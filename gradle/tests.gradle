@@ -1,129 +1,273 @@
+import java.util.regex.Pattern
+import com.gradle.enterprise.gradleplugin.testselection.*
+
 enum TestCategories {
-    Kafka,
-    Logout,
-    CAS,
-    ExpirationPolicy,
-    Metrics,
-    Tickets,
-    PasswordOps,
-    Attributes,
-    Audits,
-    Web,
-    Infinispan,
-    Spnego,
-    WebApp,
-    Authentication,
-    ActuatorEndpoint,
-    RegisteredService,
-    Utility,
-    WSFederation,
-    SMS,
-    CasConfiguration,
-    Hazelcast,
-    JMX,
-    Simple,
-    MFA,
-    X509,
-    SHELL,
-    Cassandra,
-    Webflow,
-    WebflowConfig,
-    WebflowEvents,
-    WebflowActions,
-    WebflowMfaActions,
-    CosmosDb,
-    ZooKeeper,
-    JMS,
-    AmazonWebServices,
-    Radius,
-    Couchbase,
-    CouchDb,
-    MySQL,
-    Postgres,
-    MsSqlServer,
-    MariaDb,
-    DynamoDb,
-    Ehcache,
-    FileSystem,
-    Ignite,
-    InfluxDb,
-    Oracle,
-    Ldap,
-    Groovy,
-    Mail,
-    RestfulApi,
-    Memcached,
-    MongoDb,
-    Redis,
-    OAuth,
-    UMA,
-    OIDC,
-    SAML,
-    JDBC
+    ActiveDirectory(false, true),
+    ActuatorEndpoint(true, true),
+    AmazonWebServices(true, true),
+    AMQP(false, true),
+    Attributes(true, true),
+    Audits(true, true),
+    Authentication(true, true),
+    AuthenticationHandler(true, true),
+    AuthenticationPolicy(true, true),
+    AuthenticationMetadata(true, true),
+    AuthenticationThrottling(false, true),
+    Azure(false, true),
+    CAS(true, true),
+    CasConfiguration(true, true),
+    Cassandra(false, true),
+    Cipher(true, true),
+    Consent(true, true),
+    Cookie(true, true),
+    Delegation(true, true),
+    DuoSecurity(true, true),
+    DynamoDb(false, true),
+    Elastic(true, true),
+    ExpirationPolicy(true),
+    Events(true, true),
+    FileSystem(false, true),
+    GCP(false, true),
+    GeoLocation(true, true),
+    Git(true, true),
+    Groovy(true, true),
+    GroovyAuthentication(true, true),
+    GroovyMfa(true, true),
+    GroovyServices(true, true),
+    Grouper(true, true),
+    Hazelcast(false, true),
+    Hibernate(false, true),
+    Ignite(false, true),
+    Impersonation(true, true),
+    InfluxDb(true, true),
+    JDBC(false, true),
+    JDBCMFA(false, true),
+    JDBCAuthentication(false, true),
+    JMX(true, true),
+    Kafka(true, true),
+    LdapAttributes(true, true),
+    LdapAuthentication(false, true),
+    Ldap(false, true),
+    LdapServices(false, true),
+    LdapRepository(false, true),
+    Logout(true, true),
+    Mail(true, true),
+    MariaDb(false, true),
+    Memcached(false, true),
+    Metrics(true, true),
+    MFA(true, true),
+    MFAProvider(true, true),
+    MFATrigger(true, true),
+    MFATrustedDevices(false, true),
+    MongoDb(false, true),
+    MongoDbMFA(false, true),
+    MsSqlServer(false, true),
+    MySQL(false, true),
+    Native(true, true),
+    OAuth(true, true),
+    OAuthToken(true, true),
+    OAuthWeb(false, true),
+    OIDC(false, true),
+    Oracle(false, true),
+    PasswordOps(true, true),
+    Postgres(false, true),
+    Radius(true, true),
+    Redis(false, true),
+    RegisteredService(true, true),
+    RestfulApi(false, true),
+    RestfulApiAuthentication(true, true),
+    SAML(true, true),
+    SAML1(true, true),
+    SAML2(false, true),
+    SAML2Web(false, true),
+    SAMLMetadata(true, true),
+    SAMLServiceProvider(true, true),
+    SAMLLogout(true, true),
+    SAMLAttributes(true, true),
+    SAMLResponse(false, true),
+    SCIM(true, true),
+    SHELL(true, true),
+    Simple(true, true),
+    SMS(true, true),
+    Spnego(true, true),
+    Syncope(true, true),
+    Tickets(true, true),
+    UMA(true, true),
+    Utility(true, true),
+    Web(true, true),
+    WebApp(true, true),
+    Webflow(true, true),
+    WebflowActions(true, true),
+    WebflowAccountActions(true, true),
+    WebflowServiceActions(true, true),
+    WebflowAuthenticationActions(true, true),
+    WebflowConfig(true, true),
+    WebflowMfaConfig(true, true),
+    WebflowEvents(true, true),
+    WebflowMfaActions(true),
+    WSFederation(true, true),
+    X509(true, true),
+    ZooKeeper(true, true)
+
+    boolean parallelEnabled;
+    private ptsEnabled;
+    
+    TestCategories() {
+        parallelEnabled = false
+        ptsEnabled = false
+    }
+
+    TestCategories(boolean parallelEnabled) {
+        this.parallelEnabled = parallelEnabled
+    }
+
+    TestCategories(boolean parallelEnabled, boolean ptsEnabled) {
+        this.parallelEnabled = parallelEnabled
+        this.ptsEnabled = ptsEnabled
+    }
 }
 
 if (rootProject.tasks.findByName("testCategories") == null) {
-    rootProject.tasks.create(name: "testCategories", description: "Display all available test categories") {
+    rootProject.tasks.register("testCategories") {
+        description = "Display all available test categories"
         doLast {
+            def pattern = System.getenv().get("CATEGORY_REGEX") ?: ".*"
+            def categoryMatchPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
             def result = TestCategories.values()
+                    .findAll { it.name().find(categoryMatchPattern) }
                     .toSorted({ o1, o2 ->
                         o1.name().compareTo(o2.name())
                     })
-                    .collect { it.name().toLowerCase() }
+                    .collect { it.name().toLowerCase(Locale.ENGLISH) }
             println(groovy.json.JsonOutput.toJson(result))
         }
     }
 }
 
-TestCategories.values().each({ category ->
-    if (hasTestsOfCategory(project, category.name())) {
-        def taskName = "test${category.name()}"
-        if (tasks.findByName(taskName) == null) {
-            // println "Creating task ${taskName} for ${project.name}"
-            tasks.create(name: taskName, type: Test, description: "Testing category ${category.name()}") {
-                enabled = shouldTest(project, category.name())
-                //finalizedBy jacocoTestReport
+if (rootProject.tasks.findByName("puppeteerScenarios") == null) {
+    rootProject.tasks.register("puppeteerScenarios") {
+        description = "Display all available puppeteer scenarios"
+
+        def puppeteerScenariosFrom = project.providers.gradleProperty("puppeteerScenariosFrom").getOrNull()
+        def puppeteerScenariosTo = project.providers.gradleProperty("puppeteerScenariosTo").getOrNull()
+        def scenariosDirectory = rootProject.file("ci/tests/puppeteer/scenarios")
+
+        doLast {
+            def scenarios = []
+            def pattern = System.getenv().get("SCENARIO_REGEX") ?: ".*"
+            def scenarioMatchPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE)
+
+            scenariosDirectory.eachDirMatch(scenarioMatchPattern) {
+                scenarios += it.getName()
+            }
+            Collections.sort(scenarios)
+            if (puppeteerScenariosFrom != null && puppeteerScenariosTo != null) {
+                def fromScenario = Integer.parseInt(puppeteerScenariosFrom)
+                def toScenario = Integer.parseInt(puppeteerScenariosTo)
+                if (toScenario > scenarios.size())
+                    toScenario = scenarios.size()
+                scenarios = scenarios.subList(fromScenario, toScenario)
+            }
+            println(groovy.json.JsonOutput.toJson(scenarios))
+        }
+    }
+}
+
+TestCategories.values().each({ testCategory ->
+    def sourceTestDirs = project.sourceSets.test.java.srcDirs
+    if (hasTestsOfCategory(sourceTestDirs, testCategory.name())) {
+        def taskName = "test${testCategory.name()}"
+        if (!tasks.getNames().contains(taskName)) {
+            def jacocoTestExecutionResultsFile = project.layout.buildDirectory.file("jacoco/jacoco-${taskName}.exec").get().asFile
+            def shouldWeTest = shouldTest(sourceTestDirs, testCategory.name())
+
+            tasks.register(taskName, Test) {
+                description = "Run unit/integration tests to verify the test category: ${testCategory.name()}"
+                group = "CAS Tests"
+
+                enabled = shouldWeTest
+                outputs.file(jacocoTestExecutionResultsFile)
+
                 useJUnitPlatform {
-                    includeTags category.name()
+                    includeTags testCategory.name()
                 }
+
+                def ptsEnabled = shouldWeTest && testCategory.ptsEnabled && Boolean.valueOf(System.getenv("PTS_ENABLED") ?: "true") && !rootProject.publishReleases
+                predictiveSelection {
+                    enabled = ptsEnabled
+                    mode = PredictiveTestSelectionMode.valueOf(System.getenv("PTS_MODE") ?: "RELEVANT_TESTS")
+                    profile = PredictiveTestSelectionProfile.valueOf(System.getenv("PTS_PROFILE") ?: "FAST")
+                }
+                logger.info "Predictive test selection for ${project.name} with task ${taskName} is ${ptsEnabled ? 'enabled' : 'disabled'}."
+
+                if (testCategory.parallelEnabled) {
+                    systemProperty("junit.jupiter.execution.parallel.enabled", true)
+                    systemProperty("junit.jupiter.execution.parallel.mode.default", "concurrent")
+                    systemProperty("junit.jupiter.execution.parallel.mode.classes.default", "concurrent")
+                    systemProperty("junit.jupiter.execution.parallel.config.strategy", "dynamic")
+                    systemProperty("junit.jupiter.execution.parallel.config.dynamic.factor", "8")
+                }
+
+                if (!project.path.contains(":docs")) {
+                    jacoco {
+                        dumpOnExit = true
+                        excludes = rootProject.excludedFilesFromTestCoverage
+                        destinationFile = jacocoTestExecutionResultsFile
+                        classDumpDir = layout.buildDirectory.dir('jacoco/classpathdumps').get().asFile
+                    }
+                }
+
             }
         }
     }
 })
 
-test {
+tasks.named('test') {
     enabled = false
     onlyIf = {
         false
     }
 }
 
-tasks.withType(Test) {
+tasks.withType(Test).configureEach {
     scanForTestClasses = false
-    ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
-    forkEvery = 1000
-    doFirst {
-        maxParallelForks = project.ext.properties.get("maxParallelForksForTests", 2)
-        if (maxParallelForks != 2) {
-            logger.info "Maximum number of parallel forks is set to ${maxParallelForks}"
-        }
-    }
-    if (System.getenv().containsKey("CI")) {
-        outputs.upToDateWhen { false }
-    }
+    ignoreFailures = providers.systemProperty("ignoreTestFailures").present
+    forkEvery = 2000
+    maxParallelForks = 8
+    
     systemProperty("spring.main.banner-mode", "off")
-//    systemProperty("spring.main.lazy-initialization", "true")
-    systemProperty("CI", System.getProperty("CI"))
-
+    
     failFast = true
 
     def list = []
     list.add("--add-modules")
     list.add("java.se")
+
     list.add("--add-exports")
     list.add("java.base/jdk.internal.ref=ALL-UNNAMED")
+    list.add("--add-exports")
+    list.add("java.base/jdk.internal.misc=ALL-UNNAMED")
+    list.add("--add-exports")
+    list.add("java.xml.crypto/org.jcp.xml.dsig.internal.dom=ALL-UNNAMED")
+    list.add("--add-exports")
+    list.add("java.base/sun.nio.ch=ALL-UNNAMED")
+    list.add("--add-exports")
+    list.add("java.base/java.nio=ALL-UNNAMED")
+    list.add("--add-exports")
+    list.add("java.management/com.sun.jmx.mbeanserver=ALL-UNNAMED")
+    list.add("--add-exports")
+    list.add("jdk.internal.jvmstat/sun.jvmstat.monitor=ALL-UNNAMED")
+    list.add("--add-exports")
+    list.add("java.base/sun.reflect.generics.reflectiveObjects=ALL-UNNAMED")
+
     list.add("--add-opens")
     list.add("java.base/java.lang=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.util=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.time=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.net=ALL-UNNAMED")
     list.add("--add-opens")
     list.add("java.base/java.nio=ALL-UNNAMED")
     list.add("--add-opens")
@@ -132,73 +276,60 @@ tasks.withType(Test) {
     list.add("java.management/sun.management=ALL-UNNAMED")
     list.add("--add-opens")
     list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/sun.security.action=jdk.crypto.ec")
+
     list.add("-Xms512m")
     list.add("-Xmx4g")
+
+    list.add("-XX:+EnableDynamicAgentLoading")
     jvmArgs = list
 
-    classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
     testLogging {
-        events = ["FAILED", "STANDARD_OUT"]
+        events "PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
         exceptionFormat = "full"
-        showStandardStreams = Boolean.getBoolean("showStandardStreams")
-        showExceptions = true
-        showCauses = true
-        beforeSuite { desc ->
-            if (!desc.parent) {
-                println "Started running test suite [${desc.displayName}] @ ${new java.util.Date()} "
-            }
-        }
-        beforeTest { desc ->
-            println "Started running test [${desc.className}:${desc.displayName}] @ ${new java.util.Date()} "
-        }
-        afterTest { desc, result ->
-            println """
-Results for test [${desc.className}:${desc.displayName}]: ${result.resultType} @ ${new java.util.Date()} 
-(${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)
-"""
-        }
-        afterSuite { desc, result ->
-            if (!desc.parent) {
-                println """
-Results for test suite [${desc.displayName}]: ${result.resultType} @ ${new java.util.Date()} 
-(${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)
-"""
-            }
-        }
+
+        def verbose = providers.systemProperty("verbose").present
+
+        showStandardStreams = verbose
+        showExceptions = verbose
+        showCauses = verbose
     }
-    if (!Boolean.getBoolean("skipTestRetry")) {
+    
+    def skipRetry = providers.systemProperty('skipTestRetry').present
+    if (!skipRetry) {
         retry {
             maxRetries = 3
             maxFailures = 5
             failOnPassedAfterRetry = false
         }
     }
-    jacoco {
-        dumpOnExit = true
-        excludes = rootProject.excludedFilesFromTestCoverage
+
+    filter {
+        setFailOnNoMatchingTests(false)
+        excludeTestsMatching "*TestsSuite"
     }
 }
 
-def shouldTest(Project project, String category) {
+def shouldTest(Set sourceTestDirectories, String category) {
     def foundTest = gradle.startParameter.taskNames.any { task -> task.matches(/^test${category}$/) }
     if (!foundTest) {
-        logger.debug "No tests with category ${category} found for ${project.name}"
+        logger.debug "No tests with category ${category} found"
     }
-    return !Boolean.getBoolean("skipTests") && foundTest && hasTestsOfCategory(project, category)
+    return !providers.systemProperty("skipTests").present && foundTest && hasTestsOfCategory(sourceTestDirectories, category)
 }
 
-def hasTestsOfCategory(Project project, String category) {
-    def testSrc = project.sourceSets.test.java.srcDirs
-    def res = srcTagMap.computeIfAbsent(testSrc) {
+def hasTestsOfCategory(Set sourceTestDirectories, String category) {
+    def res = srcTagMap.computeIfAbsent(sourceTestDirectories) {
         def tags = new HashSet()
-        testSrc.each { src ->
+        sourceTestDirectories.each { src ->
             try {
                 src.eachFileRecurse { file ->
                     if (file ==~ /.*Tests\.\w+/) {
                         file.readLines().parallelStream().forEach() { line ->
-                            def m = line =~ /^\s*@Tag\("(\w+)"\)\s*$/
-                            if (m) {
-                                tags.addAll(m.collect { it[1] })
+                            def match = line =~ /^\s*@Tag\("(\w+)"\)\s*$/
+                            if (match) {
+                                tags.addAll(match.collect { it[1] })
                             }
                         }
                     }

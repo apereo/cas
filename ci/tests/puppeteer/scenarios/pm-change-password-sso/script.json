@@ -1,0 +1,14 @@
+{
+  "dependencies": "generic,pm-webflow",
+
+  "properties": [
+    "--cas.authn.pm.core.enabled=true",
+    "--cas.authn.pm.core.password-policy-pattern=.+",
+    "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/passwords.json",
+    "--cas.authn.pm.reset.security-questions-enabled=false",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.server.scope=example.net"
+  ]
+}

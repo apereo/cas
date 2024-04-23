@@ -8,6 +8,6 @@ import org.junit.jupiter.api.Tag;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Simple")
-public class DefaultConsentActivationStrategyTests extends BaseConsentActivationStrategyTests {
+@Tag("Consent")
+class DefaultConsentActivationStrategyTests extends BaseConsentActivationStrategyTests {
 }

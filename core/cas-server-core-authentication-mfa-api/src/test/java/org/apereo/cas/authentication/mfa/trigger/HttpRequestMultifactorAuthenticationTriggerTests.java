@@ -18,56 +18,56 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("MFA")
-public class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+@Tag("MFATrigger")
+class HttpRequestMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
-    public void verifyOperationByHeader() {
+    void verifyOperationByHeader() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getHttp().setRequestHeader("mfaPolicy");
         this.httpRequest.addHeader("mfaPolicy", TestMultifactorAuthenticationProvider.ID);
         val trigger = new HttpRequestMultifactorAuthenticationTrigger(props, this.applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
     }
 
     @Test
-    public void verifyOperationByParameter() {
+    void verifyOperationByParameter() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getHttp().setRequestParameter("mfaPolicy");
         this.httpRequest.addParameter("mfaPolicy", TestMultifactorAuthenticationProvider.ID);
         val trigger = new HttpRequestMultifactorAuthenticationTrigger(props, this.applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
     }
 
     @Test
-    public void verifyOperationByAttribute() {
+    void verifyOperationByAttribute() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getHttp().setSessionAttribute("mfaPolicy");
         httpRequest.setAttribute("mfaPolicy", TestMultifactorAuthenticationProvider.ID);
         val trigger = new HttpRequestMultifactorAuthenticationTrigger(props, this.applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
     }
 
     @Test
-    public void verifyOperationBySessionAttribute() {
+    void verifyOperationBySessionAttribute() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getHttp().setSessionAttribute("mfaPolicy");
         httpRequest.getSession(true).setAttribute("mfaPolicy", TestMultifactorAuthenticationProvider.ID);
         val trigger = new HttpRequestMultifactorAuthenticationTrigger(props, this.applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
     }
 
     @Test
-    public void verifyOperationInvalidProvider() {
+    void verifyOperationInvalidProvider() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getMfa().getTriggers().getHttp().setSessionAttribute("mfaPolicy");
         httpRequest.setAttribute("mfaPolicy", "invalid");
         val trigger = new HttpRequestMultifactorAuthenticationTrigger(props, this.applicationContext);
         assertThrows(AuthenticationException.class,
-            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
+            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
     }
 }
 

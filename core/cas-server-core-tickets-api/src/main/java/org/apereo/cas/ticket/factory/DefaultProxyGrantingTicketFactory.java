@@ -1,19 +1,20 @@
 package org.apereo.cas.ticket.factory;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.RegisteredServiceProxyGrantingTicketExpirationPolicy;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.ProxyGrantingTicketIssuerTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,30 +29,18 @@ import lombok.val;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFactory {
-    /**
-     * Used to generate ids for {@link TicketGrantingTicket}s
-     * created.
-     */
     protected final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
-    /**
-     * Expiration policy for ticket granting tickets.
-     */
-    protected final ExpirationPolicyBuilder<ProxyGrantingTicket> ticketGrantingTicketExpirationPolicy;
+    @Getter
+    protected final ExpirationPolicyBuilder<ProxyGrantingTicket> expirationPolicyBuilder;
 
-    /**
-     * The ticket cipher.
-     */
     protected final CipherExecutor<String, String> cipherExecutor;
 
-    /**
-     * The service manager.
-     */
     protected final ServicesManager servicesManager;
 
     @Override
     public <T extends ProxyGrantingTicket> T create(final ServiceTicket serviceTicket,
-        final Authentication authentication, final Class<T> clazz) throws AbstractTicketException {
+                                                    final Authentication authentication, final Class<T> clazz) throws Throwable {
         val pgtId = produceTicketIdentifier();
         return produceTicket(serviceTicket, authentication, pgtId, clazz);
     }
@@ -61,56 +50,30 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
         return ProxyGrantingTicket.class;
     }
 
-    /**
-     * Produce ticket.
-     *
-     * @param <T>            the type parameter
-     * @param serviceTicket  the service ticket
-     * @param authentication the authentication
-     * @param pgtId          the pgt id
-     * @param clazz          the clazz
-     * @return the ticket
-     */
     protected <T extends ProxyGrantingTicket> T produceTicket(final ServiceTicket serviceTicket, final Authentication authentication,
-        final String pgtId, final Class<T> clazz) {
+                                                              final String pgtId, final Class<T> clazz) {
 
         val proxyGrantingTicketExpirationPolicy = getProxyGrantingTicketExpirationPolicy(serviceTicket);
-        val result = produceTicketWithAdequateExpirationPolicy(proxyGrantingTicketExpirationPolicy, serviceTicket, authentication, pgtId);
-        if (!clazz.isAssignableFrom(result.getClass())) {
-            throw new ClassCastException("Result [" + result
-                + " is of type " + result.getClass()
-                + " when we were expecting " + clazz);
+        val pgtIssuer = (ProxyGrantingTicketIssuerTicket) serviceTicket;
+        val result = produceTicketWithAdequateExpirationPolicy(proxyGrantingTicketExpirationPolicy, pgtIssuer, authentication, pgtId);
+        if (result == null || !clazz.isAssignableFrom(result.getClass())) {
+            throw new ClassCastException("Result %s does not match %s ".formatted(result, clazz));
         }
         return (T) result;
     }
 
-    /**
-     * Retrieve the proxy granting ticket expiration policy of the service.
-     *
-     * @param serviceTicket the service ticket
-     * @return the expiration policy
-     */
     protected RegisteredServiceProxyGrantingTicketExpirationPolicy getProxyGrantingTicketExpirationPolicy(
         final ServiceTicket serviceTicket) {
-        val service = servicesManager.findServiceBy(serviceTicket.getService());
+        val service = servicesManager.findServiceBy(serviceTicket.getService(), CasModelRegisteredService.class);
         if (service != null) {
             return service.getProxyGrantingTicketExpirationPolicy();
         }
         return null;
     }
 
-    /**
-     * Produce the ticket with the adequate expiration policy.
-     *
-     * @param servicePgtPolicy the proxy granting ticket expiration policy
-     * @param serviceTicket    the service ticket
-     * @param authentication   the authentication
-     * @param pgtId            the PGT id
-     * @return the ticket
-     */
     protected ProxyGrantingTicket produceTicketWithAdequateExpirationPolicy(
         final RegisteredServiceProxyGrantingTicketExpirationPolicy servicePgtPolicy,
-        final ServiceTicket serviceTicket,
+        final ProxyGrantingTicketIssuerTicket serviceTicket,
         final Authentication authentication,
         final String pgtId) {
         if (servicePgtPolicy != null) {
@@ -120,16 +83,11 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
         }
         LOGGER.trace("Using default ticket-granting ticket policy for proxy-granting ticket");
         return serviceTicket.grantProxyGrantingTicket(pgtId, authentication,
-            this.ticketGrantingTicketExpirationPolicy.buildTicketExpirationPolicy());
+            this.expirationPolicyBuilder.buildTicketExpirationPolicy());
 
     }
 
-    /**
-     * Produce ticket identifier string.
-     *
-     * @return the ticket
-     */
-    protected String produceTicketIdentifier() {
+    protected String produceTicketIdentifier() throws Throwable {
         val pgtId = this.ticketGrantingTicketUniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX);
         if (cipherExecutor == null || !cipherExecutor.isEnabled()) {
             return pgtId;

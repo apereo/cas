@@ -1,4 +1,11 @@
 description = "Apereo CAS YubiKey Jpa Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "YubiKey Multifactor Authentication",
+            title: "YubiKey Support via JDBC"
+    ]
+}
 dependencies {
     implementation libraries.yubicoapi
 
@@ -25,6 +32,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-util")
 
@@ -33,7 +41,8 @@ dependencies {
 
     testImplementation project(path: ":support:cas-server-support-yubikey-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-yubikey", configuration: "tests")
-
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
+    
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")

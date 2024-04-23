@@ -2,7 +2,7 @@ package org.apereo.cas.support.saml;
 
 import com.google.common.collect.Iterables;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -23,11 +23,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = AbstractOpenSamlTests.SharedTestConfiguration.class,
     properties = "spring.main.allow-bean-definition-overriding=true")
-@Tag("SAML")
-public class InMemoryResourceMetadataResolverTests extends AbstractOpenSamlTests {
+@Tag("SAMLMetadata")
+class InMemoryResourceMetadataResolverTests extends AbstractOpenSamlTests {
 
     @Test
-    public void verifyValidMetadataResource() throws Exception {
+    void verifyValidMetadataResource() throws Throwable {
         val resolver = new InMemoryResourceMetadataResolver(new ClassPathResource("metadata/metadata-valid.xml"), configBean);
         resolver.setId(UUID.randomUUID().toString());
         resolver.initialize();
@@ -40,7 +40,7 @@ public class InMemoryResourceMetadataResolverTests extends AbstractOpenSamlTests
     }
 
     @Test
-    public void verifyExpiredValidUntilMetadataResource() throws Exception {
+    void verifyExpiredValidUntilMetadataResource() throws Throwable {
         val resolver = new InMemoryResourceMetadataResolver(new ClassPathResource("metadata/metadata-expired.xml"), configBean);
         resolver.setId(UUID.randomUUID().toString());
         resolver.initialize();
@@ -53,7 +53,7 @@ public class InMemoryResourceMetadataResolverTests extends AbstractOpenSamlTests
     }
 
     @Test
-    public void verifyInvalidExpiredMetadataResourceIsOkay() throws Exception {
+    void verifyInvalidExpiredMetadataResourceIsOkay() throws Throwable {
         val resolver = new InMemoryResourceMetadataResolver(new ClassPathResource("metadata/metadata-expired.xml"), configBean);
         resolver.setRequireValidMetadata(false);
         resolver.setId(UUID.randomUUID().toString());

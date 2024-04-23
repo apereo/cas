@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
+
 /**
  * This is {@link TicketCatalogConfigurer}.
  *
@@ -11,9 +13,11 @@ public interface TicketCatalogConfigurer {
     /**
      * configure the plan.
      *
-     * @param plan the plan
+     * @param plan          the plan
+     * @param casProperties the cas properties
+     * @throws Throwable the throwable
      */
-    void configureTicketCatalog(TicketCatalog plan);
+    void configureTicketCatalog(TicketCatalog plan, CasConfigurationProperties casProperties) throws Throwable;
 
     /**
      * Gets name.

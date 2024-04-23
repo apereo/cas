@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.acme;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
@@ -11,6 +12,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,8 @@ import java.util.List;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("AcmeProperties")
-public class AcmeProperties implements Serializable {
+public class AcmeProperties implements Serializable, CasFeatureModule {
+    @Serial
     private static final long serialVersionUID = -561637865919944706L;
 
     /**

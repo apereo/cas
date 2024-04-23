@@ -21,17 +21,17 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("RestfulApi")
-public class RestResponseEntityAuditResourceResolverTests {
+class RestResponseEntityAuditResourceResolverTests {
     @Test
-    public void verifyAction() {
-        val r = new RestResponseEntityAuditResourceResolver(true);
+    void verifyAction() throws Throwable {
+        val resolver = new RestResponseEntityAuditResourceResolver(true);
         try (val webServer = new MockWebServer(9193)) {
             webServer.start();
             val headers = new LinkedMultiValueMap<String, String>();
             headers.put("header", CollectionUtils.wrapList("value"));
             headers.put("location", CollectionUtils.wrapList("someplace"));
             val entity = new ResponseEntity<>("The Response Body", headers, HttpStatus.OK);
-            assertTrue(r.resolveFrom(mock(JoinPoint.class), entity).length > 0);
+            assertTrue(resolver.resolveFrom(mock(JoinPoint.class), entity).length > 0);
         }
     }
 }

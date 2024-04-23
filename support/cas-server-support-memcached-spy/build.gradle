@@ -1,4 +1,11 @@
 description = "Apereo CAS Memcached Support via Memcached"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Memcached Support",
+            title: "Memcached via SPY"
+    ]
+}
 dependencies {
     api libraries.memcached
 }

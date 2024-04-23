@@ -1,15 +1,15 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Multimap;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +25,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -36,7 +39,69 @@ import java.util.stream.Collectors;
 @Slf4j
 @UtilityClass
 public class CollectionUtils {
-    private static final int MAP_SIZE = 8;
+
+    /**
+     * Ensure given attributes in the map are always captured
+     * with a single-value, if they exist. If the requested attributes have multiple values,
+     * the first element is chosen.
+     *
+     * @param attributes             the attributes
+     * @param singleValuedAttributes the single valued attributes
+     * @return the map
+     */
+    public static Map<String, Object> toSingleValuedMap(final Map<String, Object> attributes,
+                                                        final List<String> singleValuedAttributes) {
+        val results = new LinkedHashMap<>(attributes);
+        singleValuedAttributes.forEach(name -> {
+            val values = results.remove(name);
+            firstElement(values).ifPresent(value -> results.put(name, value));
+        });
+        return results;
+    }
+
+    /**
+     * Convert attribute values to multi valued objects.
+     *
+     * @param attributes the attributes
+     * @return the map of attributes to return
+     */
+    public static Map<String, List<Object>> toMultiValuedMap(final Map<String, Object> attributes) {
+        val entries = attributes.entrySet();
+        return entries
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+                val value = entry.getValue();
+                return toCollection(value, ArrayList.class);
+            }));
+    }
+
+    /**
+     * From comma delimited values.
+     *
+     * @param attributes the attributes
+     * @return the map
+     */
+    public static Map<String, List<Object>> fromCommaDelimitedValues(final Map<String, String> attributes) {
+        val entries = attributes.entrySet();
+        return entries
+            .stream()
+            .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+                val value = org.springframework.util.StringUtils.commaDelimitedListToSet(entry.getValue());
+                return toCollection(value, ArrayList.class);
+            }));
+    }
+
+    /**
+     * Distinct by key predicate.
+     *
+     * @param <T>          the type parameter
+     * @param keyExtractor the key extractor
+     * @return the predicate
+     */
+    public static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor) {
+        val seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
+    }
 
     /**
      * Converts the provided object into a collection
@@ -46,11 +111,26 @@ public class CollectionUtils {
      * @return the optional
      */
     public static Optional<Object> firstElement(final Object obj) {
-        val object = CollectionUtils.toCollection(obj);
+        val object = toCollection(obj);
         if (object.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(object.iterator().next());
+    }
+
+    /**
+     * Converts the provided object into a collection
+     * and return the first element, or empty.
+     *
+     * @param <T>   the type parameter
+     * @param obj   the obj
+     * @param clazz the clazz
+     * @return the optional
+     */
+    public static <T> Optional<T> firstElement(final Object obj, final Class<T> clazz) {
+        var result = (Optional<T>) firstElement(obj);
+        result.ifPresent(value -> Assert.isTrue(clazz.isAssignableFrom(value.getClass()), () -> "Invalid element subtype"));
+        return result;
     }
 
     /**
@@ -61,15 +141,16 @@ public class CollectionUtils {
      * @param clazz the clazz
      * @return the t
      */
-    @SneakyThrows
     public static <T extends Collection> T toCollection(final Object obj, final Class<T> clazz) {
-        val results = toCollection(obj);
-        if (clazz.isInterface()) {
-            throw new IllegalArgumentException("Cannot accept an interface " + clazz.getSimpleName() + " to create a new object instance");
-        }
-        val col = clazz.getDeclaredConstructor().newInstance();
-        col.addAll(results);
-        return col;
+        return FunctionUtils.doUnchecked(() -> {
+            val results = toCollection(obj);
+            if (clazz.isInterface()) {
+                throw new IllegalArgumentException("Cannot accept an interface " + clazz.getSimpleName() + " to create a new object instance");
+            }
+            val col = clazz.getDeclaredConstructor().newInstance();
+            col.addAll(results);
+            return col;
+        });
     }
 
     /**
@@ -80,38 +161,35 @@ public class CollectionUtils {
      */
     @SuppressWarnings("JdkObsolete")
     public static Set<Object> toCollection(final Object obj) {
-        val c = new LinkedHashSet<>(MAP_SIZE);
+        val resultingSet = new LinkedHashSet<>();
         if (obj == null) {
             LOGGER.trace("Converting null obj to empty collection");
-        } else if (obj instanceof Collection) {
-            c.addAll((Collection<Object>) obj);
+        } else if (obj instanceof final Collection values) {
+            resultingSet.addAll(values);
             LOGGER.trace("Converting multi-valued element [{}]", obj);
-        } else if (obj instanceof Map) {
-            val map = (Map) obj;
+        } else if (obj instanceof final Map map) {
             val set = (Set<Map.Entry>) map.entrySet();
-            c.addAll(set.stream().map(e -> Pair.of(e.getKey(), e.getValue())).collect(Collectors.toSet()));
+            resultingSet.addAll(set.stream().map(e -> Pair.of(e.getKey(), e.getValue())).collect(Collectors.toSet()));
         } else if (obj.getClass().isArray()) {
-            if (byte[].class.isInstance(obj)) {
-                c.add(obj);
+            if (obj instanceof byte[]) {
+                resultingSet.add(obj);
             } else {
-                c.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));
+                resultingSet.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));
             }
             LOGGER.trace("Converting array element [{}]", obj);
-        } else if (obj instanceof Iterator) {
-            val it = (Iterator) obj;
+        } else if (obj instanceof final Iterator it) {
             while (it.hasNext()) {
-                c.add(it.next());
+                resultingSet.add(it.next());
             }
-        } else if (obj instanceof Enumeration) {
-            val it = (Enumeration) obj;
+        } else if (obj instanceof final Enumeration it) {
             while (it.hasMoreElements()) {
-                c.add(it.nextElement());
+                resultingSet.add(it.nextElement());
             }
         } else {
-            c.add(obj);
+            resultingSet.add(obj);
             LOGGER.trace("Converting element [{}]", obj);
         }
-        return c.stream().filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
+        return resultingSet.stream().filter(Objects::nonNull).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     /**
@@ -175,10 +253,12 @@ public class CollectionUtils {
      * @param value2 the value 2
      * @return the map
      */
-    public static <K extends String, V extends Object> Map<K, V> wrap(final String key, final Object value,
-                                                                      final String key2, final Object value2) {
+    public static <K extends String, V> Map<K, V> wrap(final String key, final Object value,
+                                                       final String key2, final Object value2) {
         val m = wrap(key, value);
-        m.put(key2, value2);
+        if (value2 != null && StringUtils.isNotBlank(key2)) {
+            m.put(key2, value2);
+        }
         return (Map) m;
     }
 
@@ -199,7 +279,9 @@ public class CollectionUtils {
                                         final String key2, final Object value2,
                                         final String key3, final Object value3) {
         val m = wrap(key, value, key2, value2);
-        m.put(key3, value3);
+        if (value3 != null && StringUtils.isNotBlank(key3)) {
+            m.put(key3, value3);
+        }
         return (Map) m;
     }
 
@@ -223,7 +305,9 @@ public class CollectionUtils {
                                         final String key3, final Object value3,
                                         final String key4, final Object value4) {
         val m = wrap(key, value, key2, value2, key3, value3);
-        m.put(key4, value4);
+        if (value4 != null && StringUtils.isNotBlank(key4)) {
+            m.put(key4, value4);
+        }
         return (Map) m;
     }
 
@@ -250,7 +334,9 @@ public class CollectionUtils {
                                         final String key4, final Object value4,
                                         final String key5, final Object value5) {
         val m = wrap(key, value, key2, value2, key3, value3, key4, value4);
-        m.put(key5, value5);
+        if (value5 != null && StringUtils.isNotBlank(key5)) {
+            m.put(key5, value5);
+        }
         return (Map) m;
     }
 
@@ -280,7 +366,9 @@ public class CollectionUtils {
                                         final String key5, final Object value5,
                                         final String key6, final Object value6) {
         val m = wrap(key, value, key2, value2, key3, value3, key4, value4, key5, value5);
-        m.put(key6, value6);
+        if (value6 != null && StringUtils.isNotBlank(key6)) {
+            m.put(key6, value6);
+        }
         return (Map) m;
     }
 
@@ -313,7 +401,9 @@ public class CollectionUtils {
                                         final String key6, final Object value6,
                                         final String key7, final Object value7) {
         val m = wrap(key, value, key2, value2, key3, value3, key4, value4, key5, value5, key6, value6);
-        m.put(key7, value7);
+        if (value7 != null && StringUtils.isNotBlank(key7)) {
+            m.put(key7, value7);
+        }
         return (Map) m;
     }
 
@@ -348,10 +438,12 @@ public class CollectionUtils {
                                         final String key6, final Object value6,
                                         final String key7, final Object value7,
                                         final String key8, final Object value8) {
-        val m = wrap(key, value, key2, value2, key3, value3, key4, value4,
+        val map = wrap(key, value, key2, value2, key3, value3, key4, value4,
             key5, value5, key6, value6, key7, value7);
-        m.put(key8, value8);
-        return (Map) m;
+        if (value8 != null && StringUtils.isNotBlank(key8)) {
+            map.put(key8, value8);
+        }
+        return (Map) map;
     }
 
     /**
@@ -388,10 +480,12 @@ public class CollectionUtils {
                                         final String key7, final Object value7,
                                         final String key8, final Object value8,
                                         final String key9, final Object value9) {
-        val m = wrap(key, value, key2, value2, key3, value3, key4, value4,
+        val map = wrap(key, value, key2, value2, key3, value3, key4, value4,
             key5, value5, key6, value6, key7, value7, key8, value8);
-        m.put(key9, value9);
-        return (Map) m;
+        if (value9 != null && StringUtils.isNotBlank(key9)) {
+            map.put(key9, value9);
+        }
+        return (Map) map;
     }
 
     /**
@@ -402,10 +496,10 @@ public class CollectionUtils {
      * @return the list
      */
     public static <T> List<T> wrap(final T source) {
-        val list = new ArrayList<T>(MAP_SIZE);
+        val list = new ArrayList<T>();
         if (source != null) {
-            if (source instanceof Collection) {
-                val it = ((Collection) source).iterator();
+            if (source instanceof final Collection values) {
+                val it = values.iterator();
                 while (it.hasNext()) {
                     list.add((T) it.next());
                 }
@@ -413,8 +507,8 @@ public class CollectionUtils {
                 if (source.getClass().isAssignableFrom(byte[].class)) {
                     list.add(source);
                 } else {
-                    val elements = Arrays.stream((Object[]) source).collect(Collectors.toList());
-                    list.addAll((List) elements);
+                    val elements = Arrays.stream((Object[]) source).toList();
+                    list.addAll((Collection<? extends T>) elements);
                 }
             } else {
                 list.add(source);
@@ -431,7 +525,7 @@ public class CollectionUtils {
      * @return the list
      */
     public static <T> List<T> wrap(final List<T> source) {
-        val list = new ArrayList<T>(MAP_SIZE);
+        val list = new ArrayList<T>();
         if (source != null && !source.isEmpty()) {
             list.addAll(source);
         }
@@ -446,7 +540,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> Set<T> wrap(final Set<T> source) {
-        val list = new LinkedHashSet<T>(MAP_SIZE);
+        val list = new LinkedHashSet<T>();
         if (source != null && !source.isEmpty()) {
             list.addAll(source);
         }
@@ -461,7 +555,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> Set<T> wrapSet(final T source) {
-        val list = new LinkedHashSet<T>(MAP_SIZE);
+        val list = new LinkedHashSet<T>();
         if (source != null) {
             list.add(source);
         }
@@ -476,7 +570,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> Set<T> wrapSet(final T... source) {
-        val list = new LinkedHashSet<T>(MAP_SIZE);
+        val list = new LinkedHashSet<T>();
         addToCollection(list, source);
         return list;
     }
@@ -488,8 +582,8 @@ public class CollectionUtils {
      * @param source the source
      * @return the set
      */
-    public static <T> HashSet<T> wrapHashSet(final T... source) {
-        val list = new HashSet<T>(MAP_SIZE);
+    public static <T> Set<T> wrapHashSet(final T... source) {
+        val list = new HashSet<T>();
         addToCollection(list, source);
         return list;
     }
@@ -501,7 +595,7 @@ public class CollectionUtils {
      * @param source the source
      * @return the set
      */
-    public static <T> HashSet<T> wrapHashSet(final Collection<T> source) {
+    public static <T> Set<T> wrapHashSet(final Collection<T> source) {
         return new HashSet<>(source);
     }
 
@@ -513,7 +607,7 @@ public class CollectionUtils {
      * @return the set
      */
     public static <T> List<T> wrapList(final T... source) {
-        val list = new ArrayList<T>(MAP_SIZE);
+        val list = new ArrayList<T>();
         addToCollection(list, source);
         return list;
     }
@@ -525,8 +619,8 @@ public class CollectionUtils {
      * @param source the source
      * @return the array list
      */
-    public static <T> ArrayList<T> wrapArrayList(final T... source) {
-        val list = new ArrayList<T>(MAP_SIZE);
+    public static <T> List<T> wrapArrayList(final T... source) {
+        val list = new ArrayList<T>();
         addToCollection(list, source);
         return list;
     }
@@ -540,7 +634,7 @@ public class CollectionUtils {
      * @return the array list
      */
     public static <T> Map<String, T> wrapLinkedHashMap(final String key, final T source) {
-        val list = new LinkedHashMap<String, T>(MAP_SIZE);
+        val list = new LinkedHashMap<String, T>();
         list.put(key, source);
         return list;
     }
@@ -592,10 +686,23 @@ public class CollectionUtils {
             .stream()
             .map(s -> {
                 val bits = Splitter.on("->").splitToList(s);
-                return Pair.of(bits.get(0), bits.size() > 1 ? bits.get(1) : StringUtils.EMPTY);
+                return Pair.of(bits.getFirst(), bits.size() > 1 ? bits.get(1) : StringUtils.EMPTY);
             })
             .forEach(p -> mappings.put(p.getKey(), p.getValue()));
         return mappings;
+    }
+
+    /**
+     * Wrap collection.
+     *
+     * @param <T>    the type parameter
+     * @param source the source
+     * @return the collection
+     */
+    public static <T> Collection<T> wrapCollection(final T... source) {
+        val list = new LinkedHashSet<T>();
+        addToCollection(list, source);
+        return list;
     }
 
     private static <T> void addToCollection(final Collection<T> list, final T[] source) {
@@ -605,5 +712,17 @@ public class CollectionUtils {
                 list.addAll((Collection) col);
             });
         }
+    }
+
+    /**
+     * Merge map.
+     *
+     * @param attributes the attributes
+     * @return the map
+     */
+    public static Map<String, Object> merge(final Map<String, ?>... attributes) {
+        val result = new LinkedHashMap<String, Object>();
+        Arrays.stream(attributes).forEach(result::putAll);
+        return result;
     }
 }

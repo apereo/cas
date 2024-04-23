@@ -1,0 +1,25 @@
+version: '3'
+services:
+  postgres:
+    image: "postgres:16"
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=pass
+  grouper:
+    image: "i2incommon/grouper:4.11.0"
+    restart: always
+    ports:
+      - '443:443'
+    command:
+      - quickstart
+    environment:
+      - GROUPERSYSTEM_QUICKSTART_PASS=@4HHXr6SS42@IHz2
+      - GROUPER_MORPHSTRING_ENCRYPT_KEY=@4HHXr6SS42@IHz2
+      - GROUPER_DATABASE_PASSWORD=pass
+      - GROUPER_DATABASE_USERNAME=postgres
+      - GROUPER_DATABASE_URL=jdbc:postgresql://postgres:5432/postgres
+      - GROUPER_AUTO_DDL_UPTOVERSION=4.*.*
+      - GROUPER_RUN_HSQLDB=false

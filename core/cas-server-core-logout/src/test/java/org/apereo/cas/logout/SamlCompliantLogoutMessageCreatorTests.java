@@ -1,17 +1,19 @@
 package org.apereo.cas.logout;
 
-import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+
 import java.io.ByteArrayInputStream;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,19 +23,17 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-@Tag("SAML")
-public class SamlCompliantLogoutMessageCreatorTests {
-    private static final String CONST_TEST_URL = "https://google.com";
+@Tag("SAMLLogout")
+class SamlCompliantLogoutMessageCreatorTests {
+    private static final String TEST_URL = "https://google.com";
 
     private final SingleLogoutMessageCreator builder = new DefaultSingleLogoutMessageCreator();
 
     @Test
-    public void verifyMessageBuilding() throws Exception {
+    void verifyMessageBuilding() throws Throwable {
 
-        val service = mock(WebApplicationService.class);
-        when(service.getOriginalUrl()).thenReturn(CONST_TEST_URL);
-
-        val logoutUrl = new URL(service.getOriginalUrl());
+        val service = RegisteredServiceTestUtils.getService(TEST_URL);
+        val logoutUrl = new URI(service.getOriginalUrl()).toURL();
         val request = DefaultSingleLogoutRequestContext.builder()
             .ticketId("TICKET-ID")
             .service(service)

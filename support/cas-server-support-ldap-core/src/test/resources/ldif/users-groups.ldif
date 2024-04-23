@@ -24,6 +24,7 @@ displayName: CAS Test
 mail: casTest@example.org
 host: localhost
 userPassword: misagh
+businessCategory: cn=casTest,ou=people,dc=example,dc=org
 
 dn: cn=Administrators,ou=people,dc=example,dc=org
 cn: Administrators

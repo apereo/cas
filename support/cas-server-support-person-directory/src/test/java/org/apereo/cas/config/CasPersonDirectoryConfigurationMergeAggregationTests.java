@@ -1,15 +1,13 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -18,11 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class
-}, properties = {
+@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class, properties = {
     "cas.authn.attribute-repository.stub.attributes.uid=cas",
     "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
     "cas.authn.attribute-repository.stub.attributes.eppn=casuser",
@@ -33,24 +27,21 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.attribute-repository.json[0].location=classpath:/json-attribute-repository.json",
     "cas.authn.attribute-repository.json[0].order=2",
 
-    "cas.authn.attribute-repository.script[0].location=classpath:/GroovyAttributeRepository.groovy",
-    "cas.authn.attribute-repository.script[0].order=2",
-
     "cas.authn.attribute-repository.core.aggregation=MERGE",
     "cas.authn.attribute-repository.core.merger=MULTIVALUED",
     
     "cas.authn.attribute-repository.core.expiration-time=0"
 })
 @Tag("Attributes")
-public class CasPersonDirectoryConfigurationMergeAggregationTests {
+class CasPersonDirectoryConfigurationMergeAggregationTests {
     @Autowired
     @Qualifier("aggregatingAttributeRepository")
-    private IPersonAttributeDao aggregatingAttributeRepository;
+    private PersonAttributeDao aggregatingAttributeRepository;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(aggregatingAttributeRepository);
-        val person = aggregatingAttributeRepository.getPerson("casuser", IPersonAttributeDaoFilter.alwaysChoose());
+        val person = aggregatingAttributeRepository.getPerson("casuser");
         assertNotNull(person);
         assertNotNull(person.getAttributeValue("uid"));
         assertNotNull(person.getAttributeValue("givenName"));

@@ -1,25 +1,28 @@
 package org.apereo.cas.logging.web;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
-
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MDC;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.ObjectProvider;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.TimeZone;
+import java.util.UUID;
 
 /**
  * This is {@link ThreadContextMDCServletFilter}.
@@ -30,8 +33,11 @@ import java.util.TimeZone;
 @RequiredArgsConstructor
 public class ThreadContextMDCServletFilter implements Filter {
 
-    private final TicketRegistrySupport ticketRegistrySupport;
-    private final CasCookieBuilder ticketGrantingTicketCookieGenerator;
+    private final ObjectProvider<TicketRegistrySupport> ticketRegistrySupport;
+
+    private final ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator;
+
+    private final CasConfigurationProperties casProperties;
 
     private static void addContextAttribute(final String attributeName, final Object value) {
         val result = Optional.ofNullable(value).map(Object::toString).orElse(null);
@@ -40,20 +46,12 @@ public class ThreadContextMDCServletFilter implements Filter {
         }
     }
 
-    /**
-     * Does nothing.
-     *
-     * @param filterConfig filter initial configuration. Ignored.
-     */
-    @Override
-    public void init(final FilterConfig filterConfig) {
-    }
-
     @Override
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
                          final FilterChain filterChain) throws IOException, ServletException {
         try {
             val request = (HttpServletRequest) servletRequest;
+            val response = (HttpServletResponse) servletResponse;
 
             addContextAttribute("remoteAddress", request.getRemoteAddr());
             addContextAttribute("remoteUser", request.getRemoteUser());
@@ -74,38 +72,39 @@ public class ThreadContextMDCServletFilter implements Filter {
             addContextAttribute("scheme", request.getScheme());
             addContextAttribute("timezone", TimeZone.getDefault().getDisplayName());
 
+            val requestId = UUID.randomUUID().toString();
+            addContextAttribute("requestId", requestId);
+            request.setAttribute("requestId", requestId);
+            response.setHeader("requestId", requestId);
+
             val params = request.getParameterMap();
+            val mdc = casProperties.getLogging().getMdc();
             params.keySet()
                 .stream()
-                .filter(k -> !k.equalsIgnoreCase("password"))
-                .forEach(k -> {
-                    val values = params.get(k);
-                    addContextAttribute(k, Arrays.toString(values));
+                .filter(parameterName -> mdc.getParametersToExclude().stream().noneMatch(p -> RegexUtils.find(parameterName, p)))
+                .forEach(parameterName -> {
+                    val values = params.get(parameterName);
+                    addContextAttribute(parameterName, Arrays.toString(values));
                 });
 
             Collections.list(request.getAttributeNames()).forEach(a -> addContextAttribute(a, request.getAttribute(a)));
             val requestHeaderNames = request.getHeaderNames();
-            if (requestHeaderNames != null) {
-                Collections.list(requestHeaderNames).forEach(h -> addContextAttribute(h, request.getHeader(h)));
-            }
+            FunctionUtils.doIfNotNull(requestHeaderNames,
+                __ -> Collections.list(requestHeaderNames)
+                    .stream()
+                    .filter(header -> mdc.getHeadersToExclude().stream().noneMatch(excludedHeader -> RegexUtils.find(header, excludedHeader)))
+                    .forEach(h -> addContextAttribute(h, request.getHeader(h))));
 
-            val cookieValue = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
-            if (StringUtils.isNotBlank(cookieValue)) {
-                val p = this.ticketRegistrySupport.getAuthenticatedPrincipalFrom(cookieValue);
-                if (p != null) {
-                    addContextAttribute("principal", p.getId());
+            ticketGrantingTicketCookieGenerator.ifAvailable(builder -> {
+                val cookieValue = builder.retrieveCookieValue(request);
+                if (StringUtils.isNotBlank(cookieValue)) {
+                    val principal = ticketRegistrySupport.getObject().getAuthenticatedPrincipalFrom(cookieValue);
+                    FunctionUtils.doIfNotNull(principal, __ -> addContextAttribute("principal", principal.getId()));
                 }
-            }
+            });
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {
             MDC.clear();
         }
-    }
-
-    /**
-     * Does nothing.
-     */
-    @Override
-    public void destroy() {
     }
 }

@@ -1,14 +1,16 @@
 package org.apereo.cas.adaptors.duo.authn;
 
-import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationCredential;
 import org.apereo.cas.authentication.credential.AbstractCredential;
+import org.apereo.cas.authentication.principal.Principal;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.io.Serial;
 
 
 /**
@@ -23,14 +25,15 @@ import lombok.ToString;
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class DuoSecurityDirectCredential extends AbstractCredential implements MultifactorAuthenticationCredential {
+    @Serial
     private static final long serialVersionUID = -7570699733132111037L;
 
-    private final Authentication authentication;
+    private final Principal principal;
 
     private final String providerId;
 
     @Override
     public String getId() {
-        return this.authentication.getPrincipal().getId();
+        return getPrincipal().getId();
     }
 }

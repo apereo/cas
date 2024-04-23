@@ -22,10 +22,10 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("SAML")
-public class SamlResponseAuditPrincipalIdProviderTests {
+@Tag("SAML2")
+class SamlResponseAuditPrincipalIdProviderTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() throws Throwable {
         val r = new SamlResponseAuditPrincipalIdProvider();
         val response = mock(Response.class);
         val issuer = mock(Issuer.class);
@@ -47,7 +47,7 @@ public class SamlResponseAuditPrincipalIdProviderTests {
     }
 
     @Test
-    public void verifyDefaultAction() {
+    void verifyDefaultAction() throws Throwable {
         val r = new SamlResponseAuditPrincipalIdProvider();
         val response = mock(Response.class);
         when(response.getAssertions()).thenReturn(CollectionUtils.wrapList());

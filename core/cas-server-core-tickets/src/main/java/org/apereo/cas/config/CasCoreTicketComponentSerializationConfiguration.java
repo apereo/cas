@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.ProxyTicketImpl;
 import org.apereo.cas.ticket.ServiceTicketImpl;
@@ -8,6 +9,7 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.expiration.BaseDelegatingExpirationPolicy;
+import org.apereo.cas.ticket.expiration.FixedInstantExpirationPolicy;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -17,11 +19,14 @@ import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import org.apereo.cas.ticket.registry.DefaultEncodedTicket;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link CasCoreTicketComponentSerializationConfiguration}.
@@ -29,11 +34,13 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Configuration(value = "casCoreComponentSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasCoreTicketComponentSerializationConfiguration {
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry)
+@Configuration(value = "CasCoreTicketComponentSerializationConfiguration", proxyBeanMethods = false)
+class CasCoreTicketComponentSerializationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "coreTicketsComponentSerializationPlanConfigurer")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ComponentSerializationPlanConfigurer coreTicketsComponentSerializationPlanConfigurer() {
         return plan -> {
             plan.registerSerializableClass(RememberMeDelegatingExpirationPolicy.class);
@@ -48,6 +55,7 @@ public class CasCoreTicketComponentSerializationConfiguration {
             plan.registerSerializableClass(MultiTimeUseOrTimeoutExpirationPolicy.class);
             plan.registerSerializableClass(MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy.class);
             plan.registerSerializableClass(MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy.class);
+            plan.registerSerializableClass(MultiTimeUseOrTimeoutExpirationPolicy.TransientSessionTicketExpirationPolicy.class);
             plan.registerSerializableClass(NeverExpiresExpirationPolicy.class);
             plan.registerSerializableClass(RememberMeDelegatingExpirationPolicy.class);
             plan.registerSerializableClass(TimeoutExpirationPolicy.class);
@@ -55,8 +63,9 @@ public class CasCoreTicketComponentSerializationConfiguration {
             plan.registerSerializableClass(AlwaysExpiresExpirationPolicy.class);
             plan.registerSerializableClass(ThrottledUseAndTimeoutExpirationPolicy.class);
             plan.registerSerializableClass(TicketGrantingTicketExpirationPolicy.class);
+            plan.registerSerializableClass(FixedInstantExpirationPolicy.class);
             plan.registerSerializableClass(BaseDelegatingExpirationPolicy.class);
-            
+
         };
     }
 }

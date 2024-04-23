@@ -13,13 +13,13 @@ CAS continues to generate tokens and the endpoint is only acting as a
 facade to the real token store, receiving tokens from CAS
 in an encrypted fashion. 
 
-{% include casproperties.html properties="cas.authn.passwordless.tokens.rest" %}
+{% include_cached casproperties.html properties="cas.authn.passwordless.tokens.rest" %}
 
 The following operations need to be supported by the endpoint:
 
-| HTTP Method | Description                               | Parameter(s)          | Response
-|-------------|-------------------------------------------|-----------------------|--------------------------------
-| `GET`       | Locate tokens for the user.               | `username`            | Token in the response body.
-| `DELETE`    | Delete all tokens for the user.           | `username`            | N/A
-| `DELETE`    | Delete a single token for the user.       | `username`, `token`   | N/A
-| `POST`      | Save a token for the user.                | `username`, `token`   | N/A
+| HTTP Method | Description                         | Parameter(s)        | Response                    |
+|-------------|-------------------------------------|---------------------|-----------------------------|
+| `GET`       | Locate tokens for the user.         | `username`          | Token in the response body. |
+| `DELETE`    | Delete all tokens for the user.     | `username`          | N/A                         |
+| `DELETE`    | Delete a single token for the user. | `username`, `token` | N/A                         |
+| `POST`      | Save a token for the user.          | `username`, `token` | N/A                         |

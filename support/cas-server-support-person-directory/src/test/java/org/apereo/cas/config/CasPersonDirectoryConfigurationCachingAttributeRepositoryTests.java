@@ -1,14 +1,13 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.BasePrincipalAttributeRepositoryTests;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -17,20 +16,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    CasCoreUtilConfiguration.class
-}, properties = {
+@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class, properties = {
     "cas.authn.attribute-repository.json[0].location=classpath:/json-attribute-repository.json",
     "cas.authn.attribute-repository.core.expiration-time=30",
     "cas.authn.attribute-repository.core.expiration-time-unit=seconds"
 })
 @Tag("Attributes")
-public class CasPersonDirectoryConfigurationCachingAttributeRepositoryTests {
+class CasPersonDirectoryConfigurationCachingAttributeRepositoryTests {
     @Autowired
     @Qualifier("cachingAttributeRepository")
-    private IPersonAttributeDao cachingAttributeRepository;
+    private PersonAttributeDao cachingAttributeRepository;
 
     /**
      * These two username produce the same hashcode
@@ -39,7 +34,7 @@ public class CasPersonDirectoryConfigurationCachingAttributeRepositoryTests {
      * for each user while also maintaining a unique cache key for each.
      */
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val p1 = cachingAttributeRepository.getPerson("tensada");
         assertEquals("tensada", p1.getName());
         assertEquals("Tens", p1.getAttributeValue("oldName"));

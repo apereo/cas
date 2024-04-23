@@ -19,9 +19,9 @@ To learn more, please [see this guide](http://docs.aws.amazon.com/directoryservi
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-cloud-directory-authentication" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-cloud-directory-authentication" %}
 
-{% include casproperties.html properties="cas.authn.cloud-directory"  %}
+{% include_cached casproperties.html properties="cas.authn.cloud-directory"  %}
 
 AWS credentials are fetched from the following sources automatically, where relevant 
 and made possible via CAS configuration:
@@ -41,7 +41,7 @@ To enable additional logging, configure the log4j configuration file to add the 
 ```xml
 ...
 <Logger name="com.amazonaws" level="debug" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 ...

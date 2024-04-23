@@ -1,7 +1,9 @@
 package org.apereo.cas.web.cookie;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -14,6 +16,20 @@ import java.io.Serializable;
  * @since 4.1
  */
 public interface CookieValueManager extends Serializable {
+
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "cookieValueManager";
+
+    /**
+     * No op cookie value manager.
+     *
+     * @return the cookie value manager
+     */
+    static CookieValueManager noOp() {
+        return new NoOpCookieValueManager();
+    }
 
     /**
      * Build cookie value.
@@ -44,4 +60,30 @@ public interface CookieValueManager extends Serializable {
      */
     String obtainCookieValue(String cookie, HttpServletRequest request);
 
+    /**
+     * Gets cookie same site policy.
+     *
+     * @return the cookie same site policy
+     */
+    CookieSameSitePolicy getCookieSameSitePolicy();
+
+    class NoOpCookieValueManager implements CookieValueManager {
+        @Serial
+        private static final long serialVersionUID = 5776311151053397600L;
+
+        @Override
+        public String buildCookieValue(final String givenCookieValue, final HttpServletRequest request) {
+            return givenCookieValue;
+        }
+
+        @Override
+        public String obtainCookieValue(final String cookie, final HttpServletRequest request) {
+            return cookie;
+        }
+
+        @Override
+        public CookieSameSitePolicy getCookieSameSitePolicy() {
+            return CookieSameSitePolicy.off();
+        }
+    }
 }

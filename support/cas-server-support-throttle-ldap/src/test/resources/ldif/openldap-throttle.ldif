@@ -1,0 +1,15 @@
+dn: cn=throttled,ou=people,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+cn: throttled
+userPassword: 123456
+sn: throttled
+uid: throttled
+mail: throttled@example.org
+telephoneNumber: 1234567890
+registeredAddress: RegisteredAddressQuestion
+postalCode: PostalCodeQuestion
+roomNumber: 666
+

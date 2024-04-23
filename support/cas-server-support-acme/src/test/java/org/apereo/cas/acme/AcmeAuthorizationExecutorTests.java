@@ -19,16 +19,16 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Web")
-public class AcmeAuthorizationExecutorTests extends BaseAcmeTests {
+class AcmeAuthorizationExecutorTests extends BaseAcmeTests {
 
     @Autowired
     @Qualifier("acmeAuthorizationExecutor")
     private AcmeAuthorizationExecutor acmeAuthorizationExecutor;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val auth = mock(Authorization.class);
-        assertNull(acmeAuthorizationExecutor.find(auth));
+        assertTrue(acmeAuthorizationExecutor.find(auth).isEmpty());
         assertDoesNotThrow(() -> {
             acmeAuthorizationExecutor.execute(mock(Order.class), mock(CSRBuilder.class));
         });

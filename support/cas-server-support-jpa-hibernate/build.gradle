@@ -1,5 +1,11 @@
 description = "Apereo CAS JPA Hibernate Support"
-
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Relational Databases (JDBC & JPA)",
+            title: "JPA via Hibernate"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-configuration-model")

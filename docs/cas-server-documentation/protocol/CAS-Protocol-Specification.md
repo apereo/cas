@@ -29,7 +29,7 @@ Release Date: 2017-12-01
 
 Copyright &copy; 2005, Yale University
 
-Copyright &copy; 2017, Apereo, Inc.
+Copyright &copy; 2024, Apereo, Inc.
 
 <a name="head1"/>
 
@@ -50,7 +50,7 @@ application.
 **1.1. Conventions & Definitions**
 ----------------------------------
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in RFC 2119[[1](<#1>)].
 
@@ -90,16 +90,16 @@ CAS is an HTTP[[2](<#2>)],[[3](<#3>)]-based protocol that requires each of its
 components to be accessible through specific URIs. This section will discuss
 each of the URIs:
 
-| URI                               | Description
-|-----------------------------------|-------------------------------------------
-| `/login`                          | credential requestor / acceptor
-| `/logout`                         | destroy CAS session (logout)
-| `/validate`                       | service ticket validation
-| `/serviceValidate`                | service ticket validation [CAS 2.0]
-| `/proxyValidate`                  | service/proxy ticket validation [CAS 2.0]
-| `/proxy`                          | proxy ticket service [CAS 2.0]
-| `/p3/serviceValidate`             | service ticket validation [CAS 3.0]
-| `/p3/proxyValidate`               | service/proxy ticket validation [CAS 3.0]
+| URI                   | Description                               |
+|-----------------------|-------------------------------------------|
+| `/login`              | credential requestor / acceptor           |
+| `/logout`             | destroy CAS session (logout)              |
+| `/validate`           | service ticket validation                 |
+| `/serviceValidate`    | service ticket validation [CAS 2.0]       |
+| `/proxyValidate`      | service/proxy ticket validation [CAS 2.0] |
+| `/proxy`              | proxy ticket service [CAS 2.0]            |
+| `/p3/serviceValidate` | service ticket validation [CAS 3.0]       |
+| `/p3/proxyValidate`   | service/proxy ticket validation [CAS 3.0] |
 
 <a name="head2.1"/>
 
@@ -128,7 +128,7 @@ MUST be handled by `/login`.
 
 -   `service` [OPTIONAL] - the identifier of the application the client is
     trying to access. In almost all cases, this will be the URL of the
-    application. As a HTTP request parameter, this URL value MUST be
+    application. As an HTTP request parameter, this URL value MUST be
     URL-encoded as described in section 2.2 of RFC 3986 [[4](<#4>)].
     If a `service` is not specified and a single sign-on session does not yet
     exist, CAS SHOULD request credentials from the user to initiate a single
@@ -170,7 +170,7 @@ MUST be handled by `/login`.
     credentials as if neither parameter was specified. This parameter is not
     compatible with the `renew` parameter. Behavior is undefined if both are
     set. It is RECOMMENDED that when the `gateway` parameter is set its value be
-    "true".
+    `true`.
 
 -   `method` [OPTIONAL, CAS 3.0] - The `method` to be used when sending responses.
     While native HTTP redirects (`GET`) may be utilized as the default method,
@@ -207,11 +207,14 @@ Use POST responses instead of redirects:
 When `/login` behaves as a credential requestor, the response will vary depending
 on the type of credentials it is requesting. In most cases, CAS will respond by
 displaying a login screen requesting a username and password. This page MUST
-include a form with the parameters, "username", "password", and "lt". The form
-MAY also include the parameter "warn". If `service` was specified to `/login`,
+include a form with the parameters, "username" and "password". The form
+MAY also include other parameters, "warn", "rememberMe" and "lt".
+If `service` was specified to `/login`,
 `service` MUST also be a parameter of the form, containing the value originally
-passed to `/login`. These parameters are discussed in detail in Section [2.2.1](#head2.2.1). The
-form MUST be submitted through the HTTP POST method to `/login` which will then
+passed to `/login`. All the mentioned parameters are discussed
+in detail in Sections [2.2.1](#head2.2.1) and [2.2.2](#head2.2.2).
+
+The form MUST be submitted through the HTTP POST method to `/login` which will then
 act as a credential acceptor, discussed in Section [2.2](#head2.2).
 
 <a name="head2.1.4"/>
@@ -261,7 +264,7 @@ as a credential acceptor. They are all case-sensitive and they all MUST be
 handled by `/login`.
 
 -   `service` [OPTIONAL] - the URL of the application the client is trying to
-    access. As a HTTP request parameter, this URL value MUST be URL-encoded as
+    access. As an HTTP request parameter, this URL value MUST be URL-encoded as
     described in Section 2.2 of RFC 1738 [[4](<#4>)]. CAS MUST redirect the
     client to this URL upon successful authentication. This is discussed in
     detail in Section [2.2.4](#head2.2.4). If the CAS Server operates in
@@ -298,9 +301,7 @@ all case-sensitive.
 
 -   `password` [REQUIRED] - the password of the client that is trying to log in
 
--   `lt` [OPTIONAL] - a login ticket. This is provided as part of the login form
-    discussed in Section [2.1.3](#head2.1.3). The login ticket itself is discussed
-    in Section [3.5](#head3.5).
+-   `lt` [OPTIONAL] - a login ticket as discussed in Section [3.5](#head3.5)
 
 -   `rememberMe` [OPTIONAL, CAS 3.0] - if this parameter is set, a Long-Term
     Ticket Granting Ticket might be created by the CAS server (referred to as
@@ -363,7 +364,7 @@ sensitive and SHOULD be handled by `/logout`.
     browser might be automatically redirected to the URL specified by `service`
     after the logout was performed by the CAS server. If redirection by the
     CAS Server is actually performed depends on the server configuration.
-    As a HTTP request parameter, the `service` value MUST be URL-encoded as
+    As an HTTP request parameter, the `service` value MUST be URL-encoded as
     described in Section 2.2 of RFC 1738 [[4](<#4>)].
 
     > Note: It is STRONGLY RECOMMENDED that all `service` urls be filtered via
@@ -408,7 +409,7 @@ after successful logout.
 
 The CAS Server MAY support Single Logout (SLO). SLO means that the user gets
 logged out not only from the CAS Server, but also from all visited CAS client
-applications. If SLO is supported by the CAS Server, the CAS Server MUST send a
+applications. If SLO is supported by the CAS Server, the CAS Server MUST send an
 HTTP POST request containing a logout XML document (see [Appendix
 C](<#head_appdx_c>)) to all service URLs provided to CAS during this CAS session
 whenever a Ticket Granting Ticket is explicitly expired by the user (e.g. during logout).
@@ -435,7 +436,7 @@ availability ("fire and forget").
 Handling the logout POST request data is up to the CAS client. It is RECOMMENDED
 to logout the user from the application identified by the service ticket id sent
 in the SLO POST request.
-If the client supports SLO POST request handling, the client SHALL return a HTTP success
+If the client supports SLO POST request handling, the client SHALL return an HTTP success
 status code.
 
 
@@ -460,7 +461,7 @@ case sensitive and MUST all be handled by `/validate`.
 
 -   `service` [REQUIRED] - the identifier of the service for which the ticket was
     issued, as discussed in Section 2.2.1.
-    As a HTTP request parameter, the `service` value MUST be URL-encoded as
+    As an HTTP request parameter, the `service` value MUST be URL-encoded as
     described in Section 2.2 of RFC 1738 [[4](<#4>)].
 
     > Note: It is STRONGLY RECOMMENDED that all `service` urls be filtered via
@@ -535,7 +536,7 @@ are case sensitive and MUST all be handled by `/serviceValidate`.
 
 -   `service` [REQUIRED] - the identifier of the service for which the ticket was
     issued, as discussed in Section [2.2.1](#head2.2.1).
-    As a HTTP request parameter, the `service` value MUST be URL-encoded as
+    As an HTTP request parameter, the `service` value MUST be URL-encoded as
     described in Section 2.2 of RFC 1738 [[4](<#4>)].
 
     > Note: It is STRONGLY RECOMMENDED that all `service` urls be filtered via
@@ -552,7 +553,7 @@ are case sensitive and MUST all be handled by `/serviceValidate`.
 
 -   `pgtUrl` [OPTIONAL] - the URL of the proxy callback. Discussed in Section
     [2.5.4](#head2.5.4).
-    As a HTTP request parameter, the "pgtUrl" value MUST be URL-encoded as
+    As an HTTP request parameter, the "pgtUrl" value MUST be URL-encoded as
     described in Section 2.2 of RFC 1738 [[4](<#4>)].
 
 -   `renew` [OPTIONAL] - if this parameter is set, ticket validation will only
@@ -898,7 +899,7 @@ case-sensitive.
     service ticket or proxy ticket validation.
 -   `targetService` [REQUIRED] - the service identifier of the back-end service.
     Note that not all back-end services are web services so this service identifier
-    will not always be an URL. However, the service identifier specified here
+    will not always be a URL. However, the service identifier specified here
     MUST match the `service` parameter specified to `/proxyValidate` upon validation
     of the proxy ticket.
 
@@ -1362,7 +1363,7 @@ The Long-Term Ticket Granting Ticket lifetime MAY not exceed 3 months.
 -------------------------------
 
 `/samlValidate` checks the validity of a Service Ticket by a SAML 1.1 request
-document provided by a HTTP POST. A SAML (Secure Access Markup Language)[[7](#7)] 1.1
+document provided by an HTTP POST. A SAML (Secure Access Markup Language)[[7](#7)] 1.1
 response document MUST be returned. This allows the release of additional
 information (attributes) of the authenticated NetID. The Security Assertion
 Markup Language (SAML) describes a document and protocol framework by which
@@ -1391,7 +1392,7 @@ are both case-sensitive.
 
 ### **4.2.2 HTTP Request Method and Body**
 
-Request to /samlValidate MUST be a HTTP POST request. The request body MUST be a valid
+Request to /samlValidate MUST be an HTTP POST request. The request body MUST be a valid
 SAML 1.0 or 1.1 request XML document of document type "text/xml".
 
 
@@ -1734,11 +1735,9 @@ following SAML Logout Request XML document:
 ```xml
   <samlp:LogoutRequest xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
      ID="[RANDOM ID]" Version="2.0" IssueInstant="[CURRENT DATE/TIME]">
-    <saml:NameID xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">
-      @NOT_USED@
-    </saml:NameID>
+    <saml:NameID xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">[PRINCIPAL IDENTIFIER]</saml:NameID>
     <samlp:SessionIndex>[SESSION IDENTIFIER]</samlp:SessionIndex>
-  </samlp:LogoutRequest>`
+  </samlp:LogoutRequest>
 ```
 
 
@@ -1774,7 +1773,7 @@ Engineering Task Force, October 1989.
 
 <a name="7"/>[7] OASIS SAML 1.1 standard, saml.xml.org, December 2009.
 
-<a name="8"/>[8] [Apereo CAS Server](<http://www.Apereo.org/cas>) reference
+<a name="8"/>[8] [Apereo CAS Server](<https://www.apereo.org/projects/cas>) reference
 implementation
 
 

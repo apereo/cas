@@ -2,18 +2,22 @@ package org.apereo.cas.support.inwebo.authentication;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.inwebo.service.InweboService;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 
 import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
 
 /**
  * The Inwebo authentication handler.
@@ -22,23 +26,28 @@ import java.security.GeneralSecurityException;
  * @since 6.4.0
  */
 @Slf4j
-public class InweboAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+@Getter
+public class InweboAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler implements MultifactorAuthenticationHandler {
 
     private final InweboService service;
+
+    private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
 
     public InweboAuthenticationHandler(final ServicesManager servicesManager,
                                        final PrincipalFactory principalFactory,
                                        final InweboMultifactorAuthenticationProperties inweboProperties,
-                                       final InweboService service) {
+                                       final InweboService service,
+                                       final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         super(inweboProperties.getName(),
               servicesManager,
               principalFactory,
               inweboProperties.getOrder());
         this.service = service;
+        this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws Throwable {
         val inweboCredential = (InweboCredential) credential;
         val login = inweboCredential.getLogin();
         LOGGER.trace("Inwebo credential login is [{}]", login);
@@ -47,7 +56,7 @@ public class InweboAuthenticationHandler extends AbstractPreAndPostProcessingAut
         var authenticated = inweboCredential.isAlreadyAuthenticated();
         var deviceName = inweboCredential.getDeviceName();
         if (StringUtils.isNotBlank(otp)) {
-            val response = service.authenticateExtended(login, otp);
+            val response = this.service.authenticateExtended(login, otp);
             if (response.isOk()) {
                 authenticated = true;
                 deviceName = response.getDeviceName();

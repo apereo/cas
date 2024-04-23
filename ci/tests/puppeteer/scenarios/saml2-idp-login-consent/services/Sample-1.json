@@ -1,0 +1,36 @@
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": ".+",
+  "id": "1",
+  "name": "Sample",
+  "description": "Service",
+  "metadataLocation" : "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVariables['SCENARIO']}/sp-metadata.xml",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [
+      "java.util.ArrayList",
+      [
+        {
+          "@class": "org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy"
+        },
+        {
+          "@class": "org.apereo.cas.support.saml.services.RefedsRSAttributeReleasePolicy"
+        },
+        {
+          "@class": "org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicy",
+          "salt": "7*8GKDN9ZBaP",
+          "attribute": "uid"
+        },
+        {
+          "@class": "org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicy",
+          "groovyScript": "file://${#environmentVariables['PWD']}/ci/tests/puppeteer/scenarios/${#environmentVariables['SCENARIO']}/attributes.groovy",
+          "consentPolicy": {
+            "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
+            "status": "TRUE",
+            "excludedServices": [ "java.util.LinkedHashSet",[ "https:\/\/localhost:9859\/shibboleth" ] ]
+          }
+        }
+      ]
+    ]
+  }
+}

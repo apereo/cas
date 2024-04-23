@@ -1,0 +1,21 @@
+{
+  "dependencies": "git-service-registry,reports",
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=false",
+
+    "--cas.service-registry.git.root-directory=production",
+    "--cas.service-registry.git.repository-url=https://github.com/mmoayyed/sample-data",
+    "--cas.service-registry.git.active-branch=production",
+    "--cas.service-registry.git.branches-to-clone=production",
+
+    "--spring.profiles.include=production",
+    
+    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.web.exposure.include=*",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS"
+  ]
+}

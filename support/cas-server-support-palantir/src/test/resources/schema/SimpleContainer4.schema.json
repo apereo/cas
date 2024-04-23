@@ -1,0 +1,26 @@
+{
+  "$schema" : "https://json-schema.org/draft/2020-12/schema",
+  "$defs" : {
+    "CasProtocolVersions" : {
+      "type" : "string",
+      "enum" : [ "CAS10", "CAS20", "CAS30", "SAML1" ]
+    }
+  },
+  "type" : "object",
+  "properties" : {
+    "supportedProtocols" : {
+      "type" : "array",
+      "items" : false,
+      "prefixItems" : [ {
+        "type" : "string",
+        "const" : "java.util.LinkedHashSet"
+      }, {
+        "type" : "array",
+        "uniqueItems" : true,
+        "items" : {
+          "$ref" : "#/$defs/CasProtocolVersions"
+        }
+      } ]
+    }
+  }
+}

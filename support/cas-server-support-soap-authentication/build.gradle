@@ -1,6 +1,11 @@
 description = 'Apereo CAS SOAP Authentication'
-
-apply plugin: "com.ewerk.gradle.plugins.jaxb2"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "SOAP Authentication"
+    ]
+}
 
 dependencies {
     api project(":api:cas-server-core-api")
@@ -34,7 +39,9 @@ dependencies {
     testImplementation project(":core:cas-server-core-tickets")
 
     testImplementation libraries.springboottomcat
-    
+    testImplementation libraries.springcloudbootstrap
+    testImplementation libraries.ldaptive
+
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
@@ -44,13 +51,14 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }
 
+/*
+apply plugin: "com.ewerk.gradle.plugins.jaxb2"
 dependencies {
     jaxb2 libraries.jaxb
     jaxb2 "javax.activation:activation:1.1.1"
     jaxb2 "commons-beanutils:commons-beanutils:$commonsBeansVersion"
 }
 
-/*
 jaxb2 {
     xjc {
         "classes" {

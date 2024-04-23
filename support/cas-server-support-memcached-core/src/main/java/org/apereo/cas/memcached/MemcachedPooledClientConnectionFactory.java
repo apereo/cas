@@ -2,9 +2,9 @@ package org.apereo.cas.memcached;
 
 import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.spy.memcached.ConnectionFactoryBuilder;
@@ -25,16 +25,17 @@ import org.apache.commons.pool2.impl.GenericObjectPool;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated Since 7.0.0
  */
 @Slf4j
 @RequiredArgsConstructor
+@Deprecated(since = "7.0.0")
 public class MemcachedPooledClientConnectionFactory extends BasePooledObjectFactory<MemcachedClientIF> {
 
     private final BaseMemcachedProperties memcachedProperties;
     private final Transcoder transcoder;
 
     @Override
-    @SneakyThrows
     public MemcachedClientIF create() {
         val factoryBean = new MemcachedClientFactoryBean();
         factoryBean.setServers(memcachedProperties.getServers());
@@ -48,6 +49,9 @@ public class MemcachedPooledClientConnectionFactory extends BasePooledObjectFact
         }
         if (StringUtils.isNotBlank(memcachedProperties.getHashAlgorithm())) {
             factoryBean.setHashAlg(DefaultHashAlgorithm.valueOf(memcachedProperties.getHashAlgorithm()));
+        }
+        if (StringUtils.isNotBlank(memcachedProperties.getProtocol())) {
+            factoryBean.setProtocol(ConnectionFactoryBuilder.Protocol.valueOf(memcachedProperties.getProtocol()));
         }
 
         factoryBean.setDaemon(memcachedProperties.isDaemon());
@@ -66,8 +70,10 @@ public class MemcachedPooledClientConnectionFactory extends BasePooledObjectFact
         if (memcachedProperties.getTimeoutExceptionThreshold() > 0) {
             factoryBean.setTimeoutExceptionThreshold(memcachedProperties.getTimeoutExceptionThreshold());
         }
-        factoryBean.afterPropertiesSet();
-        return (MemcachedClientIF) factoryBean.getObject();
+        return FunctionUtils.doUnchecked(() -> {
+            factoryBean.afterPropertiesSet();
+            return (MemcachedClientIF) factoryBean.getObject();
+        });
     }
 
     @Override

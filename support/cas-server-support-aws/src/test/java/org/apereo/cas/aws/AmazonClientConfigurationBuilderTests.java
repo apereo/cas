@@ -9,7 +9,8 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.awscore.client.builder.AwsClientBuilder;
 import software.amazon.awssdk.awscore.client.builder.AwsSyncClientBuilder;
-import software.amazon.awssdk.core.client.builder.SdkSyncClientBuilder;
+
+import java.io.Serial;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -21,11 +22,12 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("AmazonWebServices")
-public class AmazonClientConfigurationBuilderTests {
+class AmazonClientConfigurationBuilderTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val properties = new AbstractDynamoDbProperties() {
+            @Serial
             private static final long serialVersionUID = -3599433486448467450L;
         };
         properties.setLocalAddress("github.com");
@@ -35,10 +37,10 @@ public class AmazonClientConfigurationBuilderTests {
         val httpClientBuilder = mock(SampleClientBuilder.class);
         val clientBuilder = mock(AwsSyncClientBuilder.class);
         when(clientBuilder.httpClientBuilder(any())).thenReturn(httpClientBuilder);
-        assertDoesNotThrow(() -> AmazonClientConfigurationBuilder.prepareClientBuilder(clientBuilder,
+        assertDoesNotThrow(() -> AmazonClientConfigurationBuilder.prepareSyncClientBuilder(clientBuilder,
             StaticCredentialsProvider.create(AwsBasicCredentials.create("key", "secret")), properties));
     }
 
-    private interface SampleClientBuilder extends AwsClientBuilder, AwsSyncClientBuilder, SdkSyncClientBuilder {
+    private interface SampleClientBuilder extends AwsClientBuilder, AwsSyncClientBuilder {
     }
 }

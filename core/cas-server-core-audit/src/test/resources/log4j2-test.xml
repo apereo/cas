@@ -4,9 +4,15 @@
         <Console name="console" target="SYSTEM_OUT">
             <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
         </Console>
+        <Console name="audit" target="SYSTEM_OUT">
+            <PatternLayout pattern="%m%n" />
+        </Console>
     </Appenders>
     <Loggers>
         <Logger name="org.apereo" level="error"  />
+        <Logger name="org.apereo.inspektr" level="info" additivity="false">
+            <AppenderRef ref="audit" />
+        </Logger>
         <Root level="off">
             <AppenderRef ref="console"/>
         </Root>

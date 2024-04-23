@@ -1,0 +1,23 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/cas.*",
+  "name": "Sample",
+  "id": 1,
+  "description": "Github",
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "requiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "cn" : [ "java.util.HashSet", [ "admin" ] ]
+    },
+    "activationCriteria": {
+      "@class": "org.apereo.cas.services.AttributeBasedRegisteredServiceAccessStrategyActivationCriteria",
+      "allowIfInactive": true,
+      "operator": "AND",
+      "requiredAttributes": {
+        "@class" : "java.util.HashMap",
+        "authenticationMethod": [ "java.util.ArrayList", [ "ExternalCAS" ] ]
+      }
+    }
+  }
+}

@@ -1,4 +1,8 @@
-description = "Apereo CAS ‌‌Bill of Material"
+ext {
+    skipPublication = true
+}
+
+description = "Apereo CAS Bill of Material"
 
 def getProjectNamePattern() {
     return "^cas-server-(core-api|core|support|webapp).*"
@@ -7,20 +11,18 @@ def getProjectNamePattern() {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact file("cas-server-support-bom.md")
-
             pom.withXml {
-                println "Creating BOM with all project dependencies for ${project.name}"
+                ansi.green "Creating BOM with all project dependencies for ${project.name}"
 
                 def iter = asNode().iterator()
                 while (iter.hasNext()) {
                     def node = iter.next()
                     if (node.name().getLocalPart().equals("dependencies")) {
-                        println "Removing dependencies block from generated POM"
+                        ansi.green "Removing dependencies block from generated POM"
                         iter.remove()
                     }
                     if (node.name().getLocalPart().equals("properties")) {
-                        println "Removing properties block from generated POM"
+                        ansi.green "Removing properties block from generated POM"
                         iter.remove()
                     }
                 }
@@ -75,26 +77,21 @@ publishing {
                     system = project.projectIssueSystem
                     url = project.projectIssueUrl
                 }
+                licenses {
+                    license {
+                        name = project.projectLicenseName
+                        url = project.projectLicenseUrl
+                    }
+                }
+                scm {
+                    connection = project.projectScmUrl
+                    developerConnection = project.projectScmUrl
+                    url = project.projectScmUrl
+                }
                 developers {
                     developer {
                         id = "mmoayyed"
                         name = "Misagh Moayyed"
-                    }
-                    developer {
-                        id = "dima767"
-                        name = "Dmitriy Kopylenko"
-                    }
-                    developer {
-                        id = "tsschmidt"
-                        name = "Travis Schmidt"
-                    }
-                    developer {
-                        id = "leleuj"
-                        name = "Jérôme Leleu"
-                    }
-                    developer {
-                        id = "hdeadman"
-                        name = "Hal Deadman"
                     }
                 }
             }

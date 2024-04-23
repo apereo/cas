@@ -2,11 +2,11 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 import org.apereo.cas.token.cipher.RegisteredServiceJwtTicketCipherExecutor;
-
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
-import org.apache.commons.lang3.BooleanUtils;
-
 import java.util.Optional;
 
 /**
@@ -40,32 +40,19 @@ public class OAuth20RegisteredServiceJwtAccessTokenCipherExecutor extends Regist
         return Optional.empty();
     }
 
-    /**
-     * Is signing enabled for registered service ?
-     *
-     * @param registeredService the registered service
-     * @return true/false
-     */
-    protected boolean isSigningEnabledForRegisteredService(final RegisteredService registeredService) {
-        val prop = RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_SIGNING_ENABLED;
-        if (prop.isAssignedTo(registeredService)) {
-            return prop.getPropertyBooleanValue(registeredService);
-        }
-        return BooleanUtils.toBoolean(prop.getDefaultValue());
+    @Override
+    protected boolean isEncryptionEnabledForRegisteredService(final RegisteredService registeredService) {
+        return super.isEncryptionEnabledForRegisteredService(registeredService);
     }
 
-    /**
-     * Is encryption enabled for registered service ?
-     *
-     * @param registeredService the registered service
-     * @return true/false
-     */
-    protected boolean isEncryptionEnabledForRegisteredService(final RegisteredService registeredService) {
-        val prop = RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_ENCRYPTION_ENABLED;
-        if (prop.isAssignedTo(registeredService)) {
-            return prop.getPropertyBooleanValue(registeredService);
-        }
-        return BooleanUtils.toBoolean(prop.getDefaultValue());
+    @Override
+    protected RegisteredServiceProperty.RegisteredServiceProperties getCipherOperationRegisteredServiceSigningEnabledProperty() {
+        return RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_SIGNING_ENABLED;
+    }
+
+    @Override
+    protected RegisteredServiceProperty.RegisteredServiceProperties getCipherOperationRegisteredServiceEncryptionEnabledProperty() {
+        return RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_ENCRYPTION_ENABLED;
     }
 
     @Override
@@ -74,5 +61,20 @@ public class OAuth20RegisteredServiceJwtAccessTokenCipherExecutor extends Regist
             return super.getEncryptionKey(registeredService);
         }
         return Optional.empty();
+    }
+
+    @Override
+    protected JwtTicketCipherExecutor createCipherExecutorInstance(final String encryptionKey, final String signingKey,
+                                                                   final RegisteredService registeredService) {
+        val cipher = super.createCipherExecutorInstance(encryptionKey, signingKey, registeredService);
+        return prepareCipherExecutor(cipher, registeredService);
+    }
+
+    protected JwtTicketCipherExecutor prepareCipherExecutor(final JwtTicketCipherExecutor cipher,
+                                                            final RegisteredService registeredService) {
+        if (registeredService instanceof final OAuthRegisteredService oauthRegisteredService) {
+            FunctionUtils.doIfNotBlank(oauthRegisteredService.getJwtAccessTokenSigningAlg(), cipher::setSigningAlgorithm);
+        }
+        return cipher;
     }
 }

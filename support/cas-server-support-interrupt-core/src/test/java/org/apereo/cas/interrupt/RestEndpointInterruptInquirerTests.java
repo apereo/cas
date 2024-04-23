@@ -3,8 +3,8 @@ package org.apereo.cas.interrupt;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.model.support.interrupt.RestfulInterruptProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,16 +13,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.test.MockRequestContext;
-
 import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,7 +29,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("RestfulApi")
-public class RestEndpointInterruptInquirerTests {
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
+class RestEndpointInterruptInquirerTests {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     private MockWebServer webServer;
 
     @BeforeEach
@@ -62,16 +63,11 @@ public class RestEndpointInterruptInquirerTests {
     }
 
     @Test
-    public void verifyResponseCanBeFoundFromRest() {
+    void verifyResponseCanBeFoundFromRest() throws Throwable {
         val restProps = new RestfulInterruptProperties();
         restProps.setUrl("http://localhost:8888");
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        request.addHeader("accept-language", "fr");
-        context.setExternalContext(new ServletExternalContext(
-            new MockServletContext(),
-            request,
-            new MockHttpServletResponse()));
+        val context = MockRequestContext.create(applicationContext);
+        context.addHeader("accept-language", "fr");
         val q = new RestEndpointInterruptInquirer(restProps);
         val response = q.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             CoreAuthenticationTestUtils.getRegisteredService(),
@@ -86,14 +82,10 @@ public class RestEndpointInterruptInquirerTests {
     }
 
     @Test
-    public void verifyBadAttempt() {
+    void verifyBadAttempt() throws Throwable {
         val restProps = new RestfulInterruptProperties();
         restProps.setUrl("http://localhost:8888");
-        val context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(
-            new MockServletContext(),
-            new MockHttpServletRequest(),
-            new MockHttpServletResponse()));
+        val context = MockRequestContext.create(applicationContext);
         val q = new RestEndpointInterruptInquirer(restProps);
         val response = q.inquire(null,
             CoreAuthenticationTestUtils.getRegisteredService(),

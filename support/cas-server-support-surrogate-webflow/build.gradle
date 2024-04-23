@@ -1,4 +1,12 @@
 description = "Apereo CAS Surrogate Authentication Webflow"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Impersonation",
+            title: "Impersonation",
+            aliases: ["surrogate", "impersonation", "sudo"]
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-webflow")
 
@@ -15,8 +23,19 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-audit")
     implementation project(":core:cas-server-core-audit-api")
+    
     implementation project(":support:cas-server-support-surrogate-authentication")
     implementation project(":support:cas-server-support-surrogate-api")
+    implementation project(":support:cas-server-support-surrogate-core")
+    implementation project(":support:cas-server-support-person-directory-core")
+
+    compileOnly project(":support:cas-server-support-pac4j-api")
+    compileOnly project(":support:cas-server-support-pac4j-core")
+    compileOnly project(":support:cas-server-support-pac4j-webflow")
+    compileOnly project(":support:cas-server-support-passwordless-api")
+    compileOnly project(":support:cas-server-support-passwordless-webflow")
+
+
 
     testImplementation project(":support:cas-server-support-themes")
 
@@ -32,6 +51,12 @@ dependencies {
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-configuration")
+    
+    testImplementation project(":support:cas-server-support-saml-core")
+    testImplementation project(":support:cas-server-support-pac4j-webflow")
+    testImplementation project(":support:cas-server-support-pac4j-api")
+    testImplementation project(":support:cas-server-support-passwordless-api")
+    testImplementation project(":support:cas-server-support-passwordless-webflow")
 
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
@@ -39,4 +64,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 }

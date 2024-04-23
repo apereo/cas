@@ -1,99 +1,214 @@
 package org.apereo.cas.adaptors.duo.authn;
 
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
+import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpStatus;
-
-import java.nio.charset.StandardCharsets;
+import java.io.Serial;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link DuoSecurityAuthenticationServiceTests}.
  *
  * @author Misagh Moayyed
- * @since 6.2.0
+ * @since 7.0.0
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreUtilConfiguration.class
-}, properties = {
-    "cas.authn.mfa.duo[0].duo-secret-key=1234567890",
-    "cas.authn.mfa.duo[0].duo-application-key=abcdefghijklmnop",
-    "cas.authn.mfa.duo[0].duo-integration-key=QRSTUVWXYZ",
-    "cas.authn.mfa.duo[0].duo-api-host=http://localhost:6556"
-})
-@Tag("MFA")
-@EnableConfigurationProperties(CasConfigurationProperties.class)
+    CasCoreWebAutoConfiguration.class
+}, properties = "cas.http-client.host-name-verifier=none")
+@EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
+@Tag("DuoSecurity")
 public class DuoSecurityAuthenticationServiceTests {
-
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).build().toObjectMapper();
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
+    @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
     private HttpClient httpClient;
 
     @Test
-    public void verifyPingOK() throws Exception {
-        val results = MAPPER.writeValueAsString(Map.of("response", "pong", "stat", "OK"));
-        try (val webServer = new MockWebServer(6556,
-            new ByteArrayResource(results.getBytes(StandardCharsets.UTF_8), "Output"),
-            HttpStatus.OK)) {
+    void verifyUserAccountStatus500Error() throws Exception {
+        val payload = Map.of(
+            DuoSecurityAuthenticationService.RESULT_KEY_CODE, DuoSecurityAuthenticationService.RESULT_CODE_ERROR_THRESHOLD + 1,
+            DuoSecurityAuthenticationService.RESULT_KEY_STAT, "FAIL");
+        try (val webServer = new MockWebServer(true, MAPPER.writeValueAsString(payload))) {
             webServer.start();
-            val service = new BasicDuoSecurityAuthenticationService(
-                casProperties.getAuthn().getMfa().getDuo().get(0), httpClient);
-            assertTrue(service.ping());
-            assertNotNull(service.getApiHost());
+            val service = getAuthenticationService(webServer.getPort());
+            service.getProperties().setAccountStatusEnabled(true);
+            val username = UUID.randomUUID().toString();
+            val result = service.getUserAccount(username);
+            assertEquals(DuoSecurityUserAccountStatus.UNAVAILABLE, result.getStatus());
         }
     }
 
     @Test
-    public void verifyPingFails() throws Exception {
-        val results = MAPPER.writeValueAsString(Map.of("response", "pong", "stat", "FAIL"));
-        val service = new BasicDuoSecurityAuthenticationService(
-            casProperties.getAuthn().getMfa().getDuo().get(0), httpClient);
-        try (val webServer = new MockWebServer(6556,
-            new ByteArrayResource(results.getBytes(StandardCharsets.UTF_8), "Output"),
-            HttpStatus.OK)) {
+    void verifyUserAccountStatusUnknown() throws Exception {
+        val payload = Map.of(
+            DuoSecurityAuthenticationService.RESULT_KEY_CODE, 1984,
+            DuoSecurityAuthenticationService.RESULT_KEY_STAT, "FAIL");
+        try (val webServer = new MockWebServer(true, MAPPER.writeValueAsString(payload))) {
             webServer.start();
-            assertFalse(service.ping());
+            val service = getAuthenticationService(webServer.getPort());
+            service.getProperties().setAccountStatusEnabled(true);
+            val username = UUID.randomUUID().toString();
+            val result = service.getUserAccount(username);
+            assertEquals(DuoSecurityUserAccountStatus.AUTH, result.getStatus());
         }
-        assertFalse(service.ping());
     }
 
     @Test
-    public void verifyPingFailsToParse() throws Exception {
-        val results = MAPPER.writeValueAsString(UUID.randomUUID().toString());
-        val props = casProperties.getAuthn().getMfa().getDuo().get(0);
-        props.setDuoApiHost(null);
-        val service = new BasicDuoSecurityAuthenticationService(props, httpClient);
-        try (val webServer = new MockWebServer(6556,
-            new ByteArrayResource(results.getBytes(StandardCharsets.UTF_8), "Output"),
-            HttpStatus.OK)) {
+    void verifyUserAccountStatusWithoutStat() throws Exception {
+        val payload = Map.of(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE,
+            Map.of(
+                DuoSecurityAuthenticationService.RESULT_KEY_RESULT, "allow",
+                DuoSecurityAuthenticationService.RESULT_KEY_STATUS_MESSAGE, "the message"));
+        try (val webServer = new MockWebServer(true, MAPPER.writeValueAsString(payload))) {
             webServer.start();
-            assertFalse(service.ping());
+            val service = getAuthenticationService(webServer.getPort());
+            service.getProperties().setAccountStatusEnabled(true);
+            val username = UUID.randomUUID().toString();
+            val result = service.getUserAccount(username);
+            assertEquals(DuoSecurityUserAccountStatus.UNAVAILABLE, result.getStatus());
+        }
+    }
+
+    @Test
+    void verifyUserAccountStatus() throws Exception {
+        val payload = Map.of(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE,
+            Map.of(
+                DuoSecurityAuthenticationService.RESULT_KEY_RESULT, "allow",
+                DuoSecurityAuthenticationService.RESULT_KEY_STATUS_MESSAGE, "the message"),
+            DuoSecurityAuthenticationService.RESULT_KEY_STAT, "OK");
+        try (val webServer = new MockWebServer(true, MAPPER.writeValueAsString(payload))) {
+            webServer.start();
+            val service = getAuthenticationService(webServer.getPort());
+            service.getProperties().setAccountStatusEnabled(true);
+            val username = UUID.randomUUID().toString();
+            var results = service.getUserAccount(username);
+            assertEquals(DuoSecurityUserAccountStatus.ALLOW, results.getStatus());
+
+            /*
+                Now cached...
+             */
+            results = service.getUserAccount(username);
+            assertEquals(DuoSecurityUserAccountStatus.ALLOW, results.getStatus());
+        }
+    }
+
+    @Test
+    void verifyUserAccountStatusEnrolled() throws Exception {
+        val payload = Map.of(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE,
+            Map.of(
+                DuoSecurityAuthenticationService.RESULT_KEY_RESULT, "enroll",
+                DuoSecurityAuthenticationService.RESULT_KEY_ENROLL_PORTAL_URL, "https://github.com",
+                DuoSecurityAuthenticationService.RESULT_KEY_STATUS_MESSAGE, "the message"),
+            DuoSecurityAuthenticationService.RESULT_KEY_STAT, "OK");
+        try (val webServer = new MockWebServer(true, MAPPER.writeValueAsString(payload))) {
+            webServer.start();
+            val service = getAuthenticationService(webServer.getPort());
+            service.getProperties().setAccountStatusEnabled(true);
+            val username = UUID.randomUUID().toString();
+            var results = service.getUserAccount(username);
+            assertEquals(DuoSecurityUserAccountStatus.ENROLL, results.getStatus());
+            assertNotNull(results.getEnrollPortalUrl());
+        }
+    }
+
+    @Test
+    void verifyPassCodeAuthn() throws Exception {
+        val payload = Map.of(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE,
+            Map.of(DuoSecurityAuthenticationService.RESULT_KEY_RESULT, "allow"), DuoSecurityAuthenticationService.RESULT_KEY_STAT, "OK");
+        try (val webServer = new MockWebServer(true, MAPPER.writeValueAsString(payload))) {
+            webServer.start();
+            val service = getAuthenticationService(webServer.getPort());
+            val token = new DuoSecurityPasscodeCredential(UUID.randomUUID().toString(), UUID.randomUUID().toString(), "mfa-duo");
+            val results = service.authenticate(token);
+            assertTrue(results.isSuccess());
+            assertEquals(results.getUsername(), token.getId());
+        }
+    }
+
+    @Test
+    void verifyDirectAuthn() throws Throwable {
+        val payload = Map.of(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE,
+            Map.of(DuoSecurityAuthenticationService.RESULT_KEY_RESULT, "allow"), DuoSecurityAuthenticationService.RESULT_KEY_STAT, "OK");
+        try (val webServer = new MockWebServer(true, MAPPER.writeValueAsString(payload))) {
+            webServer.start();
+            val service = getAuthenticationService(webServer.getPort());
+            val token = new DuoSecurityDirectCredential(RegisteredServiceTestUtils.getPrincipal(), "mfa-duo");
+            val results = service.authenticate(token);
+            assertTrue(results.isSuccess());
+            assertEquals(results.getUsername(), token.getId());
+        }
+    }
+
+    @Test
+    void verifyDirectAuthnUnknownEndpoint() throws Throwable {
+        val payload = Map.of(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE,
+            Map.of(DuoSecurityAuthenticationService.RESULT_KEY_RESULT, "allow"), DuoSecurityAuthenticationService.RESULT_KEY_STAT, "OK");
+        try (val webServer = new MockWebServer(true, MAPPER.writeValueAsString(payload))) {
+            webServer.start();
+            val service = getAuthenticationService(webServer.getPort());
+            service.getProperties().setDuoApiHost("httpbin.org/anything/sample1");
+            val token = new DuoSecurityDirectCredential(RegisteredServiceTestUtils.getPrincipal(), "mfa-duo");
+            val results = service.authenticate(token);
+            assertFalse(results.isSuccess());
+        }
+    }
+
+    private MockDuoSecurityAuthenticationService getAuthenticationService(final int port) {
+        val properties = new DuoSecurityMultifactorAuthenticationProperties()
+            .setDuoApiHost("localhost:" + port)
+            .setDuoSecretKey("0K4VewoOPTar47vFwdUfg9SvAm8GF6yyyaBWCk61")
+            .setDuoIntegrationKey("DICLHRWL1KQK5EUAQP46");
+        val userCache = Caffeine.newBuilder().<String, DuoSecurityUserAccount>build();
+        return new MockDuoSecurityAuthenticationService(properties, httpClient,
+            List.of(MultifactorAuthenticationPrincipalResolver.identical()), userCache);
+    }
+
+    private static class MockDuoSecurityAuthenticationService extends BaseDuoSecurityAuthenticationService {
+
+        @Serial
+        private static final long serialVersionUID = -8923758114214529510L;
+
+        protected MockDuoSecurityAuthenticationService(final DuoSecurityMultifactorAuthenticationProperties properties,
+                                                       final HttpClient httpClient,
+                                                       final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver,
+                                                       final Cache<String, DuoSecurityUserAccount> userAccountCache) {
+            super(properties, httpClient, multifactorAuthenticationPrincipalResolver, userAccountCache);
+        }
+
+        @Override
+        public boolean ping() {
+            return true;
+        }
+
+        @Override
+        protected DuoSecurityAuthenticationResult authenticateInternal(final Credential credential) throws Exception {
+            return null;
         }
     }
 }

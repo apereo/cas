@@ -2,6 +2,7 @@ package org.apereo.cas.token.cipher;
 
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
+import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
@@ -55,7 +57,7 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
 
     @Override
     public boolean supports(final RegisteredService registeredService) {
-        return getSigningKey(registeredService).isPresent();
+        return getSigningKey(registeredService).isPresent() || getEncryptionKey(registeredService).isPresent();
     }
 
     /**
@@ -67,41 +69,20 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
     public JwtTicketCipherExecutor getTokenTicketCipherExecutorForService(final RegisteredService registeredService) {
         val encryptionKey = getEncryptionKey(registeredService).orElse(StringUtils.EMPTY);
         val signingKey = getSigningKey(registeredService).orElse(StringUtils.EMPTY);
+        val cipher = createCipherExecutorInstance(encryptionKey, signingKey, registeredService);
         val order = getCipherOperationsStrategyType(registeredService).orElse(CipherOperationsStrategyType.ENCRYPT_AND_SIGN);
-        return createCipherExecutorInstance(encryptionKey, signingKey, registeredService, order);
+        cipher.setStrategyType(order);
+        cipher.setSigningEnabled(isSigningEnabledForRegisteredService(registeredService));
+        cipher.setEncryptionEnabled(isEncryptionEnabledForRegisteredService(registeredService));
+        return cipher;
     }
 
-    /**
-     * Gets cipher operations order.
-     *
-     * @param registeredService the registered service
-     * @return the cipher operations order
-     */
-    protected Optional<CipherOperationsStrategyType> getCipherOperationsStrategyType(final RegisteredService registeredService) {
-        val property = getCipherStrategyTypeRegisteredServiceProperty(registeredService);
-        if (property.isAssignedTo(registeredService)) {
-            val order = property.getPropertyValue(registeredService).getValue();
-            return Optional.of(CipherOperationsStrategyType.valueOf(order));
-        }
-        return Optional.empty();
-    }
-    
-    /**
-     * Create cipher executor instance.
-     *
-     * @param encryptionKey     the encryption key
-     * @param signingKey        the signing key
-     * @param registeredService the registered service
-     * @param order             the order
-     * @return the jwt ticket cipher executor
-     */
+
     protected JwtTicketCipherExecutor createCipherExecutorInstance(final String encryptionKey, final String signingKey,
-                                                                   final RegisteredService registeredService,
-                                                                   final CipherOperationsStrategyType order) {
+                                                                   final RegisteredService registeredService) {
         val cipher = new JwtTicketCipherExecutor(encryptionKey, signingKey,
             StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey), 0, 0);
-        cipher.setCustomHeaders(CollectionUtils.wrap(CUSTOM_HEADER_REGISTERED_SERVICE_ID, registeredService.getId()));
-        cipher.setStrategyType(order);
+        cipher.getCommonHeaders().putAll(CollectionUtils.wrap(CUSTOM_HEADER_REGISTERED_SERVICE_ID, registeredService.getId()));
         return cipher;
     }
 
@@ -114,7 +95,7 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
     public Optional<String> getSigningKey(final RegisteredService registeredService) {
         val property = getSigningKeyRegisteredServiceProperty();
         if (property.isAssignedTo(registeredService)) {
-            val signingKey = property.getPropertyValue(registeredService).getValue();
+            val signingKey = property.getPropertyValue(registeredService).value();
             return Optional.of(signingKey);
         }
         return Optional.empty();
@@ -129,20 +110,38 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
     public Optional<String> getEncryptionKey(final RegisteredService registeredService) {
         val property = getEncryptionKeyRegisteredServiceProperty();
         if (property.isAssignedTo(registeredService)) {
-            val key = property.getPropertyValue(registeredService).getValue();
+            val key = property.getPropertyValue(registeredService).value();
             return Optional.of(key);
         }
         return Optional.empty();
     }
 
     /**
-     * Gets cipher operations registered service property.
+     * Is signing enabled for registered service ?
      *
      * @param registeredService the registered service
-     * @return the cipher operations order registered service property
+     * @return true/false
      */
-    protected RegisteredServiceProperties getCipherStrategyTypeRegisteredServiceProperty(final RegisteredService registeredService) {
-        return RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_CIPHER_STRATEGY_TYPE;
+    protected boolean isSigningEnabledForRegisteredService(final RegisteredService registeredService) {
+        val prop = getCipherOperationRegisteredServiceSigningEnabledProperty();
+        if (prop.isAssignedTo(registeredService)) {
+            return prop.getPropertyBooleanValue(registeredService);
+        }
+        return BooleanUtils.toBoolean(prop.getDefaultValue());
+    }
+
+    /**
+     * Is encryption enabled for registered service ?
+     *
+     * @param registeredService the registered service
+     * @return true/false
+     */
+    protected boolean isEncryptionEnabledForRegisteredService(final RegisteredService registeredService) {
+        val prop = getCipherOperationRegisteredServiceEncryptionEnabledProperty();
+        if (prop.isAssignedTo(registeredService)) {
+            return prop.getPropertyBooleanValue(registeredService);
+        }
+        return BooleanUtils.toBoolean(prop.getDefaultValue());
     }
 
 
@@ -162,5 +161,13 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
      */
     protected RegisteredServiceProperties getEncryptionKeyRegisteredServiceProperty() {
         return RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY;
+    }
+
+    protected RegisteredServiceProperty.RegisteredServiceProperties getCipherOperationRegisteredServiceSigningEnabledProperty() {
+        return RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_ENABLED;
+    }
+
+    protected RegisteredServiceProperty.RegisteredServiceProperties getCipherOperationRegisteredServiceEncryptionEnabledProperty() {
+        return RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_ENABLED;
     }
 }

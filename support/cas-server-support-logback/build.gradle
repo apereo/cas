@@ -1,4 +1,12 @@
 description = "Apereo CAS Core Logging Support for Logback"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Logging",
+            title: "Logback",
+            aliases: ["logback"]
+    ]
+}
 dependencies {
     implementation libraries.springbootlogging
     
@@ -9,3 +17,4 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }
+

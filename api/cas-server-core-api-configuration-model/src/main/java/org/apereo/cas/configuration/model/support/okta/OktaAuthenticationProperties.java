@@ -1,16 +1,18 @@
 package org.apereo.cas.configuration.model.support.okta;
 
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
-import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-import java.io.Serializable;
+import java.io.Serial;
 
 /**
  * This is {@link OktaAuthenticationProperties}.
@@ -22,18 +24,15 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class OktaAuthenticationProperties implements Serializable {
+@JsonFilter("OktaAuthenticationProperties")
+public class OktaAuthenticationProperties extends BaseOktaProperties {
+    @Serial
     private static final long serialVersionUID = -13245764438426360L;
 
     /**
      * The name of the authentication handler.
      */
     private String name;
-
-    /**
-     * The order of this authentication handler in the chain.
-     */
-    private int order = Integer.MAX_VALUE;
 
     /**
      * Password encoding properties.
@@ -48,33 +47,6 @@ public class OktaAuthenticationProperties implements Serializable {
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     /**
-     * Send requests via a proxy; define the hostname.
-     */
-    private String proxyHost;
-
-    /**
-     * Send requests via a proxy; define the proxy port.
-     * Negative/zero values should deactivate the proxy configuration
-     * for the http client.
-     */
-    private int proxyPort;
-
-    /**
-     * Send requests via a proxy; define the proxy username.
-     */
-    private String proxyUsername;
-
-    /**
-     * Send requests via a proxy; define the proxy password.
-     */
-    private String proxyPassword;
-
-    /**
-     * Connection timeout in milliseconds.
-     */
-    private int connectionTimeout = 5000;
-
-    /**
      * A number of authentication handlers are allowed to determine whether they can operate on the provided credential
      * and as such lend themselves to be tried and tested during the authentication handler selection phase.
      * The credential criteria may be one of the following options:<ul>
@@ -83,11 +55,18 @@ public class OktaAuthenticationProperties implements Serializable {
      * <li>3) Path to an external Groovy script that implements the same interface.</li>
      * </ul>
      */
+    @RegularExpressionCapable
     private String credentialCriteria;
-    
+
     /**
-     * Okta domain.
+     * Define the scope and state of this authentication handler
+     * and the lifecycle in which it can be invoked or activated.
      */
-    @RequiredProperty
-    private String organizationUrl;
+    private AuthenticationHandlerStates state = AuthenticationHandlerStates.ACTIVE;
+
+    /**
+     * Provisioning settings.
+     */
+    @NestedConfigurationProperty
+    private OktaPrincipalProvisioningProperties provisioning = new OktaPrincipalProvisioningProperties();
 }

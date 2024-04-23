@@ -11,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.FileSystemResource;
 
 import java.io.File;
+import java.io.Serial;
 
 /**
  * This is {@link GitServiceRegistryProperties}.
@@ -30,6 +31,7 @@ public class GitServiceRegistryProperties extends BaseGitProperties {
      */
     public static final String DEFAULT_CAS_SERVICE_REGISTRY_NAME = "cas-service-registry";
 
+    @Serial
     private static final long serialVersionUID = 4194689836396653458L;
 
     /**

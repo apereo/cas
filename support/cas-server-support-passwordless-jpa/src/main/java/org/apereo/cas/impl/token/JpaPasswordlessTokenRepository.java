@@ -1,14 +1,17 @@
 package org.apereo.cas.impl.token;
 
-import lombok.SneakyThrows;
+import org.apereo.cas.api.PasswordlessAuthenticationRequest;
+import org.apereo.cas.api.PasswordlessUserAccount;
+import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -20,72 +23,75 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement(proxyTargetClass = false)
 @Transactional(transactionManager = "passwordlessTransactionManager")
 @Slf4j
 public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenRepository {
 
-    private static final String SELECT_QUERY = "SELECT t FROM JpaPasswordlessAuthenticationToken t ";
+    private static final String SELECT_QUERY = String.format("SELECT t FROM %s t ", JpaPasswordlessAuthenticationEntity.class.getSimpleName());
 
-    private static final String DELETE_QUERY = "DELETE FROM JpaPasswordlessAuthenticationToken t ";
+    private static final String DELETE_QUERY = String.format("DELETE FROM %s t ", JpaPasswordlessAuthenticationEntity.class.getSimpleName());
 
     private static final String QUERY_PARAM_USERNAME = "username";
 
-    @PersistenceContext(unitName = "passwordlessEntityManagerFactory")
+    @PersistenceContext(unitName = "jpaPasswordlessAuthNContext")
     private EntityManager entityManager;
 
-    public JpaPasswordlessTokenRepository(final int tokenExpirationInSeconds) {
-        super(tokenExpirationInSeconds);
+    public JpaPasswordlessTokenRepository(final long tokenExpirationInSeconds,
+                                          final CipherExecutor cipherExecutor) {
+        super(tokenExpirationInSeconds, cipherExecutor);
     }
 
     @Override
-    public Optional<String> findToken(final String username) {
+    public Optional<PasswordlessAuthenticationToken> findToken(final String username) {
         val query = SELECT_QUERY.concat(" WHERE t.username = :username");
-        val results = this.entityManager.createQuery(query, JpaPasswordlessAuthenticationToken.class)
+        val results = entityManager.createQuery(query, JpaPasswordlessAuthenticationEntity.class)
             .setParameter(QUERY_PARAM_USERNAME, username)
             .setMaxResults(1)
             .getResultList();
         if (!results.isEmpty()) {
-            val token = results.get(0);
-            if (token.isExpired()) {
+            val token = results.getFirst();
+            val authnToken = decodePasswordlessAuthenticationToken(token.getToken());
+            if (authnToken.isExpired()) {
                 LOGGER.warn("Token [{}] has expired", token);
                 return Optional.empty();
             }
-            LOGGER.debug("Located token [{}]", token);
-            return Optional.of(token.getToken());
+            LOGGER.debug("Located token [{}]", authnToken);
+            return Optional.of(authnToken);
         }
         return Optional.empty();
     }
 
     @Override
     public void deleteTokens(final String username) {
-        this.entityManager.createQuery(DELETE_QUERY.concat("WHERE t.username = :username"))
+        entityManager.createQuery(DELETE_QUERY.concat("WHERE t.username = :username"))
             .setParameter(QUERY_PARAM_USERNAME, username)
             .executeUpdate();
     }
 
     @Override
-    public void deleteToken(final String username, final String token) {
-        val query = DELETE_QUERY.concat(" WHERE t.username = :username AND t.token = :token");
-        this.entityManager.createQuery(query)
-            .setParameter(QUERY_PARAM_USERNAME, username)
-            .setParameter("token", token)
+    public void deleteToken(final PasswordlessAuthenticationToken token) {
+        val query = DELETE_QUERY.concat(" WHERE t.username = :username AND t.id = :id");
+        entityManager.createQuery(query)
+            .setParameter(QUERY_PARAM_USERNAME, token.getUsername())
+            .setParameter("id", token.getId())
             .executeUpdate();
     }
 
-    @SneakyThrows
     @Override
-    public void saveToken(final String username, final String token) {
-        val entity = PasswordlessAuthenticationToken.builder()
-            .token(token)
-            .username(username)
-            .expirationDate(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(getTokenExpirationInSeconds()))
-            .build();
-
-        val record = new JpaPasswordlessAuthenticationToken();
-        BeanUtils.copyProperties(record, entity);
-        LOGGER.debug("Saving token [{}]", record);
-        entityManager.merge(record);
+    public PasswordlessAuthenticationToken saveToken(final PasswordlessUserAccount passwordlessAccount,
+                                                     final PasswordlessAuthenticationRequest passwordlessRequest,
+                                                     final PasswordlessAuthenticationToken authnToken) {
+        return FunctionUtils.doUnchecked(() -> {
+            val record = JpaPasswordlessAuthenticationEntity.builder()
+                .username(authnToken.getUsername())
+                .token(encodeToken(authnToken))
+                .expirationDate(authnToken.getExpirationDate())
+                .build();
+            LOGGER.debug("Saving token [{}]", record);
+            val result = entityManager.merge(record);
+            return authnToken.withId(result.getId());
+        });
     }
 
     @Override
@@ -93,7 +99,7 @@ public class JpaPasswordlessTokenRepository extends BasePasswordlessTokenReposit
         val now = ZonedDateTime.now(ZoneOffset.UTC);
         LOGGER.debug("Cleaning expired records with an expiration date of [{}]", now);
         val query = DELETE_QUERY.concat(" WHERE t.expirationDate >= :expirationDate");
-        this.entityManager.createQuery(query)
+        entityManager.createQuery(query)
             .setParameter("expirationDate", now)
             .executeUpdate();
     }

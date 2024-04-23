@@ -3,6 +3,8 @@ package org.apereo.cas.entity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serial;
+
 /**
  * This is {@link SamlIdentityProviderLogoEntity}.
  *
@@ -12,6 +14,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class SamlIdentityProviderLogoEntity extends SamlIdentityProviderBasicEntity {
+    @Serial
     private static final long serialVersionUID = -3901349236417720095L;
 
     private String height;

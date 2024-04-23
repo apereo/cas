@@ -10,6 +10,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link LdapSecurityActuatorEndpointsMonitorProperties}.
  *
@@ -23,6 +25,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Accessors(chain = true)
 public class LdapSecurityActuatorEndpointsMonitorProperties extends AbstractLdapAuthenticationProperties {
 
+    @Serial
     private static final long serialVersionUID = -7333244539096172557L;
 
     /**

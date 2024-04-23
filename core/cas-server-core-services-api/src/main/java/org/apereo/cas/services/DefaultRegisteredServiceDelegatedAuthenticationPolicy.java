@@ -11,8 +11,8 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serial;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 
 /**
  * This is {@link DefaultRegisteredServiceDelegatedAuthenticationPolicy}.
@@ -24,27 +24,30 @@ import java.util.LinkedHashSet;
 @ToString
 @Getter
 @Setter
-@EqualsAndHashCode(exclude = "allowedProviders")
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class DefaultRegisteredServiceDelegatedAuthenticationPolicy implements RegisteredServiceDelegatedAuthenticationPolicy {
+    @Serial
     private static final long serialVersionUID = -784106970642770923L;
 
-    private Collection<String> allowedProviders = new LinkedHashSet<>(0);
+    private Collection<String> allowedProviders;
 
     private boolean permitUndefined = true;
 
     private boolean exclusive;
+
+    private String selectionStrategy;
 
     @Override
     @JsonIgnore
     public boolean isProviderAllowed(final String provider, final RegisteredService registeredService) {
         if (getAllowedProviders() == null || getAllowedProviders().isEmpty()) {
             LOGGER.warn("Registered service [{}] does not define any authorized/supported delegated authentication providers. "
-                + "It is STRONGLY recommended that you authorize and assign providers to the service definition. "
-                + "While just a warning for now, this behavior will be enforced by CAS in future versions.",
+                        + "It is STRONGLY recommended that you authorize and assign providers to the service definition. "
+                        + "While just a warning for now, this behavior will be enforced by CAS in future versions.",
                 registeredService.getName());
             return this.permitUndefined;
         }

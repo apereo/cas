@@ -6,7 +6,7 @@ import org.apache.cxf.sts.request.ReceivedToken;
 import org.apache.cxf.sts.token.delegation.TokenDelegationHandler;
 import org.apache.cxf.sts.token.delegation.TokenDelegationParameters;
 import org.apache.cxf.sts.token.delegation.TokenDelegationResponse;
-import org.apache.wss4j.dom.WSConstants;
+import org.apache.wss4j.common.WSS4JConstants;
 import org.w3c.dom.Element;
 
 /**
@@ -20,11 +20,10 @@ public class X509TokenDelegationHandler implements TokenDelegationHandler {
     @Override
     public boolean canHandleToken(final ReceivedToken delegateTarget) {
         val token = delegateTarget.getToken();
-        if (token instanceof Element) {
-            val tokenElement = (Element) token;
+        if (token instanceof final Element tokenElement) {
             val namespace = tokenElement.getNamespaceURI();
             val localname = tokenElement.getLocalName();
-            return WSConstants.SIG_NS.equals(namespace) && WSConstants.X509_DATA_LN.equals(localname);
+            return WSS4JConstants.SIG_NS.equals(namespace) && WSS4JConstants.X509_DATA_LN.equals(localname);
         }
         return false;
     }

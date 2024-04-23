@@ -5,13 +5,15 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.hjson.JsonValue;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
@@ -28,6 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class JsonResourceInterruptInquirer extends BaseInterruptInquirer implements DisposableBean {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
@@ -39,22 +42,24 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer impleme
 
     private FileWatcherService keystorePatchWatcherService;
 
-    @SneakyThrows
     public JsonResourceInterruptInquirer(final Resource resource) {
         this.resource = resource;
-        if (ResourceUtils.isFile(this.resource)) {
-            keystorePatchWatcherService = new FileWatcherService(resource.getFile(), file -> readResourceForInterrupts());
-        }
+        FunctionUtils.doUnchecked(__ -> {
+            if (ResourceUtils.isFile(this.resource)) {
+                keystorePatchWatcherService = new FileWatcherService(resource.getFile(), file -> readResourceForInterrupts());
+            }
+        });
     }
 
     @Override
     public InterruptResponse inquireInternal(final Authentication authentication,
-        final RegisteredService registeredService,
-        final Service service,
-        final Credential credential,
-        final RequestContext requestContext) {
+                                             final RegisteredService registeredService,
+                                             final Service service,
+                                             final Credential credential,
+                                             final RequestContext requestContext) {
         readResourceForInterrupts();
         val user = authentication.getPrincipal().getId();
+        LOGGER.info("Locating interrupt for user [{}]", user);
         if (interrupts.containsKey(user)) {
             return interrupts.get(user);
         }
@@ -63,21 +68,20 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer impleme
 
     @Override
     public void destroy() {
-        if (this.keystorePatchWatcherService != null) {
-            this.keystorePatchWatcherService.close();
-        }
+        IOUtils.closeQuietly(this.keystorePatchWatcherService);
     }
 
-    @SneakyThrows
     private void readResourceForInterrupts() {
-        this.interrupts.clear();
-        if (ResourceUtils.doesResourceExist(resource)) {
-            try (val reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
-                final TypeReference<Map<String, InterruptResponse>> personList = new TypeReference<>() {
-                };
-                val data = (Map) MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
-                this.interrupts.putAll(data);
+        FunctionUtils.doUnchecked(__ -> {
+            this.interrupts.clear();
+            if (ResourceUtils.doesResourceExist(resource)) {
+                try (val reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
+                    val personList = new TypeReference<Map<String, InterruptResponse>>() {
+                    };
+                    val data = (Map) MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
+                    this.interrupts.putAll(data);
+                }
             }
-        }
+        });
     }
 }

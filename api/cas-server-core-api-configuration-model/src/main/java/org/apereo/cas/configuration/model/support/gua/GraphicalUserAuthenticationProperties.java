@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,6 +26,7 @@ import java.util.Map;
 @Accessors(chain = true)
 public class GraphicalUserAuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7527953699378415460L;
 
     /**

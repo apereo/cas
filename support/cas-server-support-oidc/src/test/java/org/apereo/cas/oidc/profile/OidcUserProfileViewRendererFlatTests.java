@@ -3,23 +3,22 @@ package org.apereo.cas.oidc.profile;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.Map;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,14 +31,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "cas.authn.oidc.discovery.user-info-signing-alg-values-supported=RS256",
     "cas.authn.oidc.discovery.user-info-encryption-alg-values-supported=RSA1_5,RSA-OAEP,RSA-OAEP-256,A128KW,A192KW,A256KW",
-    "cas.authn.oauth.user-profile-view-type=FLAT"
+    "cas.authn.oauth.core.user-profile-view-type=FLAT"
 })
-public class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
+class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val response = new MockHttpServletResponse();
         val context = new JEEContext(new MockHttpServletRequest(), response);
         val accessToken = getAccessToken();
@@ -49,16 +48,40 @@ public class OidcUserProfileViewRendererFlatTests extends AbstractOidcTests {
         assertNotNull(entity.getBody());
         val result = MAPPER.readValue(entity.getBody().toString(), Map.class);
         assertTrue(result.containsKey(OidcConstants.CLAIM_AUTH_TIME));
-        assertTrue(result.containsKey(OidcConstants.CLAIM_SUB));
+        assertTrue(result.containsKey(OAuth20Constants.CLAIM_SUB));
         assertTrue(result.containsKey(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID));
         assertTrue(result.containsKey(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_CLIENT_ID));
         assertTrue(result.containsKey(CasProtocolConstants.PARAMETER_SERVICE));
         assertTrue(result.containsKey("email"));
-        assertEquals("casuser@example.org", result.get("email"));
+        val values = result.get("email").toString();
+        assertEquals("casuser@example.org", values);
     }
 
     @Test
-    public void verifyFailsOperation() throws Exception {
+    void verifyOperationJWS() throws Throwable {
+        val clientId = UUID.randomUUID().toString();
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(new MockHttpServletRequest(), response);
+        val accessToken = getAccessToken(clientId);
+        val service = getOidcRegisteredService(clientId);
+        service.setUserInfoSigningAlg("RS256");
+        service.setSignIdToken(true);
+        service.setEncryptIdToken(false);
+        servicesManager.save(service);
+
+        val data = oidcUserProfileDataCreator.createFrom(accessToken, context);
+        val entity = oidcUserProfileViewRenderer.render(data, accessToken, response);
+        assertNotNull(entity);
+        val body = (String) entity.getBody();
+        assertNotNull(body);
+        val claims = JwtBuilder.parse(body);
+        assertNotNull(claims);
+        assertEquals("casuser@example.org", claims.getClaim("email"));
+        assertEquals("https://sso.example.org/cas/oidc", claims.getIssuer());
+    }
+
+    @Test
+    void verifyFailsOperation() throws Throwable {
         val id = UUID.randomUUID().toString();
         val service = getOidcRegisteredService(id);
         service.setUserInfoSigningAlg(AlgorithmIdentifiers.NONE);

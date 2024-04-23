@@ -7,17 +7,12 @@ import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
-/**
- * This is {@link CheckDuplicateTestConfiguration}.
- *
- * @author Misagh Moayyed
- * @since 6.3.0
- */
 public class CheckDuplicateTestConfiguration {
 
     public static void main(final String[] args) throws Exception {
         checkPattern(args[0],
             Pattern.compile("@SpringBootTest\\(classes\\s*=\\s*\\{(.*?)\\}", Pattern.DOTALL),
+            Pattern.compile("\\s*@ImportAutoConfiguration\\(\\{(.+?)\\}\\)", Pattern.DOTALL),
             Pattern.compile("\\s*@Import\\(\\{(.+?)\\}\\)", Pattern.DOTALL));
     }
 
@@ -35,11 +30,10 @@ public class CheckDuplicateTestConfiguration {
         }
     }
 
-    protected static void checkPattern(final String arg,
-                                       final Pattern... patterns) throws IOException {
+    protected static void checkPattern(final String arg, final Pattern... patterns) throws IOException {
         var failBuild = new AtomicBoolean(false);
         var duplicatesInTestClass = new TreeSet<>();
-
+        
         Files.walk(Paths.get(arg))
             .filter(file -> Files.isRegularFile(file) && file.toFile().getName().endsWith("Tests.java"))
             .forEach(file -> {
@@ -53,7 +47,7 @@ public class CheckDuplicateTestConfiguration {
                         Arrays.stream(classes).forEach(clz -> {
                             var className = clz.trim();
                             if (!duplicatesInTestClass.add(className)) {
-                                print("Duplicate found: %s in %s", className, file);
+                                print("Duplicate found: %s in %s %n", className, file);
                                 failBuild.set(true);
                             }
                         });

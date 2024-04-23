@@ -1,9 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
-
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link PrincipalElectionStrategyConflictResolver}
@@ -17,12 +15,17 @@ import java.util.Map;
 public interface PrincipalElectionStrategyConflictResolver {
 
     /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "defaultPrincipalElectionStrategyConflictResolver";
+
+    /**
      * Pick the last principal in the chain of principals resolved.
      *
      * @return the principal election strategy conflict resolver
      */
     static PrincipalElectionStrategyConflictResolver last() {
-        return (principals, attributes) -> principals.get(principals.size() - 1).getId();
+        return List::getLast;
     }
 
     /**
@@ -31,15 +34,14 @@ public interface PrincipalElectionStrategyConflictResolver {
      * @return the principal election strategy conflict resolver
      */
     static PrincipalElectionStrategyConflictResolver first() {
-        return (principals, attributes) -> principals.get(0).getId();
+        return List::getFirst;
     }
 
     /**
      * Resolve the principal id from the chain.
      *
      * @param principals the principals chain
-     * @param attributes the attributes
      * @return the final principal id
      */
-    String resolve(List<Principal> principals, Map<String, List<Object>> attributes);
+    Principal resolve(List<Principal> principals);
 }

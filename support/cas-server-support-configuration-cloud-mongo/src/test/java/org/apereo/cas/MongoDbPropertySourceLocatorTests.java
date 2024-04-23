@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -19,12 +19,12 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("MongoDb")
-@EnabledIfPortOpen(port = 27017)
-public class MongoDbPropertySourceLocatorTests {
+@EnabledIfListeningOnPort(port = 27017)
+class MongoDbPropertySourceLocatorTests {
 
     @Test
-    public void verifyOperation() {
-        val factory = new SimpleMongoClientDatabaseFactory(MongoDbCloudConfigBootstrapConfigurationTests.MONGODB_URI);
+    void verifyOperation() throws Throwable {
+        val factory = new SimpleMongoClientDatabaseFactory(MongoDbCloudConfigBootstrapAutoConfigurationTests.MONGODB_URI);
         val template = new MongoTemplate(factory);
         val loc = new MongoDbPropertySourceLocator(template);
         assertNull(loc.locate(mock(Environment.class)));

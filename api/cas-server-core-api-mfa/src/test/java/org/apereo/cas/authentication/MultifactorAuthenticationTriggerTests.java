@@ -14,10 +14,10 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Simple")
-public class MultifactorAuthenticationTriggerTests {
+@Tag("MFATrigger")
+class MultifactorAuthenticationTriggerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val input = mock(MultifactorAuthenticationTrigger.class);
         when(input.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.LOWEST_PRECEDENCE, input.getOrder());

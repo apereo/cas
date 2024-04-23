@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("CasEmbeddedApacheTomcatClusteringProperties")
 public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 620356002948464740L;
 
     /**
@@ -41,7 +43,7 @@ public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable
      * <li> Class implementing {@code org.apache.catalina.tribes.MembershipProvider}</li>
      * </ul>
      */
-    private String cloudMembershipProvider = "kubernetes";
+    private String cloudMembershipProvider = "dns";
 
     /**
      * When a web application is being shutdown, Tomcat issues an expire call to each session to notify all the listeners.

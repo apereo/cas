@@ -3,7 +3,7 @@ dependencies {
     api project(":api:cas-server-core-api-throttle")
     api project(":api:cas-server-core-api")
 
-    implementation project(":support:cas-server-support-oauth-core")
+
     implementation project(":support:cas-server-support-oauth-core-api")
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":support:cas-server-support-oauth-api")
@@ -25,6 +25,7 @@ dependencies {
     implementation libraries.pac4jcore
     implementation libraries.nimbus
     implementation libraries.jose4j
+    implementation libraries.hibernate
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-util")

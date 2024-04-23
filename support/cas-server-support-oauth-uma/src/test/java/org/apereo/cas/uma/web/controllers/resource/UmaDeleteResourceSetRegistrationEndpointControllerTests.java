@@ -6,9 +6,9 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 
 import java.util.Map;
@@ -23,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("UMA")
-public class UmaDeleteResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
+class UmaDeleteResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
@@ -43,14 +43,14 @@ public class UmaDeleteResourceSetRegistrationEndpointControllerTests extends Bas
     }
 
     @Test
-    public void verifyEmpty() {
+    void verifyEmpty() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var response = umaDeleteResourceSetRegistrationEndpointController.deleteResourceSet(-1, results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    public void verifyBadClientId() {
+    void verifyBadClientId() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
@@ -68,7 +68,7 @@ public class UmaDeleteResourceSetRegistrationEndpointControllerTests extends Bas
         val commonProfile = new CommonProfile();
         commonProfile.setClientName("CasClient");
         commonProfile.setId("testuser");
-        commonProfile.setPermissions(Set.of(OAuth20Constants.UMA_PROTECTION_SCOPE));
+        commonProfile.setRoles(Set.of(OAuth20Constants.UMA_PROTECTION_SCOPE));
         manager.save(true, commonProfile, false);
         response = umaDeleteResourceSetRegistrationEndpointController.deleteResourceSet(resourceId,
             results.getLeft(), results.getMiddle());

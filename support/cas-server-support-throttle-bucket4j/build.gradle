@@ -1,9 +1,15 @@
 description = "Apereo CAS Bucket4j Authentication Throttling"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication Throttling",
+            title: "Authentication Throttling via Bucket4j",
+            aliases: ["bucket4j"]
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-throttle")
-    
-    implementation libraries.bucket4j
     
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util")
@@ -11,6 +17,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-throttle")
     
     implementation project(":support:cas-server-support-throttle-core")
+    implementation project(":support:cas-server-support-bucket4j-core")
 
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-audit")

@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.accesstoken;
 
-import org.apereo.cas.ticket.TicketState;
+
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.expiration.AbstractCasExpirationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -13,6 +15,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -30,6 +33,7 @@ import java.time.temporal.ChronoUnit;
 @ToString(callSuper = true)
 public class OAuth20AccessTokenExpirationPolicy extends AbstractCasExpirationPolicy {
 
+    @Serial
     private static final long serialVersionUID = -8383186650682727360L;
 
     /**
@@ -43,19 +47,19 @@ public class OAuth20AccessTokenExpirationPolicy extends AbstractCasExpirationPol
     private long timeToKillInSeconds;
 
     @JsonCreator
-    public OAuth20AccessTokenExpirationPolicy(@JsonProperty("timeToLive") final long maxTimeToLive,
-                                              @JsonProperty("timeToIdle") final long timeToKill) {
+    public OAuth20AccessTokenExpirationPolicy(
+        @JsonProperty("timeToLive")
+        final long maxTimeToLive,
+        @JsonProperty("timeToIdle")
+        final long timeToKill) {
         this.maxTimeToLiveInSeconds = maxTimeToLive;
         this.timeToKillInSeconds = timeToKill;
     }
 
     @Override
-    public boolean isExpired(final TicketState ticketState) {
+    public boolean isExpired(final TicketGrantingTicketAwareTicket ticketState) {
         val expired = isAccessTokenExpired(ticketState);
-        if (!expired) {
-            return super.isExpired(ticketState);
-        }
-        return expired;
+        return expired || super.isExpired(ticketState);
     }
 
     @Override
@@ -68,24 +72,30 @@ public class OAuth20AccessTokenExpirationPolicy extends AbstractCasExpirationPol
         return this.timeToKillInSeconds;
     }
 
-    /**
-     * Is access token expired ?
-     *
-     * @param ticketState the ticket state
-     * @return true/false
-     */
     @JsonIgnore
-    protected boolean isAccessTokenExpired(final TicketState ticketState) {
-        val currentSystemTime = ZonedDateTime.now(ZoneOffset.UTC);
+    @Override
+    public ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
         val creationTime = ticketState.getCreationTime();
+        return creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
+    }
 
-        var expirationTime = creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
+    @JsonIgnore
+    @Override
+    public ZonedDateTime getIdleExpirationTime(final Ticket ticketState) {
+        val lastTimeUsed = ticketState.getLastTimeUsed();
+        return lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+    }
+
+    @JsonIgnore
+    protected boolean isAccessTokenExpired(final Ticket ticketState) {
+        val currentSystemTime = ZonedDateTime.now(ZoneOffset.UTC);
+        var expirationTime = toMaximumExpirationTime(ticketState);
         if (currentSystemTime.isAfter(expirationTime)) {
             LOGGER.debug("Access token is expired because the current time [{}] is after [{}]", currentSystemTime, expirationTime);
             return true;
         }
 
-        val expirationTimeToKill = ticketState.getLastTimeUsed().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        val expirationTimeToKill = getIdleExpirationTime(ticketState);
         if (currentSystemTime.isAfter(expirationTimeToKill)) {
             LOGGER.debug("Access token is expired because the current time [{}] is after [{}]", currentSystemTime, expirationTimeToKill);
             return true;
@@ -104,16 +114,20 @@ public class OAuth20AccessTokenExpirationPolicy extends AbstractCasExpirationPol
     @EqualsAndHashCode(callSuper = true)
     @ToString(callSuper = true)
     public static class OAuthAccessTokenSovereignExpirationPolicy extends OAuth20AccessTokenExpirationPolicy {
+        @Serial
         private static final long serialVersionUID = -7768661082888351104L;
 
         @JsonCreator
-        public OAuthAccessTokenSovereignExpirationPolicy(@JsonProperty("timeToLive") final long maxTimeToLive,
-                                                         @JsonProperty("timeToIdle") final long timeToKill) {
+        public OAuthAccessTokenSovereignExpirationPolicy(
+            @JsonProperty("timeToLive")
+            final long maxTimeToLive,
+            @JsonProperty("timeToIdle")
+            final long timeToKill) {
             super(maxTimeToLive, timeToKill);
         }
 
         @Override
-        public boolean isExpired(final TicketState ticketState) {
+        public boolean isExpired(final TicketGrantingTicketAwareTicket ticketState) {
             return isAccessTokenExpired(ticketState);
         }
     }

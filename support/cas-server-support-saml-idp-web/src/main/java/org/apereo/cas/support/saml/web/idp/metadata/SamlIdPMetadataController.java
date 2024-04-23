@@ -14,13 +14,11 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import jakarta.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
@@ -34,7 +32,7 @@ import java.util.Optional;
 @Controller("samlIdPMetadataController")
 @Slf4j
 @RequiredArgsConstructor
-public class SamlIdPMetadataController implements InitializingBean {
+public class SamlIdPMetadataController {
     private static final String CONTENT_TYPE = "text/xml;charset=UTF-8";
 
     private final SamlIdPMetadataGenerator metadataAndCertificatesGenerationService;
@@ -45,24 +43,18 @@ public class SamlIdPMetadataController implements InitializingBean {
 
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
-    @Override
-    public void afterPropertiesSet() {
-        this.metadataAndCertificatesGenerationService.generate(Optional.empty());
-    }
-
     /**
      * Displays the identity provider metadata.
      * Checks to make sure metadata exists, and if not, generates it first.
      *
      * @param service  the service
      * @param response servlet response
-     * @throws IOException the IO exception
+     * @throws Exception the exception
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_METADATA)
     public void generateMetadataForIdp(
-        @RequestParam(value = "service", required = false)
-        final String service,
-        final HttpServletResponse response) throws IOException {
+        @RequestParam(value = "service", required = false) final String service,
+        final HttpServletResponse response) throws Throwable {
 
         val registeredService = getRegisteredServiceIfAny(service);
         metadataAndCertificatesGenerationService.generate(registeredService);

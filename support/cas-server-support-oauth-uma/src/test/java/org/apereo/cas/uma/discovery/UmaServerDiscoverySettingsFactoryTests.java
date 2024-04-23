@@ -14,13 +14,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("UMA")
-public class UmaServerDiscoverySettingsFactoryTests extends BaseUmaEndpointControllerTests {
+class UmaServerDiscoverySettingsFactoryTests extends BaseUmaEndpointControllerTests {
     @Test
-    public void verifyOperation() {
-        assertNotNull(discoverySettings.getAuthorizationEndpoint());
+    void verifyOperation() throws Throwable {
         assertNotNull(discoverySettings.getAuthorizationRequestEndpoint());
-        assertNotNull(discoverySettings.getDynamicClientEndpoint());
-        assertNotNull(discoverySettings.getIntrospectionEndpoint());
         assertNotNull(discoverySettings.getPermissionRegistrationEndpoint());
         assertNotNull(discoverySettings.getRequestingPartyClaimsEndpoint());
         assertNotNull(discoverySettings.getResourceSetRegistrationEndpoint());

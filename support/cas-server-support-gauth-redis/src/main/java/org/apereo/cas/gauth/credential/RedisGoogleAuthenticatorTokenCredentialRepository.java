@@ -1,21 +1,22 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
-import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.gauth.RedisCompositeKey;
+import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import lombok.Data;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.data.redis.core.RedisTemplate;
-
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.ScanOptions;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * This is {@link RedisGoogleAuthenticatorTokenCredentialRepository}.
@@ -27,61 +28,53 @@ import java.util.stream.Collectors;
 @ToString
 @Getter
 public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogleAuthenticatorTokenCredentialRepository {
-    private static final String KEY_SEPARATOR = ":";
 
-    private static final String CAS_PREFIX = RedisGoogleAuthenticatorTokenCredentialRepository.class.getSimpleName();
+    private final CasRedisTemplates casRedisTemplates;
 
-    private final RedisTemplate<String, List<? extends OneTimeTokenAccount>> template;
-
-    public RedisGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-                                                             final RedisTemplate<String, List<? extends OneTimeTokenAccount>> template,
-                                                             final CipherExecutor<String, String> tokenCredentialCipher) {
-        super(tokenCredentialCipher, googleAuthenticator);
-        this.template = template;
+    public RedisGoogleAuthenticatorTokenCredentialRepository(
+        final IGoogleAuthenticator googleAuthenticator,
+        final CasRedisTemplates casRedisTemplates,
+        final CipherExecutor<String, String> tokenCredentialCipher,
+        final CipherExecutor<Number, Number> scratchCodesCipher) {
+        super(tokenCredentialCipher, scratchCodesCipher, googleAuthenticator);
+        this.casRedisTemplates = casRedisTemplates;
     }
 
     @Override
     public OneTimeTokenAccount get(final String username, final long id) {
-        val keys = getGoogleAuthenticatorTokenKeys(username, String.valueOf(id));
-        if (keys != null && keys.size() == 1) {
-            val r = this.template.boundValueOps(keys.iterator().next()).get();
-            if (r != null && !r.isEmpty()) {
-                return decode(r.get(0));
-            }
-        }
-        return null;
+        return get(username)
+            .stream()
+            .filter(account -> account.getId() == id)
+            .findFirst()
+            .orElse(null);
     }
 
     @Override
     public OneTimeTokenAccount get(final long id) {
-        val keys = getGoogleAuthenticatorTokenKeys("*", String.valueOf(id));
-        if (keys != null && keys.size() == 1) {
-            val r = this.template.boundValueOps(keys.iterator().next()).get();
-            if (r != null && !r.isEmpty()) {
-                return decode(r.get(0));
-            }
-        }
-        return null;
+        val redisAccountKey = RedisCompositeKey.forAccounts().withAccount(id).toKeyPattern();
+        val account = casRedisTemplates.getAccountsRedisTemplate().boundValueOps(redisAccountKey).get();
+        return account != null ? decode(account) : null;
     }
 
     @Override
     public Collection<? extends OneTimeTokenAccount> get(final String username) {
-        val keys = getGoogleAuthenticatorTokenKeys(username, "*");
-        return keys
+        val redisAccountKey = RedisCompositeKey.forPrincipals().withPrincipal(username).toKeyPattern();
+        val accounts = casRedisTemplates.getPrincipalsRedisTemplate().boundSetOps(redisAccountKey).members();
+        return Objects.requireNonNull(accounts)
             .stream()
-            .map(key -> this.template.boundValueOps(key).get())
             .filter(Objects::nonNull)
             .map(this::decode)
             .filter(Objects::nonNull)
-            .flatMap(Collection::stream)
             .collect(Collectors.toList());
     }
 
     @Override
     public Collection<? extends OneTimeTokenAccount> load() {
-        return (Collection) getGoogleAuthenticatorTokenKeys()
+        val keyPattern = RedisCompositeKey.forAccounts().toKeyPattern();
+        val accounts = casRedisTemplates.getAccountsRedisTemplate().keys(keyPattern);
+        return Objects.requireNonNull(accounts)
             .stream()
-            .map(redisKey -> this.template.boundValueOps(redisKey).get())
+            .map(redisKey -> casRedisTemplates.getAccountsRedisTemplate().boundValueOps(redisKey).get())
             .filter(Objects::nonNull)
             .map(this::decode)
             .collect(Collectors.toList());
@@ -95,54 +88,75 @@ public class RedisGoogleAuthenticatorTokenCredentialRepository extends BaseGoogl
     @Override
     public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         val encodedAccount = encode(account);
-        val redisKey = getGoogleAuthenticatorRedisKey(account);
-        LOGGER.trace("Saving [{}] using key [{}]", encodedAccount, redisKey);
-        val ops = this.template.boundValueOps(redisKey);
-        ops.set(CollectionUtils.wrapList(encodedAccount));
+
+        val redisAccountKey = RedisCompositeKey.forAccounts().withAccount(encodedAccount).toKeyPattern();
+        LOGGER.trace("Saving account [{}] using key [{}]", encodedAccount, redisAccountKey);
+        casRedisTemplates.getAccountsRedisTemplate().boundValueOps(redisAccountKey).set(account);
+
+        val redisPrincipalKey = RedisCompositeKey.forPrincipals().withPrincipal(encodedAccount).toKeyPattern();
+        LOGGER.trace("Saving principal [{}] using key [{}]", encodedAccount, redisPrincipalKey);
+        casRedisTemplates.getPrincipalsRedisTemplate().boundSetOps(redisPrincipalKey).add(encodedAccount);
+
         return encodedAccount;
     }
 
     @Override
     public void deleteAll() {
-        val redisKey = getGoogleAuthenticatorTokenKeys();
-        LOGGER.trace("Deleting tokens using key [{}]", redisKey);
-        this.template.delete(redisKey);
-        LOGGER.trace("Deleted tokens");
+        var options = ScanOptions.scanOptions().match(RedisCompositeKey.forAccounts().toKeyPattern()).build();
+        try (val result = casRedisTemplates.getAccountsRedisTemplate().scan(options)) {
+            casRedisTemplates.getAccountsRedisTemplate().executePipelined((RedisCallback<Object>) connection -> {
+                StreamSupport.stream(result.spliterator(), false)
+                    .forEach(id -> connection.keyCommands().del(id.getBytes(StandardCharsets.UTF_8)));
+                return null;
+            });
+        }
+        options = ScanOptions.scanOptions().match(RedisCompositeKey.forPrincipals().toKeyPattern()).build();
+        try (val result = casRedisTemplates.getPrincipalsRedisTemplate().scan(options)) {
+            casRedisTemplates.getPrincipalsRedisTemplate().executePipelined((RedisCallback<Object>) connection -> {
+                StreamSupport.stream(result.spliterator(), false)
+                    .forEach(id -> connection.keyCommands().del(id.getBytes(StandardCharsets.UTF_8)));
+                return null;
+            });
+        }
     }
 
     @Override
     public void delete(final String username) {
-        val redisKey = getGoogleAuthenticatorTokenKeys(username, "*");
-        LOGGER.trace("Deleting tokens using key [{}]", redisKey);
-        this.template.delete(redisKey);
-        LOGGER.trace("Deleted tokens");
+        val redisKeyPattern = RedisCompositeKey.forPrincipals().withPrincipal(username).toKeyPattern();
+        val accounts = casRedisTemplates.getPrincipalsRedisTemplate().boundSetOps(redisKeyPattern).members();
+        casRedisTemplates.getAccountsRedisTemplate().executePipelined((RedisCallback<Object>) connection -> {
+            Objects.requireNonNull(accounts).forEach(account -> {
+                val accountKey = RedisCompositeKey.forAccounts().withAccount(account).toKeyPattern();
+                connection.keyCommands().del(accountKey.getBytes(StandardCharsets.UTF_8));
+            });
+            return null;
+        });
+        casRedisTemplates.getPrincipalsRedisTemplate().delete(redisKeyPattern);
+    }
+
+    @Override
+    public void delete(final long id) {
+        val accountKey = RedisCompositeKey.forAccounts().withAccount(id).toKeyPattern();
+        casRedisTemplates.getAccountsRedisTemplate().delete(accountKey);
     }
 
     @Override
     public long count() {
-        val keys = getGoogleAuthenticatorTokenKeys();
-        return keys.size();
+        val redisKeyPattern = RedisCompositeKey.forAccounts().toKeyPattern();
+        val accounts = Objects.requireNonNull(casRedisTemplates.getAccountsRedisTemplate().keys(redisKeyPattern));
+        return accounts.isEmpty() ? 0 : casRedisTemplates.getAccountsRedisTemplate().countExistingKeys(accounts);
     }
 
     @Override
     public long count(final String username) {
-        val keys = getGoogleAuthenticatorTokenKeys(username, "*");
-        return keys.size();
+        val redisKeyPattern = RedisCompositeKey.forPrincipals().withPrincipal(username).toKeyPattern();
+        return casRedisTemplates.getPrincipalsRedisTemplate().boundSetOps(redisKeyPattern).size();
     }
 
-    private static String getGoogleAuthenticatorRedisKey(final OneTimeTokenAccount account) {
-        return CAS_PREFIX + KEY_SEPARATOR + account.getUsername().trim().toLowerCase() + KEY_SEPARATOR + account.getId();
-    }
+    @Data
+    public static class CasRedisTemplates {
+        private final CasRedisTemplate<String, OneTimeTokenAccount> accountsRedisTemplate;
 
-    private Set<String> getGoogleAuthenticatorTokenKeys(final String username, final String id) {
-        val key = CAS_PREFIX + KEY_SEPARATOR + username.trim().toLowerCase() + KEY_SEPARATOR + id;
-        LOGGER.trace("Fetching Google Authenticator records based on key [{}]", key);
-        return this.template.keys(key);
-    }
-
-    private Set<String> getGoogleAuthenticatorTokenKeys() {
-        val key = CAS_PREFIX + KEY_SEPARATOR + "*:*";
-        LOGGER.trace("Fetching Google Authenticator records based on key [{}]", key);
-        return this.template.keys(key);
+        private final CasRedisTemplate<String, OneTimeTokenAccount> principalsRedisTemplate;
     }
 }

@@ -17,20 +17,25 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("MFA")
+@Tag("MFAProvider")
 @SpringBootTest(classes = BaseInweboConfiguration.SharedTestConfiguration.class,
     properties = {
         "cas.authn.mfa.inwebo.client-certificate.certificate.location=classpath:clientcert.p12",
         "cas.authn.mfa.inwebo.client-certificate.passphrase=password",
         "cas.authn.mfa.inwebo.service-id=7046"
     })
-public class InweboConsoleAdminTests {
+class InweboConsoleAdminTests {
     @Autowired
     @Qualifier("inweboConsoleAdmin")
     private InweboConsoleAdmin inweboConsoleAdmin;
 
     @Test
-    public void verifyOperation() {
+    void verifyLoginSearch() throws Throwable {
         assertThrows(WebServiceTransportException.class, () -> inweboConsoleAdmin.loginSearch("casuser"));
+    }
+
+    @Test
+    void verifyLoginQuery() throws Throwable {
+        assertThrows(WebServiceTransportException.class, () -> inweboConsoleAdmin.loginQuery(1L));
     }
 }

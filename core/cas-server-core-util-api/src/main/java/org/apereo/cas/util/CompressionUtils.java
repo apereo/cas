@@ -1,19 +1,31 @@
 package org.apereo.cas.util;
 
-import lombok.Cleanup;
-import lombok.SneakyThrows;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.io.TemporaryFileSystemResource;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-
+import org.jooq.lambda.Unchecked;
+import org.springframework.core.io.WritableResource;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.zip.DataFormatException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.function.Function;
+import java.util.stream.Stream;
 import java.util.zip.Deflater;
+import java.util.zip.DeflaterInputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.Inflater;
@@ -31,6 +43,7 @@ import java.util.zip.InflaterInputStream;
 @UtilityClass
 public class CompressionUtils {
     private static final int INFLATED_ARRAY_LENGTH = 10000;
+    private static final int BUFFER_LENGTH = 1024;
 
     /**
      * Deflate the given bytes using zlib.
@@ -44,21 +57,64 @@ public class CompressionUtils {
     }
 
     /**
-     * Deflate the given string via a {@link java.util.zip.Deflater}.
+     * Deflate the given string via a {@link Deflater}.
      *
      * @param data the data
      * @return base64 encoded string
      */
     public static String deflate(final String data) {
-        val deflater = new Deflater();
-        deflater.setInput(data.getBytes(StandardCharsets.UTF_8));
-        deflater.finish();
-        val buffer = new byte[data.length()];
-        val resultSize = deflater.deflate(buffer);
-        deflater.end();
-        val output = new byte[resultSize];
-        System.arraycopy(buffer, 0, output, 0, resultSize);
+        val output = deflateToByteArray(data);
         return EncodingUtils.encodeBase64(output);
+    }
+
+    /**
+     * Deflate to byte array.
+     *
+     * @param data the data
+     * @return the byte [ ]
+     */
+    public static byte[] deflateToByteArray(final String data) {
+        val bais = new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
+        val baos = new ByteArrayOutputStream();
+        var bytesRead = -1;
+        val buf = new byte[BUFFER_LENGTH];
+
+        try (val iis = new DeflaterInputStream(bais)) {
+            while ((bytesRead = iis.read(buf)) != -1) {
+                baos.write(buf, 0, bytesRead);
+            }
+            return baos.toByteArray();
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            return null;
+        }
+    }
+
+    /**
+     * First decode base64 String to byte array, then use ZipInputStream to revert the byte array to a
+     * string.
+     *
+     * @param zippedBase64Str the zipped base 64 str
+     * @return the string, or null
+     */
+    public static String decompress(final String zippedBase64Str) {
+        return Unchecked.supplier(() -> {
+            val bytes = EncodingUtils.decodeBase64(zippedBase64Str);
+            try (val zi = new GZIPInputStream(new ByteArrayInputStream(bytes))) {
+                return IOUtils.toString(zi, Charset.defaultCharset());
+            }
+        }).get();
+    }
+
+    /**
+     * Decode the byte[] in base64 to a string.
+     *
+     * @param bytes the data to encode
+     * @return the new string
+     */
+    public static String inflateToString(final byte[] bytes) {
+        val inflated = inflateToByteArray(bytes);
+        return inflated != null? new String(inflated, StandardCharsets.UTF_8) : null;
     }
 
     /**
@@ -76,73 +132,95 @@ public class CompressionUtils {
         extendedBytes[bytes.length] = 0;
         inflater.setInput(extendedBytes);
 
-        try {
+        return FunctionUtils.doAndHandle(() -> {
             val resultLength = inflater.inflate(xmlMessageBytes);
             inflater.end();
             return new String(xmlMessageBytes, 0, resultLength, StandardCharsets.UTF_8);
-        } catch (final DataFormatException e) {
-            return null;
-        }
+        }, throwable -> null).get();
     }
-
+    
     /**
-     * First decode base64 String to byte array, then use ZipInputStream to revert the byte array to a
-     * string.
+     * Decode byte array byte [].
      *
-     * @param zippedBase64Str the zipped base 64 str
-     * @return the string, or null
+     * @param bytes the bytes
+     * @return the byte [ ]
      */
-    @SneakyThrows
-    public static String decompress(final String zippedBase64Str) {
-        val bytes = EncodingUtils.decodeBase64(zippedBase64Str);
-        try (val zi = new GZIPInputStream(new ByteArrayInputStream(bytes))) {
-            return IOUtils.toString(zi, Charset.defaultCharset());
-        }
-    }
-
-    /**
-     * Decode the byte[] in base64 to a string.
-     *
-     * @param bytes the data to encode
-     * @return the new string
-     */
-    @SneakyThrows
-    public static String decodeByteArrayToString(final byte[] bytes) {
-        @Cleanup
+    public static byte[] inflateToByteArray(final byte[] bytes) {
         val bais = new ByteArrayInputStream(bytes);
-        @Cleanup
         val baos = new ByteArrayOutputStream();
-        val buf = new byte[bytes.length];
+        var bytesRead = -1;
+        val buf = new byte[BUFFER_LENGTH];
+
         try (val iis = new InflaterInputStream(bais)) {
-            var count = iis.read(buf);
-            while (count != -1) {
-                baos.write(buf, 0, count);
-                count = iis.read(buf);
+            while ((bytesRead = iis.read(buf)) != -1) {
+                baos.write(buf, 0, bytesRead);
             }
-            return new String(baos.toByteArray(), StandardCharsets.UTF_8);
+            return baos.toByteArray();
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             return null;
         }
     }
 
+    /**
+     * Use {@link java.util.zip.ZipOutputStream} to zip text to byte array, then convert
+     * byte array to base64 string, so it can be transferred via http request.
+     *
+     * @param srcTxt the src txt
+     * @return the byte array
+     */
+    public static byte[] compress(final byte[] srcTxt) throws Exception {
+        try (val rstBao = new ByteArrayOutputStream(); val zos = new GZIPOutputStream(rstBao)) {
+            zos.write(srcTxt);
+            zos.flush();
+            zos.finish();
+            return rstBao.toByteArray();
+        }
+    }
 
     /**
-     * Use ZipOutputStream to zip text to byte array, then convert
+     * Use {@link java.util.zip.ZipOutputStream} to zip text to byte array, then convert
      * byte array to base64 string, so it can be transferred via http request.
      *
      * @param srcTxt the src txt
      * @return the string in UTF-8 format and base64'ed, or null.
      */
-    @SneakyThrows
     public static String compress(final String srcTxt) {
-        try (val rstBao = new ByteArrayOutputStream(); val zos = new GZIPOutputStream(rstBao)) {
-            zos.write(srcTxt.getBytes(StandardCharsets.UTF_8));
-            zos.flush();
-            zos.finish();
-            val bytes = rstBao.toByteArray();
+        return Unchecked.supplier(() -> {
+            val bytes = compress(srcTxt.getBytes(StandardCharsets.UTF_8));
             val base64 = StringUtils.remove(EncodingUtils.encodeBase64(bytes), '\0');
             return new String(StandardCharsets.UTF_8.encode(base64).array(), StandardCharsets.UTF_8);
-        }
+        }).get();
+    }
+
+    /**
+     * To zip file.
+     *
+     * @param dataStream the data stream
+     * @param converter  the converter
+     * @param prefix     the prefix
+     * @return the writable resource
+     */
+    public static WritableResource toZipFile(final Stream<?> dataStream,
+                                             final Function<Object, File> converter,
+                                             final String prefix) {
+        return Unchecked.supplier(() -> {
+            val date = LocalDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm"));
+            val file = File.createTempFile(String.format("%s-%s", prefix, date), ".zip");
+            Files.deleteIfExists(file.toPath());
+            val env = new HashMap<String, Object>();
+            env.put("create", "true");
+            env.put("encoding", StandardCharsets.UTF_8.name());
+            try (val zipfs = FileSystems.newFileSystem(URI.create("jar:" + file.toURI()), env)) {
+                dataStream.forEach(Unchecked.consumer(entry -> {
+                    var sourceFile = converter.apply(entry);
+                    if (sourceFile.exists()) {
+                        val pathInZipfile = zipfs.getPath("/".concat(sourceFile.getName()));
+                        Files.copy(sourceFile.toPath(), pathInZipfile, StandardCopyOption.REPLACE_EXISTING);
+                    }
+                }));
+            }
+            return new TemporaryFileSystemResource(file);
+        }).get();
     }
 }

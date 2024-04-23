@@ -1,10 +1,8 @@
 package org.apereo.cas.configuration.metadata;
 
 import com.github.javaparser.StaticJavaParser;
-import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 
@@ -21,18 +19,17 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ConfigurationMetadataUnitParser {
     private final String sourcePath;
-
+    
     /**
      * Parse compilation unit.
      *
      * @param collectedProps        the collected props
      * @param collectedGroups       the collected groups
-     * @param property                     the p
+     * @param property              the p
      * @param typePath              the type path
      * @param typeName              the type name
      * @param indexNameWithBrackets the index name with brackets
      */
-    @SneakyThrows
     public void parseCompilationUnit(final Set<ConfigurationMetadataProperty> collectedProps,
                                      final Set<ConfigurationMetadataProperty> collectedGroups,
                                      final ConfigurationMetadataProperty property,
@@ -46,7 +43,7 @@ public class ConfigurationMetadataUnitParser {
             if (!cu.getTypes().isEmpty()) {
                 val type = cu.getType(0);
                 if (type.isClassOrInterfaceDeclaration()) {
-                    val decl = ClassOrInterfaceDeclaration.class.cast(type);
+                    val decl = (ClassOrInterfaceDeclaration) type;
                     for (var i = 0; i < decl.getExtendedTypes().size(); i++) {
                         val parentType = decl.getExtendedTypes().get(i);
 
@@ -60,19 +57,8 @@ public class ConfigurationMetadataUnitParser {
                     }
                 }
             }
-        }
-    }
-
-    /**
-     * Gets compilation unit.
-     *
-     * @param typePath the type path
-     * @return the compilation unit
-     */
-    @SneakyThrows
-    public static CompilationUnit getCompilationUnit(final String typePath) {
-        try (val is = Files.newInputStream(Paths.get(typePath))) {
-            return StaticJavaParser.parse(is);
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

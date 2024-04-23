@@ -11,7 +11,7 @@ category: SSO & SLO
 There are potentially many active application sessions during a CAS single sign-on session, and the distinction between
 logout and single logout is based on the number of sessions that are ended upon a _logout_ operation. 
 
-<div class="alert alert-info"><strong>Protocol Support</strong><p>Note that SLO described here specifically deals with the semantics of the CAS protocol. All other available protocols in CAS may offer and behave differently when it comes to handling, receiving and publishing logout requests whether CAS is acting as an identity provider or service provider. SLO support for each protocol implementation may vary and you should always verify the extent of available functionality for each protocol implementation.</p></div>
+<div class="alert alert-info">:information_source: <strong>Protocol Support</strong><p>Note that SLO described here specifically deals with the semantics of the CAS protocol. All other available protocols in CAS may offer and behave differently when it comes to handling, receiving and publishing logout requests whether CAS is acting as an identity provider or service provider. SLO support for each protocol implementation may vary and you should always verify the extent of available functionality for each protocol implementation.</p></div>
 
 The scope of logout is determined by where the action takes place:
 
@@ -27,9 +27,6 @@ CAS is configured for SLO, it attempts to send logout messages to every applicat
 CAS during the SSO session. While this is a best-effort process, in many cases it works well and provides a consistent
 user experience by creating symmetry between login and logout.
 
-<div class="alert alert-info"><strong>SSO Sessions</strong><p>It is possible to review the current collection of active SSO sessions,
-and determine if CAS itself maintains an active SSO session. See <a href="../monitoring/Monitoring-Statistics.html">this page</a>.</p></div>
-
 ## CAS Logout
 
 Per the [CAS Protocol](../protocol/CAS-Protocol.html), the `/logout` endpoint is responsible for destroying the current SSO session.
@@ -37,8 +34,7 @@ Upon logout, it may also be desirable to redirect back to a service. This is con
 link via the `service` parameter. The specified `service` must be registered in the service registry of CAS and enabled and
 CAS must be allowed to follow service redirects.
 
-{% include casproperties.html properties="cas.logout" %}
-
+{% include_cached casproperties.html properties="cas.logout" %}
 
 ## Single Logout (SLO)
 
@@ -47,7 +43,7 @@ invalidate client application sessions in addition to its own SSO session.
 Whenever a ticket-granting ticket is explicitly expired, the logout protocol will be initiated. Clients that do not support the
 logout protocol may notice extra requests in their access logs that appear not to do anything.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Single Logout is turned on by default.</p></div>
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>Single Logout is turned on by default.</p></div>
 
 When a CAS session ends, it notifies each of the services that the SSO session is no longer valid, and that relying parties
 need to invalidate their own session. Remember that the callback submitted to each CAS-protected application is 
@@ -59,7 +55,7 @@ contacted, and this may disrupt user experience negatively if those applications
 As an example, if user has logged into a portal application and an email application, logging out of one through SLO will
 also destroy the user session in the other which could mean data loss if the application is not carefully managing its session and user activity.
 
-{% include casproperties.html properties="cas.slo" %}
+{% include_cached casproperties.html properties="cas.slo" %}
 
 ### Back Channel
 
@@ -74,7 +70,7 @@ A sample back channel SLO message:
     ID="[RANDOM ID]"
     Version="2.0"
     IssueInstant="[CURRENT DATE/TIME]">
-    <saml:NameID>@NOT_USED@</saml:NameID>
+    <saml:NameID>[PRINCIPAL IDENTIFIER]</saml:NameID>
     <samlp:SessionIndex>[SESSION IDENTIFIER]</samlp:SessionIndex>
 </samlp:LogoutRequest>
 ```
@@ -84,7 +80,7 @@ A sample back channel SLO message:
 CAS issues asynchronous AJAX `GET` logout requests via `JSONP` to authenticated services.
 The expected behaviour of the CAS client is to invalidate the application web session. 
 
-<div class="alert alert-warning"><strong>Usage Warning</strong><p>Front channel logout may not be available for all CAS clients. Ensure your CAS client does support this behavior before trying it out.</p></div>
+<div class="alert alert-warning">:warning: <strong>Usage Warning</strong><p>Front channel logout may not be available for all CAS clients. Ensure your CAS client does support this behavior before trying it out.</p></div>
 
 A sample front channel SLO request submitted by CAS resembles the following format:
 
@@ -117,7 +113,7 @@ Sample configuration follows:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
@@ -138,7 +134,7 @@ To configure a service specific endpoint, try the following example:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "testId",
   "name" : "testId",
   "id" : 1,
@@ -157,7 +153,8 @@ This behavior can be modified via CAS settings.
 In order to better understand the SSO session management of CAS and how it regards application sessions,
 one important note is to be first and foremost considered:
 
-<div class="alert alert-info"><strong>CAS is NOT a session manager</strong><p>Application session is the responsibility of the application.</p></div>
+<div class="alert alert-info">:information_source: <strong>CAS is NOT a session manager!</strong>
+<p>Application session is the responsibility of the application.</p></div>
 
 CAS wants to maintain and control the SSO session in the form of
 the `TicketGrantingTicket` and a TGT id which is shared between the

@@ -17,10 +17,10 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("SAML")
-public class SamlIdPEntityIdAuthenticationServiceSelectionStrategyTests {
+@Tag("SAML2")
+class SamlIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() throws Throwable {
         val servicesManager = mock(ServicesManager.class);
         val factory = new WebApplicationServiceFactory();
         val strategy = new SamlIdPEntityIdAuthenticationServiceSelectionStrategy(servicesManager, factory, "http://localhost:8080/cas");

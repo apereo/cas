@@ -1,7 +1,25 @@
 {
   "dependencies": "passwordless-webflow",
+  "conditions": {
+    "docker": "true"
+  },
+
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    
     "--cas.service-registry.core.init-from-json=true",
-    "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/passwordless-login/accounts.json"
-  ]
+    "--logging.level.org.apereo.cas=info",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.authn.passwordless.tokens.mail.html=false",
+    "--cas.authn.passwordless.tokens.mail.text=${token}",
+    "--cas.authn.passwordless.tokens.mail.from=casuser@apereo.org",
+    "--cas.authn.passwordless.tokens.mail.subject=Passwordless AuthN",
+    
+    "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
+  ],
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
 }

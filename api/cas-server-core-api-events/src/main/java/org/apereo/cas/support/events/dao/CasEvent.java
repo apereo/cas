@@ -4,21 +4,25 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.JoinColumn;
-import javax.persistence.MapKeyColumn;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,6 +38,7 @@ import java.util.Map;
 @Getter
 @Setter
 @AllArgsConstructor
+@Accessors(chain = true)
 public class CasEvent implements Serializable {
 
     /**
@@ -81,7 +86,10 @@ public class CasEvent implements Serializable {
      */
     public static final String FIELD_GEO_TIMESTAMP = "geoTimestamp";
 
+    @Serial
     private static final long serialVersionUID = -4206712375316470417L;
+
+    private static final String FIELD_DEVICE_FINGERPRINT = "deviceFingerprint";
 
     @Id
     @JsonProperty
@@ -107,9 +115,6 @@ public class CasEvent implements Serializable {
     @CollectionTable(name = "events_properties", joinColumns = @JoinColumn(name = "eventId"))
     private Map<String, String> properties = new HashMap<>(0);
 
-    /**
-     * Instantiates a new CAS event.
-     */
     public CasEvent() {
         this.id = System.currentTimeMillis();
     }
@@ -118,45 +123,50 @@ public class CasEvent implements Serializable {
      * Put timestamp.
      *
      * @param time the time
+     * @return the cas event
      */
-    public void putTimestamp(final Long time) {
-        put(FIELD_TIMESTAMP, time.toString());
+    public CasEvent putTimestamp(final Long time) {
+        return put(FIELD_TIMESTAMP, time.toString());
     }
 
     /**
      * Put id.
      *
      * @param eventId the id
+     * @return the cas event
      */
-    public void putEventId(final String eventId) {
-        put(FIELD_EVENT_ID, eventId);
+    public CasEvent putEventId(final String eventId) {
+        return put(FIELD_EVENT_ID, eventId);
     }
 
     /**
      * Put client ip.
      *
      * @param loc the loc
+     * @return the cas event
      */
-    public void putClientIpAddress(final String loc) {
-        put(FIELD_CLIENT_IP, loc);
+    public CasEvent putClientIpAddress(final String loc) {
+        return put(FIELD_CLIENT_IP, loc);
     }
 
     /**
      * Put server ip.
      *
      * @param loc the loc
+     * @return the cas event
      */
-    public void putServerIpAddress(final String loc) {
-        put(FIELD_SERVER_IP, loc);
+    public CasEvent putServerIpAddress(final String loc) {
+        return put(FIELD_SERVER_IP, loc);
     }
 
     /**
      * Put agent.
      *
      * @param dev the dev
+     * @return the cas event
      */
-    public void putAgent(final String dev) {
-        put(FIELD_AGENT, dev);
+    public CasEvent putAgent(final String dev) {
+        return put(FIELD_AGENT, dev);
     }
 
     @JsonIgnore
@@ -189,13 +199,16 @@ public class CasEvent implements Serializable {
      *
      * @param key   the key
      * @param value the value
+     * @return the cas event
      */
-    public void put(final String key, final String value) {
+    @CanIgnoreReturnValue
+    public CasEvent put(final String key, final String value) {
         if (StringUtils.isBlank(value)) {
             this.properties.remove(key);
         } else {
             this.properties.put(key, value);
         }
+        return this;
     }
 
     /**
@@ -212,12 +225,34 @@ public class CasEvent implements Serializable {
      * Put geo location.
      *
      * @param location the location
+     * @return the cas event
      */
-    public void putGeoLocation(final GeoLocationRequest location) {
+    @CanIgnoreReturnValue
+    public CasEvent putGeoLocation(final GeoLocationRequest location) {
         putGeoAccuracy(location.getAccuracy());
         putGeoLatitude(location.getLatitude());
         putGeoLongitude(location.getLongitude());
         putGeoTimestamp(location.getTimestamp());
+        return this;
+    }
+
+    /**
+     * Put device fingerprint into cas event.
+     *
+     * @param value the value
+     * @return the cas event
+     */
+    public CasEvent putDeviceFingerprint(final String value) {
+        return put(FIELD_DEVICE_FINGERPRINT, value);
+    }
+
+    /**
+     * Gets device fingerprint.
+     *
+     * @return the device fingerprint
+     */
+    public String getDeviceFingerprint() {
+        return get(FIELD_DEVICE_FINGERPRINT);
     }
 
     /**
@@ -234,40 +269,22 @@ public class CasEvent implements Serializable {
         request.setLatitude(get(FIELD_GEO_LATITUDE));
         return request;
     }
-
-    /**
-     * Put geo latitude.
-     *
-     * @param s the s
-     */
-    private void putGeoLatitude(final String s) {
-        put(FIELD_GEO_LATITUDE, s);
+    
+    private CasEvent putGeoLatitude(final String s) {
+        return put(FIELD_GEO_LATITUDE, s);
     }
 
-    /**
-     * Put geo longitude.
-     *
-     * @param s the longitude
-     */
-    private void putGeoLongitude(final String s) {
-        put(FIELD_GEO_LONGITUDE, s);
+
+    private CasEvent putGeoLongitude(final String s) {
+        return put(FIELD_GEO_LONGITUDE, s);
     }
 
-    /**
-     * Put geo accuracy.
-     *
-     * @param s the accuracy
-     */
-    private void putGeoAccuracy(final String s) {
-        put(FIELD_GEO_ACCURACY, s);
+
+    private CasEvent putGeoAccuracy(final String s) {
+        return put(FIELD_GEO_ACCURACY, s);
     }
 
-    /**
-     * Put geo timestamp.
-     *
-     * @param s the timestamp
-     */
-    private void putGeoTimestamp(final String s) {
-        put(FIELD_GEO_TIMESTAMP, s);
+    private CasEvent putGeoTimestamp(final String s) {
+        return put(FIELD_GEO_TIMESTAMP, s);
     }
 }

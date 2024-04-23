@@ -1,22 +1,30 @@
 package org.apereo.cas.oidc.jwks.generator;
 
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeyStoreUtils;
-import org.apereo.cas.oidc.jwks.OidcJsonWebKeystoreGeneratorService;
+import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.io.FileWatcherService;
+import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
-import org.jose4j.jwk.PublicJsonWebKey;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.annotation.Order;
+import org.springframework.core.io.AbstractResource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-
+import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * This is {@link OidcDefaultJsonWebKeystoreGeneratorService}.
@@ -26,47 +34,95 @@ import java.nio.charset.StandardCharsets;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKeystoreGeneratorService {
+@Order
+public class OidcDefaultJsonWebKeystoreGeneratorService implements OidcJsonWebKeystoreGeneratorService, DisposableBean {
 
     private final OidcProperties oidcProperties;
 
-    @SneakyThrows
+    private final ConfigurableApplicationContext applicationContext;
+
+    private WatcherService resourceWatcherService;
+
     @Override
-    public Resource generate() {
-        val resolve = SpringExpressionLanguageValueResolver.getInstance()
-            .resolve(oidcProperties.getJwks().getJwksFile());
-        val resource = ResourceUtils.getRawResourceFrom(resolve);
-        return generate(resource);
+    public void destroy() {
+        FunctionUtils.doIfNotNull(resourceWatcherService, WatcherService::close);
     }
 
-    /**
-     * Generate.
-     *
-     * @param file the file
-     * @return the resource
-     */
-    @SneakyThrows
-    protected Resource generate(final Resource file) {
+    @Override
+    public Optional<Resource> find() throws Exception {
+        val resource = determineJsonWebKeystoreResource();
+        return Optional.ofNullable(ResourceUtils.doesResourceExist(resource) ? resource : null);
+    }
+
+    @Override
+    public JsonWebKeySet store(final JsonWebKeySet jsonWebKeySet) throws Exception {
+        val resource = determineJsonWebKeystoreResource();
+        if (ResourceUtils.isFile(resource)) {
+            val data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
+            val location = resource.getFile();
+            FileUtils.write(location, data, StandardCharsets.UTF_8);
+            LOGGER.debug("Generated JSON web keystore at [{}]", location);
+        }
+        return jsonWebKeySet;
+    }
+
+    @Override
+    public Resource generate() throws Exception {
+        val resource = determineJsonWebKeystoreResource();
+        val isWatcherEnabled = oidcProperties.getJwks().getFileSystem().isWatcherEnabled();
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        if (ResourceUtils.isFile(resource) && isWatcherEnabled) {
+            if (resourceWatcherService == null) {
+                resourceWatcherService = new FileWatcherService(resource.getFile(),
+                    file -> new Consumer<File>() {
+                        @Override
+                        public void accept(final File file) {
+                            FunctionUtils.doUnchecked(__ -> {
+                                if (applicationContext.isActive()) {
+                                    LOGGER.info("Publishing event to broadcast change in [{}]", file);
+                                    applicationContext.publishEvent(new OidcJsonWebKeystoreModifiedEvent(this, file, clientInfo));
+                                }
+                            });
+                        }
+                    });
+                resourceWatcherService.start(resource.getFilename());
+            }
+        }
+        val resultingResource = generate(resource);
+        applicationContext.publishEvent(new OidcJsonWebKeystoreGeneratedEvent(this, resultingResource, clientInfo));
+        return resultingResource;
+    }
+
+    protected Resource generate(final Resource file) throws Exception {
         if (ResourceUtils.doesResourceExist(file)) {
-            LOGGER.debug("Located JSON web keystore at [{}]", file);
+            LOGGER.trace("Located JSON web keystore at [{}]", file);
             return file;
         }
-        val jwk = generateJsonWebKey();
-        val data = new JsonWebKeySet(jwk).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
-        val location = file.getFile();
-        FileUtils.write(location, data, StandardCharsets.UTF_8);
-        LOGGER.debug("Generated JSON web keystore at [{}]", location);
+        val jsonWebKeySet = OidcJsonWebKeystoreGeneratorService.generateJsonWebKeySet(oidcProperties);
+        store(jsonWebKeySet);
         return file;
     }
 
-    /**
-     * Generate json web key public json web key.
-     *
-     * @return the public json web key
-     */
-    @SneakyThrows
-    protected PublicJsonWebKey generateJsonWebKey() {
-        val jwks = oidcProperties.getJwks();
-        return OidcJsonWebKeyStoreUtils.generateJsonWebKey(jwks.getJwksType(), jwks.getJwksKeySize());
+
+    protected AbstractResource determineJsonWebKeystoreResource() throws Exception {
+        val file = SpringExpressionLanguageValueResolver.getInstance()
+            .resolve(oidcProperties.getJwks().getFileSystem().getJwksFile());
+        try {
+            val jsonKeys = new JsonWebKeySet(file).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
+            return new ByteArrayResource(jsonKeys.getBytes(StandardCharsets.UTF_8), "OpenID Connect Keystore");
+        } catch (final Exception e) {
+            LOGGER.debug("Given resource [{}] cannot be parsed as a raw JSON web keystore", file);
+            LOGGER.trace(e.getMessage(), e);
+            val resource = ResourceUtils.getRawResourceFrom(file);
+            if (ResourceUtils.doesResourceExist(file)) {
+                val jwks = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+                if (CasConfigurationJasyptCipherExecutor.isValueEncrypted(jwks)) {
+                    val cipher = new CasConfigurationJasyptCipherExecutor(applicationContext.getEnvironment());
+                    return new ByteArrayResource(cipher.decryptValue(jwks).getBytes(StandardCharsets.UTF_8));
+                }
+            }
+            return resource;
+        }
     }
+
 }

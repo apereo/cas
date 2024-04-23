@@ -1,9 +1,8 @@
 package org.apereo.cas.aws;
 
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -31,11 +30,7 @@ import java.util.function.Function;
  * @since 5.3.0
  */
 @Slf4j
-@RequiredArgsConstructor
-@Getter
-public class ChainingAWSCredentialsProvider {
-    private final List<AwsCredentialsProvider> chain;
-
+public record ChainingAWSCredentialsProvider(List<AwsCredentialsProvider> chain) {
     /**
      * Gets instance.
      *
@@ -70,9 +65,7 @@ public class ChainingAWSCredentialsProvider {
                                                      final String profilePath, final String profileName) {
 
         LOGGER.debug("Attempting to locate AWS credentials...");
-
         val chain = new ArrayList<AwsCredentialsProvider>();
-
         addProviderToChain(nothing -> {
             chain.add(WebIdentityTokenFileCredentialsProvider.create());
             return null;
@@ -81,7 +74,7 @@ public class ChainingAWSCredentialsProvider {
         chain.add(InstanceProfileCredentialsProvider.create());
 
         if (StringUtils.isNotBlank(profilePath) && StringUtils.isNotBlank(profileName)) {
-            addProviderToChain(nothing -> {
+            addProviderToChain(__ -> {
                 chain.add(ProfileCredentialsProvider.builder()
                     .profileName(profileName)
                     .profileFile(ProfileFile.builder().content(Path.of(profilePath)).build())
@@ -89,30 +82,31 @@ public class ChainingAWSCredentialsProvider {
                 return null;
             });
         }
-        addProviderToChain(nothing -> {
+        addProviderToChain(__ -> {
             chain.add(SystemPropertyCredentialsProvider.create());
             return null;
         });
 
-        addProviderToChain(nothing -> {
+        addProviderToChain(__ -> {
             chain.add(EnvironmentVariableCredentialsProvider.create());
             return null;
         });
 
         if (StringUtils.isNotBlank(credentialAccessKey) && StringUtils.isNotBlank(credentialSecretKey)) {
-            addProviderToChain(nothing -> {
-                val credentials = AwsBasicCredentials.create(credentialAccessKey, credentialSecretKey);
+            addProviderToChain(__ -> {
+                val resolver = SpringExpressionLanguageValueResolver.getInstance();
+                val credentials = AwsBasicCredentials.create(resolver.resolve(credentialAccessKey), resolver.resolve(credentialSecretKey));
                 chain.add(StaticCredentialsProvider.create(credentials));
                 return null;
             });
         }
 
-        addProviderToChain(nothing -> {
+        addProviderToChain(__ -> {
             chain.add(ContainerCredentialsProvider.builder().build());
             return null;
         });
 
-        addProviderToChain(nothing -> {
+        addProviderToChain(__ -> {
             chain.add(InstanceProfileCredentialsProvider.builder().build());
             return null;
         });

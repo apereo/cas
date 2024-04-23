@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OidcClientRegistrationResponse implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1436206039117219598L;
 
     @JsonProperty("jwks")
@@ -62,13 +64,13 @@ public class OidcClientRegistrationResponse implements Serializable {
     private List<String> redirectUris = new ArrayList<>(0);
 
     @JsonProperty("userinfo_signed_response_alg")
-    private String userInfoSignedReponseAlg;
+    private String userInfoSignedResponseAlg;
 
     @JsonProperty("userinfo_encrypted_response_alg")
-    private String userInfoEncryptedReponseAlg;
+    private String userInfoEncryptedResponseAlg;
 
     @JsonProperty("userinfo_encrypted_response_enc")
-    private String userInfoEncryptedReponseEncoding;
+    private String userInfoEncryptedResponseEncoding;
 
     @JsonProperty("contacts")
     private List<String> contacts = new ArrayList<>(0);
@@ -84,4 +86,10 @@ public class OidcClientRegistrationResponse implements Serializable {
 
     @JsonProperty("registration_client_uri")
     private String registrationClientUri;
+    
+    @JsonProperty("client_secret_expires_at")
+    private long clientSecretExpiresAt;
+    
+    @JsonProperty("client_id_issued_at")
+    private long clientIdIssuedAt;
 }

@@ -8,8 +8,7 @@ category: Protocols
 
 # Metadata Query Protocol - SAML2 Metadata Management
 
-CAS also supports the [Metadata Query Protocol](https://spaces.internet2.edu/display/InCFederation/Metadata+Query+Protocol),
-also known as `MDQ`, which is a REST-like API for requesting and receiving
+CAS also supports the Metadata Query Protocol, also known as `MDQ`, which is a REST-like API for requesting and receiving
 arbitrary metadata. In order to configure a CAS SAML service to retrieve its
 metadata from a Metadata query server, the metadata location must be configured to point to the query server instance.
 
@@ -27,6 +26,6 @@ MDQ may be configured using the below snippet as an example:
 ```
 
 ...where `{0}` serves as an entityID placeholder for which metadata is to be queried. The placeholder
-is dynamically processed and replaced by CAS at runtime.
+is dynamically processed and replaced by CAS at runtime. Multiple locations may be comma-separated.
 
-{% include casproperties.html properties="cas.authn.saml-idp.metadata.mdq" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.mdq" %}

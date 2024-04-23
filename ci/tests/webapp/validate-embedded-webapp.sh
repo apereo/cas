@@ -20,6 +20,7 @@ management.health.diskSpace.enabled=true
 management.endpoint.env.enabled=true
 management.endpoint.loggers.enabled=true
 management.health.memoryHealthIndicator.enabled=true
+spring.main.lazy-initialization=false
 EOF
 cat ${configDir}/cas.properties
 }
@@ -59,12 +60,17 @@ testUrl() {
   fi
 }
 
+echo "Building CAS server web application with ${webAppServerType}"
 ./gradlew :webapp:cas-server-webapp-"${webAppServerType}":build \
   -DskipNestedConfigMetadataGen=true -x check -x javadoc \
-  --no-daemon --build-cache --configure-on-demand --parallel
+  --no-configuration-cache --no-daemon --build-cache --configure-on-demand --parallel
+retVal=$?
+if [[ ${retVal} -ne 0 ]]; then
+  exit $retVal
+fi
 
-mv webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas-server-webapp-"${webAppServerType}"-*.war \
-  webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war
+mv webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas-server-webapp-"${webAppServerType}"-*-SNAPSHOT.war \
+webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war
 
 dname="${dname:-CN=cas.example.org,OU=Example,OU=Org,C=US}"
 subjectAltName="${subjectAltName:-dns:example.org,dns:localhost,ip:127.0.0.1}"
@@ -82,7 +88,7 @@ createConfig ${configDir}
 
 cmd="java -jar webapp/cas-server-webapp-${webAppServerType}/build/libs/cas.war \\
   --server.ssl.key-store=${keystore} --cas.standalone.configurationDirectory=${configDir}"
-exec $cmd > ${casOutput} 2>&1 &
+exec $cmd  &
 pid=$!
 echo "Launched CAS with pid ${pid}. Waiting for CAS server to come online..."
 sleep 60

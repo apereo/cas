@@ -14,7 +14,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.apereo.inspektr.audit.annotation.Audit;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link DefaultAuthenticationRiskMitigator}.
@@ -32,7 +32,7 @@ public class DefaultAuthenticationRiskMitigator implements AuthenticationRiskMit
         resourceResolverName = AuditResourceResolvers.ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER)
     @Override
     public AuthenticationRiskContingencyResponse mitigate(final Authentication authentication, final RegisteredService service,
-                                                          final AuthenticationRiskScore score, final HttpServletRequest request) {
+                                                          final AuthenticationRiskScore score, final HttpServletRequest request) throws Throwable {
         return this.contingencyPlan.execute(authentication, service, score, request);
     }
 }

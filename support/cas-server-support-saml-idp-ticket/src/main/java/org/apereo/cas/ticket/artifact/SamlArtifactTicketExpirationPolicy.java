@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link SamlArtifactTicketExpirationPolicy}.
  *
@@ -19,10 +21,13 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class SamlArtifactTicketExpirationPolicy extends HardTimeoutExpirationPolicy {
 
+    @Serial
     private static final long serialVersionUID = -6574724814970233926L;
 
     @JsonCreator
-    public SamlArtifactTicketExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds) {
+    public SamlArtifactTicketExpirationPolicy(
+        @JsonProperty("timeToLive")
+        final long timeToKillInSeconds) {
         super(timeToKillInSeconds);
     }
 }

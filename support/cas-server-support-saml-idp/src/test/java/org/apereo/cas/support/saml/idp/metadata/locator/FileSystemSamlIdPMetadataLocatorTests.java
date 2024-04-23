@@ -3,14 +3,17 @@ package org.apereo.cas.support.saml.idp.metadata.locator;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
+import java.io.File;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link FileSystemSamlIdPMetadataLocatorTests}.
@@ -18,15 +21,21 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
+@Tag("SAMLMetadata")
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
-    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata"
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata72"
 })
-public class FileSystemSamlIdPMetadataLocatorTests extends BaseSamlIdPConfigurationTests {
+class FileSystemSamlIdPMetadataLocatorTests extends BaseSamlIdPConfigurationTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyUnknownDirectory() throws Throwable {
+        val locator = new FileSystemSamlIdPMetadataLocator(new File("/#**??#"), mock(Cache.class));
+        assertThrows(IllegalArgumentException.class, locator::initialize);
+    }
+
+    @Test
+    void verifyOperation() throws Throwable {
         samlIdPMetadataLocator.initialize();
         assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
@@ -38,7 +47,7 @@ public class FileSystemSamlIdPMetadataLocatorTests extends BaseSamlIdPConfigurat
     }
 
     @Test
-    public void verifyService() {
+    void verifyService() throws Throwable {
         val service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);

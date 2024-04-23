@@ -2,8 +2,8 @@ package org.apereo.cas.logging;
 
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -23,6 +23,7 @@ import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
 import software.amazon.awssdk.services.sqs.model.MessageAttributeValue;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
  */
 @Plugin(name = "SQSAppender", category = "Core", elementType = "appender", printObject = true)
 public class SQSAppender extends AbstractAppender implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1144758913028847477L;
 
     private final SqsAsyncClient sqsAsyncClient;
@@ -48,7 +50,6 @@ public class SQSAppender extends AbstractAppender implements Serializable {
 
     private String queueUrl;
 
-    @SneakyThrows
     public SQSAppender(final String name,
                        final Layout<Serializable> layout,
                        final String credentialAccessKey,
@@ -63,7 +64,7 @@ public class SQSAppender extends AbstractAppender implements Serializable {
 
         val builder = SqsAsyncClient.builder();
         if (StringUtils.isNotBlank(endpoint)) {
-            builder.endpointOverride(new URI(endpoint));
+            builder.endpointOverride(FunctionUtils.doUnchecked(() -> new URI(endpoint)));
         }
         builder.region(Region.of(awsLogRegionName));
         builder.credentialsProvider(ChainingAWSCredentialsProvider.getInstance(credentialAccessKey, credentialSecretKey));
@@ -88,14 +89,23 @@ public class SQSAppender extends AbstractAppender implements Serializable {
      * @return the sqs appender
      */
     @PluginFactory
-    public static SQSAppender createAppender(@PluginAttribute("name") final String name,
-                                             @PluginAttribute(value = "credentialAccessKey", sensitive = true) final String credentialAccessKey,
-                                             @PluginAttribute(value = "credentialSecretKey", sensitive = true) final String credentialSecretKey,
-                                             @PluginAttribute("region") final String region,
-                                             @PluginAttribute("endpoint") final String endpoint,
-                                             @PluginAttribute("queueName") final String queueName,
-                                             @PluginAttribute("queueTags") final String queueTags,
-                                             @PluginElement("Layout") final Layout<Serializable> layout) {
+    public static SQSAppender createAppender(
+        @PluginAttribute("name")
+        final String name,
+        @PluginAttribute(value = "credentialAccessKey", sensitive = true)
+        final String credentialAccessKey,
+        @PluginAttribute(value = "credentialSecretKey", sensitive = true)
+        final String credentialSecretKey,
+        @PluginAttribute("region")
+        final String region,
+        @PluginAttribute("endpoint")
+        final String endpoint,
+        @PluginAttribute("queueName")
+        final String queueName,
+        @PluginAttribute("queueTags")
+        final String queueTags,
+        @PluginElement("Layout")
+        final Layout<Serializable> layout) {
         return new SQSAppender(
             name,
             layout,
@@ -108,7 +118,6 @@ public class SQSAppender extends AbstractAppender implements Serializable {
     }
 
     @Override
-    @SneakyThrows
     public void start() {
         try {
             val request = GetQueueUrlRequest.builder()
@@ -122,14 +131,13 @@ public class SQSAppender extends AbstractAppender implements Serializable {
                 .queueName(this.queueName)
                 .tags(this.queueTags)
                 .build();
-            val response = sqsAsyncClient.createQueue(request).get();
+            val response = FunctionUtils.doUnchecked(() -> sqsAsyncClient.createQueue(request).get());
             this.queueUrl = response.queueUrl();
             LOGGER.debug("Created queue URL is [{}]", this.queueUrl);
         }
         super.start();
     }
 
-    @SneakyThrows
     @Override
     public void append(final LogEvent event) {
         val context = event.getContextData()
@@ -144,7 +152,7 @@ public class SQSAppender extends AbstractAppender implements Serializable {
             .messageBody(message)
             .messageAttributes(context)
             .build();
-        sqsAsyncClient.sendMessage(request).get();
+        FunctionUtils.doUnchecked(__ -> sqsAsyncClient.sendMessage(request).get());
     }
 
     @Override

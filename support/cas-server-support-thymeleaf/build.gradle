@@ -2,7 +2,7 @@ description = "Apereo CAS Support for Thymeleaf Template Engine"
 dependencies {
     api libraries.thymeleaf
 
-    implementation libraries.webjars
+    compileOnly project(":core:cas-server-core-services")
 
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-util-api")
@@ -13,6 +13,7 @@ dependencies {
     implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-validation-api")
 
+    implementation project(":support:cas-server-support-thymeleaf-core")
     implementation project(":support:cas-server-support-themes")
 
     testImplementation project(":core:cas-server-core")
@@ -27,6 +28,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
 
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
@@ -34,4 +37,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 }

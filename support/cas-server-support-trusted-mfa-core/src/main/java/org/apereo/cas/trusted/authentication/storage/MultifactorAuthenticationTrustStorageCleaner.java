@@ -1,16 +1,14 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
-import org.apereo.cas.util.LoggingUtils;
-
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.thread.Cleanable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 /**
  * This is {@link MultifactorAuthenticationTrustStorageCleaner}.
@@ -18,31 +16,21 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement(proxyTargetClass = false)
 @Transactional(transactionManager = "transactionManagerMfaAuthnTrust")
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class MultifactorAuthenticationTrustStorageCleaner {
-    private final TrustedDevicesMultifactorProperties trustedProperties;
+public class MultifactorAuthenticationTrustStorageCleaner implements Cleanable {
     private final MultifactorAuthenticationTrustStorage storage;
 
-    /**
-     * Clean up expired records.
-     */
+    @Override
     @Scheduled(initialDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.start-delay:PT10S}",
         fixedDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.repeat-interval:PT60S}")
     public void clean() {
-        if (!trustedProperties.getCleaner().getSchedule().isEnabled()) {
-            LOGGER.debug("[{}] is disabled; expired trusted authentication records will not be removed automatically", getClass().getName());
-        } else {
-            try {
-                LOGGER.trace("Proceeding to clean up expired trusted authentication records...");
-                SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
-                this.storage.remove();
-            } catch (final Exception e) {
-                LoggingUtils.error(LOGGER, e);
-            }
-        }
+        FunctionUtils.doAndHandle(__ -> {
+            LOGGER.trace("Proceeding to clean up expired trusted authentication records...");
+            storage.remove();
+        });
     }
 }

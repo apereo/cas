@@ -2,14 +2,15 @@ package org.apereo.cas.web.view;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 
 import org.springframework.web.servlet.View;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
@@ -27,16 +28,17 @@ public class Cas30ResponseView extends Cas20ResponseView {
                              final View view,
                              final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
                              final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
-                             final CasProtocolAttributesRenderer attributesRenderer) {
+                             final CasProtocolAttributesRenderer attributesRenderer,
+                             final AttributeDefinitionStore attributeDefinitionStore) {
         super(successResponse, protocolAttributeEncoder, servicesManager, view,
-            authenticationAttributeReleasePolicy, serviceSelectionStrategy, attributesRenderer);
+            authenticationAttributeReleasePolicy, serviceSelectionStrategy, attributesRenderer, attributeDefinitionStore);
     }
 
     @Override
     protected void prepareMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
-                                            final HttpServletResponse response)
-        throws Exception {
+                                            final HttpServletResponse response) throws Exception {
         super.prepareMergedOutputModel(model, request, response);
         prepareCasResponseAttributesForViewModel(model);
     }
+    
 }

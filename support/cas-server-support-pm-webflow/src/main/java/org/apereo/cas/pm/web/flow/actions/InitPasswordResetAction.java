@@ -3,13 +3,13 @@ package org.apereo.cas.pm.web.flow.actions;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -21,15 +21,15 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class InitPasswordResetAction extends AbstractAction {
+public class InitPasswordResetAction extends BaseCasWebflowAction {
     private final PasswordManagementService passwordManagementService;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val token = PasswordManagementWebflowUtils.getPasswordResetToken(requestContext);
 
         if (StringUtils.isBlank(token)) {
-            LOGGER.error("Password reset token is missing");
+            LOGGER.debug("Password reset token is missing");
             return error();
         }
 
@@ -39,9 +39,9 @@ public class InitPasswordResetAction extends AbstractAction {
             return error();
         }
 
-        val c = new UsernamePasswordCredential();
-        c.setUsername(username);
-        WebUtils.putCredential(requestContext, c);
+        val credential = new UsernamePasswordCredential();
+        credential.setUsername(username);
+        WebUtils.putCredential(requestContext, credential);
         return success();
     }
 }

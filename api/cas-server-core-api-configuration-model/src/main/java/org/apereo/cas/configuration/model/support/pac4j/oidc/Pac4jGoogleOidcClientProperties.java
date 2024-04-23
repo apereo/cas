@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link Pac4jGoogleOidcClientProperties}.
  *
@@ -19,5 +21,10 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("Pac4jGoogleOidcClientProperties")
 public class Pac4jGoogleOidcClientProperties extends BasePac4jOidcClientProperties {
+    @Serial
     private static final long serialVersionUID = 3259382317533639638L;
+
+    public Pac4jGoogleOidcClientProperties() {
+        setDiscoveryUri("https://accounts.google.com/.well-known/openid-configuration");
+    }
 }

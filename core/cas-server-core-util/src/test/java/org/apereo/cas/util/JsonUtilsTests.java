@@ -21,26 +21,26 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Utility")
-public class JsonUtilsTests {
+class JsonUtilsTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    public void verifyRender() {
+    void verifyRender() throws Throwable {
         val response = new MockHttpServletResponse();
         JsonUtils.render(response);
         assertEquals(HttpStatus.OK.value(), response.getStatus());
     }
 
     @Test
-    public void verifyRenderException() {
+    void verifyRenderException() throws Throwable {
         val response = new MockHttpServletResponse();
         JsonUtils.renderException(new RuntimeException("error"), response);
         assertEquals(HttpStatus.BAD_REQUEST.value(), response.getStatus());
     }
 
     @Test
-    public void verifyRenderModel() throws Exception {
+    void verifyRenderModel() throws Throwable {
         val response = new MockHttpServletResponse();
         val model = Map.of("key", List.of("one", "two"));
         JsonUtils.render(model, response);

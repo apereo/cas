@@ -26,11 +26,6 @@ import java.util.Set;
 public class ByCredentialSourceAuthenticationHandlerResolver implements AuthenticationHandlerResolver {
 
     @Override
-    public boolean supports(final Set<AuthenticationHandler> handlers, final AuthenticationTransaction transaction) {
-        return transaction.hasCredentialOfType(UsernamePasswordCredential.class);
-    }
-
-    @Override
     public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers, final AuthenticationTransaction transaction) {
         val finalHandlers = new LinkedHashSet<AuthenticationHandler>(candidateHandlers.size());
         val upcs = transaction.getCredentialsOfType(UsernamePasswordCredential.class);
@@ -47,5 +42,10 @@ public class ByCredentialSourceAuthenticationHandlerResolver implements Authenti
             })
             .forEach(finalHandlers::add);
         return finalHandlers;
+    }
+
+    @Override
+    public boolean supports(final Set<AuthenticationHandler> handlers, final AuthenticationTransaction transaction) {
+        return transaction.hasCredentialOfType(UsernamePasswordCredential.class);
     }
 }

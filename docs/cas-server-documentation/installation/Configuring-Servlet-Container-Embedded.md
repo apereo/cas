@@ -14,8 +14,8 @@ You **DO NOT** need to, but can if you want to, configure and deploy to an exter
 
 ## Configuration
 
-{% include casproperties.html 
-thirdPartyStartsWith="server.port,server.ssl,server.servlet,server.max-http-header-size,server.use-forward-headers,server.connection-timeout" %}
+{% include_cached casproperties.html 
+thirdPartyStartsWith="server.port,server.ssl,server.servlet,server.use-forward-headers,server.connection-timeout" %}
 
 ## Execution
 
@@ -45,14 +45,10 @@ Note that running CAS as a standalone and fully executable web application
 is supported on most Linux and OS X distributions. 
 Other platforms such as Windows may require custom configuration.
 
-### Apache Tomcat
+The following embedded servlet containers are available:
 
-Please see [this guide](Configuring-Servlet-Container-Embedded-Tomcat.html).
-
-### Jetty
-
-Please see [this guide](Configuring-Servlet-Container-Embedded-Jetty.html).
-
-### Undertow
-
-Please see [this guide](Configuring-Servlet-Container-Embedded-Undertow.html).
+| Option        | Reference                                                                      |
+|---------------|--------------------------------------------------------------------------------|
+| Apache Tomcat | Please see [this guide](Configuring-Servlet-Container-Embedded-Tomcat.html).   |
+| Jetty         | Please see [this guide](Configuring-Servlet-Container-Embedded-Jetty.html).    |
+| Undertow      | Please see [this guide](Configuring-Servlet-Container-Embedded-Undertow.html). |

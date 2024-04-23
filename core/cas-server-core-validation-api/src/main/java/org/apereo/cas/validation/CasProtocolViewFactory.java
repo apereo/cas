@@ -13,6 +13,16 @@ import org.springframework.web.servlet.View;
 @FunctionalInterface
 public interface CasProtocolViewFactory {
     /**
+     * Bean name for the Thymeleaf view factory.
+     */
+    String BEAN_NAME_THYMELEAF_VIEW_FACTORY = "casProtocolThymeleafViewFactory";
+
+    /**
+     * Bean name for the Mustache view factory.
+     */
+    String BEAN_NAME_MUSTACHE_VIEW_FACTORY = "casProtocolMustacheViewFactory";
+
+    /**
      * Create view.
      *
      * @param applicationContext the application context

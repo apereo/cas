@@ -18,20 +18,20 @@ import java.util.Map;
  */
 @Slf4j
 public class OidcGroovyWebFingerUserInfoRepository implements OidcWebFingerUserInfoRepository, DisposableBean {
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final WatchableGroovyScriptResource watchableScript;
 
     public OidcGroovyWebFingerUserInfoRepository(final Resource resource) {
         this.watchableScript = new WatchableGroovyScriptResource(resource);
     }
 
     @Override
-    public Map<String, Object> findByEmailAddress(final String email) {
+    public Map<String, Object> findByEmailAddress(final String email) throws Throwable {
         val args = new Object[]{email, LOGGER};
         return watchableScript.execute("findByEmailAddress", Map.class, args);
     }
 
     @Override
-    public Map<String, Object> findByUsername(final String username) {
+    public Map<String, Object> findByUsername(final String username) throws Throwable {
         val args = new Object[]{username, LOGGER};
         return watchableScript.execute("findByUsername", Map.class, args);
     }

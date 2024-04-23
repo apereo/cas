@@ -1,18 +1,21 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,49 +24,87 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Tag("Groovy")
-public class GroovyRegisteredServiceUsernameProviderTests {
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "GroovyRegisteredServiceUsernameProviderTests.json");
+@Tag("GroovyServices")
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
+    CasCoreUtilAutoConfiguration.class
+})
+class GroovyRegisteredServiceUsernameProviderTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
-    public void verifyUsernameProvider() {
-        val p = new GroovyRegisteredServiceUsernameProvider();
-        p.setGroovyScript("file:///src/test/resources/uid.groovy");
-        val id = p.resolveUsername(RegisteredServiceTestUtils.getPrincipal(), RegisteredServiceTestUtils.getService(),
-            RegisteredServiceTestUtils.getRegisteredService());
-        assertEquals("test", id);
+    void verifyUsernameProvider() throws Throwable {
+        val provider = new GroovyRegisteredServiceUsernameProvider();
+        provider.setGroovyScript("classpath:uid.groovy");
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService())
+            .service(RegisteredServiceTestUtils.getService())
+            .principal(RegisteredServiceTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
+            .build();
+        val id = provider.resolveUsername(usernameContext);
+        assertEquals("fromscript", id);
     }
 
     @Test
-    public void verifyUsernameProviderInline() {
-        val p = new GroovyRegisteredServiceUsernameProvider();
-        p.setGroovyScript("groovy { return attributes['uid'] + '123456789' }");
-        var id = p.resolveUsername(RegisteredServiceTestUtils.getPrincipal("casuser",
-            CollectionUtils.wrap("uid", "CAS-System")), RegisteredServiceTestUtils.getService(),
-            RegisteredServiceTestUtils.getRegisteredService());
+    void verifyUsernameProviderInline() throws Throwable {
+        val provider = new GroovyRegisteredServiceUsernameProvider();
+        provider.setGroovyScript("groovy { return attributes['uid'] + '123456789' }");
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService())
+            .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
+            .principal(RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("uid", "CAS-System")))
+            .build();
+        val id = provider.resolveUsername(usernameContext);
         assertEquals("CAS-System123456789", id);
     }
 
     @Test
-    public void verifyUsernameProviderInlineAsList() {
-        val p = new GroovyRegisteredServiceUsernameProvider();
-        p.setGroovyScript("groovy { return attributes['uid'][0] + '123456789' }");
-        var id = p.resolveUsername(RegisteredServiceTestUtils.getPrincipal("casuser",
-            CollectionUtils.wrap("uid", List.of("CAS-System"))), RegisteredServiceTestUtils.getService(),
-            RegisteredServiceTestUtils.getRegisteredService());
+    void verifyUsernameProviderInlineAsList() throws Throwable {
+        val provider = new GroovyRegisteredServiceUsernameProvider();
+        provider.setGroovyScript("groovy { return attributes['uid'][0] + '123456789' }");
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService())
+            .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
+            .principal(RegisteredServiceTestUtils.getPrincipal("casuser", CollectionUtils.wrap("uid", List.of("CAS-System"))))
+            .build();
+        val id = provider.resolveUsername(usernameContext);
         assertEquals("CAS-System123456789", id);
     }
 
     @Test
-    public void verifySerializationToJson() throws IOException {
-        val p = new GroovyRegisteredServiceUsernameProvider();
-        p.setGroovyScript("groovy { return 'something' }");
-        p.setEncryptUsername(true);
-        p.setCanonicalizationMode("NONE");
-        MAPPER.writeValue(JSON_FILE, p);
-        val repositoryRead = MAPPER.readValue(JSON_FILE, GroovyRegisteredServiceUsernameProvider.class);
-        assertEquals(p, repositoryRead);
+    void verifySerializationToJson() throws IOException {
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
+        val provider = new GroovyRegisteredServiceUsernameProvider();
+        provider.setGroovyScript("groovy { return 'something' }");
+        provider.setEncryptUsername(true);
+        provider.setCanonicalizationMode("NONE");
+        MAPPER.writeValue(jsonFile, provider);
+        val repositoryRead = MAPPER.readValue(jsonFile, GroovyRegisteredServiceUsernameProvider.class);
+        assertEquals(provider, repositoryRead);
+    }
+
+    @Test
+    void verifyUsernameProviderInlineWithoutAttribute() throws Throwable {
+        val provider = new GroovyRegisteredServiceUsernameProvider();
+        provider.setGroovyScript("groovy { return attributes['unknown-attribute'][0] + '123456789' }");
+
+        val usernameContext = RegisteredServiceUsernameProviderContext.builder()
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService())
+            .service(RegisteredServiceTestUtils.getService())
+            .applicationContext(applicationContext)
+            .principal(RegisteredServiceTestUtils.getPrincipal("casuser"))
+            .build();
+        val id = provider.resolveUsername(usernameContext);
+        assertEquals("casuser", id);
     }
 }

@@ -1,7 +1,9 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -25,31 +27,38 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("SAML")
+@Tag("SAMLAttributes")
 @TestPropertySource(properties = {
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
-    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata5"
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata55"
 })
-public class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
+class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "EduPersonTargetedIdAttributeReleasePolicyTests.json");
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifyEduPersonTargetedId() {
+    void verifyEduPersonTargetedId() throws Throwable {
         val filter = new EduPersonTargetedIdAttributeReleasePolicy();
         filter.setSalt("OqmG80fEKBQt");
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
-        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser"),
-            CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"), registeredService);
+
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .applicationContext(applicationContext)
+            .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
+            .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
+            .build();
+        val attributes = filter.getAttributes(releasePolicyContext);
         assertTrue(attributes.containsKey(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID));
         assertEquals(List.of("bhb1if0QzFdkKSS5xkcNCALXtGE="),
             attributes.get(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID));
     }
 
     @Test
-    public void verifySerializationToJson() throws IOException {
+    void verifySerializationToJson() throws IOException {
         val filter = new EduPersonTargetedIdAttributeReleasePolicy();
         filter.setSalt("OqmG80fEKBQt");
         filter.setAttribute("something");
@@ -59,25 +68,46 @@ public class EduPersonTargetedIdAttributeReleasePolicyTests extends BaseSamlIdPC
     }
 
     @Test
-    public void verifyEduPersonTargetedIdViaInCommon() {
+    void verifyEduPersonTargetedIdViaInCommon() throws Throwable {
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
-
         val filter = new InCommonRSAttributeReleasePolicy();
         filter.setOrder(1);
-
         val filter2 = new EduPersonTargetedIdAttributeReleasePolicy();
         filter2.setSalt("OqmG80fEKBQt");
         filter2.setOrder(0);
-
         val chain = new ChainingAttributeReleasePolicy();
         chain.addPolicies(filter);
         chain.addPolicies(filter2);
+        chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
         registeredService.setAttributeReleasePolicy(chain);
-
-        val attributes = chain.getAttributes(CoreAuthenticationTestUtils.getPrincipal("casuser"),
-            CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"), registeredService);
-
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .applicationContext(applicationContext)
+            .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
+            .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
+            .build();
+        val attributes = chain.getAttributes(releasePolicyContext);
         assertEquals(List.of("bhb1if0QzFdkKSS5xkcNCALXtGE="),
             attributes.get(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID));
+    }
+
+    @Test
+    void verifyEduPersonTargetedIdDefinitions() throws Throwable {
+        val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
+        val policy = new EduPersonTargetedIdAttributeReleasePolicy();
+        policy.setSalt("OqmG80fEKBQt");
+        policy.setUseUniformResourceName(true);
+
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .applicationContext(applicationContext)
+            .service(CoreAuthenticationTestUtils.getService("https://sp.testshib.org/shibboleth-sp"))
+            .principal(CoreAuthenticationTestUtils.getPrincipal("casuser"))
+            .build();
+        var definitions = policy.determineRequestedAttributeDefinitions(context);
+        assertTrue(definitions.contains(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_URN_EDU_PERSON_TARGETED_ID));
+        policy.setUseUniformResourceName(false);
+        definitions = policy.determineRequestedAttributeDefinitions(context);
+        assertTrue(definitions.contains(EduPersonTargetedIdAttributeReleasePolicy.ATTRIBUTE_NAME_EDU_PERSON_TARGETED_ID));
     }
 }

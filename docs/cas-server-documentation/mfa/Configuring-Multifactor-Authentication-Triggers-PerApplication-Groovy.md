@@ -8,11 +8,29 @@ category: Multifactor Authentication
 
 # Groovy Per Application - Multifactor Authentication Triggers
 
-You may determine the multifactor authentication policy for a registered service using a Groovy script:
+You may determine the multifactor authentication policy for a registered service using a Groovy script. The parameters passed are as follows:
+
+| Parameter            | Description                                                                     |
+|----------------------|---------------------------------------------------------------------------------|
+| `registeredService`  | The object representing the corresponding service definition in the registry.   |
+| `authentication`     | The object representing the `Authentication` object.                            |
+| `httpRequest`        | The object representing the HTTP servlet request.                               |
+| `service`            | The object representing the service request, associated with this http request. |
+| `applicationContext` | The object representing the Spring application context.                         |
+| `logger`             | The object responsible for issuing log messages such as `logger.info(...)`.     |
+
+The expected outcome of the script is either `null` in case multifactor authentication should be skipped by this trigger,
+or the identifier of the multifactor provider that should be considered for activation.
+         
+{% tabs groovymfaperapp %}
+
+{% tab groovymfaperapp File %}
+
+The script may be defined in the service definition using its full path:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
   "id" : 100,
   "name": "test",
@@ -23,13 +41,28 @@ You may determine the multifactor authentication policy for a registered service
 }
 ``` 
 
-The script may also be embedded directly in the service definition, as such:
+The script itself may be designed as follows:
 
-you may determine the multifactor authentication policy for a registered service using a Groovy script:
+```groovy
+def run(final Object... args) {
+    def (authentication,registeredService,httpRequest,service,applicationContext,logger) = args
+    logger.debug("Determine mfa provider for ${registeredService.name} and ${authentication.principal.id}")
+    def memberOf = authentication.principal.attributes['memberOf'] as List
+    return memberOf.contains('CN=NEED-MFA') ? 'mfa-duo' : null
+}
+``` 
+
+The `script` attribute supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
+
+{% endtab %}
+
+{% tab groovymfaperapp Inline %}
+
+The script may be embedded directly in the service definition, as such:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "^(https|imaps)://.*",
   "id" : 100,
   "name": "test",
@@ -40,32 +73,6 @@ you may determine the multifactor authentication policy for a registered service
 }
 ```
 
-The script itself may be designed as follows:
+{% endtab %}
 
-```groovy
-def run(final Object... args) {
-    def authentication = args[0]
-    def registeredService = args[1]
-    def httpRequest = args[2]
-    def service = args[3]
-    def applicationContext = args[4]
-    def logger = args[5]
-
-    logger.debug("Determine mfa provider for ${registeredService} and ${authentication}")
-    return "mfa-duo"
-}
-```  
-
-The parameters passed are as follows:
-
-| Parameter             | Description
-|-----------------------|------------------------------------------------------------------------------------
-| `registeredService`   | The object representing the corresponding service definition in the registry.
-| `authentication`      |  The object representing the `Authentication` object.
-| `httpRequest`         | The object representing the HTTP servlet request.
-| `service`             | The object representing the service request, associated with this http request.
-| `applicationContext`  | The object representing the Spring application context.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.               
-
-The expected outcome of the script is either `null` in case multifactor authentication should be skipped by this trigger,
-or the identifier of the multifactor provider that should be considered for activation.
+{% endtabs %}

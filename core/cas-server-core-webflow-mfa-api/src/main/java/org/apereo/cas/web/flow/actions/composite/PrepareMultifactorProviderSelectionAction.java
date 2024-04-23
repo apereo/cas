@@ -2,14 +2,13 @@ package org.apereo.cas.web.flow.actions.composite;
 
 import org.apereo.cas.authentication.ChainingMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.stream.Collectors;
 
 /**
@@ -18,12 +17,13 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-public class PrepareMultifactorProviderSelectionAction extends AbstractAction {
+public class PrepareMultifactorProviderSelectionAction extends BaseCasWebflowAction {
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val attributes = requestContext.getCurrentEvent().getAttributes();
 
         val registeredService = (RegisteredService) attributes.get(RegisteredService.class.getName());
+        val service = (Service) attributes.get(Service.class.getName());
         WebUtils.putRegisteredService(requestContext, registeredService);
 
         val mfaProvider = (ChainingMultifactorAuthenticationProvider)
@@ -34,9 +34,8 @@ public class PrepareMultifactorProviderSelectionAction extends AbstractAction {
 
         val mfaProviders = mfaProvider.getMultifactorAuthenticationProviders()
             .stream()
-            .filter(p -> p.isAvailable(registeredService)
-                && p.getBypassEvaluator().shouldMultifactorAuthenticationProviderExecute(
-                authn, registeredService, p, request))
+            .filter(provider -> provider.isAvailable(registeredService)
+                && provider.getBypassEvaluator().shouldMultifactorAuthenticationProviderExecute(authn, registeredService, provider, request, service))
             .map(MultifactorAuthenticationProvider::getId)
             .collect(Collectors.toList());
 

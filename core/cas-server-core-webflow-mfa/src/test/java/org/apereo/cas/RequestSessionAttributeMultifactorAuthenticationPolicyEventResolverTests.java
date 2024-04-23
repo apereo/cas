@@ -1,25 +1,23 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.binding.expression.support.LiteralExpression;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
-import org.springframework.webflow.test.MockRequestContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -29,17 +27,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("WebflowEvents")
-public class RequestSessionAttributeMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
+@Import(RequestSessionAttributeMultifactorAuthenticationPolicyEventResolverTests.RequestSessionMultifactorTestConfiguration.class)
+class RequestSessionAttributeMultifactorAuthenticationPolicyEventResolverTests extends BaseCasWebflowMultifactorAuthenticationTests {
     @Autowired
     @Qualifier("httpRequestAuthenticationPolicyWebflowEventResolver")
     private CasWebflowEventResolver requestSessionAttributeAuthenticationPolicyWebflowEventResolver;
 
     @Test
-    public void verifyOperation() {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
+    void verifyOperation() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
 
         val service = RegisteredServiceTestUtils.getRegisteredService();
         servicesManager.save(service);
@@ -55,10 +51,20 @@ public class RequestSessionAttributeMultifactorAuthenticationPolicyEventResolver
         context.getRootFlow().getGlobalTransitionSet().add(transition);
 
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        request.getSession(true).setAttribute(casProperties.getAuthn().getMfa().getTriggers().getHttp().getSessionAttribute(), TestMultifactorAuthenticationProvider.ID);
+        context.getHttpServletRequest().getSession(true).setAttribute(
+            casProperties.getAuthn().getMfa().getTriggers().getHttp().getSessionAttribute(),
+            TestMultifactorAuthenticationProvider.ID);
         results = requestSessionAttributeAuthenticationPolicyWebflowEventResolver.resolve(context);
         assertNotNull(results);
         assertEquals(1, results.size());
         assertEquals(TestMultifactorAuthenticationProvider.ID, results.iterator().next().getId());
+    }
+
+    @TestConfiguration(value = "RequestSessionMultifactorTestConfiguration", proxyBeanMethods = false)
+    static class RequestSessionMultifactorTestConfiguration {
+        @Bean
+        public MultifactorAuthenticationProvider dummyProvider() {
+            return new TestMultifactorAuthenticationProvider();
+        }
     }
 }

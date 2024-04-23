@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.jasypt.encryption.pbe.StandardPBEByteEncryptor;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("StandaloneConfigurationSecurityProperties")
 public class StandaloneConfigurationSecurityProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 8571848605614437022L;
 
     /**
@@ -32,7 +34,6 @@ public class StandaloneConfigurationSecurityProperties implements Serializable {
     /**
      * Security provider to use when deciphering settings.
      * Leave blank for Java, {@code BC} for BouncyCastle.
-     * This property can be set as a Java system property: {@code cas.standalone.configuration-security.provider}.
      */
     private String provider;
 
@@ -40,11 +41,10 @@ public class StandaloneConfigurationSecurityProperties implements Serializable {
      * Total number of iterations to use when deciphering settings.
      * Default value comes from Jasypt {@value StandardPBEByteEncryptor#DEFAULT_KEY_OBTENTION_ITERATIONS}
      */
-    private long iteration;
+    private long iterations;
 
     /**
      * Secret key/password to use when deciphering settings.
-     * This property can be set as a Java system property: {@code cas.standalone.configuration-security.psw}.
      */
     private String psw;
 

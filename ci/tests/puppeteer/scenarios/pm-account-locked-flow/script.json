@@ -1,0 +1,15 @@
+{
+  "dependencies": "pm-webflow,generic",
+
+  "properties": [
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    
+    "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+    "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/pwm.json",
+
+    "--cas.authn.accept.enabled=false",
+    "--cas.authn.pm.core.enabled=true"
+  ]
+}

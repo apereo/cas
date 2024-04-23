@@ -1,0 +1,12 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^http://localhost:9889/anything/undefined",
+  "name": "Undefined",
+  "id": 5,
+  "description": "Undefined Service",
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-yubikey" ] ],
+    "failureMode" : "UNDEFINED"
+  }
+}

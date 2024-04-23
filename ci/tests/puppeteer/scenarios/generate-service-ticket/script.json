@@ -1,6 +1,13 @@
 {
   "dependencies": "core",
+
   "properties": [
-    "--cas.service-registry.core.init-from-json=true"
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--logging.level.org.apereo.cas=info",
+    "--logging.level.org.thymeleaf=info"
   ]
 }

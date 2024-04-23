@@ -1,11 +1,22 @@
 description = "Apereo CAS FIDO2 WebAuthn Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "WebAuthN & FIDO2 Multifactor Authentication",
+            title: "WebAuthN Support",
+            aliases: ["webauthn", "fido2", "passkey", "fido"]
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-util")
+    api project(":api:cas-server-core-api-mfa")
 
     implementation libraries.webauthn
-
-    compileOnlyApi  project(":support:cas-server-support-trusted-mfa")
+    implementation libraries.springsecurityconfig
+    implementation libraries.springsecurityweb
+    
+    compileOnly project(":support:cas-server-support-trusted-mfa")
     
     implementation project(":support:cas-server-support-trusted-mfa-core")
     implementation project(":support:cas-server-support-webauthn-core")
@@ -26,6 +37,8 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-mfa-api")
     implementation project(":core:cas-server-core-webflow")
 
+    testImplementation libraries.springboottomcat
+
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-tickets")
@@ -33,8 +46,12 @@ dependencies {
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-notifications")
+
+    testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-webconfig")
     testImplementation project(":support:cas-server-support-trusted-mfa")
     testImplementation project(":support:cas-server-support-reports")
+    testImplementation project(":support:cas-server-support-actions")
 
     testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
@@ -45,5 +62,8 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-webflow-mfa-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow-mfa", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-audit-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-webconfig", configuration: "tests")
 }

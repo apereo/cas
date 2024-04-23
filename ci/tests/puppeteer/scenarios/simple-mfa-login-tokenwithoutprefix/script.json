@@ -1,0 +1,26 @@
+{
+  "dependencies": "simple-mfa,trusted-mfa",
+  "conditions": {
+    "docker": "true"
+  },
+
+  "properties": [
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.authn.mfa.simple.trusted-device-enabled=true",
+
+    "--cas.authn.mfa.simple.mail.html=false",
+    "--cas.authn.mfa.simple.mail.from=cas@example.com",
+    "--cas.authn.mfa.simple.mail.subject=Token",
+    "--cas.authn.mfa.simple.mail.text=${tokenWithoutPrefix}"
+  ],
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
+}

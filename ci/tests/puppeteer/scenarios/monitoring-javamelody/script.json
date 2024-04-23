@@ -1,0 +1,23 @@
+{
+  "dependencies": "javamelody",
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.schedule.repeat-interval=PT2S",
+    "--cas.service-registry.schedule.start-delay=PT2S",
+
+    "--cas.ticket.registry.cleaner.schedule.repeat-interval=PT2S",
+    "--cas.ticket.registry.cleaner.schedule.start-delay=PT2S",
+
+    "--spring.security.user.name=javamelody",
+    "--spring.security.user.password=M3ll0n",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+    "--logging.level.org.springframework.security=info"
+  ]
+}

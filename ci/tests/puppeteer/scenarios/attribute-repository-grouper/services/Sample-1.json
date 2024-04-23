@@ -1,0 +1,14 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/cas.*",
+  "name": "Sample",
+  "id": 1,
+  "description": "Github",
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "requiredAttributes" : {
+      "@class" : "java.util.HashMap",
+      "grouperGroups" : [ "java.util.HashSet", [ ".*grouperUiUserData.*" ] ]
+    }
+  }
+}

@@ -1,30 +1,51 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
-const url = require('url');
+
+const assert = require("assert");
+const cas = require("../../cas.js");
+
+async function startAuthFlow(page, username) {
+    await cas.log("Removing previous sessions and logging out");
+    await cas.gotoLogout(page);
+    await cas.log(`Starting authentication flow for ${username}`);
+    await cas.gotoLogin(page);
+    await cas.sleep(1000);
+    const pswd = await page.$("#password");
+    assert(pswd === null);
+    await cas.type(page, "#username", username);
+    await cas.pressEnter(page);
+    await cas.sleep(9000);
+    await cas.screenshot(page);
+    await cas.logPage(page);
+    const url = await page.url();
+    assert(url.startsWith("https://localhost:8444"));
+    await cas.sleep(1000);
+    await cas.loginWith(page);
+    await cas.sleep(9000);
+    await cas.logPage(page);
+    await cas.assertCookie(page);
+    await cas.assertInnerTextStartsWith(page, "#content div p", "You, casuser, have successfully logged in");
+
+    await cas.click(page, "#auth-tab");
+    await cas.sleep(1000);
+    await cas.type(page, "#attribute-tab-1 input[type=search]", "surrogate");
+    await cas.sleep(1000);
+    await cas.screenshot(page);
+
+    const surrogateEnabled = await page.$("#surrogateEnabled");
+    assert(surrogateEnabled === null);
+    const surrogatePrincipal = await page.$("#surrogatePrincipal");
+    assert(surrogatePrincipal === null);
+    const surrogateUser = await page.$("#surrogateUser");
+    assert(surrogateUser === null);
+    await cas.sleep(1000);
+}
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true
-    });
-    const page = await browser.newPage();
-    
-    await page.goto("https://localhost:8443/cas/login");
+    const browser = await cas.newBrowser(cas.browserOptions());
+    const page = await cas.newPage(browser);
 
-    // await page.waitForTimeout(5000)
+    await startAuthFlow(page, "casuser-server");
+    await startAuthFlow(page, "casuser-none");
+    await startAuthFlow(page, "casuser-client");
 
-    var pswd = await page.$('#password');
-    assert(pswd == null);
-
-    await page.type('#username', "casuser");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
-
-    // await page.waitForTimeout(5000)
-
-    const url = await page.url()
-    console.log(`Page url: ${url}`)
-    assert(url.startsWith("https://github.com/"))
-    
     await browser.close();
 })();

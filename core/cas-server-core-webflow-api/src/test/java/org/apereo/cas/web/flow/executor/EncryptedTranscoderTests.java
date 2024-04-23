@@ -18,7 +18,7 @@ import org.springframework.aop.framework.ProxyFactoryBean;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 6.1
  */
 @Tag("Webflow")
-public class EncryptedTranscoderTests {
+class EncryptedTranscoderTests {
 
     public static Stream<Arguments> getParameters() throws Exception {
         val ksFactory = new KeyStoreFactoryBean();
@@ -59,46 +59,46 @@ public class EncryptedTranscoderTests {
         return Stream.of(
             Arguments.arguments(transcoder1,
                 "Four score and seven years ago our forefathers brought forth upon this continent a "
-                    + "new nation conceived in liberty and dedicated to the proposition that all men "
-                    + "are created equal."),
+                + "new nation conceived in liberty and dedicated to the proposition that all men "
+                + "are created equal."),
             Arguments.arguments(transcoder2,
-                new URL("https://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&"
-                    + "q=1600+Pennsylvania+Avenue+Northwest+Washington,+DC+20500&aq=&"
-                    + "sll=38.897678,-77.036517&sspn=0.00835,0.007939&vpsrc=6&t=w&"
-                    + "g=1600+Pennsylvania+Avenue+Northwest+Washington,+DC+20500&ie=UTF8&hq=&"
-                    + "hnear=1600+Pennsylvania+Ave+NW,+Washington,+District+of+Columbia,+20500&"
-                    + "ll=38.898521,-77.036517&spn=0.00835,0.007939&z=17&iwloc=A"))
+                new URI("https://maps.google.com/maps?f=q&source=s_q&hl=en&geocode=&"
+                        + "q=1600+Pennsylvania+Avenue+Northwest+Washington,+DC+20500&aq=&"
+                        + "sll=38.897678,-77.036517&sspn=0.00835,0.007939&vpsrc=6&t=w&"
+                        + "g=1600+Pennsylvania+Avenue+Northwest+Washington,+DC+20500&ie=UTF8&hq=&"
+                        + "hnear=1600+Pennsylvania+Ave+NW,+Washington,+District+of+Columbia,+20500&"
+                        + "ll=38.898521,-77.036517&spn=0.00835,0.007939&z=17&iwloc=A").toURL())
         );
     }
 
     @ParameterizedTest
     @MethodSource("getParameters")
-    public void verifyEncodeDecode(final EncryptedTranscoder transcoder,
+    void verifyEncodeDecode(final EncryptedTranscoder transcoder,
                                    final Object encodable) throws Exception {
         val encoded = transcoder.encode(encodable);
         assertEquals(encodable, transcoder.decode(encoded));
     }
 
     @Test
-    public void verifyBadEncoding() throws Exception {
+    void verifyBadEncoding() throws Throwable {
         val encoder = new EncryptedTranscoder(mock(CipherBean.class));
         assertNotNull(encoder.encode(null));
     }
 
     @Test
-    public void verifyNotSerializable() throws Exception {
+    void verifyNotSerializable() throws Throwable {
         val encoder = new EncryptedTranscoder(mock(CipherBean.class));
         assertNull(encoder.encode(new Object()));
     }
 
     @Test
-    public void verifyBadDecoding() {
+    void verifyBadDecoding() throws Throwable {
         val encoder = new EncryptedTranscoder(mock(CipherBean.class));
         assertThrows(IOException.class, () -> encoder.decode(null));
     }
 
     @Test
-    public void verifyBadCipher() {
+    void verifyBadCipher() throws Throwable {
         val bean = mock(CipherBean.class);
         when(bean.decrypt(any())).thenThrow(IllegalArgumentException.class);
         when(bean.encrypt(any())).thenThrow(IllegalArgumentException.class);
@@ -108,7 +108,7 @@ public class EncryptedTranscoderTests {
     }
 
     @Test
-    public void verifyProxy() {
+    void verifyProxy() throws Throwable {
         val bean = mock(CipherBean.class);
         val factory = new ProxyFactoryBean();
         factory.setTargetClass(CipherBean.class);

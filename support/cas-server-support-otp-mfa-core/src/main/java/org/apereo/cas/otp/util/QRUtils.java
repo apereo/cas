@@ -7,7 +7,6 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import lombok.Cleanup;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 
@@ -32,7 +31,7 @@ public class QRUtils {
     /**
      * Large width size.
      */
-    public static final int WIDTH_LARGE = 250;
+    public static final int SIZE = 250;
 
     /**
      * Generate qr code.
@@ -41,9 +40,9 @@ public class QRUtils {
      * @param width  the width
      * @param height the height
      * @return the output in base64
+     * @throws Exception the exception
      */
-    @SneakyThrows
-    public static String generateQRCode(final String key, final int width, final int height) {
+    public static String generateQRCode(final String key, final int width, final int height) throws Exception {
         val hintMap = new EnumMap<>(EncodeHintType.class);
         hintMap.put(EncodeHintType.CHARACTER_SET, StandardCharsets.UTF_8.name());
         hintMap.put(EncodeHintType.MARGIN, 2);

@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.support.pac4j.oauth;
 
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jIdentifiableClientProperties;
-import org.apereo.cas.configuration.support.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -10,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,8 +24,9 @@ import java.util.Map;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("Pac4jOAuth20ClientProperties")
-public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientProperties implements CasFeatureModule {
+public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientProperties {
 
+    @Serial
     private static final long serialVersionUID = -1240711580664148382L;
 
     /**
@@ -47,14 +48,15 @@ public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientPropert
     private String profileUrl;
 
     /**
+     * Whether a state value should be generated
+     * when sending authentication requests to the provider.
+     */
+    private boolean withState;
+
+    /**
      * The scope requested from the identity provider.
      */
     private String scope;
-
-    /**
-     * Profile path portion of the profile endpoint of the provider.
-     */
-    private String profilePath;
 
     /**
      * Http method to use when asking for profile.
@@ -68,6 +70,15 @@ public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientPropert
 
     /**
      * Profile attributes to request and collect in form of key-value pairs.
+     * Key is the attribute name, and value is the mapped attribute name, if necessary.
+     * If remapping is not required, key and value should match.
+     * It's also possible to define values as {@code CONVERTER|mapped-attribute}.
+     * {@code CONVERTER} should be the attribute converter specified by its acceptable type
+     * and when acceptable, the converter attempts to transform the provided attribute value.
+     * Accepted converters are {@code Locale, Integer, Color, Date, Gender, Boolean, Long, String, Url}.
+     * CAS can also provide a special attribute converter that does the transformation and conversion
+     * based on an <i>inline groovy script</i>. This special groovy converter can be specified
+     * using this example syntax for the value, {@code groovy { return attribute + '-test'}|mapped-attribute}.
      */
     private Map<String, String> profileAttrs = new LinkedHashMap<>(1);
 
@@ -75,6 +86,11 @@ public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientPropert
      * Custom parameters in form of key-value pairs sent along in authZ requests, etc.
      */
     private Map<String, String> customParams = new LinkedHashMap<>(1);
+
+    /**
+     * The client authentication method: {@code basicAuth} (default) or {@code requestBody}.
+     */
+    private String clientAuthenticationMethod = "basicAuth";
 
     public Pac4jOAuth20ClientProperties() {
         setCallbackUrlType(CallbackUrlTypes.PATH_PARAMETER);

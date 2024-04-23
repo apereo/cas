@@ -1,0 +1,11 @@
+[
+  {
+    "accountId": "1",
+    "accountName": "ATP",
+    "authType": "local",
+    "id": 729,
+    "mfaType": "none",
+    "serviceId": "atp-web-prd-release",
+    "userName": "user_1"
+  }
+]

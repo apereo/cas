@@ -15,18 +15,18 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Tag("Authentication")
-public class Cas10ProxyHandlerTests {
+@Tag("AuthenticationHandler")
+class Cas10ProxyHandlerTests {
 
     private final ProxyHandler proxyHandler = new Cas10ProxyHandler();
 
     @Test
-    public void verifyNoCredentialsOrProxy() {
+    void verifyNoCredentialsOrProxy() throws Throwable {
         assertNull(this.proxyHandler.handle(null, null));
     }
 
     @Test
-    public void verifyCredentialsAndProxy() {
+    void verifyCredentialsAndProxy() throws Throwable {
         val proxyGrantingTicket = mock(TicketGrantingTicket.class);
         when(proxyGrantingTicket.getId()).thenReturn("proxyGrantingTicket");
         assertNull(this.proxyHandler.handle(

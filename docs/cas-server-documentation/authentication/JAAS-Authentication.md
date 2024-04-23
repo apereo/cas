@@ -19,7 +19,14 @@ JAAS components are provided in the CAS core module and require no additional de
 The JAAS handler delegates to the built-in JAAS subsystem to perform authentication according to the
 directives in the JAAS config file.
 
-{% include casproperties.html properties="cas.authn.jaas" %}
+{% include_cached casproperties.html properties="cas.authn.jaas" %}
+  
+### Password Policy
+
+JAAS authentication components have limited support for detecting account status and password policy
+settings defined via CAS settings.
+
+{% include_cached casproperties.html properties="cas.authn.jaas" includes=".password-policy" %}
 
 ## JAAS Configuration File
 
@@ -189,7 +196,7 @@ Ldaptive provides several [login modules for authentication and authorization](h
 
 In order to take advantage of the login modules provided by Ldaptive, the following dependency must be present and added to the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ldap-core" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-ldap-core" %}
 
 ### Keystore
 

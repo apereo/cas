@@ -1,16 +1,16 @@
 package org.apereo.cas.uma.ticket.rpt;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
+import org.apereo.cas.util.jwt.JsonWebTokenSigner;
 
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,20 +21,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("UMA")
-public class UmaRequestingPartyTokenSigningServiceTests extends BaseUmaEndpointControllerTests {
+class UmaRequestingPartyTokenSigningServiceTests extends BaseUmaEndpointControllerTests {
     @Test
-    public void verifyUnknownJwks() {
+    void verifyUnknownJwks() throws Throwable {
+        val props = new CasConfigurationProperties();
+        props.getAuthn().getOauth().getUma().getCore().setIssuer("cas");
         val jwks = new ClassPathResource("nothing.jwks");
-        val signingService = new UmaRequestingPartyTokenSigningService(jwks, "cas");
-        assertNull(signingService.getJsonWebKeySigningKey());
+        props.getAuthn().getOauth().getUma().getRequestingPartyToken().getJwksFile().setLocation(jwks);
+        val signingService = new UmaRequestingPartyTokenSigningService(props);
+        assertThrows(IllegalArgumentException.class, () -> signingService.getJsonWebKeySigningKey(Optional.empty()));
+        val service = getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        assertEquals(JsonWebTokenSigner.ALGORITHM_ALL_EXCEPT_NONE, signingService.getAllowedSigningAlgorithms(service));
     }
-
-    @Test
-    public void verifyEmptyJwks() throws Exception {
-        val file = File.createTempFile("uma-keystore", ".jwks");
-        FileUtils.write(file, "{\"keys\": []}", StandardCharsets.UTF_8);
-        assertThrows(IllegalArgumentException.class,
-            () -> new UmaRequestingPartyTokenSigningService(new FileSystemResource(file), "cas"));
-    }
-
 }

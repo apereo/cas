@@ -25,12 +25,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("RestfulApi")
-public class CaptchaValidatorTests {
+class CaptchaValidatorTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifyLowScore() throws Exception {
+    void verifyLowScore() throws Throwable {
         val secret = UUID.randomUUID().toString();
         val props = new GoogleRecaptchaProperties().setScore(1).setSecret(secret).setVerifyUrl("http://localhost:8812");
         val validator = new GoogleCaptchaV2Validator(props);
@@ -45,7 +45,7 @@ public class CaptchaValidatorTests {
     }
 
     @Test
-    public void verifySuccess() throws Exception {
+    void verifySuccess() throws Throwable {
         val props = new GoogleRecaptchaProperties()
             .setScore(.1)
             .setSecret(UUID.randomUUID().toString())
@@ -62,7 +62,7 @@ public class CaptchaValidatorTests {
     }
 
     @Test
-    public void verifyBadResponse() {
+    void verifyBadResponse() throws Throwable {
         val secret = UUID.randomUUID().toString();
         val props = new GoogleRecaptchaProperties().setScore(1).setSecret(secret).setVerifyUrl("http://localhost:8812");
         val validator = new GoogleCaptchaV2Validator(props);
@@ -75,7 +75,7 @@ public class CaptchaValidatorTests {
     }
 
     @Test
-    public void verifyInstance() {
+    void verifyInstance() throws Throwable {
         assertNotNull(CaptchaValidator.getInstance(new GoogleRecaptchaProperties()
             .setVersion(GoogleRecaptchaProperties.RecaptchaVersions.GOOGLE_RECAPTCHA_V2)
             .setVerifyUrl("http://localhost:8812")));

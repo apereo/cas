@@ -4,22 +4,22 @@ title: CAS - Release Notes
 category: Planning
 ---
 
-# RC2 Release Notes
+# 7.1.0-RC2 Release Notes
 
-We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set 
-you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note that CAS 
-releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks, statistics or completion of features. To gain 
-confidence in a particular release, it is strongly recommended that you start early by experimenting with release candidates and/or follow-up snapshots.
+We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
+you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note
+that CAS releases are *strictly* time-based releases; they are not scheduled or based on specific benchmarks,
+statistics or completion of features. To gain confidence in a particular
+release, it is strongly recommended that you start early by experimenting with release candidates and/or follow-up snapshots.
 
 ## Apereo Membership
 
-If you benefit from Apereo CAS as free and open-source software, we invite you to [join the Apereo Foundation](https://www.apereo.org/content/apereo-membership) 
-and financially support the project at a capacity that best suits your deployment. Note that all development activity 
-is performed *almost exclusively* on a voluntary basis with no expectations, commitments or strings attached. Having the financial means to better 
-sustain engineering activities will allow the developer community to allocate *dedicated and committed* time for long-term support, 
-maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner. Funding will 
-ensure support for the software you rely on and you gain an advantage and say in the way Apereo, and the CAS project at that, runs 
-and operates. If you consider your CAS deployment to be a critical part of the identity and access management ecosystem, this is a viable option to consider.
+If you benefit from Apereo CAS as free and open-source software, we invite you
+to [join the Apereo Foundation](https://www.apereo.org/content/apereo-membership)
+and financially support the project at a capacity that best suits your deployment. Note that all development activity is performed
+*almost exclusively* on a voluntary basis with no expectations, commitments or strings attached. Having the financial means to better
+sustain engineering activities will allow the developer community to allocate *dedicated and committed* time for long-term support,
+maintenance and release planning, especially when it comes to addressing critical and security issues in a timely manner.
 
 ## Get Involved
 
@@ -32,151 +32,130 @@ and operates. If you consider your CAS deployment to be a critical part of the i
 - [Release Schedule](https://github.com/apereo/cas/milestones)
 - [Release Policy](/cas/developer/Release-Policy.html)
 
-## Overlay
+## System Requirements
 
-In the `gradle.properties` of the [CAS WAR Overlay](../installation/WAR-Overlay-Installation.html), adjust the following setting:
-
-```properties
-cas.version=6.4.0-RC2
-```
-
-<div class="alert alert-info">
-  <strong>System Requirements</strong><br/>There are no changes to the minimum system/platform requirements for this release.
-</div>
+The JDK baseline requirement for this CAS release is and **MUST** be JDK `21`. All compatible distributions
+such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported.
 
 ## New & Noteworthy
 
-The following items are new improvements and enhancements presented in this release. 
+The following items are new improvements and enhancements presented in this release.
+
+### Spring Boot 3.3
+
+The migration of the entire codebase to Spring Boot `3.3` is ongoing, and at the
+moment is waiting for the wider ecosystem of supporting frameworks and libraries to catch up to
+changes. We anticipate the work to finalize in the next few release candidates and certainly prior to the final release.
+
+### Graal VM Native Images
+
+A CAS server installation and deployment process can be tuned to build and run
+as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html).
+The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) have selectively switched
+to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
+
+### Testing Strategy
+
+The collection of end-to-end [browser tests based via Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately `475` distinct scenarios. The overall
+test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
+are now configured to run with parallelism enabled.
   
-### CAS Initializr 
+Finally, the overall execution of the [browser tests based via Puppeteer](../../developer/Test-Process.html) is reduced
+by approximately `8~10` minutes for every run of the test suite by removing unnecessary *wait* times and delays in test scenarios.
 
-[CAS Initializr](../installation/WAR-Overlay-Initializr.html) is now given the ability to produce
-different overlay projects using a dedicated `type` parameter.
+### OAuth/OpenID Connect Token Exchange
 
-<div class="alert alert-info">
-<strong>Note</strong><br/>It is expected that at some point in the not-too-distant future, previous/existing 
-WAR overlay projects would be deprecated and ultimately archived, allowing the CAS Initializr 
-to be the one true way to generate a starting template project for CAS deployments.
-</div>
+[OAuth Token Exchange](../authentication/OAuth-ProtocolFlow-TokenExchange.html) protocol can now support ID token exchanges
+when CAS is running as an OpenID Connect provider..
+  
+### Develocity Predictive Test Selection
 
-### CAS Documentation
+[Develocity Predictive Test Selection](https://develocity.apereo.org/scans/test-selection) is now turned on for all 
+CAS unit test categories. This feature saves testing time by identifying, prioritizing, and running only 
+tests that are likely to provide useful feedback during test runs and it accomplishes 
+this by applying a machine learning model that uniquely incorporates fine-grained code snapshots, 
+comprehensive test analytics, and flaky test data.
 
-CAS documentation has gone through a cleanup effort to improve how configuration settings are
-managed and presented. Configuration namespaces for CAS settings are presented as individual
-snippets and fragments appropriate for each feature, and are included throughout the documentation
-pages where necessary, split into panes for required, optional and third-party settings, etc.
+To accommodate the machine learning model, CAS will also run its suite of unit tests using a fixed schedule.
+The scheduled workflow runs disable the predictive test selection feature and instead run all tests in the suite to
+avoid accidents and mistakes made when a test run is incorrectly skipped. As the number of runs increase, 
+we expect the model to improve and learn more efficiently.
 
-The presentation and generation of CAS settings and their documentation is entirely driven by CAS configuration metadata,
-and this capability is ultimately powered by Github Pages and Jekyll that render the CAS documentation in the backend.
+This capability is provided by [Develocity](https://gradle.com/develocity/) to the Apereo CAS project for free and is proving
+to be extremely valuable in cutting down test execution time and therefor resulting in a quicker feedback loop. 
 
-Please note that as part of this change, a number of CAS configuration settings are moved around into new namespaces
-to make the generation of configuration metadata and relevant documentation snippets easier. Most likely, settings
-are moved into a new `.core.` or `.engine.` or `.policy` namespace. Some of the settings that are affected by this effort
-are:
+### Startup Time Improvements
 
-- `cas.authn.adaptive`
-- `cas.service-registry`
-- `cas.authn.mfa`
-- `cas.authn.mfa.trusted`
-- `cas.authn.saml-idp`
-- `cas.attribute-repository`
-- `cas.authn.pac4j`
-- `cas.ticket.tgt`
+CAS web application startup time has been improved by approximately `3` seconds by removing unnecessary initializations.
+Notable changes in this area include:
 
-<div class="alert alert-info">
-<strong>Note</strong><br/>Configuration changes for the most commonly-used settings
-are recorded in the CAS configuration metadata catalog to note the change and the possible replacement.
-You should be receiving warnings and/or instructions on startup if your configuration is affected by
-the above changes. 
-</div>
+- Removing unnecessary I/O operations during startup to verify existence of embedded application resources on the classpath.
+- Removing the `org.webjars:webjars-locator-core` library which does classpath scanning at startup to locate assets.
+- ...and as a result, the *Hal Browser* interface that listed the CAS actuator endpoints has been removed.
+- Delaying the construction of the CAS webflow execution plan until the application container is fully ready.
 
-## Pac4j v5
+### Passwordless Authentication w/ Duo Security
 
-The Pac4j library, mainly responsible for delegated authentication, is now upgraded to its `v5` release line. This is a major upgrade
-with many API changes that affect the internal workings of CAS when it comes to dealing with an external identity provider
-or managing the internal implementation of OpenID Connect and SAML2 protocols when CAS is acting as a standalone identity provider.
-Pac4j `v5` is not quite final yet, and we are taking advantage of the early release candidate here to do as much work upfront
-as possible to handle the final upgrade better in the future. As a result, some things may not be immediately functional
-and, as always, you are encouraged to try and test the upgrade as much as possible to avoid surprises.
+[Duo Security](../authentication/Passwordless-Authentication-Storage-DuoSecurity.html) can now 
+act as a passwordless authentication account store to verify and locate passwordless accounts.
+Furthermore, [passwordless authentication](../authentication/Passwordless-Authentication.html) can now be selectively controlled per application.
+ 
+### Surrogate Authentication
 
-## Delegated Authentication Per Application
+Multiple [surrogate account stores](../authentication/Surrogate-Authentication.html) can be used simultaneously to verify and locate surrogate accounts.
+Furthermore, the [surrogate access strategy](../authentication/Surrogate-Authentication-AccessStrategy.html) has removed the `surrogateEnabled` flag and is 
+also modified to allow the strategy to authorize the request for non-surrogate requests. You now have the ability to disable surrogate authentication requests
+for specific services by using a dedicated [surrogate authentication policy](../authentication/Surrogate-Authentication-AccessStrategy.html).
 
-Certain configuration elements for an external identity provider, in the context of
-[delegated authentication](../integration/Delegate-Authentication.html) can now be controlled
-and overridden on a per-application basis. For example, you may choose to send a specific SAML2
-authentication context class to an external SAML2 identity provider depending on the original
-service provider, while leaving the global configuration in place and unmodified. 
-Support for service-level overrides applies to SAML2 and OIDC identity providers.
+Finally, multiple [LDAP surrogate account stores](../authentication/Surrogate-Authentication-Storage-LDAP.html) 
+can now be configured to locate accounts.
 
-## Scriptable Email Messages
+### Attribute Definitions
 
-The construction of the [email message body](../notifications/Sending-Email-Configuration.html) can 
-now be scripted using an external Groovy script.
-
-## Delegated Authentication Tracking
-
-Identity provider choices and selections made via [delegated authentication](../integration/Delegate-Authentication.html) 
-can now be remembered via a dedicated cookie to be used for subsequent attempts and auto-redirects.
+[JSON attribute definitions](../integration/Attribute-Definitions.html) that are taught to CAS via settings 
+are given the ability to override attribute definitions that ship directly with CAS.
 
 ## Other Stuff
 
-- A number of Docker images used for [integration tests](../developer/Test-Process.html), such as 
-  DynamoDb, MySQL, MariaDb, etc are now updated to their latest versions.
-- A special failure analyzer for Spring Boot is now available to analyze startup failures more accurately and with better logs.
-- In [delegated authentication](../integration/Delegate-Authentication-SAML.html) to SAML2 identity providers,
-  handling SAML2 logout requests and responses should now properly honor final redirects back to the calling application.
-- Support for the legacy syntax for [JSON service definitions](../services/JSON-Service-Management.html) 
-  based on CAS Addons as well as the old `org.jasig` namespace has been removed. 
-- Locale interception and changing the default user interface language can now be forced regardless of the http request.  
-- Reworking internal components and APIs for [password management](../password_management/Password-Management.html) to 
-  make customizations easier, specially when multiple fields may be involved to locate the user record. The work here may present
-  breaking changes, specially if you are handling password 
-  management operations via external [Groovy scripts](../password_management/Password-Management-Groovy.html).
-- The default value for `cas.service-registry.git.branches-to-clone` and `cas.authn.saml-idp.metadata.git.branches-to-clone`
-  changed from `master` to `*` which means all branches will be cloned by default. The properties may contain a list of
-  branches, but the list must include the branch specified in the `cas.service-registry.git.active-branch`
-  or `cas.authn.saml-idp.metadata.git.active-branch` property. 
-- When resolving the final principal to build the authentication object and history, attributes from all collected authentication
-  objects are now merged back together using the merge strategy defined in CAS configuration instead of the hardcoded `MultivaluedAttributeMerger`.
-- References to [Bintray repositories](https://jfrog.com/blog/into-the-sunset-bintray-jcenter-gocenter-and-chartcenter/) 
-  have been removed and updated with more maintainable replacements.
-- SAML2 IdP metadata generators now allow for dynamic customizations at runtime when generating metadata.
-- When using [delegated authentication](../integration/Delegate-Authentication-SAML.html) to SAML2 identity providers, the service provider metadata
-can now be signed using the `XMLSec` tool.
-- [SAML2 Attribute Definitions](../integration/Attribute-Definitions.html) now present the ability to support `urn` values for each attribute.  
-- [SAML2 IdP metadata](../installation/Configuring-SAML2-DynamicMetadata.html) can now be signed.
-- Minor improvements to indexing operations for [MongoDb ticket registry](../ticketing/MongoDb-Ticket-Registry.html).
-- Additional support is built in to provide for Spring Boot's `startup` actuator endpoint.
-- In [delegated authentication](../integration/Delegate-Authentication.html) scenarios, CAS is now able to retry the authentication attempt
-using forceful authentication requests upon failed attempts.
-- Principal election strategy can now be directed to choose the correct principal from the chain, when multiple conflicting principals are resolved.
-- [Remember-Me Authentication](../authentication/Configuring-LongTerm-Authentication.html) can now be 
-  conditionally activated based on certain user-agents or IP addresses.  
-- [Attribute consent](../integration/Attribute-Release-Consent.html) implementations are given the ability to delete consent decisions by user.  
-- [Attribute release policies](../integration/Attribute-Release-Policies.html) that allow for a collection of pre-defined attributes for release
-can now request those attributes to be resolved via the [Attribute Definition Store](../integration/Attribute-Definitions.html).
+- Internal enhancements to allow a few more ticket registries to support more advanced querying operations and session management features.
+- [Redis ticket registry](../ticketing/Redis-Ticket-Registry.html) correctly sets the expiration time for principal records tied to ticket objects.           
+- [LDAP passwordless authentication](../authentication/Passwordless-Authentication-Storage-LDAP.html) can be configured to require specific user attributes and values before triggering the flow.
+- [Account Profile Management](../registration/Account-Management-Overview.html) can now display the list of access tokens that are issued for an authenticated user.
+- [MDC](../logging/Logging-MDC.html) logging gains options to control what parameters or headers should be excluded from the logging output.
+- [Triggering interrupts](../webflow/Webflow-Customization-Interrupt-PerService.html) per service can now be controlled via Groovy.
+- [LDAP attribute repositories](../integration/Attribute-Resolution-LDAP.html) can now virtually rename an attribute to multiple names.
+- Multiple [passwordless account stores](../authentication/Passwordless-Authentication.html) can be used simultaneously to verify and locate passwordless accounts.
 
 ## Library Upgrades
-
-- Apache Tomcat
-- Nimbus OIDC
-- Nimbus JWT
-- Google Maps
-- Couchbase Client
-- MariaDb Driver
-- PostgreSQL Driver
-- Spring Cloud
-- Spring Security
-- Amazon SDK
-- Spring
-- JavaParser
-- Pac4j
-- Hibernate
-- Hibernate Validator
-- Commons Lang  
+           
+- AWS SDK
+- Slack
+- Twilio
+- Commons Codec
+- Spring Cloud CosmosDb
+- Spring Data CosmosDb
 - Spring Boot
-- Caffein
-- JQuery
-- ByteBuddy
-- SnakeYAML
-- SpotBugs
+- Puppeteer
+- Spring Integration
+- Spring Data
+- Micrometer
+- Jose4j
+- Elastic APM
+- SendGrid
+- JavaMelody
+- Apache Tomcat
+- Logback
+- Apache Log4j
+- MariaDb
+- Ldaptive
+- Gradle
+- PostgreSQL
+- Apache Cassandra
+- Zipkin Brave
+- Grouper
+- MongoDb
+- ACME
+- Apache Kafka
+- Sentry
+- IP GeoLocation

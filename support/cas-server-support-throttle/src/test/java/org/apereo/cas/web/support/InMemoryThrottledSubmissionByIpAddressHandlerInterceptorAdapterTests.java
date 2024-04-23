@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * Unit test for {@link InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter}.
+ * Unit test for {@link ThrottledSubmissionHandlerInterceptor}.
  *
  * @author Scott Battaglia
  * @author Marvin S. Addison
@@ -19,11 +19,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
     properties = "cas.authn.throttle.failure.range-seconds=5"
 )
 @Getter
-@Tag("Simple")
-public class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests
+@Tag("AuthenticationThrottling")
+class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests
     extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired
-    @Qualifier("authenticationThrottle")
+    @Qualifier(ThrottledSubmissionHandlerInterceptor.BEAN_NAME)
     private ThrottledSubmissionHandlerInterceptor throttle;
 }

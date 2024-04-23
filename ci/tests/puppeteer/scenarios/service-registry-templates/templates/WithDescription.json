@@ -1,0 +1,5 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "templateName": "WithDescription",
+  "description": "My Application"
+}

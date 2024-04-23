@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-redis-core")
 @JsonFilter("RedisClusterNodeProperties")
 public class RedisClusterNodeProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 2912983343579258662L;
 
     /**
@@ -54,7 +56,7 @@ public class RedisClusterNodeProperties implements Serializable {
 
     /**
      * Indicate the type/role of this node.
-     * Accepted values are: {@code MASTER, SLAVE}.
+     * Accepted values are: {@code MASTER, REPLICA}.
      */
     @RequiredProperty
     private String type;

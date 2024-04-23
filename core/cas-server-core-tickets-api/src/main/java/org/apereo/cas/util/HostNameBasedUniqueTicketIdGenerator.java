@@ -30,7 +30,7 @@ public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdG
      * @param maxLength the max length
      * @param suffix    the suffix
      */
-    public HostNameBasedUniqueTicketIdGenerator(final int maxLength, final String suffix) {
+    public HostNameBasedUniqueTicketIdGenerator(final long maxLength, final String suffix) {
         super(maxLength, determineTicketSuffixByHostName(suffix));
     }
 

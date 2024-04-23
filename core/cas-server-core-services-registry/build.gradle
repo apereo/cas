@@ -2,12 +2,16 @@ description = "Apereo CAS Core Services Registry and Manager"
 dependencies {
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-events")
-    
+    api project(":api:cas-server-core-api-monitor")
+
+    implementation libraries.cqengine
+
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-services-api")
 
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+
 }
 

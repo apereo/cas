@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.aup;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +25,9 @@ import java.util.List;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("AcceptableUsagePolicyProperties")
-public class AcceptableUsagePolicyProperties implements Serializable {
+public class AcceptableUsagePolicyProperties implements CasFeatureModule, Serializable {
 
+    @Serial
     private static final long serialVersionUID = -7703477581675908899L;
 
     /**
@@ -33,28 +36,16 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     private List<LdapAcceptableUsagePolicyProperties> ldap = new ArrayList<>();
 
     /**
-     * Control AUP via Redis.
+     * Control AUP via JDBC.
      */
     @NestedConfigurationProperty
     private JdbcAcceptableUsagePolicyProperties jdbc = new JdbcAcceptableUsagePolicyProperties();
 
     /**
-     * Control AUP via Redis.
+     * Control AUP via REST.
      */
     @NestedConfigurationProperty
     private RestAcceptableUsagePolicyProperties rest = new RestAcceptableUsagePolicyProperties();
-
-    /**
-     * Control AUP via CouchDb.
-     */
-    @NestedConfigurationProperty
-    private CouchDbAcceptableUsagePolicyProperties couchDb = new CouchDbAcceptableUsagePolicyProperties();
-
-    /**
-     * Control AUP via Couchbase.
-     */
-    @NestedConfigurationProperty
-    private CouchbaseAcceptableUsagePolicyProperties couchbase = new CouchbaseAcceptableUsagePolicyProperties();
 
     /**
      * Control AUP via a MongoDb database resource.

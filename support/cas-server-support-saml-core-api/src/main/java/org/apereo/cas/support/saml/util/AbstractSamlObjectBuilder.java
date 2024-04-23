@@ -3,14 +3,15 @@ package org.apereo.cas.support.saml.util;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.gen.HexRandomStringGenerator;
-import org.apereo.cas.util.serialization.JacksonXmlSerializer;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlFactory;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +36,7 @@ import org.opensaml.core.xml.schema.impl.XSIntegerBuilder;
 import org.opensaml.core.xml.schema.impl.XSStringBuilder;
 import org.opensaml.core.xml.schema.impl.XSURIBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -50,6 +52,7 @@ import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
@@ -59,6 +62,7 @@ import java.security.PublicKey;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -78,10 +82,15 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      */
     protected static final String DEFAULT_ELEMENT_LOCAL_NAME_FIELD = "DEFAULT_ELEMENT_LOCAL_NAME";
 
-    private static final int RANDOM_ID_SIZE = 16;
+    private static final ObjectMapper XML_OBJECT_MAPPER = JacksonObjectMapperFactory.builder()
+        .jsonFactory(new XmlFactory())
+        .useWrapperNameAsProperty(true)
+        .build()
+        .toObjectMapper();
 
     private static final String SIGNATURE_FACTORY_PROVIDER_CLASS = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
 
+    @Serial
     private static final long serialVersionUID = -6833230731146922780L;
 
     private static final String LOG_MESSAGE_ATTR_CREATED = "Created attribute value XMLObject: [{}]";
@@ -104,8 +113,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         val doc = constructDocumentFromXml(samlResponse);
 
         if (doc != null) {
-            val signedElement = signSamlElement(doc.getRootElement(),
-                privateKey, publicKey);
+            val signedElement = signSamlElement(doc.getRootElement(), privateKey, publicKey);
             doc.setRootElement(signedElement.detach());
             return new XMLOutputter().outputString(doc);
         }
@@ -131,17 +139,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             LoggingUtils.error(LOGGER, e);
             return null;
         }
-    }
-
-    /**
-     * Generate a secure random id.
-     *
-     * @return the secure id string
-     */
-    public String generateSecureRandomId() {
-        val random = new HexRandomStringGenerator(RANDOM_ID_SIZE);
-        val hex = random.getNewString();
-        return '_' + hex;
     }
 
     /**
@@ -193,9 +190,8 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         }
     }
 
-    @SneakyThrows
     private static SignatureMethod getSignatureMethodFromPublicKey(final PublicKey pubKey,
-                                                                   final XMLSignatureFactory sigFactory) {
+                                                                   final XMLSignatureFactory sigFactory) throws Exception {
         val algorithm = pubKey.getAlgorithm();
         if ("DSA".equalsIgnoreCase(algorithm)) {
             return sigFactory.newSignatureMethod(SignatureMethod.DSA_SHA1, null);
@@ -222,44 +218,28 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         return nodeListStatus.item(nodeListStatus.getLength() - 1);
     }
 
-    /**
-     * Convert the received jdom element to an Element.
-     *
-     * @param element the element
-     * @return the org.w3c.dom. element
-     */
-    private static Element toDom(final org.jdom2.Element element) {
+    private static Element toDom(final org.jdom2.Element element) throws Exception {
         return Objects.requireNonNull(toDom(element.getDocument())).getDocumentElement();
     }
 
-    /**
-     * Convert the received jdom doc to a Document element.
-     *
-     * @param doc the doc
-     * @return the org.w3c.dom. document
-     */
-    private static org.w3c.dom.Document toDom(final Document doc) {
-        try {
-            LOGGER.trace("Creating document from: [{}]", doc);
-            val xmlOutputter = new XMLOutputter();
-            val elemStrWriter = new StringWriter();
-            xmlOutputter.output(doc, elemStrWriter);
-            val xmlBytes = elemStrWriter.toString().getBytes(Charset.defaultCharset());
-            val dbf = DocumentBuilderFactory.newInstance();
-            dbf.setNamespaceAware(true);
-            dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-            dbf.setFeature("http://apache.org/xml/features/validation/schema/normalized-value", false);
-            dbf.setFeature("http://javax.xml.XMLConstants/feature/secure-processing", true);
-            dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-
-            return dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xmlBytes));
-        } catch (final Exception e) {
-            LOGGER.trace("Caught error during creation of org.w3c.dom.Document: e.getMessage()", e);
-            return null;
-        }
+    private static org.w3c.dom.Document toDom(final Document doc) throws Exception {
+        LOGGER.trace("Creating document from: [{}]", doc);
+        val xmlOutputter = new XMLOutputter();
+        val elemStrWriter = new StringWriter();
+        xmlOutputter.output(doc, elemStrWriter);
+        val xmlBytes = elemStrWriter.toString().getBytes(Charset.defaultCharset());
+        val dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        dbf.setFeature("http://apache.org/xml/features/validation/schema/normalized-value", false);
+        dbf.setFeature("http://javax.xml.XMLConstants/feature/secure-processing", true);
+        dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        return dbf.newDocumentBuilder().parse(new ByteArrayInputStream(xmlBytes));
     }
+
+
 
     /**
      * New attribute value.
@@ -271,6 +251,13 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      */
     protected XMLObject newAttributeValue(final Object value, final String valueType, final QName elementName) {
         LOGGER.trace("Creating new attribute value XMLObject for value: [{}], value type: [{}], QName: [{}]", value, valueType, elementName);
+
+        if (value instanceof final NameIDType instance) {
+            LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, value);
+            instance.detach();
+            return (XMLObject) value;
+        }
+
         if (XSString.class.getSimpleName().equalsIgnoreCase(valueType)) {
             val builder = new XSStringBuilder();
             val attrValueObj = builder.buildObject(elementName, XSString.TYPE_NAME);
@@ -290,7 +277,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         if (XSBoolean.class.getSimpleName().equalsIgnoreCase(valueType)) {
             val builder = new XSBooleanBuilder();
             val attrValueObj = builder.buildObject(elementName, XSBoolean.TYPE_NAME);
-            attrValueObj.setValue(XSBooleanValue.valueOf(value.toString().toLowerCase()));
+            attrValueObj.setValue(XSBooleanValue.valueOf(value.toString().toLowerCase(Locale.ENGLISH)));
             LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
             return attrValueObj;
         }
@@ -320,12 +307,13 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         }
 
         if (XSObject.class.getSimpleName().equalsIgnoreCase(valueType)) {
-            val mapper = new JacksonXmlSerializer();
-            val builder = new XSAnyBuilder();
-            val attrValueObj = builder.buildObject(elementName);
-            attrValueObj.setTextContent(mapper.writeValueAsString(value));
-            LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
-            return attrValueObj;
+            return FunctionUtils.doUnchecked(() -> {
+                val builder = new XSAnyBuilder();
+                val attrValueObj = builder.buildObject(elementName);
+                attrValueObj.setTextContent(XML_OBJECT_MAPPER.writeValueAsString(value));
+                LOGGER.trace(LOG_MESSAGE_ATTR_CREATED, attrValueObj);
+                return attrValueObj;
+            });
         }
 
         val builder = new XSAnyBuilder();

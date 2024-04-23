@@ -1,17 +1,19 @@
 package org.apereo.cas.configuration.model.support.pm;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.util.crypto.CipherExecutor;
-
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -25,8 +27,9 @@ import java.io.Serializable;
 @Setter
 @JsonFilter("ResetPasswordManagementProperties")
 @Accessors(chain = true)
-public class ResetPasswordManagementProperties implements Serializable {
+public class ResetPasswordManagementProperties implements CasFeatureModule, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3453970349530670459L;
 
     /**
@@ -64,15 +67,30 @@ public class ResetPasswordManagementProperties implements Serializable {
     private boolean includeClientIpAddress = true;
 
     /**
+     * Controls whether password reset operations must activate
+     * and support a multifactor authentication flow based on the
+     * set of available MFA providers that are configured and active, before reset
+     * instructions can be shared and sent.
+     */
+    private boolean multifactorAuthenticationEnabled = true;
+
+    /**
      * How long in minutes should the password expiration link remain valid.
      */
-    private long expirationMinutes = 1;
+    @DurationCapable
+    private String expiration = "PT1M";
+
+    /**
+     * How many times you can use the password reset link.
+     * Stricly lower than 1 means infinite.
+     */
+    private int numberOfUses = -1;
 
     public ResetPasswordManagementProperties() {
-        mail.setAttributeName("mail");
-        mail.setText("Reset your password via this link: %s");
+        mail.setText("Reset your password via this link: ${url}");
+        sms.setText("Reset your password via this link: ${url}");
         mail.setSubject("Password Reset");
-        crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
-        crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
+        crypto.getEncryption().setKeySize(EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+        crypto.getSigning().setKeySize(SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }
 }

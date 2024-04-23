@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.Ordered;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -17,15 +15,26 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Webflow")
-public class CasMultifactorWebflowCustomizerTests {
+class CasMultifactorWebflowCustomizerTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val input = mock(CasMultifactorWebflowCustomizer.class);
-        when(input.getCandidateStatesForMultifactorAuthentication()).thenReturn(List.of());
+        when(input.getCandidateStatesForMultifactorAuthentication()).thenCallRealMethod();
         when(input.getOrder()).thenCallRealMethod();
+        when(input.getWebflowAttributeMappings()).thenCallRealMethod();
+
         assertTrue(input.getCandidateStatesForMultifactorAuthentication().isEmpty());
         assertEquals(Ordered.LOWEST_PRECEDENCE, input.getOrder());
+        assertTrue(input.getWebflowAttributeMappings().isEmpty());
     }
 
+    @Test
+    void verifyDefaultOperation() throws Throwable {
+        val input = mock(CasWebflowCustomizer.class);
+        when(input.getOrder()).thenCallRealMethod();
+        when(input.getWebflowAttributeMappings()).thenCallRealMethod();
+        assertEquals(Ordered.LOWEST_PRECEDENCE, input.getOrder());
+        assertTrue(input.getWebflowAttributeMappings().isEmpty());
+    }
 }

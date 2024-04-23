@@ -3,28 +3,42 @@ package org.apereo.cas.adaptors.duo.authn;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccountStatus;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.duosecurity.client.Http;
+import com.duosecurity.client.Util;
 import com.duosecurity.duoweb.DuoWebException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
-import lombok.SneakyThrows;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import okhttp3.CertificatePinner;
+import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.springframework.http.HttpMethod;
-
+import org.springframework.util.ReflectionUtils;
+import javax.net.ssl.X509TrustManager;
+import java.io.Serial;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link BaseDuoSecurityAuthenticationService}.
@@ -33,71 +47,43 @@ import java.util.Map;
  * @since 5.1.0
  */
 @Slf4j
-@EqualsAndHashCode(of = "duoProperties")
+@EqualsAndHashCode(of = "properties")
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurityAuthenticationService {
+    @Serial
     private static final long serialVersionUID = -8044100706027708789L;
 
     private static final int AUTH_API_VERSION = 2;
 
-    private static final int RESULT_CODE_ERROR_THRESHOLD = 49999;
-
-    private static final int USER_ACCOUNT_CACHE_INITIAL_SIZE = 50;
-
-    private static final long USER_ACCOUNT_CACHE_MAX_SIZE = 100_000_000;
-
-    private static final int USER_ACCOUNT_CACHE_EXPIRATION_SECONDS = 5;
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    /**
-     * Duo Properties.
-     */
-    protected final DuoSecurityMultifactorAuthenticationProperties duoProperties;
+    private static final int DEFAULT_HTTP_TIMEOUT_SECONDS = 60;
 
-    /**
-     * Http client used to make calls to duo.
-     */
-    protected final transient HttpClient httpClient;
+    @Getter
+    protected final DuoSecurityMultifactorAuthenticationProperties properties;
 
-    private final transient Map<String, DuoSecurityUserAccount> userAccountCachedMap;
+    protected final HttpClient httpClient;
 
-    private final transient Cache<String, DuoSecurityUserAccount> userAccountCache;
+    private final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver;
 
-    /**
-     * Instantiates a new Base duo security authentication service.
-     *
-     * @param duoProperties the duo properties
-     * @param httpClient    the http client
-     */
-    protected BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorAuthenticationProperties duoProperties,
-        final HttpClient httpClient) {
-        this.duoProperties = duoProperties;
-        this.httpClient = httpClient;
-
-        this.userAccountCache = Caffeine.newBuilder()
-            .initialCapacity(USER_ACCOUNT_CACHE_INITIAL_SIZE)
-            .maximumSize(USER_ACCOUNT_CACHE_MAX_SIZE)
-            .expireAfterWrite(Duration.ofSeconds(USER_ACCOUNT_CACHE_EXPIRATION_SECONDS))
-            .build();
-        this.userAccountCachedMap = this.userAccountCache.asMap();
-    }
+    private final Cache<String, DuoSecurityUserAccount> userAccountCache;
 
     @Override
     public DuoSecurityAuthenticationResult authenticate(final Credential credential) throws Exception {
-        if (credential instanceof DuoSecurityDirectCredential) {
-            return authenticateDuoCredentialDirect(credential);
+        if (credential instanceof final DuoSecurityPasscodeCredential duo) {
+            return authenticateDuoPasscodeCredential(duo);
+        }
+        if (credential instanceof final DuoSecurityDirectCredential duo) {
+            return authenticateDuoCredentialDirect(duo);
         }
         return authenticateInternal(credential);
     }
 
     @Override
-    public String getApiHost() {
-        return duoProperties.getDuoApiHost();
-    }
-
-    @Override
     public DuoSecurityUserAccount getUserAccount(final String username) {
+        val userAccountCachedMap = userAccountCache.asMap();
         if (userAccountCachedMap.containsKey(username)) {
             val account = userAccountCachedMap.get(username);
             LOGGER.debug("Found cached duo user account [{}]", account);
@@ -110,22 +96,23 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
         try {
             val userRequest = buildHttpPostUserPreAuthRequest(username);
             signHttpUserPreAuthRequest(userRequest);
-            LOGGER.debug("Contacting Duo to inquire about username [{}]", username);
+            LOGGER.debug("Contacting Duo Security to inquire about username [{}]", username);
             val userResponse = getHttpResponse(userRequest);
-            val jsonResponse = URLDecoder.decode(userResponse, StandardCharsets.UTF_8.name());
-            LOGGER.debug("Received Duo admin response [{}]", jsonResponse);
+            val jsonResponse = URLDecoder.decode(userResponse, StandardCharsets.UTF_8);
+            LOGGER.debug("Received Duo response [{}]", jsonResponse);
 
             val result = MAPPER.readTree(jsonResponse);
             if (!result.has(RESULT_KEY_STAT)) {
-                LOGGER.warn("Duo admin response was received in unknown format: [{}]", jsonResponse);
+                LOGGER.warn("Duo response was received in unknown format: [{}]", jsonResponse);
                 throw new DuoWebException("Invalid response format received from Duo");
             }
 
-            if (result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
+            if ("OK".equalsIgnoreCase(result.get(RESULT_KEY_STAT).asText())) {
                 val response = result.get(RESULT_KEY_RESPONSE);
-                val authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase();
+                val authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase(Locale.ENGLISH);
 
                 val status = DuoSecurityUserAccountStatus.valueOf(authResult);
+                account.setProviderId(properties.getId());
                 account.setStatus(status);
                 account.setMessage(response.get(RESULT_KEY_STATUS_MESSAGE).asText());
                 if (status == DuoSecurityUserAccountStatus.ENROLL) {
@@ -155,118 +142,148 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
         return account;
     }
 
-    /**
-     * Authenticate internal.
-     *
-     * @param credential the credential
-     * @return the duo security authentication result
-     * @throws Exception the exception
-     */
-    protected abstract DuoSecurityAuthenticationResult authenticateInternal(Credential credential) throws Exception;
-
-    /**
-     * Gets http response.
-     *
-     * @param userRequest the user request
-     * @return the http response
-     * @throws Exception the exception
-     */
-    protected String getHttpResponse(final Http userRequest) throws Exception {
-        return userRequest.executeHttpRequest().body().string();
+    @Override
+    public Optional<DuoSecurityAdminApiService> getAdminApiService() {
+        if (StringUtils.isNotBlank(getProperties().getDuoAdminIntegrationKey()) && StringUtils.isNotBlank(getProperties().getDuoAdminSecretKey())) {
+            return Optional.of(new DefaultDuoSecurityAdminApiService(this.httpClient, properties));
+        }
+        return Optional.empty();
     }
 
-    /**
-     * Build http post auth request http.
-     *
-     * @return the http
-     */
-    protected Http buildHttpPostAuthRequest() {
-        val request = new Http(HttpMethod.POST.name(),
-            duoProperties.getDuoApiHost(),
-            String.format("/auth/v%s/auth", AUTH_API_VERSION));
+    protected abstract DuoSecurityAuthenticationResult authenticateInternal(Credential credential) throws Exception;
+
+    protected String getHttpResponse(final Http userRequest) throws Exception {
+        try (val request = userRequest.executeHttpRequest()) {
+            return Objects.requireNonNull(request.body()).string();
+        }
+    }
+
+
+    protected Http buildHttpPostAuthRequest() throws Exception {
+        val request = buildHttpRequest("/auth/v%s/auth");
         configureHttpRequest(request);
         return request;
     }
 
-    /**
-     * Build http post get user auth request.
-     *
-     * @param username the username
-     * @return the http
-     */
-    protected Http buildHttpPostUserPreAuthRequest(final String username) {
-        val request = new Http(HttpMethod.POST.name(),
-            duoProperties.getDuoApiHost(),
-            String.format("/auth/v%s/preauth", AUTH_API_VERSION));
+    protected Http buildHttpPostUserPreAuthRequest(final String username) throws Exception {
+        val request = buildHttpRequest("/auth/v%s/preauth");
         request.addParam("username", username);
         configureHttpRequest(request);
         return request;
     }
 
-    /**
-     * Configure http request.
-     *
-     * @param request the request
-     */
+    private Http buildHttpRequest(final String format) throws Exception {
+        val originalHost = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getDuoApiHost());
+        val host = new URI(StringUtils.prependIfMissing(originalHost, "https://"));
+        val request = new CasHttpBuilder(HttpMethod.POST.name(),
+            host.getHost(), String.format(format, AUTH_API_VERSION)).build();
+
+        val hostField = ReflectionUtils.findField(request.getClass(), "host");
+        ReflectionUtils.makeAccessible(Objects.requireNonNull(hostField));
+
+        val resultingHost = host.getHost() + (host.getPort() > 0 ? ":" + host.getPort() : StringUtils.EMPTY);
+        ReflectionUtils.setField(hostField, request, resultingHost);
+
+        val factory = httpClient.httpClientFactory();
+        val clientInstanceBuilder = new OkHttpClient.Builder()
+            .connectTimeout(DEFAULT_HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .readTimeout(DEFAULT_HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .writeTimeout(DEFAULT_HTTP_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .hostnameVerifier(factory.getHostnameVerifier());
+        if ("localhost".equalsIgnoreCase(host.getHost())) {
+            clientInstanceBuilder
+                .certificatePinner(CertificatePinner.DEFAULT)
+                .sslSocketFactory(factory.getSslContext().getSocketFactory(), (X509TrustManager) factory.getTrustManagers()[0]);
+        } else {
+            val caCertificatesField = ReflectionUtils.findField(Http.class, "DEFAULT_CA_CERTS");
+            ReflectionUtils.makeAccessible(Objects.requireNonNull(caCertificatesField));
+            val certificates = (String[]) ReflectionUtils.getField(caCertificatesField, request);
+            val pinner = Util.createPinner(host.getHost(), certificates);
+            clientInstanceBuilder.certificatePinner(pinner);
+        }
+        val httpClientField = ReflectionUtils.findField(Http.class, "httpClient");
+        ReflectionUtils.makeAccessible(Objects.requireNonNull(httpClientField));
+
+        val clientInstance = clientInstanceBuilder.build();
+        ReflectionUtils.setField(httpClientField, request, clientInstance);
+        return request;
+    }
+
+
     protected void configureHttpRequest(final Http request) {
-        val factory = this.httpClient.getHttpClientFactory();
+        val factory = httpClient.httpClientFactory();
         if (factory.getProxy() != null) {
             request.setProxy(factory.getProxy().getHostName(), factory.getProxy().getPort());
         }
     }
 
-    /**
-     * Authenticate duo credential direct duo security authentication result.
-     *
-     * @param crds the crds
-     * @return the duo security authentication result
-     */
-    protected DuoSecurityAuthenticationResult authenticateDuoCredentialDirect(final Credential crds) {
+    protected DuoSecurityAuthenticationResult authenticateDuoCredentialDirect(final DuoSecurityDirectCredential credential) {
         try {
-            val credential = DuoSecurityDirectCredential.class.cast(crds);
-            val p = credential.getAuthentication().getPrincipal();
+            val principal = resolvePrincipal(credential.getPrincipal());
             val request = buildHttpPostAuthRequest();
-            signHttpAuthRequest(request, p.getId());
-            val result = (JSONObject) request.executeRequest();
-            LOGGER.debug("Duo authentication response: [{}]", result);
+            signHttpAuthRequest(request, principal.getId());
+            val result = executeDuoApiRequest(request);
+            LOGGER.debug("Duo Security authentication response: [{}]", result);
             if ("allow".equalsIgnoreCase(result.getString("result"))) {
-                return DuoSecurityAuthenticationResult.builder().success(true).username(crds.getId()).build();
+                return DuoSecurityAuthenticationResult.builder().success(true).username(credential.getId()).build();
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
-        return DuoSecurityAuthenticationResult.builder().success(false).username(crds.getId()).build();
+        return DuoSecurityAuthenticationResult.builder().success(false).username(credential.getId()).build();
     }
 
-    /**
-     * Sign http request.
-     *
-     * @param request the request
-     * @param id      the id
-     * @return the http
-     */
-    @SneakyThrows
+    protected JSONObject executeDuoApiRequest(final Http request) throws Exception {
+        return (JSONObject) request.executeRequest();
+    }
+
     protected Http signHttpAuthRequest(final Http request, final String id) {
-        request.addParam("username", id);
-        request.addParam("factor", "auto");
-        request.addParam("device", "auto");
-        request.signRequest(
-            duoProperties.getDuoIntegrationKey(),
-            duoProperties.getDuoSecretKey());
-        return request;
+        return signHttpAuthRequest(request, Map.of("username", id, "factor", "auto", "device", "auto"));
     }
 
-    /**
-     * Sign http users request http.
-     *
-     * @param request the request
-     * @return the http
-     */
-    @SneakyThrows
+    private Http signHttpAuthRequest(final Http request, final Map<String, String> parameters) {
+        parameters.forEach(request::addParam);
+        return signHttpUserPreAuthRequest(request);
+    }
+
     protected Http signHttpUserPreAuthRequest(final Http request) {
-        request.signRequest(
-            duoProperties.getDuoIntegrationKey(),
-            duoProperties.getDuoSecretKey());
-        return request;
+        return FunctionUtils.doUnchecked(() -> {
+            val resolver = SpringExpressionLanguageValueResolver.getInstance();
+            request.signRequest(
+                resolver.resolve(properties.getDuoIntegrationKey()),
+                resolver.resolve(properties.getDuoSecretKey()));
+            return request;
+        });
+    }
+
+    protected Principal resolvePrincipal(final Principal principal) {
+        return multifactorAuthenticationPrincipalResolver
+            .stream()
+            .filter(resolver -> resolver.supports(principal))
+            .findFirst()
+            .map(r -> r.resolve(principal))
+            .orElseThrow(() -> new IllegalStateException("Unable to resolve principal for multifactor authentication"));
+    }
+
+    private DuoSecurityAuthenticationResult authenticateDuoPasscodeCredential(final DuoSecurityPasscodeCredential credential) {
+        try {
+            val request = buildHttpPostAuthRequest();
+            signHttpAuthRequest(request, Map.of("username", credential.getId().trim(),
+                "factor", "passcode", "passcode", credential.getPassword().trim()));
+            val result = executeDuoApiRequest(request);
+            LOGGER.debug("Duo authentication response: [{}]", result);
+            if ("allow".equalsIgnoreCase(result.getString("result"))) {
+                return DuoSecurityAuthenticationResult.builder().success(true).username(credential.getId()).build();
+            }
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return DuoSecurityAuthenticationResult.builder().success(false).username(credential.getId()).build();
+    }
+
+    private static final class CasHttpBuilder extends Http.HttpBuilder {
+        CasHttpBuilder(final String method, final String host, final String uri) {
+            super(method, host, uri);
+        }
     }
 }

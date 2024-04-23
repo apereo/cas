@@ -1,7 +1,8 @@
 package org.apereo.cas.ticket.expiration;
 
 import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -10,8 +11,12 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serial;
+import java.time.Clock;
+import java.time.ZonedDateTime;
+
 /**
- * NeverExpiresExpirationPolicy always answers false when asked if a Ticket is
+ * {@link NeverExpiresExpirationPolicy} always answers false when asked if a Ticket is
  * expired. Use this policy when you want a Ticket to live forever, or at least
  * as long as the particular CAS Universe exists.
  *
@@ -30,13 +35,13 @@ public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
      */
     public static final ExpirationPolicy INSTANCE = new NeverExpiresExpirationPolicy();
 
-    /**
-     * Serializable Unique ID.
-     */
+    private static final long MAX_EXPIRATION_IN_YEARS = 50L;
+
+    @Serial
     private static final long serialVersionUID = 3833747698242303540L;
 
     @Override
-    public boolean isExpired(final TicketState ticketState) {
+    public boolean isExpired(final TicketGrantingTicketAwareTicket ticketState) {
         return false;
     }
 
@@ -52,4 +57,13 @@ public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
         return (long) Integer.MAX_VALUE;
     }
 
+    @Override
+    public ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
+        return ZonedDateTime.now(Clock.systemUTC()).plusYears(MAX_EXPIRATION_IN_YEARS);
+    }
+
+    @Override
+    public ZonedDateTime getIdleExpirationTime(final Ticket ticketState) {
+        return ZonedDateTime.now(Clock.systemUTC()).plusYears(MAX_EXPIRATION_IN_YEARS);
+    }
 }

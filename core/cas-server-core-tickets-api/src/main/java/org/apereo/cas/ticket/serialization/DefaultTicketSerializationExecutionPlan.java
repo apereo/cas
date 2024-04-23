@@ -43,23 +43,23 @@ public class DefaultTicketSerializationExecutionPlan implements TicketSerializat
     }
 
     @Override
-    public void registerTicketSerializer(final String typeToSerialize, final StringSerializer<? extends Ticket> serializer) {
-        ticketSerializers.put(typeToSerialize, serializer);
-    }
-
-    @Override
     public void registerTicketSerializer(final StringSerializer<? extends Ticket> serializer) {
         registerTicketSerializer(serializer.getTypeToSerialize().getName(), serializer);
     }
 
     @Override
-    public StringSerializer<Ticket> getTicketSerializer(final Ticket ticket) {
-        return getTicketSerializer(ticket.getClass().getName());
+    public void registerTicketSerializer(final String typeToSerialize, final StringSerializer<? extends Ticket> serializer) {
+        ticketSerializers.put(typeToSerialize, serializer);
     }
 
     @Override
     public StringSerializer<Ticket> getTicketSerializer(final Class<? extends Ticket> clazz) {
         return getTicketSerializer(clazz.getName());
+    }
+
+    @Override
+    public StringSerializer<Ticket> getTicketSerializer(final Ticket ticket) {
+        return getTicketSerializer(ticket.getClass().getName());
     }
 
     @Override

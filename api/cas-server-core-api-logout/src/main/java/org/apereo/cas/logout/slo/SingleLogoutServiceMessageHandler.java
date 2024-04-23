@@ -1,7 +1,6 @@
 package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.logout.SingleLogoutExecutionRequest;
 
 import org.springframework.core.Ordered;
 
@@ -20,7 +19,7 @@ public interface SingleLogoutServiceMessageHandler extends Ordered {
      * Handle logout for slo service.
      *
      * @param singleLogoutService the service
-     * @param sessionIdentifier            the ticket id
+     * @param sessionIdentifier   the ticket id
      * @param context             the ticket granting ticket
      * @return the logout request
      */
@@ -60,8 +59,9 @@ public interface SingleLogoutServiceMessageHandler extends Ordered {
      *
      * @param logoutRequest the logout request.
      * @return the single logout message payload
+     * @throws Throwable the throwable
      */
-    SingleLogoutMessage createSingleLogoutMessage(SingleLogoutRequestContext logoutRequest);
+    SingleLogoutMessage createSingleLogoutMessage(SingleLogoutRequestContext logoutRequest) throws Throwable;
 
     @Override
     default int getOrder() {

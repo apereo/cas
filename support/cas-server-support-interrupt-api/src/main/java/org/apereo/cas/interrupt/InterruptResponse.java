@@ -4,7 +4,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
+import lombok.experimental.Accessors;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,19 +21,19 @@ import java.util.Map;
 @Getter
 @Setter
 @EqualsAndHashCode
+@Accessors(chain = true)
 public class InterruptResponse implements Serializable {
     /**
      * The default message when flows are interrupted.
      */
     public static final String DEFAULT_MESSAGE = "Authentication flow is interrupted";
 
-    private static final int MAP_SIZE = 8;
-
+    @Serial
     private static final long serialVersionUID = 2558836528840508196L;
 
     private String message;
 
-    private Map<String, String> links = new LinkedHashMap<>(MAP_SIZE);
+    private Map<String, String> links = new LinkedHashMap<>();
 
     private boolean block;
 
@@ -44,13 +45,16 @@ public class InterruptResponse implements Serializable {
 
     private long autoRedirectAfterSeconds = -1;
 
-    private Map<String, List<String>> data = new LinkedHashMap<>(MAP_SIZE);
+    private Map<String, List<String>> data = new LinkedHashMap<>();
+
+    private String messageCode;
 
     public InterruptResponse(final boolean interrupt) {
         this.interrupt = interrupt;
     }
 
-    public InterruptResponse(final String message, final boolean block, final boolean ssoEnabled) {
+    public InterruptResponse(final String message, final boolean block,
+                             final boolean ssoEnabled) {
         this(true);
         this.message = message;
         this.block = block;
@@ -65,7 +69,8 @@ public class InterruptResponse implements Serializable {
         this(DEFAULT_MESSAGE, false, true);
     }
 
-    public InterruptResponse(final String message, final Map<String, String> links, final boolean block, final boolean ssoEnabled) {
+    public InterruptResponse(final String message, final Map<String, String> links,
+                             final boolean block, final boolean ssoEnabled) {
         this(message, block, ssoEnabled);
         this.links = links;
     }
@@ -87,4 +92,5 @@ public class InterruptResponse implements Serializable {
     public static InterruptResponse interrupt() {
         return new InterruptResponse(DEFAULT_MESSAGE);
     }
+    
 }

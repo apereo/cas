@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Authentication")
-public class DefaultPrincipalFactoryTests {
+class DefaultPrincipalFactoryTests {
     private static final String UID = "uid";
 
     @Test
-    public void checkCreatingSimplePrincipal() {
+    void checkCreatingSimplePrincipal() throws Throwable {
         val f = PrincipalFactoryUtils.newPrincipalFactory();
         val p = f.createPrincipal(UID);
         assertEquals(UID, p.getId());
@@ -31,7 +31,7 @@ public class DefaultPrincipalFactoryTests {
     }
 
     @Test
-    public void checkCreatingSimplePrincipalWithAttributes() {
+    void checkCreatingSimplePrincipalWithAttributes() throws Throwable {
         val f = PrincipalFactoryUtils.newPrincipalFactory();
         val p = f.createPrincipal(UID, Collections.singletonMap("mail", List.of("final@example.com")));
         assertEquals(UID, p.getId());
@@ -40,7 +40,7 @@ public class DefaultPrincipalFactoryTests {
     }
 
     @Test
-    public void checkCreatingSimplePrincipalWithDefaultRepository() {
+    void checkCreatingSimplePrincipalWithDefaultRepository() throws Throwable {
         val f = PrincipalFactoryUtils.newPrincipalFactory();
         val p = f.createPrincipal(UID);
         assertEquals(UID, p.getId());
@@ -48,10 +48,10 @@ public class DefaultPrincipalFactoryTests {
     }
 
     @Test
-    public void verifyAction() {
+    void verifyAction() throws Throwable {
         val factory = PrincipalFactoryUtils.newPrincipalFactory();
         val p = factory.createPrincipal("casuser", CollectionUtils.wrap("name", "CAS"));
-        assertEquals(p.getId(), "casuser");
+        assertEquals("casuser", p.getId());
         assertEquals(1, p.getAttributes().size());
     }
 }

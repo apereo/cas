@@ -1,100 +1,119 @@
-import org.gradle.internal.logging.*
-import org.gradle.internal.logging.events.*
+class Ansi {
+    static final String NORMAL = "\u001B[0m"
 
-import java.util.regex.Pattern
+    static final String BOLD = "\u001B[1m"
+    static final String ITALIC = "\u001B[3m"
+    static final String UNDERLINE = "\u001B[4m"
+    static final String BLINK = "\u001B[5m"
+    static final String RAPID_BLINK = "\u001B[6m"
+    static final String REVERSE_VIDEO = "\u001B[7m"
+    static final String INVISIBLE_TEXT = "\u001B[8m"
 
-tasks.withType(Javadoc) {
-    def exceptions = []
-    doFirst {
-        gradle.services.get(LoggingOutputInternal).addOutputEventListener(new OutputEventListener() {
-            void onOutput(OutputEvent event) {
-                if (event.toString() =~ " warning: ") {
-                    exceptions << new GradleException("Javadoc warning: ${event.toString()}")
-                }
-            }
-        })
+    static final String BLACK = "\u001B[30m"
+    static final String RED = "\u001B[31m"
+    static final String GREEN = "\u001B[32m"
+    static final String YELLOW = "\u001B[33m"
+    static final String BLUE = "\u001B[34m"
+    static final String MAGENTA = "\u001B[35m"
+    static final String CYAN = "\u001B[36m"
+    static final String WHITE = "\u001B[37m"
+
+    static final String DARK_GRAY = "\u001B[1;30m"
+    static final String LIGHT_RED = "\u001B[1;31m"
+    static final String LIGHT_GREEN = "\u001B[1;32m"
+    static final String LIGHT_YELLOW = "\u001B[1;33m"
+    static final String LIGHT_BLUE = "\u001B[1;34m"
+    static final String LIGHT_PURPLE = "\u001B[1;35m"
+    static final String LIGHT_CYAN = "\u001B[1;36m"
+
+    static String color(String text, String ansiValue) {
+        ansiValue + text + NORMAL
     }
-    doLast {
-        exceptions.each {
-            throw it
-        }
+
+    static void write(String text, String ansiValue) {
+        println(color(text, ansiValue))
+    }
+
+    static void green(String text) {
+        write(text, Ansi.GREEN)
+    }
+
+    static void cyan(String text) {
+        write(text, Ansi.CYAN)
+    }
+
+    static void red(String text) {
+        write(text, Ansi.RED)
+    }
+
+    static void yellow(String text) {
+        write(text, Ansi.YELLOW)
+    }
+
+    static void blue(String text) {
+        write(text, Ansi.BLUE)
     }
 }
 
-task pathingJar(type: Jar, description: "Produces a 'pathing' JAR whose manifest class-path contains project runtime dependencies") {
-    dependsOn configurations.runtimeClasspath
-    appendix = "pathing"
+Object.metaClass.ansi = new Ansi()
+project.ext.set("ansi", new Ansi())
 
+tasks.register('pathingJar', Jar) {
+    description = "Produces a 'pathing' JAR whose manifest class-path contains project runtime dependencies"
+    dependsOn configurations.runtimeClasspath
+    archiveAppendix.set("pathing")
+
+    def files = configurations.runtimeClasspath.files
     doFirst {
         manifest {
             attributes "Class-Path":
-            configurations.runtimeClasspath.files.collect {
-                it.toURL().toString().replaceFirst("/file:/+/", "/")
-            }
-            .join(" ")
+                    files.collect {
+                        it.toURL().toString().replaceFirst("/file:/+/", "/")
+                    }.join(" ")
         }
     }
 }
 
-task testJar(type: Jar, dependsOn: testClasses, description: "archive the testClasses") {
-    archiveBaseName = "${project.archivesBaseName}-tests"
-    archiveClassifier = "tests"
+tasks.register('testJar', Jar) {
+    dependsOn testClasses
+    description = "Archive the testClasses"
+    archiveClassifier.set("tests")
     from sourceSets.test.output
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    archiveClassifier = "sources"
+tasks.register('sourcesJar', Jar) {
+    dependsOn classes
+    archiveClassifier.set("sources")
     from sourceSets.main.allSource
 }
 
-task resourcesJar(type: Jar) {
-    classifier "resources"
+tasks.register('resourcesJar', Jar) {
+    archiveClassifier.set("resources")
     from project.file("src/main/resources")
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    archiveClassifier = "javadoc"
+tasks.register('javadocJar', Jar) {
+    dependsOn javadoc
+    archiveClassifier.set("javadoc")
     from javadoc.destinationDir
 }
 
-task cleanLogs(description: "Clean build log files") {
-    delete fileTree(dir: project.projectDir, includes: ["**/*.log", "**/*.gz", "**/*.log.gz", "**/*.orig"])
-}
-
-task showConfiguration {
-    description "Shows the configuration used by the build"
+tasks.register('showProjects') {
+    description "Shows the projects used by the build"
+    def result = rootProject.subprojects.collect { it.name }
     doLast() {
-        def cfg = project.hasProperty("configuration") ? project.property("configuration") : "compile"
-        configurations.getByName(cfg).each { println it }
+        println(groovy.json.JsonOutput.toJson(result))
     }
 }
 
-task downloadDependencies {
+tasks.register('downloadDependencies') {
     description "Pre-download project dependencies for all configurations"
-    doLast {
-        configurations.getAsMap().each { name, config ->
-            logger.info "Retrieving dependencies for $project:$name"
-            try {
-                config.files
-            } catch (e) {
-                project.logger.info e.message
-            }
+    configurations.getAsMap().each { name, config ->
+        logger.info "Retrieving dependencies for $project:$name"
+        try {
+            config.files
+        } catch (e) {
+            project.logger.info e.message
         }
     }
 }
-
-task outputDependenciesWithoutLicense(description: "Output dependencies without approved license") {
-    doLast {
-        def results = file("${project.buildDir}/licenses/dependencies-without-allowed-license.json")
-        if (results.exists()) {
-            def slurper = new groovy.json.JsonSlurper()
-            def dependencies = slurper.parseText(results.text)
-            if (!dependencies.dependenciesWithoutAllowedLicenses.isEmpty()) {
-                println results.text
-                throw new GradleException("Dependencies found without allowed licenses")
-            }
-        }
-    }
-}
-
-clean.dependsOn("cleanLogs")

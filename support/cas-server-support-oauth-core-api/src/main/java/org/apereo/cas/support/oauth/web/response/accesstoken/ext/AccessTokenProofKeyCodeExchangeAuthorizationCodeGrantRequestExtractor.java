@@ -5,9 +5,7 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.pac4j.core.context.WebContext;
 
 /**
  * This is {@link AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor}.
@@ -15,26 +13,30 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-public class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor extends AccessTokenAuthorizationCodeGrantRequestExtractor {
+public class AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor
+    extends AccessTokenAuthorizationCodeGrantRequestExtractor {
     public AccessTokenProofKeyCodeExchangeAuthorizationCodeGrantRequestExtractor(final OAuth20ConfigurationContext oAuthConfigurationContext) {
         super(oAuthConfigurationContext);
     }
 
     @Override
-    protected AccessTokenRequestDataHolder extractInternal(final HttpServletRequest request, final HttpServletResponse response,
-                                                           final AccessTokenRequestDataHolder.AccessTokenRequestDataHolderBuilder builder) {
-        val challenge = request.getParameter(OAuth20Constants.CODE_CHALLENGE);
-        return builder.codeVerifier(challenge).build();
-    }
-
-    @Override
-    public boolean supports(final HttpServletRequest context) {
-        val challenge = context.getParameter(OAuth20Constants.CODE_VERIFIER);
+    public boolean supports(final WebContext context) {
+        val challenge = getConfigurationContext().getRequestParameterResolver()
+            .resolveRequestParameter(context, OAuth20Constants.CODE_VERIFIER).orElse(StringUtils.EMPTY);
         return StringUtils.isNotBlank(challenge) && super.supports(context);
     }
 
     @Override
     public boolean requestMustBeAuthenticated() {
         return true;
+    }
+
+    @Override
+    protected AccessTokenRequestContext extractInternal(
+        final WebContext context,
+        final AccessTokenRequestContext accessTokenRequestContext) {
+        val challenge = getConfigurationContext().getRequestParameterResolver()
+            .resolveRequestParameter(context, OAuth20Constants.CODE_VERIFIER).orElse(StringUtils.EMPTY);
+        return accessTokenRequestContext.withCodeVerifier(challenge);
     }
 }

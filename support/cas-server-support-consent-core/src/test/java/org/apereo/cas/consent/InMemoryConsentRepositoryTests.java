@@ -14,10 +14,10 @@ import org.springframework.boot.test.context.SpringBootTest;
  */
 @SpringBootTest(classes = BaseConsentRepositoryTests.SharedTestConfiguration.class)
 @Getter
-@Tag("Simple")
-public class InMemoryConsentRepositoryTests extends BaseConsentRepositoryTests {
+@Tag("Consent")
+class InMemoryConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired
-    @Qualifier("consentRepository")
+    @Qualifier(ConsentRepository.BEAN_NAME)
     protected ConsentRepository repository;
 }

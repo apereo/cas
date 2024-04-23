@@ -15,7 +15,7 @@ of verification and certificate issuance.
 
 Support is enabled by including the following dependency in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-acme" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-acme" %}
 
 The activation of this module is performed on startup when the CAS server is ready serve http requests. 
 When this module is finished successfully, the domain key pair composed of the key and 
@@ -31,8 +31,7 @@ your account and the other is required for encrypting the traffic on your
 domain(s). It is strongly encouraged to use separate key pairs 
 for account and each of the certificates.
 
-<div class="alert alert-info">
-<strong>Note</strong><br/>
+<div class="alert alert-info">:information_source: <strong>Note</strong><br/>
 Backup key pairs in a safe place, as you will be locked out from your account 
 if you should ever lose it! There is no way to recover a lost key pair, 
 or regain access to your account when the key is lost.
@@ -48,5 +47,5 @@ path to respond to verification challenges.
 
 ## Configuration
 
-{% include casproperties.html properties="cas.acme." %}
+{% include_cached casproperties.html properties="cas.acme." %}
 

@@ -4,6 +4,7 @@ import org.shredzone.acme4j.Authorization;
 import org.shredzone.acme4j.Order;
 import org.shredzone.acme4j.challenge.Http01Challenge;
 import org.shredzone.acme4j.util.CSRBuilder;
+import java.util.Optional;
 
 /**
  * This is {@link AcmeAuthorizationExecutor}.
@@ -29,7 +30,7 @@ public interface AcmeAuthorizationExecutor {
      * @param auth the auth
      * @return the http 01 challenge
      */
-    Http01Challenge find(Authorization auth);
+    Optional<Http01Challenge> find(Authorization auth);
 
     /**
      * Execute.
@@ -39,7 +40,7 @@ public interface AcmeAuthorizationExecutor {
      * @return the order
      * @throws Exception the exception
      */
-    default Order execute(Order order, CSRBuilder builder) throws Exception {
+    default Order execute(final Order order, final CSRBuilder builder) throws Exception {
         order.execute(builder.getEncoded());
         return order;
     }

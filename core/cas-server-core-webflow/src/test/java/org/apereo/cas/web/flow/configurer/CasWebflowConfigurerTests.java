@@ -6,7 +6,6 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.binding.convert.ConversionService;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.expression.ExpressionParser;
@@ -14,12 +13,14 @@ import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.validation.MessageCodesResolver;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
 import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionCriteria;
+import org.springframework.webflow.engine.TransitionSet;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.BinderConfiguration;
@@ -43,20 +44,24 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("WebflowConfig")
-public class CasWebflowConfigurerTests {
+class CasWebflowConfigurerTests {
     @Test
-    public void verifyNoAutoConfig() {
+    void verifyNoAutoConfig() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val props = new CasConfigurationProperties();
         props.getWebflow().getAutoConfiguration().setEnabled(false);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
-            mock(FlowDefinitionRegistry.class), new StaticApplicationContext(), props) {
+            mock(FlowDefinitionRegistry.class), applicationContext, props) {
         };
         assertDoesNotThrow(cfg::initialize);
+        assertDoesNotThrow(() -> cfg.postInitialization(applicationContext));
         assertNotNull(cfg.getName());
     }
 
     @Test
-    public void verifyFailAutoConfig() {
+    void verifyFailAutoConfig() throws Throwable {
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             mock(FlowDefinitionRegistry.class), new StaticApplicationContext(), new CasConfigurationProperties()) {
             @Override
@@ -68,7 +73,7 @@ public class CasWebflowConfigurerTests {
     }
 
     @Test
-    public void verifyMissingFlow() {
+    void verifyMissingFlow() throws Throwable {
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             null, new StaticApplicationContext(), new CasConfigurationProperties()) {
         };
@@ -77,7 +82,7 @@ public class CasWebflowConfigurerTests {
     }
 
     @Test
-    public void verifyNoLoginFlow() {
+    void verifyNoLoginFlow() throws Throwable {
         val registry = mock(FlowDefinitionRegistry.class);
         when(registry.getFlowDefinitionIds()).thenReturn(ArrayUtils.EMPTY_STRING_ARRAY);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
@@ -87,19 +92,27 @@ public class CasWebflowConfigurerTests {
     }
 
     @Test
-    public void verifyTransition() {
+    void verifyTransition() throws Throwable {
         val registry = mock(FlowDefinitionRegistry.class);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             registry, new StaticApplicationContext(), new CasConfigurationProperties()) {
         };
         val state = mock(TransitionableState.class);
         when(state.getId()).thenReturn("example");
+        when(state.getTransitionSet()).thenReturn(new TransitionSet());
         val transition = cfg.createTransition("destination", state);
         assertNotNull(transition);
+
+        val transition2 = cfg.createTransitionForState(state, "criteria");
+        assertNotNull(transition2);
+
+        val flow = mock(Flow.class);
+        assertNull(cfg.getTransitionableState(flow, "example", ActionState.class));
+        assertNull(cfg.getTransitionableState(flow, "example"));
     }
 
     @Test
-    public void verifyNoEvalAction() {
+    void verifyNoEvalAction() throws Throwable {
         val registry = mock(FlowDefinitionRegistry.class);
         val cfg = new AbstractCasWebflowConfigurer(null,
             registry, new StaticApplicationContext(), new CasConfigurationProperties()) {
@@ -109,7 +122,7 @@ public class CasWebflowConfigurerTests {
     }
 
     @Test
-    public void verifyDuplicateDecisionState() {
+    void verifyDuplicateDecisionState() throws Throwable {
         val registry = mock(FlowDefinitionRegistry.class);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             registry, new StaticApplicationContext(), new CasConfigurationProperties()) {
@@ -123,7 +136,7 @@ public class CasWebflowConfigurerTests {
     }
 
     @Test
-    public void verifyDuplicateEndState() {
+    void verifyDuplicateEndState() throws Throwable {
         val registry = mock(FlowDefinitionRegistry.class);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             registry, new StaticApplicationContext(), new CasConfigurationProperties()) {
@@ -137,7 +150,7 @@ public class CasWebflowConfigurerTests {
     }
 
     @Test
-    public void verifyDuplicateViewState() {
+    void verifyDuplicateViewState() throws Throwable {
         val registry = mock(FlowDefinitionRegistry.class);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             registry, new StaticApplicationContext(), new CasConfigurationProperties()) {
@@ -152,7 +165,7 @@ public class CasWebflowConfigurerTests {
     }
 
     @Test
-    public void verifySubflowState() {
+    void verifySubflowState() throws Throwable {
         val registry = mock(FlowDefinitionRegistry.class);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             registry, new StaticApplicationContext(), new CasConfigurationProperties()) {
@@ -161,11 +174,11 @@ public class CasWebflowConfigurerTests {
         when(flow.containsState("SubflowState")).thenReturn(Boolean.FALSE);
         val subState = cfg.createSubflowState(flow, "SubflowState", "SubflowState", mock(Action.class));
         assertNotNull(subState);
-        assertNotEquals(subState.getEntryActionList().size(), 0);
+        assertNotEquals(0, subState.getEntryActionList().size());
     }
 
     @Test
-    public void verifyDuplicateSubflowState() {
+    void verifyDuplicateSubflowState() throws Throwable {
         val registry = mock(FlowDefinitionRegistry.class);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             registry, new StaticApplicationContext(), new CasConfigurationProperties()) {
@@ -179,7 +192,7 @@ public class CasWebflowConfigurerTests {
     }
 
     @Test
-    public void verifyRedirectEndState() {
+    void verifyRedirectEndState() throws Throwable {
         val registry = mock(FlowDefinitionRegistry.class);
         val services = mock(FlowBuilderServices.class);
         val viewFactory = mock(ViewFactory.class);
@@ -199,29 +212,19 @@ public class CasWebflowConfigurerTests {
     }
 
     @Test
-    public void verifyDefaultTransition() {
+    void verifyDefaultTransition() throws Throwable {
         val registry = mock(FlowDefinitionRegistry.class);
         val cfg = new AbstractCasWebflowConfigurer(mock(FlowBuilderServices.class),
             registry, new StaticApplicationContext(), new CasConfigurationProperties()) {
         };
         val state = mock(TransitionableState.class);
         when(state.getId()).thenReturn("example");
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                cfg.createStateDefaultTransition(null, "target");
-            }
-        });
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                cfg.createStateDefaultTransition(null, state);
-            }
-        });
+        assertDoesNotThrow(() -> cfg.createStateDefaultTransition(null, "target"));
+        assertDoesNotThrow(() -> cfg.createStateDefaultTransition(null, state));
     }
 
     @Test
-    public void verifyMapping() {
+    void verifyMapping() throws Throwable {
         val registry = mock(FlowDefinitionRegistry.class);
         val fbs = mock(FlowBuilderServices.class);
         val parser = mock(ExpressionParser.class);
@@ -237,7 +240,7 @@ public class CasWebflowConfigurerTests {
     }
 
     @Test
-    public void verifyContains() {
+    void verifyContains() throws Throwable {
         val registry = mock(FlowDefinitionRegistry.class);
         val fbs = mock(FlowBuilderServices.class);
         val cfg = new AbstractCasWebflowConfigurer(fbs,
@@ -249,7 +252,7 @@ public class CasWebflowConfigurerTests {
     }
 
     @Test
-    public void verifyViewBinder() {
+    void verifyViewBinder() throws Throwable {
         val registry = mock(FlowDefinitionRegistry.class);
         val fbs = mock(FlowBuilderServices.class);
         val cfg = new AbstractCasWebflowConfigurer(fbs,
@@ -263,7 +266,7 @@ public class CasWebflowConfigurerTests {
     }
 
     @Test
-    public void verifyCriteria() {
+    void verifyCriteria() throws Throwable {
         val registry = mock(FlowDefinitionRegistry.class);
         val fbs = mock(FlowBuilderServices.class);
         val cfg = new AbstractCasWebflowConfigurer(fbs,
@@ -279,7 +282,7 @@ public class CasWebflowConfigurerTests {
     }
 
     @Test
-    public void verifyExpression() {
+    void verifyExpression() throws Throwable {
         val registry = mock(FlowDefinitionRegistry.class);
         val fbs = mock(FlowBuilderServices.class);
         when(fbs.getConversionService()).thenReturn(mock(ConversionService.class));
@@ -291,7 +294,7 @@ public class CasWebflowConfigurerTests {
     }
 
     @Test
-    public void verifyTransitionCreate() {
+    void verifyTransitionCreate() throws Throwable {
         val registry = mock(FlowDefinitionRegistry.class);
 
         val fbs = mock(FlowBuilderServices.class);
@@ -304,12 +307,7 @@ public class CasWebflowConfigurerTests {
         val state = mock(TransitionableState.class);
         when(flow.containsState("endStateId")).thenReturn(Boolean.TRUE);
         when(flow.getState("endStateId")).thenReturn(state);
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                cfg.createTransitionsForState(flow, "endStateId", Map.of());
-            }
-        });
+        assertDoesNotThrow(() -> cfg.createTransitionsForState(flow, "endStateId", Map.of()));
     }
 }
 

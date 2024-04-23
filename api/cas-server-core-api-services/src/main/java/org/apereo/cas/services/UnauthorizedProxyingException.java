@@ -1,6 +1,8 @@
 package org.apereo.cas.services;
 
 
+import java.io.Serial;
+
 /**
  * Exception thrown when a service attempts to proxy when it is not allowed to.
  *
@@ -18,33 +20,17 @@ public class UnauthorizedProxyingException extends UnauthorizedServiceException 
      */
     public static final String MESSAGE = "Proxying is not allowed for registered service ";
 
-    /**
-     * Comment for {@code serialVersionUID}.
-     */
+    @Serial
     private static final long serialVersionUID = -7307803750894078575L;
 
-    /**
-     * Instantiates a new unauthorized proxying exception.
-     */
     public UnauthorizedProxyingException() {
         super(CODE);
     }
 
-    /**
-     * Instantiates a new unauthorized proxying exception.
-     *
-     * @param message the message
-     * @param cause   the cause
-     */
     public UnauthorizedProxyingException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    /**
-     * Instantiates a new unauthorized proxying exception.
-     *
-     * @param message the message
-     */
     public UnauthorizedProxyingException(final String message) {
         super(message);
     }

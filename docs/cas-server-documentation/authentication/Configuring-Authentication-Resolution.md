@@ -13,7 +13,7 @@ The collection of handlers can be narrowed down using a selection criteria that 
 for the handler based on the current authentication transaction, provided credentials, service definition policy
 and many other controls.
 
-{% include casproperties.html
+{% include_cached casproperties.html
 properties="cas.authn.core.groovy-authentication-resolution,cas.authn.core.service-authentication-resolution" %}
 
 
@@ -32,30 +32,23 @@ to narrow down the list of candidates for the current transaction. The outline o
 
 ```groovy
 def run(Object[] args) {
-    def handlers = args[0]
-    def transaction = args[1]
-    def servicesManager = args[2]
-    def logger = args[3]
-
+    def (handlers,transaction,servicesManager,logger) = args
     return handlers
 }
 
 def supports(Object[] args) {
-    def handlers = args[0]
-    def transaction = args[1]
-    def servicesManager = args[2]
-    def logger = args[3]
+    def (handlers,transaction,servicesManager,logger) = args
     true
 }
 ```
 
 The following parameters are passed to the script:
 
-| Parameter        | Description
-|------------------|--------------------------------------------------------------------------------------------
-| `handlers`       | Collection of available and candidate `AuthenticationHandler`s.
-| `transaction`    | The authentication transaction currently in progress.
-| `servicesManager`  | The `ServicesManager` object responsible for locating service definitions attached to this transaction.
-| `logger`           | The object responsible for issuing log messages such as `logger.info(...)`.
+| Parameter         | Description                                                                                             |
+|-------------------|---------------------------------------------------------------------------------------------------------|
+| `handlers`        | Collection of available and candidate `AuthenticationHandler`s.                                         |
+| `transaction`     | The authentication transaction currently in progress.                                                   |
+| `servicesManager` | The `ServicesManager` object responsible for locating service definitions attached to this transaction. |
+| `logger`          | The object responsible for issuing log messages such as `logger.info(...)`.                             |
 
 The outcome of the script should be the collection of selected handlers with the type `Set<AuthenticationHandler>`.

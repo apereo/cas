@@ -8,8 +8,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.OrderComparator;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,7 +27,10 @@ import java.util.List;
 @Setter
 @RequiredArgsConstructor
 public class DefaultChainingMultifactorAuthenticationProvider implements ChainingMultifactorAuthenticationProvider {
+    @Serial
     private static final long serialVersionUID = -3199297701531604341L;
+
+    private final ConfigurableApplicationContext applicationContext;
 
     private final List<MultifactorAuthenticationProvider> multifactorAuthenticationProviders = new ArrayList<>(0);
 
@@ -33,7 +38,7 @@ public class DefaultChainingMultifactorAuthenticationProvider implements Chainin
 
     @Override
     public MultifactorAuthenticationProviderBypassEvaluator getBypassEvaluator() {
-        val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider();
+        val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
         getMultifactorAuthenticationProviders()
             .stream()
             .sorted(OrderComparator.INSTANCE)

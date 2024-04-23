@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title>Login Sidebar Fragment</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+<main class="container mt-3 mb-3">
+    <div th:fragment="logindrawer" id="logindrawer">
+        <aside id="app-drawer"
+               th:if="${'true' == #strings.defaultString(#themes.code('cas.drawer-menu.enabled'), 'true')}"
+               class="mdc-drawer mdc-drawer--dismissible mdc-drawer--modal offcanvas offcanvas-start">
+            <div class="mdc-drawer__header offcanvas-header flex-column">
+                <h2 class="mdc-drawer__title offcanvas-title" th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}">
+                    CAS</h2>
+                <div class="mdc-drawer__subtitle offcanvas-title"
+                    th:text="${#strings.defaultString(#themes.code('cas.theme.description'), 'Central Authentication Service')}">
+                    Central Authentication Service</div>
+            </div>
+            <div class="mdc-drawer__content offcanvas-body">
+                <nav class="mdc-list list-group list-group-flush" th:with="serverprefix=${cas.server.prefix}">
+                    <a th:href="@{/actuator}" class="mdc-list-item list-group-item list-group-item-action">
+                        <i class="mdi mdi-cogs fa fa-cogs" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">[[#{cas.login.resources.endpoints}]]</span>
+                    </a>
+                    <a class="mdc-list-item list-group-item list-group-item-action" href="https://apereo.github.io/cas">
+                        <i class="mdi mdi-file-code-outline fas fa-file-code" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">[[#{cas.login.resources.wiki}]]</span>
+                    </a>
+                    <a class="mdc-list-item list-group-item list-group-item-action" href="https://github.com/apereo/cas/pulls">
+                        <i class="mdi mdi-call-merge fas fa-code-branch" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">[[#{cas.login.resources.pulls}]]</span>
+                    </a>
+                    <a class="mdc-list-item list-group-item list-group-item-action"
+                       href="https://apereo.github.io/cas/developer/Contributor-Guidelines.html">
+                        <i class="mdi mdi-information fas fa-info-circle" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">[[#{cas.login.resources.contribguide}]]</span>
+                    </a>
+                    <a class="mdc-list-item list-group-item list-group-item-action" href="https://apereo.github.io/cas/Support.html">
+                        <i class="mdi mdi-help-circle fas fa-question-circle" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">[[#{cas.login.resources.support}]]</span>
+                    </a>
+                    <a class="mdc-list-item list-group-item list-group-item-action" href="https://apereo.github.io/cas/Mailing-Lists.html">
+                        <i class="mdi mdi-email-newsletter fas fa-envelope-open-text" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">[[#{cas.login.resources.mailinglist}]]</span>
+                    </a>
+                    <a class="mdc-list-item list-group-item list-group-item-action" href="https://gitter.im/apereo/cas">
+                        <i class="mdi mdi-message-text fas fa-comment-dots" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">[[#{cas.login.resources.chat}]]</span>
+                    </a>
+                    <a class="mdc-list-item list-group-item list-group-item-action" href="https://apereo.github.io/">
+                        <i class="mdi mdi-post fas fa-newspaper" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">[[#{cas.login.resources.blog}]]</span>
+                    </a>
+                </nav>
+            </div>
+        </aside>
+    </div>
+</main>
+</body>
+
+</html>

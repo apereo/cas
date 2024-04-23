@@ -1,12 +1,14 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.util.CollectionUtils;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Data;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
-
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,9 +23,10 @@ import java.util.stream.Collectors;
 @Data
 public class AcceptableUsagePolicyStatus implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -5552830592634074877L;
 
-    private final boolean accepted;
+    private final TriStateBoolean status;
 
     private final Principal principal;
 
@@ -36,7 +39,7 @@ public class AcceptableUsagePolicyStatus implements Serializable {
      * @return the acceptable usage policy status
      */
     public static AcceptableUsagePolicyStatus accepted(final Principal principal) {
-        return new AcceptableUsagePolicyStatus(true, principal);
+        return new AcceptableUsagePolicyStatus(TriStateBoolean.TRUE, principal);
     }
 
     /**
@@ -46,7 +49,17 @@ public class AcceptableUsagePolicyStatus implements Serializable {
      * @return the acceptable usage policy status
      */
     public static AcceptableUsagePolicyStatus denied(final Principal principal) {
-        return new AcceptableUsagePolicyStatus(false, principal);
+        return new AcceptableUsagePolicyStatus(TriStateBoolean.FALSE, principal);
+    }
+
+    /**
+     * Factory method. Indicate AUP has been skipped with unknown/undefined status.
+     *
+     * @param principal the principal
+     * @return the acceptable usage policy status
+     */
+    public static AcceptableUsagePolicyStatus skipped(final Principal principal) {
+        return new AcceptableUsagePolicyStatus(TriStateBoolean.UNDEFINED, principal);
     }
 
     /**
@@ -56,6 +69,7 @@ public class AcceptableUsagePolicyStatus implements Serializable {
      * @param value the value
      * @return the property
      */
+    @CanIgnoreReturnValue
     public AcceptableUsagePolicyStatus setProperty(final String name, final Object value) {
         this.properties.remove(name);
         addProperty(name, value);
@@ -67,6 +81,7 @@ public class AcceptableUsagePolicyStatus implements Serializable {
      *
      * @return the acceptable usage policy status
      */
+    @CanIgnoreReturnValue
     public AcceptableUsagePolicyStatus clearProperties() {
         this.properties.clear();
         return this;
@@ -79,6 +94,7 @@ public class AcceptableUsagePolicyStatus implements Serializable {
      * @param value the value
      * @return the acceptable usage policy status
      */
+    @CanIgnoreReturnValue
     public AcceptableUsagePolicyStatus addProperty(final String name, final Object value) {
         this.properties.put(name, value);
         return this;
@@ -131,5 +147,25 @@ public class AcceptableUsagePolicyStatus implements Serializable {
             return this.properties.get(name);
         }
         return defaultValues;
+    }
+
+    /**
+     * Is accepted status.
+     *
+     * @return true/false
+     */
+    @JsonIgnore
+    public boolean isAccepted() {
+        return status != null && this.status.isTrue();
+    }
+
+    /**
+     * Is denied status.
+     *
+     * @return true/false
+     */
+    @JsonIgnore
+    public boolean isDenied() {
+        return status != null && this.status.isFalse();
     }
 }

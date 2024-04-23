@@ -25,9 +25,9 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
         "cas.authn.mfa.yubikey.multiple-device-registration-enabled=true",
         "cas.authn.mfa.trusted.core.device-registration-enabled=true"
     })
-@Tag("WebflowConfig")
+@Tag("WebflowMfaConfig")
 @Getter
-public class YubiKeyMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
+class YubiKeyMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired
     @Qualifier("yubikeyFlowRegistry")
     private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;

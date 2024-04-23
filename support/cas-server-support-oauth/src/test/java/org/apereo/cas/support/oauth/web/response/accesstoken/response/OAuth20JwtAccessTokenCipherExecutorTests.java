@@ -15,17 +15,17 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OAuth")
-public class OAuth20JwtAccessTokenCipherExecutorTests extends AbstractOAuth20Tests {
+class OAuth20JwtAccessTokenCipherExecutorTests extends AbstractOAuth20Tests {
 
     @Test
-    public void verifyOperation() {
-        val c = new OAuth20JwtAccessTokenCipherExecutor(true, true);
-        assertNotNull(c.getSigningKey());
-        assertNotNull(c.getSigningKeySetting());
-        assertNotNull(c.getSecretKeyEncryptionKey());
-        assertNotNull(c.getEncryptionKeySetting());
-        assertNotNull(c.getName());
-        val token = c.encode("example");
-        assertEquals("example", c.decode(token));
+    void verifyOperation() throws Throwable {
+        val cipher = new OAuth20JwtAccessTokenCipherExecutor(true, true);
+        assertNotNull(cipher.getSigningKey());
+        assertNotNull(cipher.getSigningKeySetting());
+        assertNotNull(cipher.getEncryptionKey());
+        assertNotNull(cipher.getEncryptionKeySetting());
+        assertNotNull(cipher.getName());
+        val token = cipher.encode("example");
+        assertEquals("example", cipher.decode(token));
     }
 }

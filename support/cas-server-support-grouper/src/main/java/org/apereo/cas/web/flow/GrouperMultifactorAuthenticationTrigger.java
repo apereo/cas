@@ -21,10 +21,10 @@ import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -52,9 +52,11 @@ public class GrouperMultifactorAuthenticationTrigger implements MultifactorAuthe
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
-                                                                   final HttpServletRequest request, final Service service) {
+                                                                   final HttpServletRequest request,
+                                                                   final HttpServletResponse response,
+                                                                   final Service service) {
         val grouperField = casProperties.getAuthn().getMfa()
-            .getTriggers().getGrouper().getGrouperGroupField().toUpperCase();
+            .getTriggers().getGrouper().getGrouperGroupField();
         if (StringUtils.isBlank(grouperField)) {
             LOGGER.debug("No group field is defined to process for Grouper multifactor trigger");
             return Optional.empty();
@@ -64,24 +66,23 @@ public class GrouperMultifactorAuthenticationTrigger implements MultifactorAuthe
             return Optional.empty();
         }
 
-        val principal = authentication.getPrincipal();
-        val results = grouperFacade.getGroupsForSubjectId(principal.getId());
-        if (results.isEmpty()) {
-            LOGGER.debug("No groups could be found for [{}] to resolve events for MFA", principal);
-            return Optional.empty();
-        }
-
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
 
+        val principal = authentication.getPrincipal();
+        val results = grouperFacade.getGroupsForSubjectId(principal.getId());
+        if (results.isEmpty()) {
+            LOGGER.debug("No groups could be found for [{}] to resolve events for MFA", principal);
+            return Optional.empty();
+        }
+        
         val groupField = GrouperGroupField.valueOf(grouperField);
 
         val values = results.stream()
-            .map(wsGetGroupsResult -> Stream.of(wsGetGroupsResult.getWsGroups()))
-            .flatMap(Function.identity())
+            .flatMap(wsGetGroupsResult -> Stream.of(wsGetGroupsResult.getWsGroups()))
             .map(g -> GrouperFacade.getGrouperGroupAttribute(groupField, g))
             .collect(Collectors.toSet());
 

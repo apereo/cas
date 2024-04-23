@@ -1,7 +1,7 @@
 /**********************************
  * Base64 Core
  **********************************/
-(function (root, factory) {
+((root, factory) => {
     if (typeof define === 'function' && define.amd) {
         define(['base64js'], factory);
     } else if (typeof module === 'object' && module.exports) {
@@ -9,7 +9,7 @@
     } else {
         root.base64url = factory(root.base64js);
     }
-})(this, function (base64js) {
+})(this, base64js => {
 
     function ensureUint8Array(arg) {
         if (arg instanceof ArrayBuffer) {
@@ -47,7 +47,7 @@
  * WebAuthN Core
  *******************************************************/
 
-(function (root, factory) {
+((root, factory) => {
     if (typeof define === 'function' && define.amd) {
         define(['base64url'], factory);
     } else if (typeof module === 'object' && module.exports) {
@@ -55,7 +55,7 @@
     } else {
         root.webauthn = factory(root.base64url);
     }
-})(this, function (base64url) {
+})(this, base64url => {
 
     function extend(obj, more) {
         return Object.assign({}, obj, more);
@@ -148,40 +148,36 @@
 
     /** Turn a PublicKeyCredential object into a plain object with base64url encoded binary values */
     function responseToObject(response) {
-        if (response.u2fResponse) {
-            return response;
+        let clientExtensionResults = {};
+
+        try {
+            clientExtensionResults = response.getClientExtensionResults();
+        } catch (e) {
+            console.error('getClientExtensionResults failed', e);
+        }
+
+        if (response.response.attestationObject) {
+            return {
+                type: response.type,
+                id: response.id,
+                response: {
+                    attestationObject: base64url.fromByteArray(response.response.attestationObject),
+                    clientDataJSON: base64url.fromByteArray(response.response.clientDataJSON),
+                },
+                clientExtensionResults,
+            };
         } else {
-            let clientExtensionResults = {};
-
-            try {
-                clientExtensionResults = response.getClientExtensionResults();
-            } catch (e) {
-                console.error('getClientExtensionResults failed', e);
-            }
-
-            if (response.response.attestationObject) {
-                return {
-                    type: response.type,
-                    id: response.id,
-                    response: {
-                        attestationObject: base64url.fromByteArray(response.response.attestationObject),
-                        clientDataJSON: base64url.fromByteArray(response.response.clientDataJSON),
-                    },
-                    clientExtensionResults,
-                };
-            } else {
-                return {
-                    type: response.type,
-                    id: response.id,
-                    response: {
-                        authenticatorData: base64url.fromByteArray(response.response.authenticatorData),
-                        clientDataJSON: base64url.fromByteArray(response.response.clientDataJSON),
-                        signature: base64url.fromByteArray(response.response.signature),
-                        userHandle: response.response.userHandle && base64url.fromByteArray(response.response.userHandle),
-                    },
-                    clientExtensionResults,
-                };
-            }
+            return {
+                type: response.type,
+                id: response.id,
+                response: {
+                    authenticatorData: base64url.fromByteArray(response.response.authenticatorData),
+                    clientDataJSON: base64url.fromByteArray(response.response.clientDataJSON),
+                    signature: base64url.fromByteArray(response.response.signature),
+                    userHandle: response.response.userHandle && base64url.fromByteArray(response.response.userHandle),
+                },
+                clientExtensionResults,
+            };
         }
     }
 
@@ -256,7 +252,7 @@ function addDeviceAttributeAsRow(name, value) {
 }
 
 function addMessage(message) {
-    $('#messages').html("<p>" + message + "</p>");
+    $('#messages').html(`<p>${message}</p>`);
 }
 
 function addMessages(messages) {
@@ -265,7 +261,7 @@ function addMessages(messages) {
 
 function showJson(name, data) {
     if (data != null) {
-        $('#' + name).text(JSON.stringify(data, false, 4));
+        $(`#${name}`).text(JSON.stringify(data, false, 4));
     }
 }
 
@@ -291,6 +287,7 @@ function showServerResponse(data) {
 function hideDeviceInfo() {
     $("#device-info").hide();
     $("#registerButton").show();
+    $("#registerDiscoverableCredentialButton").show();
 }
 
 function showDeviceInfo(params) {
@@ -299,6 +296,9 @@ function showDeviceInfo(params) {
     $("#device-icon").attr("src", params.imageUrl);
     $("#registerButton").hide();
     $("#deviceNamePanel").hide();
+
+    $("#registerDiscoverableCredentialButton").hide();
+    $("#residentKeysPanel").hide();
 }
 
 function resetDisplays() {
@@ -314,13 +314,17 @@ function getWebAuthnUrls() {
     let endpoints = {
         authenticate: "webauthn/authenticate",
         register: "webauthn/register",
-    }
+    };
     return new Promise((resolve, reject) => resolve(endpoints)).then(data => {
         return data;
     });
 }
 
-function getRegisterRequest(urls, username, displayName, credentialNickname, requireResidentKey = false) {
+function getRegisterRequest(urls,
+                            username,
+                            displayName,
+                            credentialNickname,
+                            requireResidentKey = false) {
     return fetch(urls.register, {
         body: new URLSearchParams({
             username,
@@ -329,6 +333,9 @@ function getRegisterRequest(urls, username, displayName, credentialNickname, req
             requireResidentKey,
             sessionToken: session.sessionToken || null,
         }),
+        headers: {
+           "X-CSRF-TOKEN": csrfToken
+        },
         method: 'POST',
     })
         .then(response => response.json())
@@ -349,6 +356,9 @@ function submitResponse(url, request, response) {
 
     return fetch(url, {
         method: 'POST',
+        headers: {
+            "X-CSRF-TOKEN": csrfToken
+        },
         body: JSON.stringify(body),
     })
         .then(response => response.json())
@@ -417,11 +427,13 @@ function finishCeremony(response) {
         });
 }
 
-function register(username, displayName, credentialNickname, requireResidentKey = false, getRequest = getRegisterRequest) {
-    var request;
+function register(username, displayName, credentialNickname, csrfToken,
+                  requireResidentKey = false,
+                  getRequest = getRegisterRequest) {
+    let request;
     return performCeremony({
         getWebAuthnUrls,
-        getRequest: urls => getRequest(urls, username, displayName, credentialNickname, requireResidentKey),
+        getRequest: urls => getRequest(urls, username, displayName, credentialNickname, requireResidentKey, csrfToken),
         statusStrings: {
             init: 'Initiating registration ceremony with server...',
             authenticatorRequest: 'Asking authenticators to create credential...',
@@ -433,6 +445,7 @@ function register(username, displayName, credentialNickname, requireResidentKey 
         }
     })
         .then(data => {
+            console.log(`registration data: ${JSON.stringify(data.registration)}`);
             if (data.registration) {
                 const nicknameInfo = {nickname: data.registration.credentialNickname};
 
@@ -448,11 +461,11 @@ function register(username, displayName, credentialNickname, requireResidentKey 
                 if (!data.attestationTrusted) {
                     addMessage("Attestation cannot be trusted.");
                 } else {
-                    setTimeout(function () {
+                    setTimeout(() => {
                         $('#sessionToken').val(session.sessionToken);
                         console.log("Submitting registration form");
                         $('#form').submit();
-                    }, 1500);
+                    }, 2500);
                 }
             }
         })
@@ -482,6 +495,9 @@ function register(username, displayName, credentialNickname, requireResidentKey 
 function getAuthenticateRequest(urls, username) {
     return fetch(urls.authenticate, {
         body: new URLSearchParams(username ? {username} : {}),
+        headers: {
+            "X-CSRF-TOKEN": csrfToken
+        },
         method: 'POST',
     })
         .then(response => response.json())
@@ -510,7 +526,7 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
         executeRequest: executeAuthenticateRequest,
     }).then(data => {
         $('#divDeviceInfo').show();
-        console.log("Received: " + JSON.stringify(data));
+        console.log(`Received: ${JSON.stringify(data, undefined, 2)}`);
         if (data.registrations) {
 
             data.registrations.forEach(reg => {
@@ -519,18 +535,23 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
                 addDeviceAttributeAsRow("Credential Nickname", reg.credentialNickname);
                 addDeviceAttributeAsRow("Registration Date", reg.registrationTime);
                 addDeviceAttributeAsRow("Session Token", data.sessionToken);
-                addDeviceAttributeAsRow("Device Id", reg.attestationMetadata.deviceProperties.deviceId);
-                addDeviceAttributeAsRow("Device Name", reg.attestationMetadata.deviceProperties.displayName);
+                if (reg.attestationMetadata) {
+                    const deviceProperties = reg.attestationMetadata.deviceProperties;
+                    if (deviceProperties) {
+                        addDeviceAttributeAsRow("Device Id", deviceProperties.deviceId);
+                        addDeviceAttributeAsRow("Device Name", deviceProperties.displayName);
 
-                showDeviceInfo({
-                    "displayName": reg.attestationMetadata.deviceProperties.displayName,
-                    "imageUrl": reg.attestationMetadata.deviceProperties.imageUrl
-                })
+                        showDeviceInfo({
+                            "displayName": deviceProperties.displayName,
+                            "imageUrl": deviceProperties.imageUrl
+                        })
+                    }
+                }
             });
 
             $('#authnButton').hide();
 
-            setTimeout(function () {
+            setTimeout(() => {
                 $('#token').val(data.sessionToken);
                 console.log("Submitting authentication form");
                 $('#webauthnLoginForm').submit();

@@ -24,11 +24,6 @@ import java.util.Optional;
  */
 public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifactorWebflowConfigurer {
 
-    /**
-     * Webflow event id.
-     */
-    public static final String MFA_SIMPLE_EVENT_ID = "mfa-simple";
-
     public CasSimpleMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                  final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                  final FlowDefinitionRegistry flowDefinitionRegistry,
@@ -41,45 +36,48 @@ public class CasSimpleMultifactorWebflowConfigurer extends AbstractCasMultifacto
 
     @Override
     protected void doInitialize() {
+        val providerId = casProperties.getAuthn().getMfa().getSimple().getId();
         multifactorAuthenticationFlowDefinitionRegistries.forEach(registry -> {
-            val flow = getFlow(registry, MFA_SIMPLE_EVENT_ID);
+            val flow = getFlow(registry, providerId);
             createFlowVariable(flow, CasWebflowConstants.VAR_ID_CREDENTIAL, CasSimpleMultifactorTokenCredential.class);
             flow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
 
             val initLoginFormState = createActionState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM,
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION));
-            createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS, "sendSimpleToken");
+            createTransitionForState(initLoginFormState, CasWebflowConstants.TRANSITION_ID_SUCCESS,
+                CasWebflowConstants.STATE_ID_SIMPLE_MFA_SEND_TOKEN);
             setStartState(flow, initLoginFormState);
             createEndState(flow, CasWebflowConstants.STATE_ID_SUCCESS);
             createEndState(flow, CasWebflowConstants.STATE_ID_UNAVAILABLE);
 
-            val sendSimpleToken = createActionState(flow, "sendSimpleToken",
-                createEvaluateAction("mfaSimpleMultifactorSendTokenAction"));
+            val sendSimpleToken = createActionState(flow, CasWebflowConstants.STATE_ID_SIMPLE_MFA_SEND_TOKEN, CasWebflowConstants.ACTION_ID_MFA_SIMPLE_SEND_TOKEN);
             createTransitionForState(sendSimpleToken, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_UNAVAILABLE);
             createTransitionForState(sendSimpleToken, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
+            createTransitionForState(sendSimpleToken, "selectEmails", "selectEmailsView");
 
+            val selectEmailsView = createViewState(flow, "selectEmailsView", "simple-mfa/casSimpleMfaSelectEmailsView");
+            createTransitionForState(selectEmailsView, CasWebflowConstants.TRANSITION_ID_SELECT, CasWebflowConstants.STATE_ID_SIMPLE_MFA_SEND_TOKEN);
 
             val setPrincipalAction = createSetAction("viewScope.principal", "conversationScope.authentication.principal");
             val propertiesToBind = CollectionUtils.wrapList("token");
             val binder = createStateBinderConfiguration(propertiesToBind);
             val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM,
-                "casSimpleMfaLoginView", binder);
+                "simple-mfa/casSimpleMfaLoginView", binder);
             createStateModelBinding(viewLoginFormState, CasWebflowConstants.VAR_ID_CREDENTIAL, CasSimpleMultifactorTokenCredential.class);
             viewLoginFormState.getEntryActionList().add(setPrincipalAction);
 
             createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_SUBMIT,
                 CasWebflowConstants.STATE_ID_REAL_SUBMIT, Map.of("bind", Boolean.TRUE, "validate", Boolean.TRUE));
-            createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_RESEND, "sendSimpleToken",
+
+            createTransitionForState(viewLoginFormState, CasWebflowConstants.TRANSITION_ID_RESEND,
+                CasWebflowConstants.STATE_ID_SIMPLE_MFA_SEND_TOKEN,
                 Map.of("bind", Boolean.FALSE, "validate", Boolean.FALSE));
 
             val realSubmitState = createActionState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT,
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_OTP_AUTHENTICATION_ACTION));
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
-
         });
-
-        registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_SIMPLE_EVENT_ID,
-            casProperties.getAuthn().getMfa().getSimple().getId());
+        registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), providerId);
     }
 }

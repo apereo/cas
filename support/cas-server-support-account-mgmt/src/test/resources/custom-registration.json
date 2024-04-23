@@ -1,0 +1,24 @@
+{
+  "@class" : "java.util.HashMap",
+  "username" : {
+    "@class" : "org.apereo.cas.acct.AccountRegistrationProperty",
+    "name" : "username",
+    "required" : true,
+    "label" : "cas.screen.acct.label.username",
+    "order": 0
+  },
+  "email" : {
+    "@class" : "org.apereo.cas.acct.AccountRegistrationProperty",
+    "name" : "email",
+    "required" : true,
+    "label" : "cas.screen.acct.label.email",
+    "order": 1
+  },
+  "phone" : {
+    "@class" : "org.apereo.cas.acct.AccountRegistrationProperty",
+    "name" : "phone",
+    "required" : false,
+    "label" : "cas.screen.acct.label.phone",
+    "order": 2
+  }
+}

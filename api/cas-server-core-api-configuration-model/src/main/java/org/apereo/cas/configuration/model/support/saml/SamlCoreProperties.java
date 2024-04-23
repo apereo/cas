@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml;
 
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -7,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,17 +24,20 @@ import java.io.Serializable;
 @JsonFilter("SamlCoreProperties")
 public class SamlCoreProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8505851926931247878L;
 
     /**
      * Skew allowance that controls the issue instance of the authentication.
      */
-    private int skewAllowance = 5;
+    @DurationCapable
+    private String skewAllowance = "PT30S";
 
     /**
      * Issue length that controls the validity period of the assertion.
      */
-    private int issueLength = 30;
+    @DurationCapable
+    private String issueLength = "PT30S";
 
     /**
      * Attribute namespace to use when generating SAML1 responses.

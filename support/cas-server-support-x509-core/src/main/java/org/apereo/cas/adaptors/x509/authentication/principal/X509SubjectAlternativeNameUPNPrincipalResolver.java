@@ -1,14 +1,11 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
-import org.apereo.cas.util.LoggingUtils;
 
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 
-import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 
 /**
@@ -22,20 +19,15 @@ import java.security.cert.X509Certificate;
 @ToString(callSuper = true)
 public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509PrincipalResolver {
 
-    public X509SubjectAlternativeNameUPNPrincipalResolver(final PrincipalResolutionContext context,
-                                                          final String alternatePrincipalAttribute) {
-        super(context, alternatePrincipalAttribute);
+    public X509SubjectAlternativeNameUPNPrincipalResolver(final PrincipalResolutionContext context) {
+        super(context);
     }
 
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
         LOGGER.debug("Resolving principal from Subject Alternative Name UPN for [{}]", certificate);
-        try {
-            val upnString = X509UPNExtractorUtils.extractUPNString(certificate);
-            return StringUtils.isNotBlank(upnString) ? upnString : getAlternatePrincipal(certificate);
-        } catch (final CertificateParsingException e) {
-            LoggingUtils.error(LOGGER, e);
-            return getAlternatePrincipal(certificate);
-        }
+        val subjectAltNames = X509ExtractorUtils.getSubjectAltNames(certificate);
+        val upnString = X509UPNExtractorUtils.extractUPNString(subjectAltNames);
+        return upnString.orElseGet(() -> getAlternatePrincipal(certificate));
     }
 }

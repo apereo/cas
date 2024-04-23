@@ -1,22 +1,20 @@
 package org.apereo.cas.webauthn;
 
-import org.apereo.cas.config.RestfulWebAuthnConfiguration;
+import org.apereo.cas.config.CasRestfulWebAuthnAutoConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepositoryTests;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
-
 import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -25,28 +23,29 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("RestfulApi")
+@Tag("RestfulApiAuthentication")
 @TestPropertySource(properties = "cas.authn.mfa.web-authn.rest.url=http://localhost:9559")
-@Import(RestfulWebAuthnConfiguration.class)
-public class RestfulWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
+@Import(CasRestfulWebAuthnAutoConfiguration.class)
+@Execution(ExecutionMode.SAME_THREAD)
+class RestfulWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
 
     @Test
     @Override
-    public void verifyOperation() throws Exception {
+    protected void verifyOperation() throws Throwable {
         assertRegistrationIsFound();
         assertRegistrationBadStatus();
         assertRegistrationBadInput();
     }
 
     @Test
-    public void verifyLoadOperation() throws Exception {
+    void verifyLoadOperation() throws Throwable {
         assertLoadIsFound();
         assertLoadBadStatus();
         assertLoadBadInput();
     }
 
     @Test
-    public void verifyUpdate() {
+    void verifyUpdate() throws Throwable {
         try (val webServer = new MockWebServer(9559, HttpStatus.OK)) {
             webServer.start();
             webAuthnCredentialRepository.removeAllRegistrations("casuser");
@@ -62,7 +61,7 @@ public class RestfulWebAuthnCredentialRepositoryTests extends BaseWebAuthnCreden
         }
     }
 
-    private void assertLoadBadInput() {
+    private void assertLoadBadInput() throws Exception {
         val records = getCredentialRegistration("casuser");
         try (val webServer = new MockWebServer(9559,
             new ByteArrayResource("_-@@-_".getBytes(StandardCharsets.UTF_8), "REST Output"), HttpStatus.OK)) {
@@ -81,7 +80,7 @@ public class RestfulWebAuthnCredentialRepositoryTests extends BaseWebAuthnCreden
         }
     }
 
-    private void assertLoadBadStatus() {
+    private void assertLoadBadStatus() throws Exception {
         val records = getCredentialRegistration("casuser");
         try (val webServer = new MockWebServer(9559,
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"), HttpStatus.NOT_FOUND)) {
@@ -91,7 +90,7 @@ public class RestfulWebAuthnCredentialRepositoryTests extends BaseWebAuthnCreden
         }
     }
 
-    private void assertRegistrationIsFound() throws JsonProcessingException {
+    private void assertRegistrationIsFound() throws Exception {
         val records = getCredentialRegistration("casuser");
         val results = cipherExecutor.encode(WebAuthnUtils.getObjectMapper()
             .writeValueAsString(CollectionUtils.wrapList(records)));
@@ -103,7 +102,7 @@ public class RestfulWebAuthnCredentialRepositoryTests extends BaseWebAuthnCreden
         }
     }
 
-    private void assertLoadIsFound() throws JsonProcessingException {
+    private void assertLoadIsFound() throws Exception {
         val records = getCredentialRegistration("casuser");
         val results = cipherExecutor.encode(WebAuthnUtils.getObjectMapper()
             .writeValueAsString(CollectionUtils.wrapList(records)));

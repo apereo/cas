@@ -1,22 +1,19 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.web.flow.logout.TerminateSessionAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.test.MockRequestContext;
-
-import javax.servlet.http.Cookie;
-
+import jakarta.servlet.http.Cookie;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -25,29 +22,70 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
 @Tag("WebflowActions")
-public class TerminateSessionActionTests extends AbstractWebflowActionsTests {
-    @Autowired
-    @Qualifier("terminateSessionAction")
-    private Action action;
+class TerminateSessionActionTests {
+    @Nested
+    @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
+    class DefaultTests extends AbstractWebflowActionsTests {
 
-    @Test
-    public void verifyTerminateAction() throws Exception {
-        val context = new MockRequestContext();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), new MockHttpServletRequest(), new MockHttpServletResponse()));
-        WebUtils.putTicketGrantingTicketInScopes(context, "TGT-123456-something");
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
-        assertNotNull(WebUtils.getLogoutRequests(context));
+        @Autowired
+        @Qualifier(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION)
+        private Action action;
+
+        @Test
+        void verifyTerminateAction() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            WebUtils.putTicketGrantingTicketInScopes(context, "TGT-123456-something");
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, this.action.execute(context).getId());
+            assertNotNull(WebUtils.getLogoutRequests(context));
+        }
+
+        @Test
+        void verifyTerminateActionByCookie() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            context.getHttpServletRequest().setCookies(new Cookie("TGC", "TGT-123456-something"));
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
+            assertNotNull(WebUtils.getLogoutRequests(context));
+        }
     }
 
-    @Test
-    public void verifyTerminateActionByCookie() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        request.setCookies(new Cookie("TGC", "TGT-123456-something"));
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
-        assertNotNull(WebUtils.getLogoutRequests(context));
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.tgc.crypto.enabled=false",
+        "cas.logout.confirm-logout=true",
+        "cas.logout.redirect-url=https://github.com"
+    })
+    class ConfirmingLogoutTests extends AbstractWebflowActionsTests {
+        @Autowired
+        @Qualifier(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION)
+        private Action action;
+
+        @Test
+        void verifyTerminateActionConfirmed() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            context.setParameter(TerminateSessionAction.REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED, "true");
+            WebUtils.putTicketGrantingTicketInScopes(context, "TGT-123456-something");
+            assertEquals(CasWebflowConstants.TRANSITION_ID_REDIRECT, action.execute(context).getId());
+        }
+
+        @Test
+        void verifyTerminateActionRequests() throws Throwable {
+            val tgt = new MockTicketGrantingTicket(RegisteredServiceTestUtils.getAuthentication());
+            getTicketRegistry().addTicket(tgt);
+            val context = MockRequestContext.create(applicationContext);
+            context.setParameter(TerminateSessionAction.REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED, "true");
+            WebUtils.putTicketGrantingTicketInScopes(context, tgt.getId());
+            WebUtils.putAuthentication(tgt.getAuthentication(), context);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_REDIRECT, action.execute(context).getId());
+            assertNull(getTicketRegistry().getTicket(tgt.getId()));
+            assertTrue(WebUtils.getLogoutRequests(context).isEmpty());
+        }
+
+        @Test
+        void verifyTerminateActionConfirming() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            WebUtils.putTicketGrantingTicketInScopes(context, "TGT-123456-something");
+            assertEquals(CasWebflowConstants.STATE_ID_WARN, action.execute(context).getId());
+        }
     }
 }

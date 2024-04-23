@@ -1,12 +1,22 @@
 package org.apereo.cas.interrupt.webflow;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.interrupt.InterruptResponse;
-
+import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
+import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
+import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.webflow.test.MockRequestContext;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -16,21 +26,41 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Simple")
-public class InterruptSingleSignOnParticipationStrategyTests {
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
+    InterruptWebflowConfigurerTests.SharedTestConfiguration.class,
+    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+}, properties = "cas.interrupt.json.location=classpath:/interrupt.json")
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+class InterruptSingleSignOnParticipationStrategyTests {
+    @Autowired
+    @Qualifier("interruptSingleSignOnParticipationStrategy")
+    private SingleSignOnParticipationStrategy interruptSingleSignOnParticipationStrategy;
+
     @Test
-    public void verifyStrategyWithoutInterrupt() {
-        val s = new InterruptSingleSignOnParticipationStrategy();
-        assertFalse(s.isParticipating(new MockRequestContext()));
+    void verifyStrategyWithoutInterrupt() throws Throwable {
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(new MockHttpServletRequest())
+            .httpServletResponse(new MockHttpServletResponse())
+            .requestContext(new MockRequestContext())
+            .build();
+        assertFalse(interruptSingleSignOnParticipationStrategy.isParticipating(ssoRequest));
     }
 
     @Test
-    public void verifyStrategyWithInterruptDisabled() {
-        val s = new InterruptSingleSignOnParticipationStrategy();
+    void verifyStrategyWithInterruptDisabled() throws Throwable {
         val ctx = new MockRequestContext();
         val response = new InterruptResponse();
         response.setSsoEnabled(false);
         InterruptUtils.putInterruptIn(ctx, response);
-        assertTrue(s.supports(ctx));
-        assertFalse(s.isParticipating(ctx));
+
+        val ssoRequest = SingleSignOnParticipationRequest.builder()
+            .httpServletRequest(new MockHttpServletRequest())
+            .httpServletResponse(new MockHttpServletResponse())
+            .requestContext(ctx)
+            .build();
+        assertTrue(interruptSingleSignOnParticipationStrategy.supports(ssoRequest));
+        assertFalse(interruptSingleSignOnParticipationStrategy.isParticipating(ssoRequest));
     }
 }

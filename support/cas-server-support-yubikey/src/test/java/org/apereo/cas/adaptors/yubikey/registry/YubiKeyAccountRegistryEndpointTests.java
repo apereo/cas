@@ -1,16 +1,28 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
 import org.apereo.cas.adaptors.yubikey.BaseYubiKeyTests;
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
+import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.nio.charset.StandardCharsets;
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,12 +38,15 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.yubikey.client-id=18423",
         "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As=",
         "cas.authn.mfa.yubikey.json-file=file:${java.io.tmpdir}/yubikey.json",
-        
+
         "management.endpoints.web.exposure.include=*",
         "management.endpoint.yubikeyAccountRepository.enabled=true"
     })
-@Tag("MFA")
-public class YubiKeyAccountRegistryEndpointTests {
+@Tag("MFAProvider")
+@ResourceLock(value = "yubiKeyAccountRegistry", mode = ResourceAccessMode.READ_WRITE)
+class YubiKeyAccountRegistryEndpointTests {
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")
@@ -42,7 +57,7 @@ public class YubiKeyAccountRegistryEndpointTests {
     private YubiKeyAccountRegistryEndpoint endpoint;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         endpoint.deleteAll();
         val username = UUID.randomUUID().toString();
         assertTrue(endpoint.load().isEmpty());
@@ -53,9 +68,28 @@ public class YubiKeyAccountRegistryEndpointTests {
         assertTrue(yubiKeyAccountRegistry.registerAccountFor(request));
         assertNotNull(endpoint.get(username));
         assertFalse(endpoint.load().isEmpty());
+
+        val entity = endpoint.export();
+        assertEquals(HttpStatus.OK, entity.getStatusCode());
+
         endpoint.delete(username);
         assertNull(endpoint.get(username));
         endpoint.deleteAll();
         assertTrue(endpoint.load().isEmpty());
+    }
+
+    @Test
+    void verifyImportOperation() throws Throwable {
+        val toSave = YubiKeyAccount.builder().username(UUID.randomUUID().toString())
+            .devices(CollectionUtils.wrapList(YubiKeyRegisteredDevice.builder()
+                .name(UUID.randomUUID().toString())
+                .registrationDate(ZonedDateTime.now(Clock.systemUTC()))
+                .publicId(UUID.randomUUID().toString()).build()))
+            .build();
+
+        val request = new MockHttpServletRequest();
+        val content = MAPPER.writeValueAsString(toSave);
+        request.setContent(content.getBytes(StandardCharsets.UTF_8));
+        assertEquals(HttpStatus.CREATED, endpoint.importAccount(request).getStatusCode());
     }
 }

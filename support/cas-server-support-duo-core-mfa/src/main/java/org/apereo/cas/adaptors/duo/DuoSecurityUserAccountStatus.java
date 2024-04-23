@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.duo;
 
+import java.util.Locale;
+
 /**
  * This is {@link DuoSecurityUserAccountStatus}.
  *
@@ -26,5 +28,33 @@ public enum DuoSecurityUserAccountStatus {
     /**
      * Duo service was unavailable.
      */
-    UNAVAILABLE
+    UNAVAILABLE;
+
+    /**
+     * Translate status to a duo account status type.
+     *
+     * @param status the status
+     * @return the duo security user account status
+     */
+    public static DuoSecurityUserAccountStatus from(final String status) {
+        return switch (status.toLowerCase(Locale.ENGLISH)) {
+            case "bypass" -> ALLOW;
+            case "disabled", "locked", "pending_deletion" -> DENY;
+            default -> AUTH;
+        };
+    }
+
+    /**
+     * Convert status to string value understood by Duo Security.
+     *
+     * @return the string
+     */
+    public String toValue() {
+        return switch (this) {
+            case ALLOW -> "bypass";
+            case DENY -> "disabled";
+            case UNAVAILABLE -> "locked out";
+            default -> "active";
+        };
+    }
 }

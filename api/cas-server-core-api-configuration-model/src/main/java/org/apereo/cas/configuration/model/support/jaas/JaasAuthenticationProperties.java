@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.support.jaas;
 
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -13,6 +15,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -28,6 +31,7 @@ import java.io.Serializable;
 @JsonFilter("JaasAuthenticationProperties")
 public class JaasAuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 4643338626978471986L;
 
     /**
@@ -80,6 +84,7 @@ public class JaasAuthenticationProperties implements Serializable {
      * <li>3) Path to an external Groovy script that implements the same interface.</li>
      * </ul>
      */
+    @RegularExpressionCapable
     private String credentialCriteria;
 
     /**
@@ -128,4 +133,10 @@ public class JaasAuthenticationProperties implements Serializable {
      * Order of the authentication handler in the chain.
      */
     private int order = Integer.MAX_VALUE;
+
+    /**
+     * Define the scope and state of this authentication handler
+     * and the lifecycle in which it can be invoked or activated.
+     */
+    private AuthenticationHandlerStates state = AuthenticationHandlerStates.ACTIVE;
 }

@@ -13,12 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Monitors the memcached hosts known to an instance of {@link net.spy.memcached.MemcachedClientIF}.
+ * Monitors the memcached hosts known to an instance of {@link MemcachedClientIF}.
  *
  * @author Marvin S. Addison
  * @since 3.5.1
+ * @deprecated Since 7.0.0
  */
 @Slf4j
+@Deprecated(since = "7.0.0")
 public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
     private final ObjectPool<MemcachedClientIF> connectionPool;
 

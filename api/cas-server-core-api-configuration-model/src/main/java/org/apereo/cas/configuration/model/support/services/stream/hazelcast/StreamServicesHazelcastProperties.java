@@ -10,6 +10,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link StreamServicesHazelcastProperties}.
  *
@@ -22,6 +24,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Accessors(chain = true)
 public class StreamServicesHazelcastProperties extends BaseStreamServicesProperties {
 
+    @Serial
     private static final long serialVersionUID = -1583614089051161614L;
 
     /**

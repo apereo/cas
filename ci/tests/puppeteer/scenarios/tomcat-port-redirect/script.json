@@ -1,0 +1,9 @@
+{
+  "dependencies": "core",
+
+  "properties": [
+    "--cas.server.tomcat.http[0].enabled=true",
+    "--cas.server.tomcat.http[0].port=8080",
+    "--cas.server.tomcat.http[0].redirect-port=8443"
+  ]
+}

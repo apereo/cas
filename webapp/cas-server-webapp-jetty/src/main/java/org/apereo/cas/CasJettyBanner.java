@@ -15,8 +15,8 @@ import java.util.Formatter;
  */
 public class CasJettyBanner extends AbstractCasBanner {
     @Override
-    protected void injectEnvironmentInfoIntoBanner(final Formatter formatter, final Environment environment, final Class<?> sourceClass) {
+    public void injectEnvironmentInfo(final Formatter formatter, final Environment environment,
+                                      final Class<?> sourceClass) {
         formatter.format("Jetty Version: %s%n", Server.getVersion());
-        formatter.format("%s%n", LINE_SEPARATOR);
     }
 }

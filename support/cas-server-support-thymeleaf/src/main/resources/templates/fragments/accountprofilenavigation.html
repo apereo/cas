@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title>Account Profile</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+<span th:fragment="navigation">
+       <div>
+            <div class="mdc-drawer__header">
+                <h3 class="mdc-drawer__title" th:text="${authentication.principal.id}">Username</h3>
+                <code class="mdc-drawer__subtitle"
+                      th:if="${authentication.principal.attributes['displayName'] != null}"
+                      th:text="${authentication.principal.attributes['displayName'][0]}">Display Name</code>
+                <kbd class="mdc-drawer__subtitle"
+                     th:if="${authentication.principal.attributes['email'] != null}"
+                     th:text="${authentication.principal.attributes['email'][0]}">Display Name</kbd>
+            </div>
+            <div class="mdc-drawer__content">
+                <nav class="mdc-list" id="navigationMenu">
+                    <a class="mdc-list-item list-group-item list-group-item-action"
+                       onclick="showPanel('#divOverview');"
+                       id="linkOverview"
+                       href="#divOverview">
+                        <i class="mdi mdi-form-textbox-password fa fa-key" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">Overview</span>
+                    </a>
+                    <a class="mdc-list-item list-group-item list-group-item-action"
+                       onclick="showPanel('#divAttributes');"
+                       id="linkAttributes"
+                       href="#divAttributes">
+                        <i class="mdi mdi-account-details fa fa-key" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">Attributes</span>
+                    </a>
+                    <a class="mdc-list-item list-group-item list-group-item-action"
+                       id="linkSessions"
+                       onclick="showPanel('#divSessions');"
+                       href="#divSessions">
+                        <i class="mdi mdi-account-clock fa fa-key" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">Sessions</span>
+                    </a>
+
+                    <a class="mdc-list-item list-group-item list-group-item-action"
+                       th:if="${authorizedServices}"
+                       id="linkServices"
+                       onclick="showPanel('#divApplications');"
+                       href="#divApplications">
+                        <i class="mdi mdi-apps fa fa-key" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">Applications</span>
+                    </a>
+
+                    <a class="mdc-list-item list-group-item list-group-item-action"
+                       onclick="showPanel('#divAuditLog');"
+                       id="linkAuditLog"
+                       th:if="${auditLog}"
+                       href="#divAuditLog">
+                        <i class="mdi mdi-account-reactivate fa fa-key" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">Audit Log</span>
+                    </a>
+
+                    <a class="mdc-list-item list-group-item list-group-item-action"
+                       onclick="showPanel('#divMfaRegisteredAccounts');"
+                       id="linkMfaRegisteredAccounts"
+                       th:if="${multifactorRegisteredAccounts}"
+                       href="#divMfaRegisteredAccounts">
+                        <i class="mdi mdi-account-reactivate fa fa-key" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">Multifactor Devices</span>
+                    </a>
+
+                    <a class="mdc-list-item list-group-item list-group-item-action"
+                       onclick="showPanel('#divMultifactorTrustedDevices');"
+                       id="linkMfaTrustedDevices"
+                       th:if="${multifactorTrustedDevices}"
+                       href="#divMultifactorTrustedDevices">
+                        <i class="mdi mdi-account-reactivate fa fa-key" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">Multifactor Trusted Devices</span>
+                    </a>
+
+                    <a class="mdc-list-item list-group-item list-group-item-action"
+                       onclick="showPanel('#divConsentDecisions');"
+                       id="linkConsentDecisions"
+                       th:if="${consentDecisions}"
+                       href="#divConsentDecisions">
+                        <i class="mdi mdi-head-check-outline fa fa-key" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">Attribute Consent</span>
+                    </a>
+
+                    <a class="mdc-list-item list-group-item list-group-item-action"
+                       onclick="showPanel('#divOidcAccessTokens');"
+                       id="linkOidcAccessTokens"
+                       th:if="${!#lists.isEmpty(oidcAccessTokens)}"
+                       href="#divOidcAccessTokens">
+                        <i class="mdi mdi-cloud-key-outline fa fa-key" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">Access Tokens</span>
+                    </a>
+
+                    <hr align="left" width="85%">
+                    <form method="post" id="fmChangePsw" name="fmChangePsw">
+                        <a class="mdc-list-item list-group-item list-group-item-action"
+                           th:if="${passwordManagementEnabled != null && passwordManagementEnabled}"
+                           aria-describedby="tooltip-change-password"
+                           onclick="document.forms.fmChangePsw.submit()"
+                           id="linkPasswordManagement"
+                           href="javascript:void(0);">
+                            <i class="mdi mdi-form-textbox-password fa fa-key" aria-hidden="true"></i>&nbsp;
+                            <span class="mdc-list-item__text">Change Password</span>
+                        </a>
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                        <input type="hidden" name="_eventId" value="resetPassword"/>
+                    </form>
+
+                    <a class="mdc-list-item list-group-item list-group-item-action"
+                       th:if="${securityQuestionsEnabled}"
+                       onclick="showPanel('#divSecurityQuestions');"
+                       id="linkSecurityQuestions"
+                       href="#divSecurityQuestions">
+                        <i class="mdi mdi-security fa fa-key" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">Security Questions</span>
+                    </a>
+                    <a class="mdc-list-item list-group-item list-group-item-action" th:href="@{/logout}">
+                        <i class="mdi mdi-logout-variant fa fa-key" aria-hidden="true"></i>&nbsp;
+                        <span class="mdc-list-item__text">Logout</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+        <div id="tooltip-change-password" class="mdc-tooltip" role="tooltip" aria-hidden="true">
+            <div class="mdc-tooltip__surface mdc-tooltip__surface-animation" th:text="#{screen.account.tooltip.logout}">
+                This operation forces a logout.
+            </div>
+        </div>
+    </span>
+</body>
+
+</html>

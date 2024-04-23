@@ -9,8 +9,10 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import lombok.val;
 
 import java.util.Map;
@@ -26,7 +28,7 @@ import java.util.TreeMap;
  */
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 public class AuditableExecutionResult {
 
     /**
@@ -53,7 +55,7 @@ public class AuditableExecutionResult {
      * RuntimeException.
      */
     @Setter
-    private RuntimeException exception;
+    private Throwable exception;
 
     /**
      * The execution result of the auditable action.
@@ -75,6 +77,7 @@ public class AuditableExecutionResult {
      * Properties.
      */
     @Builder.Default
+    @Getter
     private Map<String, Object> properties = new TreeMap<>();
 
     /**
@@ -102,7 +105,7 @@ public class AuditableExecutionResult {
     /**
      * Throw exception if needed.
      */
-    public void throwExceptionIfNeeded() {
+    public void throwExceptionIfNeeded() throws Throwable {
         if (isExecutionFailure()) {
             throw getException().get();
         }
@@ -186,16 +189,7 @@ public class AuditableExecutionResult {
      *
      * @return optional exception
      */
-    public Optional<RuntimeException> getException() {
+    public Optional<Throwable> getException() {
         return Optional.ofNullable(exception);
-    }
-
-    /**
-     * Get.
-     *
-     * @return properties
-     */
-    public Map<String, Object> getProperties() {
-        return properties;
     }
 }

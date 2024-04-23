@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import java.util.List;
 @JsonFilter("JdbcAuthenticationProperties")
 public class JdbcAuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7199786191466526110L;
 
     /**

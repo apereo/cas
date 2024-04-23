@@ -12,8 +12,8 @@ User decisions may also be kept inside a regular RDBMS of your own choosing.
 
 Support is provided via the following module:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-jdbc" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa-jdbc" %}
 
 To learn how to configure database drivers, [please see this guide](../installation/JDBC-Drivers.html).
 
-{% include casproperties.html properties="cas.authn.mfa.trusted.jpa" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.trusted.jpa" %}

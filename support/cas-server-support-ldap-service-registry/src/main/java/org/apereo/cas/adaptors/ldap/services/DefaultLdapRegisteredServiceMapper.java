@@ -2,13 +2,12 @@ package org.apereo.cas.adaptors.ldap.services;
 
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.services.RegisteredServiceDefinition;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.LdapAttribute;
@@ -33,12 +32,11 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
 
     private final LdapServiceRegistryProperties ldap;
 
-    private final StringSerializer<RegisteredService> jsonSerializer = new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
+    private final StringSerializer<RegisteredService> jsonSerializer;
 
     @Override
-    @SneakyThrows
     public LdapEntry mapFromRegisteredService(final String dn, final RegisteredService svc) {
-        if (svc.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
+        if (svc.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE) {
             val id = System.currentTimeMillis();
             svc.setId(id);
         }
@@ -48,21 +46,22 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
         val attrs = new ArrayList<LdapAttribute>(3);
         attrs.add(new LdapAttribute(ldap.getIdAttribute(), String.valueOf(svc.getId())));
 
-        try (val writer = new StringWriter()) {
-            this.jsonSerializer.to(writer, svc);
-            val defn = writer.toString();
-            attrs.add(new LdapAttribute(ldap.getServiceDefinitionAttribute(), defn));
-            attrs.add(new LdapAttribute(LdapUtils.OBJECT_CLASS_ATTRIBUTE, "top", ldap.getObjectClass()));
-        }
-        LOGGER.debug("LDAP attributes assigned to the DN [{}] are [{}]", newDn, attrs);
-        val entry = LdapEntry.builder().dn(newDn).attributes(attrs).build();
-        LOGGER.debug("Constructed LDAP entry [{}]", entry);
-        return entry;
+        return FunctionUtils.doUnchecked(() -> {
+            try (val writer = new StringWriter()) {
+                this.jsonSerializer.to(writer, svc);
+                val defn = writer.toString();
+                attrs.add(new LdapAttribute(ldap.getServiceDefinitionAttribute(), defn));
+                attrs.add(new LdapAttribute(LdapUtils.OBJECT_CLASS_ATTRIBUTE, "top", ldap.getObjectClass()));
+            }
+            LOGGER.debug("LDAP attributes assigned to the DN [{}] are [{}]", newDn, attrs);
+            val entry = LdapEntry.builder().dn(newDn).attributes(attrs).build();
+            LOGGER.debug("Constructed LDAP entry [{}]", entry);
+            return entry;
+        });
 
     }
 
     @Override
-    @SneakyThrows
     public RegisteredService mapToRegisteredService(final LdapEntry entry) {
         val value = LdapUtils.getString(entry, ldap.getServiceDefinitionAttribute());
         if (StringUtils.hasText(value)) {

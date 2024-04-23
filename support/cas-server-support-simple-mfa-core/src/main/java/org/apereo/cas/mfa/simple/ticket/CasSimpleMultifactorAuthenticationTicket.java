@@ -1,11 +1,10 @@
 package org.apereo.cas.mfa.simple.ticket;
 
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.PropertiesAwareTicket;
+import org.apereo.cas.ticket.ServiceAwareTicket;
+
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import java.util.Map;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationTicket}.
@@ -14,23 +13,9 @@ import java.util.Map;
  * @since 6.3.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface CasSimpleMultifactorAuthenticationTicket extends Ticket {
+public interface CasSimpleMultifactorAuthenticationTicket extends ServiceAwareTicket, PropertiesAwareTicket {
     /**
      * MFA ticket prefix.
      */
     String PREFIX = "CASMFA";
-
-    /**
-     * Gets properties.
-     *
-     * @return the properties
-     */
-    Map<String, Object> getProperties();
-
-    /**
-     * Gets service.
-     *
-     * @return the service
-     */
-    Service getService();
 }

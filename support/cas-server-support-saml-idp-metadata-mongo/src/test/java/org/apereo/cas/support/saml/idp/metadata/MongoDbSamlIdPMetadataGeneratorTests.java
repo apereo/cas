@@ -2,7 +2,7 @@ package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.support.saml.BaseMongoDbSamlMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -30,10 +30,10 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.mongo.idp-metadata-collection=saml-idp-metadata"
     })
 @Tag("MongoDb")
-@EnabledIfPortOpen(port = 27017)
-public class MongoDbSamlIdPMetadataGeneratorTests extends BaseMongoDbSamlMetadataTests {
+@EnabledIfListeningOnPort(port = 27017)
+class MongoDbSamlIdPMetadataGeneratorTests extends BaseMongoDbSamlMetadataTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         this.samlIdPMetadataGenerator.generate(Optional.empty());
         assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
@@ -43,7 +43,7 @@ public class MongoDbSamlIdPMetadataGeneratorTests extends BaseMongoDbSamlMetadat
     }
 
     @Test
-    public void verifyService() {
+    void verifyService() throws Throwable {
         val service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);

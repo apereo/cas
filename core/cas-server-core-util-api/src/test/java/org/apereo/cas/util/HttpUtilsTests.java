@@ -1,14 +1,15 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
+import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import lombok.val;
-import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.http.HttpMethod;
-
+import org.springframework.http.HttpStatus;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -19,11 +20,42 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Utility")
-public class HttpUtilsTests {
+class HttpUtilsTests {
 
     @Test
-    public void verifyExec() {
-        val exec = HttpUtils.HttpExecutionRequest.builder()
+    void verifyRetryOnErrors() throws Throwable {
+        try (val webServer = new MockWebServer(HttpStatus.BAD_REQUEST)) {
+            webServer.start();
+            val exec = HttpExecutionRequest.builder()
+                .basicAuthPassword("password")
+                .basicAuthUsername("user")
+                .method(HttpMethod.GET)
+                .entity("entity")
+                .url("http://localhost:%s".formatted(webServer.getPort()))
+                .build();
+            assertNotNull(HttpUtils.execute(exec));
+        }
+    }
+
+    @Test
+    void verifyExecWithExistingClient() throws Throwable {
+        try (val webServer = new MockWebServer(HttpStatus.OK)) {
+            webServer.start();
+            val exec = HttpExecutionRequest.builder()
+                .basicAuthPassword("password")
+                .basicAuthUsername("user")
+                .method(HttpMethod.GET)
+                .entity("entity")
+                .url("http://localhost:%s".formatted(webServer.getPort()))
+                .httpClient(new SimpleHttpClientFactoryBean().getObject())
+                .build();
+            assertNotNull(HttpUtils.execute(exec));
+        }
+    }
+
+    @Test
+    void verifyExec() throws Throwable {
+        val exec = HttpExecutionRequest.builder()
             .basicAuthPassword("password")
             .basicAuthUsername("user")
             .method(HttpMethod.GET)
@@ -31,13 +63,12 @@ public class HttpUtilsTests {
             .url("http://localhost:8081")
             .proxyUrl("http://localhost:8080")
             .build();
-
         assertNull(HttpUtils.execute(exec));
     }
 
     @Test
-    public void verifyBearerToken() {
-        val exec = HttpUtils.HttpExecutionRequest.builder()
+    void verifyBearerToken() throws Throwable {
+        val exec = HttpExecutionRequest.builder()
             .bearerToken(UUID.randomUUID().toString())
             .method(HttpMethod.GET)
             .entity("entity")
@@ -49,16 +80,25 @@ public class HttpUtilsTests {
     }
 
     @Test
-    public void verifyClose() {
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Exception {
-                HttpUtils.close(null);
-                val response = mock(CloseableHttpResponse.class);
-                doThrow(new RuntimeException()).when(response).close();
-                HttpUtils.close(response);
-            }
+    void verifyClose() throws Throwable {
+        assertDoesNotThrow(() -> {
+            HttpUtils.close(null);
+            val response = mock(CloseableHttpResponse.class);
+            doThrow(new RuntimeException()).when(response).close();
+            HttpUtils.close(response);
         });
     }
 
+    @Test
+    void verifyBadSSLLogging() throws Throwable {
+        val exec = HttpExecutionRequest.builder()
+            .method(HttpMethod.GET)
+            .url("https://untrusted-root.badssl.com/endpoint?secret=sensitiveinfo")
+            .build();
+        val response = HttpUtils.execute(exec);
+        assertNotNull(response);
+
+        assertTrue(HttpStatus.valueOf(response.getCode()).is5xxServerError());
+        assertTrue(response.getReasonPhrase().contains("https://untrusted-root.badssl.com/endpoint"));
+    }
 }

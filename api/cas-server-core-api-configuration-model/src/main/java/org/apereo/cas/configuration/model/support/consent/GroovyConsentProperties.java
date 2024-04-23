@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link GroovyConsentProperties}.
  *
@@ -18,5 +20,6 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class GroovyConsentProperties extends SpringResourceProperties {
+    @Serial
     private static final long serialVersionUID = 7079027843747126083L;
 }

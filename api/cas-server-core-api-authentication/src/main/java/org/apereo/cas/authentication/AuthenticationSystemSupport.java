@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 
 import java.util.Collection;
@@ -21,6 +22,11 @@ import java.util.Collection;
 public interface AuthenticationSystemSupport {
 
     /**
+     * Default impl bean name.
+     */
+    String BEAN_NAME = "defaultAuthenticationSystemSupport";
+
+    /**
      * Gets authentication transaction manager.
      *
      * @return the authentication transaction manager
@@ -33,6 +39,13 @@ public interface AuthenticationSystemSupport {
      * @return the principal election strategy
      */
     PrincipalElectionStrategy getPrincipalElectionStrategy();
+
+    /**
+     * Gets principal resolver.
+     *
+     * @return the principal resolver
+     */
+    PrincipalResolver getPrincipalResolver();
 
     /**
      * Gets authentication transaction factory.
@@ -56,7 +69,7 @@ public interface AuthenticationSystemSupport {
      * @return authentication result builder used to accumulate authentication transactions in this authentication event.
      * @since 5.0.0
      */
-    AuthenticationResultBuilder establishAuthenticationContextFromInitial(Authentication authentication, Credential credential);
+    AuthenticationResultBuilder establishAuthenticationContextFromInitial(Authentication authentication, Credential... credential);
 
     /**
      * Establish authentication context from initial authentication result builder.
@@ -75,7 +88,7 @@ public interface AuthenticationSystemSupport {
      * @throws AuthenticationException exception to indicate authentication processing failure.
      * @since 5.0.0
      */
-    AuthenticationResultBuilder handleInitialAuthenticationTransaction(Service service, Credential... credential) throws AuthenticationException;
+    AuthenticationResultBuilder handleInitialAuthenticationTransaction(Service service, Credential... credential) throws Throwable;
 
     /**
      * Handle single authentication transaction within potential multi-transaction authentication event.
@@ -84,12 +97,12 @@ public interface AuthenticationSystemSupport {
      * @param authenticationResultBuilder builder used to accumulate authentication transactions in this authentication event.
      * @param credential                  a credential used for this authentication transaction.
      * @return authentication result builder used to accumulate authentication transactions in this authentication event.
-     * @throws AuthenticationException exception to indicate authentication processing failure.
+     * @throws Throwable the throwable
      * @since 5.0.0
      */
     AuthenticationResultBuilder handleAuthenticationTransaction(Service service,
                                                                 AuthenticationResultBuilder authenticationResultBuilder,
-                                                                Credential... credential) throws AuthenticationException;
+                                                                Credential... credential) throws Throwable;
 
     /**
      * Finalize all authentication transactions processed and collected for this authentication event.
@@ -97,9 +110,10 @@ public interface AuthenticationSystemSupport {
      * @param authenticationResultBuilder builder used to accumulate authentication transactions in this authentication event.
      * @param service                     a service for this authentication event.
      * @return authentication result representing a final outcome of the authentication event.
+     * @throws Throwable the throwable
      * @since 5.0.0
      */
-    AuthenticationResult finalizeAllAuthenticationTransactions(AuthenticationResultBuilder authenticationResultBuilder, Service service);
+    AuthenticationResult finalizeAllAuthenticationTransactions(AuthenticationResultBuilder authenticationResultBuilder, Service service) throws Throwable;
 
     /**
      * Handle a single-transaction authentication event and immediately produce a finalized {@link AuthenticationResult}.
@@ -110,7 +124,7 @@ public interface AuthenticationSystemSupport {
      * @throws AuthenticationException exception to indicate authentication processing failure.
      * @since 5.0.0
      */
-    AuthenticationResult handleAndFinalizeSingleAuthenticationTransaction(Service service, Credential... credential) throws AuthenticationException;
+    AuthenticationResult finalizeAuthenticationTransaction(Service service, Credential... credential) throws Throwable;
 
     /**
      * Handle a single-transaction authentication event and immediately produce a finalized {@link AuthenticationResult}.
@@ -118,11 +132,22 @@ public interface AuthenticationSystemSupport {
      * @param service     a service for this authentication event.
      * @param credentials credentials used for this single-transaction authentication event.
      * @return authentication result representing a final outcome of the authentication event.
-     * @throws AuthenticationException exception to indicate authentication processing failure.
+     * @throws Throwable the throwable
      * @since 5.3.0
      */
-    default AuthenticationResult handleAndFinalizeSingleAuthenticationTransaction(final Service service,
-                                                                                  final Collection<Credential> credentials) throws AuthenticationException {
-        return handleAndFinalizeSingleAuthenticationTransaction(service, credentials.toArray(Credential[]::new));
+    default AuthenticationResult finalizeAuthenticationTransaction(final Service service,
+                                                                   final Collection<Credential> credentials) throws Throwable {
+        return finalizeAuthenticationTransaction(service, credentials.toArray(Credential[]::new));
+    }
+
+    /**
+     * Finalize authentication transaction.
+     *
+     * @param credentials the credentials
+     * @return the authentication result
+     * @throws Throwable the throwable
+     */
+    default AuthenticationResult finalizeAuthenticationTransaction(final Credential... credentials) throws Throwable {
+        return finalizeAuthenticationTransaction(null, credentials);
     }
 }

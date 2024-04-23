@@ -1,6 +1,0 @@
-{
-  "dependencies": "aup-webflow",
-  "properties": [
-    "--cas.service-registry.core.init-from-json=true"
-  ]
-}

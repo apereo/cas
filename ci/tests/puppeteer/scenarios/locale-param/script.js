@@ -1,16 +1,25 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
+
+const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true
-    });
-    const page = await browser.newPage();
-    await page.goto("https://localhost:8443/cas/login?locale=de");
+    const browser = await cas.newBrowser(cas.browserOptions());
+    const page = await cas.newPage(browser);
 
-    const header = await page.$eval('#content #fm1 button[name=submit]', el => el.innerText)
-    console.log(header)
-    assert(header == "ANMELDEN")
-    
+    await cas.gotoLoginWithLocale(page, undefined, "de");
+    await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "ANMELDEN");
+    await cas.attributeValue(page, "html", "lang", "de");
+
+    const service = "https://localhost:9859/anything/cas";
+    await cas.gotoLogin(page, service);
+    await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "SE CONNECTER");
+    await cas.attributeValue(page, "html", "lang", "fr");
+
+    await cas.gotoLogin(page);
+    await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "SE CONNECTER");
+
+    await cas.gotoLoginWithLocale(page, service, "es");
+    await cas.assertInnerText(page, "#content #fm1 button[name=submitBtn]", "INICIAR SESIÓN");
+    await cas.attributeValue(page, "html", "lang", "es");
+
     await browser.close();
 })();

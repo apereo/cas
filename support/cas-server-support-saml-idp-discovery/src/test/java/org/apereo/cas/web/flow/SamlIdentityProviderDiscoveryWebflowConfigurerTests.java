@@ -1,11 +1,8 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.config.CoreSamlConfiguration;
-import org.apereo.cas.config.Pac4jAuthenticationEventExecutionPlanConfiguration;
-import org.apereo.cas.config.Pac4jDelegatedAuthenticationConfiguration;
-import org.apereo.cas.config.SamlIdentityProviderDiscoveryConfiguration;
-import org.apereo.cas.web.flow.config.DelegatedAuthenticationWebflowConfiguration;
-
+import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
+import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasSamlIdentityProviderDiscoveryAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -14,7 +11,6 @@ import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConf
 import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.webflow.engine.Flow;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,17 +23,14 @@ import static org.junit.jupiter.api.Assertions.*;
     WebMvcAutoConfiguration.class,
     MockMvcAutoConfiguration.class,
     ErrorMvcAutoConfiguration.class,
-    CoreSamlConfiguration.class,
-    Pac4jAuthenticationEventExecutionPlanConfiguration.class,
-    Pac4jDelegatedAuthenticationConfiguration.class,
-    DelegatedAuthenticationWebflowConfiguration.class,
-    SamlIdentityProviderDiscoveryConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    CasCoreSamlAutoConfiguration.class,
+    CasDelegatedAuthenticationAutoConfiguration.class,
+    CasSamlIdentityProviderDiscoveryAutoConfiguration.class
 })
-@Tag("SAML")
-public class SamlIdentityProviderDiscoveryWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+@Tag("SAML2Web")
+class SamlIdentityProviderDiscoveryWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);

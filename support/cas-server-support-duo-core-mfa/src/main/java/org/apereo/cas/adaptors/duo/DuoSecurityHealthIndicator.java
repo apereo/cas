@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.duo;
 
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -27,17 +28,18 @@ public class DuoSecurityHealthIndicator extends AbstractHealthIndicator {
         providers
             .stream()
             .filter(Objects::nonNull)
+            .filter(BeanSupplier::isNotProxy)
             .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
-            .forEach(p -> {
-                val duoService = p.getDuoAuthenticationService();
+            .map(DuoSecurityMultifactorAuthenticationProvider::getDuoAuthenticationService)
+            .forEach(duoService -> {
                 val result = duoService.ping();
-                val b = builder.withDetail("duoApiHost", duoService.getApiHost());
+                val builderResult = builder.withDetail("duoApiHost", duoService.getProperties().getDuoApiHost());
                 if (result) {
-                    b.up();
+                    builderResult.up();
                 } else {
-                    b.down();
+                    builderResult.down();
                 }
-                b.build();
+                builderResult.build();
             });
     }
 }

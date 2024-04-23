@@ -3,13 +3,11 @@ package org.apereo.cas.adaptors.x509.authentication;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
@@ -27,7 +25,7 @@ import java.util.Objects;
  * In httpd, mod_headers is used to add the SSL information as HTTP headers. In
  * Tomcat, this valve is used to read the information from the HTTP headers and
  * insert it into the request.
- *
+ * <p>
  * <b>Note: Ensure that the headers are always set by httpd for all requests to
  * prevent a client spoofing SSL information by sending fake headers. </b>
  * In httpd.conf add the following:
@@ -43,20 +41,17 @@ import java.util.Objects;
  * @since 5.3.0
  */
 @Slf4j
-@Getter
-@RequiredArgsConstructor
-public class RequestHeaderX509CertificateExtractor implements X509CertificateExtractor {
+public record RequestHeaderX509CertificateExtractor(String sslClientCertHeader) implements X509CertificateExtractor {
 
     /**
      * X509 Cert header.
      */
     public static final String X509_HEADER = "-----BEGIN CERTIFICATE-----";
+
     /**
      * X509 Cert footer.
      */
     public static final String X509_FOOTER = "-----END CERTIFICATE-----";
-
-    private final String sslClientCertHeader;
 
     /**
      * Extract base64 encoded certificate from header and convert to {@link X509Certificate}.
@@ -79,7 +74,7 @@ public class RequestHeaderX509CertificateExtractor implements X509CertificateExt
             return null;
         }
 
-        if (Objects.requireNonNull(certHeaderValue).length() < X509_HEADER.length()) {
+        if (Objects.requireNonNull(certHeaderValue).length() - X509_FOOTER.length() < X509_HEADER.length()) {
             LOGGER.debug("Header [{}] found but it is too short to parse. Header value: [{}]", sslClientCertHeader, certHeaderValue);
             return null;
         }
@@ -87,12 +82,13 @@ public class RequestHeaderX509CertificateExtractor implements X509CertificateExt
         LOGGER.trace("Located value [{}] from header [{}]. Parsing...", certHeaderValue, sslClientCertHeader);
         val body = sanitizeCertificateBody(certHeaderValue);
         LOGGER.debug("Certificate body to parse is [{}]", body);
-        
+
         try (val input = new ByteArrayInputStream(body.getBytes(StandardCharsets.ISO_8859_1))) {
             val cert = CertUtils.readCertificate(input);
             LOGGER.debug("Certificate extracted from header [{}] with subject: [{}]", sslClientCertHeader, cert.getSubjectDN());
             return new X509Certificate[]{cert};
         } catch (final Exception e) {
+            LOGGER.debug("Could not parse certificate from header: [{}] with sanitized value: [{}]", sslClientCertHeader, body);
             LoggingUtils.warn(LOGGER, e);
         }
         return null;

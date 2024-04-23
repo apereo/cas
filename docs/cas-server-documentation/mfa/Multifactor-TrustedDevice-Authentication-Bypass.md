@@ -14,7 +14,7 @@ trusted device workflow for MFA can be bypassed on a per application basis:
 
 ```json
 {
-  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "@class": "org.apereo.cas.services.CasRegisteredService",
   "serviceId": "^(https|imaps)://app.example.org",
   "name": "Example",
   "id": 1,

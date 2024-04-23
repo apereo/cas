@@ -8,10 +8,11 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.Locale;
 
 /**
  * This is {@link RedirectToServiceAction}.
@@ -21,11 +22,11 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class RedirectToServiceAction extends AbstractAction {
+public class RedirectToServiceAction extends BaseCasWebflowAction {
     private final ResponseBuilderLocator<WebApplicationService> responseBuilderLocator;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val service = WebUtils.getService(requestContext);
         LOGGER.debug("Located service [{}] from the context", service);
 
@@ -44,14 +45,6 @@ public class RedirectToServiceAction extends AbstractAction {
         return finalizeResponseEvent(requestContext, service, response);
     }
 
-    /**
-     * Finalize response event event.
-     *
-     * @param requestContext the request context
-     * @param service        the service
-     * @param response       the response
-     * @return the event
-     */
     protected Event finalizeResponseEvent(final RequestContext requestContext, final WebApplicationService service, final Response response) {
         WebUtils.putServiceResponseIntoRequestScope(requestContext, response);
         WebUtils.putServiceOriginalUrlIntoRequestScope(requestContext, service);
@@ -59,16 +52,8 @@ public class RedirectToServiceAction extends AbstractAction {
         return new EventFactorySupport().event(this, eventId);
     }
 
-    /**
-     * Gets final response event id.
-     *
-     * @param service        the service
-     * @param response       the response
-     * @param requestContext the request context
-     * @return the final response event id
-     */
     protected String getFinalResponseEventId(final WebApplicationService service, final Response response, final RequestContext requestContext) {
-        val eventId = response.getResponseType().name().toLowerCase();
+        val eventId = response.responseType().name().toLowerCase(Locale.ENGLISH);
         LOGGER.debug("Signaling flow to redirect to service [{}] via event [{}]", service, eventId);
         return eventId;
     }

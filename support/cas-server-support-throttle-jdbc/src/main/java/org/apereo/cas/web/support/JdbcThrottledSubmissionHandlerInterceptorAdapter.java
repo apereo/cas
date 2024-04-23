@@ -1,17 +1,18 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.configuration.model.support.throttle.JdbcThrottleProperties;
-
+import org.apereo.cas.throttle.AbstractInspektrAuditHandlerInterceptorAdapter;
+import org.apereo.cas.throttle.ThrottledSubmissionHandlerConfigurationContext;
+import org.apereo.cas.util.DateTimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.springframework.jdbc.core.JdbcTemplate;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.sql.DataSource;
+import org.springframework.jdbc.core.JdbcOperations;
+import jakarta.servlet.http.HttpServletRequest;
 import java.sql.Types;
 import java.util.Collection;
 import java.util.Date;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -27,37 +28,40 @@ import java.util.stream.Collectors;
  * @since 3.3.5
  */
 @Slf4j
-@SuppressWarnings("JavaUtilDate")
 public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractInspektrAuditHandlerInterceptorAdapter {
-    private final String sqlQueryAudit;
-    private final JdbcTemplate jdbcTemplate;
+    private final JdbcOperations jdbcTemplate;
 
-    public JdbcThrottledSubmissionHandlerInterceptorAdapter(final ThrottledSubmissionHandlerConfigurationContext configurationContext,
-                                                            final DataSource dataSource,
-                                                            final String sqlQueryAudit) {
+    public JdbcThrottledSubmissionHandlerInterceptorAdapter(
+        final ThrottledSubmissionHandlerConfigurationContext configurationContext,
+        final JdbcOperations jdbcTemplate) {
         super(configurationContext);
-        this.sqlQueryAudit = sqlQueryAudit;
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
+        val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle();
         val clientInfo = ClientInfoHolder.getClientInfo();
         val remoteAddress = clientInfo.getClientIpAddress();
-
         val username = getUsernameParameterFromRequest(request);
-        val failuresInAudits = this.jdbcTemplate.query(
-            this.sqlQueryAudit,
-            new Object[]{
-                remoteAddress,
-                username,
-                getConfigurationContext().getAuthenticationFailureCode(),
-                getConfigurationContext().getApplicationCode(),
-                getFailureInRangeCutOffDate()},
-            new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
-            (resultSet, i) -> resultSet.getTimestamp(1));
-        val failures = failuresInAudits.stream().map(t -> new Date(t.getTime())).collect(Collectors.toList());
-        val result = calculateFailureThresholdRateAndCompare(failures);
+
+        LOGGER.debug("Fetching failures in audit log for username [{}] and remote address [{}]", username, remoteAddress);
+        val failuresInAudits = jdbcTemplate.query(
+            throttle.getJdbc().getAuditQuery(),
+            ps -> {
+                ps.setString(1, remoteAddress);
+                ps.setString(2, username);
+                ps.setString(3, throttle.getFailure().getCode());
+                ps.setString(4, throttle.getCore().getAppCode());
+                ps.setObject(5, getFailureInRangeCutOffDate());
+            },
+            (resultSet, i) -> ThrottledSubmission
+                .builder()
+                .key(UUID.randomUUID().toString())
+                .value(DateTimeUtils.zonedDateTimeOf(resultSet.getTimestamp("AUD_DATE")))
+                .build());
+        LOGGER.debug("Found [{}] failure(s) in audit log", failuresInAudits.size());
+        val result = calculateFailureThresholdRateAndCompare(failuresInAudits);
         if (result) {
             LOGGER.debug("Request from [{}] by user [{}] exceeds threshold", remoteAddress, username);
         }
@@ -66,19 +70,20 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
 
     @Override
     public String getName() {
-        return "InspektrIpAddressUsernameThrottle";
+        return "JdbcThrottle";
     }
 
     @Override
     public Collection getRecords() {
-        val failuresInAudits = this.jdbcTemplate.query(
+        val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle();
+        val failuresInAudits = jdbcTemplate.query(
             JdbcThrottleProperties.SQL_AUDIT_QUERY_ALL,
             new Object[]{
-                getConfigurationContext().getAuthenticationFailureCode(),
-                getConfigurationContext().getApplicationCode(),
+                throttle.getFailure().getCode(),
+                throttle.getCore().getAppCode(),
                 getFailureInRangeCutOffDate()},
             new int[]{Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
-            (resultSet, i) -> resultSet.getTimestamp(1));
+            (resultSet, i) -> resultSet.getTimestamp("AUD_DATE"));
         return failuresInAudits.stream().map(t -> new Date(t.getTime())).collect(Collectors.toList());
     }
 }

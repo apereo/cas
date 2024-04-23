@@ -1,4 +1,12 @@
 description = "Apereo CAS Inwebo MFA Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Multifactor Authentication",
+            title: "InWebo",
+            aliases: ["inwebo"]
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-mfa")
@@ -15,7 +23,7 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":support:cas-server-support-trusted-mfa-core")
 
-    compileOnlyApi project(":support:cas-server-support-trusted-mfa")
+    compileOnly project(":support:cas-server-support-trusted-mfa")
     
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")
@@ -30,6 +38,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-logout")
 
@@ -44,4 +53,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 }

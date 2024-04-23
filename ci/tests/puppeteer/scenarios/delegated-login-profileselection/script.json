@@ -1,0 +1,27 @@
+{
+  "dependencies": "pac4j-webflow",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+    "--cas.authn.attribute-repository.stub.attributes.name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.gender=female",
+    "--cas.authn.attribute-repository.stub.attributes.preferred_username=casuser",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--logging.level.org.apereo.cas=info",
+    "--cas.http-client.host-name-verifier=none",
+
+    "--cas.authn.pac4j.profile-selection.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/GroovyProfileSelection.groovy",
+
+    "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
+    "--cas.authn.pac4j.cas[0].protocol=CAS30",
+    "--cas.authn.pac4j.cas[0].client-name=CasClient"
+  ],
+  "initScript": "${PWD}/ci/tests/cas/run-cas-server.sh"
+}

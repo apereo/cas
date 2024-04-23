@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
@@ -25,26 +24,25 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("MFA")
-@DirtiesContext
+@Tag("MFATrigger")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
     @Order(2)
-    public void verifyUndefined() {
+    void verifyUndefined() throws Throwable {
         val props = new CasConfigurationProperties();
         var trigger = new TimedMultifactorAuthenticationTrigger(props, applicationContext);
-        var result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        var result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
 
         trigger = new TimedMultifactorAuthenticationTrigger(props, applicationContext);
-        result = trigger.isActivated(null, null, this.httpRequest, mock(Service.class));
+        result = trigger.isActivated(null, null, this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
     }
 
     @Test
     @Order(3)
-    public void verifyProvider() {
+    void verifyProvider() throws Throwable {
         val props = new CasConfigurationProperties();
         val timeProps = new TimeBasedAuthenticationProperties();
         timeProps.setProviderId(TestMultifactorAuthenticationProvider.ID);
@@ -54,20 +52,19 @@ public class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorA
         props.getAuthn().getAdaptive().getPolicy().getRequireTimedMultifactor().add(timeProps);
 
         var trigger = new TimedMultifactorAuthenticationTrigger(props, applicationContext);
-        var result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        var result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
 
         timeProps.setProviderId("bad-id");
         val trigger2 = new TimedMultifactorAuthenticationTrigger(props, applicationContext);
         assertThrows(AuthenticationException.class,
-            () -> trigger2.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
+            () -> trigger2.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
     }
-
 
     @Test
     @Tag("DisableProviderRegistration")
     @Order(1)
-    public void verifyNoProviders() {
+    void verifyNoProviders() throws Throwable {
         val props = new CasConfigurationProperties();
         val trigger = new TimedMultifactorAuthenticationTrigger(props, applicationContext);
         val timeProps = new TimeBasedAuthenticationProperties();
@@ -78,6 +75,6 @@ public class TimedMultifactorAuthenticationTriggerTests extends BaseMultifactorA
 
         props.getAuthn().getAdaptive().getPolicy().getRequireTimedMultifactor().add(timeProps);
         assertThrows(AuthenticationException.class,
-            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class)));
+            () -> trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
     }
 }

@@ -1,11 +1,10 @@
 package org.apereo.cas.support.wsfederation.attributes;
 
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.core.io.Resource;
-
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
@@ -16,17 +15,15 @@ import java.util.Map;
  * @since 6.0.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class GroovyWsFederationAttributeMutator implements WsFederationAttributeMutator {
+    @Serial
     private static final long serialVersionUID = -3864465057274774578L;
 
-    private final transient WatchableGroovyScriptResource watchableScript;
-
-    public GroovyWsFederationAttributeMutator(final Resource groovyResource) {
-        this.watchableScript = new WatchableGroovyScriptResource(groovyResource);
-    }
+    private final WatchableGroovyScriptResource watchableScript;
 
     @Override
-    public Map<String, List<Object>> modifyAttributes(final Map<String, List<Object>> attributes) {
+    public Map<String, List<Object>> modifyAttributes(final Map<String, List<Object>> attributes) throws Throwable {
         val args = new Object[]{attributes, LOGGER};
         val map = watchableScript.execute(args, Map.class);
         LOGGER.debug("Attributes mutated by [{}] are calculated as [{}]", getClass().getSimpleName(), map);

@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,22 +25,14 @@ import java.io.Serializable;
 @JsonFilter("ThrottleProperties")
 public class ThrottleProperties implements Serializable {
 
-    /**
-     * Default app code for throttling and audits.
-     */
-    private static final String DEFAULT_APPLICATION_CODE = "CAS";
-
-    /**
-     * Default authentication failed action used as the code.
-     */
-    private static final String DEFAULT_AUTHN_FAILED_ACTION = "AUTHENTICATION_FAILED";
-
+    @Serial
     private static final long serialVersionUID = 6813165633105563813L;
 
     /**
      * Throttling failure events.
      */
-    private Failure failure = new Failure();
+    @NestedConfigurationProperty
+    private ThrottleFailureProperties failure = new ThrottleFailureProperties();
 
     /**
      * Record authentication throttling events in a JDBC resource.
@@ -60,14 +53,16 @@ public class ThrottleProperties implements Serializable {
     private HazelcastThrottleProperties hazelcast = new HazelcastThrottleProperties();
 
     /**
-     * Username parameter to use in order to extract the username from the request.
+     * Settings related to throttling requests using LDAP.
      */
-    private String usernameParameter;
+    @NestedConfigurationProperty
+    private LdapThrottleProperties ldap = new LdapThrottleProperties();
 
     /**
-     * Application code used to identify this application in the audit logs.
+     * Core throttling settings.
      */
-    private String appCode = DEFAULT_APPLICATION_CODE;
+    @NestedConfigurationProperty
+    private ThrottleCoreProperties core = new ThrottleCoreProperties();
 
     /**
      * Scheduler settings to clean up throttled attempts.
@@ -80,35 +75,4 @@ public class ThrottleProperties implements Serializable {
         schedule.setStartDelay("PT10S");
         schedule.setRepeatInterval("PT30S");
     }
-
-    /**
-     * Failure.
-     */
-    @RequiresModule(name = "cas-server-support-throttle")
-    @Getter
-    @Setter
-    @Accessors(chain = true)
-    public static class Failure implements Serializable {
-
-        private static final long serialVersionUID = 1246256695801461610L;
-
-        /**
-         * Failure code to record in the audit log.
-         * Generally this indicates an authentication failure event.
-         */
-        private String code = DEFAULT_AUTHN_FAILED_ACTION;
-
-        /**
-         * Number of failed login attempts permitted in the above period.
-         * All login throttling components that ship with CAS limit successive failed
-         * login attempts that exceed a threshold rate in failures per second.
-         */
-        private int threshold = -1;
-
-        /**
-         * Period of time in seconds during which the threshold applies.
-         */
-        private int rangeSeconds = -1;
-    }
-
 }

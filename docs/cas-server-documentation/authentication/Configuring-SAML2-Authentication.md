@@ -11,7 +11,7 @@ CAS can act as a SAML2 identity provider accepting authentication requests and p
 
 If you intend to allow CAS to delegate authentication to an external SAML2 identity provider, you need to [review this guide](../integration/Delegate-Authentication.html).
 
-<div class="alert alert-info"><strong>SAML Specification</strong><p>This document solely focuses on what one might do to turn on SAML2 
+<div class="alert alert-info">:information_source: <strong>SAML Specification</strong><p>This document solely focuses on what one might do to turn on SAML2 
 support inside CAS. It is not to describe/explain the numerous characteristics of the SAML2 protocol itself. If you are unsure 
 about the concepts referred to on this page, please start with reviewing 
 the <a href="http://docs.oasis-open.org/security/saml/Post2.0/sstc-saml-tech-overview-2.0.html">SAML2 Specification</a>.</p></div>
@@ -26,11 +26,10 @@ is recommended that you view, evaluate and comment on functionality that is curr
 
 The following CAS endpoints respond to supported SAML2 profiles:
 
+- `/idp/error`
 - `/idp/profile/SAML2/Redirect/SSO`
 - `/idp/profile/SAML2/POST/SSO`
 - `/idp/profile/SAML2/POST-SimpleSign/SSO`
-- `/idp/profile/SAML2/POST/SLO`
-- `/idp/profile/SAML2/Redirect/SLO`
 - `/idp/profile/SAML2/Unsolicited/SSO`
 - `/idp/profile/SAML2/SOAP/ECP`
 - `/idp/profile/SAML2/SOAP/AttributeQuery`
@@ -45,7 +44,7 @@ can be done in a few ways. To learn more, please [review this guide](../installa
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp" %}
 
 You may also need to declare the following repository in
 your CAS overlay to be able to resolve dependencies:
@@ -54,20 +53,18 @@ your CAS overlay to be able to resolve dependencies:
 repositories {
     maven { 
         mavenContent { releasesOnly() }
-        url "https://build.shibboleth.net/nexus/content/repositories/releases" 
+        url "https://build.shibboleth.net/maven/releases/" 
     }
 }
 ```
 
-{% include casproperties.html properties="cas.authn.saml-idp.core,cas.client,cas.session-replication" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.core" %}
 
-### Administrative Endpoints
+### Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint          | Description
-|-------------------|-------------------------------------------------------------------------------------------------------
-| `samlPostProfileResponse` | Obtain a SAML2 response payload by supplying a `username`, `password` and `entityId` as parameters.
+
+{% include_cached actuators.html endpoints="samlPostProfileResponse" %}
 
 ### SAML Services
 
@@ -78,6 +75,11 @@ about how to configure SAML2 service providers.
 
 Please [see this guide](../installation/Configuring-SAML2-Security.html) to learn more
 about how to configure SAML2 security configuration.
+ 
+### Logout & SLO
+
+Please [see this guide](../installation/Configuring-SAML2-Logout.html) to learn more
+about how to configure SAML2 logout operations and settings.
 
 ### Attribute Release
 
@@ -92,36 +94,28 @@ about how to configure SAML2 security configuration.
 
 SAML2 IdP `Unsolicited/SSO` profile supports the following parameters:
 
-| Parameter                         | Description
-|-----------------------------------|-----------------------------------------------------------------
-| `providerId`                      | Required. Entity ID of the service provider.
-| `shire`                           | Optional. Response location (ACS URL) of the service provider.
-| `target`                          | Optional. Relay state.
-| `time`                            | Optional. Skew the authentication request.
+| Parameter    | Description                                                    |
+|--------------|----------------------------------------------------------------|
+| `providerId` | Required. Entity ID of the service provider.                   |
+| `shire`      | Optional. Response location (ACS URL) of the service provider. |
+| `target`     | Optional. Relay state.                                         |
+| `time`       | Optional. Skew the authentication request.                     |
 
 ## Attribute Queries
 
-In order to allow CAS to support and respond to attribute queries, you need to make sure the generated metadata has
-the `AttributeAuthorityDescriptor` element enabled, with protocol support enabled for `urn:oasis:names:tc:SAML:2.0:protocol`
-and relevant binding that corresponds to the CAS endpoint(s). You also must ensure the `AttributeAuthorityDescriptor` tag lists all
-`KeyDescriptor` elements and certificates that are used for signing as well as authentication, specially if the SOAP client of the service provider 
-needs to cross-compare the certificate behind the CAS endpoint with what is defined for the `AttributeAuthorityDescriptor`. CAS by default 
-will always use its own signing certificate for signing of the responses generated as a result of an attribute query.
-
-Also note that support for attribute queries need to be explicitly enabled and the behavior is off by default, given it imposes a burden on 
-CAS and the underlying ticket registry to keep track of attributes and responses as tickets and have them be later used and looked up.
+Please see [this guide](../installation/Configuring-SAML2-AttributeQuery.html) for more details.
 
 ## Client Libraries
 
 For Java-based applications, the following frameworks may be used to integrate your application with CAS acting as a SAML2 identity provider:
 
-- [Spring Security SAML](http://projects.spring.io/spring-security-saml/)
+- [Spring Security SAML](https://docs.spring.io/spring-security/reference)
 - [Pac4j](http://www.pac4j.org/docs/clients/saml.html)
 
 ## Sample Client Applications
 
-- [Spring Security SAML Sample Webapp](https://github.com/cas-projects/saml2-sample-java-webapp)
-- [Okta](https://developer.okta.com/standards/SAML/setting_up_a_saml_application_in_okta)
+- [Spring Security SAML Sample Webapp](https://github.com/apereo/saml2-sample-java-webapp)
+- [SAMLTEST.ID](https://samltest.id/)
 
 ## Troubleshooting
 
@@ -129,11 +123,11 @@ To enable additional logging, modify the logging configuration file to add the f
 
 ```xml
 <Logger name="org.opensaml" level="debug" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 <Logger name="PROTOCOL_MESSAGE" level="debug" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 ```

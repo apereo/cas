@@ -1,0 +1,33 @@
+{
+  "dependencies": "passwordless-webflow,simple-mfa",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.server.scope=example.net",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+    "--cas.authn.passwordless.accounts.ldap.email-attribute=email",
+    "--cas.authn.passwordless.core.delegated-authentication-activated=false",
+    "--cas.authn.passwordless.core.multifactor-authentication-activated=true",
+
+    "--cas.authn.mfa.triggers.principal.global-principal-attribute-name-triggers=memberOf",
+    "--cas.authn.mfa.triggers.principal.global-principal-attribute-value-regex=mfa",
+
+    "--cas.authn.mfa.simple.mail.from=cas@apereo.org",
+    "--cas.authn.mfa.simple.mail.text=${token}",
+    "--cas.authn.mfa.simple.mail.subject=MFA code",
+    "--cas.authn.mfa.simple.mail.attribute-name=email",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.authn.attribute-repository.stub.attributes.firstname=jerome"
+  ],
+  "jvmArgs": "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true",
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
+}

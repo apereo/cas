@@ -1,6 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
@@ -12,16 +12,16 @@ import org.springframework.test.context.TestPropertySource;
  * @since 5.3.0
  */
 @TestPropertySource(properties = {
-    "cas.jdbc.show-sql=true",
+    "cas.jdbc.show-sql=false",
     "cas.authn.mfa.trusted.jpa.ddl-auto=create-drop",
 
     "cas.authn.mfa.trusted.jpa.user=system",
     "cas.authn.mfa.trusted.jpa.password=Oradoc_db1",
     "cas.authn.mfa.trusted.jpa.driver-class=oracle.jdbc.driver.OracleDriver",
     "cas.authn.mfa.trusted.jpa.url=jdbc:oracle:thin:@localhost:1521:ORCLCDB",
-    "cas.authn.mfa.trusted.jpa.dialect=org.hibernate.dialect.Oracle12cDialect"
+    "cas.authn.mfa.trusted.jpa.dialect=org.hibernate.dialect.OracleDialect"
 })
-@EnabledIfPortOpen(port = 1521)
+@EnabledIfListeningOnPort(port = 1521)
 @Tag("Oracle")
-public class OracleJpaMultifactorAuthenticationTrustStorageTests extends JpaMultifactorAuthenticationTrustStorageTests {
+class OracleJpaMultifactorAuthenticationTrustStorageTests extends JpaMultifactorAuthenticationTrustStorageTests {
 }

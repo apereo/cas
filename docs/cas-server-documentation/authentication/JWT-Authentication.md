@@ -22,25 +22,28 @@ in form of JWT claims. To learn more about this functionality, [please review th
 
 CAS expects a `token` parameter (or request header) to be passed along to the `/login` endpoint. The parameter value must be a JWT.
 
-<div class="alert alert-info"><strong>JCE Requirement</strong><p>It's safe to make sure you have the proper JCE bundle installed in your Java environment that is used by CAS, specially if you need to use specific signing/encryption algorithms and methods. Be sure to pick the right version of the JCE for your Java version. Java versions can be detected via the <code>java -version</code> command.</p></div>
+<div class="alert alert-info">:information_source: <strong>JCE Requirement</strong><p>It's safe to make sure you have 
+the proper JCE bundle installed in your Java environment that is used by CAS, specially if you need to use specific 
+signing/encryption algorithms and methods. Be sure to pick the right version of the JCE for your Java version. Java 
+versions can be detected via the <code>java -version</code> command.</p></div>
 
 Here is an example of how to generate a JWT via [Pac4j](https://github.com/pac4j/pac4j):
 
 ```java
-final String signingSecret = RandomUtils.randomAlphanumeric(256);
-final String encryptionSecret = RandomUtils.randomAlphanumeric(48);
+var signingSecret = RandomUtils.randomAlphanumeric(256);
+var encryptionSecret = RandomUtils.randomAlphanumeric(48);
 
 System.out.println("signingSecret " + signingSecret);
 System.out.println("encryptionSecret " + encryptionSecret);
 
-final JwtGenerator<CommonProfile> g = new JwtGenerator<>();
+var g = new JwtGenerator<>();
 g.setSignatureConfiguration(new SecretSignatureConfiguration(signingSecret, JWSAlgorithm.HS256));
 g.setEncryptionConfiguration(new SecretEncryptionConfiguration(encryptionSecret,
         JWEAlgorithm.DIR, EncryptionMethod.A192CBC_HS384));
 
-final CommonProfile profile = new CommonProfile();
+var profile = new CommonProfile();
 profile.setId("casuser");
-final String token = g.generate(profile);
+var token = g.generate(profile);
 System.out.println("token: " + token);
 ```
 
@@ -56,15 +59,15 @@ The `token` parameter may also be passed as a request header.
 
 JWT authentication support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-token-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-token-webflow" %}
 
-{% include casproperties.html properties="cas.authn.token" %}
+{% include_cached casproperties.html properties="cas.authn.token" %}
 
 Configure the appropriate service in your service registry to hold the secrets:
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "https://.+",
   "name" : "testId",
   "id" : 1,
@@ -99,3 +102,13 @@ Configure the appropriate service in your service registry to hold the secrets:
 ```
 
 Note that the only required property is `jwtSigningSecret`.
+
+Signing and encryption keys may also be defined on a per-service basis, or globally via CAS settings.
+
+{% include_cached registeredserviceproperties.html groups="JWT_AUTHENTICATION" %}
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="tokenAuth" %}

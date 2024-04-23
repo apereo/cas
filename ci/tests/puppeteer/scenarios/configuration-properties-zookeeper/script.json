@@ -1,0 +1,21 @@
+{
+  "dependencies": "configuration-cloud-zookeeper",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--spring.cloud.zookeeper.config.watcher.enabled=true",
+    "--spring.cloud.zookeeper.config.enabled=true",
+    "--spring.cloud.zookeeper.connect-string=localhost:2181",
+    "--spring.cloud.zookeeper.enabled=true",
+
+    "--spring.cloud.discovery.enabled=true" ,
+    "--spring.cloud.service-registry.enabled=true",
+    "--spring.cloud.zookeeper.discovery.enabled=true"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

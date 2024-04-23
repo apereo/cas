@@ -11,11 +11,10 @@ category: Protocols
 The following protocols are supported and provided by CAS:
 
 *   [CAS](CAS-Protocol.html)
-*   [OpenID](OpenID-Protocol.html)
 *   [OAuth](OAuth-Protocol.html)
 *   [OpenID Connect](OIDC-Protocol.html)
 *   [WS Federation](WS-Federation-Protocol.html)
-*   [SAML1](SAML-Protocol.html)
+*   [SAML1](SAML-v1-Protocol.html)
 *   [SAML2](../authentication/Configuring-SAML2-Authentication.html)
 *   [REST Protocol](REST-Protocol.html)
 
@@ -45,7 +44,7 @@ If you understand the above strategy, then you would be glad to learn that *almo
 6. The OAuth2 plugin attempts to validate that ticket to retrieve the necessary user profile and attributes.
 7. The OAuth2 plugin then proceeds to issue the right OAuth2 response by translating and transforming the profile and validated assertions into what the client application may need.
 
-<div class="alert alert-info"><strong>Note</strong><p>The above strategy applies exactly the same, if CAS decides to delegate the authentication to an external identity provider such as Facebook or a SAML2 identity provider.</p></div>
+<div class="alert alert-info">:information_source: <strong>Note</strong><p>The above strategy applies exactly the same, if CAS decides to delegate the authentication to an external identity provider such as Facebook or a SAML2 identity provider.</p></div>
 
 The right-hand side of the flow is always CAS, because the plugin always translates protocol requests into CAS requests. Another way of looking at it is that all protocol plugins and modules are themselves clients of the CAS server! They are issued service tickets and they proceed to validate them just like any other CAS-enabled client. Just like above, to the OAuth2-enabled client all such details are totally transparent and as long as “the right stuff” is produced back to the client, it shall not care.
 

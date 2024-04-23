@@ -55,7 +55,7 @@ public class RadiusMultifactorWebflowConfigurer extends AbstractCasMultifactorWe
             setStartState(flow, initLoginFormState);
 
             val realSubmitState = createActionState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT,
-                createEvaluateAction("radiusAuthenticationWebflowAction"));
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_RADIUS_AUTHENTICATION));
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SUCCESS);
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
             createTransitionForState(realSubmitState, CasWebflowConstants.TRANSITION_ID_CANCEL, CasWebflowConstants.STATE_ID_CANCEL);
@@ -63,7 +63,7 @@ public class RadiusMultifactorWebflowConfigurer extends AbstractCasMultifactorWe
             val loginProperties = CollectionUtils.wrapList("token");
             val loginBinder = createStateBinderConfiguration(loginProperties);
             val viewLoginFormState = createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM,
-                "casRadiusLoginView", loginBinder);
+                "radius/casRadiusLoginView", loginBinder);
             createStateModelBinding(viewLoginFormState, CasWebflowConstants.VAR_ID_CREDENTIAL, RadiusTokenCredential.class);
             val setPrincipalAction = createSetAction("viewScope.principal", "conversationScope.authentication.principal");
             viewLoginFormState.getEntryActionList().addAll(setPrincipalAction);

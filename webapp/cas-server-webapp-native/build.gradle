@@ -1,0 +1,233 @@
+description = "Apereo CAS Native Graal VM Web Application"
+
+apply plugin: "java"
+apply plugin: "org.springframework.boot"
+apply plugin: "org.graalvm.buildtools.native"
+
+ext {
+    publishMetadata = true
+    projectMetadata = [
+        facets: ["web"],
+        category: "Web Application",
+        title: "GraalVM Native Image Web Application",
+        aliases: ["graalvmwebapp"]
+    ]
+}
+
+["bootJar", "processAot", "nativeCompile"].each { name ->
+    tasks.named(name) { task ->
+        task.notCompatibleWithConfigurationCache("${name} is not supported by the Gradle configuration cache")
+    }
+}
+
+configurations {
+    configureEach {
+        /*
+            Log4j does not support Graal VM and leads to com.oracle.svm.core.jdk.UnsupportedFeatureError:
+            Defining hidden classes at runtime is not supported. We use logback instead.
+         */
+        exclude(group: "org.apache.logging.log4j", module: "log4j-api")
+        exclude(group: "org.apache.logging.log4j", module: "log4j-jakarta-web")
+        exclude(group: "org.apache.logging.log4j", module: "log4j-web")
+        exclude(group: "org.apache.logging.log4j", module: "log4j-jcl")
+        exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j-impl")
+        exclude(group: "org.apache.logging.log4j", module: "log4j-slf4j2-impl")
+        exclude(group: "org.apereo.cas", module: "cas-server-core-logging")
+        /*
+            DevTools and Spring Cloud Bootstrap do not support native images.
+         */
+        exclude(group: "org.springframework.boot", module: "spring-boot-devtools")
+        exclude(group: "org.springframework.cloud", module: "spring-cloud-starter-bootstrap")
+    }
+}
+
+dependencies {
+    processAotClasspath libraries.graalvmsdk
+    processAotClasspath libraries.graalvmpolyglot
+    processTestAotClasspath libraries.graalvmsdk
+    processTestAotClasspath libraries.graalvmpolyglot
+
+    implementation project(":webapp:cas-server-webapp-init")
+    implementation project(":webapp:cas-server-webapp-resources")
+    implementation project(":webapp:cas-server-webapp-init-tomcat")
+
+    implementation project(":core:cas-server-core")
+    implementation project(":core:cas-server-core-audit")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-cookie")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-logout")
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-tickets")
+    implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-validation")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-notifications")
+
+    implementation project(":support:cas-server-support-native")
+    implementation project(":support:cas-server-support-webconfig")
+    implementation project(":support:cas-server-support-logback")
+    implementation project(":support:cas-server-support-person-directory")
+    implementation project(":support:cas-server-support-themes")
+    implementation project(":support:cas-server-support-validation")
+    implementation project(":support:cas-server-support-thymeleaf")
+    implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-actions-core")
+    implementation project(":support:cas-server-support-pm-webflow")
+
+    def casModules = providers.systemProperty("casModules").getOrNull()
+    if (casModules != null) {
+        def dependencies = casModules.split(",")
+        dependencies.each {
+            def projectsToAdd = rootProject.subprojects.findAll {project ->
+                def pattern = /cas-server-${it}|cas-server-core-${it}|cas-server-support-${it}/
+                logger.debug("Matching ${pattern} against CAS module ${project.name}")
+                project.name.matches(pattern)
+            }
+
+            if (!projectsToAdd.isEmpty()) {
+                ansi.green("Including CAS module(s): ${projectsToAdd} in native web application")
+                projectsToAdd.each {
+                    implementation it
+                }
+            }
+        }
+    }
+    
+    testImplementation libraries.graalvmsdk
+    testImplementation libraries.graalvmpolyglot
+}
+
+graalvmNative {
+    metadataRepository {
+        enabled = true
+        version = "${graalVmMetadataRepositoryVersion}"
+    }
+
+    /*
+        The toolchain detection cannot distinguish between
+        GraalVM JDKs and standard JDKs without Native Image support.
+     */
+    toolchainDetection = false
+
+    binaries {
+        main {
+            imageName = "cas"
+            quickBuild = true
+            debug = true
+            verbose = false
+            richOutput = true
+            sharedLibrary = false
+            mainClass = "org.apereo.cas.nativex.CasNativeWebApplication"
+            
+            configurationFileDirectories.from(file('src/graal'))
+
+            buildArgs.add('-H:+ReportExceptionStackTraces')
+            buildArgs.add('-H:+InlineBeforeAnalysis')
+            buildArgs.add('-H:+TraceSecurityServices')
+            buildArgs.add('-H:+BuildReport')
+            buildArgs.add('-H:+AddAllCharsets')
+            buildArgs.add('-H:+UnlockExperimentalVMOptions')
+            
+            buildArgs.add('-J-Xmx12G')
+            buildArgs.add('-J-Xms4G')
+            buildArgs.add('--native-image-info')
+            buildArgs.add('--strict-image-heap')
+
+            buildArgs.add('-march=native')
+//            buildArgs.add('--pgo-instrument')
+//            def profileFile = rootProject.file("default.iprof")
+//            if (profileFile.exists()) {
+//                ansi.blue("Using data collected for profile-guided optimizations of AOT-compiled code")
+//                buildArgs.add("--pgo=${profileFile.path}")
+//            }
+            buildArgs.add('--trace-class-initialization=true')
+
+            buildArgs.add('--initialize-at-build-time=java.beans')
+            buildArgs.add('--initialize-at-build-time=com.sun.beans')
+            buildArgs.add('--initialize-at-build-time=groovyjarjarantlr4.v4.runtime')
+            buildArgs.add('--initialize-at-build-time=org.codehaus.groovy')
+            buildArgs.add('--initialize-at-build-time=org.apache.groovy')
+            buildArgs.add('--initialize-at-build-time=groovy.lang')
+            buildArgs.add('--initialize-at-build-time=groovyjarjarasm.asm.Type')
+            buildArgs.add('--initialize-at-build-time=groovyjarjarasm.asm.Handle')
+
+            buildArgs.add('--initialize-at-run-time=com.sun.xml.ws')
+            buildArgs.add('--initialize-at-run-time=groovy.grape.GrapeIvy')
+            buildArgs.add("--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG\$Default")
+            buildArgs.add("--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG\$NonceAndIV")
+
+            buildArgs.add('--features=org.apereo.cas.nativex.features.DefaultNativeImageFeature')
+
+            buildArgs.add('--enable-url-protocols=jar,file,resource,http,https')
+        }
+    }
+
+    /*
+    agent {
+        defaultMode = "direct"
+        enabled = true
+        builtinCallerFilter = false
+        builtinHeuristicFilter = false
+        enableExperimentalPredefinedClasses = true
+        enableExperimentalUnsafeAllocationTracing = false
+        trackReflectionMetadata = false
+        modes {
+            standard {
+            }
+            direct {
+                options.add("config-output-dir={output_dir}")
+                options.add("experimental-configuration-with-origins")
+            }
+        }
+    }
+     */
+}
+
+processAot {
+    enabled = providers.systemProperty("skipAot").getOrElse("false") == "false"
+    notCompatibleWithConfigurationCache("processAot is not supported by the Gradle configuration cache")
+
+    def list = []
+    list.add("--add-opens")
+    list.add("java.base/java.lang=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.util=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.time=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/java.net=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/sun.security.action=jdk.crypto.ec")
+    list.add("--add-opens")
+    list.add("java.base/java.nio=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.base/sun.nio.ch=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("java.management/sun.management=ALL-UNNAMED")
+    list.add("--add-opens")
+    list.add("jdk.management/com.sun.management.internal=ALL-UNNAMED")
+    list.add("-Xdebug")
+    list.add("-Xrunjdwp:transport=dt_socket,address=*:5005,server=y,suspend=n")
+
+    jvmArgs = list
+//    systemProperties System.properties
+
+    def aotSpringActiveProfiles = providers.systemProperty("aotSpringActiveProfiles").getOrElse("native")
+    logger.info "AOT processing spring active profile: ${aotSpringActiveProfiles}"
+    
+    args(
+        "--spring.profiles.active=${aotSpringActiveProfiles}",
+        "--spring.main.lazy-initialization=false",
+        "--logging.level.org.apereo.cas=info",
+        "--logging.level.org.springframework.core.env=info",
+        "--logging.level.org.springframework.boot=info",
+        "--logging.level.org.springframework.security=warn"
+    )
+}

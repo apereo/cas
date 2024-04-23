@@ -1,11 +1,13 @@
 package org.apereo.cas.web.flow.actions;
 
+import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
-import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.Optional;
 
 /**
  * Action that will be called as part of the MFA subflow to determine if a MFA provider
@@ -16,16 +18,13 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class MultifactorAuthenticationAvailableAction extends AbstractMultifactorAuthenticationAction {
 
-    public MultifactorAuthenticationAvailableAction(final ApplicationContext applicationContext) {
-        super(applicationContext);
-    }
-
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
-        val service = WebUtils.getRegisteredService(requestContext);
-        if (provider.isAvailable(service)) {
-            return yes();
-        }
-        return no();
+    protected Event doExecuteInternal(final RequestContext requestContext) {
+        val registeredService = WebUtils.getRegisteredService(requestContext);
+        val failureEval = provider.getFailureModeEvaluator();
+        val checkAvailability = Optional.ofNullable(failureEval)
+            .map(eval -> eval.evaluate(registeredService, provider) != MultifactorAuthenticationProviderFailureModes.NONE)
+            .orElse(true);
+        return !checkAvailability || provider.isAvailable(registeredService) ? yes() : no();
     }
 }

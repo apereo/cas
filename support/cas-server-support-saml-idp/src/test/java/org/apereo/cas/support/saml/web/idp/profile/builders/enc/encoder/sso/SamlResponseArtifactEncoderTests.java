@@ -2,11 +2,12 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso;
 
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.Response;
@@ -17,7 +18,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link SamlResponseArtifactEncoderTests}.
@@ -25,17 +25,17 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("SAML")
+@Tag("SAML2")
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
-public class SamlResponseArtifactEncoderTests extends BaseSamlIdPConfigurationTests {
+class SamlResponseArtifactEncoderTests extends BaseSamlIdPConfigurationTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
         val registeredService = getSamlRegisteredServiceForTestShib();
         val authnRequest = getAuthnRequestFor(registeredService);
-        val adaptor = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, registeredService, authnRequest).get();
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, registeredService, authnRequest).get();
         val encoder = new SamlResponseArtifactEncoder(velocityEngine, adaptor, request, response, samlArtifactMap);
         assertEquals(SAMLConstants.SAML2_ARTIFACT_BINDING_URI, encoder.getBinding());
 
@@ -45,13 +45,12 @@ public class SamlResponseArtifactEncoderTests extends BaseSamlIdPConfigurationTe
         request.setCookies(response.getCookies());
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
-
-        val issuer = mock(Issuer.class);
-        when(issuer.getValue()).thenReturn("cas");
-
-        val samlResponse = mock(Response.class);
-        when(samlResponse.getIssuer()).thenReturn(issuer);
-        assertNotNull(encoder.encode(authnRequest, samlResponse, "relay-state"));
+        
+        val samlResponse = samlProfileSamlResponseBuilder.newSamlObject(Response.class);
+        val issuer = samlProfileSamlResponseBuilder.newSamlObject(Issuer.class);
+        issuer.setValue("cas");
+        samlResponse.setIssuer(issuer);
+        assertNotNull(encoder.encode(authnRequest, samlResponse, "relay-state", new MessageContext()));
     }
 
 }

@@ -5,11 +5,12 @@ import org.apereo.cas.pm.impl.history.PasswordHistoryEntity;
 import lombok.Getter;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import java.io.Serial;
 
 /**
  * This is {@link JdbcPasswordHistoryEntity}.
@@ -21,6 +22,7 @@ import javax.persistence.Table;
 @Table(name = "PasswordHistoryTable")
 @Getter
 public class JdbcPasswordHistoryEntity extends PasswordHistoryEntity {
+    @Serial
     private static final long serialVersionUID = -7485700281426107428L;
 
     @Id

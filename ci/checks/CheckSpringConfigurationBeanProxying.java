@@ -2,7 +2,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
@@ -33,42 +32,34 @@ public class CheckSpringConfigurationBeanProxying {
 
     protected static void checkPattern(final String arg) throws IOException {
         var failBuild = new AtomicBoolean(false);
-        final var results = new ArrayList<>();
-
-        var patternBeanMethods = Pattern.compile("public\\s\\w+(<\\w+>)*\\s(\\w+)\\(");
-
         Files.walk(Paths.get(arg))
-            .filter(file -> Files.isRegularFile(file) && file.toFile().getName().endsWith("Configuration.java"))
+            .filter(file -> Files.isRegularFile(file) && file.toFile().getName().endsWith(".java"))
             .forEach(file -> {
                 var text = readFile(file);
                 if (text.contains("@Configuration")) {
-                    var canProxyBeans = true;
-                    var matcher = patternBeanMethods.matcher(text);
-                    results.clear();
-                    while (matcher.find()) {
-                        results.add(matcher.group(2));
+                    var proxyPattern = Pattern.compile("@Configuration\\(value\\s*=\\s*\"(\\w+)\",\\s*proxyBeanMethods\\s*=\\s*(true)\\)").matcher(text);
+                    if (proxyPattern.find()) {
+                        print("Configuration class %s should be marked with proxyBeanMethods = false%n", file);
+                        failBuild.set(true);
                     }
-                    for (var r : results) {
-                        var patternMethodCall = Pattern.compile(r + "\\(");
-                        var matcher2 = patternMethodCall.matcher(text);
-                        var count = 0;
-                        while (matcher2.find()) {
-                            count++;
-                        }
-                        if (count > 1) {
-                            canProxyBeans = false;
-                            break;
-                        }
+                    proxyPattern = Pattern.compile("@Configuration\\(value\\s*=\\s*\"(\\w+)\"\\)").matcher(text);
+                    if (proxyPattern.find()) {
+                        print("Configuration class %s should be explicitly marked with proxyBeanMethods = false%n", file);
+                        failBuild.set(true);
                     }
-                    if (canProxyBeans) {
-                        var proxyPattern = Pattern.compile("@Configuration\\(value\\s*=\\s*\"(\\w+)\",\\s*proxyBeanMethods\\s*=\\s*(false|true)\\)").matcher(text);
-                        if (!proxyPattern.find()) {
-                            print("Configuration class %s should be marked with proxyBeanMethods = false", file);
+                }
+
+
+                if (text.contains("@AutoConfiguration") && file.toFile().getAbsolutePath().contains("src/main/java")) {
+                    var packagePattern = Pattern.compile("package (.+);").matcher(text);
+                    if (packagePattern.find()) {
+                        var packageName = packagePattern.group(1);
+                        if (!packageName.equals("org.apereo.cas.config")) {
+                            print("Configuration class %s in package %s must be placed inside the package 'org.apereo.cas.config'%n", file, packageName);
                             failBuild.set(true);
                         }
                     }
                 }
-
             });
         if (failBuild.get()) {
             System.exit(1);

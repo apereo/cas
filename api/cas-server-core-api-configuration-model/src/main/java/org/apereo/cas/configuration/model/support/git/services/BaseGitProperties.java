@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.support.git.services;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -10,6 +12,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,7 +25,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-public abstract class BaseGitProperties implements Serializable {
+public abstract class BaseGitProperties implements CasFeatureModule, Serializable {
+    @Serial
     private static final long serialVersionUID = 4194689836396653458L;
 
     /**
@@ -30,12 +34,14 @@ public abstract class BaseGitProperties implements Serializable {
      * Could be a URL or a file-system path.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String repositoryUrl;
 
     /**
      * The branch to checkout and activate, defaults to {@code master}.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String activeBranch = "master";
 
     /**
@@ -63,9 +69,14 @@ public abstract class BaseGitProperties implements Serializable {
     private boolean pushChanges;
 
     /**
-     * Whether or not commits should be signed.
+     * Whether commits should be signed.
      */
     private boolean signCommits;
+
+    /**
+     * Whether to rebase on pulls.
+     */
+    private boolean rebase;
 
     /**
      * Password for the SSH private key.
@@ -112,4 +123,28 @@ public abstract class BaseGitProperties implements Serializable {
     @NestedConfigurationProperty
     @RequiredProperty
     private SpringResourceProperties cloneDirectory = new SpringResourceProperties();
+
+    /**
+     * Implementation of HTTP client to use when doing git operations via http/https.
+     * The jgit library sets the connection factory statically (globally) so this property should
+     * be set to the same value for all git repositories (services, saml, etc). Not doing
+     * so might result in one connection factory being used for clone and another for subsequent
+     * fetches.
+     */
+    private HttpClientTypes httpClientType = HttpClientTypes.JDK;
+
+    /**
+     * The jgit library supports multiple HTTP client implementations.
+     */
+    public enum HttpClientTypes {
+        /**
+         * Built-in JDK http/https client.
+         */
+        JDK,
+        /**
+         * Apache HTTP Client http/https client.
+         */
+        HTTP_CLIENT
+    }
+
 }

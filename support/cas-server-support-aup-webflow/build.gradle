@@ -1,4 +1,13 @@
 description = "Apereo CAS AUP Webflow Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            title: "Acceptable Usage Policy",
+            category: "Acceptable Usage Policy",
+            aliases: ["aup"]
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-ticket")
@@ -16,6 +25,7 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
 
     implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-actions-core")
     implementation project(":support:cas-server-support-aup-core")
 
     testImplementation project(":support:cas-server-support-themes")
@@ -46,4 +56,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 }

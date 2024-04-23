@@ -2,10 +2,8 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
-
-import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.springframework.core.Ordered;
-
 import java.util.Optional;
 
 /**
@@ -25,6 +23,11 @@ import java.util.Optional;
 public interface PrincipalResolver extends Ordered {
 
     /**
+     * Default principal resolver bean name.
+     */
+    String BEAN_NAME_PRINCIPAL_RESOLVER = "defaultPrincipalResolver";
+
+    /**
      * Attribute repository implementation bean name.
      */
     String BEAN_NAME_ATTRIBUTE_REPOSITORY = "attributeRepository";
@@ -40,9 +43,10 @@ public interface PrincipalResolver extends Ordered {
      *
      * @param credential Source credential.
      * @return the principal
+     * @throws Throwable the throwable
      */
-    default Principal resolve(final Credential credential) {
-        return resolve(credential, Optional.empty(), Optional.empty());
+    default Principal resolve(final Credential credential) throws Throwable {
+        return resolve(credential, Optional.empty(), Optional.empty(), Optional.empty());
     }
 
     /**
@@ -52,9 +56,10 @@ public interface PrincipalResolver extends Ordered {
      * @param credential Source credential.
      * @param handler    the authentication handler linked to the resolver. May be null.
      * @return the principal
+     * @throws Throwable the throwable
      */
-    default Principal resolve(final Credential credential, final Optional<AuthenticationHandler> handler) {
-        return resolve(credential, Optional.empty(), handler);
+    default Principal resolve(final Credential credential, final Optional<AuthenticationHandler> handler) throws Throwable {
+        return resolve(credential, Optional.empty(), handler, Optional.empty());
     }
 
     /**
@@ -63,13 +68,17 @@ public interface PrincipalResolver extends Ordered {
      * @param credential Source credential.
      * @param principal  A principal that may have been produced during the authentication process. May be null.
      * @param handler    the authentication handler linked to the resolver. May be null.
+     * @param service    the service
      * @return Resolved principal, or null if the principal could not be resolved.
+     * @throws Throwable the throwable
      */
-    Principal resolve(Credential credential, Optional<Principal> principal, Optional<AuthenticationHandler> handler);
+    Principal resolve(Credential credential, Optional<Principal> principal,
+                      Optional<AuthenticationHandler> handler,
+                      Optional<Service> service) throws Throwable;
 
     /**
      * Determines whether this instance supports principal resolution from the given credential. This method SHOULD
-     * be called prior to {@link #resolve(Credential, Optional, Optional)})}.
+     * be called prior to {@link #resolve(Credential, Optional, Optional, Optional)})}.
      *
      * @param credential The credential to check for support.
      * @return True if credential is supported, false otherwise.
@@ -82,7 +91,9 @@ public interface PrincipalResolver extends Ordered {
      * @return the attribute repository or null.
      * @since 5.1
      */
-    IPersonAttributeDao getAttributeRepository();
+    default PersonAttributeDao getAttributeRepository() {
+        return null;
+    }
 
     /**
      * Gets a unique name for this principal resolver.

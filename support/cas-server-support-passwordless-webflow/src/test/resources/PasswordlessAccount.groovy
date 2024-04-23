@@ -1,29 +1,38 @@
+import org.apereo.cas.api.PasswordlessAuthenticationRequest
 import org.apereo.cas.api.PasswordlessUserAccount
 
 def run(Object[] args) {
-    def username = args[0]
+    def request = args[0] as PasswordlessAuthenticationRequest
     def logger = args[1]
-    logger.info("Testing username $username")
+    logger.info("Testing username $request")
 
-    if (username.equals("unknown")) {
+    if (request.username.equals("unknown")) {
         return null
     }
 
-    if (username.equals("nouserinfo")) {
+    if (request.username.equals("nouserinfo")) {
         return PasswordlessUserAccount.builder()
                 .username("nouserinfo")
                 .name("CAS")
-                .build();
+                .build()
     }
 
-    if (username.equals("needs-password")) {
+    if (request.username.equals("needs-password")) {
         return PasswordlessUserAccount.builder()
                 .username("nouserinfo")
                 .name("CAS")
                 .email("casuser@example.org")
                 .phone("123-456-7890")
                 .requestPassword(true)
-                .build();
+                .build()
+    }
+
+    if (request.username.equals("needs-password-user-without-email-or-phone")) {
+        return PasswordlessUserAccount.builder()
+                .username("nouserinfo")
+                .name("CAS")
+                .requestPassword(true)
+                .build()
     }
 
     return PasswordlessUserAccount.builder()
@@ -31,5 +40,5 @@ def run(Object[] args) {
             .phone("123-456-7890")
             .username("casuser")
             .name("CAS")
-            .build();
+            .build()
 }

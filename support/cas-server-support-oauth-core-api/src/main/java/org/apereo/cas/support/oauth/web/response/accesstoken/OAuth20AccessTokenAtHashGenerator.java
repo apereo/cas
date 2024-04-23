@@ -4,8 +4,8 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
 
-import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
@@ -20,7 +20,7 @@ import java.util.Arrays;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Builder
+@SuperBuilder
 @Getter
 @Slf4j
 public class OAuth20AccessTokenAtHashGenerator {

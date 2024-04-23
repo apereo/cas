@@ -20,9 +20,11 @@ import java.util.Collection;
  *
  * @author Misagh Moayyed
  * @since 5.2.0
+ * @deprecated Since 7.0.0
  */
 @Slf4j
 @UtilityClass
+@Deprecated(since = "7.0.0")
 public class MemcachedUtils {
 
     /**
@@ -45,23 +47,25 @@ public class MemcachedUtils {
     public static Transcoder newTranscoder(final BaseMemcachedProperties memcachedProperties,
                                            final Collection<Class> kryoSerializableClasses) {
         switch (memcachedProperties.getTranscoder()) {
-            case SERIAL:
+            case SERIAL -> {
                 val serial = new SerializingTranscoder();
                 serial.setCompressionThreshold(memcachedProperties.getTranscoderCompressionThreshold());
                 LOGGER.debug("Creating memcached transcoder [{}]", serial.getClass().getName());
                 return serial;
-            case WHALIN:
+            }
+            case WHALIN -> {
                 val whalin = new WhalinTranscoder();
                 whalin.setCompressionThreshold(memcachedProperties.getTranscoderCompressionThreshold());
                 LOGGER.debug("Creating memcached transcoder [{}]", whalin.getClass().getName());
                 return whalin;
-            case WHALINV1:
+            }
+            case WHALINV1 -> {
                 val whalinv1 = new WhalinV1Transcoder();
                 whalinv1.setCompressionThreshold(memcachedProperties.getTranscoderCompressionThreshold());
                 LOGGER.debug("Creating memcached transcoder [{}]", whalinv1.getClass().getName());
                 return whalinv1;
-            case KRYO:
-            default:
+            }
+            default -> {
                 val kryoPool = new CasKryoPool(kryoSerializableClasses, true,
                     memcachedProperties.isKryoRegistrationRequired(),
                     memcachedProperties.isKryoObjectsByReference(),
@@ -69,6 +73,7 @@ public class MemcachedUtils {
                 val kryo = new CasKryoTranscoder(kryoPool);
                 LOGGER.debug("Creating memcached transcoder [{}]", kryo.getClass().getName());
                 return kryo;
+            }
         }
     }
 }

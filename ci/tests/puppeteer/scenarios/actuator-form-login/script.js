@@ -1,29 +1,38 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
+
+const assert = require("assert");
+const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true
-    });
-    const page = await browser.newPage();
-    await page.goto("https://localhost:8443/cas/actuator/sso");
+    const browser = await cas.newBrowser(cas.browserOptions());
+    const page = await cas.newPage(browser);
+    await cas.goto(page, "https://localhost:8443/cas/actuator/info");
 
-    var header = await page.$eval('#content h2', el => el.innerText)
-    console.log(header)
-    assert(header === "Login")
+    await cas.assertInnerText(page, "#content h2", "Login");
+    await cas.assertVisibility(page, "#content form[name=fm1]");
 
-    let form = await page.$('#content form[name=fm1]');
-    assert(await form.boundingBox() != null);
+    await cas.assertInnerText(page, "#content form[name=fm1] h3", "Enter Username & Password");
+    await cas.assertVisibility(page, "#username");
 
-    let subtitle = await page.$eval('#content form[name=fm1] h3', el => el.innerText);
-    console.log(subtitle);
-    assert(subtitle === "Enter Username & Password");
+    await cas.attributeValue(page, "#username", "autocapitalize", "none");
+    await cas.attributeValue(page, "#username", "spellcheck", "false");
+    await cas.attributeValue(page, "#username", "autocomplete", "username");
+    await cas.assertVisibility(page, "#password");
 
-    let uid = await page.$('#username');
-    assert(await uid.boundingBox() != null);
+    let response = await cas.loginWith(page, "unknown", "badpassword");
+    await cas.sleep(1000);
+    await cas.log(`${response.status()} ${response.statusText()}`);
+    await cas.screenshot(page);
+    assert(response.status() === 200);
+    await cas.assertVisibility(page, "#errorPanel");
+    await cas.assertInnerText(page, "#errorPanel", "Invalid credentials.");
 
-    let pswd = await page.$('#password');
-    assert(await pswd.boundingBox() != null);
+    response = await cas.loginWith(page);
+    await cas.log(`${response.status()} ${response.statusText()}`);
+    await cas.screenshot(page);
+    const content = await page.content();
+    const json = await cas.substring(content, "<pre>", "</pre>");
+    const payload = JSON.parse(json);
+    await cas.log(payload);
 
     await browser.close();
 })();

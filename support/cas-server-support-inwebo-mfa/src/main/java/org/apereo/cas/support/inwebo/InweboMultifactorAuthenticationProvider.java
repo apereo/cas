@@ -6,6 +6,8 @@ import org.apereo.cas.configuration.model.support.mfa.InweboMultifactorAuthentic
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
+
 /**
  * The Inwebo MFA provider definition.
  *
@@ -15,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 @NoArgsConstructor
 public class InweboMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
 
+    @Serial
     private static final long serialVersionUID = 7504677927348866590L;
 
     @Override

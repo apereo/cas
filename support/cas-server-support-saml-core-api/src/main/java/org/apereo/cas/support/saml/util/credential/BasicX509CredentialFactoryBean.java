@@ -3,7 +3,7 @@ package org.apereo.cas.support.saml.util.credential;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
-import net.shibboleth.utilities.java.support.collection.LazyList;
+import net.shibboleth.shared.collection.LazyList;
 import org.opensaml.security.credential.UsageType;
 import org.opensaml.security.crypto.KeySupport;
 import org.opensaml.security.x509.BasicX509Credential;
@@ -76,7 +76,7 @@ public class BasicX509CredentialFactoryBean implements FactoryBean<BasicX509Cred
 
         var entityCertificate = getEntityCertificate();
         if (null == entityCertificate) {
-            entityCertificate = certificates.get(0);
+            entityCertificate = certificates.getFirst();
         }
 
         val privateKey = getPrivateKey();

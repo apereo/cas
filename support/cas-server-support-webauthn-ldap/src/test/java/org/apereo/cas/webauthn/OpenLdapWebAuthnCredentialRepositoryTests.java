@@ -1,21 +1,18 @@
 package org.apereo.cas.webauthn;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
-import org.apereo.cas.config.LdapWebAuthnConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.config.CasLdapWebAuthnAutoConfiguration;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepositoryTests;
-
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.Credential;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -35,15 +32,14 @@ import java.nio.charset.StandardCharsets;
         "cas.authn.mfa.web-authn.ldap.bind-credential=P@ssw0rd",
         "cas.authn.mfa.web-authn.ldap.trust-manager=ANY"
     })
-@Tag("Ldap")
-@EnabledIfPortOpen(port = 11636)
+@Tag("LdapRepository")
+@EnabledIfListeningOnPort(port = 11636)
 @Getter
-@Import(LdapWebAuthnConfiguration.class)
-public class OpenLdapWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
+@Import(CasLdapWebAuthnAutoConfiguration.class)
+class OpenLdapWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
 
-    @SneakyThrows
     @Override
-    protected String getUsername() {
+    protected String getUsername() throws Exception {
         val uid = super.getUsername();
 
         val bindInit = new BindConnectionInitializer("cn=admin,dc=example,dc=org", new Credential("P@ssw0rd"));

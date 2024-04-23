@@ -11,7 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
-import org.springframework.webflow.execution.RequestContext;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link GroovyConsentActivationStrategy}.
@@ -26,7 +27,7 @@ public class GroovyConsentActivationStrategy implements ConsentActivationStrateg
 
     private final CasConfigurationProperties casProperties;
 
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final WatchableGroovyScriptResource watchableScript;
 
     public GroovyConsentActivationStrategy(final Resource groovyResource,
                                            final ConsentEngine consentEngine,
@@ -38,8 +39,10 @@ public class GroovyConsentActivationStrategy implements ConsentActivationStrateg
 
     @Override
     public boolean isConsentRequired(final Service service, final RegisteredService registeredService,
-                                     final Authentication authentication, final RequestContext requestContext) {
-        val args = new Object[]{consentEngine, casProperties, service, registeredService, authentication, requestContext, LOGGER};
+                                     final Authentication authentication,
+                                     final HttpServletRequest requestContext) throws Throwable {
+        val args = new Object[]{consentEngine, casProperties, service,
+            registeredService, authentication, requestContext, LOGGER};
         return watchableScript.execute(args, Boolean.class);
     }
 

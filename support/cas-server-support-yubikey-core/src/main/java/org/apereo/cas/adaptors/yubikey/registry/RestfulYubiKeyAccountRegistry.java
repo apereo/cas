@@ -6,20 +6,20 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
 import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.configuration.model.support.mfa.yubikey.YubiKeyRestfulMultifactorProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,33 +40,33 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     private final YubiKeyRestfulMultifactorProperties restProperties;
 
     public RestfulYubiKeyAccountRegistry(final YubiKeyRestfulMultifactorProperties restProperties,
-        final YubiKeyAccountValidator validator) {
+                                         final YubiKeyAccountValidator validator) {
         super(validator);
         this.restProperties = restProperties;
     }
 
     @Override
     public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request, final YubiKeyRegisteredDevice... device) {
-        HttpResponse response = null;
-        try {
-            val account = YubiKeyAccount.builder()
-                .username(request.getUsername())
-                .devices(CollectionUtils.wrapList(device))
-                .build();
-            update(account);
-            return account;
-        } finally {
-            HttpUtils.close(response);
-        }
+        val account = YubiKeyAccount.builder()
+            .username(request.getUsername())
+            .devices(CollectionUtils.wrapList(device))
+            .build();
+        return save(account);
+    }
+
+    @Override
+    public YubiKeyAccount save(final YubiKeyAccount account) {
+        update(account);
+        return account;
     }
 
     @Override
     public boolean update(final YubiKeyAccount account) {
         HttpResponse response = null;
         try {
-            val headers = CollectionUtils.<String, Object>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
             headers.putAll(restProperties.getHeaders());
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.POST)
@@ -75,7 +75,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
                 .entity(MAPPER.writeValueAsString(account))
                 .build();
             response = HttpUtils.execute(exec);
-            return response != null && HttpStatus.valueOf(response.getStatusLine().getStatusCode()).is2xxSuccessful();
+            return response != null && HttpStatus.valueOf(response.getCode()).is2xxSuccessful();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
@@ -85,67 +85,13 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
-    protected YubiKeyAccount getAccountInternal(final String username) {
-        HttpResponse response = null;
-        try {
-            val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/").concat(username);
-            val exec = HttpUtils.HttpExecutionRequest.builder()
-                .basicAuthPassword(restProperties.getBasicAuthPassword())
-                .basicAuthUsername(restProperties.getBasicAuthUsername())
-                .method(HttpMethod.GET)
-                .url(url)
-                .build();
-            response = HttpUtils.execute(exec);
-            if (response != null) {
-                val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
-                if (status.is2xxSuccessful()) {
-                    val content = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                    return MAPPER.readValue(content, YubiKeyAccount.class);
-                }
-            }
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        } finally {
-            HttpUtils.close(response);
-        }
-        return null;
-    }
-
-    @Override
-    protected Collection<? extends YubiKeyAccount> getAccountsInternal() {
-        HttpResponse response = null;
-        try {
-            val exec = HttpUtils.HttpExecutionRequest.builder()
-                .basicAuthPassword(restProperties.getBasicAuthPassword())
-                .basicAuthUsername(restProperties.getBasicAuthUsername())
-                .method(HttpMethod.GET)
-                .url(restProperties.getUrl())
-                .build();
-            response = HttpUtils.execute(exec);
-            if (response != null) {
-                val status = HttpStatus.valueOf(response.getStatusLine().getStatusCode());
-                if (status.is2xxSuccessful()) {
-                    val content = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                    return MAPPER.readValue(content, new TypeReference<List<YubiKeyAccount>>() {
-                    });
-                }
-            }
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        } finally {
-            HttpUtils.close(response);
-        }
-        return new ArrayList<>(0);
-    }
-
-    @Override
     public void delete(final String username, final long deviceId) {
         HttpResponse response = null;
         try {
             val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/")
                 .concat(username).concat("/").concat(String.valueOf(deviceId));
 
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
@@ -163,7 +109,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         HttpResponse response = null;
         try {
             val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/").concat(username);
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
@@ -179,7 +125,7 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     public void deleteAll() {
         HttpResponse response = null;
         try {
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(restProperties.getBasicAuthPassword())
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.DELETE)
@@ -189,5 +135,63 @@ public class RestfulYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         } finally {
             HttpUtils.close(response);
         }
+    }
+
+    @Override
+    protected YubiKeyAccount getAccountInternal(final String username) {
+        HttpResponse response = null;
+        try {
+            val url = StringUtils.appendIfMissing(restProperties.getUrl(), "/").concat(username);
+            val exec = HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(url)
+                .build();
+            response = HttpUtils.execute(exec);
+            if (response != null) {
+                val status = HttpStatus.valueOf(response.getCode());
+                if (status.is2xxSuccessful()) {
+                    try (val contis = ((HttpEntityContainer) response).getEntity().getContent()) {
+                        val content = IOUtils.toString(contis, StandardCharsets.UTF_8);
+                        return MAPPER.readValue(content, YubiKeyAccount.class);
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
+        }
+        return null;
+    }
+
+    @Override
+    protected Collection<? extends YubiKeyAccount> getAccountsInternal() {
+        HttpResponse response = null;
+        try {
+            val exec = HttpExecutionRequest.builder()
+                .basicAuthPassword(restProperties.getBasicAuthPassword())
+                .basicAuthUsername(restProperties.getBasicAuthUsername())
+                .method(HttpMethod.GET)
+                .url(restProperties.getUrl())
+                .build();
+            response = HttpUtils.execute(exec);
+            if (response != null) {
+                val status = HttpStatus.valueOf(response.getCode());
+                if (status.is2xxSuccessful()) {
+                    try (val contis = ((HttpEntityContainer) response).getEntity().getContent()) {
+                        val content = IOUtils.toString(contis, StandardCharsets.UTF_8);
+                        return MAPPER.readValue(content, new TypeReference<List<YubiKeyAccount>>() {
+                        });
+                    }
+                }
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        } finally {
+            HttpUtils.close(response);
+        }
+        return new ArrayList<>(0);
     }
 }

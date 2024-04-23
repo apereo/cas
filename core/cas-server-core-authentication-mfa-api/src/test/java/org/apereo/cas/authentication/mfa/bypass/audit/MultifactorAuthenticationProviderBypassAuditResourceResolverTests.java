@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.mfa.bypass.audit;
 
+import org.apereo.cas.authentication.bypass.AlwaysAllowMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.audit.MultifactorAuthenticationProviderBypassAuditResourceResolver;
 import org.apereo.cas.authentication.mfa.MultifactorAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
@@ -20,11 +21,11 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("MFA")
-public class MultifactorAuthenticationProviderBypassAuditResourceResolverTests {
+@Tag("MFATrigger")
+class MultifactorAuthenticationProviderBypassAuditResourceResolverTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
@@ -36,7 +37,7 @@ public class MultifactorAuthenticationProviderBypassAuditResourceResolverTests {
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext)
         };
         when(jp.getArgs()).thenReturn(args);
-        when(jp.getTarget()).thenReturn("TargetObject");
+        when(jp.getTarget()).thenReturn(new AlwaysAllowMultifactorAuthenticationProviderBypassEvaluator(applicationContext));
         val outcome = resolver.resolveFrom(jp, new Object());
         assertTrue(outcome.length > 0);
         assertNotNull(resolver.resolveFrom(jp, new RuntimeException("failed")));
@@ -46,13 +47,13 @@ public class MultifactorAuthenticationProviderBypassAuditResourceResolverTests {
     }
 
     @Test
-    public void verifyJsonOperation() {
+    void verifyJsonOperation() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
         val resolver = new MultifactorAuthenticationProviderBypassAuditResourceResolver();
         resolver.setAuditFormat(AuditTrailManager.AuditFormats.JSON);
-        
+
         val jp = mock(JoinPoint.class);
         val args = new Object[]{
             MultifactorAuthenticationTestUtils.getAuthentication("casuser"),
@@ -60,7 +61,7 @@ public class MultifactorAuthenticationProviderBypassAuditResourceResolverTests {
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext)
         };
         when(jp.getArgs()).thenReturn(args);
-        when(jp.getTarget()).thenReturn("TargetObject");
+        when(jp.getTarget()).thenReturn(new AlwaysAllowMultifactorAuthenticationProviderBypassEvaluator(applicationContext));
         val outcome = resolver.resolveFrom(jp, new Object());
         assertTrue(outcome.length > 0);
         assertNotNull(resolver.resolveFrom(jp, new RuntimeException("failed")));

@@ -24,13 +24,13 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoint.qrDevices.enabled=true",
         "management.endpoints.web.exposure.include=*"
     })
-public class QRAuthenticationDeviceRepositoryEndpointTests {
+class QRAuthenticationDeviceRepositoryEndpointTests {
     @Autowired
     @Qualifier("qrAuthenticationDeviceRepositoryEndpoint")
     private QRAuthenticationDeviceRepositoryEndpoint qrAuthenticationDeviceRepositoryEndpoint;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertTrue(qrAuthenticationDeviceRepositoryEndpoint.devices("casuser").isEmpty());
         assertDoesNotThrow(() -> {
             qrAuthenticationDeviceRepositoryEndpoint.registerDevice("casuser", UUID.randomUUID().toString());

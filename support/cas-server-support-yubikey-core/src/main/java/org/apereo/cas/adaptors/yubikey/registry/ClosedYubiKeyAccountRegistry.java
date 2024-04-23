@@ -55,6 +55,11 @@ public class ClosedYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     }
 
     @Override
+    public YubiKeyAccount save(final YubiKeyAccount account) {
+        return null;
+    }
+
+    @Override
     public boolean update(final YubiKeyAccount account) {
         return false;
     }

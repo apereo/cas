@@ -1,13 +1,13 @@
 package org.apereo.cas.ticket.expiration;
 
 import org.apereo.cas.authentication.RememberMeCredential;
-import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.util.CollectionUtils;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import java.io.Serial;
 
 /**
  * Delegates to different expiration policies depending on whether remember me
@@ -25,18 +25,19 @@ public class RememberMeDelegatingExpirationPolicy extends BaseDelegatingExpirati
      */
     public static final String POLICY_NAME_REMEMBER_ME = "REMEMBER_ME";
 
+    @Serial
     private static final long serialVersionUID = -2735975347698196127L;
 
 
     @Override
-    protected String getExpirationPolicyNameFor(final TicketState ticketState) {
+    protected String getExpirationPolicyNameFor(final AuthenticationAwareTicket ticketState) {
         val attrs = ticketState.getAuthentication().getAttributes();
         val rememberMeRes = CollectionUtils.firstElement(attrs.get(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME));
         if (rememberMeRes.isEmpty()) {
             return POLICY_NAME_DEFAULT;
         }
-        val b = (Boolean) rememberMeRes.get();
-        if (b.equals(Boolean.FALSE)) {
+        val rememberMeValue = (Boolean) rememberMeRes.get();
+        if (rememberMeValue.equals(Boolean.FALSE)) {
             LOGGER.trace("Ticket is not associated with a remember-me authentication.");
             return POLICY_NAME_DEFAULT;
         }

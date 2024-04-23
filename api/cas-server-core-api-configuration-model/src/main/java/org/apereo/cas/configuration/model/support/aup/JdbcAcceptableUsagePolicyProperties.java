@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link JdbcAcceptableUsagePolicyProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("JdbcAcceptableUsagePolicyProperties")
 public class JdbcAcceptableUsagePolicyProperties extends AbstractJpaProperties {
 
+    @Serial
     private static final long serialVersionUID = -1325011278378393385L;
 
     /**
@@ -52,4 +55,10 @@ public class JdbcAcceptableUsagePolicyProperties extends AbstractJpaProperties {
      * %s placeholders represent {@link #tableName}, {@link #aupColumn}, {@link #principalIdColumn} settings.
      */
     private String sqlUpdate = "UPDATE %s SET %s=true WHERE %s=?";
+
+    /**
+     * The query template to search for the AUP attribute.
+     * %s placeholders represent {@link #aupColumn}, {@link #tableName}, {@link #principalIdColumn} settings.
+     */
+    private String sqlSelect = "SELECT %s FROM %s WHERE %s=?";
 }

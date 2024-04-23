@@ -1,0 +1,1 @@
+org.springframework.boot.SpringApplicationRunListener=org.apereo.cas.nativex.CasNativeApplicationRunListener

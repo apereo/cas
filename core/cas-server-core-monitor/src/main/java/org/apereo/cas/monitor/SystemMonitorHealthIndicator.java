@@ -2,12 +2,14 @@ package org.apereo.cas.monitor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.actuate.metrics.MetricsEndpoint;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Monitors JVM system load and memory.
@@ -18,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SystemMonitorHealthIndicator extends AbstractHealthIndicator {
 
-    private final MetricsEndpoint metrics;
+    private final ObjectProvider<MetricsEndpoint> metrics;
 
     private final int threshold;
 
@@ -58,8 +60,12 @@ public class SystemMonitorHealthIndicator extends AbstractHealthIndicator {
     }
 
     private double getMetricsFor(final String key, final List<String> tag, final int measure) {
-        val metric = metrics.metric(key, tag);
-        val measures = metric != null ? metric.getMeasurements() : null;
-        return measures != null ? measures.get(measure).getValue() : 0;
+        return Optional.ofNullable(metrics.getIfAvailable())
+            .map(endpoint -> {
+                val metric = endpoint.metric(key, tag);
+                val measures = Optional.ofNullable(metric).map(MetricsEndpoint.MetricDescriptor::getMeasurements).orElse(null);
+                return measures != null ? measures.get(measure).getValue() : 0;
+            })
+            .orElse(0D);
     }
 }

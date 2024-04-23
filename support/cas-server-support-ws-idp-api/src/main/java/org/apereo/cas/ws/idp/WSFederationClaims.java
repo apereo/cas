@@ -122,11 +122,6 @@ public enum WSFederationClaims {
      */
     private final String uri;
 
-    /**
-     * Instantiates a new Claim type constants.
-     *
-     * @param str the str
-     */
     WSFederationClaims(final String str) {
         this.uri = str;
     }

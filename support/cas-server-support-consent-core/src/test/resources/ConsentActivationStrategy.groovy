@@ -1,4 +1,4 @@
-import org.apereo.cas.util.model.TriStateBoolean
+import org.apereo.cas.configuration.support.TriStateBoolean
 
 def run(Object[] args) {
     def consentEngine = args[0]
@@ -6,9 +6,9 @@ def run(Object[] args) {
     def service = args[2]
     def registeredService = args[3]
     def authentication = args[4]
-    def requestContext = args[5]
+    def request = args[5]
     def logger = args[6]
 
     logger.debug("Activating consent for ${service}")
-    return registeredService.attributeReleasePolicy.consentPolicy.status != TriStateBoolean.FALSE;
+    return registeredService.attributeReleasePolicy.consentPolicy.status != TriStateBoolean.FALSE
 }

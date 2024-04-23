@@ -17,7 +17,7 @@ allows you to provide a mapping between usernames and YubiKey public keys.
 ```java
 package org.apereo.cas.support.yubikey;
 
-@Configuration("myYubiKeyConfiguration")
+@AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MyYubiKeyConfiguration {
 

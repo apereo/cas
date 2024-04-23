@@ -13,81 +13,82 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.4.4
  */
 @Tag("Authentication")
-public class ResponseTests {
+class ResponseTests {
 
     private static final String TICKET_PARAM = "ticket";
+
     private static final String TICKET_VALUE = "foobar";
 
     @Test
-    public void verifyConstructionWithoutFragmentAndNoQueryString() {
+    void verifyConstructionWithoutFragmentAndNoQueryString() throws Throwable {
         val url = "http://localhost:8080/foo";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
         val response = DefaultResponse.getRedirectResponse(url, attributes);
-        assertEquals(url + "?ticket=foobar", response.getUrl());
+        assertEquals(url + "?ticket=foobar", response.url());
     }
 
     @Test
-    public void verifyConstructionWithoutFragmentButHasQueryString() {
+    void verifyConstructionWithoutFragmentButHasQueryString() throws Throwable {
         val url = "http://localhost:8080/foo?test=boo";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
         val response = DefaultResponse.getRedirectResponse(url, attributes);
-        assertEquals(url + "&ticket=foobar", response.getUrl());
+        assertEquals(url + "&ticket=foobar", response.url());
     }
 
     @Test
-    public void verifyConstructionWithFragmentAndQueryString() {
+    void verifyConstructionWithFragmentAndQueryString() throws Throwable {
         val url = "http://localhost:8080/foo?test=boo#hello";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
         val response = DefaultResponse.getRedirectResponse(url, attributes);
-        assertEquals("http://localhost:8080/foo?test=boo&ticket=foobar#hello", response.getUrl());
+        assertEquals("http://localhost:8080/foo?test=boo&ticket=foobar#hello", response.url());
     }
 
     @Test
-    public void verifyConstructionWithFragmentAndNoQueryString() {
+    void verifyConstructionWithFragmentAndNoQueryString() throws Throwable {
         val url = "http://localhost:8080/foo#hello";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
         val response = DefaultResponse.getRedirectResponse(url, attributes);
-        assertEquals("http://localhost:8080/foo?ticket=foobar#hello", response.getUrl());
+        assertEquals("http://localhost:8080/foo?ticket=foobar#hello", response.url());
     }
 
     @Test
-    public void verifyConstructionWithFragmentAndNoQueryString2() {
+    void verifyConstructionWithFragmentAndNoQueryString2() throws Throwable {
         val url = "http://localhost:8080/foo#hello?test=boo";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, TICKET_VALUE);
         val response = DefaultResponse.getRedirectResponse(url, attributes);
-        assertEquals("http://localhost:8080/foo?ticket=foobar#hello?test=boo", response.getUrl());
+        assertEquals("http://localhost:8080/foo?ticket=foobar#hello?test=boo", response.url());
     }
 
     @Test
-    public void verifyUrlSanitization() {
+    void verifyUrlSanitization() throws Throwable {
         val url = "https://www.example.com\r\nLocation: javascript:\r\n\r\n<script>alert(document.cookie)</script>";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, "ST-12345");
         val response = DefaultResponse.getRedirectResponse(url, attributes);
         assertEquals("https://www.example.com Location: javascript: <script>alert(document.cookie)</script>?ticket=ST-12345",
-            response.getUrl());
+            response.url());
     }
 
     @Test
-    public void verifyUrlWithUnicode() {
+    void verifyUrlWithUnicode() throws Throwable {
         val url = "https://www.example.com/πολιτικῶν";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, "ST-12345");
         val response = DefaultResponse.getRedirectResponse(url, attributes);
-        assertEquals("https://www.example.com/πολιτικῶν?ticket=ST-12345", response.getUrl());
+        assertEquals("https://www.example.com/πολιτικῶν?ticket=ST-12345", response.url());
     }
 
     @Test
-    public void verifyUrlWithUrn() {
+    void verifyUrlWithUrn() throws Throwable {
         val url = "urn:applis-cri:java-sso";
         val attributes = new HashMap<String, String>();
         attributes.put(TICKET_PARAM, "ST-123456");
         val response = DefaultResponse.getRedirectResponse(url, attributes);
-        assertEquals("urn:applis-cri:java-sso?ticket=ST-123456", response.getUrl());
+        assertEquals("urn:applis-cri:java-sso?ticket=ST-123456", response.url());
     }
 }

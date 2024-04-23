@@ -17,12 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WSFederation")
-public class WSFederationMetadataWriterTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class WSFederationMetadataWriterTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val results = WSFederationMetadataWriter.produceMetadataDocument(casProperties);
         assertNotNull(results);
     }

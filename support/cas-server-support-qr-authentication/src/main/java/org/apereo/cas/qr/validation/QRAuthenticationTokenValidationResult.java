@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Authentication;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -16,6 +17,7 @@ import java.io.Serializable;
 @Getter
 @SuperBuilder
 public class QRAuthenticationTokenValidationResult implements Serializable {
+    @Serial
     private static final long serialVersionUID = -2010576443419962855L;
 
     private final Authentication authentication;

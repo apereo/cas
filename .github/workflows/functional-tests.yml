@@ -1,0 +1,210 @@
+name: Functional Tests
+
+##########################################################################
+
+env:
+  JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
+  GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
+  GRADLE_BUILDCACHE_USER: ci
+  GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
+  GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
+  DUO_SECURITY_ADMIN_SKEY: ${{ secrets.DUO_SECURITY_ADMIN_SKEY }}
+  DUO_SECURITY_ADMIN_IKEY: ${{ secrets.DUO_SECURITY_ADMIN_IKEY }}
+  DUO_SECURITY_UNIVERSAL_PROMPT_SKEY: ${{ secrets.DUO_SECURITY_UNIVERSAL_PROMPT_SKEY }}
+  DUO_SECURITY_UNIVERSAL_PROMPT_IKEY: ${{ secrets.DUO_SECURITY_UNIVERSAL_PROMPT_IKEY }}
+  DUO_SECURITY_API_HOST: ${{ secrets.DUO_SECURITY_API_HOST }}
+  ADFS_HOST: ${{ secrets.ADFS_HOST }}
+  ADFS_RELYING_PARTY_ID: ${{ secrets.ADFS_RELYING_PARTY_ID }}
+  ADFS_USERNAME: ${{ secrets.ADFS_USERNAME }}
+  ADFS_PASSWORD: ${{ secrets.ADFS_PASSWORD }}
+  AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+  AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+  AZURE_AD_USER_PASSWORD: ${{ secrets.AZURE_AD_USER_PASSWORD }}
+  AZURE_AD_TENANT: ${{ secrets.AZURE_AD_TENANT }}
+  AZURE_AD_DOMAIN: ${{ secrets.AZURE_AD_DOMAIN }}
+  AZURE_MAPS_SUBSCRIPTION_ID: ${{ secrets.AZURE_MAPS_SUBSCRIPTION_ID }}
+  AZURE_MAPS_CLIENT_ID: ${{ secrets.AZURE_MAPS_CLIENT_ID }}
+  TERM: xterm-256color
+  JDK_CURRENT: 21
+  JDK_DISTRIBUTION: "corretto"
+  NODE_CURRENT: '21.7.3'
+  MAX_ATTEMPTS: 2
+  RETRY_MINUTES: 8
+  SCENARIO_REGEX: ".*"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 4 * * *'
+  push:
+    branches:
+      - master
+      - '!**.**.**'
+      - '!heroku-*'
+  pull_request:
+    types: [ labeled ]
+    branches:
+      - master
+      - 'pr-*'
+      - '!**.**.**'
+
+concurrency:
+  group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'apereo/cas' }}
+
+##########################################################################
+
+jobs:
+  trigger-ci:
+    if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.pull_request.labels.*.name, 'Renovate') && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger CI
+        run: echo "CI Triggered"
+  initialize:
+    needs: [trigger-ci]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: ${{ env.JDK_DISTRIBUTION }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Initialize
+        run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
+
+  ##########################################################################
+            
+  puppeteer-scenarios:
+    needs: [initialize]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      scenarios255: ${{ steps.get-scenarios255.outputs.scenarios255 }}
+      scenarios511: ${{ steps.get-scenarios511.outputs.scenarios511 }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: ${{ env.JDK_DISTRIBUTION }}
+          cache: 'gradle'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - id: print-scenarios
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios | jq
+      - id: get-scenarios255
+        run: echo "scenarios255=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=0 -PpuppeteerScenariosTo=255)" >> $GITHUB_OUTPUT
+      - id: get-scenarios511
+        run: echo "scenarios511=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=255 -PpuppeteerScenariosTo=511)" >> $GITHUB_OUTPUT
+
+  ##########################################################################
+  puppeteer-tests-255:
+    runs-on: ubuntu-latest
+    needs: [puppeteer-scenarios]
+    continue-on-error: false
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios255)}}
+    name: ${{matrix.scenario}}
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: ${{ env.JDK_DISTRIBUTION }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Initialize
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;
+      - name: Configure CI
+        run: |
+          source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
+          echo "NODE_VERSION_REQUIRED=$(echo $NODE_REQUIRED)" >> $GITHUB_ENV
+      - name: Set up Nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION_REQUIRED }}
+          cache: 'npm'
+          cache-dependency-path: ./ci/tests/puppeteer/package.json
+      - name: Run Tests
+        uses: nick-fields/retry@v3
+        with:
+          max_attempts: ${{ env.MAX_ATTEMPTS }}
+          retry_on: error
+          timeout_minutes: ${{ env.RETRY_MINUTES }}
+          shell: bash
+          command: |
+            export RUNNER_OS=${{ runner.os }}
+            ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots-${{matrix.scenario}}
+          path: ./ci/tests/puppeteer/screenshots/*.png
+          if-no-files-found: ignore
+          retention-days: 2
+  ##########################################################################
+  puppeteer-tests-511:
+    runs-on: ubuntu-latest
+    needs: [puppeteer-scenarios]
+    continue-on-error: false
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios511)}}
+    name: ${{matrix.scenario}}
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: ${{ env.JDK_DISTRIBUTION }}
+          cache: 'gradle'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Initialize
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;
+      - name: Configure CI
+        run: |
+          source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
+          echo "NODE_VERSION_REQUIRED=$(echo $NODE_REQUIRED)" >> $GITHUB_ENV
+      - name: Set up Nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_CURRENT }}
+          check-latest: true
+          cache: 'npm'
+          cache-dependency-path: ./ci/tests/puppeteer/package.json
+      - name: Run Tests
+        uses: nick-fields/retry@v3
+        with:
+          max_attempts: ${{ env.MAX_ATTEMPTS }}
+          retry_on: error
+          timeout_minutes: ${{ env.RETRY_MINUTES }}
+          shell: bash
+          command: |
+            export RUNNER_OS=${{ runner.os }}
+            ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: screenshots-${{matrix.scenario}}
+          path: ./ci/tests/puppeteer/screenshots/*.png
+          if-no-files-found: ignore
+          retention-days: 2
+##########################################################################

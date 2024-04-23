@@ -22,41 +22,29 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
     String getId();
 
     /**
-     * Determines if the ticket is expired. Most common implementations might
-     * collaborate with <i>ExpirationPolicy</i> strategy.
-     *
-     * @return true, if the ticket is expired
-     * @see ExpirationPolicy
-     */
-    boolean isExpired();
-
-    /**
-     * Method to retrieve the TicketGrantingTicket that granted this ticket.
-     *
-     * @return the ticket or null if it has no parent
-     */
-    TicketGrantingTicket getTicketGrantingTicket();
-
-    /**
      * Method to return the time the Ticket was created.
      *
      * @return the time the ticket was created.
      */
-    ZonedDateTime getCreationTime();
+    default ZonedDateTime getCreationTime() {
+        return null;
+    }
+
+    /**
+     * Sets creation time.
+     *
+     * @param creationTime the creation time
+     */
+    default void setCreationTime(final ZonedDateTime creationTime) {}
 
     /**
      * Gets count of uses.
      *
      * @return the number of times this ticket was used.
      */
-    int getCountOfUses();
-
-    /**
-     * Get expiration policy associated with ticket.
-     *
-     * @return the expiration policy
-     */
-    ExpirationPolicy getExpirationPolicy();
+    default int getCountOfUses() {
+        return 0;
+    }
 
     /**
      * Gets prefix.
@@ -66,7 +54,80 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
     String getPrefix();
 
     /**
+     * Determines if the ticket is expired. Most common implementations might
+     * collaborate with <i>ExpirationPolicy</i> strategy.
+     *
+     * @return true, if the ticket is expired
+     * @see ExpirationPolicy
+     */
+    default boolean isExpired() {
+        return false;
+    }
+
+    /**
+     * Indicate whether ticket is a compact (usually a JWT) ticket.
+     *
+     * @return true/false
+     */
+    default boolean isStateless() {
+        return false;
+    }
+
+    /**
+     * Get expiration policy associated with ticket.
+     *
+     * @return the expiration policy
+     */
+    default ExpirationPolicy getExpirationPolicy() {
+        return null;
+    }
+
+    /**
+     * Sets expiration policy.
+     *
+     * @param expirationPolicy the expiration policy
+     */
+    default void setExpirationPolicy(final ExpirationPolicy expirationPolicy) {}
+
+    /**
      * Mark a ticket as expired.
      */
-    void markTicketExpired();
+    default void markTicketExpired() {}
+
+    /**
+     * Returns the last time the ticket was used.
+     *
+     * @return the last time the ticket was used.
+     */
+    default ZonedDateTime getLastTimeUsed() {
+        return null;
+    }
+
+    /**
+     * Get the second to last time used.
+     *
+     * @return the previous time used.
+     */
+    default ZonedDateTime getPreviousTimeUsed() {
+        return null;
+    }
+
+    /**
+     * Records the <i>previous</i> last time this ticket was used as well as
+     * the last usage time. The ticket usage count is also incremented.
+     * <p>Tickets themselves are solely responsible to maintain their state. The
+     * determination of ticket usage is left up to the implementation and
+     * the specific ticket type.
+     *
+     * @see ExpirationPolicy
+     * @since 5.0.0
+     */
+    default void update() {}
+
+    /**
+     * Mark this ticket as compact and stateless. A stateless ticket usually is self contained, such as a JWT.
+     */
+    default Ticket markTicketStateless() {
+        return this;
+    }
 }

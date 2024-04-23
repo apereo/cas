@@ -1,8 +1,6 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
-import org.apereo.cas.authentication.principal.Service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -19,7 +17,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@FunctionalInterface
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredServiceAttributeReleasePolicy extends Serializable, Ordered {
 
@@ -73,31 +70,26 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable, O
      *
      * @return the principal attribute repository
      */
-    default RegisteredServicePrincipalAttributesRepository getPrincipalAttributesRepository() {
-        return null;
-    }
+    RegisteredServicePrincipalAttributesRepository getPrincipalAttributesRepository();
 
     /**
      * Gets the attributes, having applied the filter.
      *
-     * @param p               the principal that contains the resolved attributes
-     * @param selectedService the selected service
-     * @param service         the service
+     * @param context the context
      * @return the attributes
+     * @throws Throwable the throwable
      */
-    Map<String, List<Object>> getAttributes(Principal p, Service selectedService, RegisteredService service);
+    Map<String, List<Object>> getAttributes(RegisteredServiceAttributeReleasePolicyContext context) throws Throwable;
 
     /**
      * Gets the attributes that qualify for consent.
      *
-     * @param p               the principal that contains the resolved attributes
-     * @param selectedService the selected service
-     * @param service         the service
+     * @param context the context
      * @return the attributes
+     * @throws Throwable the throwable
      */
-    default Map<String, List<Object>> getConsentableAttributes(final Principal p, final Service selectedService,
-                                                               final RegisteredService service) {
-        return getAttributes(p, selectedService, service);
+    default Map<String, List<Object>> getConsentableAttributes(final RegisteredServiceAttributeReleasePolicyContext context) throws Throwable {
+        return getAttributes(context);
     }
 
     @Override
@@ -113,5 +105,14 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable, O
     @JsonIgnore
     default String getName() {
         return getClass().getSimpleName();
+    }
+
+    /**
+     * Gets condition that controls whether this policy should be activated.
+     *
+     * @return the condition
+     */
+    default RegisteredServiceAttributeReleaseActivationCriteria getActivationCriteria() {
+        return null;
     }
 }

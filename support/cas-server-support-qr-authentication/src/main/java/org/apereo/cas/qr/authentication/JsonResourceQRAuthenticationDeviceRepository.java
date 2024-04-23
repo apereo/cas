@@ -1,11 +1,11 @@
 package org.apereo.cas.qr.authentication;
 
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hjson.JsonValue;
@@ -32,16 +32,17 @@ public class JsonResourceQRAuthenticationDeviceRepository implements QRAuthentic
 
     private final ConcurrentMap<String, String> devices = new ConcurrentHashMap<>();
 
-    private final transient Resource jsonResource;
+    private final Resource jsonResource;
 
-    @SneakyThrows
     public JsonResourceQRAuthenticationDeviceRepository(final Resource jsonResource) {
         this.jsonResource = jsonResource;
         if (ResourceUtils.isFile(jsonResource) && !ResourceUtils.doesResourceExist(jsonResource)) {
-            val res = jsonResource.getFile().createNewFile();
-            if (res) {
-                LOGGER.debug("Created JSON resource @ [{}]", jsonResource);
-            }
+            FunctionUtils.doUnchecked(__ -> {
+                val res = jsonResource.getFile().createNewFile();
+                if (res) {
+                    LOGGER.debug("Created JSON resource @ [{}]", jsonResource);
+                }
+            });
         }
         readFromJsonResource();
     }
@@ -80,21 +81,21 @@ public class JsonResourceQRAuthenticationDeviceRepository implements QRAuthentic
             .collect(Collectors.toList());
     }
 
-    @SneakyThrows
     private void writeToJsonResource() {
-        MAPPER.writerWithDefaultPrettyPrinter().writeValue(jsonResource.getFile(), devices);
+        FunctionUtils.doUnchecked(__ -> MAPPER.writerWithDefaultPrettyPrinter().writeValue(jsonResource.getFile(), devices));
     }
 
-    @SneakyThrows
     private void readFromJsonResource() {
         if (ResourceUtils.doesResourceExist(jsonResource)) {
-            try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
-                final TypeReference<Map<String, String>> personList = new TypeReference<>() {
-                };
-                val results = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
-                devices.clear();
-                devices.putAll(results);
-            }
+            FunctionUtils.doUnchecked(__ -> {
+                try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
+                    val personList = new TypeReference<Map<String, String>>() {
+                    };
+                    val results = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
+                    devices.clear();
+                    devices.putAll(results);
+                }
+            });
         }
     }
 

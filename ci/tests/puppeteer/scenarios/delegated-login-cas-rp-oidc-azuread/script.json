@@ -1,0 +1,34 @@
+{
+  "dependencies": "pac4j-webflow",
+  "conditions": {
+    "env": "AZURE_AD_CLIENT_ID,AZURE_AD_CLIENT_SECRET,AZURE_AD_USER_PASSWORD,AZURE_AD_TENANT,AZURE_AD_DOMAIN"
+  },
+  "environmentVariables": [
+    "AZURE_AD_SCOPES=openid profile email"
+  ],
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+    
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+    "--cas.authn.attribute-repository.stub.attributes.name=CAS",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.http-client.host-name-verifier=none",
+    
+    "--cas.authn.pac4j.oidc[0].azure.tenant=${#environmentVariables['AZURE_AD_TENANT']}",
+    "--cas.authn.pac4j.oidc[0].azure.id=${#environmentVariables['AZURE_AD_CLIENT_ID']}",
+    "--cas.authn.pac4j.oidc[0].azure.secret=${#environmentVariables['AZURE_AD_CLIENT_SECRET']}",
+    "--cas.authn.pac4j.oidc[0].azure.scope=${#environmentVariables['AZURE_AD_SCOPES']}",
+    "--cas.authn.pac4j.oidc[0].azure.preferred-jws-algorithm=RS256",
+    "--cas.authn.pac4j.oidc[0].azure.client-authentication-method=client_secret_basic",
+    "--cas.authn.pac4j.oidc[0].azure.supported-client-authentication-methods=client_secret_basic,client_secret_post",
+    "--cas.authn.pac4j.oidc[0].azure.client-name=AzureClient"
+  ]
+}

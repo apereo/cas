@@ -1,0 +1,8 @@
+{
+  "@class": "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "oauth-clientid",
+  "clientSecret": "secret",
+  "serviceId": "^https://localhost:9859/anything/cas.*",
+  "name": "Sample",
+  "id": 2
+}

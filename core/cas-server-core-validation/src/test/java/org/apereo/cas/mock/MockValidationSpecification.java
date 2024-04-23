@@ -5,7 +5,7 @@ import org.apereo.cas.validation.CasProtocolValidationSpecification;
 
 import lombok.AllArgsConstructor;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Class to test the Runtime exception thrown when there is no default

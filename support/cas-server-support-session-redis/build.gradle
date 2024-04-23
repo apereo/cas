@@ -1,7 +1,16 @@
 description = "Apereo CAS Web Application Redis Session Management"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "HTTP Session Management",
+            title: "HTTP Session Management via Redis"
+    ]
+}
+
 dependencies {
     implementation project(":core:cas-server-core-configuration-api")
-    
+    implementation project(":core:cas-server-core-util-api")
+
     implementation libraries.springsession
     implementation libraries.springsessionredis
     implementation libraries.redis

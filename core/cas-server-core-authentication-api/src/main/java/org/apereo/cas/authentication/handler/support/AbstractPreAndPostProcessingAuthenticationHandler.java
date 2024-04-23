@@ -6,16 +6,15 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.PrePostAuthenticationHandler;
-import org.apereo.cas.authentication.PreventedException;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.NonNull;
 
 import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,29 +29,24 @@ import java.util.List;
  */
 public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends AbstractAuthenticationHandler implements PrePostAuthenticationHandler {
 
-    protected AbstractPreAndPostProcessingAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
-                                                             final Integer order) {
+    protected AbstractPreAndPostProcessingAuthenticationHandler(final String name,
+                                                                final ServicesManager servicesManager,
+                                                                final PrincipalFactory principalFactory,
+                                                                final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
 
     @Override
-    public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service)
+        throws Throwable {
         if (!preAuthenticate(credential)) {
             throw new FailedLoginException();
         }
-        return postAuthenticate(credential, doAuthentication(credential));
+        return postAuthenticate(credential, doAuthentication(credential, service));
     }
 
-    /**
-     * Performs the details of authentication and returns an authentication handler result on success.
-     *
-     * @param credential Credential to authenticate.
-     * @return Authentication handler result on success.
-     * @throws GeneralSecurityException On authentication failure that is thrown out to the caller of
-     *                                  {@link #authenticate(Credential)}.
-     * @throws PreventedException       On the indeterminate case when authentication is prevented.
-     */
-    protected abstract AuthenticationHandlerExecutionResult doAuthentication(Credential credential) throws GeneralSecurityException, PreventedException;
+    protected abstract AuthenticationHandlerExecutionResult doAuthentication(Credential credential, Service service)
+        throws Throwable;
 
     /**
      * Helper method to construct a handler result
@@ -68,7 +62,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
     protected AuthenticationHandlerExecutionResult createHandlerResult(final @NonNull Credential credential,
                                                                        final @NonNull Principal principal,
                                                                        final @NonNull List<MessageDescriptor> warnings) {
-        return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential), principal, warnings);
+        return new DefaultAuthenticationHandlerExecutionResult(this, credential, principal, warnings);
     }
 
     /**
@@ -83,7 +77,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      */
     protected AuthenticationHandlerExecutionResult createHandlerResult(final @NonNull Credential credential,
                                                                        final @NonNull Principal principal) {
-        return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential),
+        return new DefaultAuthenticationHandlerExecutionResult(this, credential,
             principal, new ArrayList<>(0));
     }
 }

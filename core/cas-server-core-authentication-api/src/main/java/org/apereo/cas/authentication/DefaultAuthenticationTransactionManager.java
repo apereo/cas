@@ -1,12 +1,13 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionCompletedEvent;
-
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -17,25 +18,27 @@ import org.springframework.context.ApplicationEventPublisher;
  * @since 4.2.0
  */
 @Slf4j
-@Getter
 @RequiredArgsConstructor
-public class DefaultAuthenticationTransactionManager implements AuthenticationTransactionManager {
-
+@Getter
+public final class DefaultAuthenticationTransactionManager implements AuthenticationTransactionManager {
     private final ApplicationEventPublisher eventPublisher;
 
     private final AuthenticationManager authenticationManager;
 
     @Override
-    public AuthenticationTransactionManager handle(@NonNull final AuthenticationTransaction authenticationTransaction,
-                                                   @NonNull final AuthenticationResultBuilder authenticationResult)
-        throws AuthenticationException {
-        if (!authenticationTransaction.getCredentials().isEmpty()) {
-            val authentication = this.authenticationManager.authenticate(authenticationTransaction);
-            LOGGER.trace("Successful authentication; Collecting authentication result [{}]", authentication);
-            publishEvent(new CasAuthenticationTransactionCompletedEvent(this, authentication));
-            authenticationResult.collect(authentication);
-        } else {
+    @CanIgnoreReturnValue
+    public AuthenticationTransactionManager handle(
+        @NonNull final AuthenticationTransaction authenticationTransaction,
+        @NonNull final AuthenticationResultBuilder authenticationResult)
+        throws Throwable {
+        if (authenticationTransaction.getCredentials().isEmpty()) {
             LOGGER.debug("Transaction ignored since there are no credentials to authenticate");
+        } else {
+            val authentication = authenticationManager.authenticate(authenticationTransaction);
+            val clientInfo = ClientInfoHolder.getClientInfo();
+            LOGGER.trace("Successful authentication; Collecting authentication result [{}]", authentication);
+            publishEvent(new CasAuthenticationTransactionCompletedEvent(this, authentication, clientInfo));
+            authenticationResult.collect(authentication);
         }
         return this;
     }

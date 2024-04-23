@@ -1,12 +1,11 @@
 package org.apereo.cas.pm.jdbc;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
-import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementQuery;
+import org.apereo.cas.pm.impl.BasePasswordManagementService;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.Getter;
@@ -19,7 +18,7 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.support.TransactionOperations;
 
 import javax.sql.DataSource;
 import java.io.Serializable;
@@ -38,19 +37,19 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
 
     private final JdbcTemplate jdbcTemplate;
 
-    private final TransactionTemplate transactionTemplate;
+    private final TransactionOperations transactionTemplate;
 
     private final PasswordEncoder passwordEncoder;
 
     public JdbcPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
-        final String issuer,
-        final PasswordManagementProperties passwordManagementProperties,
-        @NonNull
-        final DataSource dataSource,
-        @NonNull
-        final TransactionTemplate transactionTemplate,
-        final PasswordHistoryService passwordHistoryService,
-        final PasswordEncoder passwordEncoder) {
+                                         final String issuer,
+                                         final PasswordManagementProperties passwordManagementProperties,
+                                         @NonNull
+                                         final DataSource dataSource,
+                                         @NonNull
+                                         final TransactionOperations transactionTemplate,
+                                         final PasswordHistoryService passwordHistoryService,
+                                         final PasswordEncoder passwordEncoder) {
         super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.transactionTemplate = transactionTemplate;
@@ -58,11 +57,10 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
-    public boolean changeInternal(final Credential credential, final PasswordChangeRequest bean) {
+    public boolean changeInternal(final PasswordChangeRequest bean) {
         var result = this.transactionTemplate.execute(action -> {
-            val c = (UsernamePasswordCredential) credential;
-            val password = passwordEncoder.encode(bean.getPassword());
-            val count = this.jdbcTemplate.update(properties.getJdbc().getSqlChangePassword(), password, c.getId());
+            val password = passwordEncoder.encode(bean.toPassword());
+            val count = this.jdbcTemplate.update(properties.getJdbc().getSqlChangePassword(), password, bean.getUsername());
             return count > 0;
         });
         return BooleanUtils.toBoolean(result);
@@ -127,7 +125,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     @Override
     public Map<String, String> getSecurityQuestions(final PasswordManagementQuery query) {
         return this.transactionTemplate.execute(action -> {
-            val sqlSecurityQuestions = properties.getJdbc().getSqlSecurityQuestions();
+            val sqlSecurityQuestions = properties.getJdbc().getSqlGetSecurityQuestions();
             val map = new HashMap<String, String>();
             val results = jdbcTemplate.queryForList(sqlSecurityQuestions, query.getUsername());
             results.forEach(row -> {
@@ -138,5 +136,18 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
             LOGGER.debug("Found [{}] security questions for [{}]", map.size(), query.getUsername());
             return map;
         });
+    }
+
+    @Override
+    public void updateSecurityQuestions(final PasswordManagementQuery query) {
+        jdbcTemplate.update(properties.getJdbc().getSqlDeleteSecurityQuestions(), query.getUsername());
+        query.getSecurityQuestions().forEach((question, values) -> values.forEach(answer ->
+            jdbcTemplate.update(properties.getJdbc().getSqlUpdateSecurityQuestions(),
+                query.getUsername(), question, answer)));
+    }
+
+    @Override
+    public boolean unlockAccount(final Credential credential) {
+        return jdbcTemplate.update(properties.getJdbc().getSqlUnlockAccount(), Boolean.TRUE, credential.getId()) > 0;
     }
 }

@@ -4,13 +4,13 @@ import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-
+import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.FileSystemResource;
-
+import java.io.File;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -19,14 +19,24 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("SAML")
-public class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServicesTests {
+@Tag("SAMLMetadata")
+class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServicesTests {
+    private String fileSystemMetadataPath;
+
+    @BeforeEach
+    public void setup() throws Throwable {
+        val file = new File(FileUtils.getTempDirectory(), "metadata-%s".formatted(RandomUtils.randomAlphanumeric(6)));
+        if (!file.mkdirs()) {
+            fail(() -> "Unable to create directory " + file);
+        }
+        fileSystemMetadataPath = file.getCanonicalPath();
+    }
 
     @Test
-    public void verifyResolverSupports() throws Exception {
+    void verifyResolverSupports() throws Throwable {
         val props = new SamlIdPProperties();
-        props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
-        val resolver = new MetadataQueryProtocolMetadataResolver(props, openSamlConfigBean);
+        props.getMetadata().getFileSystem().setLocation(fileSystemMetadataPath);
+        val resolver = new MetadataQueryProtocolMetadataResolver(httpClient, props, openSamlConfigBean);
         val service = new SamlRegisteredService();
         service.setMetadataLocation("http://www.testshib.org/metadata/testshib-providers.xml");
         assertFalse(resolver.supports(service));
@@ -35,27 +45,43 @@ public class MetadataQueryProtocolMetadataResolverTests extends BaseSamlIdPServi
     }
 
     @Test
-    public void verifyResolverResolves() throws Exception {
+    void verifyResolverResolves() throws Throwable {
         val props = new SamlIdPProperties();
-        props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
-        val resolver = new MetadataQueryProtocolMetadataResolver(props, openSamlConfigBean);
+        props.getMetadata().getFileSystem().setLocation(fileSystemMetadataPath);
+        val resolver = new MetadataQueryProtocolMetadataResolver(httpClient, props, openSamlConfigBean);
         val service = new SamlRegisteredService();
-        service.setId(100);
-        service.setName("Dynamic");
-        service.setMetadataLocation("http://mdq-preview.incommon.org/entities/{0}");
+        service.setId(RandomUtils.nextLong());
+        service.setName(RandomUtils.randomAlphabetic(12));
+        service.setMetadataLocation("http://mdq.incommon.org/entities/{0}");
         service.setServiceId("https://webauth.cmc.edu/idp/shibboleth");
         val results = resolver.resolve(service);
         assertFalse(results.isEmpty());
     }
 
     @Test
-    public void verifyResolverFails() throws Exception {
+    void verifyResolverWithMultipleURLs() throws Throwable {
         val props = new SamlIdPProperties();
-        props.getMetadata().getFileSystem().setLocation(new FileSystemResource(FileUtils.getTempDirectory()).getFile().getCanonicalPath());
-        val resolver = new MetadataQueryProtocolMetadataResolver(props, openSamlConfigBean);
+        props.getMetadata().getFileSystem().setLocation(fileSystemMetadataPath);
+        val resolver = new MetadataQueryProtocolMetadataResolver(httpClient, props, openSamlConfigBean);
         val service = new SamlRegisteredService();
-        service.setId(100);
-        service.setName("Dynamic");
+        service.setId(RandomUtils.nextLong());
+        service.setName(RandomUtils.randomAlphabetic(12));
+        service.setMetadataLocation("http://mdq.ukfederation.org.uk/entities/{0},http://mdq.incommon.org/entities/{0}");
+        service.setServiceId("https://webauth.cmc.edu/idp/shibboleth");
+        val results = resolver.resolve(service);
+        assertFalse(results.isEmpty());
+        assertTrue(resolver.isAvailable(service));
+        assertTrue(resolver.supports(service));
+    }
+
+    @Test
+    void verifyResolverFails() throws Throwable {
+        val props = new SamlIdPProperties();
+        props.getMetadata().getFileSystem().setLocation(fileSystemMetadataPath);
+        val resolver = new MetadataQueryProtocolMetadataResolver(httpClient, props, openSamlConfigBean);
+        val service = new SamlRegisteredService();
+        service.setId(RandomUtils.nextLong());
+        service.setName(RandomUtils.randomAlphabetic(12));
         service.setMetadataLocation("https://github1234.com/entities/{0}");
         service.setServiceId("https://webauth.cmc.edu/idp/shibboleth");
         assertThrows(SamlException.class, () -> resolver.resolve(service));

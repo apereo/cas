@@ -1,11 +1,18 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.model.core.authentication.policy.AllCredentialsAuthenticationPolicyProperties;
+import org.apereo.cas.configuration.model.core.authentication.policy.AllHandlersAuthenticationPolicyProperties;
+import org.apereo.cas.configuration.model.core.authentication.policy.AnyCredentialAuthenticationPolicyProperties;
+import org.apereo.cas.configuration.model.core.authentication.policy.NotPreventedAuthenticationPolicyProperties;
+import org.apereo.cas.configuration.model.core.authentication.policy.RequiredAttributesAuthenticationPolicyProperties;
+import org.apereo.cas.configuration.model.core.authentication.policy.RequiredAuthenticationHandlerAuthenticationPolicyProperties;
+import org.apereo.cas.configuration.model.core.authentication.policy.UniquePrincipalAuthenticationPolicyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +29,7 @@ import java.util.List;
 @Accessors(chain = true)
 public class AuthenticationPolicyProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 2039700004862120066L;
 
     /**
@@ -43,24 +51,28 @@ public class AuthenticationPolicyProperties implements Serializable {
      * Satisfied if any authentication handler succeeds.
      * Allows options to avoid short circuiting and try every handler even if one prior succeeded.
      */
-    private AnyCredential any = new AnyCredential();
+    @NestedConfigurationProperty
+    private AnyCredentialAuthenticationPolicyProperties any = new AnyCredentialAuthenticationPolicyProperties();
 
     /**
      * Satisfied if an only if a specified handler successfully authenticates its credential.
      */
-    private RequiredAuthenticationHandler req = new RequiredAuthenticationHandler();
+    @NestedConfigurationProperty
+    private RequiredAuthenticationHandlerAuthenticationPolicyProperties req = new RequiredAuthenticationHandlerAuthenticationPolicyProperties();
 
     /**
      * Satisfied if and only if all given credentials are successfully authenticated.
      * Support for multiple credentials is new in CAS and this handler would
      * only be acceptable in a multi-factor authentication situation.
      */
-    private AllCredentials all = new AllCredentials();
+    @NestedConfigurationProperty
+    private AllCredentialsAuthenticationPolicyProperties all = new AllCredentialsAuthenticationPolicyProperties();
 
     /**
      * Satisfied if and only if all given authn handlers are successfully authenticated.
      */
-    private AllHandlers allHandlers = new AllHandlers();
+    @NestedConfigurationProperty
+    private AllHandlersAuthenticationPolicyProperties allHandlers = new AllHandlersAuthenticationPolicyProperties();
 
     /**
      * Execute a groovy script to detect authentication policy.
@@ -75,7 +87,8 @@ public class AuthenticationPolicyProperties implements Serializable {
     /**
      * Satisfied if an only if the authentication event is not blocked by a {@code PreventedException}.
      */
-    private NotPrevented notPrevented = new NotPrevented();
+    @NestedConfigurationProperty
+    private NotPreventedAuthenticationPolicyProperties notPrevented = new NotPreventedAuthenticationPolicyProperties();
 
     /**
      * Satisfied if an only if the principal has not already authenticated
@@ -85,87 +98,12 @@ public class AuthenticationPolicyProperties implements Serializable {
      * to query all relevant tickets found in the registry to cross-check
      * the requesting username with existing tickets.
      */
-    private UniquePrincipal uniquePrincipal = new UniquePrincipal();
+    @NestedConfigurationProperty
+    private UniquePrincipalAuthenticationPolicyProperties uniquePrincipal = new UniquePrincipalAuthenticationPolicyProperties();
 
-
-    @RequiresModule(name = "cas-server-core-authentication", automated = true)
-    @Getter
-    @Setter
-    public abstract static class BaseAuthenticationPolicy implements Serializable {
-        private static final long serialVersionUID = -1830217018850738715L;
-
-        /**
-         * Enables the policy.
-         */
-        private boolean enabled;
-
-        /**
-         * The name of the authentication policy.
-         */
-        private String name;
-    }
-
-    @RequiresModule(name = "cas-server-core-authentication", automated = true)
-    @Getter
-    @Setter
-    public static class NotPrevented extends BaseAuthenticationPolicy {
-        private static final long serialVersionUID = 8184166804664983317L;
-    }
-
-    @RequiresModule(name = "cas-server-core-authentication", automated = true)
-    @Getter
-    @Setter
-    public static class UniquePrincipal extends BaseAuthenticationPolicy {
-        private static final long serialVersionUID = -4930217087310738715L;
-    }
-
-    @RequiresModule(name = "cas-server-core-authentication", automated = true)
-    @Getter
-    @Setter
-    public static class AnyCredential extends BaseAuthenticationPolicy {
-
-        private static final long serialVersionUID = 4600357071276768175L;
-
-        /**
-         * Avoid short circuiting and try every handler even if one prior succeeded.
-         * Ensure number of provided credentials does not match the sum of authentication successes and failures
-         */
-        private boolean tryAll;
-
-        public AnyCredential() {
-            setEnabled(true);
-        }
-    }
-
-    @RequiresModule(name = "cas-server-core-authentication", automated = true)
-    @Getter
-    @Setter
-    public static class AllCredentials extends BaseAuthenticationPolicy {
-        private static final long serialVersionUID = 928409456096460793L;
-    }
-
-    @RequiresModule(name = "cas-server-core-authentication", automated = true)
-    @Getter
-    @Setter
-    public static class AllHandlers extends BaseAuthenticationPolicy {
-        private static final long serialVersionUID = 928409456096460793L;
-    }
-
-    @RequiresModule(name = "cas-server-core-authentication", automated = true)
-    @Getter
-    @Setter
-    public static class RequiredAuthenticationHandler extends BaseAuthenticationPolicy {
-
-        private static final long serialVersionUID = -4206244023952305821L;
-
-        /**
-         * Ensure number of provided credentials does not match the sum of authentication successes and failures.
-         */
-        private boolean tryAll;
-
-        /**
-         * The handler name which must have successfully executed and validated credentials.
-         */
-        private String handlerName = "handlerName";
-    }
+    /**
+     * Satisfied if an only if the authentication contains the required attributes.
+     */
+    @NestedConfigurationProperty
+    private RequiredAttributesAuthenticationPolicyProperties requiredAttributes = new RequiredAttributesAuthenticationPolicyProperties();
 }

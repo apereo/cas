@@ -1,27 +1,32 @@
 package org.apereo.cas.oidc.profile;
 
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.claims.OidcAttributeDefinition;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRenderer;
+import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
-
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -32,51 +37,98 @@ import java.util.UUID;
  */
 @Slf4j
 public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRenderer {
-    private final ServicesManager servicesManager;
     private final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService;
+
+    private final AttributeDefinitionStore attributeDefinitionStore;
 
     public OidcUserProfileViewRenderer(final OAuthProperties oauthProperties,
                                        final ServicesManager servicesManager,
-                                       final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService) {
-        super(oauthProperties);
-        this.servicesManager = servicesManager;
+                                       final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService,
+                                       final AttributeDefinitionStore attributeDefinitionStore) {
+        super(servicesManager, oauthProperties);
         this.signingAndEncryptionService = signingAndEncryptionService;
+        this.attributeDefinitionStore = attributeDefinitionStore;
     }
 
     @Override
-    protected ResponseEntity renderProfileForModel(final Map<String, Object> userProfile, final OAuth20AccessToken accessToken,
+    protected ResponseEntity renderProfileForModel(final Map<String, Object> userProfile,
+                                                   final OAuth20AccessToken accessToken,
                                                    final HttpServletResponse response) {
-        val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, accessToken.getClientId());
+        val service = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, accessToken.getClientId());
         if (!(service instanceof OidcRegisteredService)) {
             return super.renderProfileForModel(userProfile, accessToken, response);
         }
 
-        try {
+        return FunctionUtils.doAndHandle(() -> {
             val registeredService = (OidcRegisteredService) service;
             if (signingAndEncryptionService.shouldSignToken(registeredService)
                 || signingAndEncryptionService.shouldEncryptToken(registeredService)) {
-                val claims = new JwtClaims();
-                userProfile.forEach(claims::setClaim);
-                claims.setAudience(registeredService.getClientId());
-                claims.setIssuedAt(NumericDate.now());
-                claims.setIssuer(this.signingAndEncryptionService.getIssuer());
-                claims.setJwtId(UUID.randomUUID().toString());
-
-                LOGGER.debug("Collected user profile claims, before cipher operations, are [{}]", claims);
-                val result = this.signingAndEncryptionService.encode(registeredService, claims);
-                LOGGER.debug("Finalized user profile is [{}]", result);
-
-                response.setContentType(OidcConstants.CONTENT_TYPE_JWT);
-                val headers = new HttpHeaders();
-                headers.put("Content-Type", CollectionUtils.wrapList(OidcConstants.CONTENT_TYPE_JWT));
-                return new ResponseEntity<>(result, headers, HttpStatus.OK);
+                return signAndEncryptUserProfileClaims(userProfile, response, registeredService);
             }
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            val result = OAuth20Utils.toJson(userProfile);
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return new ResponseEntity<>("Unable to produce user profile", HttpStatus.BAD_REQUEST);
+            return buildPlainUserProfileClaims(userProfile, response, registeredService);
+        }, e -> ResponseEntity.badRequest().body("Unable to produce user profile claims")).get();
+    }
+
+    protected ResponseEntity<String> buildPlainUserProfileClaims(final Map<String, Object> userProfile,
+                                                                 final HttpServletResponse response,
+                                                                 final OidcRegisteredService registeredService) {
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        val claims = convertUserProfileIntoClaims(userProfile);
+        return buildResponseEntity(claims.toJson(), response, registeredService);
+    }
+
+    private JwtClaims convertUserProfileIntoClaims(final Map<String, Object> userProfile) {
+        val claims = new JwtClaims();
+        userProfile
+            .entrySet()
+            .stream()
+            .filter(entry -> !entry.getKey().startsWith(CentralAuthenticationService.NAMESPACE))
+            .forEach(entry -> {
+                if (OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES.equals(entry.getKey())) {
+                    val attributes = (Map<String, Object>) entry.getValue();
+                    val newAttributes = new HashMap<String, Object>();
+                    attributes.forEach((attrName, attrValue) -> newAttributes.put(attrName, determineAttributeValue(attrName, attrValue)));
+                    claims.setClaim(entry.getKey(), newAttributes);
+                } else {
+                    claims.setClaim(entry.getKey(), determineAttributeValue(entry.getKey(), entry.getValue()));
+                }
+            });
+        return claims;
+    }
+
+    protected ResponseEntity<String> signAndEncryptUserProfileClaims(final Map<String, Object> userProfile,
+                                                                     final HttpServletResponse response,
+                                                                     final OidcRegisteredService registeredService) throws Throwable {
+        val claims = convertUserProfileIntoClaims(userProfile);
+        claims.setAudience(registeredService.getClientId());
+        claims.setIssuedAt(NumericDate.now());
+        claims.setJwtId(UUID.randomUUID().toString());
+        claims.setIssuer(signingAndEncryptionService.resolveIssuer(Optional.of(registeredService)));
+
+        LOGGER.debug("Collected user profile claims, before cipher operations, are [{}]", claims);
+        val result = signingAndEncryptionService.encode(registeredService, claims);
+        LOGGER.debug("Finalized user profile is [{}]", result);
+
+        response.setContentType(OidcConstants.CONTENT_TYPE_JWT);
+        return buildResponseEntity(result, response, registeredService);
+    }
+
+    private static ResponseEntity<String> buildResponseEntity(final String result, final HttpServletResponse response,
+                                                              final OidcRegisteredService registeredService) {
+        val context = Map.<String, Object>of(
+            "Client ID", registeredService.getClientId(),
+            "Service", registeredService.getName(),
+            "Content Type", response.getContentType());
+        LoggingUtils.protocolMessage("OpenID Connect User Profile Response", context, result);
+        val headers = new HttpHeaders();
+        headers.put("Content-Type", CollectionUtils.wrapList(response.getContentType()));
+        return ResponseEntity.ok().headers(headers).body(result);
+    }
+
+    protected Object determineAttributeValue(final String name, final Object attrValue) {
+        val values = CollectionUtils.toCollection(attrValue, ArrayList.class);
+        val result = attributeDefinitionStore.locateAttributeDefinition(name, OidcAttributeDefinition.class);
+        return result.map(defn -> defn.toAttributeValue(values))
+            .orElseGet(() -> values.size() == 1 ? values.getFirst() : values);
     }
 }

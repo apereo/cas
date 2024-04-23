@@ -1,26 +1,35 @@
 description = "Apereo CAS Server OpenID Connect Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "OpenID Connect Protocol",
+            title: "OpenID Connect Identity Provider",
+            aliases: ["oidc", "openidconnect", "openid"]
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-cookie")
+    api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-protocol")
-
-    compileOnlyApi  project(":support:cas-server-support-jpa-util")
-
-    implementation project(":support:cas-server-support-throttle")
+    
     implementation project(":support:cas-server-support-oauth-webflow")
     implementation project(":support:cas-server-support-oidc-core")
     implementation project(":support:cas-server-support-oidc-core-api")
-    implementation project(":support:cas-server-support-oauth-core")
+
     implementation project(":support:cas-server-support-oauth-core-api")
     implementation project(":support:cas-server-support-token-core-api")
     implementation project(":support:cas-server-support-oidc-services")
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-oauth")
     implementation project(":support:cas-server-support-oauth-services")
-
+    implementation project(":support:cas-server-support-pac4j-api")
+    
     implementation project(":core:cas-server-core-authentication-throttle")
+    implementation project(":core:cas-server-core-audit-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-authentication-api")
@@ -34,12 +43,18 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-mfa-api")
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-logout-api")
+    implementation project(":core:cas-server-core-tickets-api")
+
+    compileOnly project(":support:cas-server-support-discovery-profile-core")
 
     implementation libraries.pac4jcore
     implementation libraries.pac4jcas
-    implementation libraries.jose4j
-    implementation libraries.nimbus
-
+    implementation libraries.springsecurityconfig
+    implementation libraries.springsecurityweb
+    
+    api libraries.jose4j
+    api libraries.nimbus
+    
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core")
@@ -55,10 +70,22 @@ dependencies {
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-logging")
+
+    testImplementation libraries.springboottomcat
     
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")
-
+    testImplementation project(":support:cas-server-support-throttle")
+    testImplementation project(":support:cas-server-support-reports")
+    testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-jpa-util")
+    testImplementation project(":support:cas-server-support-jpa-hibernate")
+    testImplementation project(":support:cas-server-support-mongo-core")
+    testImplementation project(":support:cas-server-support-discovery-profile-core")
+    testImplementation project(":support:cas-server-support-webconfig")
+    testImplementation project(":support:cas-server-support-account-mgmt")
+    
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
@@ -67,4 +94,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-audit-api", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 }

@@ -1,15 +1,16 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
+import java.nio.file.Files;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,45 +21,44 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("RegisteredService")
-public class DefaultRegisteredServiceAuthenticationPolicyTests {
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "ServiceAuthenticationPolicy.json");
-
+class DefaultRegisteredServiceAuthenticationPolicyTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     private static void verify(final RegisteredServiceAuthenticationPolicyCriteria criteria) throws Exception {
-        var svc = RegisteredServiceTestUtils.getRegisteredService("serviceidauth");
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
+        var svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
         val policy = new DefaultRegisteredServiceAuthenticationPolicy();
         policy.setRequiredAuthenticationHandlers(Set.of("handler1", "handler2"));
         policy.setCriteria(criteria);
         svc.setAuthenticationPolicy(policy);
-        MAPPER.writerWithDefaultPrettyPrinter().writeValue(JSON_FILE, svc);
-        val svc2 = MAPPER.readValue(JSON_FILE, AbstractRegisteredService.class);
+        MAPPER.writerWithDefaultPrettyPrinter().writeValue(jsonFile, svc);
+        val svc2 = MAPPER.readValue(jsonFile, BaseRegisteredService.class);
         assertEquals(svc, svc2);
     }
 
     @Test
-    public void verifyAnySerializeToJson() throws Exception {
+    void verifyAnySerializeToJson() throws Throwable {
         val criteria = new AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria();
         criteria.setTryAll(true);
         verify(criteria);
     }
 
     @Test
-    public void verifyAllSerializeToJson() throws Exception {
+    void verifyAllSerializeToJson() throws Throwable {
         val criteria = new AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria();
         verify(criteria);
     }
 
     @Test
-    public void verifyGroovySerializeToJson() throws Exception {
+    void verifyGroovySerializeToJson() throws Throwable {
         val criteria = new GroovyRegisteredServiceAuthenticationPolicyCriteria();
         criteria.setScript("groovy { return Optional.empty() }");
         verify(criteria);
     }
 
     @Test
-    public void verifyRestfulerializeToJson() throws Exception {
+    void verifyRestfulSerializeToJson() throws Throwable {
         val criteria = new RestfulRegisteredServiceAuthenticationPolicyCriteria();
         criteria.setUrl("https://example.org");
         verify(criteria);

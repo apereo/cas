@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.x509.util;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import lombok.val;
 
 import javax.security.auth.x500.X500Principal;
 import java.math.BigInteger;
@@ -115,12 +114,11 @@ public class MockX509CRL extends X509CRL {
     }
 
     /**
-     * @see java.security.cert.CRL#isRevoked(java.security.cert.Certificate)
+     * @see java.security.cert.CRL#isRevoked(Certificate)
      */
     @Override
     public boolean isRevoked(final Certificate cert) {
-        if (cert instanceof X509Certificate) {
-            val xcert = (X509Certificate) cert;
+        if (cert instanceof final X509Certificate xcert) {
             return getRevokedCertificates().stream().anyMatch(entry -> entry.getSerialNumber().equals(xcert.getSerialNumber()));
         }
         return false;

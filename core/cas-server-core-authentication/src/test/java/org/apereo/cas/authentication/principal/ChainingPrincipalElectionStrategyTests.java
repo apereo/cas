@@ -8,6 +8,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.List;
 
@@ -20,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Authentication")
-public class ChainingPrincipalElectionStrategyTests {
+class ChainingPrincipalElectionStrategyTests {
     @Test
-    public void verifyOperationWithSingleAuthn() {
+    void verifyOperationWithSingleAuthn() throws Throwable {
         val strategy = new ChainingPrincipalElectionStrategy(new DefaultPrincipalElectionStrategy());
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         val principal = strategy.nominate(List.of(authentication), CoreAuthenticationTestUtils.getAttributes());
@@ -31,11 +32,12 @@ public class ChainingPrincipalElectionStrategyTests {
     }
 
     @Test
-    public void verifyOperationWithMultipleAuthn() {
+    void verifyOperationWithMultipleAuthn() throws Throwable {
         val strategy1 = new DefaultPrincipalElectionStrategy();
         strategy1.setOrder(100);
 
         val strategy2 = new DefaultPrincipalElectionStrategy() {
+            @Serial
             private static final long serialVersionUID = 332375002782221999L;
 
             @Override
@@ -56,7 +58,7 @@ public class ChainingPrincipalElectionStrategyTests {
     }
 
     @Test
-    public void verifyOperationWithMultiplePrincipals() {
+    void verifyOperationWithMultiplePrincipals() throws Throwable {
         val strategy1 = new DefaultPrincipalElectionStrategy();
         strategy1.setOrder(100);
 

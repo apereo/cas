@@ -6,6 +6,7 @@ import org.apereo.cas.util.CompressionUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -15,6 +16,7 @@ import java.nio.charset.StandardCharsets;
  * @since 5.3.7
  */
 public class NonInflatingSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder {
+    @Serial
     private static final long serialVersionUID = 4737200174453971436L;
 
     public NonInflatingSaml20ObjectBuilder(final OpenSamlConfigBean configBean) {
@@ -23,7 +25,7 @@ public class NonInflatingSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder
 
     @Override
     protected String inflateAuthnRequest(final byte[] decodedBytes) {
-        val inflated = CompressionUtils.decodeByteArrayToString(decodedBytes);
+        val inflated = CompressionUtils.inflateToString(decodedBytes);
         if (!StringUtils.isEmpty(inflated)) {
             return inflated;
         }

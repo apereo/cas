@@ -3,22 +3,23 @@ package org.apereo.cas.oidc.discovery.webfinger.userinfo;
 import org.apereo.cas.configuration.model.RestEndpointProperties;
 import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerUserInfoRepository;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpStatus;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
-
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -51,21 +52,23 @@ public class OidcRestfulWebFingerUserInfoRepository implements OidcWebFingerUser
      * @param headers the headers
      * @return the map
      */
-    protected Map<String, Object> findAccountViaRestApi(final Map<String, Object> headers) {
+    protected Map<String, Object> findAccountViaRestApi(final Map<String, String> headers) {
         HttpResponse response = null;
         try {
             headers.putAll(properties.getHeaders());
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
-                .method(HttpMethod.valueOf(properties.getMethod().toUpperCase().trim()))
+                .method(HttpMethod.valueOf(properties.getMethod().toUpperCase(Locale.ENGLISH).trim()))
                 .url(properties.getUrl())
                 .headers(headers)
                 .build();
             response = HttpUtils.execute(exec);
-            if (response != null && response.getEntity() != null && response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                return MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
+            if (response != null && ((HttpEntityContainer) response).getEntity() != null && response.getCode() == HttpStatus.SC_OK) {
+                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                    val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                    return MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
+                }
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

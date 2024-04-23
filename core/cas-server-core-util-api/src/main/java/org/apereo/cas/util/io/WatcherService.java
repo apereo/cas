@@ -8,7 +8,7 @@ import java.io.Closeable;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-public interface WatcherService extends Closeable, AutoCloseable {
+public interface WatcherService extends Closeable {
 
     /**
      * No op watcher service.
@@ -32,6 +32,6 @@ public interface WatcherService extends Closeable, AutoCloseable {
      *
      * @param name the name
      */
-    default void start(String name) {
+    default void start(final String name) {
     }
 }

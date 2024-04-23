@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
@@ -11,15 +11,15 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@EnabledIfPortOpen(port = 1433)
+@EnabledIfListeningOnPort(port = 1433)
 @Tag("MsSqlServer")
 @TestPropertySource(properties = {
-    "cas.jdbc.show-sql=true",
+    "cas.jdbc.show-sql=false",
     "cas.authn.mfa.yubikey.jpa.user=sa",
     "cas.authn.mfa.yubikey.jpa.password=p@ssw0rd",
     "cas.authn.mfa.yubikey.jpa.driver-class=com.microsoft.sqlserver.jdbc.SQLServerDriver",
-    "cas.authn.mfa.yubikey.jpa.url=jdbc:sqlserver://localhost:1433;databaseName=yubikey;useUnicode=true;characterEncoding=UTF-8",
-    "cas.authn.mfa.yubikey.jpa.dialect=org.hibernate.dialect.SQLServer2012Dialect"
+    "cas.authn.mfa.yubikey.jpa.url=jdbc:sqlserver://localhost:1433;databaseName=yubikey;useUnicode=true;characterEncoding=UTF-8;encrypt=false;trustServerCertificate=true",
+    "cas.authn.mfa.yubikey.jpa.dialect=org.hibernate.dialect.SQLServer2016Dialect"
 })
-public class MicrosoftSQLServerJpaYubiKeyAccountRegistryTests extends JpaYubiKeyAccountRegistryTests {
+class MicrosoftSQLServerJpaYubiKeyAccountRegistryTests extends JpaYubiKeyAccountRegistryTests {
 }

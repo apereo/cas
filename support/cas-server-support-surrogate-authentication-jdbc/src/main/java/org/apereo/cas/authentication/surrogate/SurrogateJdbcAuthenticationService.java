@@ -14,6 +14,7 @@ import lombok.val;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Objects;
@@ -45,16 +46,15 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
     }
 
     @Override
-    public boolean canAuthenticateAsInternal(final String username, final Principal surrogate, final Optional<Service> service) {
+    public boolean canImpersonateInternal(final String username, final Principal surrogate, final Optional<? extends Service> service) {
         LOGGER.debug("Executing SQL query [{}]", surrogateSearchQuery);
         val count = this.jdbcTemplate.queryForObject(surrogateSearchQuery, Integer.class, surrogate.getId(), username);
         return Objects.requireNonNull(count) > 0;
     }
 
     @Override
-    public Collection<String> getEligibleAccountsForSurrogateToProxy(final String username) {
-        val results = this.jdbcTemplate.query(this.surrogateAccountQuery,
-            new BeanPropertyRowMapper<>(SurrogateAccount.class), username);
+    public Collection<String> getImpersonationAccounts(final String username, final Optional<? extends Service> service) {
+        val results = jdbcTemplate.query(this.surrogateAccountQuery, new BeanPropertyRowMapper<>(SurrogateAccount.class), username);
         return results.stream().map(SurrogateAccount::getSurrogateAccount).collect(Collectors.toList());
     }
 
@@ -67,6 +67,7 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
     @EqualsAndHashCode
     @NoArgsConstructor
     public static class SurrogateAccount implements Serializable {
+        @Serial
         private static final long serialVersionUID = 7734857552147825153L;
 
         private String surrogateAccount;

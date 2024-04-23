@@ -1,4 +1,13 @@
 description = "Apereo CAS Server FCM Notifications Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Integrations",
+            title: "FCM Notifications",
+            aliases: ["fcm"]
+    ]
+}
+
 dependencies {
     implementation libraries.jose4j
     implementation libraries.firebaseadmin
@@ -14,6 +23,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-cookie-api")
+    implementation project(":core:cas-server-core-notifications-api")
     implementation project(":core:cas-server-core-notifications")
 
     testImplementation project(":core:cas-server-core-util")

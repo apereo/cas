@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link EncryptionOptionalSigningOptionalJwtCryptographyProperties}.
  *
@@ -18,6 +20,7 @@ import lombok.experimental.Accessors;
 @RequiresModule(name = "cas-server-core-util", automated = true)
 public class EncryptionOptionalSigningOptionalJwtCryptographyProperties extends EncryptionJwtSigningJwtCryptographyProperties {
 
+    @Serial
     private static final long serialVersionUID = 7185404480671258520L;
 
     /**

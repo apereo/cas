@@ -11,13 +11,15 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -35,8 +37,10 @@ import java.util.Set;
 @Setter
 @Getter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Accessors(chain = true)
 public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends BaseAuthenticationPolicy {
 
+    @Serial
     private static final long serialVersionUID = -3871692225877293627L;
 
     /**
@@ -48,7 +52,7 @@ public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends Base
      * Flag to try all credentials before policy is satisfied.
      */
     private boolean tryAll;
-    
+
     protected BaseAuthenticationHandlerAuthenticationPolicy(final String requiredHandlerNames) {
         this(StringUtils.commaDelimitedListToSet(requiredHandlerNames), false);
     }
@@ -57,7 +61,7 @@ public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends Base
     public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication authn,
                                                              final Set<AuthenticationHandler> authenticationHandlers,
                                                              final ConfigurableApplicationContext applicationContext,
-                                                             final Optional<Serializable> assertion) {
+                                                             final Map<String, ? extends Serializable> context) {
         var credsOk = true;
         val sum = authn.getSuccesses().size() + authn.getFailures().size();
         if (this.tryAll) {
@@ -66,7 +70,7 @@ public abstract class BaseAuthenticationHandlerAuthenticationPolicy extends Base
 
         if (!credsOk) {
             LOGGER.warn("Number of provided credentials [{}] does not match the sum of authentication successes and failures [{}]. "
-                + "Successful authentication handlers are [{}]", authn.getCredentials().size(), sum, authn.getSuccesses().keySet());
+                        + "Successful authentication handlers are [{}]", authn.getCredentials().size(), sum, authn.getSuccesses().keySet());
             return AuthenticationPolicyExecutionResult.failure();
         }
 

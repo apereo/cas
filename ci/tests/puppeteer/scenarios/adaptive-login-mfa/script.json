@@ -1,0 +1,33 @@
+{
+  "dependencies": "geolocation,simple-mfa",
+  "conditions": {
+    "docker": "true"
+  },
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--logging.level.org.apereo.cas=info",
+
+    "--cas.events.core.track-geolocation=true",
+
+    "--cas.authn.adaptive.policy.require-multifactor.mfa-simple=.*usa.*|safari|^172.168.*",
+
+    "--cas.geo-location.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/GeoLocation.groovy",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
+    "--cas.authn.mfa.simple.mail.html=false",
+    "--cas.authn.mfa.simple.mail.from=cas@example.com",
+    "--cas.authn.mfa.simple.mail.subject=CAS Token",
+    "--cas.authn.mfa.simple.mail.text=${token}",
+
+    "--cas.service-registry.core.init-from-json=true"
+  ],
+  "jvmArgs": "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true",
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
+}

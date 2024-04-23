@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.web.view;
 
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
@@ -24,13 +25,15 @@ public class Saml10FailureResponseView extends AbstractSaml10ResponseView {
 
 
     public Saml10FailureResponseView(final ProtocolAttributeEncoder protocolAttributeEncoder,
-                                     final ServicesManager servicesManager, final ArgumentExtractor samlArgumentExtractor,
-                                     final String encoding, final AuthenticationAttributeReleasePolicy authAttrReleasePolicy,
+                                     final ServicesManager servicesManager,
+                                     final ArgumentExtractor samlArgumentExtractor,
+                                     final AuthenticationAttributeReleasePolicy authAttrReleasePolicy,
                                      final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
                                      final CasProtocolAttributesRenderer attributesRenderer,
-                                     final SamlResponseBuilder samlResponseBuilder) {
-        super(false, protocolAttributeEncoder, servicesManager, samlArgumentExtractor, encoding,
-            authAttrReleasePolicy, serviceSelectionStrategy, attributesRenderer, samlResponseBuilder);
+                                     final SamlResponseBuilder samlResponseBuilder,
+                                     final AttributeDefinitionStore attributeDefinitionStore) {
+        super(false, protocolAttributeEncoder, servicesManager, samlArgumentExtractor,
+            authAttrReleasePolicy, serviceSelectionStrategy, attributesRenderer, samlResponseBuilder, attributeDefinitionStore);
     }
 
     @Override

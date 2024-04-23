@@ -8,9 +8,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.Set;
 
 /**
@@ -27,8 +29,10 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @Setter
 @Getter
+@Accessors(chain = true)
 public class RequiredAuthenticationHandlerAuthenticationPolicy extends BaseAuthenticationHandlerAuthenticationPolicy {
 
+    @Serial
     private static final long serialVersionUID = -3871692225877293627L;
 
     public RequiredAuthenticationHandlerAuthenticationPolicy(final String requiredHandlerNames) {
@@ -49,8 +53,8 @@ public class RequiredAuthenticationHandlerAuthenticationPolicy extends BaseAuthe
                 .anyMatch(s -> getHandlerNames().contains(s));
 
             if (!credsOk) {
-                LOGGER.warn("Required authentication handler(s) [{}] is not present in the list of recorded successful authentications",
-                    getHandlerNames());
+                LOGGER.info("Required authentication handler(s) [{}] is not present in the list of successful authentications [{}]",
+                    getHandlerNames(), authn.getSuccesses().keySet());
                 return AuthenticationPolicyExecutionResult.failure();
             }
         }

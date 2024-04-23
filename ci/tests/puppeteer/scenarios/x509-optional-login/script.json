@@ -1,9 +1,18 @@
 {
   "dependencies": "x509-webflow",
+
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    
     "--cas.authn.x509.webflow.port=8446",
-    "--server.ssl.trust-store=file:${PWD}/ci/tests/puppeteer/scenarios/x509-optional-login/truststore.jks",
+    "--cas.authn.x509.webflow.client-auth=true",
+    
+    "--server.ssl.trust-store=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/truststore.jks",
     "--server.ssl.trust-store-password=changeit",
     "--server.ssl.client-auth=none"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "trustStoreCertificateFile": "./ci/tests/puppeteer/scenarios/x509-optional-login/cert.pem",
+  "trustStorePrivateKeyFile": "./ci/tests/puppeteer/scenarios/x509-optional-login/key.pem"
 }

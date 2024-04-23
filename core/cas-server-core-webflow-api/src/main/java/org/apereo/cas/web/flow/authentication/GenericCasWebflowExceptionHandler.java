@@ -11,8 +11,6 @@ import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Set;
-
 /**
  * This is {@link GenericCasWebflowExceptionHandler}.
  *
@@ -24,25 +22,28 @@ import java.util.Set;
 @Slf4j
 @RequiredArgsConstructor
 public class GenericCasWebflowExceptionHandler implements CasWebflowExceptionHandler<Exception> {
-    private int order = Integer.MAX_VALUE;
-
-    /**
-     * Ordered list of error classes that this class knows how to handle.
-     */
-    private final Set<Class<? extends Throwable>> errors;
+    private final CasWebflowExceptionCatalog errors;
 
     /**
      * String appended to exception class name to create a message bundle key for that particular error.
      */
     private final String messageBundlePrefix;
 
+    private int order = Integer.MAX_VALUE;
+
     @Override
     public Event handle(final Exception exception, final RequestContext requestContext) {
         val messageContext = requestContext.getMessageContext();
-        LOGGER.trace("Unable to translate errors of the authentication exception [{}]. Returning [{}]", exception, CasWebflowExceptionHandler.UNKNOWN);
+        LOGGER.trace("Unable to translate errors of the authentication exception [{}]. Returning [{}]",
+            exception, CasWebflowExceptionHandler.UNKNOWN);
         val message = buildErrorMessageResolver(exception, requestContext);
         messageContext.addMessage(message);
         return new EventFactorySupport().event(this, CasWebflowExceptionHandler.UNKNOWN);
+    }
+
+    @Override
+    public boolean supports(final Exception exception, final RequestContext requestContext) {
+        return exception != null;
     }
 
     /**
@@ -58,10 +59,5 @@ public class GenericCasWebflowExceptionHandler implements CasWebflowExceptionHan
             .error()
             .code(messageCode)
             .build();
-    }
-
-    @Override
-    public boolean supports(final Exception exception, final RequestContext requestContext) {
-        return exception != null;
     }
 }

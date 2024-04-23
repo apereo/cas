@@ -1,6 +1,7 @@
 package org.apereo.cas.uma.web.controllers.resource;
 
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -20,14 +21,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("UMA")
-public class UmaUpdateResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
+class UmaUpdateResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
 
     @Test
-    public void verifyRegistrationOperation() throws Exception {
+    void verifyRegistrationOperation() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
-
         var body = createUmaResourceRegistrationRequest().toJson();
-
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -45,7 +44,7 @@ public class UmaUpdateResourceSetRegistrationEndpointControllerTests extends Bas
     }
 
     @Test
-    public void verifyFailsId() throws Exception {
+    void verifyFailsId() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
 
@@ -60,15 +59,16 @@ public class UmaUpdateResourceSetRegistrationEndpointControllerTests extends Bas
     }
 
     @Test
-    public void verifyFailsMissing() throws Exception {
+    void verifyFailsMissing() throws Throwable {
+        val id = RandomUtils.nextLong();
         val results = authenticateUmaRequestWithProtectionScope();
-        var body = createUmaResourceRegistrationRequest(1000).toJson();
-        val response = umaUpdateResourceSetRegistrationEndpointController.updateResourceSet(1000, body, results.getLeft(), results.getMiddle());
+        var body = createUmaResourceRegistrationRequest(id).toJson();
+        val response = umaUpdateResourceSetRegistrationEndpointController.updateResourceSet(id, body, results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    public void verifyNoAuth() throws Exception {
+    void verifyNoAuth() throws Throwable {
         var body = createUmaResourceRegistrationRequest(1000).toJson();
         val response = umaUpdateResourceSetRegistrationEndpointController.updateResourceSet(1000, body,
             new MockHttpServletRequest(), new MockHttpServletResponse());

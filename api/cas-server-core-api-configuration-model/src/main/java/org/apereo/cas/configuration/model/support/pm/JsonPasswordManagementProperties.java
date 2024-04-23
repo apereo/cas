@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link JsonPasswordManagementProperties}.
  *
@@ -20,5 +22,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("JsonPasswordManagementProperties")
 public class JsonPasswordManagementProperties extends SpringResourceProperties {
+    @Serial
     private static final long serialVersionUID = 1129426669588789974L;
 }

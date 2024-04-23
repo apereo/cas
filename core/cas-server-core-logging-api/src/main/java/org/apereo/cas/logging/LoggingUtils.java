@@ -1,6 +1,6 @@
 package org.apereo.cas.logging;
 
-import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -24,14 +24,28 @@ public class LoggingUtils {
      * @param logEvent the log event
      * @return the log event
      */
-    public static LogEvent prepareLogEvent(final LogEvent logEvent) {
-        val messageModified = TicketIdSanitizationUtils.sanitize(logEvent.getMessage().getFormattedMessage());
+    public LogEvent prepareLogEvent(final LogEvent logEvent) {
+        val newLogEventBuilder = getLogEventBuilder(logEvent);
+        return newLogEventBuilder.build();
+    }
+
+    /**
+     * Gets log event builder.
+     *
+     * @param logEvent the log event
+     * @return the log event builder
+     */
+    public Log4jLogEvent.Builder getLogEventBuilder(final LogEvent logEvent) {
+        val messageModified = ApplicationContextProvider.getMessageSanitizer()
+            .map(sanitizer -> sanitizer.sanitize(logEvent.getMessage().getFormattedMessage()))
+            .orElseGet(() -> logEvent.getMessage().getFormattedMessage());
         val message = new SimpleMessage(messageModified);
+        val contextData = new SortedArrayStringMap(logEvent.getContextData());
         val newLogEventBuilder = Log4jLogEvent.newBuilder()
             .setLevel(logEvent.getLevel())
             .setLoggerName(logEvent.getLoggerName())
             .setLoggerFqcn(logEvent.getLoggerFqcn())
-            .setContextData(new SortedArrayStringMap(logEvent.getContextData()))
+            .setContextData(contextData)
             .setContextStack(logEvent.getContextStack())
             .setEndOfBatch(logEvent.isEndOfBatch())
             .setIncludeLocation(logEvent.isIncludeLocation())
@@ -48,6 +62,6 @@ public class LoggingUtils {
         } catch (final Exception e) {
             newLogEventBuilder.setSource(null);
         }
-        return newLogEventBuilder.build();
+        return newLogEventBuilder;
     }
 }

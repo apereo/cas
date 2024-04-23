@@ -2,25 +2,25 @@ package org.apereo.cas.util.http;
 
 import org.apereo.cas.util.LoggingUtils;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.FutureRequestExecutionService;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.FutureRequestExecutionService;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.HttpClientResponseHandler;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.springframework.beans.factory.DisposableBean;
 
+import java.io.Serial;
 import java.io.Serializable;
-import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -37,45 +37,21 @@ import java.util.concurrent.RejectedExecutionException;
  * @since 3.1
  */
 @Slf4j
-@Getter
-@RequiredArgsConstructor
-public class SimpleHttpClient implements HttpClient, Serializable, DisposableBean {
+public record SimpleHttpClient(List<Integer> acceptableCodes, CloseableHttpClient wrappedHttpClient, FutureRequestExecutionService requestExecutorService,
+                               SimpleHttpClientFactoryBean httpClientFactory) implements HttpClient, Serializable, DisposableBean {
 
-    /**
-     * Unique Id for serialization.
-     */
+    @Serial
     private static final long serialVersionUID = -4949380008568071855L;
-
-    /**
-     * the acceptable codes supported by this client.
-     */
-    private final List<Integer> acceptableCodes;
-
-    /**
-     * the HTTP client for this client.
-     */
-    private final transient CloseableHttpClient wrappedHttpClient;
-
-    /**
-     * the request executor service for this client.
-     */
-    private final FutureRequestExecutionService requestExecutorService;
-
-    /**
-     * The client factory that created and initialized this client instance.
-     */
-    private final SimpleHttpClientFactoryBean httpClientFactory;
 
     @Override
     public boolean sendMessageToEndPoint(final HttpMessage message) {
         try {
             val request = new HttpPost(message.getUrl().toURI());
             request.addHeader("Content-Type", message.getContentType());
-
             val entity = new StringEntity(message.getMessage(), ContentType.create(message.getContentType()));
             request.setEntity(entity);
 
-            val handler = (ResponseHandler<Boolean>) response -> response.getStatusLine().getStatusCode() == HttpStatus.SC_OK;
+            val handler = (HttpClientResponseHandler<Boolean>) response -> response.getCode() == HttpStatus.SC_OK;
             LOGGER.trace("Created HTTP post message payload [{}]", request);
             val task = this.requestExecutorService.execute(request, HttpClientContext.create(), handler);
             return message.isAsynchronous() || task.get();
@@ -91,15 +67,15 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
     @Override
     public HttpMessage sendMessageToEndPoint(final URL url) {
         try (val response = this.wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
-            val responseCode = response.getStatusLine().getStatusCode();
+            val responseCode = response.getCode();
 
             for (val acceptableCode : this.acceptableCodes) {
                 if (responseCode == acceptableCode) {
                     LOGGER.debug("Response code received from server matched [{}].", responseCode);
-                    val entity = response.getEntity();
+                    val entity = ((HttpEntityContainer) response).getEntity();
                     try {
                         val msg = new HttpMessage(url, IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8));
-                        msg.setContentType(entity.getContentType().getValue());
+                        msg.setContentType(entity.getContentType());
                         msg.setResponseCode(responseCode);
                         return msg;
                     } finally {
@@ -109,7 +85,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
             }
             LOGGER.warn("Response code [{}] from [{}] did not match any of the acceptable response codes.", responseCode, url);
             if (responseCode == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-                val value = response.getStatusLine().getReasonPhrase();
+                val value = response.getReasonPhrase();
                 LOGGER.error("There was an error contacting the endpoint: [{}]; The error:\n[{}]", url.toExternalForm(), value);
             }
         } catch (final Exception e) {
@@ -122,9 +98,9 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
     @Override
     public boolean isValidEndPoint(final String url) {
         try {
-            val u = new URL(url);
+            val u = new URI(url).toURL();
             return isValidEndPoint(u);
-        } catch (final MalformedURLException e) {
+        } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             return false;
         }
@@ -133,7 +109,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
     @Override
     public boolean isValidEndPoint(final URL url) {
         try (val response = this.wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
-            val responseCode = response.getStatusLine().getStatusCode();
+            val responseCode = response.getCode();
             val idx = Collections.binarySearch(this.acceptableCodes, responseCode);
             if (idx >= 0) {
                 LOGGER.debug("Response code from server matched [{}].", responseCode);
@@ -143,11 +119,11 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
             LOGGER.debug("Response code did not match any of the acceptable response codes. Code returned was [{}]", responseCode);
 
             if (responseCode == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
-                val value = response.getStatusLine().getReasonPhrase();
+                val value = response.getReasonPhrase();
                 LOGGER.error("There was an error contacting the endpoint: [{}]; The error was:\n[{}]", url.toExternalForm(), value);
             }
 
-            val entity = response.getEntity();
+            val entity = ((HttpEntityContainer) response).getEntity();
             try {
                 LOGGER.debug("Located entity with length [{}]", entity.getContentLength());
             } finally {

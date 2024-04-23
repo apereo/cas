@@ -1,6 +1,7 @@
 package org.apereo.cas.logout;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
@@ -10,8 +11,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
-import javax.persistence.Transient;
+import jakarta.persistence.Transient;
+
+import java.io.Serial;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,22 +29,14 @@ import java.util.Map;
 @ToString
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 public class DefaultSingleLogoutRequestContext implements SingleLogoutRequestContext {
 
-    /**
-     * Generated serialVersionUID.
-     */
+    @Serial
     private static final long serialVersionUID = -6411421298859045022L;
 
-    /**
-     * The service ticket id.
-     */
     private final String ticketId;
 
-    /**
-     * The service.
-     */
     private final WebApplicationService service;
 
     private final URL logoutUrl;

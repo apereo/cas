@@ -6,7 +6,6 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -19,44 +18,29 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
-public class SamlIdPMetadataControllerTests extends BaseSamlIdPConfigurationTests {
+@Tag("SAMLMetadata")
+class SamlIdPMetadataControllerTests extends BaseSamlIdPConfigurationTests {
 
     @Autowired
     @Qualifier("samlIdPMetadataController")
     private SamlIdPMetadataController samlIdPMetadataController;
 
     @Test
-    public void verifyOperationByServiceId() {
+    void verifyOperationByServiceId() throws Throwable {
         val response = new MockHttpServletResponse();
         val service = RegisteredServiceTestUtils.getService().getId();
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                samlIdPMetadataController.generateMetadataForIdp(service, response);
-            }
-        });
+        assertDoesNotThrow(() -> samlIdPMetadataController.generateMetadataForIdp(service, response));
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val response = new MockHttpServletResponse();
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                samlIdPMetadataController.generateMetadataForIdp("1000", response);
-            }
-        });
+        assertDoesNotThrow(() -> samlIdPMetadataController.generateMetadataForIdp("1000", response));
     }
 
     @Test
-    public void verifyNoServiceOperation() {
+    void verifyNoServiceOperation() throws Throwable {
         val response = new MockHttpServletResponse();
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                samlIdPMetadataController.generateMetadataForIdp(null, response);
-            }
-        });
+        assertDoesNotThrow(() -> samlIdPMetadataController.generateMetadataForIdp(null, response));
     }
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.slo.SingleLogoutMessage;
 import org.apereo.cas.logout.slo.SingleLogoutMessageCreator;
 import org.apereo.cas.logout.slo.SingleLogoutRequestContext;
@@ -8,27 +9,28 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlAttributeBasedNameIdGenerator;
-import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.util.RandomUtils;
-import lombok.SneakyThrows;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.LogoutRequest;
-import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
-
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -42,6 +44,7 @@ import java.util.Optional;
 @Slf4j
 public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20ObjectBuilder implements SingleLogoutMessageCreator {
 
+    @Serial
     private static final long serialVersionUID = -5895467960534493675L;
 
     /**
@@ -84,14 +87,13 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
     }
 
     @Override
-    @SneakyThrows
     public SingleLogoutMessage create(final SingleLogoutRequestContext request) {
         val id = '_' + String.valueOf(RandomUtils.nextLong());
 
         val samlService = (SamlRegisteredService) request.getRegisteredService();
-        val skewAllowance = samlService.getSkewAllowance() > 0
+        val skewAllowance = samlService.getSkewAllowance() != 0
             ? samlService.getSkewAllowance()
-            : samlIdPProperties.getResponse().getSkewAllowance();
+            : Beans.newDuration(samlIdPProperties.getResponse().getSkewAllowance()).toSeconds();
 
         val issueInstant = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(skewAllowance);
 
@@ -99,10 +101,10 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
             .getAuthentication().getPrincipal().getId();
         LOGGER.trace("Preparing NameID attribute for principal [{}]", principalName);
 
-        val nameFormat = StringUtils.defaultIfBlank(samlService.getRequiredNameIdFormat(), NameID.UNSPECIFIED);
+        val nameFormat = StringUtils.defaultIfBlank(samlService.getRequiredNameIdFormat(), NameIDType.UNSPECIFIED);
         val encoder = SamlAttributeBasedNameIdGenerator.get(Optional.empty(), nameFormat, samlService, principalName);
         LOGGER.debug("Encoding NameID based on [{}]", nameFormat);
-        val nameId = encoder.generate(new ProfileRequestContext(), nameFormat);
+        val nameId = FunctionUtils.doUnchecked(() -> encoder.generate(new ProfileRequestContext(), nameFormat));
 
         var samlLogoutRequest = newLogoutRequest(id, issueInstant,
             request.getLogoutUrl().toExternalForm(),
@@ -113,12 +115,12 @@ public class SamlIdPProfileSingleLogoutMessageCreator extends AbstractSaml20Obje
         val binding = request.getProperties().get(SamlIdPSingleLogoutServiceLogoutUrlBuilder.PROPERTY_NAME_SINGLE_LOGOUT_BINDING);
         if (samlIdPProperties.getLogout().isForceSignedLogoutRequests()) {
             val serviceId = request.getService().getId();
-            val adaptorRes = SamlRegisteredServiceServiceProviderMetadataFacade.get(samlRegisteredServiceCachingMetadataResolver, samlService, serviceId);
+            val adaptorRes = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, samlService, serviceId);
             val adaptor = adaptorRes.orElseThrow(() -> new IllegalArgumentException("Unable to find metadata for saml service " + serviceId));
             val httpRequest = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
             val httpResponse = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
-            samlObjectSigner.encode(samlLogoutRequest, samlService, adaptor,
-                httpResponse, httpRequest, binding, samlLogoutRequest);
+            FunctionUtils.doUnchecked(__ -> samlObjectSigner.encode(samlLogoutRequest, samlService, adaptor,
+                httpResponse, httpRequest, binding, samlLogoutRequest, new MessageContext()));
         }
 
         if (SAMLConstants.SAML2_SOAP11_BINDING_URI.equalsIgnoreCase(binding)) {

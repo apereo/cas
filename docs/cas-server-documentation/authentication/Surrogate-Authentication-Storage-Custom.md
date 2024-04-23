@@ -6,14 +6,14 @@ category: Authentication
 {% include variables.html %}
 
 
-# Custom Surrogate Authentication Registration
+# Custom Surrogate Authentication
 
 If you wish to design your own account store, you may follow the below approach:
 
 ```java
 package org.apereo.cas.custom;
 
-@Configuration("mySurrogateConfiguration")
+@AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MySurrogateConfiguration {
 

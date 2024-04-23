@@ -26,19 +26,19 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @ExtendWith(MockitoExtension.class)
 @Tag("X509")
-public class X509RestMultipartBodyCredentialFactoryTests {
+class X509RestMultipartBodyCredentialFactoryTests {
 
     private final X509RestMultipartBodyCredentialFactory factory = new X509RestMultipartBodyCredentialFactory();
 
     @Test
-    public void emptyRequestBody() {
+    void emptyRequestBody() {
         val requestBody = new LinkedMultiValueMap<String, String>();
         val cred = factory.fromRequest(new MockHttpServletRequest(), requestBody);
         assertTrue(cred.isEmpty());
     }
 
     @Test
-    public void badCredential() {
+    void badCredential() {
         val requestBody = new LinkedMultiValueMap<String, String>();
         requestBody.add("cert", "bad-certificate");
         val cred = factory.fromRequest(new MockHttpServletRequest(), requestBody);
@@ -46,19 +46,19 @@ public class X509RestMultipartBodyCredentialFactoryTests {
     }
 
     @Test
-    public void createX509Credential() throws IOException {
+    void createX509Credential() throws IOException {
         val requestBody = new LinkedMultiValueMap<String, String>();
         @Cleanup
-        val scan = new Scanner(new ClassPathResource("ldap-crl.crt").getFile(), StandardCharsets.UTF_8.name());
+        val scan = new Scanner(new ClassPathResource("ldap-crl.crt").getFile(), StandardCharsets.UTF_8);
         val certStr = scan.useDelimiter("\\Z").next();
         scan.close();
         requestBody.add("cert", certStr);
-        val cred = factory.fromRequest(new MockHttpServletRequest(), requestBody).iterator().next();
-        assertTrue(cred instanceof X509CertificateCredential);
+        val cred = factory.fromRequest(new MockHttpServletRequest(), requestBody).getFirst();
+        assertInstanceOf(X509CertificateCredential.class, cred);
     }
 
     @Test
-    public void createDefaultCredential() {
+    void createDefaultCredential() {
         val requestBody = new LinkedMultiValueMap<String, String>();
         requestBody.add("username", "name");
         requestBody.add("password", "passwd");

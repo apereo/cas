@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.attribute.CaseCanonicalizationMode;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.AccessLevel;
@@ -12,10 +12,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.services.persondir.util.CaseCanonicalizationMode;
 
-import javax.persistence.PostLoad;
+
+import jakarta.persistence.PostLoad;
+
+import java.io.Serial;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -33,43 +36,37 @@ import java.util.Optional;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseRegisteredServiceUsernameAttributeProvider implements RegisteredServiceUsernameAttributeProvider {
 
+    @Serial
     private static final long serialVersionUID = -8381275200333399951L;
 
-    private String canonicalizationMode = CaseCanonicalizationMode.NONE.name();
+    private String canonicalizationMode = "NONE";
 
     private boolean encryptUsername;
 
+    private String scope;
+
+    private String removePattern;
+
     @Override
-    public final String resolveUsername(final Principal principal, final Service service, final RegisteredService registeredService) {
-        val username = resolveUsernameInternal(principal, service, registeredService);
+    public final String resolveUsername(final RegisteredServiceUsernameProviderContext context) throws Throwable {
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(context.getService(), context.getRegisteredService());
+            
+        val resolvedUsername = resolveUsernameInternal(context);
         if (canonicalizationMode == null) {
-            canonicalizationMode = CaseCanonicalizationMode.NONE.name();
+            canonicalizationMode = "NONE";
         }
-        val uid = CaseCanonicalizationMode.valueOf(canonicalizationMode).canonicalize(username.trim(), Locale.getDefault());
-        LOGGER.debug("Resolved username for [{}] is [{}]", service, uid);
+        val removedUsername = removePatternFromUsernameIfNecessary(resolvedUsername);
+        val finalUsername = scopeUsernameIfNecessary(removedUsername);
+        val uid = CaseCanonicalizationMode.valueOf(canonicalizationMode).canonicalize(finalUsername.trim(), Locale.getDefault());
+        LOGGER.debug("Resolved username for [{}] is [{}]", context.getService(), uid);
         if (!this.encryptUsername) {
             return uid;
         }
-        val encryptedId = encryptResolvedUsername(principal, service, registeredService, uid);
+        val encryptedId = encryptResolvedUsername(context, uid);
         if (StringUtils.isBlank(encryptedId)) {
-            throw new IllegalArgumentException("Could not encrypt username " + uid + " for service " + service);
+            throw new IllegalArgumentException("Could not encrypt username " + uid + " for service " + context.getService());
         }
         return encryptedId;
-    }
-
-    /**
-     * Encrypt resolved username.
-     *
-     * @param principal         the principal
-     * @param service           the service
-     * @param registeredService the registered service
-     * @param username          the username
-     * @return the encrypted username or null
-     */
-    protected String encryptResolvedUsername(final Principal principal, final Service service, final RegisteredService registeredService, final String username) {
-        val applicationContext = ApplicationContextProvider.getApplicationContext();
-        val cipher = applicationContext.getBean(RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME, RegisteredServiceCipherExecutor.class);
-        return cipher.encode(username, Optional.of(registeredService));
     }
 
     /**
@@ -78,17 +75,23 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
      */
     @PostLoad
     public void initialize() {
-        setCanonicalizationMode(CaseCanonicalizationMode.NONE.name());
+        setCanonicalizationMode("NONE");
     }
 
-    /**
-     * Resolve username internal string.
-     *
-     * @param principal         the principal
-     * @param service           the service
-     * @param registeredService the registered service
-     * @return the string
-     */
-    protected abstract String resolveUsernameInternal(Principal principal, Service service, RegisteredService registeredService);
+    protected String removePatternFromUsernameIfNecessary(final String username) {
+        return FunctionUtils.doIfNotNull(removePattern, () -> RegExUtils.removePattern(username, removePattern), () -> username).get();
+    }
+
+    protected String scopeUsernameIfNecessary(final String resolved) {
+        return FunctionUtils.doIfNotNull(scope, () -> String.format("%s@%s", resolved, scope), () -> resolved).get();
+    }
+
+    protected String encryptResolvedUsername(final RegisteredServiceUsernameProviderContext context, final String username) {
+        val applicationContext = ApplicationContextProvider.getApplicationContext();
+        val cipher = applicationContext.getBean(RegisteredServiceCipherExecutor.DEFAULT_BEAN_NAME, RegisteredServiceCipherExecutor.class);
+        return cipher.encode(username, Optional.of(context.getRegisteredService()));
+    }
+
+    protected abstract String resolveUsernameInternal(RegisteredServiceUsernameProviderContext context) throws Throwable;
 
 }

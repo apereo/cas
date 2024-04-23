@@ -12,7 +12,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import com.datastax.oss.driver.api.core.DefaultConsistencyLevel;
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -34,8 +33,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @ToString
 public class CassandraServiceRegistry extends AbstractServiceRegistry implements DisposableBean {
-    private static final StringSerializer<RegisteredService> SERIALIZER =
-        new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
+    private final StringSerializer<RegisteredService> serializer;
 
     private final CassandraSessionFactory cassandraSessionFactory;
 
@@ -48,12 +46,13 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
         super(applicationContext, serviceRegistryListeners);
         this.properties = properties;
         this.cassandraSessionFactory = cassandraSessionFactory;
+        this.serializer = new RegisteredServiceJsonSerializer(applicationContext);
     }
 
     @Override
     public RegisteredService save(final RegisteredService rs) {
         try {
-            val data = SERIALIZER.toString(rs);
+            val data = serializer.toString(rs);
             invokeServiceRegistryListenerPreSave(rs);
             val options = InsertOptions.builder()
                 .consistencyLevel(DefaultConsistencyLevel.valueOf(properties.getConsistencyLevel()))
@@ -62,7 +61,7 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
                 .build();
             val result = cassandraSessionFactory.getCassandraTemplate()
                 .insert(new CassandraRegisteredServiceHolder(rs.getId(), data), options);
-            return SERIALIZER.from(result.getEntity().getData());
+            return serializer.from(result.getEntity().getData());
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
@@ -83,8 +82,7 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
 
     @Override
     public void deleteAll() {
-        cassandraSessionFactory.getCassandraTemplate()
-            .getCqlOperations().execute("TRUNCATE TABLE " + CassandraRegisteredServiceHolder.TABLE_NAME);
+        cassandraSessionFactory.getCassandraTemplate().truncate(CassandraRegisteredServiceHolder.class);
     }
 
     @Override
@@ -97,7 +95,7 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
     public Collection<RegisteredService> load() {
         val results = cassandraSessionFactory.getCassandraTemplate().select(Query.query(), CassandraRegisteredServiceHolder.class);
         return results.stream()
-            .map(holder -> SERIALIZER.from(holder.getData()))
+            .map(holder -> serializer.from(holder.getData()))
             .filter(Objects::nonNull)
             .map(this::invokeServiceRegistryListenerPostLoad)
             .filter(Objects::nonNull)
@@ -109,7 +107,7 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
         val holder = cassandraSessionFactory.getCassandraTemplate()
             .selectOneById(id, CassandraRegisteredServiceHolder.class);
         if (holder != null) {
-            return SERIALIZER.from(holder.getData());
+            return serializer.from(holder.getData());
         }
         return null;
     }

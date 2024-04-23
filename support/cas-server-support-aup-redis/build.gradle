@@ -1,6 +1,11 @@
 description = "Apereo CAS AUP Redis Support"
 ext {
-    maxParallelForksForTests = 1
+
+    publishMetadata = true
+    projectMetadata = [
+            title: "Acceptable Usage Policy via Redis",
+            category: "Acceptable Usage Policy"
+    ]
 }
 dependencies {
     api project(":api:cas-server-core-api-authentication")
@@ -24,12 +29,17 @@ dependencies {
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-notifications")
+    
     testImplementation project(":support:cas-server-support-aup-webflow")
 
     testImplementation project(path: ":support:cas-server-support-aup-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-aup-webflow", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
+    
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")

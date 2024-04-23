@@ -6,13 +6,16 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jasig.cas.client.util.URIBuilder;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.net.URIBuilder;
 
+import java.io.Serial;
 import java.util.Optional;
 
 /**
@@ -25,6 +28,7 @@ import java.util.Optional;
 @Setter
 @Getter
 public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy extends BaseAuthenticationServiceSelectionStrategy {
+    @Serial
     private static final long serialVersionUID = -2059445756475980894L;
 
     private final String casServiceUrlPattern;
@@ -55,11 +59,13 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy extends BaseA
      * @param service the service
      * @return the entity id as parameter
      */
-    protected static Optional<URIBuilder.BasicNameValuePair> getEntityIdAsParameter(final Service service) {
-        val builder = new URIBuilder(service.getId());
-        return builder.getQueryParams()
-            .stream()
-            .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
-            .findFirst();
+    protected static Optional<NameValuePair> getEntityIdAsParameter(final Service service) {
+        return FunctionUtils.doAndHandle(() -> {
+            val builder = new URIBuilder(service.getId());
+            return builder.getQueryParams()
+                .stream()
+                .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
+                .findFirst();
+        });
     }
 }

@@ -2,12 +2,15 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import lombok.Builder;
+import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -20,12 +23,14 @@ import java.util.Optional;
  * @author Dmitriy Kopylenko
  * @since 5.3.0
  */
-@Builder
+@SuperBuilder
 public class AuditableContext {
 
     private final Service service;
 
     private final RegisteredService registeredService;
+
+    private final Principal principal;
 
     private final Authentication authentication;
 
@@ -39,50 +44,26 @@ public class AuditableContext {
 
     private final Object httpResponse;
 
-    /**
-     * Should attributes be refreshed from the release policy?
-     */
     @Builder.Default
-    private Boolean retrievePrincipalAttributesFromReleasePolicy = Boolean.FALSE;
-
-    /**
-     * Properties.
-     */
-    @Builder.Default
+    @Getter
     private Map<String, Object> properties = new LinkedHashMap<>(0);
 
-    /**
-     * Get service.
-     *
-     * @return optional service
-     */
     public Optional<Service> getService() {
         return Optional.ofNullable(service);
     }
 
-    /**
-     * Get registered service.
-     *
-     * @return optional registered service
-     */
     public Optional<RegisteredService> getRegisteredService() {
         return Optional.ofNullable(registeredService);
     }
 
-    /**
-     * Get.
-     *
-     * @return optional authentication
-     */
     public Optional<Authentication> getAuthentication() {
         return Optional.ofNullable(authentication);
     }
 
-    /**
-     * Get.
-     *
-     * @return optional service ticket
-     */
+    public Optional<Principal> getPrincipal() {
+        return Optional.ofNullable(this.principal);
+    }
+
     public Optional<ServiceTicket> getServiceTicket() {
         return Optional.ofNullable(serviceTicket);
     }
@@ -95,39 +76,11 @@ public class AuditableContext {
         return Optional.ofNullable(httpResponse);
     }
 
-    /**
-     * Get.
-     *
-     * @return optional authentication result
-     */
     public Optional<AuthenticationResult> getAuthenticationResult() {
         return Optional.ofNullable(authenticationResult);
     }
 
-    /**
-     * Get.
-     *
-     * @return optional tgt
-     */
     public Optional<TicketGrantingTicket> getTicketGrantingTicket() {
         return Optional.ofNullable(ticketGrantingTicket);
-    }
-
-    /**
-     * Get.
-     *
-     * @return optional attribute retrieval policy flag
-     */
-    public Optional<Boolean> getRetrievePrincipalAttributesFromReleasePolicy() {
-        return Optional.ofNullable(retrievePrincipalAttributesFromReleasePolicy);
-    }
-
-    /**
-     * Get.
-     *
-     * @return optional properties
-     */
-    public Map<String, Object> getProperties() {
-        return properties;
     }
 }

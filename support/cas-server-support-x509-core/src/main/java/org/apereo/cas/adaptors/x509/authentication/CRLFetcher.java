@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.x509.authentication;
 
 import org.springframework.core.io.Resource;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;

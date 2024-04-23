@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.generic;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
@@ -19,16 +20,16 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Groovy")
-public class GroovyAuthenticationHandlerTests {
+@Tag("GroovyAuthentication")
+class GroovyAuthenticationHandlerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val resource = new ClassPathResource("GroovyAuthnHandler.groovy");
         val handler = new GroovyAuthenticationHandler("Test", mock(ServicesManager.class),
             PrincipalFactoryUtils.newPrincipalFactory(), resource, 0);
         assertTrue(handler.supports(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
         assertTrue(handler.supports(UsernamePasswordCredential.class));
-        val result = handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        val result = handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class));
         assertNotNull(result);
     }
 }

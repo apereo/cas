@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("HazelcastDockerSwarmDiscoveryProperties")
 public class HazelcastDockerSwarmDiscoveryProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1409066358752067150L;
 
     /**
@@ -38,7 +40,9 @@ public class HazelcastDockerSwarmDiscoveryProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class DnsRProvider implements Serializable {
+        @Serial
         private static final long serialVersionUID = -1863901001243353934L;
+
         /**
          * Enable provider.
          */
@@ -69,6 +73,7 @@ public class HazelcastDockerSwarmDiscoveryProperties implements Serializable {
     @Setter
     @Accessors(chain = true)
     public static class MemberAddressProvider implements Serializable {
+        @Serial
         private static final long serialVersionUID = -2963901001243353939L;
 
         /**

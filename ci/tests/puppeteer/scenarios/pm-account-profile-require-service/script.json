@@ -1,0 +1,18 @@
+{
+  "dependencies": "audit-jdbc,pm-webflow",
+
+  "properties": [
+    "--CasFeatureModule.AccountManagement.enabled=true",
+    
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.view.authorized-services-on-successful-login=true",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+    "--cas.authn.pm.core.enabled=true",
+    "--cas.sso.services.allow-missing-service-parameter=false"
+  ]
+}

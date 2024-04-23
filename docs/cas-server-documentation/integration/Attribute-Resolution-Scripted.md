@@ -10,7 +10,7 @@ category: Attributes
 
 The following configuration describes how to fetch and retrieve attributes from Scripted attribute repositories.
 
-<div class="alert alert-warning"><strong>Usage</strong>
+<div class="alert alert-warning">:warning: <strong>Usage</strong>
 <p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
 </div>
 
@@ -18,10 +18,10 @@ Similar to the Groovy option but more versatile, this option takes advantage of 
 scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script to resolve attributes.
 The following settings are relevant:
 
-{% include casproperties.html properties="cas.authn.attribute-repository.script" %}
+{% include_cached casproperties.html properties="cas.authn.attribute-repository.script" %}
 
 While Javascript and Groovy should be natively supported by CAS, Python scripts may need
-to massage the CAS configuration to include the [Python modules](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jython-standalone%22).
+to massage the CAS configuration to include the [Python modules](https://search.maven.org/search?q=a:jython-standalone).
 
 The Groovy script may be defined as:
 
@@ -29,9 +29,7 @@ The Groovy script may be defined as:
 import java.util.*
 
 Map<String, List<Object>> run(final Object... args) {
-    def uid = args[0]
-    def logger = args[1]
-
+    def (uid,logger) = args
     logger.debug("Groovy things are happening just fine with UID: {}",uid)
     return [username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
 }

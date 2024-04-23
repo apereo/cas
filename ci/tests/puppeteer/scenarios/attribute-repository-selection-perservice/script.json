@@ -1,0 +1,28 @@
+{
+  "dependencies": "generic",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.http-client.host-name-verifier=none",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.authn.attribute-repository.json[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attribute-repository.json",
+    "--cas.authn.attribute-repository.json[0].id=MyJson",
+
+    "--cas.authn.attribute-repository.stub.id=StaticStub",
+    "--cas.authn.attribute-repository.stub.attributes.cn=cas",
+    "--cas.authn.attribute-repository.stub.attributes.displayName=Apereo CAS",
+    
+    "--cas.authn.accept.name=STATIC",
+
+    "--cas.authn.attribute-repository.core.expiration-time=0",
+    "--cas.person-directory.attribute-repository-selection.STATIC=StaticStub"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}
+

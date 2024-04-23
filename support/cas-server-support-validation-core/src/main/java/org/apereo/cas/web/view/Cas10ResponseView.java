@@ -3,15 +3,21 @@ package org.apereo.cas.web.view;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.view.AbstractCasView;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 
 import lombok.val;
+import org.springframework.http.MediaType;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Nonnull;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.Map;
 
@@ -30,23 +36,39 @@ public class Cas10ResponseView extends AbstractCasView {
                              final ServicesManager servicesManager,
                              final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
                              final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
-                             final CasProtocolAttributesRenderer attributesRenderer) {
+                             final CasProtocolAttributesRenderer attributesRenderer,
+                             final AttributeDefinitionStore attributeDefinitionStore) {
         super(successResponse, protocolAttributeEncoder, servicesManager,
-            authenticationAttributeReleasePolicy, serviceSelectionStrategy, attributesRenderer);
+            authenticationAttributeReleasePolicy, serviceSelectionStrategy,
+            attributesRenderer, attributeDefinitionStore);
     }
 
     @Override
-    protected void renderMergedOutputModel(final Map model, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-
-        val writer = response.getWriter();
-        if (this.successResponse) {
-            super.prepareViewModelWithAuthenticationPrincipal(model);
-            super.prepareCasResponseAttributesForViewModel(model);
-            writer.print("yes\n" + getPrimaryAuthenticationFrom(model).getPrincipal().getId() + '\n');
-            val attributes = (Collection) model.get(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES);
-            attributes.forEach(writer::println);
-        } else {
-            writer.print("no\n\n");
+    protected void renderMergedOutputModel(
+        @Nonnull
+        final Map model, @Nonnull
+        final HttpServletRequest request,
+        @Nonnull
+        final HttpServletResponse response) throws Exception {
+        try (val writer = new StringWriter()) {
+            if (this.successResponse) {
+                prepareViewModelWithAuthenticationPrincipal(model);
+                prepareCasResponseAttributesForViewModel(model);
+                writer.write("yes\n" + getPrimaryAuthenticationFrom(model).getPrincipal().getId() + '\n');
+                if (model.containsKey(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES)) {
+                    val attributes = (Collection) model.get(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES);
+                    attributes.forEach(attr -> {
+                        writer.write(attr.toString());
+                        writer.write('\n');
+                    });
+                }
+            } else {
+                writer.write("no\n\n");
+            }
+            val message = writer.toString();
+            LoggingUtils.protocolMessage("CAS v1 Response", Map.of(), message);
+            response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+            response.getWriter().write(message);
         }
     }
 }

@@ -1,25 +1,31 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
-import org.apereo.cas.config.GoogleAuthenticatorRedisConfiguration;
+import org.apereo.cas.config.CasGoogleAuthenticatorRedisAutoConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
-
+import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.commons.lang3.time.StopWatch;
+import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import java.util.UUID;
-
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -29,83 +35,138 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @SpringBootTest(classes = {
-    GoogleAuthenticatorRedisConfiguration.class,
+    CasGoogleAuthenticatorRedisAutoConfiguration.class,
     BaseOneTimeTokenCredentialRepositoryTests.SharedTestConfiguration.class
 }, properties = {
     "cas.authn.mfa.gauth.redis.host=localhost",
     "cas.authn.mfa.gauth.redis.port=6379"
 })
-@EnableTransactionManagement(proxyTargetClass = true)
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableTransactionManagement(proxyTargetClass = false)
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @Tag("Redis")
 @Getter
-@EnabledIfPortOpen(port = 6379)
-public class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
+@EnabledIfListeningOnPort(port = 6379)
+@Slf4j
+class RedisGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;
-
-    @BeforeEach
-    public void cleanUp() {
-        registry.deleteAll();
-    }
-
+    
     @Test
-    public void verifySave() {
-        val id = UUID.randomUUID().toString();
+    void verifySave() {
+        val username = UUID.randomUUID().toString();
         assertNull(registry.get(654321));
-        assertNull(registry.get(id, 654321));
-
-        var toSave = OneTimeTokenAccount.builder()
-            .username(id)
+        assertNull(registry.get(username, 654321));
+        val validationCode = RandomUtils.nextInt(1, 999999);
+        val toSave = OneTimeTokenAccount.builder()
+            .username(username)
             .secretKey("secret")
-            .validationCode(143211)
+            .validationCode(validationCode)
             .scratchCodes(CollectionUtils.wrapList(1, 2, 3, 4, 5, 6))
             .name(UUID.randomUUID().toString())
             .build();
         registry.save(toSave);
-        
-        val s = registry.get(id).iterator().next();
-        assertEquals("secret", s.getSecretKey());
-        val c = registry.load();
-        assertFalse(c.isEmpty());
+
+        val account = registry.get(username).iterator().next();
+        assertEquals("secret", account.getSecretKey());
+        assertEquals(validationCode, account.getValidationCode());
+        val accounts = registry.load();
+        assertFalse(accounts.isEmpty());
     }
 
     @Test
-    public void verifyDelete() {
-        val id = UUID.randomUUID().toString();
+    void verifyDelete() {
+        val username = UUID.randomUUID().toString();
         val toSave = OneTimeTokenAccount.builder()
-            .username(id)
+            .username(username)
             .secretKey("secret")
             .validationCode(143211)
             .scratchCodes(CollectionUtils.wrapList(1, 2, 3, 4, 5, 6))
             .name(UUID.randomUUID().toString())
             .build();
         registry.save(toSave);
-        registry.delete(id);
+        registry.delete(username);
         assertEquals(0, registry.count());
     }
 
-    @Test
-    public void verifySaveAndUpdate() {
-        val id = UUID.randomUUID().toString();
+    @Override
+    @RetryingTest(2)
+    void verifySaveAndUpdate() {
+        val username = UUID.randomUUID().toString();
+        var validationCode = RandomUtils.nextInt(1, 999999);
         val toSave = OneTimeTokenAccount.builder()
-            .username(id)
+            .username(username)
             .secretKey("secret")
-            .validationCode(222222)
+            .validationCode(validationCode)
             .scratchCodes(CollectionUtils.wrapList(1, 2, 3, 4, 5, 6))
             .name(UUID.randomUUID().toString())
             .build();
         registry.save(toSave);
-        val s = registry.get(id).iterator().next();
-        assertNotNull(s.getRegistrationDate());
-        assertEquals(222222, s.getValidationCode());
-        s.setSecretKey("newSecret");
-        s.setValidationCode(999666);
-        registry.update(s);
-        val s2 = registry.get(id).iterator().next();
-        assertEquals(999666, s2.getValidationCode());
-        assertEquals("newSecret", s2.getSecretKey());
+        val tokenAccount = registry.get(username).iterator().next();
+        assertNotNull(tokenAccount.getRegistrationDate());
+        assertEquals(validationCode, tokenAccount.getValidationCode());
+        tokenAccount.setSecretKey("newSecret");
+
+        val validationCode2 = RandomUtils.nextInt(1, 999999);
+        tokenAccount.setValidationCode(validationCode2);
+        registry.update(tokenAccount);
+
+        await().untilAsserted(() -> {
+            val s2 = registry.get(username).iterator().next();
+            assertEquals(validationCode2, s2.getValidationCode());
+            assertEquals("newSecret", s2.getSecretKey());
+        });
+    }
+
+    @Test
+    void verifyLargeDataset() {
+        val allAccounts = Stream.generate(
+                () -> {
+                    val username = UUID.randomUUID().toString();
+                    var validationCode = RandomUtils.nextInt(1, 999999);
+                    return OneTimeTokenAccount.builder()
+                        .username(username)
+                        .secretKey("secret")
+                        .validationCode(validationCode)
+                        .scratchCodes(CollectionUtils.wrapList(1, 2, 3, 4, 5, 6))
+                        .name(UUID.randomUUID().toString())
+                        .build();
+                })
+            .limit(1000);
+        executedTimedOperation("Adding accounts", __ -> allAccounts.forEach(registry::save));
+        executedTimedOperation("Getting accounts",
+            Unchecked.consumer(__ -> {
+                val accounts = registry.load();
+                assertFalse(accounts.isEmpty());
+            }));
+
+        val accountsStream = executedTimedOperation("Getting accounts in bulk",
+            Unchecked.supplier(() -> registry.load()));
+        executedTimedOperation("Getting accounts individually",
+            Unchecked.consumer(__ -> accountsStream.forEach(acct -> assertNotNull(registry.get(acct.getId())))));
+        executedTimedOperation("Getting accounts individually for users",
+            Unchecked.consumer(__ -> accountsStream.forEach(acct -> assertNotNull(registry.get(acct.getUsername())))));
+    }
+
+    private static <T> T executedTimedOperation(final String name, final Supplier<T> operation) {
+        val stopwatch = new StopWatch();
+        stopwatch.start();
+        val result = operation.get();
+        stopwatch.stop();
+        val time = stopwatch.getTime(TimeUnit.MILLISECONDS);
+        LOGGER.info("[{}]: [{}]ms", name, time);
+        assertTrue(time <= 8000);
+        return result;
+    }
+
+    private static void executedTimedOperation(final String name, final Consumer operation) {
+        val stopwatch = new StopWatch();
+        stopwatch.start();
+        operation.accept(null);
+        stopwatch.stop();
+        val time = stopwatch.getTime(TimeUnit.MILLISECONDS);
+        LOGGER.info("[{}]: [{}]ms", name, time);
+        assertTrue(time <= 8000);
     }
 }

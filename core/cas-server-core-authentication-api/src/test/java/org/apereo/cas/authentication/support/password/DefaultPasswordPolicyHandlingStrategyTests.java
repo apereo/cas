@@ -17,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("PasswordOps")
-public class DefaultPasswordPolicyHandlingStrategyTests {
+class DefaultPasswordPolicyHandlingStrategyTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val s = new DefaultPasswordPolicyHandlingStrategy<>();
         assertTrue(s.handle(new Object(), null).isEmpty());
         val cfg = new PasswordPolicyContext(30);

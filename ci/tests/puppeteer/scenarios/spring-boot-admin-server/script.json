@@ -1,0 +1,16 @@
+{
+  "dependencies": "bootadmin,reports",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.http-client.host-name-verifier=none",
+
+    "--spring.security.user.name=s#kiooritea",
+    "--spring.security.user.password=p@$$W0rd",
+    
+    "--cas.monitor.endpoints.endpoint.defaults.access=AUTHENTICATED",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true"
+  ]
+}

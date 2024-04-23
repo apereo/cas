@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -10,15 +9,15 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * This is {@link OneTimeTokenTests}.
  * Sleeping for one millisecond because Winodws tests fail sometimes, presumably because time is the same.
+ *
  * @author Misagh Moayyed
  * @since 6.3.0
  */
 @Tag("MFA")
-public class OneTimeTokenTests {
+class OneTimeTokenTests {
 
-    @SneakyThrows
     @Test
-    public void verifyComparisonWorks() {
+    void verifyComparisonWorks() throws Throwable {
         val otp1 = new OneTimeToken(123456, "casuser");
         Thread.sleep(1);
         val otp2 = new OneTimeToken(123456, "casuser");

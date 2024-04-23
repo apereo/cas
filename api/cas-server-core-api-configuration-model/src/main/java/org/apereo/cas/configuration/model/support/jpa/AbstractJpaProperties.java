@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -12,6 +14,7 @@ import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,8 +31,9 @@ import java.util.Map;
 @Accessors(chain = true)
 @JsonFilter("AbstractJpaProperties")
 @SuppressWarnings("UnescapedEntity")
-public abstract class AbstractJpaProperties implements Serializable {
+public abstract class AbstractJpaProperties implements CasFeatureModule, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 761486823496930920L;
 
     /**
@@ -71,6 +75,7 @@ public abstract class AbstractJpaProperties implements Serializable {
      * The database connection URL.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String url = "jdbc:hsqldb:mem:cas-hsql-database";
 
     /**
@@ -100,6 +105,7 @@ public abstract class AbstractJpaProperties implements Serializable {
 
     /**
      * The SQL query to be executed to test the validity of connections.
+     * This is for "legacy" databases that do not support the JDBC4 {@code Connection.isValid()} API.
      */
     private String healthQuery = StringUtils.EMPTY;
 
@@ -110,14 +116,20 @@ public abstract class AbstractJpaProperties implements Serializable {
     private String idleTimeout = "PT10M";
 
     /**
+     * Indicates the maximum number of milliseconds that the service
+     * can wait to obtain a connection.
+     */
+    @DurationCapable
+    private String connectionTimeout = "PT30S";
+
+    /**
      * Attempts to do a JNDI data source look up for the data source name specified.
-     * Will attempt to locate the data source object as is, or will try to return a proxy
-     * instance of it, in the event that {@link #dataSourceProxy} is used.
+     * Will attempt to locate the data source object as is.
      */
     private String dataSourceName;
 
     /**
-     * Additional settings provided by Hibernate in form of key-value pairs.
+     * Additional settings provided by Hibernate (or the connection provider) in form of key-value pairs.
      */
     private Map<String, String> properties = new HashMap<>(0);
 
@@ -131,12 +143,23 @@ public abstract class AbstractJpaProperties implements Serializable {
      * Controls the amount of time that a connection can be out of the pool before a message
      * is logged indicating a possible connection leak.
      */
-    private int leakThreshold = 3_000;
+    @DurationCapable
+    private String leakThreshold = "PT6S";
+
+    /**
+     * Allow hibernate to generate query statistics.
+     */
+    private boolean generateStatistics;
 
     /**
      * A non-zero value enables use of JDBC2 batch updates by Hibernate. e.g. recommended values between 5 and 30.
      */
-    private int batchSize = 5;
+    private int batchSize = 100;
+
+    /**
+     * Used to specify number of rows to be fetched in a select query.
+     */
+    private int fetchSize = 100;
 
     /**
      * Set the pool initialization failure timeout.
@@ -181,98 +204,16 @@ public abstract class AbstractJpaProperties implements Serializable {
      */
     private boolean autocommit;
 
-    //CHECKSTYLE:OFF
     /**
-     * Indicates whether JNDI data sources retrieved should be proxied
-     * or returned back verbatim.
-     * When using a container configured data source, many of the pool related parameters will not be used.
-     * If this setting is specified but the JNDI lookup fails, a data source will be created with the configured
-     * (or default) CAS pool parameters.
-     *
-     * If you experience classloading errors while trying to use a container datasource, you can try
-     * setting this setting to {@code true} which will wrap the container datasource in
-     * a way that may resolve the error. This property can be either a JNDI name for the datasource or a resource name prefixed with
-     * {@code java:/comp/env/}. If it is a resource name then you need an entry in a {@code web.xml}.
-     * It should contain an entry like this:
-     *
-     * <pre>
-     * {@code
-     * <resource-ref>
-     *    <res-ref-name>jdbc/casDataSource</res-ref-name>
-     *    <res-type>javax.sql.DataSource</res-type>
-     *    <res-auth>Container</res-auth>
-     * </resource-ref>
-     * }
-     * </pre>
-     *
-     * In Apache Tomcat, a container datasource can be defined like this in the {@code context.xml}:
-     *
-     * <pre>
-     * {@code
-     * <Resource name="jdbc/casDataSource"
-     *           auth="Container"
-     *           type="javax.sql.DataSource"
-     *           driverClassName="org.postgresql.Driver"
-     *           url="jdbc:postgresql://casdb.example.com:5432/xyz_db"
-     *           username="cas"
-     *           password="xyz"
-     *           testWhileIdle="true"
-     *           testOnBorrow="true"
-     *           testOnReturn="false"
-     *           validationQuery="select 1"
-     *           validationInterval="30000"
-     *           timeBetweenEvictionRunsMillis="30000"
-     *           factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
-     *           minIdle="0"
-     *           maxIdle="5"
-     *           initialSize="0"
-     *           maxActive="20"
-     *           maxWait="10000" />
-     * }
-     * </pre>
-     *
-     * In Jetty, a pool can be put in JNDI with a {@code jetty.xml} or {@code jetty-env.xml} file like this:
-     * 
-     * <pre>
-     * {@code
-     * <?xml version="1.0"?>
-     * <!DOCTYPE Configure PUBLIC "-//Jetty//Configure//EN" "http://www.eclipse.org/jetty/configure_9_4.dtd">
-     *
-     * <Configure class="org.eclipse.jetty.webapp.WebAppContext">
-     *     <New id="datasource.cas" class="org.eclipse.jetty.plus.jndi.Resource">
-     *         <Arg></Arg> <!-- empty scope arg is JVM scope -->
-     *         <Arg>jdbc/casDataSource</Arg> <!-- name that matches resource in web.xml-->
-     *         <Arg>
-     *             <New class="org.apache.commons.dbcp.BasicDataSource">
-     *                 <Set name="driverClassName">oracle.jdbc.OracleDriver</Set>
-     *                 <Set name="url">jdbc:oracle:thin:@//casdb.example.com:1521/ntrs"</Set>
-     *                 <Set name="username">cas</Set>
-     *                 <Set name="password">xyz</Set>
-     *                 <Set name="validationQuery">select dummy from dual</Set>
-     *                 <Set name="testOnBorrow">true</Set>
-     *                 <Set name="testOnReturn">false</Set>
-     *                 <Set name="testWhileIdle">false</Set>
-     *                 <Set name="defaultAutoCommit">false</Set>
-     *                 <Set name="initialSize">0</Set>
-     *                 <Set name="maxActive">15</Set>
-     *                 <Set name="minIdle">0</Set>
-     *                 <Set name="maxIdle">5</Set>
-     *                 <Set name="maxWait">2000</Set>
-     *             </New>
-     *         </Arg>
-     *     </New>
-     * </Configure>
-     * }
-     * </pre>
+     * Configures the Connections to be added to the pool as read-only Connections.
      */
-    //CHECKSTYLE:ON
-    private boolean dataSourceProxy;
+    private boolean readOnly;
 
     /**
      * Fully-qualified name of the class that can control the physical naming strategy of hibernate.
      */
     private String physicalNamingStrategyClassName = "org.apereo.cas.hibernate.CasHibernatePhysicalNamingStrategy";
-    
+
     /**
      * Defines the isolation level for transactions.
      *

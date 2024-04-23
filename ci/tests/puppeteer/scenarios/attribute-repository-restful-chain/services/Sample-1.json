@@ -1,0 +1,34 @@
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "https://apereo.github.io",
+  "name" : "Sample",
+  "id" : 1,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "mergingPolicy": "DESTINATION",
+    "policies": [
+      "java.util.ArrayList",
+      [
+        {
+          "@class" : "org.apereo.cas.services.ReturnRestfulAttributeReleasePolicy",
+          "endpoint" : "http://localhost:5423",
+          "order": 0
+        },
+        {
+          "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+          "allowedAttributes" : {
+            "@class" : "java.util.TreeMap",
+            "mail" : "email-address",
+            "category" : "group"
+          },
+          "order": 1
+        },
+        {
+          "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+          "allowedAttributes" : [ "java.util.ArrayList", [ "group", "email-address" ] ],
+          "order": 2
+        }
+      ]
+    ]
+  }
+}

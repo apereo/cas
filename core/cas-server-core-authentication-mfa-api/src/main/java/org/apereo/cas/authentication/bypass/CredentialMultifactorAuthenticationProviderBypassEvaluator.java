@@ -8,8 +8,12 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ConfigurableApplicationContext;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.Serial;
+import java.util.Objects;
 
 /**
  * Multifactor Bypass provider based on Credentials.
@@ -19,13 +23,15 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 public class CredentialMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
+    @Serial
     private static final long serialVersionUID = -1233888418344342672L;
 
     private final MultifactorAuthenticationProviderBypassProperties bypassProperties;
 
     public CredentialMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
-                                                                      final String providerId) {
-        super(providerId);
+                                                                      final String providerId,
+                                                                      final ConfigurableApplicationContext applicationContext) {
+        super(providerId, applicationContext);
         this.bypassProperties = bypassProperties;
     }
 
@@ -39,7 +45,8 @@ public class CredentialMultifactorAuthenticationProviderBypassEvaluator extends 
     protected static boolean locateMatchingCredentialType(final Authentication authentication, final String credentialClassType) {
         return StringUtils.isNotBlank(credentialClassType) && authentication.getCredentials()
             .stream()
-            .anyMatch(e -> e.getCredentialClass().getName().matches(credentialClassType));
+            .anyMatch(e -> Objects.nonNull(e.getCredentialMetadata())
+                           && e.getCredentialMetadata().getCredentialClass().getName().matches(credentialClassType));
     }
 
     @Override
@@ -52,7 +59,6 @@ public class CredentialMultifactorAuthenticationProviderBypassEvaluator extends 
             LOGGER.debug("Bypass rules for credential types [{}] indicate the request may be ignored", bypassProperties.getCredentialClassType());
             return false;
         }
-
         return true;
     }
 }

@@ -1,6 +1,11 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryAttributesProperties;
+import org.apereo.cas.configuration.model.support.jdbc.JdbcPrincipalAttributesProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapPrincipalAttributesProperties;
+import org.apereo.cas.configuration.model.support.okta.OktaPrincipalAttributesProperties;
+import org.apereo.cas.configuration.model.support.redis.RedisPrincipalAttributesProperties;
+import org.apereo.cas.configuration.model.support.syncope.SyncopePrincipalAttributesProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -9,6 +14,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +45,9 @@ import java.util.List;
 @JsonFilter("PrincipalAttributesProperties")
 public class PrincipalAttributesProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -4515569588579072890L;
-    
+
     /**
      * Attribute resolution core/common settings.
      */
@@ -83,17 +90,6 @@ public class PrincipalAttributesProperties implements Serializable {
     private List<RedisPrincipalAttributesProperties> redis = new ArrayList<>(0);
 
     /**
-     * Retrieve attributes from Couchbase repositories.
-     */
-    @NestedConfigurationProperty
-    private CouchbasePrincipalAttributesProperties couchbase = new CouchbasePrincipalAttributesProperties();
-
-    /**
-     * Retrieve attributes from multiple scripted repositories.
-     */
-    private List<ScriptedPrincipalAttributesProperties> script = new ArrayList<>(0);
-
-    /**
      * Use stubbed attribute definitions as the underlying attribute repository source.
      * Static attributes that need to be mapped to a hardcoded value belong here.
      */
@@ -119,4 +115,16 @@ public class PrincipalAttributesProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AttributeDefinitionStoreProperties attributeDefinitionStore = new AttributeDefinitionStoreProperties();
+
+    /**
+     * Fetch user attributes from Okta.
+     */
+    @NestedConfigurationProperty
+    private OktaPrincipalAttributesProperties okta = new OktaPrincipalAttributesProperties();
+
+    /**
+     * Fetch user attributes from Apache Syncope.
+     */
+    @NestedConfigurationProperty
+    private SyncopePrincipalAttributesProperties syncope = new SyncopePrincipalAttributesProperties();
 }

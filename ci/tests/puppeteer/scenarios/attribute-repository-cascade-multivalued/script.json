@@ -1,0 +1,24 @@
+{
+  "dependencies": "core",
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.http-client.host-name-verifier=none",
+
+    "--cas.authn.attribute-repository.stub.attributes.prefix=sys_",
+    "--cas.authn.attribute-repository.stub.attributes.lastname=User",
+    "--cas.authn.attribute-repository.stub.attributes.firstname=CAS",
+    "--cas.authn.attribute-repository.stub.order=1",
+
+    "--cas.authn.attribute-repository.groovy[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attributes.groovy",
+    "--cas.authn.attribute-repository.groovy[0].order=2",
+
+    "--cas.authn.attribute-repository.core.aggregation=CASCADE",
+    "--cas.authn.attribute-repository.core.merger=MULTIVALUED",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ]
+}
+

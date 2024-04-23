@@ -6,9 +6,7 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.HttpRequestUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
-
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -16,16 +14,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.annotation.DirtiesContext;
-
+import org.springframework.mock.web.MockHttpServletResponse;
 import java.util.List;
 import java.util.Map;
-
 import static org.mockito.Mockito.*;
 
 /**
@@ -36,14 +33,11 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     AopAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@DirtiesContext
 public abstract class BaseMultifactorAuthenticationTriggerTests {
-    @Autowired
-    protected ConfigurableApplicationContext applicationContext;
-
     protected GeoLocationService geoLocationService;
 
     protected Authentication authentication;
@@ -52,12 +46,18 @@ public abstract class BaseMultifactorAuthenticationTriggerTests {
 
     protected MockHttpServletRequest httpRequest;
 
+    protected MockHttpServletResponse httpResponse;
+
     protected TestMultifactorAuthenticationProvider multifactorAuthenticationProvider;
+
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
+
+    @Autowired
+    protected CasConfigurationProperties casProperties;
 
     @BeforeEach
     public void setup(final TestInfo info) {
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-
         if (!info.getTags().contains("DisableProviderRegistration")) {
             this.multifactorAuthenticationProvider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         }
@@ -80,6 +80,9 @@ public abstract class BaseMultifactorAuthenticationTriggerTests {
         this.httpRequest.setRemoteAddr("185.86.151.11");
         this.httpRequest.setLocalAddr("185.88.151.12");
         this.httpRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
-        ClientInfoHolder.setClientInfo(new ClientInfo(this.httpRequest));
+        var clientInfo = ClientInfo.from(this.httpRequest);
+        ClientInfoHolder.setClientInfo(clientInfo);
+
+        this.httpResponse = new MockHttpServletResponse();
     }
 }

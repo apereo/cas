@@ -64,6 +64,21 @@ public class EncryptedTranscoder implements Transcoder {
         return encrypt(outBuffer);
     }
 
+    @Override
+    @SuppressWarnings("BanSerializableRead")
+    public Object decode(final byte[] encoded) throws IOException {
+        val data = decrypt(encoded);
+        try (val inBuffer = new ByteArrayInputStream(data);
+             val in = this.compression
+                 ? new ObjectInputStream(new GZIPInputStream(inBuffer))
+                 : new ObjectInputStream(inBuffer)) {
+            return in.readObject();
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            throw new IOException("Deserialization error", e);
+        }
+    }
+
     /**
      * Write object to output stream.
      *
@@ -76,7 +91,7 @@ public class EncryptedTranscoder implements Transcoder {
         var object = o;
         if (AopUtils.isAopProxy(o)) {
             try {
-                object = Advised.class.cast(o).getTargetSource().getTarget();
+                object = ((Advised) o).getTargetSource().getTarget();
             } catch (final Exception e) {
                 LoggingUtils.error(LOGGER, e);
             }
@@ -105,21 +120,6 @@ public class EncryptedTranscoder implements Transcoder {
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
             throw new IOException("Encryption error", e);
-        }
-    }
-
-    @Override
-    @SuppressWarnings("BanSerializableRead")
-    public Object decode(final byte[] encoded) throws IOException {
-        val data = decrypt(encoded);
-        try (val inBuffer = new ByteArrayInputStream(data);
-             val in = this.compression
-                 ? new ObjectInputStream(new GZIPInputStream(inBuffer))
-                 : new ObjectInputStream(inBuffer)) {
-            return in.readObject();
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-            throw new IOException("Deserialization error", e);
         }
     }
 

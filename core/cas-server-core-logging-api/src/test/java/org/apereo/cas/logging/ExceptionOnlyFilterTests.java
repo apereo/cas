@@ -1,6 +1,5 @@
 package org.apereo.cas.logging;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -23,7 +22,17 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Simple")
 @Slf4j
-public class ExceptionOnlyFilterTests {
+class ExceptionOnlyFilterTests {
+
+    private static long getFileSize() {
+        var logFile = FileUtils.getFile("build/slf4j-exceptions.log");
+        assertTrue(logFile.exists(), "Log file not found");
+        return logFile.length();
+    }
+
+    private static void sleep(final int millis) throws Exception {
+        Thread.sleep(millis);
+    }
 
     /**
      * Test that only log messages with Exception pass the {@link ExceptionOnlyFilter} filter.
@@ -33,7 +42,7 @@ public class ExceptionOnlyFilterTests {
      * Stopping th log system so file is flushed for size check, sleep also works.
      */
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val fileSize = getFileSize();
         LOGGER.error("Testing no exception");
         sleep(1000);
@@ -44,7 +53,7 @@ public class ExceptionOnlyFilterTests {
     }
 
     @Test
-    public void verifyFilters() {
+    void verifyFilters() throws Throwable {
         val filter = new ExceptionOnlyFilter();
         assertEquals(Filter.Result.ACCEPT,
             filter.filter(mock(Logger.class), Level.INFO, mock(Marker.class), mock(Message.class), new Throwable()));
@@ -60,17 +69,6 @@ public class ExceptionOnlyFilterTests {
             filter.filter(mock(Logger.class), Level.INFO, mock(Marker.class), "message", "value1", new Throwable()));
         assertEquals(Filter.Result.DENY,
             filter.filter(mock(Logger.class), Level.INFO, mock(Marker.class), "message", "value1", "value2"));
-    }
-
-    private static long getFileSize() {
-        var logFile = FileUtils.getFile("build/slf4j-exceptions.log");
-        assertTrue(logFile.exists(), "Log file not found");
-        return logFile.length();
-    }
-
-    @SneakyThrows
-    private static void sleep(final int millis) {
-        Thread.sleep(millis);
     }
 
 

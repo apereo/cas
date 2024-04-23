@@ -21,16 +21,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Groovy")
-@TestPropertySource(properties = "cas.authn.mfa.core.provider-selector-groovy-script.location=classpath:mfaGroovySelector.groovy")
-public class GroovyScriptMultifactorAuthenticationProviderSelectorTests extends BaseCasWebflowMultifactorAuthenticationTests {
+@Tag("GroovyAuthentication")
+@TestPropertySource(properties = "cas.authn.mfa.core.provider-selection.provider-selector-groovy-script.location=classpath:mfaGroovySelector.groovy")
+class GroovyScriptMultifactorAuthenticationProviderSelectorTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
     @Autowired
-    @Qualifier("multifactorAuthenticationProviderSelector")
+    @Qualifier(MultifactorAuthenticationProviderSelector.BEAN_NAME)
     private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
 
     @Test
-    public void verifySelectionOfMfaProvider() {
+    void verifySelectionOfMfaProvider() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         servicesManager.save(service);
         val dummy = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
@@ -41,7 +41,7 @@ public class GroovyScriptMultifactorAuthenticationProviderSelectorTests extends 
     }
 
     @Test
-    public void verifyNoProvider() {
+    void verifyNoProvider() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         servicesManager.save(service);
         val dummy = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);

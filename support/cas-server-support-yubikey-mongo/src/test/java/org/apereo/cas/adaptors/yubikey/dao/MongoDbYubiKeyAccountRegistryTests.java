@@ -3,11 +3,10 @@ package org.apereo.cas.adaptors.yubikey.dao;
 import org.apereo.cas.adaptors.yubikey.AbstractYubiKeyAccountRegistryTests;
 import org.apereo.cas.adaptors.yubikey.BaseYubiKeyTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
-import org.apereo.cas.config.MongoDbYubiKeyConfiguration;
+import org.apereo.cas.config.CasMongoDbYubiKeyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
-
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +20,9 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("MongoDb")
+@Tag("MongoDbMFA")
 @SpringBootTest(classes = {
-    MongoDbYubiKeyConfiguration.class,
+    CasMongoDbYubiKeyAutoConfiguration.class,
     BaseYubiKeyTests.SharedTestConfiguration.class
 },
     properties = {
@@ -38,9 +37,9 @@ import org.springframework.boot.test.context.SpringBootTest;
         "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As="
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnabledIfPortOpen(port = 27017)
+@EnabledIfListeningOnPort(port = 27017)
 @Getter
-public class MongoDbYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTests {
+class MongoDbYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTests {
     @Autowired
     @Qualifier("yubikeyAccountCipherExecutor")
     private CipherExecutor yubikeyAccountCipherExecutor;

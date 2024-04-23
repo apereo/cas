@@ -4,11 +4,7 @@ import lombok.val;
 import org.apache.commons.io.output.WriterOutputStream;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.core.env.Environment;
+import org.springframework.mock.env.MockEnvironment;
 
 import java.io.PrintStream;
 import java.io.StringWriter;
@@ -22,20 +18,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    AopAutoConfiguration.class
-})
-@Tag("WebApp")
-public class CasJettyBannerTests {
-    @Autowired
-    private Environment environment;
 
+@Tag("WebApp")
+class CasJettyBannerTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() throws Throwable {
         val banner = new CasJettyBanner();
         val writer = new StringWriter();
-        val out = new WriterOutputStream(writer, StandardCharsets.UTF_8);
+        val out = WriterOutputStream.builder().setWriter(writer).setCharset(StandardCharsets.UTF_8).get();
+        val environment = new MockEnvironment();
         try (val stream = new PrintStream(out, true, StandardCharsets.UTF_8)) {
             banner.printBanner(environment, CasJettyBanner.class, stream);
         }

@@ -1,4 +1,12 @@
 description = "Apereo CAS Metrics Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Monitoring",
+            title: "Apereo CAS Metrics",
+            aliases: ["metrics"]
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-authentication-api")
@@ -8,16 +16,16 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-monitor")
     
-    implementation libraries.mongo
-    implementation libraries.redis
     implementation libraries.metrics
-    implementation libraries.influxdb
-    implementation libraries.squareup
-    implementation libraries.okhttp
 
-    implementation project(":support:cas-server-support-redis-core")
-    implementation project(":support:cas-server-support-mongo-core")
-    implementation project(":support:cas-server-support-influxdb-core")
+    compileOnly libraries.mongo
+    compileOnly libraries.redis
+    compileOnly libraries.influxdb
+    compileOnly libraries.squareup
+    compileOnly libraries.okhttp
 
-
+    compileOnly project(":support:cas-server-support-redis-core")
+    compileOnly project(":support:cas-server-support-mongo-core")
+    compileOnly project(":support:cas-server-support-influxdb-core")
+    
 }

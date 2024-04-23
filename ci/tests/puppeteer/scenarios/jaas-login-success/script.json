@@ -1,0 +1,25 @@
+{
+  "dependencies": "core",
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.authn.accept.enabled=false",
+    
+    "--cas.authn.jaas[0].name=JAAS1",
+    "--cas.authn.jaas[0].realm=DevLogin",
+    "--cas.authn.jaas[0].login-config-type=JavaLoginConfig",
+    "--cas.authn.jaas[0].login-configuration-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/jaas.conf",
+    "--cas.authn.jaas[0].password-encoder.encoding-algorithm=MD5",
+    "--cas.authn.jaas[0].password-encoder.type=DEFAULT",
+
+    "--cas.authn.jaas[1].name=JAAS2",
+    "--cas.authn.jaas[1].realm=ProdLogin",
+    "--cas.authn.jaas[1].login-config-type=JavaLoginConfig",
+    "--cas.authn.jaas[1].login-configuration-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/jaas.conf",
+    "--cas.authn.jaas[1].password-encoder.encoding-algorithm=MD5",
+    "--cas.authn.jaas[1].password-encoder.type=DEFAULT"
+  ]
+}

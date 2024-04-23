@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -14,13 +15,16 @@ import java.io.Serializable;
  *
  * @author Misagh Moayyed
  * @since 5.0.0
+ * @deprecated Since 7.0.0
  */
 @Getter
 @Setter
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-support-memcached-core")
+@Deprecated(since = "7.0.0")
 public class BaseMemcachedProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 514520518053691666L;
 
     /**
@@ -90,6 +94,11 @@ public class BaseMemcachedProperties implements Serializable {
      * Hash algorithm. Acceptable values are {@code NATIVE_HASH,CRC_HASH,FNV1_64_HASH,FNV1A_64_HASH,FNV1_32_HASH,FNV1A_32_HASH,KETAMA_HASH}.
      */
     private String hashAlgorithm = "FNV1_64_HASH";
+
+    /**
+     * Protocol. Acceptable values are {@code TEXT, BINARY}.
+     */
+    private String protocol = "TEXT";
 
     /**
      * Sets the cap on the number of objects that can be allocated by

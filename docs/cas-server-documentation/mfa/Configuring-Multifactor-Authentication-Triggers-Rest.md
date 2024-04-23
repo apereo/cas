@@ -15,4 +15,4 @@ url in the body of the request.
 Endpoints must be designed to accept/process `application/json`. The body of the response in 
 the event of a successful `200` status code is expected to be the MFA provider id which CAS should activate.
 
-{% include casproperties.html properties="cas.authn.mfa.triggers.rest" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.triggers.rest" %}

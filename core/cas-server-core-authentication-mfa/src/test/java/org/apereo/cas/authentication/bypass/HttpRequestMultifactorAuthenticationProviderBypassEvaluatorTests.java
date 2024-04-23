@@ -21,25 +21,26 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("MFA")
-public class HttpRequestMultifactorAuthenticationProviderBypassEvaluatorTests {
+@Tag("MFATrigger")
+class HttpRequestMultifactorAuthenticationProviderBypassEvaluatorTests {
 
     @Test
-    public void verifyShouldProceed() {
+    void verifyShouldProceed() throws Throwable {
         val properties = new MultifactorAuthenticationProviderBypassProperties();
 
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        val eval = new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(properties, provider.getId());
+        val eval = new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(properties, provider.getId(), applicationContext);
 
         val principal = CoreAuthenticationTestUtils.getPrincipal(Map.of("cn", List.of("example")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
 
         val request = new MockHttpServletRequest();
-        assertTrue(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request));
+        assertTrue(eval.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService,
+            provider, request, CoreAuthenticationTestUtils.getService()));
 
     }
 

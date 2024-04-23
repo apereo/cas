@@ -3,20 +3,17 @@ package org.apereo.cas.support.saml.web.idp.profile.sso.request;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
+import net.shibboleth.shared.xml.ParserPool;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SignableSAMLObject;
-
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 /**
@@ -38,12 +35,12 @@ public class DefaultSSOSamlHttpRequestExtractor implements SSOSamlHttpRequestExt
         actionResolverName = AuditActionResolvers.SAML2_REQUEST_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SAML2_REQUEST_RESOURCE_RESOLVER)
     @Override
-    @SneakyThrows
-    public Optional<Pair<? extends SignableSAMLObject, MessageContext>> extract(final HttpServletRequest request,
-                                                                                final BaseHttpServletRequestXMLMessageDecoder decoder,
-                                                                                final Class<? extends SignableSAMLObject> clazz) {
+    public Optional<Pair<? extends SignableSAMLObject, MessageContext>> extract(
+        final HttpServletRequest request,
+        final BaseHttpServletRequestXMLMessageDecoder decoder,
+        final Class<? extends SignableSAMLObject> clazz) throws Exception {
         LOGGER.trace("Received SAML profile request [{}]", request.getRequestURI());
-        decoder.setHttpServletRequest(request);
+        decoder.setHttpServletRequestSupplier(() -> request);
         decoder.setParserPool(this.parserPool);
         decoder.initialize();
         decoder.decode();

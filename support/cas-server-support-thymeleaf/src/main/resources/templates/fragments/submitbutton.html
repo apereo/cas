@@ -11,13 +11,13 @@
 </head>
 
 <body>
-<main role="main" class="container mt-3 mb-3">
-    <div th:fragment="submitButton (messageKey)">
-
+<main class="container mt-3 mb-3">
+    <th:block th:fragment="submitButton (messageKey)">
         <button
-                class="mdc-button mdc-button--raised"
+                class="mdc-button mdc-button--raised btn btn-primary btn-primary"
                 th:if="${recaptchaSiteKey == null}"
-                name="submit"
+                name="submitBtn"
+                id="submitBtn"
                 accesskey="l"
                 type="submit">
             <span class="mdc-button__label" th:text="#{${messageKey}}">Login</span>
@@ -25,28 +25,30 @@
 
         <span th:unless="${recaptchaSiteKey == null}">
              <span th:if="${#strings.equalsIgnoreCase(recaptchaVersion, 'GOOGLE_RECAPTCHA_V2')}">
-                <button th:unless="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
-                        class="mdc-button mdc-button--raised"
-                        name="submit"
+                <button th:unless="${recaptchaInvisible != null AND recaptchaInvisible}"
+                        class="mdc-button mdc-button--raised btn btn-primary btn btn-primary"
+                        name="submitBtn"
+                        id="submitBtn"
                         accesskey="l"
                         type="submit"
                         value="Login3">
                     <span class="mdc-button__label" th:text="#{${messageKey}}">Login</span>
                 </button>
-                <button th:if="${recaptchaSiteKey != null AND recaptchaInvisible != null AND recaptchaInvisible}"
-                        class="mdc-button mdc-button--raised"
+                <button th:if="${recaptchaInvisible != null AND recaptchaInvisible}"
+                        class="mdc-button mdc-button--raised g-recaptcha btn btn-primary btn btn-primary"
                         th:attr="data-sitekey=${recaptchaSiteKey}, data-badge=${recaptchaPosition}"
                         data-callback="onRecaptchaV2Submit"
                         name="submitBtn"
+                        id="submitBtn"
                         accesskey="l">
                     <span class="mdc-button__label" th:text="#{${messageKey}}" ></span>
                 </button>
             </span>
 
             <span th:if="${#strings.equalsIgnoreCase(recaptchaVersion, 'GOOGLE_RECAPTCHA_V3')}">
-                <button class="mdc-button mdc-button--raised"
-                        th:if="${recaptchaSiteKey != null}"
-                        name="submit"
+                <button class="mdc-button mdc-button--raised btn btn-primary btn btn-primary"
+                        name="submitBtn"
+                        id="submitBtn"
                         th:attr="data-sitekey=${recaptchaSiteKey}"
                         accesskey="l"
                         th:value="#{screen.welcome.button.login}"
@@ -58,21 +60,20 @@
 
 
             <span th:if="${#strings.equalsIgnoreCase(recaptchaVersion, 'HCAPTCHA')}" th:remove="tag">
-                <button class="mdc-button mdc-button--raised"
-                        name="submit"
+                <button class="mdc-button mdc-button--raised btn btn-primary btn btn-primary"
+                        name="submitBtn"
+                        id="submitBtn"
                         accesskey="l"
                         type="submit"
                         value="Login3">
                     <span class="mdc-button__label" th:text="#{${messageKey}}">Login</span>
                 </button>
             </span>
-            
+
         </span>
 
-    </div>
+    </th:block>
 </main>
 </body>
 
 </html>
-
-

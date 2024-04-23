@@ -14,9 +14,9 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class PersistentIdGeneratorTests {
+class PersistentIdGeneratorTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val policy = mock(PersistentIdGenerator.class);
         when(policy.generate(any(Principal.class))).thenCallRealMethod();
         when(policy.generate(any(Principal.class), anyString())).thenReturn("1");

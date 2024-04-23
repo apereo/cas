@@ -30,10 +30,11 @@ import org.opensaml.saml.saml1.core.StatusMessage;
 import org.opensaml.saml.saml1.core.Subject;
 import org.opensaml.saml.saml1.core.SubjectConfirmation;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import javax.xml.namespace.QName;
-
+import java.io.Serial;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collection;
@@ -50,6 +51,7 @@ import java.util.Map;
 public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     private static final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:1.0:cm:artifact";
 
+    @Serial
     private static final long serialVersionUID = -4711012620700270554L;
 
     public Saml10ObjectBuilder(final OpenSamlConfigBean configBean) {
@@ -63,8 +65,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
      * @param samlResponse the saml 1 response
      */
     private static void setInResponseToForSamlResponseIfNeeded(final Service service, final Response samlResponse) {
-        if (service instanceof SamlService) {
-            val samlService = (SamlService) service;
+        if (service instanceof final SamlService samlService) {
             val requestId = samlService.getRequestId();
             if (StringUtils.isNotBlank(requestId)) {
                 samlResponse.setInResponseTo(requestId);
@@ -124,7 +125,10 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     public Conditions newConditions(final ZonedDateTime issuedAt, final String audienceUri, final long issueLength) {
         val conditions = SamlUtils.newSamlObject(Conditions.class);
         conditions.setNotBefore(issuedAt.toInstant());
-        conditions.setNotOnOrAfter(issuedAt.plus(issueLength, ChronoUnit.SECONDS).toInstant());
+
+        val notOnOrAfter = ZonedDateTime.now(ZoneOffset.UTC).plus(issueLength, ChronoUnit.SECONDS);
+        conditions.setNotOnOrAfter(notOnOrAfter.toInstant());
+
         val audienceRestriction = SamlUtils.newSamlObject(AudienceRestrictionCondition.class);
         val audience = SamlUtils.newSamlObject(Audience.class);
         audience.setURI(audienceUri);
@@ -276,13 +280,11 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     public void encodeSamlResponse(final HttpServletResponse httpResponse,
                                    final HttpServletRequest httpRequest,
                                    final Response samlMessage) throws Exception {
-
-        SamlUtils.logSamlObject(this.openSamlConfigBean, samlMessage);
-
+        openSamlConfigBean.logObject(samlMessage);
         val encoder = new CasHttpSoap11Encoder();
         val context = new MessageContext();
         context.setMessage(samlMessage);
-        encoder.setHttpServletResponse(httpResponse);
+        encoder.setHttpServletResponseSupplier(() -> httpResponse);
         encoder.setMessageContext(context);
         encoder.initialize();
         encoder.prepareContext();

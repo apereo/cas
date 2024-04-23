@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.FileSystemResource;
 
+import jakarta.annotation.Nonnull;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.FilterInputStream;
@@ -26,6 +28,25 @@ public class TemporaryFileSystemResource extends FileSystemResource {
         super(file);
     }
 
+    @Nonnull
+    @Override
+    public InputStream getInputStream() throws IOException {
+        return new FilterInputStream(super.getInputStream()) {
+
+            @Override
+            public void close() throws IOException {
+                closeThenDeleteFile(this.in);
+            }
+
+        };
+    }
+
+    @Override
+    public boolean isFile() {
+        return false;
+    }
+
+    @Nonnull
     @Override
     public ReadableByteChannel readableChannel() throws IOException {
         val readableChannel = super.readableChannel();
@@ -48,18 +69,6 @@ public class TemporaryFileSystemResource extends FileSystemResource {
         };
     }
 
-    @Override
-    public InputStream getInputStream() throws IOException {
-        return new FilterInputStream(super.getInputStream()) {
-
-            @Override
-            public void close() throws IOException {
-                closeThenDeleteFile(this.in);
-            }
-
-        };
-    }
-
     private void closeThenDeleteFile(final Closeable closeable) throws IOException {
         try {
             closeable.close();
@@ -72,13 +81,9 @@ public class TemporaryFileSystemResource extends FileSystemResource {
         try {
             Files.delete(getFile().toPath());
         } catch (final IOException ex) {
-            LOGGER.warn("Failed to delete temporary heap dump file '" + getFile() + '\'', ex);
+            val msg = String.format("Failed to delete temporary heap dump file %s", getFile());
+            LOGGER.warn(msg, ex);
         }
-    }
-
-    @Override
-    public boolean isFile() {
-        return false;
     }
 
 }

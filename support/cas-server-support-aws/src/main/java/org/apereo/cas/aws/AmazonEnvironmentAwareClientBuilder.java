@@ -1,7 +1,8 @@
 package org.apereo.cas.aws;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
@@ -64,7 +65,6 @@ public class AmazonEnvironmentAwareClientBuilder {
      * @param clientType the client type
      * @return the client instance
      */
-    @SneakyThrows
     public <T> T build(final AwsClientBuilder builder, final Class<T> clientType) {
         val key = getSetting("credential-access-key");
         val secret = getSetting("credential-secret-key");
@@ -76,7 +76,7 @@ public class AmazonEnvironmentAwareClientBuilder {
 
         val endpoint = getSetting("endpoint");
         if (StringUtils.isNotBlank(endpoint)) {
-            builder.endpointOverride(new URI(endpoint));
+            builder.endpointOverride(FunctionUtils.doUnchecked(() -> new URI(endpoint)));
         }
         val result = builder.build();
         return clientType.cast(result);

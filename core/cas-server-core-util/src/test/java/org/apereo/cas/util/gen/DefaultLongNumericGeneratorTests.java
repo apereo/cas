@@ -11,39 +11,39 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("Simple")
-public class DefaultLongNumericGeneratorTests {
+class DefaultLongNumericGeneratorTests {
 
     @Test
-    public void verifyWrap() {
+    void verifyWrap() throws Throwable {
         assertEquals(Long.MAX_VALUE, new DefaultLongNumericGenerator(Long.MAX_VALUE)
             .getNextLong());
     }
 
     @Test
-    public void verifyInitialValue() {
+    void verifyInitialValue() throws Throwable {
         assertEquals(10L, new DefaultLongNumericGenerator(10L)
             .getNextLong());
     }
 
     @Test
-    public void verifyIncrementWithNoWrap() {
+    void verifyIncrementWithNoWrap() throws Throwable {
         assertEquals(0, new DefaultLongNumericGenerator().getNextLong());
     }
 
     @Test
-    public void verifyIncrementWithNoWrap2() {
+    void verifyIncrementWithNoWrap2() throws Throwable {
         val g = new DefaultLongNumericGenerator();
         g.getNextLong();
         assertEquals(1, g.getNextLong());
     }
 
     @Test
-    public void verifyMinimumSize() {
+    void verifyMinimumSize() throws Throwable {
         assertEquals(1, new DefaultLongNumericGenerator().minLength());
     }
 
     @Test
-    public void verifyMaximumLength() {
+    void verifyMaximumLength() throws Throwable {
         assertEquals(Long.toString(Long.MAX_VALUE).length(),
             new DefaultLongNumericGenerator().maxLength());
     }

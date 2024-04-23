@@ -9,16 +9,16 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
+@Tag("SAMLServiceProvider")
 @TestPropertySource(properties = {
     "cas.saml-sp.neo-gov.metadata=classpath:/metadata/sp-metadata.xml",
     "cas.saml-sp.neo-gov.name-id-attribute=cn",
     "cas.saml-sp.neo-gov.name-id-format=transient"
 })
-public class CasSamlSPNeoGovConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPNeoGovConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
     @Override
     protected String getServiceProviderId() {
-        return casProperties.getSamlSp().getNeoGov().getEntityIds().get(0);
+        return casProperties.getSamlSp().getNeoGov().getEntityIds().getFirst();
     }
 }

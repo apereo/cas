@@ -1,0 +1,33 @@
+{
+  "dependencies": "reports,dynamodb-ticket-registry,dynamodb-service-registry",
+  "conditions": {
+    "docker": "true"
+  },
+
+  "jvmArgs": "-Daws.accessKeyId=AKIAIPPIGGUNIO74C63Z -Daws.secretAccessKey=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",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+
+    "--management.health.dynamoDbHealthIndicator.enabled=true",
+
+    "--management.endpoints.web.exposure.include=health",
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.enabled-by-default=true",
+
+    "--cas.service-registry.dynamo-db.endpoint=http://localhost:8000",
+    "--cas.service-registry.dynamo-db.drop-tables-on-startup=true",
+    "--cas.service-registry.dynamo-db.local-instance=true",
+    "--cas.service-registry.dynamo-db.region=us-east-1",
+
+    "--cas.ticket.registry.dynamo-db.endpoint=http://localhost:8000",
+    "--cas.ticket.registry.dynamo-db.drop-tables-on-startup=true",
+    "--cas.ticket.registry.dynamo-db.local-instance=true",
+    "--cas.ticket.registry.dynamo-db.region=us-east-1"
+  ],
+  "initScript": "${PWD}/ci/tests/dynamodb/run-dynamodb-server.sh"
+}

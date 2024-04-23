@@ -1,0 +1,15 @@
+{
+  "dependencies": "rest-authentication",
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    "--cas.authn.accept.enabled=false",
+    
+    "--cas.authn.rest[0].uri=http://localhost:5433/unknown",
+    "--cas.authn.rest[0].order=0",
+
+    "--cas.authn.rest[1].uri=http://localhost:5432/authn.json",
+    "--cas.authn.rest[1].order=1"
+  ]
+}

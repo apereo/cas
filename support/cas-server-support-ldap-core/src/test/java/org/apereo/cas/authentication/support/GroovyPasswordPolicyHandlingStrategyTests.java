@@ -13,6 +13,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import javax.security.auth.login.AccountExpiredException;
 
+import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -23,28 +24,26 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @Tag("Groovy")
-public class GroovyPasswordPolicyHandlingStrategyTests {
+class GroovyPasswordPolicyHandlingStrategyTests {
     @Test
-    public void verifyStrategySupportsDefault() {
+    void verifyStrategySupportsDefault() throws Throwable {
         val resource = new ClassPathResource("lppe-strategy.groovy");
-
-        val s = new GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse>(resource, mock(ApplicationContext.class));
+        val strategy = new GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse>(resource, mock(ApplicationContext.class));
         val res = mock(AuthenticationResponse.class);
         when(res.getAuthenticationResultCode()).thenReturn(AuthenticationResultCode.INVALID_CREDENTIAL);
         when(res.isSuccess()).thenReturn(false);
 
-        val results = s.handle(res, mock(PasswordPolicyContext.class));
-
-        assertFalse(s.supports(null));
-        assertTrue(s.supports(res));
+        val results = strategy.handle(res, mock(PasswordPolicyContext.class));
+        assertFalse(strategy.supports(null));
+        assertTrue(strategy.supports(res));
         assertFalse(results.isEmpty());
     }
 
     @Test
-    public void verifyStrategyHandlesErrors() {
+    void verifyStrategyHandlesErrors() throws Throwable {
         val resource = new ClassPathResource("lppe-strategy-throws-error.groovy");
-        val s = new GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse>(resource, mock(ApplicationContext.class));
+        val strategy = new GroovyPasswordPolicyHandlingStrategy<AuthenticationResponse>(resource, mock(ApplicationContext.class));
         val res = mock(AuthenticationResponse.class);
-        assertThrows(AccountExpiredException.class, () -> s.handle(res, mock(PasswordPolicyContext.class)));
+        assertThrowsWithRootCause(RuntimeException.class, AccountExpiredException.class, () -> strategy.handle(res, mock(PasswordPolicyContext.class)));
     }
 }

@@ -1,0 +1,23 @@
+cas:
+  authn:
+    jdbc:
+      query:
+        - sql: SELECT * FROM pm_table_accounts WHERE userid=?
+          field-password: password
+          field-expired: status
+          driver-class: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE
+          dialect: org.hibernate.dialect.MySQLDialect
+          password: password
+          user: root
+          password-encoder:
+            type: NONE
+    pm:
+      jdbc:
+        sql-get-security-questions: SELECT question, answer FROM pm_table_questions WHERE userid=?
+        sql-delete-security-questions: DELETE FROM pm_table_questions WHERE userid=?
+        sql-update-security-questions: INSERT INTO pm_table_questions(userid, question, answer) VALUES (?,?,?)
+        sql-find-email: SELECT email FROM pm_table_accounts WHERE userid=?
+        sql-find-user: SELECT userid FROM pm_table_accounts WHERE email=?
+        sql-find-phone: SELECT phone FROM pm_table_accounts WHERE userid=?
+        sql-change-password: UPDATE pm_table_accounts SET password=?,status=false WHERE userid=?

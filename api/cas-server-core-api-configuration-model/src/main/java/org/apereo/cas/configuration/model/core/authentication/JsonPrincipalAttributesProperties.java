@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * <p>
  * If you wish to directly and separately retrieve attributes from a static JSON source.
@@ -33,6 +35,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class JsonPrincipalAttributesProperties extends SpringResourceProperties {
 
+    @Serial
     private static final long serialVersionUID = -6573755681498251678L;
 
     /**
@@ -46,4 +49,9 @@ public class JsonPrincipalAttributesProperties extends SpringResourceProperties 
      * A value can be assigned to this field to uniquely identify this resolver.
      */
     private String id;
+
+    /**
+     * Whether attribute resolution based on this source is enabled.
+     */
+    private AttributeRepositoryStates state = AttributeRepositoryStates.ACTIVE;
 }

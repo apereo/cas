@@ -17,7 +17,7 @@ perform the requested action, e.g. attribute release.
 - If the user does not have a valid CAS SSO session, the user will be redirected to CAS and must
 authenticate before the IdP proceeds with the requested action.
 
-<div class="alert alert-info"><strong>Note</strong><p>Remember that this page is specifically dedicated to integration options with the Shibboleth Identity Provider. If you need CAS to act as a SAML2 identity provider on its own, you should <a href="../authentication/Configuring-SAML2-Authentication.html">start here instead</a>.</p></div>
+<div class="alert alert-info">:information_source: <strong>Note</strong><p>Remember that this page is specifically dedicated to integration options with the Shibboleth Identity Provider. If you need CAS to act as a SAML2 identity provider on its own, you should <a href="../authentication/Configuring-SAML2-Authentication.html">start here instead</a>.</p></div>
 
 ## SSO for Shibboleth IdP (External)
 
@@ -31,9 +31,9 @@ and [v3](https://github.com/Unicon/shib-cas-authn3) and [v4](https://github.com/
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-shibboleth" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-shibboleth" %}
 
-{% include casproperties.html properties="cas.authn.shib-idp" %}
+{% include_cached casproperties.html properties="cas.authn.shib-idp" %}
 
 ### Relying Party EntityId
 
@@ -59,9 +59,9 @@ that is provided by the metadata associated with the relying party.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-mdui" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-saml-mdui" %}
 
-{% include casproperties.html properties="cas.saml-metadata-ui" %}
+{% include_cached casproperties.html properties="cas.saml-metadata-ui" %}
 
 ### Relying Party Metadata
 
@@ -78,7 +78,7 @@ service application and specify a number of MDUI-like elements in the body of th
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "relying-party-entity-id",
   "name" : "Test",
   "id" : 100,

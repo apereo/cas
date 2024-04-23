@@ -17,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
-public class SamlRestServiceTicketResourceEntityResponseFactoryTests {
+@Tag("SAML2")
+class SamlRestServiceTicketResourceEntityResponseFactoryTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val factory = new SamlRestServiceTicketResourceEntityResponseFactory(new DefaultUniqueTicketIdGenerator());
         assertEquals(0, factory.getOrder());
 

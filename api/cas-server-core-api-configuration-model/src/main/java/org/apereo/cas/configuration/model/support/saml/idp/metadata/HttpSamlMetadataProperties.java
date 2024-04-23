@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -7,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +24,7 @@ import java.io.Serializable;
 @JsonFilter("HttpSamlMetadataProperties")
 public class HttpSamlMetadataProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8226473583467202828L;
 
     /**
@@ -37,5 +40,6 @@ public class HttpSamlMetadataProperties implements Serializable {
      * off of the metadata location on disk when specified. The directory location
      * should also support and be resolvable via Spring expression language.
      */
+    @ExpressionLanguageCapable
     private String metadataBackupLocation;
 }

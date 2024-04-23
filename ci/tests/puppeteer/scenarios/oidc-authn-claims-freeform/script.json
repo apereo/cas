@@ -1,0 +1,33 @@
+{
+  "dependencies": "oidc",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--logging.level.org.apereo.cas=info",
+
+    "--cas.authn.attribute-repository.stub.attributes.cn=casuser",
+    "--cas.authn.attribute-repository.stub.attributes.mail=cas@example.org",
+    "--cas.authn.attribute-repository.stub.attributes.sn=Apereo",
+    "--cas.authn.attribute-repository.stub.attributes.givenName=CAS",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/freeform.jwks",
+    
+    "--cas.authn.oidc.discovery.scopes=openid",
+    "--cas.authn.oidc.discovery.claims=sub,given_name,common_name,family_name,client_ip,authenticationDate,authenticationMethod",
+
+    "--cas.authn.oidc.core.claims-map.sn=family_name",
+    "--cas.authn.oidc.core.claims-map.cn=common_name",
+    "--cas.authn.oidc.core.claims-map.givenName=given_name",
+    "--cas.authn.oidc.core.claims-map.ClientIpAddress=client_ip",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}
+

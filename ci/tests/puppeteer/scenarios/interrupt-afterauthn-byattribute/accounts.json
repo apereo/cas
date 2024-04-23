@@ -1,0 +1,14 @@
+{
+  "@class" : "java.util.LinkedHashMap",
+  "testuser" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "testuser",
+    "warnings" : [ "java.util.ArrayList", [ "Hello, World!" ] ],
+    "attributes" : {
+      "@class" : "java.util.LinkedHashMap",
+      "family_name" : [ "java.util.List", ["Apereo"] ],
+      "name" : [ "java.util.List", ["ApereoCAS"] ],
+      "groups" : [ "java.util.List", ["admin", "super", "staff"] ]
+    }
+  }
+}

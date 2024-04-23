@@ -15,10 +15,10 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("RegisteredService")
-public class RegisteredServiceCipherExecutorTests {
+@Tag("Cipher")
+class RegisteredServiceCipherExecutorTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val component = mock(RegisteredServiceCipherExecutor.class);
         when(component.isEnabled()).thenCallRealMethod();
         when(component.supports(any())).thenCallRealMethod();

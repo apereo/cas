@@ -1,0 +1,50 @@
+{
+  "dependencies": "reports,amqp-ticket-registry,pac4j-webflow",
+
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--logging.level.org.apereo.cas=info",
+    "--logging.level.org.springframework.amqp=debug",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.tgc.crypto.encryption.key=u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w",
+    "--cas.tgc.crypto.signing.key=zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w",
+    
+    "--spring.rabbitmq.host=localhost",
+    "--spring.rabbitmq.port=5672",
+    "--spring.rabbitmq.username=rabbituser",
+    "--spring.rabbitmq.password=bugsbunny",
+
+    "--cas.ticket.registry.in-memory.crypto.signing.key=CYPAXgmLzDnPjWEdCMeP360LorQjurUFtUgJGvBLdctpGgUDK1NjTnfjEmHJpnQHwQ52KYWpmQ4GlAmsxlDjiQ",
+    "--cas.ticket.registry.in-memory.crypto.encryption.key=7CITiW3O2dOpUYOwHJX3-w",
+
+    "--cas.authn.pac4j.saml[0].keystore-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].private-key-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].service-provider-entity-id=cas:apereo:pac4j:saml",
+    "--cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/sp-metadata.xml",
+    "--cas.authn.pac4j.saml[0].keystore-path=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/samlKeystore.jks",
+    "--cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=http://localhost:9443/simplesaml/saml2/idp/metadata.php",
+    "--cas.authn.pac4j.saml[0].destination-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
+    "--cas.authn.pac4j.saml[0].client-name=SAML2Client",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true"
+  ],
+  "bootstrapScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "instances": 2,
+  "instance1": {
+    "properties": [
+      "--cas.ticket.registry.core.queue-identifier=cas-queue-1"
+    ]
+  },
+  "instance2": {
+    "properties": [
+      "--cas.ticket.registry.core.queue-identifier=cas-queue-2"
+    ]
+  }
+}

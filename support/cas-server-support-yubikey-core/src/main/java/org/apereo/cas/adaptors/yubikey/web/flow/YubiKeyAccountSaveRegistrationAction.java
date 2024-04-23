@@ -2,15 +2,15 @@ package org.apereo.cas.adaptors.yubikey.web.flow;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
+import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.binding.message.MessageBuilder;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -22,7 +22,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class YubiKeyAccountSaveRegistrationAction extends AbstractAction {
+public class YubiKeyAccountSaveRegistrationAction extends AbstractMultifactorAuthenticationAction<YubiKeyMultifactorAuthenticationProvider> {
 
     /**
      * Token parameter.
@@ -39,11 +39,12 @@ public class YubiKeyAccountSaveRegistrationAction extends AbstractAction {
     private final YubiKeyAccountRegistry registry;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         try {
-            val uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
-            val token = requestContext.getRequestParameters().getRequired(PARAMETER_NAME_TOKEN);
-            val accountName = requestContext.getRequestParameters().getRequired(PARAMETER_NAME_ACCOUNT);
+            val principal = resolvePrincipal(WebUtils.getAuthentication(requestContext).getPrincipal(), requestContext);
+            val uid = principal.getId();
+            val token = WebUtils.getRequestParameterOrAttribute(requestContext, PARAMETER_NAME_TOKEN).orElseThrow();
+            val accountName = WebUtils.getRequestParameterOrAttribute(requestContext, PARAMETER_NAME_ACCOUNT).orElseThrow();
 
             val regRequest = YubiKeyDeviceRegistrationRequest.builder()
                 .username(uid)
@@ -57,11 +58,7 @@ public class YubiKeyAccountSaveRegistrationAction extends AbstractAction {
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
-        val messageContext = requestContext.getMessageContext();
-        messageContext.addMessage(new MessageBuilder()
-            .error()
-            .code(CODE_FAILURE)
-            .build());
+        WebUtils.addErrorMessageToContext(requestContext, CODE_FAILURE);
         return error();
     }
 }

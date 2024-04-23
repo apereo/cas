@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.generic;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -10,6 +11,7 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,11 +26,13 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class FileAuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 4031366217090049241L;
 
     /**
      * File resource where user accounts are kept.
      */
+    @RequiredProperty
     private transient Resource filename;
 
     /**

@@ -12,9 +12,9 @@ import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.util.DateTimeUtils;
 
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.ext.ActiveDirectoryAccountState;
@@ -30,6 +30,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
+
 import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -52,7 +53,7 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
     /**
      * Map of account state error to CAS authentication exception.
      */
-    protected Map<AccountState.Error, LoginException> errorMap;
+    protected final Map<AccountState.Error, LoginException> errorMap;
 
     @Setter
     private Map<String, Class<? extends LoginException>> attributesToErrorMap = new LinkedCaseInsensitiveMap<>(DEFAULT_ERROR_COUNT);
@@ -71,7 +72,7 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
         this.errorMap.put(ActiveDirectoryAccountState.Error.PASSWORD_EXPIRED, new CredentialExpiredException());
         this.errorMap.put(ActiveDirectoryAccountState.Error.ACCOUNT_EXPIRED, new AccountExpiredException());
         this.errorMap.put(ActiveDirectoryAccountState.Error.LOGON_FAILURE, new FailedLoginException());
-        
+
         this.errorMap.put(EDirectoryAccountState.Error.ACCOUNT_EXPIRED, new AccountExpiredException());
         this.errorMap.put(EDirectoryAccountState.Error.FAILED_AUTHENTICATION, new FailedLoginException());
         this.errorMap.put(EDirectoryAccountState.Error.LOGIN_LOCKOUT, new AccountLockedException());
@@ -97,7 +98,7 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
 
     @Override
     public List<MessageDescriptor> handle(final AuthenticationResponse response,
-        final PasswordPolicyContext configuration) throws LoginException {
+                                          final PasswordPolicyContext configuration) throws LoginException {
         LOGGER.debug("Attempting to handle LDAP account state for [{}]", response);
         if (!this.attributesToErrorMap.isEmpty() && response.isSuccess()) {
             LOGGER.debug("Handling policy based on pre-defined attributes");
@@ -105,6 +106,10 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
         }
 
         val state = response.getAccountState();
+        if (state == null && !response.isSuccess()) {
+            handleFailingResponse(response, configuration);
+        }
+
         if (state == null) {
             LOGGER.debug("Account state not defined. Returning empty list of messages.");
             return new ArrayList<>(0);
@@ -114,6 +119,19 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
         handleWarning(state.getWarning(), response, configuration, messages);
 
         return messages;
+    }
+
+    /**
+     * Handle failing response.
+     *
+     * @param response      the response
+     * @param configuration the configuration
+     * @throws LoginException the login exception
+     */
+    protected void handleFailingResponse(final AuthenticationResponse response,
+                                         final PasswordPolicyContext configuration) throws LoginException {
+        val error = ActiveDirectoryAccountState.Error.parse(response.getDiagnosticMessage());
+        handleError(error, response, configuration, new ArrayList<>());
     }
 
     /**
@@ -131,7 +149,7 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
                                final PasswordPolicyContext configuration, final List<MessageDescriptor> messages) throws LoginException {
 
         LOGGER.debug("Handling LDAP account state error [{}]", error);
-        if (errorMap.containsKey(error)) {
+        if (error != null && errorMap.containsKey(error)) {
             throw errorMap.get(error);
         }
         LOGGER.debug("No LDAP error mapping defined for [{}]", error);
@@ -150,8 +168,6 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
      */
     protected void handleWarning(final AccountState.Warning warning, final AuthenticationResponse response,
                                  final PasswordPolicyContext configuration, final List<MessageDescriptor> messages) {
-
-
         LOGGER.debug("Handling account state warning [{}]", warning);
         if (warning == null) {
             LOGGER.debug("Account state warning not defined");
@@ -162,9 +178,8 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
             val expDate = DateTimeUtils.zonedDateTimeOf(warning.getExpiration());
             val ttl = ZonedDateTime.now(ZoneOffset.UTC).until(expDate, ChronoUnit.DAYS);
             LOGGER.debug("Password expires in [{}] days. Expiration warning threshold is [{}] days.",
-                ttl,
-                configuration.getPasswordWarningNumberOfDays());
-            if (configuration.isAlwaysDisplayPasswordExpirationWarning() || ttl < configuration.getPasswordWarningNumberOfDays()) {
+                ttl, configuration.getPasswordWarningNumberOfDays());
+            if (configuration.isAlwaysDisplayPasswordExpirationWarning() || (ttl >= 0 && ttl < configuration.getPasswordWarningNumberOfDays())) {
                 messages.add(new PasswordExpiringWarningMessageDescriptor("Password expires in {0} days.", ttl));
             }
         } else {
@@ -185,14 +200,14 @@ public class DefaultLdapAccountStateHandler implements AuthenticationAccountStat
      * This handles ad-hoc password policies.
      *
      * @param response the authentication response.
+     * @throws LoginException the login exception
      */
-    @SneakyThrows
-    protected void handlePolicyAttributes(final AuthenticationResponse response) {
+    protected void handlePolicyAttributes(final AuthenticationResponse response) throws LoginException {
         val attributes = response.getLdapEntry().getAttributes();
         for (val attr : attributes) {
             if (this.attributesToErrorMap.containsKey(attr.getName()) && Boolean.parseBoolean(attr.getStringValue())) {
                 val clazz = this.attributesToErrorMap.get(attr.getName());
-                throw clazz.getDeclaredConstructor().newInstance();
+                throw Unchecked.supplier(() -> clazz.getDeclaredConstructor().newInstance()).get();
             }
         }
     }

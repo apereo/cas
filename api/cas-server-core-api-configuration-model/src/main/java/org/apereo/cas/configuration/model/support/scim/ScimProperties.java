@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.scim;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -7,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -19,19 +21,15 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class ScimProperties implements Serializable {
+public class ScimProperties implements CasFeatureModule, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7943229230342691009L;
 
     /**
      * Decide whether scim should be enabled.
      */
     private boolean enabled = true;
-
-    /**
-     * Indicate what version of the scim protocol is and should be used.
-     */
-    private long version = 2;
 
     /**
      * The SCIM provisioning target URI.

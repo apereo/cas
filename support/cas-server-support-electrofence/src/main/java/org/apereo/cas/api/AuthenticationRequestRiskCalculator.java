@@ -3,8 +3,7 @@ package org.apereo.cas.api;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
+import org.apereo.inspektr.common.web.ClientInfo;
 
 /**
  * This is {@link AuthenticationRequestRiskCalculator}.
@@ -15,24 +14,14 @@ import java.math.BigDecimal;
 @FunctionalInterface
 public interface AuthenticationRequestRiskCalculator {
     /**
-     * Highest risk score for an authn request.
-     */
-    BigDecimal HIGHEST_RISK_SCORE = BigDecimal.ONE;
-
-    /**
-     * Lowest risk score for an authn request.
-     */
-    BigDecimal LOWEST_RISK_SCORE = BigDecimal.ZERO;
-
-    /**
      * Calculate authentication risk score.
      *
      * @param authentication the authentication
      * @param service        the service
-     * @param request        the request
+     * @param clientInfo     the client info
      * @return the authentication risk score
      */
     AuthenticationRiskScore calculate(Authentication authentication,
                                       RegisteredService service,
-                                      HttpServletRequest request);
+                                      ClientInfo clientInfo);
 }

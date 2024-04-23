@@ -8,8 +8,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,15 +30,19 @@ import java.util.Map;
 @EqualsAndHashCode
 public class RegisteredServiceChainingAttributeFilter implements RegisteredServiceAttributeFilter {
 
+    @Serial
     private static final long serialVersionUID = 903015750234610128L;
 
     private List<RegisteredServiceAttributeFilter> filters = new ArrayList<>(0);
 
     @Override
-    public Map<String, List<Object>> filter(final Map<String, List<Object>> givenAttributes) {
+    public Map<String, List<Object>> filter(final Map<String, List<Object>> givenAttributes) throws Throwable {
         AnnotationAwareOrderComparator.sort(this.filters);
         val attributes = new HashMap<String, List<Object>>();
-        filters.forEach(policy -> attributes.putAll(policy.filter(givenAttributes)));
+        filters
+            .stream()
+            .map(Unchecked.function(policy -> policy.filter(givenAttributes)))
+            .forEach(attributes::putAll);
         return attributes;
     }
 

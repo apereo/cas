@@ -5,7 +5,7 @@ import org.apereo.cas.support.saml.services.BaseSamlIdPServicesTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,12 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("SAML")
+@Tag("SAMLMetadata")
 @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=file:/tmp")
-public class JsonResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
+class JsonResourceMetadataResolverTests extends BaseSamlIdPServicesTests {
 
     @Test
-    public void verifyResolverResolves() throws Exception {
+    void verifyResolverResolves() throws Throwable {
         val props = new SamlIdPProperties();
         val dir = new FileSystemResource(FileUtils.getTempDirectory());
         props.getMetadata().getFileSystem().setLocation(dir.getFile().getCanonicalPath());
@@ -37,7 +37,6 @@ public class JsonResourceMetadataResolverTests extends BaseSamlIdPServicesTests 
             new File(FileUtils.getTempDirectory(), "saml-sp-metadata.json"));
         val service = new SamlRegisteredService();
         val resolver = new JsonResourceMetadataResolver(props, openSamlConfigBean);
-
         service.setName("Example");
         service.setId(1000);
         service.setServiceId("https://example.org/saml");
@@ -56,7 +55,7 @@ public class JsonResourceMetadataResolverTests extends BaseSamlIdPServicesTests 
      * Make sure default file:/etc/cas/saml URI syntax is parsed correctly.
      */
     @Test
-    public void verifyResolverResolvesWithFileUri() {
+    void verifyResolverResolvesWithFileUri() throws Throwable {
         val props = new SamlIdPProperties();
         props.getMetadata().getFileSystem().setLocation("file:/etc/cas/saml");
         val resolver = new JsonResourceMetadataResolver(props, openSamlConfigBean);

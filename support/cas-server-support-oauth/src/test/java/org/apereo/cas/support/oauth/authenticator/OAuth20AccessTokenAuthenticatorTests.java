@@ -1,17 +1,19 @@
 package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
-
+import org.apereo.cas.ticket.InvalidTicketException;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.JEEContext;
-import org.pac4j.core.context.session.JEESessionStore;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.TokenCredentials;
+import org.pac4j.core.credentials.authenticator.Authenticator;
+import org.pac4j.jee.context.JEEContext;
+import org.pac4j.jee.context.session.JEESessionStore;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,74 +23,47 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OAuth")
-public class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
-    protected OAuth20AccessTokenAuthenticator authenticator;
-
-    @BeforeEach
-    public void init() {
-        authenticator = new OAuth20AccessTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
-    }
-
-    @BeforeEach
-    public void initialize() {
-        super.initialize();
-        ticketRegistry.deleteAll();
-    }
+class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTests {
+    @Autowired
+    @Qualifier("oauthAccessTokenAuthenticator")
+    private Authenticator oauthAccessTokenAuthenticator;
 
     @Test
-    public void verifyAuthenticationWithJwtAccessToken() {
+    void verifyAuthenticationWithJwtAccessToken() throws Throwable {
         val accessToken = getAccessToken();
-        this.ticketRegistry.addTicket(accessToken);
+        ticketRegistry.addTicket(accessToken);
 
-        val encoder = OAuth20JwtAccessTokenEncoder.builder()
-            .accessToken(accessToken)
-            .registeredService(serviceJwtAccessToken)
-            .service(accessToken.getService())
-            .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .casProperties(casProperties)
-            .build();
-
-        val credentials = new TokenCredentials(encoder.encode());
+        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(accessTokenJwtBuilder, serviceJwtAccessToken,
+            accessToken, accessToken.getService(), casProperties, false).encode(accessToken.getId());
+        val credentials = new TokenCredentials(encodedAccessToken);
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        oauthAccessTokenAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
     }
 
     @Test
-    public void verifyAuthenticationFailsWithNoToken() {
+    void verifyAuthenticationFailsWithNoToken() throws Throwable {
         val accessToken = getAccessToken();
-        val encoder = OAuth20JwtAccessTokenEncoder.builder()
-            .accessToken(accessToken)
-            .registeredService(serviceJwtAccessToken)
-            .service(accessToken.getService())
-            .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .casProperties(casProperties)
-            .build();
-        val credentials = new TokenCredentials(encoder.encode());
+        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(accessTokenJwtBuilder, serviceJwtAccessToken,
+            accessToken, accessToken.getService(), casProperties, false).encode(accessToken.getId());
+        val credentials = new TokenCredentials(encodedAccessToken);
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
-        assertNull(credentials.getUserProfile());
+        assertThrows(InvalidTicketException.class,
+            () -> oauthAccessTokenAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials));
     }
 
     @Test
-    public void verifyAuthentication() {
+    void verifyAuthentication() throws Throwable {
         val accessToken = getAccessToken();
-        this.ticketRegistry.addTicket(accessToken);
-
-        val encoder = OAuth20JwtAccessTokenEncoder.builder()
-            .accessToken(accessToken)
-            .registeredService(service)
-            .service(accessToken.getService())
-            .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .casProperties(casProperties)
-            .build();
-
-        val credentials = new TokenCredentials(encoder.encode());
+        ticketRegistry.addTicket(accessToken);
+        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(accessTokenJwtBuilder, service,
+            accessToken, accessToken.getService(), casProperties, false).encode(accessToken.getId());
+        val credentials = new TokenCredentials(encodedAccessToken);
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
-        authenticator.validate(credentials, ctx, JEESessionStore.INSTANCE);
+        oauthAccessTokenAuthenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials);
         assertNotNull(credentials.getUserProfile());
     }
 }

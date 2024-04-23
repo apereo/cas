@@ -1,7 +1,13 @@
 description = "Apereo CAS Hazelcast Discovery Kubernetes Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Hazelcast Discovery",
+            title: "Hazelcast Discovery via Kubernetes"
+    ]
+}
 dependencies {
     implementation libraries.hazelcast
-    implementation libraries.hazelcastkubernetes
     
     implementation project(":support:cas-server-support-hazelcast-core")
     implementation project(":core:cas-server-core-util-api")

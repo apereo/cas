@@ -45,7 +45,7 @@
           </elementProp>
           <elementProp name="CasSP" elementType="Argument">
             <stringProp name="Argument.name">CasSP</stringProp>
-            <stringProp name="Argument.value">https://httpbin.org/get</stringProp>
+            <stringProp name="Argument.value">https://localhost:9859/get</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
             <stringProp name="Argument.desc">Service Provider url</stringProp>
           </elementProp>

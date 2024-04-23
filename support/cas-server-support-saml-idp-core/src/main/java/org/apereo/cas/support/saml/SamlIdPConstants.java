@@ -1,5 +1,8 @@
 package org.apereo.cas.support.saml;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 /**
  * Class that exposes relevant constants and parameters to
  * the SAML IdP.
@@ -8,21 +11,30 @@ package org.apereo.cas.support.saml;
  * @since 5.0.0
  */
 public interface SamlIdPConstants {
+    /**
+     * Base context path for all SAML IDP related endpoints.
+     */
+    String BASE_ENDPOINT_IDP = "/idp";
+
+    /**
+     * The IdP error endpoint.
+     */
+    String ENDPOINT_IDP_ERROR = BASE_ENDPOINT_IDP + "/error";
 
     /**
      * The IdP metadata endpoint.
      */
-    String ENDPOINT_IDP_METADATA = "/idp/metadata";
+    String ENDPOINT_IDP_METADATA = BASE_ENDPOINT_IDP + "/metadata";
 
     /**
      * Base endpoint url for saml2 requests.
      */
-    String BASE_ENDPOINT_SAML2 = "/idp/profile/SAML2";
+    String BASE_ENDPOINT_SAML2 = BASE_ENDPOINT_IDP + "/profile/SAML2";
 
     /**
      * Base endpoint url for saml1 requests.
      */
-    String BASE_ENDPOINT_SAML1 = "/idp/profile/SAML1";
+    String BASE_ENDPOINT_SAML1 = BASE_ENDPOINT_IDP + "/profile/SAML1";
 
     /**
      * The SAML2 SSO simple-sign post profile endpoint.
@@ -73,7 +85,7 @@ public interface SamlIdPConstants {
     /**
      * The SAML2 callback profile endpoint.
      */
-    String ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK = BASE_ENDPOINT_SAML2 + "/Callback";
+    String ENDPOINT_SAML2_SSO_PROFILE_CALLBACK = BASE_ENDPOINT_SAML2 + "/Callback";
 
     /**
      * The shire constant.
@@ -94,6 +106,14 @@ public interface SamlIdPConstants {
      * The time constant.
      */
     String TIME = "time";
+    /**
+     * The signature algorithm parameter.
+     */
+    String SIG_ALG = "SigAlg";
+    /**
+     * The signature parameter.
+     */
+    String SIGNATURE = "Signature";
 
     /**
      * The samlError constant.
@@ -104,5 +124,32 @@ public interface SamlIdPConstants {
      * The PAOS content type.
      */
     String ECP_SOAP_PAOS_CONTENT_TYPE = "application/vnd.paos+xml";
+    /**
+     * The SAML2 authentication request identifier.
+     */
+    String AUTHN_REQUEST_ID = "srid";
+
+    /**
+     * Structure to catalog known entity attributes
+     * that drive SAML2 behavior in CAS.
+     */
+    @RequiredArgsConstructor
+    @Getter
+    enum KnownEntityAttributes {
+        /**
+         * If present, will enable signing operations for SAML2 assertions.
+         */
+        SHIBBOLETH_SIGN_ASSERTIONS("http://shibboleth.net/ns/profiles/saml2/sso/browser/signAssertions"),
+        /**
+         * If present, will enable signing operations for SAML2 responses.
+         */
+        SHIBBOLETH_SIGN_RESPONSES("http://shibboleth.net/ns/profiles/saml2/sso/browser/signResponses"),
+        /**
+         * If present, will enable encryption operations for SAML2 assertions.
+         */
+        SHIBBOLETH_ENCRYPT_ASSERTIONS("http://shibboleth.net/ns/profiles/encryptAssertions");
+
+        private final String name;
+    }
 }
 

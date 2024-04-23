@@ -1,23 +1,26 @@
 package org.apereo.cas.support.events.dao;
 
+import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.influxdb.InfluxDbConnectionFactory;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
-import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.influxdb.annotations.Column;
+import com.influxdb.annotations.Measurement;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.influxdb.dto.Point;
-import org.influxdb.dto.QueryResult;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.Instant;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 /**
  * This is {@link InfluxDbCasEventRepository}.
@@ -25,9 +28,11 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 public class InfluxDbCasEventRepository extends AbstractCasEventRepository implements DisposableBean {
     private static final String MEASUREMENT = "InfluxDbCasEventRepositoryCasEvents";
+
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     private final InfluxDbConnectionFactory influxDbConnectionFactory;
 
@@ -38,84 +43,82 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
     }
 
     @Override
-    public void saveInternal(final CasEvent event) {
-        val builder = Point.measurement(MEASUREMENT);
-        ReflectionUtils.doWithFields(CasEvent.class, field -> {
-            if (!Modifier.isStatic(field.getModifiers())) {
-                field.setAccessible(true);
-                if (field.getType().equals(Map.class)) {
-                    builder.fields((Map) field.get(event));
-                } else {
-                    builder.field(field.getName(), field.get(event));
-                }
-            }
-        });
-
-        val point = builder.time(System.currentTimeMillis(), TimeUnit.MILLISECONDS).build();
-        influxDbConnectionFactory.writeBatch(point);
+    public void removeAll() {
+        influxDbConnectionFactory.deleteAll();
     }
 
     @Override
-    public Collection<? extends CasEvent> load() {
-        val results = influxDbConnectionFactory.query(MEASUREMENT);
-        val queryResults = results.getResults();
-        val events = new ArrayList<CasEvent>(queryResults.size());
-        queryResults
-            .stream()
-            .filter(r -> r.getSeries() != null)
-            .map(QueryResult.Result::getSeries)
-            .forEach(r -> r.forEach(s -> {
-                try {
-                    val it = s.getValues().iterator();
-                    while (it.hasNext()) {
-                        val event = new CasEvent();
-                        val row = it.next();
-                        for (var i = 0; i < s.getColumns().size(); i++) {
-                            val colName = s.getColumns().get(i);
-                            val value = row.get(i) != null ? row.get(i).toString() : StringUtils.EMPTY;
-
-                            LOGGER.debug("Handling event column name [{}] with value [{}]", colName, value);
-
-                            if (StringUtils.isNotBlank(value)) {
-                                switch (colName) {
-                                    case "time":
-                                        break;
-                                    case "eventId":
-                                        event.putEventId(value);
-                                        break;
-                                    case "type":
-                                        event.setType(value);
-                                        break;
-                                    case "principalId":
-                                        event.setPrincipalId(value);
-                                        break;
-                                    case "creationTime":
-                                        event.setCreationTime(value);
-                                        break;
-                                    default:
-                                        event.put(colName, value);
-                                }
-                            }
-                        }
-
-                        if (StringUtils.isNotBlank(event.getType()) && StringUtils.isNotBlank(event.getPrincipalId()) && StringUtils.isNotBlank(event.getEventId())) {
-                            events.add(event);
-                        }
-                    }
-                } catch (final Exception e) {
-                    LoggingUtils.error(LOGGER, e);
-                }
-            }));
-        return events;
+    public CasEvent saveInternal(final CasEvent event) {
+        influxDbConnectionFactory.write(MEASUREMENT,
+            Map.of("value", event.getEventId()),
+            Map.of(
+                "serverIpAddress", event.getServerIpAddress(),
+                "clientIpAddress", event.getClientIpAddress(),
+                "principalId", event.getPrincipalId(),
+                "geoLocation", Unchecked.supplier(() -> MAPPER.writeValueAsString(event.getGeoLocation())).get(),
+                "creationTime", event.getCreationTime(),
+                "timestamp", String.valueOf(event.getTimestamp()),
+                "type", event.getType()));
+        return event;
     }
 
+    @Override
+    public Stream<? extends CasEvent> load() {
+        val results = influxDbConnectionFactory.query(InfluxDbEvent.class);
+        return results.stream().map(flux -> {
+            val event = new CasEvent();
+            val geo = Unchecked.supplier(() -> MAPPER.readValue(flux.getGeoLocation(), new TypeReference<GeoLocationRequest>() {
+            })).get();
+            event.putGeoLocation(geo);
+            event.setPrincipalId(flux.getPrincipalId());
+            event.setType(flux.getType());
+            event.setCreationTime(flux.getCreationTime());
+            event.putClientIpAddress(flux.getClientIpAddress());
+            event.putServerIpAddress(flux.getServerIpAddress());
+            event.putEventId(flux.getValue());
+            event.putTimestamp(Long.valueOf(flux.getTimestamp()));
+            return event;
+        });
+    }
 
-    /**
-     * Stops the database client.
-     */
-    @SneakyThrows
     @Override
     public void destroy() {
-        this.influxDbConnectionFactory.close();
+        influxDbConnectionFactory.close();
+    }
+
+    @Measurement(name = MEASUREMENT)
+    @Getter
+    @Setter
+    @ToString
+    public static class InfluxDbEvent implements Serializable {
+        @Serial
+        private static final long serialVersionUID = -90633813914510237L;
+
+        @Column(timestamp = true)
+        private Instant time;
+
+        @Column(tag = true)
+        private String principalId;
+
+        @Column(tag = true)
+        private String type;
+
+        @Column(tag = true)
+        private String clientIpAddress;
+
+        @Column(tag = true)
+        private String serverIpAddress;
+
+        @Column(tag = true)
+        private String creationTime;
+
+        @Column(tag = true)
+        private String timestamp;
+
+        @Column(tag = true)
+        private String geoLocation;
+
+        @Column
+        private String value;
     }
 }

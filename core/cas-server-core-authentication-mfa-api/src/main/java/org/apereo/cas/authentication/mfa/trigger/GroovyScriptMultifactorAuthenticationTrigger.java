@@ -2,17 +2,19 @@ package org.apereo.cas.authentication.mfa.trigger;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.ChainingMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderResolver;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -21,7 +23,9 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Optional;
 
 /**
@@ -33,69 +37,49 @@ import java.util.Optional;
 @Getter
 @Setter
 @Slf4j
+@RequiredArgsConstructor
 public class GroovyScriptMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger, DisposableBean {
-    private final CasConfigurationProperties casProperties;
     private final WatchableGroovyScriptResource watchableScript;
+
     private final ApplicationContext applicationContext;
 
-    private int order = Ordered.LOWEST_PRECEDENCE;
+    private final MultifactorAuthenticationProviderResolver multifactorAuthenticationProviderResolver;
 
-    public GroovyScriptMultifactorAuthenticationTrigger(final CasConfigurationProperties casProperties,
-                                                        final ApplicationContext applicationContext) {
-        this.casProperties = casProperties;
-        val groovyScript = casProperties.getAuthn().getMfa().getGroovyScript().getLocation();
-        this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
-        this.applicationContext = applicationContext;
-    }
+    private final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
+
+    private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
-                                                                   final HttpServletRequest httpServletRequest, final Service service) {
-        val groovyScript = casProperties.getAuthn().getMfa().getGroovyScript().getLocation();
-        if (groovyScript == null) {
-            LOGGER.trace("No groovy script is configured for multifactor authentication");
-            return Optional.empty();
-        }
-
-        if (!ResourceUtils.doesResourceExist(groovyScript)) {
-            LOGGER.warn("No groovy script is found at [{}] for multifactor authentication", groovyScript);
-            return Optional.empty();
-        }
-
+                                                                   final HttpServletRequest httpServletRequest,
+                                                                   final HttpServletResponse response,
+                                                                   final Service service) {
         if (authentication == null) {
             LOGGER.debug("No authentication is available to determine event for principal");
             return Optional.empty();
         }
-        
-        if (registeredService == null) {
-            LOGGER.debug("No registered service is available to determine event for principal [{}]", authentication.getPrincipal());
-            return Optional.empty();
-        }
 
-        if (service == null) {
-            LOGGER.debug("No service is available to determine event for principal [{}]", authentication.getPrincipal());
-            return Optional.empty();
-        }
-        
         val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
         }
 
-        try {
+        return FunctionUtils.doUnchecked(() -> {
             val args = new Object[]{service, registeredService, authentication, httpServletRequest, LOGGER};
             val provider = this.watchableScript.execute(args, String.class);
             LOGGER.debug("Groovy script run for [{}] returned the provider id [{}]", registeredService, provider);
             if (StringUtils.isBlank(provider)) {
                 return Optional.empty();
             }
+            val principal = multifactorAuthenticationProviderResolver.resolvePrincipal(authentication.getPrincipal());
+            if (provider.equals(ChainingMultifactorAuthenticationProvider.DEFAULT_IDENTIFIER)) {
+                return Optional.of(multifactorAuthenticationProviderSelector.resolve(providerMap.values(), registeredService, principal));
+            }
             return MultifactorAuthenticationUtils.resolveProvider(providerMap, provider);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return Optional.empty();
+        });
+
     }
 
     @Override

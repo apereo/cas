@@ -1,5 +1,6 @@
 package org.apereo.cas.support.geo;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 
@@ -7,9 +8,11 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.net.InetAddress;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link GeoLocationServiceTests}.
@@ -17,23 +20,27 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Simple")
-public class GeoLocationServiceTests {
+@Tag("GeoLocation")
+class GeoLocationServiceTests {
     @Test
-    public void verifyLocate() {
+    void verifyLocate() throws Throwable {
+        HttpsURLConnection.setDefaultHostnameVerifier(CasSSLContext.disabled().getHostnameVerifier());
+        HttpsURLConnection.setDefaultSSLSocketFactory(CasSSLContext.disabled().getSslContext().getSocketFactory());
         val svc = new DummyGeoLocationService();
         assertNotNull(svc.locate("1.2.3.4", new GeoLocationRequest(1, 1)));
         assertNotNull(svc.locate(new GeoLocationRequest(1, 1)));
     }
 
     @Test
-    public void verifyLocateByIpStack() {
-        val svc = new DummyGeoLocationService();
-        svc.setIpStackAccessKey("abcdefghijklmnop");
-        assertNotNull(svc.locate("0.0.0.0"));
+    void verifyLocateFails() throws Throwable {
+        val svc = mock(AbstractGeoLocationService.class);
+        when(svc.locate(anyString())).thenReturn(null);
+        when(svc.locate(anyString(), any(GeoLocationRequest.class))).thenCallRealMethod();
+        when(svc.locate(anyDouble(), anyDouble())).thenReturn(new GeoLocationResponse());
+        assertNotNull(svc.locate("1.2.3.4", new GeoLocationRequest(1, 1)));
     }
 
-    private static class DummyGeoLocationService extends AbstractGeoLocationService {
+    private static final class DummyGeoLocationService extends AbstractGeoLocationService {
         @Override
         public GeoLocationResponse locate(final InetAddress address) {
             return new GeoLocationResponse()

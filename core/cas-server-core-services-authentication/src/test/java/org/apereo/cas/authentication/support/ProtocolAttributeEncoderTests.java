@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -19,14 +21,14 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("Attributes")
-public class ProtocolAttributeEncoderTests {
+class ProtocolAttributeEncoderTests {
     @Test
-    public void verifyEncoder() {
+    void verifyEncoder() throws Throwable {
         val encoder = new ProtocolAttributeEncoder() {
         };
         val attributes = new LinkedHashMap<String, Object>();
         attributes.put(ProtocolAttributeEncoder.encodeAttribute("user@name"), "casuser");
-        val results = encoder.encodeAttributes(attributes, mock(RegisteredService.class), mock(WebApplicationService.class));
+        val results = encoder.encodeAttributes(Map.of(), attributes, mock(RegisteredService.class), mock(WebApplicationService.class));
         assertTrue(results.containsKey("user@name"));
     }
 }

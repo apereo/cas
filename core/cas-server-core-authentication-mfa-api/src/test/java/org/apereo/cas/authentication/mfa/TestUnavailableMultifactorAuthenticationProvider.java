@@ -1,10 +1,12 @@
 package org.apereo.cas.authentication.mfa;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+
 import org.springframework.context.ConfigurableApplicationContext;
+
+import java.io.Serial;
 
 /**
  * This is {@link TestUnavailableMultifactorAuthenticationProvider}.
@@ -18,6 +20,7 @@ public class TestUnavailableMultifactorAuthenticationProvider extends AbstractMu
      */
     public static final String ID = "mfa-dummy-unavailable";
 
+    @Serial
     private static final long serialVersionUID = -9184556172646207560L;
 
     /**
@@ -26,9 +29,10 @@ public class TestUnavailableMultifactorAuthenticationProvider extends AbstractMu
      * @param applicationContext the application context
      * @return the multifactor authentication provider
      */
-    public static MultifactorAuthenticationProvider registerProviderIntoApplicationContext(final ConfigurableApplicationContext applicationContext) {
+    public static TestUnavailableMultifactorAuthenticationProvider registerProviderIntoApplicationContext(
+        final ConfigurableApplicationContext applicationContext) {
         return ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
-            TestUnavailableMultifactorAuthenticationProvider.class, "unavailable-provider" + System.currentTimeMillis());
+            TestUnavailableMultifactorAuthenticationProvider.class, "unavailable-provider%d".formatted(System.currentTimeMillis()));
     }
 
     @Override
@@ -37,7 +41,7 @@ public class TestUnavailableMultifactorAuthenticationProvider extends AbstractMu
     }
 
     @Override
-    public String getId(){
+    public String getId() {
         return ID;
     }
 

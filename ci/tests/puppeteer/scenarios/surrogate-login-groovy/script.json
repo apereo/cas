@@ -1,0 +1,11 @@
+{
+  "dependencies": "surrogate-webflow",
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.authn.accept.users=casuser1::Mellon,casuser2::Mellon,casuser3::Mellon,casuser4::Mellon",
+    "--cas.authn.surrogate.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/impersonation.groovy"
+  ]
+}

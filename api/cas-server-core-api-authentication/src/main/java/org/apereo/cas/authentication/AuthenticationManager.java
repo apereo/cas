@@ -9,11 +9,23 @@ package org.apereo.cas.authentication;
  */
 @FunctionalInterface
 public interface AuthenticationManager {
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "casAuthenticationManager";
 
     /**
      * Authentication method attribute name.
      **/
     String AUTHENTICATION_METHOD_ATTRIBUTE = "authenticationMethod";
+
+    /**
+     * Authentication session timeout attribute
+     * whose value in seconds would control the
+     * session timeout for this authentication event.
+     */
+    String AUTHENTICATION_SESSION_TIMEOUT_ATTRIBUTE = "authenticationSessionTimeout";
+
     /**
      * Authentication date attribute name.
      **/
@@ -28,8 +40,7 @@ public interface AuthenticationManager {
      *
      * @param authenticationTransaction Process a single authentication transaction
      * @return Authentication object on success that contains metadata about credentials that were authenticated.
-     * @throws AuthenticationException On authentication failure. The exception contains details
-     *                                 on each of the credentials that failed to authenticate.
+     * @throws Throwable the throwable
      */
-    Authentication authenticate(AuthenticationTransaction authenticationTransaction) throws AuthenticationException;
+    Authentication authenticate(AuthenticationTransaction authenticationTransaction) throws Throwable;
 }

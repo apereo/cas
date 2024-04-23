@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @JsonFilter("SamlIdPMetadataProperties")
 public class SamlIdPMetadataProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1020542741768471305L;
 
     /**
@@ -45,7 +47,7 @@ public class SamlIdPMetadataProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private FileSystemSamlMetadataProperties fileSystem = new FileSystemSamlMetadataProperties();
-    
+
     /**
      * Properties pertaining to mongo db saml metadata resolvers.
      */
@@ -81,12 +83,6 @@ public class SamlIdPMetadataProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AmazonS3SamlMetadataProperties amazonS3 = new AmazonS3SamlMetadataProperties();
-
-    /**
-     * Properties pertaining to CouchDB metadata resolution.
-     */
-    @NestedConfigurationProperty
-    private CouchDbSamlMetadataProperties couchDb = new CouchDbSamlMetadataProperties();
 
     /**
      * Metadata management settings via MDQ protocol.

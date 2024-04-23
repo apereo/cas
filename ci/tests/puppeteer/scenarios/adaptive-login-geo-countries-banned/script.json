@@ -1,0 +1,16 @@
+{
+  "dependencies": "core",
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.http-client.host-name-verifier=none",
+    
+    "--cas.authn.adaptive.policy.reject-countries=(korea|russia|france)",
+    "--cas.geo-location.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/GeoLocation.groovy",
+
+    "--cas.service-registry.core.init-from-json=true"
+  ],
+  "jvmArgs": "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true"
+}

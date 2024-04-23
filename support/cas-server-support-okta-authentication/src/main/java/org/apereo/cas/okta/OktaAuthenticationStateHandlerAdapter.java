@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeExcepti
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.okta.authn.sdk.AuthenticationStateHandlerAdapter;
 import com.okta.authn.sdk.resource.AuthenticationResponse;
@@ -63,13 +64,12 @@ public class OktaAuthenticationStateHandlerAdapter extends AuthenticationStateHa
             val user = successResponse.getUser();
             this.username = user.getLogin();
 
-            userAttributes.put("sessionToken", CollectionUtils.wrapList(successResponse.getSessionToken()));
-            userAttributes.put("status", CollectionUtils.wrapList(successResponse.getStatusString()));
-            userAttributes.put("type", CollectionUtils.wrapList(successResponse.getType()));
-            userAttributes.put("expiration", CollectionUtils.wrapList(successResponse.getExpiresAt()));
-            userAttributes.put("id", CollectionUtils.wrapList(user.getId()));
-            userAttributes.put("passwordChanged", CollectionUtils.wrapList(user.getPasswordChanged()));
-
+            FunctionUtils.doIfNotNull(successResponse.getSessionToken(), value -> userAttributes.put("oktaSessionToken", CollectionUtils.wrapList(value)));
+            FunctionUtils.doIfNotNull(successResponse.getStatusString(), value -> userAttributes.put("oktaStatus", CollectionUtils.wrapList(value)));
+            FunctionUtils.doIfNotNull(successResponse.getType(), value -> userAttributes.put("oktaType", CollectionUtils.wrapList(value)));
+            FunctionUtils.doIfNotNull(successResponse.getExpiresAt(), value -> userAttributes.put("oktaExpiration", CollectionUtils.wrapList(value)));
+            FunctionUtils.doIfNotNull(successResponse.getRecoveryType(), value -> userAttributes.put("oktaRecoveryType", CollectionUtils.wrapList(value)));
+            
             user.getProfile().forEach((key, value) -> userAttributes.put(key, CollectionUtils.wrapList(value)));
         } else {
             handleUnauthenticated(successResponse);
@@ -82,7 +82,7 @@ public class OktaAuthenticationStateHandlerAdapter extends AuthenticationStateHa
             if (passwordPolicyHandlingStrategy.supports(passwordWarning)) {
                 warnings = passwordPolicyHandlingStrategy.handle(passwordWarning, passwordPolicyConfiguration);
             }
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         handleUnknown(passwordWarning);

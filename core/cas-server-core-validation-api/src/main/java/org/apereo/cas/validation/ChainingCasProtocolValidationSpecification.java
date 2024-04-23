@@ -1,15 +1,20 @@
 package org.apereo.cas.validation;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.apereo.inspektr.audit.annotation.Audit;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ChainingCasProtocolValidationSpecification}.
@@ -26,12 +31,29 @@ public class ChainingCasProtocolValidationSpecification implements CasProtocolVa
 
     private final boolean canBeSatisfiedByAnySpecification;
 
+    private boolean renew;
+
+    @Audit(
+        action = AuditableActions.PROTOCOL_SPECIFICATION_VALIDATE,
+        actionResolverName = AuditActionResolvers.VALIDATE_PROTOCOL_SPECIFICATION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.VALIDATE_PROTOCOL_SPECIFICATION_RESOURCE_RESOLVER)
     @Override
     public boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {
         if (this.canBeSatisfiedByAnySpecification) {
-            return this.specifications.stream().anyMatch(s -> s.isSatisfiedBy(assertion, request));
+            return this.specifications
+                .stream()
+                .peek(spec -> spec.setRenew(this.renew))
+                .anyMatch(spec -> spec.isSatisfiedBy(assertion, request));
         }
-        return this.specifications.stream().allMatch(s -> s.isSatisfiedBy(assertion, request));
+        return this.specifications.stream()
+            .peek(spec -> spec.setRenew(this.renew))
+            .allMatch(spec -> spec.isSatisfiedBy(assertion, request));
+    }
+
+    @Override
+    public void reset() {
+        this.specifications.forEach(CasProtocolValidationSpecification::reset);
+        setRenew(false);
     }
 
     /**
@@ -49,7 +71,7 @@ public class ChainingCasProtocolValidationSpecification implements CasProtocolVa
      * @param policies the policies
      */
     public void addSpecifications(final CasProtocolValidationSpecification... policies) {
-        this.specifications.addAll(Arrays.stream(policies).collect(Collectors.toList()));
+        this.specifications.addAll(Arrays.stream(policies).toList());
     }
 
     /**
@@ -59,10 +81,5 @@ public class ChainingCasProtocolValidationSpecification implements CasProtocolVa
      */
     public int size() {
         return specifications.size();
-    }
-
-    @Override
-    public void reset() {
-        this.specifications.forEach(CasProtocolValidationSpecification::reset);
     }
 }

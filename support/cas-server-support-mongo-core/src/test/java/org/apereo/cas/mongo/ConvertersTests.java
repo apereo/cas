@@ -10,7 +10,6 @@ import org.bson.codecs.EncoderContext;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
@@ -25,10 +24,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("MongoDb")
-public class ConvertersTests {
+class ConvertersTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNull(new BaseConverters.NullConverter().convert(new Object()));
         assertNull(new BaseConverters.StringToZonedDateTimeConverter().convert(StringUtils.EMPTY));
         assertNull(new BaseConverters.StringToPatternConverter().convert(StringUtils.EMPTY));
@@ -40,15 +39,12 @@ public class ConvertersTests {
         val codec = new BaseConverters.ZonedDateTimeCodecProvider().get(ZonedDateTime.class, mock(CodecRegistry.class));
         assertNotNull(codec);
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                codec.encode(mock(BsonWriter.class), ZonedDateTime.now(Clock.systemUTC()), mock(EncoderContext.class));
+        assertDoesNotThrow(() -> {
+            codec.encode(mock(BsonWriter.class), ZonedDateTime.now(Clock.systemUTC()), mock(EncoderContext.class));
 
-                val r = mock(BsonReader.class);
-                when(r.readTimestamp()).thenReturn(new BsonTimestamp());
-                codec.decode(r, mock(DecoderContext.class));
-            }
+            val r = mock(BsonReader.class);
+            when(r.readTimestamp()).thenReturn(new BsonTimestamp());
+            codec.decode(r, mock(DecoderContext.class));
         });
         assertNotNull(codec.getEncoderClass());
     }

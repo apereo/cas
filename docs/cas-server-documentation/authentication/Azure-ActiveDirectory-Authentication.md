@@ -15,15 +15,13 @@ Azure Active Directory as the account store and optionally fetch user attributes
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-azuread-authentication" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-azuread-authentication" %}
 
-
-{% include casproperties.html 
-properties="cas.authn.azure-active-directory" %}
+{% include_cached casproperties.html properties="cas.authn.azure-active-directory" %}
 
 ## Principal Attributes
 
 The above dependency may also be used, in the event that principal attributes 
 need to be fetched from Azure Active Directory without necessarily authenticating credentials . 
 
-{% include casproperties.html properties="cas.authn.attribute-repository.azure-active-directory" %}
+{% include_cached casproperties.html properties="cas.authn.attribute-repository.azure-active-directory" %}

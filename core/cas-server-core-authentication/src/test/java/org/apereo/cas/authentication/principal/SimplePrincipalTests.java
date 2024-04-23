@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("Authentication")
-public class SimplePrincipalTests {
+class SimplePrincipalTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "simplePrincipal.json");
 
@@ -27,14 +27,14 @@ public class SimplePrincipalTests {
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    public void verifyEquality() {
+    void verifyEquality() throws Throwable {
         val p = new SimplePrincipal("id", new HashMap<>());
-        assertNotEquals(p, null);
-        assertNotEquals(p, "HelloWorld");
+        assertNotEquals(null, p);
+        assertNotEquals("HelloWorld", p);
     }
 
     @Test
-    public void verifySerializeACompletePrincipalToJson() throws Exception {
+    void verifySerializeACompletePrincipalToJson() throws Throwable {
         val attributes = new HashMap<String, List<Object>>();
         attributes.put("attribute", List.of("value"));
         val principalWritten = new SimplePrincipal("id", attributes);
@@ -44,7 +44,7 @@ public class SimplePrincipalTests {
     }
 
     @Test
-    public void verifySerializeAPrincipalWithEmptyAttributesToJson() throws Exception {
+    void verifySerializeAPrincipalWithEmptyAttributesToJson() throws Throwable {
         val principalWritten = new SimplePrincipal("id", new HashMap<>(0));
         MAPPER.writeValue(JSON_FILE, principalWritten);
         val principalRead = MAPPER.readValue(JSON_FILE, SimplePrincipal.class);

@@ -12,14 +12,11 @@ The following ticket registries are able to support secure ticket replication
 by encrypting and signing tickets:
 
 * [Hazelcast](../ticketing/Hazelcast-Ticket-Registry.html)
-* [Ehcache](../ticketing/Ehcache-Ticket-Registry.html)
 * [Ignite](../ticketing/Ignite-Ticket-Registry.html)
-* [CouchDb](../ticketing/CouchDb-Ticket-Registry.html)
-* [Memcached](../ticketing/Memcached-Ticket-Registry.html)
 * [Redis](../ticketing/Redis-Ticket-Registry.html)
 * [MongoDb](../ticketing/MongoDb-Ticket-Registry.html)
 
-<div class="alert alert-info"><strong>Default Behavior</strong><p>Encryption by default is turned off
+<div class="alert alert-info">:information_source: <strong>Default Behavior</strong><p>Encryption by default is turned off
 when you use the above ticket registries. It requires explicit configuration before it can be used.</p></div>
 
 ## Configuration

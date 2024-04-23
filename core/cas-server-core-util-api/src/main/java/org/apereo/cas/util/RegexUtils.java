@@ -4,8 +4,9 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -34,7 +35,7 @@ public class RegexUtils {
      */
     public static boolean isValidRegex(final String pattern) {
         try {
-            if (pattern != null) {
+            if (StringUtils.isNotBlank(pattern)) {
                 Pattern.compile(pattern);
                 return true;
             }
@@ -95,12 +96,12 @@ public class RegexUtils {
      * Matches the entire region for the string.
      *
      * @param pattern the pattern
-     * @param string  the string
+     * @param value   the string
      * @return true/false
      * @see Matcher#matches()
      */
-    public static boolean matches(final Pattern pattern, final String string) {
-        return pattern.matcher(string).matches();
+    public static boolean matches(final Pattern pattern, final String value) {
+        return pattern.matcher(value).matches();
     }
 
     /**
@@ -124,23 +125,70 @@ public class RegexUtils {
      * Attempts to find the next sub-sequence of the input sequence that matches the pattern.
      *
      * @param pattern the pattern
-     * @param string  the string
+     * @param value   the string
      * @return true/false
      * @see Matcher#find()
      */
-    public static boolean find(final Pattern pattern, final String string) {
-        return pattern.matcher(string).find();
+    public static boolean find(final Pattern pattern, final String value) {
+        return pattern.matcher(value).find();
     }
 
     /**
      * Attempts to find the next sub-sequence of the input sequence that matches the pattern.
      *
      * @param pattern the pattern
-     * @param string  the string
+     * @param value   the string
      * @return true/false
      */
-    public static boolean find(final String pattern, final String string) {
-        return createPattern(pattern, Pattern.CASE_INSENSITIVE).matcher(string).find();
+    public static boolean find(final String pattern, final String value) {
+        return StringUtils.isNotBlank(value) && createPattern(pattern, Pattern.CASE_INSENSITIVE).matcher(value).find();
     }
 
+    /**
+     * Find first in the list of items provided.
+     *
+     * @param pattern  the regex pattern
+     * @param elements the elements
+     * @return the optional
+     */
+    public static Optional<String> findFirst(final String pattern, final Collection elements) {
+        val compiledPattern = createPattern(pattern);
+        return elements
+            .stream()
+            .filter(entry -> find(compiledPattern, entry.toString()))
+            .findFirst();
+    }
+
+    /**
+     * Find first matching pattern in the given collection of elements.
+     *
+     * @param patterns the patterns
+     * @param elements the elements
+     * @return the optional
+     */
+    public static Optional<String> findFirst(final Collection<String> patterns, final Collection elements) {
+        return patterns
+            .stream()
+            .map(RegexUtils::createPattern)
+            .flatMap(compiledPattern -> elements.stream().filter(r -> find(compiledPattern, r.toString())))
+            .findFirst();
+    }
+
+    /**
+     * Matches ip address.
+     *
+     * @param pattern    the pattern
+     * @param remoteAddr the remote addr
+     * @return true or false
+     */
+    public static boolean matchesIpAddress(final String pattern, final String remoteAddr) {
+        try {
+            val ipAddressMatcher = new IpAddressMatcher(pattern);
+            LOGGER.trace("Attempting to match [{}] against [{}] as a IP or netmask", remoteAddr, pattern);
+            return ipAddressMatcher.matches(remoteAddr);
+        } catch (final Exception e) {
+            LOGGER.trace("Falling back to regex match. Couldn't treat [{}] as an IP address or netmask: [{}]", pattern, e.getMessage());
+            return find(pattern, remoteAddr);
+        }
+    }
 }

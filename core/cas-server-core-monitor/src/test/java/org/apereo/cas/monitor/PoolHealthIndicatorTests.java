@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.5.0
  */
 @Tag("Metrics")
-public class PoolHealthIndicatorTests {
+class PoolHealthIndicatorTests {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Test
-    public void verifyObserveOK() {
+    void verifyObserveOK() throws Throwable {
         val monitor = new AbstractPoolHealthIndicator(1000, executor) {
             @Override
             protected Health.Builder checkPool(final Health.Builder builder) {
@@ -42,13 +42,13 @@ public class PoolHealthIndicatorTests {
 
         };
         val health = monitor.health();
-        assertEquals(health.getStatus(), Status.UP);
+        assertEquals(Status.UP, health.getStatus());
 
         assertAll(((DisposableBean) monitor)::destroy);
     }
 
     @Test
-    public void verifyObserveDown() {
+    void verifyObserveDown() throws Throwable {
         val monitor = new AbstractPoolHealthIndicator(200, executor) {
             @Override
             protected Health.Builder checkPool(final Health.Builder builder) throws Exception {
@@ -73,7 +73,7 @@ public class PoolHealthIndicatorTests {
     }
 
     @Test
-    public void verifyObserveError() {
+    void verifyObserveError() throws Throwable {
         val monitor = new AbstractPoolHealthIndicator(500, executor) {
             @Override
             protected Health.Builder checkPool(final Health.Builder builder) {
@@ -91,7 +91,7 @@ public class PoolHealthIndicatorTests {
             }
         };
         val health = monitor.health();
-        assertEquals(health.getStatus(), Status.OUT_OF_SERVICE);
+        assertEquals(Status.OUT_OF_SERVICE, health.getStatus());
         assertAll(((DisposableBean) monitor)::destroy);
     }
 }

@@ -12,7 +12,6 @@ import lombok.val;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 
 /**
@@ -38,8 +37,7 @@ public class CassandraAuthenticationHandler extends AbstractUsernamePasswordAuth
 
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword)
-        throws GeneralSecurityException {
+                                                                                        final String originalPassword) throws Throwable {
         val username = credential.getUsername();
         val attributes = this.cassandraRepository.getUser(username);
 
@@ -51,7 +49,7 @@ public class CassandraAuthenticationHandler extends AbstractUsernamePasswordAuth
         }
 
         LOGGER.debug("Located account attributes [{}] for [{}]", attributes.keySet(), username);
-        val entryPassword = attributes.get(cassandraAuthenticationProperties.getPasswordAttribute()).get(0).toString();
+        val entryPassword = attributes.get(cassandraAuthenticationProperties.getPasswordAttribute()).getFirst().toString();
 
         if (!getPasswordEncoder().matches(originalPassword, entryPassword)) {
             LOGGER.warn("Account password on record for [{}] does not match the given password", username);

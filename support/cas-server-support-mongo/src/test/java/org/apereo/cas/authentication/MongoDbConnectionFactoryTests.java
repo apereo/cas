@@ -2,7 +2,7 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -21,13 +21,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@EnabledIfPortOpen(port = 27017)
+@EnabledIfListeningOnPort(port = 27017)
 @Tag("MongoDb")
-public class MongoDbConnectionFactoryTests {
+class MongoDbConnectionFactoryTests {
     private static final String URI = "mongodb://root:secret@localhost:27017/admin";
 
     @Test
-    public void verifyProps() {
+    void verifyProps() throws Throwable {
         val factory = new MongoDbConnectionFactory();
         val props = new SingleCollectionMongoDbProperties();
         props.setClientUri(URI);
@@ -37,7 +37,7 @@ public class MongoDbConnectionFactoryTests {
     }
 
     @Test
-    public void verifyClient() {
+    void verifyClient() throws Throwable {
         val props = new SingleCollectionMongoDbProperties();
         props.setClientUri(URI);
         val factory = new MongoDbConnectionFactory();
@@ -46,7 +46,7 @@ public class MongoDbConnectionFactoryTests {
     }
 
     @Test
-    public void verifyPackages() {
+    void verifyPackages() throws Throwable {
         val props = new SingleCollectionMongoDbProperties();
         props.setHost("localhost,localhost");
         props.setPort(27017);
@@ -65,5 +65,5 @@ public class MongoDbConnectionFactoryTests {
     }
 
     @Document
-    public static class SampleDocument {}
+    static class SampleDocument {}
 }

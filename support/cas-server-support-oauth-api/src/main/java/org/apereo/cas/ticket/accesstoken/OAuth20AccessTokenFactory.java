@@ -2,10 +2,12 @@ package org.apereo.cas.ticket.accesstoken;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
-import org.apereo.cas.ticket.TicketGrantingTicket;
-
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -23,15 +25,23 @@ public interface OAuth20AccessTokenFactory extends TicketFactory {
      * @param authentication       the authentication
      * @param ticketGrantingTicket the ticket granting ticket
      * @param scopes               the scopes
+     * @param token                the token
      * @param clientId             the client id
      * @param requestClaims        the request claims
+     * @param responseType         the response type
+     * @param grantType            the grant type
      * @return the access token
+     * @throws Throwable the throwable
      */
-    OAuth20AccessToken create(Service service, Authentication authentication,
-                              TicketGrantingTicket ticketGrantingTicket,
+    OAuth20AccessToken create(Service service,
+                              Authentication authentication,
+                              Ticket ticketGrantingTicket,
                               Collection<String> scopes,
+                              String token,
                               String clientId,
-                              Map<String, Map<String, Object>> requestClaims);
+                              Map<String, Map<String, Object>> requestClaims,
+                              OAuth20ResponseTypes responseType,
+                              OAuth20GrantTypes grantType) throws Throwable;
 
     /**
      * Create access token.
@@ -39,12 +49,19 @@ public interface OAuth20AccessTokenFactory extends TicketFactory {
      * @param service        the service
      * @param authentication the authentication
      * @param scopes         the scopes
-     * @param requestClaims  the request claims
      * @param clientId       the client id
+     * @param responseType   the response type
+     * @param grantType      the grant type
      * @return the access token
+     * @throws Throwable the throwable
      */
-    OAuth20AccessToken create(Service service, Authentication authentication,
-                              Collection<String> scopes,
-                              String clientId,
-                              Map<String, Map<String, Object>> requestClaims);
+    default OAuth20AccessToken create(final Service service,
+                                      final Authentication authentication,
+                                      final Collection<String> scopes,
+                                      final String clientId,
+                                      final OAuth20ResponseTypes responseType,
+                                      final OAuth20GrantTypes grantType) throws Throwable {
+        return create(service, authentication, null, scopes, null, clientId,
+            new HashMap<>(), responseType, grantType);
+    }
 }

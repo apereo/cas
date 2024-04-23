@@ -16,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Logout")
-public class LogoutPostProcessorTests {
+class LogoutPostProcessorTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val processor = new LogoutPostProcessor() {
             @Override
             public void handle(final TicketGrantingTicket ticketGrantingTicket) {

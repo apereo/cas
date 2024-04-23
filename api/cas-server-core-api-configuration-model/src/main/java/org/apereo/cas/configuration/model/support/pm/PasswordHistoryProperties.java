@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pm;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -9,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,7 +24,8 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("PasswordHistoryProperties")
-public class PasswordHistoryProperties implements Serializable {
+public class PasswordHistoryProperties implements CasFeatureModule, Serializable {
+    @Serial
     private static final long serialVersionUID = 2211199066765183587L;
 
     /**

@@ -19,7 +19,9 @@ import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +40,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class HttpRequestMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
+
     private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
@@ -45,7 +48,9 @@ public class HttpRequestMultifactorAuthenticationTrigger implements MultifactorA
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
-                                                                   final HttpServletRequest httpServletRequest, final Service service) {
+                                                                   final HttpServletRequest httpServletRequest,
+                                                                   final HttpServletResponse response,
+                                                                   final Service service) {
         if (authentication == null) {
             LOGGER.debug("No authentication is available to determine event for principal");
             return Optional.empty();
@@ -61,7 +66,7 @@ public class HttpRequestMultifactorAuthenticationTrigger implements MultifactorA
                 throw new AuthenticationException(new MultifactorAuthenticationProviderAbsentException());
             }
 
-            val providerFound = MultifactorAuthenticationUtils.resolveProvider(providerMap, values.get(0));
+            val providerFound = MultifactorAuthenticationUtils.resolveProvider(providerMap, values.getFirst());
             if (providerFound.isPresent()) {
                 return providerFound;
             }

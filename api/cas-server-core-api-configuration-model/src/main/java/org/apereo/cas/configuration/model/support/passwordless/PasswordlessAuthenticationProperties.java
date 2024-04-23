@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.passwordless;
 
+import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -16,12 +18,13 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RequiresModule(name = "cas-server-support-passwordless")
+@RequiresModule(name = "cas-server-support-passwordless-webflow")
 @Getter
 @Setter
 @Accessors(chain = true)
 @JsonFilter("PasswordlessAuthenticationProperties")
 public class PasswordlessAuthenticationProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 8726382874579042117L;
 
     /**
@@ -41,5 +44,10 @@ public class PasswordlessAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private PasswordlessAuthenticationCoreProperties core = new PasswordlessAuthenticationCoreProperties();
-    
+
+    /**
+     * The webflow configuration.
+     */
+    @NestedConfigurationProperty
+    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties().setOrder(70);
 }

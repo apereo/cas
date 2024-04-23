@@ -2,6 +2,8 @@ package org.apereo.cas.authentication.exceptions;
 
 import org.apereo.cas.authentication.AuthenticationException;
 
+import java.io.Serial;
+
 /**
  * This is {@link UniquePrincipalRequiredException}.
  *
@@ -11,6 +13,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 public class UniquePrincipalRequiredException extends AuthenticationException {
     private static final String CODE = "UNIQUE_PRINCIPAL_REQUIRED";
 
+    @Serial
     private static final long serialVersionUID = 3532358716666809448L;
 
     @Override

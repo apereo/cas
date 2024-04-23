@@ -1,17 +1,17 @@
 package org.apereo.cas.configuration.model.core;
 
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatProperties;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,10 +23,11 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core", automated = true)
 @Getter
 @Setter
-@Accessors(chain = true) 
+@Accessors(chain = true)
 @JsonFilter("CasServerProperties")
 public class CasServerProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7876382696803430817L;
 
     /**
@@ -42,12 +43,14 @@ public class CasServerProperties implements Serializable {
      * Deployments at root likely need to blank out this value.
      */
     @RequiredProperty
-    private String prefix = name.concat("/cas");
+    @ExpressionLanguageCapable
+    private String prefix;
 
     /**
      * The CAS Server scope.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String scope = "example.org";
 
     /**
@@ -56,13 +59,17 @@ public class CasServerProperties implements Serializable {
     @NestedConfigurationProperty
     private CasEmbeddedApacheTomcatProperties tomcat = new CasEmbeddedApacheTomcatProperties();
 
+    public CasServerProperties() {
+        setPrefix(StringUtils.appendIfMissing(getName(), "/").concat("cas"));
+    }
+
     @JsonIgnore
     public String getLoginUrl() {
-        return getPrefix().concat(CasProtocolConstants.ENDPOINT_LOGIN);
+        return getPrefix().concat("/login");
     }
 
     @JsonIgnore
     public String getLogoutUrl() {
-        return getPrefix().concat(CasProtocolConstants.ENDPOINT_LOGOUT);
+        return getPrefix().concat("/logout");
     }
 }

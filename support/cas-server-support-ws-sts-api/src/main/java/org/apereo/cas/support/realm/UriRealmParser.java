@@ -8,6 +8,7 @@ import org.apache.cxf.sts.RealmParser;
 import org.apache.cxf.sts.token.realm.RealmProperties;
 import org.apache.cxf.ws.security.sts.provider.STSException;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 
@@ -47,7 +48,7 @@ public class UriRealmParser implements RealmParser {
         for (var i = 0; i < count; i++) {
             realm = st.nextToken();
         }
-        return realm.toUpperCase();
+        return realm.toUpperCase(Locale.ENGLISH);
     }
 }
 

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<EntityDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+                  xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+                  xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
+                  xmlns:mdrpi="urn:oasis:names:tc:SAML:metadata:rpi"
+                  xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui"
+                  xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+                  entityID="https://samltest.id/saml/sp"
+                  xmlns="urn:oasis:names:tc:SAML:2.0:metadata">
+    <SPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
+        <md:Extensions xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata">
+            <DiscoveryResponse xmlns="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol" Binding="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol" Location="https://carmenwiki.osu.edu/Shibboleth.sso/Login" index="1"/>
+            <DiscoveryResponse xmlns="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol" Binding="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol" Location="https://carmenwiki.it.ohio-state.edu/Shibboleth.sso/Login" index="2"/>
+            <DiscoveryResponse xmlns="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol" Binding="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol" Location="https://carmenwiki.osu.edu/Shibboleth.sso/Clear" index="3"/>
+            <DiscoveryResponse xmlns="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol" Binding="urn:oasis:names:tc:SAML:profiles:SSO:idp-discovery-protocol" Location="https://carmenwiki.it.ohio-state.edu/Shibboleth.sso/Clear" index="4"/>
+        </md:Extensions>
+        <md:KeyDescriptor xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata">
+            <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                <ds:X509Data>
+                    <ds:X509Certificate>
+                        MIIDGzCCAgOgAwIBAgIJANI+yGM0M1N2MA0GCSqGSIb3DQEBBQUAMCcxJTAjBgNV
+                        BAMTHGx0Y2F3aWtpMDEuaXQub2hpby1zdGF0ZS5lZHUwHhcNMTAwNzA3MjI0MzA1
+                        WhcNMjAwNzA0MjI0MzA1WjAnMSUwIwYDVQQDExxsdGNhd2lraTAxLml0Lm9oaW8t
+                        c3RhdGUuZWR1MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5fsEv25M
+                        r9wfa48qfjn8m40yB/lwimJ8dSnYw2erd/tfB+sPESw42Is5Lv2B3pI3mj9a0PT0
+                        Gf1VgUoQW0RCT6L4VOW50WsPFv/RKPfT/AIRl00dTCqb440PgotGbrK9ivZqlvkz
+                        lSGUKuFcg2gLj+CJlbMcwEneSwn0FE1xKEGpMDUk91lZH1XxmnIDDOQn1G5qul4q
+                        AbXITMpLi2MlsHAEXxnLrthFFas6zDrviTwHcqGXq9zJJkPHDcbu1qg6AUT7bRJr
+                        qszxxktSV6mFclkgLPpcVkigMR8RNVMQkWaaWSnfBkFy2iAe3xw3DNp7obtzgItY
+                        i9N8U6K5qorSkQIDAQABo0owSDAnBgNVHREEIDAeghxsdGNhd2lraTAxLml0Lm9o
+                        aW8tc3RhdGUuZWR1MB0GA1UdDgQWBBR32XnCliG78DdyTtZhyIQSHChtyjANBgkq
+                        hkiG9w0BAQUFAAOCAQEAVEweCxPElHGmam4Iv2QeJsGE7m4de7axp3epAJb7uVbN
+                        Z2P1S/s4GZQhmGsUoGoxwqca3wyQ+C1ZkpQJdyFl5s1tFc26D+Z0KTDo174GzO9i
+                        I9SeQ4YSp3FNhZqxn4xH3DULzzHwoVSwFr5irLPAVtrqK8H/rzBREhqOse2VSJ/1
+                        PkI+p7lUiElIzMiObLGjumF2fDOPkXOSMNyC4c5oCCJtcrip/BaLo6bqdqn3DKP8
+                        onMw/lHZQolyVsupuhGsSX13WVJ0uyGvuA7hiHnGEkpDmskUd3TsriyQAt47RZzY
+                        tTupO/NdWvz8SvXU1qIOk9CTQ0D2b2OOftfUW+FuAQ==
+                    </ds:X509Certificate>
+                </ds:X509Data>
+            </ds:KeyInfo>
+        </md:KeyDescriptor>
+        <md:SingleLogoutService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://localhost:9859/get"/>
+        <md:AssertionConsumerService xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata" Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://localhost:9859/post" index="5"/>
+    </SPSSODescriptor>
+</EntityDescriptor>

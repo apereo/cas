@@ -8,6 +8,7 @@ dependencies {
     implementation project(":core:cas-server-core-services-authentication")
 
     implementation libraries.kryo
+    implementation libraries.jodatime
 
     provided project(":support:cas-server-support-memcached-spy")
     
@@ -18,6 +19,10 @@ dependencies {
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-notifications")
 
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")

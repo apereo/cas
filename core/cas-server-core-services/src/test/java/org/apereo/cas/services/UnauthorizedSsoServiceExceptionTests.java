@@ -11,26 +11,27 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.0.0
  */
 @Tag("Simple")
-public class UnauthorizedSsoServiceExceptionTests {
+class UnauthorizedSsoServiceExceptionTests {
 
     private static final String CODE = "service.not.authorized.sso";
+
     private static final String MESSAGE = "GG";
 
     @Test
-    public void verifyGetCode() {
+    void verifyGetCode() throws Throwable {
         val e = new UnauthorizedSsoServiceException();
         assertEquals(CODE, e.getMessage());
     }
 
     @Test
-    public void verifyCodeConstructor() {
+    void verifyCodeConstructor() throws Throwable {
         val e = new UnauthorizedSsoServiceException(MESSAGE);
 
         assertEquals(MESSAGE, e.getMessage());
     }
 
     @Test
-    public void verifyThrowableConstructorWithCode() {
+    void verifyThrowableConstructorWithCode() throws Throwable {
         val r = new RuntimeException();
         val e = new UnauthorizedSsoServiceException(MESSAGE, r);
 

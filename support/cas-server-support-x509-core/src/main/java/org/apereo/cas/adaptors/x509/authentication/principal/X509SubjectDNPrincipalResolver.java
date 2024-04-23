@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 
+import lombok.Setter;
 import lombok.ToString;
 
 import java.security.cert.X509Certificate;
@@ -13,14 +14,13 @@ import java.security.cert.X509Certificate;
  * @since 3.0.0
  */
 @ToString(callSuper = true)
+@Setter
 public class X509SubjectDNPrincipalResolver extends AbstractX509PrincipalResolver {
 
-    private final String subjectDnFormat;
+    private String subjectDnFormat;
 
-    public X509SubjectDNPrincipalResolver(final PrincipalResolutionContext context,
-                                          final String subjectDnFormat) {
+    public X509SubjectDNPrincipalResolver(final PrincipalResolutionContext context) {
         super(context);
-        this.subjectDnFormat = subjectDnFormat;
     }
 
     @Override

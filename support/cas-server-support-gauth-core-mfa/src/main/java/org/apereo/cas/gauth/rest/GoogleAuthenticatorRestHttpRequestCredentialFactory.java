@@ -10,7 +10,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.MultiValueMap;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +48,6 @@ public class GoogleAuthenticatorRestHttpRequestCredentialFactory implements Rest
         }
         val creds = new GoogleAuthenticatorTokenCredential(token,
             StringUtils.isNotBlank(id) ? Long.valueOf(id) : null);
-        return CollectionUtils.wrap(creds);
+        return CollectionUtils.wrap(prepareCredential(request, creds));
     }
 }

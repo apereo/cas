@@ -4,6 +4,8 @@ import lombok.NoArgsConstructor;
 
 import javax.security.auth.login.CredentialExpiredException;
 
+import java.io.Serial;
+
 /**
  * Describes an authentication error condition where a user account's password must change before login.
  *
@@ -13,9 +15,7 @@ import javax.security.auth.login.CredentialExpiredException;
 @NoArgsConstructor
 public class AccountPasswordMustChangeException extends CredentialExpiredException {
 
-    /**
-     * Serialization metadata.
-     */
+    @Serial
     private static final long serialVersionUID = 7487835035108753209L;
 
     /**

@@ -2,6 +2,7 @@ package org.apereo.cas;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.ImmutableAssertion;
@@ -11,6 +12,7 @@ import lombok.val;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * This is {@link CoreValidationTestUtils}.
@@ -29,12 +31,22 @@ public class CoreValidationTestUtils {
 
     public static Assertion getAssertion(final boolean fromNewLogin,
                                          final String[] extraPrincipals) {
+        return getAssertion(fromNewLogin, extraPrincipals, CoreAuthenticationTestUtils.getRegisteredService());
+    }
+
+    public static Assertion getAssertion(final boolean fromNewLogin,
+                                         final String[] extraPrincipals,
+                                         final RegisteredService registeredService) {
         val list = new ArrayList<Authentication>();
         list.add(CoreAuthenticationTestUtils.getAuthentication());
 
         Arrays.stream(extraPrincipals).map(CoreAuthenticationTestUtils::getAuthentication).forEach(list::add);
         return new ImmutableAssertion(CoreAuthenticationTestUtils.getAuthentication(),
-            list, fromNewLogin, RegisteredServiceTestUtils.getService());
+            CoreAuthenticationTestUtils.getAuthentication(),
+            list, fromNewLogin, false, RegisteredServiceTestUtils.getService(), registeredService, Map.of());
     }
 
+    public static Assertion getAssertion(final RegisteredService registeredService) {
+        return getAssertion(false, CONST_NO_PRINCIPALS, registeredService);
+    }
 }

@@ -2,11 +2,14 @@ package org.apereo.cas.gauth;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.PreventedException;
+import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
@@ -14,9 +17,9 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 
 import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
 
 /**
  * An authentication handler that uses the token provided
@@ -27,17 +30,22 @@ import java.security.GeneralSecurityException;
  */
 @Slf4j
 @Getter
-public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+@Monitorable
+public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler implements MultifactorAuthenticationHandler {
 
     private final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator;
 
-    public GoogleAuthenticatorAuthenticationHandler(final String name,
-                                                    final ServicesManager servicesManager,
-                                                    final PrincipalFactory principalFactory,
-                                                    final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator,
-                                                    final Integer order) {
+    private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
+
+    public GoogleAuthenticatorAuthenticationHandler(
+        final String name,
+        final ServicesManager servicesManager,
+        final PrincipalFactory principalFactory,
+        final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator,
+        final Integer order, final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider) {
         super(name, servicesManager, principalFactory, order);
         this.validator = validator;
+        this.multifactorAuthenticationProvider = multifactorAuthenticationProvider;
     }
 
     @Override
@@ -51,9 +59,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential)
-        throws GeneralSecurityException, PreventedException {
-
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws Throwable {
         val tokenCredential = (GoogleAuthenticatorTokenCredential) credential;
         val authentication = WebUtils.getInProgressAuthentication();
 

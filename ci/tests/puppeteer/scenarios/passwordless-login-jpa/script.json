@@ -1,0 +1,32 @@
+{
+  "dependencies": "passwordless-webflow,passwordless-jpa",
+  "conditions": {
+    "docker": "true"
+  },
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--logging.level.org.apereo.cas=info",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.authn.passwordless.tokens.mail.html=false",
+    "--cas.authn.passwordless.tokens.mail.text=${token}",
+    "--cas.authn.passwordless.tokens.mail.from=casuser@apereo.org",
+    "--cas.authn.passwordless.tokens.mail.subject=Passwordless AuthN",
+
+    "--cas.authn.passwordless.tokens.jpa.user=root",
+    "--cas.authn.passwordless.tokens.jpa.password=password",
+    "--cas.authn.passwordless.tokens.jpa.driver-class=com.mysql.cj.jdbc.Driver",
+    "--cas.authn.passwordless.tokens.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+    "--cas.authn.passwordless.tokens.jpa.dialect=org.hibernate.dialect.MySQLDialect",
+    "--cas.authn.passwordless.tokens.jpa.ddl-auto=create-drop",
+
+    "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

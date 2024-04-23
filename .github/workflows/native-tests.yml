@@ -1,0 +1,202 @@
+name: Native Image Tests
+
+##########################################################################
+
+env:
+  JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
+  GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
+  GRADLE_BUILDCACHE_USER: ci
+  GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
+  GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
+  DUO_SECURITY_ADMIN_SKEY: ${{ secrets.DUO_SECURITY_ADMIN_SKEY }}
+  DUO_SECURITY_ADMIN_IKEY: ${{ secrets.DUO_SECURITY_ADMIN_IKEY }}
+  DUO_SECURITY_UNIVERSAL_PROMPT_SKEY: ${{ secrets.DUO_SECURITY_UNIVERSAL_PROMPT_SKEY }}
+  DUO_SECURITY_UNIVERSAL_PROMPT_IKEY: ${{ secrets.DUO_SECURITY_UNIVERSAL_PROMPT_IKEY }}
+  DUO_SECURITY_API_HOST: ${{ secrets.DUO_SECURITY_API_HOST }}
+  ADFS_HOST: ${{ secrets.ADFS_HOST }}
+  ADFS_RELYING_PARTY_ID: ${{ secrets.ADFS_RELYING_PARTY_ID }}
+  ADFS_USERNAME: ${{ secrets.ADFS_USERNAME }}
+  ADFS_PASSWORD: ${{ secrets.ADFS_PASSWORD }}
+  AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
+  AZURE_AD_CLIENT_SECRET: ${{ secrets.AZURE_AD_CLIENT_SECRET }}
+  AZURE_AD_USER_PASSWORD: ${{ secrets.AZURE_AD_USER_PASSWORD }}
+  AZURE_AD_TENANT: ${{ secrets.AZURE_AD_TENANT }}
+  AZURE_AD_DOMAIN: ${{ secrets.AZURE_AD_DOMAIN }}
+  AZURE_MAPS_SUBSCRIPTION_ID: ${{ secrets.AZURE_MAPS_SUBSCRIPTION_ID }}
+  AZURE_MAPS_CLIENT_ID: ${{ secrets.AZURE_MAPS_CLIENT_ID }}
+  TERM: xterm-256color
+  JDK_CURRENT: 21
+  JDK_DISTRIBUTION: "corretto"
+  NODE_CURRENT: '20.10.0'
+  MAX_ATTEMPTS: 1
+  RETRY_MINUTES: 15
+  SCENARIO_REGEX: ".*"
+
+on:
+#  push:
+#    branches: [ master ]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 10 */2 * *'
+
+concurrency:
+  group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'apereo/cas' }}
+  
+##########################################################################
+
+jobs:
+  initialize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: ${{ env.JDK_DISTRIBUTION }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Initialize
+        run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
+
+  ##########################################################################
+            
+  puppeteer-scenarios:
+    needs: [initialize]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      scenarios255: ${{ steps.get-scenarios255.outputs.scenarios255 }}
+      scenarios511: ${{ steps.get-scenarios511.outputs.scenarios511 }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: ${{ env.JDK_DISTRIBUTION }}
+          cache: 'gradle'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - id: print-scenarios
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios | jq
+      - id: get-scenarios255
+        run: echo "scenarios255=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=0 -PpuppeteerScenariosTo=255)" >> $GITHUB_OUTPUT
+      - id: get-scenarios511
+        run: echo "scenarios511=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=255 -PpuppeteerScenariosTo=511)" >> $GITHUB_OUTPUT
+
+  ##########################################################################
+  puppeteer-tests-255:
+    runs-on: ubuntu-latest
+    needs: [puppeteer-scenarios]
+    continue-on-error: false
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios255)}}
+    name: ${{matrix.scenario}}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
+      - name: Configure CI
+        run: source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: "Setup Graal VM"
+        uses: graalvm/setup-graalvm@v1
+        if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
+        with:
+          distribution: 'graalvm'
+          java-version: ${{ env.JDK_CURRENT }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'gradle'
+          set-java-home: 'true'
+      - name: Set up Nodejs
+        uses: actions/setup-node@v4
+        if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
+        with:
+          node-version: ${{ env.NODE_VERSION_REQUIRED }}
+          cache: 'npm'
+          cache-dependency-path: ./ci/tests/puppeteer/package.json
+          check-latest: true
+      - name: Build Native Tests
+        uses: nick-fields/retry@v3
+        if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
+        with:
+          max_attempts: ${{ env.MAX_ATTEMPTS }}
+          timeout_minutes: ${{ env.RETRY_MINUTES }}
+          retry_on: error
+          shell: bash
+          command: |
+            ./ci/tests/puppeteer/run.sh --nb --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Run Native Tests
+        uses: nick-fields/retry@v3
+        if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
+        with:
+          max_attempts: ${{ env.MAX_ATTEMPTS }}
+          timeout_minutes: 5
+          retry_on: error
+          shell: bash
+          command: |
+            ./ci/tests/puppeteer/run.sh --nr --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+  ##########################################################################
+  puppeteer-tests-511:
+    runs-on: ubuntu-latest
+    needs: [puppeteer-scenarios]
+    continue-on-error: false
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario: ${{fromJSON(needs.puppeteer-scenarios.outputs.scenarios511)}}
+    name: ${{matrix.scenario}}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
+      - name: Configure CI
+        run: ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: "Setup Graal VM"
+        uses: graalvm/setup-graalvm@v1
+        if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
+        with:
+          distribution: 'graalvm'
+          java-version: ${{ env.JDK_CURRENT }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'gradle'
+          set-java-home: 'true'
+      - name: Set up Nodejs
+        uses: actions/setup-node@v4
+        if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
+        with:
+          node-version: ${{ env.NODE_VERSION_REQUIRED }}
+          cache: 'npm'
+          cache-dependency-path: ./ci/tests/puppeteer/package.json
+      - name: Build Native Tests
+        uses: nick-fields/retry@v3
+        if: ${{ env.NATIVE_BUILD_ENABLED == 'true' }}
+        with:
+          max_attempts: ${{ env.MAX_ATTEMPTS }}
+          timeout_minutes: ${{ env.RETRY_MINUTES }}
+          retry_on: error
+          shell: bash
+          command: |
+            export RUNNER_OS=${{ runner.os }}
+            ./ci/tests/puppeteer/run.sh --nb --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
+      - name: Run Native Tests
+        uses: nick-fields/retry@v3
+        if: ${{ env.NATIVE_RUN_ENABLED == 'true' }}
+        with:
+          max_attempts: ${{ env.MAX_ATTEMPTS }}
+          timeout_minutes: 5
+          retry_on: error
+          shell: bash
+          command: |
+            export RUNNER_OS=${{ runner.os }}
+            ./ci/tests/puppeteer/run.sh --nr --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}

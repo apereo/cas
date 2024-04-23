@@ -11,7 +11,7 @@ package org.apereo.cas.audit;
 public abstract class BaseAuditableExecution implements AuditableExecution {
 
     @Override
-    public AuditableExecutionResult execute(final AuditableContext context) {
+    public AuditableExecutionResult execute(final AuditableContext context) throws Throwable {
         return AuditableExecutionResult.of(context);
     }
 }

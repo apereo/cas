@@ -15,7 +15,8 @@ describes how to build and deploy CAS.
 There are is a wide range of servlet containers and servers on the menu. The selection criteria is outlined below:
 
 - Choose a technology that you are most familiar with and have the skills and patience to troubleshoot, tune and scale for the win. 
-- Choose a technology that does not force your CAS configuration to be tied to any individual servers/nodes in the cluster, as this will present auto-scaling issues and manual effort.
+- Choose a technology that does not force your CAS configuration to be tied to any individual 
+  servers/nodes in the cluster, as this will present auto-scaling issues and manual effort.
 - Choose a technology that works well with your network and firewall configuration and is performant and reliable enough based on your network topology.
 - Choose a technology that shows promising results under *your expected load*, having run [performance and stress tests](../high_availability/High-Availability-Performance-Testing.html).
 - Choose a technology that does not depend on outside processes, systems and manual work as much as possible, is self-reliant and self contained.
@@ -30,6 +31,12 @@ difference between using an embedded container vs. an external one.
 
 Unless there are specific, technical and reasonable objections, choosing an 
 embedded servlet container is almost always the better choice.
+
+## Actuator Endpoints
+
+The following endpoints are provided:
+
+{% include_cached actuators.html endpoints="shutdown,restart,pause,resume" %}
 
 ## Embedded
      

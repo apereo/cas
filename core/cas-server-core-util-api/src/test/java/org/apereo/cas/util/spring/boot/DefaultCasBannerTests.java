@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.mock.env.MockEnvironment;
 
 import java.io.ByteArrayOutputStream;
@@ -22,39 +21,29 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Simple")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class DefaultCasBannerTests {
+class DefaultCasBannerTests {
     @Test
     @Order(1)
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val banner = new DefaultCasBanner();
         assertNotNull(banner.getTitle());
-        assertNotNull(DefaultCasBanner.LINE_SEPARATOR);
+        assertNotNull(AbstractCasBanner.LINE_SEPARATOR);
 
         val environment = new MockEnvironment();
         try (val os = new ByteArrayOutputStream(); val out = new PrintStream(os)) {
-            assertDoesNotThrow(new Executable() {
-                @Override
-                public void execute() {
-                    banner.printBanner(environment, DefaultCasBannerTests.this.getClass(), out);
-                }
-            });
+            assertDoesNotThrow(() -> banner.printBanner(environment, this.getClass(), out));
             assertNotNull(os.toByteArray());
         }
     }
 
     @Test
     @Order(100)
-    public void verifyNoBanner() throws Exception {
+    void verifyNoBanner() throws Throwable {
         System.setProperty("CAS_BANNER_SKIP", "true");
         val banner = new DefaultCasBanner();
         val environment = new MockEnvironment();
         try (val os = new ByteArrayOutputStream(); val out = new PrintStream(os)) {
-            assertDoesNotThrow(new Executable() {
-                @Override
-                public void execute() {
-                    banner.printBanner(environment, DefaultCasBannerTests.this.getClass(), out);
-                }
-            });
+            assertDoesNotThrow(() -> banner.printBanner(environment, this.getClass(), out));
             assertNotNull(os.toByteArray());
         }
     }

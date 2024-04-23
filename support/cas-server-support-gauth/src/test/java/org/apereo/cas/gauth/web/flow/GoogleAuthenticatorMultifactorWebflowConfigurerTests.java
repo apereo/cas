@@ -19,19 +19,20 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 @SpringBootTest(classes = BaseGoogleAuthenticatorTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.mfa.gauth.json.location=classpath:/repository.json",
-        "cas.authn.mfa.gauth.trusted-device-enabled=true",
+        "cas.authn.mfa.gauth.core.trusted-device-enabled=true",
         "cas.authn.mfa.trusted.core.device-registration-enabled=true"
     })
-@Tag("WebflowConfig")
+@Tag("WebflowMfaConfig")
 @Getter
-public class GoogleAuthenticatorMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
+class GoogleAuthenticatorMultifactorWebflowConfigurerTests extends BaseMultifactorWebflowConfigurerTests {
     @Autowired
     @Qualifier("googleAuthenticatorFlowRegistry")
     private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;
-
+    
     @Override
     protected String getMultifactorEventId() {
-        return GoogleAuthenticatorMultifactorWebflowConfigurer.MFA_GAUTH_EVENT_ID;
+        return casProperties.getAuthn().getMfa().getGauth().getId();
     }
+
 }
 

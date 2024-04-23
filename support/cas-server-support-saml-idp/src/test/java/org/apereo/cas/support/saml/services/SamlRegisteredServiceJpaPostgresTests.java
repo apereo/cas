@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
@@ -16,9 +16,9 @@ import org.springframework.test.context.TestPropertySource;
     "cas.service-registry.jpa.password=password",
     "cas.service-registry.jpa.driver-class=org.postgresql.Driver",
     "cas.service-registry.jpa.url=jdbc:postgresql://localhost:5432/saml",
-    "cas.service-registry.jpa.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
+    "cas.service-registry.jpa.dialect=org.hibernate.dialect.PostgreSQLDialect"
 })
-@EnabledIfPortOpen(port = 5432)
+@EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
-public class SamlRegisteredServiceJpaPostgresTests extends SamlRegisteredServiceJpaTests {
+class SamlRegisteredServiceJpaPostgresTests extends SamlRegisteredServiceJpaTests {
 }

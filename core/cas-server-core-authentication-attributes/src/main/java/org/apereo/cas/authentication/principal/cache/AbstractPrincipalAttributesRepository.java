@@ -2,11 +2,12 @@ package org.apereo.cas.authentication.principal.cache;
 
 import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetcher;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -15,13 +16,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
 
-import javax.persistence.Transient;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,17 +41,13 @@ import java.util.stream.Collectors;
  * @since 4.2
  */
 @Slf4j
-@ToString(exclude = "lock")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = {"mergingStrategy", "attributeRepositoryIds"})
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public abstract class AbstractPrincipalAttributesRepository implements RegisteredServicePrincipalAttributesRepository, AutoCloseable {
+@Accessors(chain = true)
+public abstract class AbstractPrincipalAttributesRepository implements RegisteredServicePrincipalAttributesRepository {
+    @Serial
     private static final long serialVersionUID = 6350245643948535906L;
-
-    @JsonIgnore
-    @Transient
-    @org.springframework.data.annotation.Transient
-    private final transient Object lock = new Object();
 
     /**
      * The merging strategy that deals with existing principal attributes
@@ -71,122 +67,58 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
     @Setter
     private boolean ignoreResolvedAttributes;
 
-    @Override
-    public abstract Map<String, List<Object>> getAttributes(Principal principal, RegisteredService registeredService);
-
-    @Override
-    public void close() {
-    }
-
-    /**
-     * Gets attribute repository.
-     *
-     * @return the attribute repository
-     */
-    @JsonIgnore
-    protected static IPersonAttributeDao getAttributeRepository() {
-        val repositories = ApplicationContextProvider.getAttributeRepository();
-        return repositories.orElse(null);
-    }
-
-    /***
-     * Convert principal attributes to person attributes.
-     * @param attributes the attributes
-     * @return person attributes
-     */
     protected static Map<String, List<Object>> convertPrincipalAttributesToPersonAttributes(final Map<String, ?> attributes) {
         val convertedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         val principalAttributes = new LinkedHashMap<>(attributes);
+        LOGGER.trace("Principal attributes to convert to person attributes are [{}]", principalAttributes);
         principalAttributes.forEach((key, values) -> {
-            if (values instanceof Collection) {
-                val uniqueValues = new LinkedHashSet<Object>(Collection.class.cast(values));
+            if (values instanceof final Collection collection) {
+                val uniqueValues = new LinkedHashSet<Object>(collection);
                 val listedValues = new ArrayList<Object>(uniqueValues);
                 convertedAttributes.put(key, listedValues);
             } else {
                 convertedAttributes.put(key, CollectionUtils.wrap(values));
             }
         });
+        LOGGER.trace("Converted principal attributes, now as person attributes are [{}]", convertedAttributes);
         return convertedAttributes;
     }
 
-    /**
-     * Convert person attributes to principal attributes.
-     *
-     * @param attributes person attributes
-     * @return principal attributes
-     */
     protected static Map<String, List<Object>> convertPersonAttributesToPrincipalAttributes(final Map<String, List<Object>> attributes) {
         return attributes.entrySet()
             .stream()
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    /**
-     * Convert attributes to principal attributes and cache.
-     *
-     * @param principal         the principal
-     * @param sourceAttributes  the source attributes
-     * @param registeredService the registered service
-     * @return the map
-     */
-    protected Map<String, List<Object>> convertAttributesToPrincipalAttributesAndCache(final Principal principal,
-                                                                                       final Map<String, List<Object>> sourceAttributes,
-                                                                                       final RegisteredService registeredService) {
+    protected Map<String, List<Object>> convertAttributesToPrincipalAttributesAndCache(final Map<String, List<Object>> sourceAttributes,
+                                                                                       final RegisteredServiceAttributeReleasePolicyContext context) {
         val finalAttributes = convertPersonAttributesToPrincipalAttributes(sourceAttributes);
-        update(principal.getId(), finalAttributes, registeredService);
+        update(context.getPrincipal().getId(), finalAttributes, context);
+        LOGGER.trace("Final principal attributes after caching, if any, are [{}]", finalAttributes);
         return finalAttributes;
     }
-    
-    /**
-     * Calculate merging strategy attribute merging strategy.
-     *
-     * @return the attribute merging strategy
-     */
+
     protected PrincipalAttributesCoreProperties.MergingStrategyTypes determineMergingStrategy() {
         return ObjectUtils.defaultIfNull(getMergingStrategy(), PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
     }
 
-    /**
-     * Are attribute repository ids defined boolean.
-     *
-     * @return true/false
-     */
     @JsonIgnore
     protected boolean areAttributeRepositoryIdsDefined() {
         return attributeRepositoryIds != null && !attributeRepositoryIds.isEmpty();
     }
 
-    /**
-     * Obtains attributes first from the repository by calling
-     * {@link IPersonAttributeDao#getPerson(String, org.apereo.services.persondir.IPersonAttributeDaoFilter)}.
-     *
-     * @param principal the person to locate in the attribute repository
-     * @return the map of attributes
-     */
-    protected Map<String, List<Object>> retrievePersonAttributesFromAttributeRepository(final Principal principal) {
-        synchronized (lock) {
-            val repository = getAttributeRepository();
-            if (repository == null) {
-                LOGGER.warn("No attribute repositories could be fetched from application context");
-                return new HashMap<>(0);
-            }
-
-            return PrincipalAttributeRepositoryFetcher.builder()
-                .attributeRepository(repository)
-                .principalId(principal.getId())
-                .activeAttributeRepositoryIdentifiers(this.attributeRepositoryIds)
-                .currentPrincipal(principal)
-                .build()
-                .retrieve();
-        }
+    protected Map<String, List<Object>> retrievePersonAttributesFromAttributeRepository(
+        final RegisteredServiceAttributeReleasePolicyContext context) {
+        val repository = context.getApplicationContext().getBean(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY, PersonAttributeDao.class);
+        return PrincipalAttributeRepositoryFetcher.builder()
+            .attributeRepository(repository)
+            .principalId(context.getPrincipal().getId())
+            .activeAttributeRepositoryIdentifiers(this.attributeRepositoryIds)
+            .currentPrincipal(context.getPrincipal())
+            .build()
+            .retrieve();
     }
 
-    /**
-     * Gets principal attributes.
-     *
-     * @param principal the principal
-     * @return the principal attributes
-     */
     @JsonIgnore
     protected Map<String, List<Object>> getPrincipalAttributes(final Principal principal) {
         if (ignoreResolvedAttributes) {

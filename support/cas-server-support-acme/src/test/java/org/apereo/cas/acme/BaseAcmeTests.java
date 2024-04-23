@@ -1,11 +1,11 @@
 package org.apereo.cas.acme;
 
-import org.apereo.cas.config.CasAcmeConfiguration;
+import org.apereo.cas.config.CasAcmeAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -18,9 +18,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @Tag("Web")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    CasAcmeConfiguration.class
+    WebMvcAutoConfiguration.class,
+    CasAcmeAutoConfiguration.class
 }, properties = {
-    "cas.acme.domains=cas.example.org",
+    "cas.acme.domains=cas.apereo.org",
     "cas.acme.server-url=acme://letsencrypt.org/staging",
     "cas.acme.user-key.location=file:${java.io.tmpdir}/user.key",
     "cas.acme.domain-key.location=file:${java.io.tmpdir}/domain.key",

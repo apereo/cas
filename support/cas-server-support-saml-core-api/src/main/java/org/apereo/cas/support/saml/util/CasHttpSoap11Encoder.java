@@ -11,6 +11,8 @@ import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.util.SOAPConstants;
 
+import jakarta.annotation.Nonnull;
+
 /**
  * Override OpenSAML {@link HTTPSOAP11Encoder} such that SOAP-ENV XML namespace prefix is used for SOAP envelope
  * elements. This is needed for backward compatibility with certain CAS clients (e.g. Java CAS client).
@@ -24,7 +26,9 @@ public class CasHttpSoap11Encoder extends HTTPSOAP11Encoder {
     private static final String OPENSAML_11_SOAP_NS_PREFIX = "SOAP-ENV";
 
     @Override
-    protected void buildAndStoreSOAPMessage(final XMLObject payload) {
+    protected void buildAndStoreSOAPMessage(
+        @Nonnull
+        final XMLObject payload) {
         val builderFactory = XMLObjectProviderRegistrySupport.getBuilderFactory();
 
         val envBuilder =

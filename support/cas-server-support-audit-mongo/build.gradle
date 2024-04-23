@@ -1,4 +1,11 @@
 description = "Apereo CAS MongoDb Audit Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Audits",
+            title: "Audits via MongoDb"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-audit")
@@ -6,6 +13,7 @@ dependencies {
     implementation libraries.mongo
 
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-audit-api")
     implementation project(":support:cas-server-support-mongo-core")
 
@@ -14,9 +22,17 @@ dependencies {
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-web-api")
     testImplementation project(":core:cas-server-core-configuration")
-    
+    testImplementation project(":core:cas-server-core-notifications")
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-cookie")
+
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")

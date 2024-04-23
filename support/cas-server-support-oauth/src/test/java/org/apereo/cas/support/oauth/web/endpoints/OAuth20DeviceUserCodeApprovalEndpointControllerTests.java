@@ -5,7 +5,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,19 +22,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("OAuth")
-public class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth20Tests {
+@Tag("OAuthWeb")
+class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("deviceUserCodeApprovalEndpointController")
     private OAuth20DeviceUserCodeApprovalEndpointController callbackAuthorizeController;
-
-    @BeforeEach
-    public void initialize() {
-        clearAllServices();
-    }
-
+    
     @Test
-    public void verifyGet() {
+    void verifyGet() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val mv = callbackAuthorizeController.handleGetRequest(request, response);
@@ -45,7 +39,7 @@ public class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends Abstra
     }
 
     @Test
-    public void verifyPostNoCode() {
+    void verifyPostNoCode() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         var mv = callbackAuthorizeController.handlePostRequest(request, response);
@@ -57,11 +51,11 @@ public class OAuth20DeviceUserCodeApprovalEndpointControllerTests extends Abstra
     }
 
     @Test
-    public void verifyApproval() {
+    void verifyApproval() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val devCode = defaultDeviceTokenFactory.createDeviceCode(RegisteredServiceTestUtils.getService());
-        val uc = defaultDeviceUserCodeFactory.createDeviceUserCode(devCode);
+        val uc = defaultDeviceUserCodeFactory.createDeviceUserCode(devCode.getService());
         ticketRegistry.addTicket(uc);
         request.setParameter(OAuth20DeviceUserCodeApprovalEndpointController.PARAMETER_USER_CODE, uc.getId());
         var mv = callbackAuthorizeController.handlePostRequest(request, response);

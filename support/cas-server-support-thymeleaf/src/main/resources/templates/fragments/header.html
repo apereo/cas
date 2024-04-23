@@ -13,105 +13,75 @@
 <body>
 <div th:fragment="header">
 
-    <header id="app-bar" class="mdc-top-app-bar mdc-top-app-bar--fixed mdc-elevation--z4">
-        <nav class="mdc-top-app-bar__row">
-            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
-                <button
-                        th:if="${'true' == #strings.defaultString(#themes.code('cas.drawer-menu.enabled'), 'true')}"
-                        class="mdc-icon-button mdc-top-app-bar__navigation-icon">
-                    <span class="mdi mdi-menu"></span>
-                    <span class="sr-only">menu</span>
-                </button>
-            </section>
-            <section class="mdc-top-app-bar__section">
-                    <span class="cas-brand mx-auto">
-                        <span class="sr-only"
-                              th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}">CAS</span>
-                        <img class="cas-logo"
-                             th:title="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
-                             th:src="@{${#strings.defaultString(#themes.code('cas.logo.file'), '/images/cas-logo.png')}}" />
-                    </span>
-            </section>
-            <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
-                <button id="cas-notifications-menu"
-                        th:if="${'true' == #strings.defaultString(#themes.code('cas.notifications-menu.enabled'), 'true')}"
-                        class="mdc-icon-button mdc-top-app-bar__action-item cas-notification-toggle"
-                        aria-label="Bookmark this page">
-                    <span class="mdi mdi-bell-alert"></span>
-                    <span class="sr-only">notifications</span>
-                    <i id="notifications-count" class="notifications-count count">2</i>
-                </button>
-            </section>
-        </nav>
+    <header id="app-bar" class="mdc-top-app-bar mdc-top-app-bar--fixed mdc-elevation--z4 shadow-sm">
+        <nav class="mdc-top-app-bar__row navbar navbar-dark bg-dark">
+            <div class="container-fluid container-fluid d-flex align-items-center justify-content-between">
+                <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+                    <button th:if="${'true' == #strings.defaultString(#themes.code('cas.drawer-menu.enabled'), 'true')}"
+                            class="mdc-icon-button mdc-top-app-bar__navigation-icon  btn btn-outline-light"
+                            id="drawerButton"
+                            data-bs-toggle="offcanvas"
+                            data-bs-target="#app-drawer">
+                        <span class="mdi mdi-menu fa fa-bars" aria-hidden="true"></span>
+                        <span class="visually-hidden">menu</span>
+                    </button>
+                </section>
+                <section class="mdc-top-app-bar__section">
+                    <div class="cas-brand mx-auto">
+                        <h1 class="visually-hidden" th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}">CAS</h1>
+                        <a th:href="@{/}">
+                            <img id="cas-logo" class="cas-logo"
+                                 th:alt="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}"
+                                 th:src="@{${#strings.defaultString(#themes.code('cas.logo.file'), '/images/cas-logo.png')}}"
+                            />
+                        </a>
+                    </div>
+                </section>
+                <section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
+                    <button id="cas-notifications-menu"
+                            th:if="${'true' == #strings.defaultString(#themes.code('cas.notifications-menu.enabled'), 'true')}"
+                            class="mdc-icon-button mdc-top-app-bar__action-item cas-notification-toggle btn btn-outline-light"
+                            aria-label="Bookmark this page"
+                            data-bs-toggle="modal"
+                            data-bs-target="#cas-notification-dialog">
+                        <span class="mdi mdi-bell-alert fa fa-bell" aria-hidden="true"></span>
+                        <span class="visually-hidden">notifications</span>
+                        <i id="notifications-count" class="notifications-count count">2</i>
+                    </button>
 
+                    <a id="cas-user-account"
+                       th:href="@{/account}"
+                       th:if="${accountProfileManagementEnabled != null
+                        && accountProfileManagementEnabled
+                        && ticketGrantingTicketId != null}"
+                       class="mdc-icon-button mdc-top-app-bar__action-item"
+                       aria-label="User Account">
+                        <span class="mdi mdi-account-group" aria-hidden="true"></span>
+                        <span class="visually-hidden">user account</span>
+                    </a>
+                </section>
+            </div>
+        </nav>
     </header>
-    <aside id="app-drawer"
-           th:if="${'true' == #strings.defaultString(#themes.code('cas.drawer-menu.enabled'), 'true')}"
-           class="mdc-drawer mdc-drawer--dismissible mdc-drawer--modal">
-        <div class="mdc-drawer__header">
-            <h3 class="mdc-drawer__title" th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}">CAS</h3>
-            <h6 class="mdc-drawer__subtitle"
-                th:text="${#strings.defaultString(#themes.code('cas.theme.description'), 'Central Authentication Service')}">
-                Central Authentication Service</h6>
-        </div>
-        <div class="mdc-drawer__content">
-            <nav class="mdc-list">
-                <a th:href="@{/actuator}" class="mdc-list-item">
-                    <i class="mdi mdi-cogs"></i>&nbsp;
-                    <span class="mdc-list-item__text">[[#{cas.login.resources.endpoints}]]</span>
-                </a>
-                <hr class="mdc-list-divider"/>
-                <a class="mdc-list-item" href="https://apereo.github.io/cas">
-                    <i class="mdi mdi-file-code-outline"></i>&nbsp;
-                    <span class="mdc-list-item__text">[[#{cas.login.resources.wiki}]]</span>
-                </a>
-                <a class="mdc-list-item" href="https://github.com/apereo/cas/pulls">
-                    <i class="mdi mdi-call-merge"></i>&nbsp;
-                    <span class="mdc-list-item__text">[[#{cas.login.resources.pulls}]]</span>
-                </a>
-                <a class="mdc-list-item" href="https://apereo.github.io/cas/developer/Contributor-Guidelines.html">
-                    <i class="mdi mdi-information"></i>&nbsp;
-                    <span class="mdc-list-item__text">[[#{cas.login.resources.contribguide}]]</span>
-                </a>
-                <a class="mdc-list-item" href="https://apereo.github.io/cas/Support.html">
-                    <i class="mdi mdi-help-circle"></i>&nbsp;
-                    <span class="mdc-list-item__text">[[#{cas.login.resources.support}]]</span>
-                </a>
-                <a class="mdc-list-item" href="https://apereo.github.io/cas/Mailing-Lists.html">
-                    <i class="mdi mdi-email-newsletter"></i>&nbsp;
-                    <span class="mdc-list-item__text">[[#{cas.login.resources.mailinglist}]]</span>
-                </a>
-                <a class="mdc-list-item" href="https://gitter.im/apereo/cas">
-                    <i class="mdi mdi-message-text"></i>&nbsp;
-                    <span class="mdc-list-item__text">[[#{cas.login.resources.chat}]]</span>
-                </a>
-                <a class="mdc-list-item" href="https://apereo.github.io/">
-                    <i class="mdi mdi-post"></i>&nbsp;
-                    <span class="mdc-list-item__text">[[#{cas.login.resources.blog}]]</span>
-                </a>
-            </nav>
-        </div>
-    </aside>
+
+    <div th:replace="~{fragments/logindrawer :: logindrawer}"/>
 
     <script>var countMessages = 0;</script>
     <div
             th:if="${'true' == #strings.defaultString(#themes.code('cas.notifications-menu.enabled'), 'true')}"
-            class="mdc-dialog cas-notification-dialog"
+            class="mdc-dialog cas-notification-dialog modal"
             id="cas-notification-dialog" role="alertdialog"
             aria-modal="true" aria-labelledby="notif-dialog-title"
             aria-describedby="notif-dialog-content">
-        
-        <div class="mdc-dialog__container">
-            <div class="mdc-dialog__surface">
-                <h1 class="mdc-dialog__title mt-lg-2" id="notif-dialog-title">
-                    Notifications
-                </h1>
-                <div class="mdc-dialog__content" id="notif-dialog-content">
+        <div class="mdc-dialog__container modal-dialog">
+            <div class="mdc-dialog__surface modal-content">
+                <div class="mdc-dialog__content modal-body" id="notif-dialog-content">
                     <div class="cas-notification-message mdc-typography--body1" th:if="${staticAuthentication}">
                         <script>countMessages++;</script>
-                        <h6 class="mdc-typography--headline6 mdi mdi-alert-circle" th:utext="#{screen.defaultauthn.title}"/>
+                        <h3 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
+                            th:utext="#{screen.defaultauthn.title}"/>
                         <p class="text text-wrap small" th:utext="#{screen.defaultauthn.heading}">
-                            <i class="mdi mdi-google"></i>
+                            <i class="mdi mdi-google fas fa-google" aria-hidden="true"></i>
                             Static AuthN is ONLY useful for demo purposes. It is recommended that you connect CAS to
                             LDAP,
                             JDBC, etc
@@ -119,17 +89,29 @@
                         </p>
                     </div>
                     <div class="cas-notification-message mdc-typography--body1"
-                         th:if="${not #httpServletRequest.secure}">
-                        <h6 class="mdc-typography--headline6 mdi mdi-alert-circle" th:utext="#{screen.nonsecure.title}"/>
+                         th:unless="${httpRequestSecure}">
+                        <h3 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
+                            th:utext="#{screen.nonsecure.title}"/>
                         <script>countMessages++;</script>
                         <p class="text-wrap small" th:utext="#{screen.nonsecure.message}">
                             Unsure Connection
                         </p>
                     </div>
+
+                    <div id="cookiesSupportedDiv" class="cas-notification-message mdc-typography--body1" style="display: none">
+                        <h3 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
+                            th:utext="#{screen.cookies.disabled.title}"></h3>
+                        <p class="text-wrap small" th:utext="#{screen.cookies.disabled.message}">
+                            Cookies are not supported by this browser.
+                        </p>
+                    </div>
+
                 </div>
-                <footer class="mdc-dialog__actions">
-                    <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="accept"
-                            data-mdc-dialog-button-default>
+                <footer class="mdc-dialog__actions modal-footer">
+                    <button type="button" class="mdc-button mdc-button--raised mdc-dialog__button btn btn-primary"
+                            data-mdc-dialog-action="accept"
+                            data-mdc-dialog-button-default
+                            data-bs-dismiss="modal">
                         <span class="mdc-button__label">OK</span>
                     </button>
                 </footer>
@@ -140,21 +122,21 @@
 
     <script type="text/javascript">
 
-        (function (material) {
-            var header = {
-                init: function () {
+        (material => {
+            let header = {
+                init: () => {
                     header.attachTopbar();
                     material.autoInit();
                 },
-                attachDrawer: function () {
-                    var elm = document.getElementById('app-drawer');
+                attachDrawer: () => {
+                    let elm = document.getElementById('app-drawer');
                     if (elm != null) {
-                        var drawer = material.drawer.MDCDrawer.attachTo(elm);
-                        var closeDrawer = function (evt) {
+                        let drawer = material.drawer.MDCDrawer.attachTo(elm);
+                        let closeDrawer = evt => {
                             drawer.open = false;
                         };
                         drawer.foundation.handleScrimClick = closeDrawer;
-                        document.onkeydown = function (evt) {
+                        document.onkeydown = evt => {
                             evt = evt || window.event;
                             if (evt.keyCode == 27) {
                                 closeDrawer();
@@ -165,10 +147,10 @@
                     }
                     return undefined;
                 },
-                attachTopbar: function (drawer) {
+                attachTopbar: drawer => {
 
-                    var drawer = header.attachDrawer();
-                    var dialog = header.attachNotificationDialog();
+                    drawer = header.attachDrawer();
+                    let dialog = header.attachNotificationDialog();
 
                     if (drawer != undefined) {
                         header.attachDrawerToggle(drawer);
@@ -177,51 +159,64 @@
                         header.attachNotificationToggle(dialog);
                     }
                 },
-                checkCaps: function (ev) {
-                    var s = String.fromCharCode(ev.which);
-                    if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
-                        ev.target.parentElement.classList.add('caps-on');
-                    } else {
-                        ev.target.parentElement.classList.remove('caps-on');
-                    }
-                },
-                attachDrawerToggle: function (drawer) {
+                attachDrawerToggle: drawer => {
                     let appBar = document.getElementById('app-bar');
                     if (appBar != null) {
-                        var topAppBar = material.topAppBar.MDCTopAppBar.attachTo(appBar);
+                        let topAppBar = material.topAppBar.MDCTopAppBar.attachTo(appBar);
                         topAppBar.setScrollTarget(document.getElementById('main-content'));
-                        topAppBar.listen('MDCTopAppBar:nav', function () {
+                        topAppBar.listen('MDCTopAppBar:nav', () => {
                             drawer.open = !drawer.open;
                         });
                         return topAppBar;
                     }
                     return undefined;
                 },
-                attachNotificationDialog: function () {
-                    var element = document.getElementById('cas-notification-dialog');
+                attachNotificationDialog: () => {
+                    let element = document.getElementById('cas-notification-dialog');
                     if (element != null) {
                         return material.dialog.MDCDialog.attachTo(element);
                     }
                     return undefined;
                 },
-                attachNotificationToggle: function (dialog) {
-                    var btn = document.getElementById('cas-notifications-menu');
+                attachNotificationToggle: dialog => {
+                    let btn = document.getElementById('cas-notifications-menu');
                     if (btn != null) {
-                        btn.addEventListener('click', function () {
+                        btn.addEventListener('click', () => {
                             dialog.open();
                         });
                     }
                 }
             }
-            document.addEventListener('DOMContentLoaded', function () {
-                header.init();
-                if (countMessages == 0) {
+            function supportsCookies() {
+                try {
+                    document.cookie = 'testcookie=1';
+                    let ret = document.cookie.indexOf('testcookie=') !== -1;
+                    document.cookie = 'testcookie=1; expires=Thu, 01-Jan-1970 00:00:01 GMT';
+                    return ret;
+                } catch (e) {
+                    console.log(e);
+                    return false;
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                if (material) {
+                    header.init();
+                }
+
+                if (!supportsCookies()) {
+                    countMessages++;
+                    window.jQuery('#cookiesSupportedDiv').show();
+                }
+
+                if (countMessages === 0) {
                     window.jQuery('#notifications-count').remove();
+                    window.jQuery('#cas-notifications-menu').remove();
                 } else {
-                    window.jQuery('#notifications-count').text("(" + countMessages + ")")
+                    window.jQuery('#notifications-count').text(`(${countMessages})`)
                 }
             });
-        })(mdc);
+        })(typeof mdc !== 'undefined' && mdc);
     </script>
 </div>
 

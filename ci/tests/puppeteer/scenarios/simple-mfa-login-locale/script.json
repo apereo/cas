@@ -1,0 +1,42 @@
+{
+  "dependencies": "simple-mfa,trusted-mfa-jdbc",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.jdbc.show-sql=true",
+    "--cas.authn.mfa.trusted.jpa.ddl-auto=create-drop",
+    "--cas.authn.mfa.trusted.jpa.user=postgres",
+    "--cas.authn.mfa.trusted.jpa.password=password",
+    "--cas.authn.mfa.trusted.jpa.driver-class=org.postgresql.Driver",
+    "--cas.authn.mfa.trusted.jpa.url=jdbc:postgresql://localhost:5432/mfa",
+    "--cas.authn.mfa.trusted.jpa.dialect=org.hibernate.dialect.PostgreSQLDialect",
+
+    "--cas.authn.attribute-repository.stub.attributes.lastName=Apereo",
+    "--cas.authn.attribute-repository.stub.attributes.firstName=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
+    "--logging.level.org.apereo.cas=info",
+    
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.authn.mfa.simple.trusted-device-enabled=true",
+
+    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.web.exposure.include=*",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+
+    "--cas.authn.mfa.simple.mail.html=false",
+    "--cas.authn.mfa.simple.mail.from=cas@example.com",
+    "--cas.authn.mfa.simple.mail.subject=Token",
+    "--cas.authn.mfa.simple.mail.text=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/email.gtemplate"
+  ],
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh,${PWD}/ci/tests/postgres/run-postgres-server.sh"
+}
+

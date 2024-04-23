@@ -5,6 +5,7 @@ import org.apereo.cas.util.RandomUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.SpelCompilerMode;
@@ -29,7 +30,9 @@ import java.util.function.Function;
 @Slf4j
 public class SpringExpressionLanguageValueResolver implements Function {
     private static final int HOUR_23 = 23;
+
     private static final int MINUTE_59 = 59;
+
     private static final int SECOND_59 = 59;
 
     private static final ParserContext PARSER_CONTEXT = new TemplateParserContext("${", "}");
@@ -41,7 +44,7 @@ public class SpringExpressionLanguageValueResolver implements Function {
     private static SpringExpressionLanguageValueResolver INSTANCE;
 
     private final StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
-    
+
     protected SpringExpressionLanguageValueResolver() {
         val properties = System.getProperties();
         evaluationContext.setVariable("systemProperties", properties);
@@ -55,6 +58,41 @@ public class SpringExpressionLanguageValueResolver implements Function {
 
         evaluationContext.setVariable("tempDir", FileUtils.getTempDirectoryPath());
         evaluationContext.setVariable("zoneId", ZoneId.systemDefault().getId());
+    }
+
+    /**
+     * Gets instance of the resolver as a singleton.
+     *
+     * @return the instance
+     */
+    public static SpringExpressionLanguageValueResolver getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new SpringExpressionLanguageValueResolver();
+        }
+        INSTANCE.initializeDynamicVariables();
+        return INSTANCE;
+    }
+
+    /**
+     * Resolve string.
+     *
+     * @param value the value
+     * @return the string
+     */
+    public String resolve(final String value) {
+        if (StringUtils.isNotBlank(value)) {
+            LOGGER.trace("Parsing expression as [{}]", value);
+            val expression = EXPRESSION_PARSER.parseExpression(value, PARSER_CONTEXT);
+            val result = expression.getValue(evaluationContext, String.class);
+            LOGGER.trace("Parsed expression result is [{}]", result);
+            return result;
+        }
+        return value;
+    }
+
+    @Override
+    public Object apply(final Object o) {
+        return resolve(o.toString());
     }
 
     private void initializeDynamicVariables() {
@@ -86,37 +124,5 @@ public class SpringExpressionLanguageValueResolver implements Function {
 
         evaluationContext.setVariable("zonedDateTime", ZonedDateTime.now(ZoneId.systemDefault()).toString());
         evaluationContext.setVariable("zonedDateTimeUtc", ZonedDateTime.now(Clock.systemUTC()).toString());
-    }
-
-    /**
-     * Gets instance of the resolver as a singleton.
-     *
-     * @return the instance
-     */
-    public static SpringExpressionLanguageValueResolver getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new SpringExpressionLanguageValueResolver();
-        }
-        INSTANCE.initializeDynamicVariables();
-        return INSTANCE;
-    }
-
-    /**
-     * Resolve string.
-     *
-     * @param value the value
-     * @return the string
-     */
-    public String resolve(final String value) {
-        LOGGER.trace("Parsing expression as [{}]", value);
-        val expression = EXPRESSION_PARSER.parseExpression(value, PARSER_CONTEXT);
-        val result = expression.getValue(evaluationContext, String.class);
-        LOGGER.trace("Parsed expression result is [{}]", result);
-        return result;
-    }
-
-    @Override
-    public Object apply(final Object o) {
-        return resolve(o.toString());
     }
 }

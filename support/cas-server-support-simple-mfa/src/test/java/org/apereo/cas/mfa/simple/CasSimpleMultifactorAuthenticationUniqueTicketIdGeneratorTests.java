@@ -14,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("MFA")
-public class CasSimpleMultifactorAuthenticationUniqueTicketIdGeneratorTests {
+@Tag("MFAProvider")
+class CasSimpleMultifactorAuthenticationUniqueTicketIdGeneratorTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val gen = new CasSimpleMultifactorAuthenticationUniqueTicketIdGenerator(6);
         assertNotNull(gen.getNewTicketId("CAS"));
     }

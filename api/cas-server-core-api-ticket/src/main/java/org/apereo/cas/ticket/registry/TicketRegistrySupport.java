@@ -2,8 +2,8 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.TicketState;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +17,11 @@ import java.util.Map;
  * @since 4.2.0
  */
 public interface TicketRegistrySupport {
+
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "defaultTicketRegistrySupport";
 
     /**
      * Retrieve a valid Authentication object identified by the provided TGT SSO token.
@@ -40,7 +45,7 @@ public interface TicketRegistrySupport {
      * @param ticketId the ticket id
      * @return the ticket state
      */
-    TicketState getTicketState(String ticketId);
+    Ticket getTicket(String ticketId);
 
     /**
      * Retrieve a valid Principal object identified by the provided TGT SSO token.
@@ -65,6 +70,14 @@ public interface TicketRegistrySupport {
      *
      * @param ticketGrantingTicketId the ticket granting ticket id
      * @param authentication         the authentication
+     * @throws Exception the exception
      */
-    void updateAuthentication(String ticketGrantingTicketId, Authentication authentication);
+    void updateAuthentication(String ticketGrantingTicketId, Authentication authentication) throws Exception;
+
+    /**
+     * Gets ticket registry.
+     *
+     * @return the ticket registry
+     */
+    TicketRegistry getTicketRegistry();
 }

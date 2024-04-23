@@ -1,21 +1,19 @@
 package org.apereo.cas.services.util;
 
 import org.apereo.cas.services.AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
 import org.apereo.cas.services.LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy;
-import org.apereo.cas.services.RegexRegisteredService;
-
-import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
+import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
+import org.springframework.context.support.StaticApplicationContext;
 import java.io.File;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -25,79 +23,99 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.1.0
  */
 @Tag("FileSystem")
-public class RegisteredServiceJsonSerializerTests {
+class RegisteredServiceJsonSerializerTests {
 
     @Test
-    public void verifyPrinter() {
-        val zer = new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
+    void verifyPrinter() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        val zer = new RegisteredServiceJsonSerializer(applicationContext);
         assertFalse(zer.supports(new File("bad-file")));
         assertFalse(zer.getContentTypes().isEmpty());
     }
 
     @Test
-    public void verifyWriter() {
-        val zer = new RegisteredServiceJsonSerializer(new MinimalPrettyPrinter());
+    void verifyWriter() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        val zer = new RegisteredServiceJsonSerializer(applicationContext);
         val writer = new StringWriter();
-        zer.to(writer, new RegexRegisteredService());
+        zer.to(writer, new CasRegisteredService());
         assertNotNull(zer.from(writer));
     }
 
     @Test
-    public void checkNullability() {
-        val zer = new RegisteredServiceJsonSerializer();
-        val json = "    {\n"
-            + "        \"@class\" : \"org.apereo.cas.services.RegexRegisteredService\",\n"
-            + "            \"serviceId\" : \"^https://xyz.*\",\n"
-            + "            \"name\" : \"XYZ\",\n"
-            + "            \"id\" : \"20161214\"\n"
-            + "    }";
-
-        val s = zer.from(json);
-        assertNotNull(s);
-        assertNotNull(s.getAccessStrategy());
-        assertNotNull(s.getAttributeReleasePolicy());
-        assertNotNull(s.getProxyPolicy());
-        assertNotNull(s.getUsernameAttributeProvider());
+    void verifyList() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        val zer = new RegisteredServiceJsonSerializer(applicationContext);
+        val registeredService = new CasRegisteredService();
+        registeredService.setName("CasService");
+        val results = zer.fromList(CollectionUtils.wrapList(registeredService));
+        assertNotNull(zer.fromList(results));
     }
 
     @Test
-    public void verifySsoPolicySerialization() {
+    void checkNullability() {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        val zer = new RegisteredServiceJsonSerializer(applicationContext);
+        val json = """
+            {
+                "@class" : "org.apereo.cas.services.CasRegisteredService",
+                    "serviceId" : "^https://xyz.*",
+                    "name" : "XYZ",
+                    "id" : "20161214"
+            }""".indent(4);
+
+        val registeredService = (CasRegisteredService) zer.from(json);
+        assertNotNull(registeredService);
+        assertNotNull(registeredService.getAccessStrategy());
+        assertNotNull(registeredService.getAttributeReleasePolicy());
+        assertNotNull(registeredService.getProxyPolicy());
+        assertNotNull(registeredService.getUsernameAttributeProvider());
+    }
+
+    @Test
+    void verifySsoPolicySerialization() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
         val policyWritten = new DefaultRegisteredServiceAcceptableUsagePolicy();
         policyWritten.setEnabled(true);
         policyWritten.setMessageCode("example.code");
         policyWritten.setText("example text");
 
-        val s = new RegexRegisteredService();
-        s.setAcceptableUsagePolicy(policyWritten);
+        val registeredService = new CasRegisteredService();
+        registeredService.setAcceptableUsagePolicy(policyWritten);
 
         val policy = new ChainingRegisteredServiceSingleSignOnParticipationPolicy();
         policy.addPolicies(Arrays.asList(
             new LastUsedTimeRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 100, 1),
             new AuthenticationDateRegisteredServiceSingleSignOnParticipationPolicy(TimeUnit.SECONDS, 100, 1)));
-        s.setSingleSignOnParticipationPolicy(policy);
-        val zer = new RegisteredServiceJsonSerializer();
-        val results = zer.toString(s);
+        registeredService.setSingleSignOnParticipationPolicy(policy);
+        val zer = new RegisteredServiceJsonSerializer(applicationContext);
+        val results = zer.toString(registeredService);
         val read = zer.from(results);
-        assertEquals(s, read);
+        assertEquals(registeredService, read);
     }
 
     @Test
-    public void verifyEmptyStringAsNull() {
-        val zer = new RegisteredServiceJsonSerializer();
-        val json = "    {\n"
-            + "        \"@class\" : \"org.apereo.cas.services.RegexRegisteredService\",\n"
-            + "            \"serviceId\" : \"^https://xyz.*\",\n"
-            + "            \"name\" : \"XYZ\",\n"
-            + "            \"id\" : \"20161214\"\n"
-            + "  \"authenticationPolicy\" : {\n"
-            + "    \"@class\" : \"org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy\",\n"
-            + "    \"criteria\":\"\""
-            + "  }"
-            + "    }";
+    void verifyEmptyStringAsNull() throws Throwable {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+        val zer = new RegisteredServiceJsonSerializer(applicationContext);
+        val json = """
+              {
+                  "@class" : "org.apereo.cas.services.CasRegisteredService",
+                      "serviceId" : "^https://xyz.*",
+                      "name" : "XYZ",
+                      "id" : "20161214"
+            "authenticationPolicy" : {
+              "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy"}}""".indent(2);
 
-        val s = zer.from(json);
-        assertNotNull(s);
-        assertNotNull(s.getAuthenticationPolicy());
-        assertNull(s.getAuthenticationPolicy().getCriteria());
+        val serialized = zer.from(json);
+        assertNotNull(serialized);
+        assertNotNull(serialized.getAuthenticationPolicy());
+        assertNull(serialized.getAuthenticationPolicy().getCriteria());
     }
 }

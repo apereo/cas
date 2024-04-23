@@ -1,4 +1,11 @@
 description = "Apereo CAS YubiKey Redis Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "YubiKey Multifactor Authentication",
+            title: "YubiKey Support via Redis"
+    ]
+}
 dependencies {
     implementation libraries.yubicoapi
     implementation libraries.redis
@@ -21,6 +28,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-configuration")
@@ -31,6 +39,7 @@ dependencies {
 
     testImplementation project(path: ":support:cas-server-support-yubikey-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-yubikey", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
     
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

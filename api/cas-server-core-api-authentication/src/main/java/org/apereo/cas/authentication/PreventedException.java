@@ -1,6 +1,8 @@
 package org.apereo.cas.authentication;
 
 
+import java.io.Serial;
+
 /**
  * Describes an error condition where authentication was prevented for some reason, e.g. communication
  * error with back-end authentication store.
@@ -15,6 +17,7 @@ public class PreventedException extends RootCasException {
      */
     public static final String CODE = "BLOCKED_AUTHN_REQUEST";
 
+    @Serial
     private static final long serialVersionUID = 4702274165911620708L;
 
     public PreventedException(final String msg) {

@@ -1,0 +1,21 @@
+{
+  "dependencies": "oidc",
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--logging.level.org.apereo.cas=info",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
+
+    "--cas.authn.oidc.registration.dynamic-client-registration-mode=PROTECTED",
+    "--cas.authn.oidc.registration.initial-access-token-user=casuser",
+    "--cas.authn.oidc.registration.initial-access-token-password=Mellon",
+    
+    "--cas.authn.oidc.registration.client-secret-expiration=P14D",
+    
+    "--cas.service-registry.core.init-from-json=false"
+  ]
+}
+

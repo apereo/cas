@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.BaseGitSamlMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -16,11 +17,12 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,27 +34,35 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @TestPropertySource(properties = {
+    "cas.authn.saml-idp.metadata.http.metadata-backup-location=file://${java.io.tmpdir}/metadata-backups",
+
+    "cas.authn.saml-idp.metadata.git.schedule.enabled=true",
+    
     "cas.authn.saml-idp.metadata.git.sign-commits=false",
     "cas.authn.saml-idp.metadata.git.push-changes=true",
     "cas.authn.saml-idp.metadata.git.idp-metadata-enabled=true",
-    "cas.authn.saml-idp.metadata.git.repository-url=file:${java.io.tmpdir}/cas-metadata-data.git"
+    "cas.authn.saml-idp.metadata.git.crypto.enabled=false",
+    "cas.authn.saml-idp.metadata.git.repository-url=file://${java.io.tmpdir}/cas-metadata-data",
+    "cas.authn.saml-idp.metadata.git.clone-directory.location=file://${java.io.tmpdir}/cas-saml-metadata-gsrsmrt"
 })
 @Slf4j
-@Tag("FileSystem")
-public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataTests {
+@Tag("Git")
+class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMetadataTests {
+    @Autowired
+    @Qualifier("gitSamlRegisteredServiceRepositoryScheduler")
+    private Runnable gitSamlRegisteredServiceRepositoryScheduler;
+    
     @BeforeAll
     public static void setup() {
         try {
-            val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
-            if (gitDir.exists()) {
-                PathUtils.deleteDirectory(gitDir.toPath(),
-                        StandardDeleteOption.OVERRIDE_READ_ONLY);
-            }
+            cleanUp();
+            val gitDir = new File(FileUtils.getTempDirectory(), "cas-metadata-data");
             if (!gitDir.mkdir()) {
                 throw new IllegalArgumentException("Git repository directory location " + gitDir + " cannot be located/created");
             }
             val git = Git.init().setDirectory(gitDir).setBare(false).call();
             FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
+            git.add().addFilepattern("*.txt").call();
             git.commit().setSign(false).setMessage("Initial commit").call();
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
@@ -64,18 +74,19 @@ public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMe
     public static void cleanUp() throws Exception {
         val gitRepoDir = new File(FileUtils.getTempDirectory(), "cas-metadata-data");
         if (gitRepoDir.exists()) {
-            PathUtils.deleteDirectory(gitRepoDir.toPath(),
-                    StandardDeleteOption.OVERRIDE_READ_ONLY);
+            FunctionUtils.doAndHandle(
+                __ -> PathUtils.deleteDirectory(gitRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
         }
-        val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
-        if (gitDir.exists()) {
-            PathUtils.deleteDirectory(gitDir.toPath(),
-                    StandardDeleteOption.OVERRIDE_READ_ONLY);
+        val cloneDirectory = "cas-saml-metadata-gsrsmrt";
+        val gitCloneRepoDir = new File(FileUtils.getTempDirectory(), cloneDirectory);
+        if (gitCloneRepoDir.exists()) {
+            FunctionUtils.doAndHandle(
+                __ -> PathUtils.deleteDirectory(gitCloneRepoDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
         }
     }
 
     @Test
-    public void verifyResolver() throws IOException {
+    void verifyResolver() throws Throwable {
         val md = new SamlMetadataDocument();
         md.setName("SP");
         md.setValue(IOUtils.toString(new ClassPathResource("sp-metadata.xml").getInputStream(), StandardCharsets.UTF_8));
@@ -94,5 +105,13 @@ public class GitSamlRegisteredServiceMetadataResolverTests extends BaseGitSamlMe
         assertFalse(resolvers.isEmpty());
         service.setMetadataLocation("https://example.com/endswith.git");
         assertTrue(resolver.supports(service));
+
+        assertDoesNotThrow(() -> {
+            gitSamlRegisteredServiceRepositoryScheduler.run();
+            
+            resolver.resolve(null, null);
+            resolver.saveOrUpdate(null);
+
+        });
     }
 }

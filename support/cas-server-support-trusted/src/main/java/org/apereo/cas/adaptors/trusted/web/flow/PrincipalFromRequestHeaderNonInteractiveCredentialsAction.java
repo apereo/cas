@@ -5,16 +5,10 @@ import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link PrincipalFromRequestHeaderNonInteractiveCredentialsAction}.
@@ -24,7 +18,6 @@ import java.util.Map;
  */
 @Slf4j
 public class PrincipalFromRequestHeaderNonInteractiveCredentialsAction extends BasePrincipalFromNonInteractiveCredentialsAction {
-    private static final int DEFAULT_SIZE = 20;
     private final String remotePrincipalHeader;
 
     public PrincipalFromRequestHeaderNonInteractiveCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
@@ -52,34 +45,13 @@ public class PrincipalFromRequestHeaderNonInteractiveCredentialsAction extends B
         }
 
         if (StringUtils.isNotBlank(this.remotePrincipalHeader)) {
-            val headers = getAllRequestHeaderValues(request);
-            LOGGER.debug("Available request headers are [{}]. Locating first header value for [{}]", headers, this.remotePrincipalHeader);
-            if (headers.containsKey(this.remotePrincipalHeader)) {
-                val header = headers.get(this.remotePrincipalHeader).get(0);
+            val header = request.getHeader(this.remotePrincipalHeader);
+            if (StringUtils.isNotBlank(header)) {
                 LOGGER.debug("Remote user [{}] found in [{}] header", header, this.remotePrincipalHeader);
                 return header;
             }
         }
         LOGGER.debug("No remote user [{}] could be found", remoteUser);
         return null;
-    }
-
-    @SuppressWarnings("JdkObsolete")
-    private static Map<String, List<String>> getAllRequestHeaderValues(final HttpServletRequest request) {
-        val headers = new HashMap<String, List<String>>(DEFAULT_SIZE);
-        val names = request.getHeaderNames();
-        while (names.hasMoreElements()) {
-            val name = (String) names.nextElement();
-            val values = request.getHeaders(name);
-            if (values != null) {
-                val listValues = new ArrayList<String>(DEFAULT_SIZE);
-                while (values.hasMoreElements()) {
-                    val value = (String) values.nextElement();
-                    listValues.add(value);
-                }
-                headers.put(name, listValues);
-            }
-        }
-        return headers;
     }
 }

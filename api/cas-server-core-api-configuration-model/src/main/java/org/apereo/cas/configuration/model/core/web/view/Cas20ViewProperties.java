@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @JsonFilter("Cas20ViewProperties")
 public class Cas20ViewProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -7954879759474698003L;
 
     /**
@@ -39,7 +41,7 @@ public class Cas20ViewProperties implements Serializable {
      * Whether v2 protocol support should be forward compatible
      * to act like v3 and match its response, mainly for attribute release.
      */
-    private boolean v3ForwardCompatible;
+    private boolean v3ForwardCompatible = true;
 
     /**
      * Proxy views and settings.

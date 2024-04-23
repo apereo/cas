@@ -1,0 +1,14 @@
+{
+  "dependencies": "themes-collection",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--spring.thymeleaf.cache=false",
+    "--cas.logout.confirm-logout=true",
+    "--cas.logout.follow-service-redirects=false",
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

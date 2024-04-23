@@ -6,7 +6,7 @@ import org.junit.jupiter.api.function.Executable;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.core.NestedExceptionUtils.getRootCause;
+import static org.springframework.core.NestedExceptionUtils.*;
 
 /**
  * This is {@link Assertions}. Allows expected type to be null.

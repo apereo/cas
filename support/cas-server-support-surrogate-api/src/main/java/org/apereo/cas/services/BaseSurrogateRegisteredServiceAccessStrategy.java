@@ -2,7 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 
-import java.util.Map;
+import java.io.Serial;
 
 /**
  * This is {@link BaseSurrogateRegisteredServiceAccessStrategy}.
@@ -10,16 +10,11 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public abstract class BaseSurrogateRegisteredServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
+public abstract class BaseSurrogateRegisteredServiceAccessStrategy extends BaseRegisteredServiceAccessStrategy {
+    @Serial
     private static final long serialVersionUID = -3975861635454453130L;
 
-    /**
-     * Is surrogate authentication session?.
-     *
-     * @param attributes the attributes
-     * @return true /false
-     */
-    protected boolean isSurrogateAuthenticationSession(final Map<String, Object> attributes) {
-        return attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED);
+    protected boolean isSurrogateAuthenticationSession(final RegisteredServiceAccessStrategyRequest request) {
+        return request.getAttributes().containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED);
     }
 }

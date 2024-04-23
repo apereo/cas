@@ -1,13 +1,26 @@
 description = "Apereo CAS LDAP Support"
+ext {
+        publishMetadata = true
+        projectMetadata = [
+                category: "Authentication",
+                title: "LDAP & Active Directory Authentication"
+        ]
+}
 dependencies {
         implementation project(":core:cas-server-core-util-api")
+        implementation project(":core:cas-server-core-web-api")
         implementation project(":core:cas-server-core-authentication-api")
         implementation project(":core:cas-server-core-configuration-api")
         implementation project(":core:cas-server-core-notifications")
+        
         implementation project(":support:cas-server-support-ldap-core")
+        implementation project(":support:cas-server-support-person-directory-core")
 
         implementation libraries.ldaptive
+        implementation libraries.springsecurityconfig
+        implementation libraries.springsecurityweb
 
+        
         testImplementation project(":core:cas-server-core-services")
         testImplementation project(":core:cas-server-core-tickets")
         testImplementation project(":core:cas-server-core-web")
@@ -23,4 +36,5 @@ dependencies {
         testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
         testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
         testImplementation project(path: ":support:cas-server-support-ldap-core", configuration: "tests")
+        testImplementation project(path: ":support:cas-server-support-person-directory", configuration: "tests")
 }

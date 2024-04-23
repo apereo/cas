@@ -1,4 +1,13 @@
 description = "Apereo CAS SAML Server and Validation Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "SAML1 Protocol",
+            title: "SAML1 Support",
+            aliases: ["saml1"]
+    ]
+}
+
 dependencies {
     implementation libraries.dropwizard
     implementation libraries.opensaml
@@ -21,7 +30,7 @@ dependencies {
     implementation project(":core:cas-server-core-validation-api")
     implementation project(":core:cas-server-core-configuration-api")
 
-    compileOnlyApi  project(":core:cas-server-core-rest")
+    compileOnly project(":core:cas-server-core-rest-api")
 
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")

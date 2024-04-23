@@ -2,22 +2,21 @@ package org.apereo.cas.authentication.support;
 
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
-import org.apereo.cas.services.RegisteredServicePublicKeyCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -37,24 +36,6 @@ import java.util.stream.Collectors;
 public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttributeEncoder {
     private final CipherExecutor<String, String> cacheCredentialCipherExecutor;
 
-    /**
-     * Instantiates a new Default cas attribute encoder.
-     *
-     * @param servicesManager               the services manager
-     * @param cacheCredentialCipherExecutor the cache credential cipher executor
-     */
-    public DefaultCasProtocolAttributeEncoder(final ServicesManager servicesManager,
-                                              final CipherExecutor<String, String> cacheCredentialCipherExecutor) {
-        this(servicesManager, new RegisteredServicePublicKeyCipherExecutor(), cacheCredentialCipherExecutor);
-    }
-
-    /**
-     * Instantiates a new Default cas attribute encoder.
-     *
-     * @param servicesManager               the services manager
-     * @param cipherExecutor                the cipher executor
-     * @param cacheCredentialCipherExecutor the cache credential cipher executor
-     */
     public DefaultCasProtocolAttributeEncoder(final ServicesManager servicesManager,
                                               final RegisteredServiceCipherExecutor cipherExecutor,
                                               final CipherExecutor<String, String> cacheCredentialCipherExecutor) {
@@ -63,30 +44,29 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
     }
 
     private static void sanitizeAndTransformAttributeNames(final Map<String, Object> attributes,
-                                                           final WebApplicationService webApplicationService) {
-        if (webApplicationService != null && webApplicationService.getFormat() != null
-            && !webApplicationService.getFormat().isEncodingNecessary()) {
+                                                           final Service webApplicationService) {
+        if (webApplicationService instanceof final WebApplicationService was && !was.getFormat().isEncodingNecessary()) {
             LOGGER.trace("Skipping attribute name sanitization for [{}]", webApplicationService);
             return;
         }
 
         LOGGER.trace("Sanitizing attribute names in preparation of the final validation response");
-        val attrs = attributes.keySet().stream()
+        val encodedAttributes = attributes.keySet().stream()
             .filter(DefaultCasProtocolAttributeEncoder::getSanitizingAttributeNamePredicate)
-            .map(s -> {
-                var values = attributes.get(s);
-                LOGGER.trace("Encoding attribute [{}] with value(s) [{}]", s, values);
-                return Pair.of(ProtocolAttributeEncoder.encodeAttribute(s), values);
+            .map(attribute -> {
+                val values = attributes.get(attribute);
+                LOGGER.trace("Encoding attribute [{}] with value(s) [{}]", attribute, values);
+                return Pair.of(ProtocolAttributeEncoder.encodeAttribute(attribute), values);
             })
             .collect(Collectors.toSet());
 
-        if (!attrs.isEmpty()) {
-            LOGGER.info("Found [{}] attribute(s) that need to be sanitized/encoded.", attrs.size());
+        if (!encodedAttributes.isEmpty()) {
+            LOGGER.info("Found [{}] attribute(s) that need to be sanitized/encoded.", encodedAttributes.size());
             attributes.keySet().removeIf(DefaultCasProtocolAttributeEncoder::getSanitizingAttributeNamePredicate);
-            attrs.forEach(p -> {
-                val key = p.getKey();
+            encodedAttributes.forEach(attribute -> {
+                val key = attribute.getKey();
                 LOGGER.trace("Sanitized attribute name to be [{}]", key);
-                attributes.put(key, transformAttributeValueIfNecessary(p.getValue()));
+                attributes.put(key, transformAttributeValueIfNecessary(attribute.getValue()));
             });
         }
     }
@@ -117,17 +97,6 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
         return Predicates.instanceOf(byte[].class);
     }
 
-    /**
-     * Encode and encrypt credential password using the public key
-     * supplied by the service. The result is base64 encoded
-     * and put into the attributes collection again, overwriting
-     * the previous value.
-     *
-     * @param attributes               the attributes
-     * @param cachedAttributesToEncode the cached attributes to encode
-     * @param cipher                   the cipher
-     * @param registeredService        the registered service
-     */
     protected void encodeAndEncryptCredentialPassword(final Map<String, Object> attributes,
                                                       final Map<String, String> cachedAttributesToEncode,
                                                       final RegisteredServiceCipherExecutor cipher,
@@ -147,61 +116,59 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
             cipher, registeredService);
     }
 
-    /**
-     * Encode and encrypt pgt.
-     *
-     * @param attributes               the attributes
-     * @param cachedAttributesToEncode the cached attributes to encode
-     * @param cipher                   the cipher
-     * @param registeredService        the registered service
-     */
-    protected void encodeAndEncryptProxyGrantingTicket(final Map<String, Object> attributes,
+    protected void encodeAndEncryptProxyGrantingTicket(final Map<String, Object> model,
+                                                       final Map<String, Object> resultingAttributes,
                                                        final Map<String, String> cachedAttributesToEncode,
                                                        final RegisteredServiceCipherExecutor cipher,
                                                        final RegisteredService registeredService) {
-        encryptAndEncodeAndPutIntoAttributesMap(attributes, cachedAttributesToEncode,
-            CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, cipher, registeredService);
-        encryptAndEncodeAndPutIntoAttributesMap(attributes, cachedAttributesToEncode,
+
+        if (model.containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET)) {
+            val proxyGrantingTicket = (Ticket) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
+            if (proxyGrantingTicket != null && proxyGrantingTicket.isStateless()) {
+                putIntoAttributesMap(resultingAttributes, cachedAttributesToEncode,
+                    CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET);
+            } else {
+                encryptAndEncodeAndPutIntoAttributesMap(resultingAttributes, cachedAttributesToEncode,
+                    CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, cipher, registeredService);
+            }
+        }
+
+        encryptAndEncodeAndPutIntoAttributesMap(resultingAttributes, cachedAttributesToEncode,
             CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU, cipher, registeredService);
     }
 
-    /**
-     * Encrypt, encode and put the attribute into attributes map.
-     *
-     * @param attributes               the attributes
-     * @param cachedAttributesToEncode the cached attributes to encode
-     * @param cachedAttributeName      the cached attribute name
-     * @param cipher                   the cipher
-     * @param registeredService        the registered service
-     */
-    protected void encryptAndEncodeAndPutIntoAttributesMap(final Map<String, Object> attributes,
+    protected void putIntoAttributesMap(final Map<String, Object> resultingAttributes,
+                                        final Map<String, String> cachedAttributesToEncode,
+                                        final String cachedAttributeName) {
+        val cachedAttributeValue = cachedAttributesToEncode.remove(cachedAttributeName);
+        if (StringUtils.isNotBlank(cachedAttributeValue)) {
+            resultingAttributes.put(cachedAttributeName, cachedAttributeValue);
+        }
+    }
+
+    protected void encryptAndEncodeAndPutIntoAttributesMap(final Map<String, Object> resultingAttributes,
                                                            final Map<String, String> cachedAttributesToEncode,
                                                            final String cachedAttributeName,
                                                            final RegisteredServiceCipherExecutor cipher,
                                                            final RegisteredService registeredService) {
-        val cachedAttribute = cachedAttributesToEncode.remove(cachedAttributeName);
-        if (StringUtils.isNotBlank(cachedAttribute)) {
-            LOGGER.trace("Retrieved [{}] as a cached model attribute...", cachedAttributeName);
-            val encodedValue = cipher.encode(cachedAttribute, Optional.of(registeredService));
-            if (StringUtils.isNotBlank(encodedValue)) {
-                attributes.put(cachedAttributeName, encodedValue);
-                LOGGER.trace("Encrypted and encoded [{}] as an attribute to [{}].", cachedAttributeName, encodedValue);
-            } else {
-                LOGGER.warn("Attribute [{}] cannot be encoded and is removed from the collection of attributes", cachedAttributeName);
-            }
-        } else {
-            LOGGER.trace("[{}] is not available as a cached model attribute to encrypt...", cachedAttributeName);
+        val cachedAttributeValue = cachedAttributesToEncode.remove(cachedAttributeName);
+        val encodedValue = StringUtils.isNotBlank(cachedAttributeValue)
+            ? cipher.encode(cachedAttributeValue, Optional.of(registeredService))
+            : cachedAttributeValue;
+        if (StringUtils.isNotBlank(encodedValue)) {
+            resultingAttributes.put(cachedAttributeName, encodedValue);
         }
     }
 
     @Override
-    protected void encodeAttributesInternal(final Map<String, Object> attributes,
+    protected void encodeAttributesInternal(final Map<String, Object> model,
+                                            final Map<String, Object> attributes,
                                             final Map<String, String> cachedAttributesToEncode,
                                             final RegisteredServiceCipherExecutor cipher,
                                             final RegisteredService registeredService,
-                                            final WebApplicationService webApplicationService) {
+                                            final Service webApplicationService) {
         encodeAndEncryptCredentialPassword(attributes, cachedAttributesToEncode, cipher, registeredService);
-        encodeAndEncryptProxyGrantingTicket(attributes, cachedAttributesToEncode, cipher, registeredService);
+        encodeAndEncryptProxyGrantingTicket(model, attributes, cachedAttributesToEncode, cipher, registeredService);
         sanitizeAndTransformAttributeNames(attributes, webApplicationService);
         sanitizeAndTransformAttributeValues(attributes);
     }

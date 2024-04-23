@@ -1,0 +1,22 @@
+package org.apereo.cas.nativex;
+
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccountCipherExecutor;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.springframework.aot.hint.RuntimeHints;
+import java.util.List;
+
+/**
+ * This is {@link OneTimeTokenRuntimeHints}.
+ *
+ * @author Misagh Moayyed
+ * @since 7.0.0
+ */
+public class OneTimeTokenRuntimeHints implements CasRuntimeHintsRegistrar {
+    @Override
+    public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+        registerReflectionHints(hints, List.of(OneTimeTokenAccountCipherExecutor.class));
+    }
+
+}
+
+

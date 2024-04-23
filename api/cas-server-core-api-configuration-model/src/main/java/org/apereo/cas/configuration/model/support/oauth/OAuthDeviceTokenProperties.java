@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,10 +24,11 @@ import java.io.Serializable;
 @JsonFilter("OAuthDeviceTokenProperties")
 public class OAuthDeviceTokenProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -6832081675586528350L;
 
     /**
-     * Hard timeout to kill the access token and expire it.
+     * Hard timeout to kill the device token and expire it.
      */
     @DurationCapable
     private String maxTimeToLiveInSeconds = "PT5M";
@@ -38,4 +40,10 @@ public class OAuthDeviceTokenProperties implements Serializable {
      */
     @DurationCapable
     private String refreshInterval = "PT15S";
+
+    /**
+     * The storage object name used and created by CAS to hold OAuth device tokens
+     * in the backing ticket registry implementation.
+     */
+    private String storageName = "oauthDeviceTokensCache";
 }

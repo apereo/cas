@@ -18,17 +18,17 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Web")
-public class CasReloadableMessageBundleTests {
+class CasReloadableMessageBundleTests {
 
     @Test
-    public void verifyDefaultMessage() {
+    void verifyDefaultMessage() throws Throwable {
         val bundle = new CasReloadableMessageBundle();
         assertNull(bundle.getMessage("cas.message",
             ArrayUtils.EMPTY_STRING_ARRAY, null, Locale.ENGLISH));
     }
 
     @Test
-    public void verifyMessage() {
+    void verifyMessage() throws Throwable {
         val bundle = new CasReloadableMessageBundle();
         bundle.setBasenames("messages");
         assertNull(bundle.getMessage("cas.message",

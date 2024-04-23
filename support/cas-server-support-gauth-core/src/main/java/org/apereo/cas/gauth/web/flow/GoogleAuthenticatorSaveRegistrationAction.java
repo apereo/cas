@@ -1,6 +1,5 @@
 package org.apereo.cas.gauth.web.flow;
 
-import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
@@ -8,7 +7,7 @@ import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountSaveRegistrationAction;
-import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +23,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.3.0
  */
 @Slf4j
-public class GoogleAuthenticatorSaveRegistrationAction extends OneTimeTokenAccountSaveRegistrationAction {
+public class GoogleAuthenticatorSaveRegistrationAction extends OneTimeTokenAccountSaveRegistrationAction<GoogleAuthenticatorAccount> {
     /**
      * Parameter name indicating token.
      */
@@ -32,33 +31,31 @@ public class GoogleAuthenticatorSaveRegistrationAction extends OneTimeTokenAccou
 
     private final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator;
 
-    public GoogleAuthenticatorSaveRegistrationAction(final OneTimeTokenCredentialRepository repository,
-                                                     final CasConfigurationProperties casProperties,
-                                                     final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator) {
+    public GoogleAuthenticatorSaveRegistrationAction(
+        final OneTimeTokenCredentialRepository repository,
+        final CasConfigurationProperties casProperties,
+        final OneTimeTokenCredentialValidator<GoogleAuthenticatorTokenCredential, GoogleAuthenticatorToken> validator) {
         super(repository, casProperties);
         this.validator = validator;
     }
 
     @Override
-    protected boolean validate(final OneTimeTokenAccount account, final RequestContext requestContext) {
-        try {
+    protected boolean validate(final GoogleAuthenticatorAccount account, final RequestContext requestContext) {
+        return FunctionUtils.doAndHandle(__ -> {
             val token = requestContext.getRequestParameters().getRequiredInteger(REQUEST_PARAMETER_TOKEN);
             if (validator.isTokenAuthorizedFor(token, account)) {
                 LOGGER.debug("Successfully validated token [{}]", token);
+                val googleAuthenticatorToken = new GoogleAuthenticatorToken(token, account.getUsername());
+                validator.getTokenRepository().store(googleAuthenticatorToken);
                 return true;
             }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return false;
+            LOGGER.warn("Unable to authorize given token [{}] for account [{}]", token, account);
+            return false;
+        }, e -> false)
+        .apply(account);
     }
 
-    /**
-     * Gets error event.
-     *
-     * @param requestContext the request context
-     * @return the error event
-     */
+    @Override
     protected Event getErrorEvent(final RequestContext requestContext) {
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -66,16 +63,8 @@ public class GoogleAuthenticatorSaveRegistrationAction extends OneTimeTokenAccou
     }
 
     @Override
-    protected OneTimeTokenAccount buildOneTimeTokenAccount(final RequestContext requestContext) {
+    protected GoogleAuthenticatorAccount buildOneTimeTokenAccount(final RequestContext requestContext) {
         val acct = super.buildOneTimeTokenAccount(requestContext);
-        return GoogleAuthenticatorAccount.builder()
-            .id(acct.getId())
-            .name(acct.getName())
-            .username(acct.getUsername())
-            .secretKey(acct.getSecretKey())
-            .validationCode(acct.getValidationCode())
-            .scratchCodes(acct.getScratchCodes())
-            .registrationDate(acct.getRegistrationDate())
-            .build();
+        return GoogleAuthenticatorAccount.from(acct);
     }
 }

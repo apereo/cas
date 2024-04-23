@@ -29,9 +29,6 @@ public class UmaServerDiscoverySettings {
     @JsonIgnore
     private final CasConfigurationProperties casProperties;
 
-    @JsonIgnore
-    private final String serverPrefix;
-
     @JsonProperty
     private final String issuer;
 
@@ -66,37 +63,16 @@ public class UmaServerDiscoverySettings {
         OAuth20GrantTypes.UMA_TICKET.getType(),
         OAuth20GrantTypes.CLIENT_CREDENTIALS.getType());
 
-    public UmaServerDiscoverySettings(final CasConfigurationProperties casProperties, final String issuer) {
-        this.issuer = issuer;
-        this.serverPrefix = casProperties.getServer().getPrefix();
-        this.casProperties = casProperties;
-    }
-
-    @JsonProperty("dynamic_client_endpoint")
-    public String getDynamicClientEndpoint() {
-        return StringUtils.appendIfMissing(issuer, "/").concat(OAuth20Constants.UMA_REGISTRATION_URL);
-    }
-
     @JsonProperty("token_endpoint")
     public String getTokenEndpoint() {
         return StringUtils.appendIfMissing(issuer, "/").concat(OAuth20Constants.ACCESS_TOKEN_URL);
     }
-
-    @JsonProperty("authorization_endpoint")
-    public String getAuthorizationEndpoint() {
-        return StringUtils.appendIfMissing(issuer, "/").concat(OAuth20Constants.AUTHORIZE_URL);
-    }
-
+    
     @JsonProperty("requesting_party_claims_endpoint")
     public String getRequestingPartyClaimsEndpoint() {
         return StringUtils.appendIfMissing(issuer, "/").concat(OAuth20Constants.UMA_CLAIMS_COLLECTION_URL);
     }
-
-    @JsonProperty("introspection_endpoint")
-    public String getIntrospectionEndpoint() {
-        return StringUtils.appendIfMissing(issuer, "/").concat(OAuth20Constants.INTROSPECTION_URL);
-    }
-
+    
     @JsonProperty("resource_set_registration_endpoint")
     public String getResourceSetRegistrationEndpoint() {
         return StringUtils.appendIfMissing(issuer, "/").concat(OAuth20Constants.UMA_RESOURCE_SET_REGISTRATION_URL);

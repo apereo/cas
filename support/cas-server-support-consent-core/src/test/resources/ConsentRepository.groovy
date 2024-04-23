@@ -17,6 +17,10 @@ def delete(Object[] args) {
     return !principalId.contains("-")
 }
 
+def deleteAll(Object[] args) {
+    def logger = args[0]
+}
+
 def deletePrincipal(Object[] args) {
     def principalId = args[0]
     def logger = args[1]

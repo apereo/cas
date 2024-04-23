@@ -1,0 +1,29 @@
+<html>
+<head>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+<h1>Testing CAS Actuator Endpoint</h1>
+<code id="data"></code>
+<script type="text/javascript">
+    const params = new Proxy(new URLSearchParams(window.location.search), {
+        get: (searchParams, prop) => searchParams.get(prop),
+    });
+    let endpoint = params.endpoint;
+    $.ajax({
+        type: "GET",
+        url: `https://localhost:8443/cas/actuator/${endpoint}`,
+        cors: true,
+        headers: {
+            "Authorization": `Basic ${window.btoa('casuser:Mellon')}`,
+            "X-Requested-With": "XMLHttpRequest"
+        }
+    })
+        .done(data => {
+            console.log(`Found data ${JSON.stringify(data)}`);
+            $('#data').text(JSON.stringify(data));
+        })
+        .fail(() => console.log('Failed to get data'));
+</script>
+</body>
+</html>

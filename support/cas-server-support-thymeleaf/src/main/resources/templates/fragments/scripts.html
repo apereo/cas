@@ -1,42 +1,25 @@
-<script type="text/javascript" th:src="@{#{webjars.es5shim.js}}"></script>
-<script type="text/javascript" th:src="@{#{webjars.cssVarsPonyfill.js}}"></script>
 <script type="text/javascript" th:src="@{#{webjars.jquery.js}}"></script>
-<script type="text/javascript" th:src="@{#{webjars.material-components.js}}"></script>
+<script type="text/javascript" th:src="@{#{webjars.dataTables.js}}"></script>
+<script type="text/javascript" th:src="@{#{webjars.clientjs.js}}"></script>
 
-<script type="text/javascript" th:src="@{${#themes.code('cas.standard.js.file')}}"></script>
+<span th:remove="tag" th:if="${'true' == #strings.defaultString(#themes.code('cas.js.core.enabled'), 'true')}">
+    <span th:replace="~{fragments/includes :: javascript}">
+        <a href="fragments/includes.html">Theme</a> fragment will go here
+    </span>
+</span>
+
+<span th:remove="tag" th:each="file : ${#strings.arraySplit(#themes.code('cas.standard.js.file'), ',')}">
+    <script type="text/javascript" th:src="@{${file}}"></script>
+</span>
 
 <script th:inline="javascript">
     if (typeof resourceLoadedSuccessfully === "function") {
         resourceLoadedSuccessfully();
     }
-    $(function() {
-        cssVars({onlyLegacy: true});
-    })
+    $(() => {
+        typeof cssVars === "function" && cssVars({onlyLegacy: true});
+    });
+    let trackGeoLocation = /*[[${trackGeoLocation}]]*/ === "true";
 </script>
 
-<script th:inline="javascript">
-    /*<![CDATA[*/
-
-    var trackGeoLocation = /*[[${trackGeoLocation}]]*/ === "true";
-
-    var googleAnalyticsTrackingId = /*[[${googleAnalyticsTrackingId}]]*/;
-
-    if (googleAnalyticsTrackingId != null && googleAnalyticsTrackingId != '') {
-        (function (i, s, o, g, r, a, m) {
-            i['GoogleAnalyticsObject'] = r;
-            i[r] = i[r] || function () {
-                (i[r].q = i[r].q || []).push(arguments)
-            }, i[r].l = 1 * new Date();
-            a = s.createElement(o),
-                m = s.getElementsByTagName(o)[0];
-            a.async = 1;
-            a.src = g;
-            m.parentNode.insertBefore(a, m)
-        })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-
-        ga('create', googleAnalyticsTrackingId, 'auto');
-        ga('send', 'pageview');
-    }
-
-    /*]]>*/
-</script>
+<script th:replace="~{fragments/googleanalytics :: ga}"></script>

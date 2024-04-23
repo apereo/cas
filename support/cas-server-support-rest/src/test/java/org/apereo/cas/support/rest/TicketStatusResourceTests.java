@@ -1,9 +1,10 @@
 package org.apereo.cas.support.rest;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.rest.resources.TicketStatusResource;
 import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,11 +30,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @ExtendWith(MockitoExtension.class)
 @Tag("RestfulApi")
-public class TicketStatusResourceTests {
+class TicketStatusResourceTests {
     private static final String TICKETS_RESOURCE_URL = "/cas/v1/tickets";
 
     @Mock
-    private CentralAuthenticationService casMock;
+    private TicketRegistry ticketRegistry;
 
     @InjectMocks
     private TicketStatusResource ticketStatusResource;
@@ -42,7 +43,7 @@ public class TicketStatusResourceTests {
 
     @BeforeEach
     public void initialize() {
-        this.ticketStatusResource = new TicketStatusResource(casMock);
+        this.ticketStatusResource = new TicketStatusResource(ticketRegistry);
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketStatusResource)
             .defaultRequest(get("/")
@@ -52,24 +53,24 @@ public class TicketStatusResourceTests {
     }
 
     @Test
-    public void verifyStatus() throws Exception {
+    void verifyStatus() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
-        when(casMock.getTicket(anyString())).thenReturn(tgt);
+        when(ticketRegistry.getTicket(anyString(), (Class<Ticket>) any())).thenReturn(tgt);
         this.mockMvc.perform(get(TICKETS_RESOURCE_URL + "/TGT-1"))
             .andExpect(status().isOk())
             .andExpect(content().string(tgt.getId()));
     }
 
     @Test
-    public void verifyStatusNotFound() throws Exception {
-        when(casMock.getTicket(anyString())).thenThrow(InvalidTicketException.class);
+    void verifyStatusNotFound() throws Throwable {
+        when(ticketRegistry.getTicket(anyString(), (Class<Ticket>) any())).thenThrow(InvalidTicketException.class);
         this.mockMvc.perform(get(TICKETS_RESOURCE_URL + "/TGT-1"))
             .andExpect(status().isNotFound());
     }
 
     @Test
-    public void verifyStatusError() throws Exception {
-        when(casMock.getTicket(anyString())).thenThrow(RuntimeException.class);
+    void verifyStatusError() throws Throwable {
+        when(ticketRegistry.getTicket(anyString())).thenThrow(RuntimeException.class);
         this.mockMvc.perform(get(TICKETS_RESOURCE_URL + "/TGT-1"))
             .andExpect(status().isInternalServerError());
     }

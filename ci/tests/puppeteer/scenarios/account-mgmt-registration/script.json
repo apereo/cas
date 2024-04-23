@@ -1,0 +1,23 @@
+{
+  "dependencies": "account-mgmt",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.http-client.host-name-verifier=none",
+
+    "--cas.account-registration.mail.from=cas@apereo.org",
+    "--cas.account-registration.mail.html=false",
+    "--cas.account-registration.mail.text=${url}",
+
+    "--cas.account-registration.core.password-policy-pattern=.+",
+    "--cas.account-registration.provisioning.rest.url=https://localhost:9859/post"
+  ],
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

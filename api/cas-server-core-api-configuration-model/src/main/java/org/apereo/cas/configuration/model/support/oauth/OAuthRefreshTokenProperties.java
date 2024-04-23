@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @JsonFilter("OAuthRefreshTokenProperties")
 public class OAuthRefreshTokenProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8328568272835831702L;
 
     /**
@@ -30,4 +32,18 @@ public class OAuthRefreshTokenProperties implements Serializable {
      */
     @DurationCapable
     private String timeToKillInSeconds = "P14D";
+
+    /**
+     * The storage object name used and created by CAS to hold OAuth refresh tokens
+     * in the backing ticket registry implementation.
+     */
+    private String storageName = "oauthRefreshTokensCache";
+
+    /**
+     * Maximum number of active refresh tokens that an application
+     * can receive. If the application requests more that this limit,
+     * the request will be denied and the access token will not be issued.
+     */
+    private long maxActiveTokensAllowed;
+
 }

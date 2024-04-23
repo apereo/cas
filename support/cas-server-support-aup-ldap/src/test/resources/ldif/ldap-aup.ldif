@@ -1,9 +1,9 @@
-dn: cn=casaupldap,ou=people,dc=example,dc=org
+dn: cn=$user,ou=people,dc=example,dc=org
 objectClass: organizationalRole
 objectClass: inetOrgPerson
 objectClass: person
 objectClass: account
-cn: casaupldap
+cn: $user
 userPassword: 123456
 sn: casaupldap
 uid: casaupldap

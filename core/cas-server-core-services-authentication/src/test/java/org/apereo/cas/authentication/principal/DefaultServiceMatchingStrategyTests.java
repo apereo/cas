@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -16,13 +17,59 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class DefaultServiceMatchingStrategyTests {
+class DefaultServiceMatchingStrategyTests {
+
+    private ServiceMatchingStrategy strategy;
+
+    @BeforeEach
+    public void setup() {
+        val mgr = mock(ServicesManager.class);
+        this.strategy = new DefaultServiceMatchingStrategy(mgr);
+    }
 
     @Test
-    public void verifyOperation() {
-        val mgr = mock(ServicesManager.class);
-        val strategy = new DefaultServiceMatchingStrategy(mgr);
+    void verifyServicesAsNull() throws Throwable {
         assertFalse(strategy.matches(null, null));
     }
 
+    @Test
+    void verifyServicesMatch() throws Throwable {
+        val service = getService("https://www.google.org");
+        assertTrue(strategy.matches(service, service));
+    }
+
+    @Test
+    void verifyServicesDifferById() throws Throwable {
+        val service1 = getService("https://www.google.org/");
+        val service2 = getService("https://www.google.org");
+        assertFalse(strategy.matches(service1, service2));
+    }
+
+    @Test
+    void verifyServicesDifferByWWW() throws Throwable {
+        val service1 = getService("https://google.org");
+        val service2 = getService("https://www.google.org");
+        assertFalse(strategy.matches(service1, service2));
+    }
+
+    @Test
+    void verifyServicesMatchByFragmentEncoded() throws Throwable {
+        val service1 = getService("https://google.org");
+        val service2 = getService("https://google.org%23/A/B/C");
+        assertTrue(strategy.matches(service1, service2));
+    }
+
+    @Test
+    void verifyServicesMatchByFragmentDecoded() throws Throwable {
+        val service1 = getService("https://google.org");
+        val service2 = getService("https://google.org#/A/B/C");
+        assertTrue(strategy.matches(service1, service2));
+    }
+
+    private static Service getService(final String id) {
+        val service = mock(WebApplicationService.class);
+        when(service.getId()).thenReturn(id);
+        when(service.getOriginalUrl()).thenReturn(id);
+        return service;
+    }
 }

@@ -21,9 +21,9 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Utility")
-public class StringSerializerTests {
+class StringSerializerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val input = mock(StringSerializer.class);
         when(input.supports(any(File.class))).thenCallRealMethod();
         when(input.supports(anyString())).thenCallRealMethod();
@@ -32,6 +32,6 @@ public class StringSerializerTests {
         assertTrue(input.supports(new File("something")));
         assertTrue(input.supports("something"));
         assertTrue(input.load(new ByteArrayInputStream(ArrayUtils.EMPTY_BYTE_ARRAY)).isEmpty());
-        assertEquals(input.getContentTypes(), List.of(MediaType.TEXT_PLAIN));
+        assertEquals(List.of(MediaType.TEXT_PLAIN), input.getContentTypes());
     }
 }

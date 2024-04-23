@@ -14,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("OAuth")
-public class OAuth20RegisteredServiceCipherExecutorTests {
+@Tag("Cipher")
+class OAuth20RegisteredServiceCipherExecutorTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val cipher = new OAuth20RegisteredServiceCipherExecutor();
         val secret = RandomUtils.randomAlphanumeric(12);
         val encoded = cipher.encode(secret);

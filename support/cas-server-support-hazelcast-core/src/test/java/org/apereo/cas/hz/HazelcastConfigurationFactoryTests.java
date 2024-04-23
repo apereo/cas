@@ -19,31 +19,43 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Hazelcast")
-public class HazelcastConfigurationFactoryTests {
+class HazelcastConfigurationFactoryTests {
     @Test
-    public void verifyMergePolicy() {
+    void verifyReplicationMaps() throws Throwable {
+        val hz = new BaseHazelcastProperties();
+        hz.getCluster().getCore().setReplicated(true);
+        hz.getCluster().getCore().setPartitionMemberGroupType("ZONE_AWARE");
+        val mapConfig = HazelcastConfigurationFactory.buildMapConfig(hz, "mapName", 10);
+        assertNotNull(mapConfig);
+        assertNotNull(HazelcastConfigurationFactory.build(hz, mapConfig));
+    }
+
+    @Test
+    void verifyMergePolicy() throws Throwable {
         val policies = new String[]{"discard", "pass_through", "expiration_time", "higher_hits",
             "latest_update", "latest_access", "put_if_absent", "other"};
         Arrays.stream(policies).forEach(policy -> {
             val hz = new BaseHazelcastProperties();
             hz.getCluster().getCore().setMapMergePolicy(policy);
-            val result = HazelcastConfigurationFactory.buildMapConfig(hz, "mapName", 10);
-            assertNotNull(result);
+            val mapConfig = HazelcastConfigurationFactory.buildMapConfig(hz, "mapName", 10);
+            assertNotNull(mapConfig);
+            assertNotNull(HazelcastConfigurationFactory.build(hz, mapConfig));
         });
     }
 
     @Test
-    public void verifyLocalPublic() {
+    void verifyLocalPublic() throws Throwable {
         val hz = new BaseHazelcastProperties();
         hz.getCluster().getNetwork().setLocalAddress("127.0.0.1");
         hz.getCluster().getNetwork().setPublicAddress("127.0.0.1");
         hz.getCluster().getNetwork().setNetworkInterfaces("127.0.0.1,*");
+        hz.getCluster().getCore().setCpMemberCount(3);
         val result = HazelcastConfigurationFactory.build(hz);
         assertNotNull(result);
     }
 
     @Test
-    public void verifyDefaultJoinConfig() {
+    void verifyDefaultJoinConfig() throws Throwable {
         val hz = new BaseHazelcastProperties();
         hz.getCluster().getDiscovery().getMulticast().setEnabled(true);
         hz.getCluster().getDiscovery().getMulticast().setGroup("127.0.0.1");
@@ -54,7 +66,7 @@ public class HazelcastConfigurationFactoryTests {
     }
 
     @Test
-    public void verifyDiscoveryConfig() {
+    void verifyDiscoveryConfig() throws Throwable {
         val hz = new BaseHazelcastProperties();
         hz.getCluster().getDiscovery().setEnabled(true);
         val result = HazelcastConfigurationFactory.build(hz);
@@ -62,7 +74,7 @@ public class HazelcastConfigurationFactoryTests {
     }
 
     @Test
-    public void verifyWAN() {
+    void verifyWAN() throws Throwable {
         val hz = new BaseHazelcastProperties();
         hz.getCluster().getWanReplication().setEnabled(true);
         assertThrows(IllegalArgumentException.class, () -> HazelcastConfigurationFactory.build(hz));

@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.expiration;
 
 import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.Clock;
 import java.util.UUID;
 
@@ -27,6 +28,7 @@ import java.util.UUID;
 @EqualsAndHashCode
 public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
 
+    @Serial
     private static final long serialVersionUID = 8042104336580063690L;
 
     private String name;
@@ -34,11 +36,11 @@ public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
     private Clock clock = Clock.systemUTC();
 
     protected AbstractCasExpirationPolicy() {
-        this.name = this.getClass().getSimpleName() + '-' + UUID.randomUUID().toString();
+        this.name = this.getClass().getSimpleName() + '-' + UUID.randomUUID();
     }
 
     @Override
-    public boolean isExpired(final TicketState ticketState) {
+    public boolean isExpired(final TicketGrantingTicketAwareTicket ticketState) {
         val tgt = ticketState.getTicketGrantingTicket();
         return tgt != null && tgt.isExpired();
     }

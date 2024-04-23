@@ -1,4 +1,12 @@
 description = "Apereo CAS OAuth UMA Server Core Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "OAuth2 User-Managed Access (UMA)",
+            title: "OAuth2 UMA Identity Provider",
+            aliases: ["uma"]
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-throttle")
     api project(":api:cas-server-core-api")
@@ -7,11 +15,12 @@ dependencies {
     implementation libraries.jose4j
     implementation libraries.nimbus
 
-    implementation project(":support:cas-server-support-oauth-core")
+
     implementation project(":support:cas-server-support-oauth-core-api")
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-pac4j-api")
+    implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-oauth")
     implementation project(":support:cas-server-support-jpa-util")
     implementation project(":support:cas-server-support-token-core-api")
@@ -32,6 +41,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-throttle")
     testImplementation project(":support:cas-server-support-validation")
 
     testImplementation project(":core:cas-server-core-util")
@@ -40,6 +50,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-tickets")

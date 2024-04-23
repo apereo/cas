@@ -1,11 +1,14 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.services.util.RegisteredServiceAccessStrategyEvaluator;
+
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serial;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,43 +18,40 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Slf4j
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
 public class SurrogateRegisteredServiceAccessStrategy extends BaseSurrogateRegisteredServiceAccessStrategy {
 
+    @Serial
     private static final long serialVersionUID = -1688944419711632962L;
 
-    private boolean surrogateEnabled;
+    /**
+     * Defines the attribute aggregation behavior when checking for required attributes.
+     * Default requires that all attributes be present and match the principal's.
+     */
+    protected boolean requireAllAttributes = true;
 
+    /**
+     * Indicates whether matching on required attribute values
+     * should be done in a case-insensitive manner.
+     */
+    protected boolean caseInsensitive;
+    
     private Map<String, Set<String>> surrogateRequiredAttributes = new HashMap<>(0);
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> attributes) {
-        if (isSurrogateAuthenticationSession(attributes)) {
-            return isSurrogateEnabled() && doPrincipalAttributesAllowSurrogateServiceAccess(attributes);
-        }
-        return super.doPrincipalAttributesAllowServiceAccess(principal, attributes);
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
+        return !isSurrogateAuthenticationSession(request) || doPrincipalAttributesAllowSurrogateServiceAccess(request);
     }
 
-    /**
-     * Do principal attributes allow surrogate service access?.
-     *
-     * @param principalAttributes the principal attributes
-     * @return true/false
-     */
-    protected boolean doPrincipalAttributesAllowSurrogateServiceAccess(final Map<String, Object> principalAttributes) {
-        if (!enoughRequiredAttributesAvailableToProcess(principalAttributes, this.surrogateRequiredAttributes)) {
-            LOGGER.debug("Surrogate access is denied. There are not enough attributes available to satisfy the requirements [{}]",
-                this.surrogateRequiredAttributes);
-            return false;
-        }
-        if (!doRequiredAttributesAllowPrincipalAccess(principalAttributes, this.surrogateRequiredAttributes)) {
-            LOGGER.debug("Surrogate access is denied. The principal does not have the required attributes [{}] specified by this strategy",
-                this.surrogateRequiredAttributes);
-            return false;
-        }
-        return true;
+    protected boolean doPrincipalAttributesAllowSurrogateServiceAccess(final RegisteredServiceAccessStrategyRequest request) {
+        return RegisteredServiceAccessStrategyEvaluator.builder()
+            .caseInsensitive(this.caseInsensitive)
+            .requireAllAttributes(this.requireAllAttributes)
+            .requiredAttributes(this.surrogateRequiredAttributes)
+            .rejectedAttributes(new LinkedHashMap<>(0))
+            .build()
+            .apply(request);
     }
 }

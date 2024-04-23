@@ -1,0 +1,13 @@
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "https://apereo.github.io",
+  "name" : "Sample",
+  "id" : 1,
+  "multifactorPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "forceExecution": true,
+    "principalAttributeNameTrigger": "memberOf",
+    "principalAttributeValueToMatch": "^((?!^CN=GRP-MFA-Exempt).)*",
+    "multifactorAuthenticationProviders": [ "java.util.LinkedHashSet", [ "mfa-yubikey" ] ]
+  }
+}

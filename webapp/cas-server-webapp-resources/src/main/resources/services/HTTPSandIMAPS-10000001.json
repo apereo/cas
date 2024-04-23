@@ -1,8 +1,15 @@
 {
-  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "@class": "org.apereo.cas.services.CasRegisteredService",
   "serviceId": "^(https|imaps)://.*",
   "name": "HTTPS and IMAPS",
   "id": 10000001,
   "description": "This service definition authorizes all application urls that support HTTPS and IMAPS protocols.",
-  "evaluationOrder": 10000
+  "evaluationOrder": 10000,
+  "properties" : {
+    "@class" : "java.util.HashMap",
+    "wildcardedServiceDefinition" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "true" ] ]
+    }
+  }
 }

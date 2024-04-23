@@ -18,12 +18,18 @@ dependencies {
     testImplementation project(":core:cas-server-core-services-registry")
     testImplementation project(":core:cas-server-core-services-api")
     testImplementation project(":core:cas-server-core-services-authentication")
-    
-    testRuntimeOnly libraries.webjars
-    testRuntimeOnly libraries.websockets
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-notifications")
 
-    implementation libraries.pac4jcore
-    implementation libraries.nimbus
+    testRuntimeOnly libraries.webjars
+    testRuntimeOnly libraries.webjarsbootstrap
+    testRuntimeOnly libraries.websockets
+    
     implementation libraries.snakeyaml
 }
 
@@ -45,11 +51,11 @@ Probably a better way, but watch out for "tasks.jar.onlyIf" elsewhere in build s
  */
 jar.dependsOn 'deleteJar'
 
-task deleteJar(type: Delete) {
+tasks.register('deleteJar', Delete) {
     def jarFile = file("build/libs/${project.name}-${project.version}.jar")
     def propModified = gradlePropFile.lastModified()
     def jarModified = jarFile.lastModified()
-    if (propModified > jarModified) { 
+    if (propModified > jarModified) {
         doLast {
             logger.info("""
 Deleting JAR files [$jarFile] due to [gradle.properties] update because it was updated last at [$propModified]

@@ -6,9 +6,9 @@ import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.JEEContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -25,9 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("UMA")
-public class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
+class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
-    public void verifyPermissionRegistrationOperation() throws Exception {
+    void verifyPermissionRegistrationOperation() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         val body = createUmaPermissionRegistrationRequest(100).toJson();
         val response = umaPermissionRegistrationEndpointController.handle(body, results.getLeft(), results.getMiddle());
@@ -39,7 +39,7 @@ public class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEnd
     }
 
     @Test
-    public void verifyFailsAuthn() throws Exception {
+    void verifyFailsAuthn() throws Throwable {
         val body = createUmaPermissionRegistrationRequest(100).toJson();
         val response = umaPermissionRegistrationEndpointController.handle(body,
             new MockHttpServletRequest(), new MockHttpServletResponse());
@@ -47,7 +47,7 @@ public class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEnd
     }
 
     @Test
-    public void verifyBadInput() throws Exception {
+    void verifyBadInput() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = "###";
         var response = umaPermissionRegistrationEndpointController.handle(body, results.getLeft(), results.getMiddle());
@@ -55,7 +55,7 @@ public class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEnd
     }
 
     @Test
-    public void verifyBadProfile() throws Exception {
+    void verifyBadProfile() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
 
         var body = createUmaResourceRegistrationRequest().toJson();
@@ -80,7 +80,7 @@ public class UmaPermissionRegistrationEndpointControllerTests extends BaseUmaEnd
         val commonProfile = new CommonProfile();
         commonProfile.setClientName("CasClient");
         commonProfile.setId("testuser");
-        commonProfile.setPermissions(Set.of(OAuth20Constants.UMA_PROTECTION_SCOPE));
+        commonProfile.setRoles(Set.of(OAuth20Constants.UMA_PROTECTION_SCOPE));
         manager.save(true, commonProfile, false);
 
         response = umaPermissionRegistrationEndpointController.handle(body, results.getLeft(), results.getMiddle());

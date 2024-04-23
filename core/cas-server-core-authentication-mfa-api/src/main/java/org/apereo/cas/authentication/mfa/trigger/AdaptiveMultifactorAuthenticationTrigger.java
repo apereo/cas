@@ -10,8 +10,8 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.HttpRequestUtils;
-
+import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -21,8 +21,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
-
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 import java.util.Optional;
 
@@ -38,21 +38,42 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final GeoLocationService geoLocationService;
+
     private final CasConfigurationProperties casProperties;
+
     private final ApplicationContext applicationContext;
 
     private int order = Ordered.LOWEST_PRECEDENCE;
+
+    private static boolean checkUserAgentOrClientIp(final String clientIp, final String agent,
+                                                    final String mfaMethod, final String pattern) {
+        if (StringUtils.isNotBlank(agent) && RegexUtils.find(pattern, agent)) {
+            LOGGER.debug("Current user agent [{}] at [{}] matches the provided pattern [{}] for "
+                    + "adaptive authentication and is required to use [{}]",
+                agent, clientIp, pattern, mfaMethod);
+            return true;
+        }
+
+        if (StringUtils.isNotBlank(clientIp) && RegexUtils.find(pattern, clientIp)) {
+            LOGGER.debug("Current client IP [{}] matches the provided pattern [{}] for "
+                    + "adaptive authentication and is required to use [{}]",
+                clientIp, pattern, mfaMethod);
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
                                                                    final RegisteredService registeredService,
                                                                    final HttpServletRequest httpServletRequest,
-                                                                   final Service service) {
+                                                                   final HttpServletResponse response,
+                                                                   final Service service) throws Throwable {
 
         val multifactorMap = casProperties.getAuthn().getAdaptive().getPolicy().getRequireMultifactor();
 
-        if (service == null || authentication == null) {
-            LOGGER.trace("No service or authentication is available to determine event for principal");
+        if (authentication == null) {
+            LOGGER.trace("No authentication is available to determine event for principal");
             return Optional.empty();
         }
 
@@ -97,27 +118,9 @@ public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuth
         return Optional.empty();
     }
 
-    private static boolean checkUserAgentOrClientIp(final String clientIp, final String agent,
-                                                    final String mfaMethod, final String pattern) {
-        if (StringUtils.isNotBlank(agent) && agent.matches(pattern)) {
-            LOGGER.debug("Current user agent [{}] at [{}] matches the provided pattern [{}] for "
-                    + "adaptive authentication and is required to use [{}]",
-                agent, clientIp, pattern, mfaMethod);
-            return true;
-        }
-
-        if (StringUtils.isNotBlank(clientIp) && clientIp.matches(pattern)) {
-            LOGGER.debug("Current client IP [{}] matches the provided pattern [{}] for "
-                    + "adaptive authentication and is required to use [{}]",
-                clientIp, pattern, mfaMethod);
-            return true;
-        }
-        return false;
-    }
-
     private boolean checkRequestGeoLocation(final HttpServletRequest httpServletRequest,
                                             final String clientIp, final String mfaMethod,
-                                            final String pattern) {
+                                            final String pattern) throws Throwable {
         if (this.geoLocationService == null) {
             LOGGER.trace("No geolocation service is defined");
             return false;
@@ -131,7 +134,7 @@ public class AdaptiveMultifactorAuthenticationTrigger implements MultifactorAuth
         }
 
         val address = loc.build();
-        if (address.matches(pattern)) {
+        if (RegexUtils.find(pattern, address)) {
             LOGGER.debug("Current address [{}] at [{}] matches the provided pattern [{}] for "
                     + "adaptive authentication and is required to use [{}]",
                 address, clientIp, pattern, mfaMethod);

@@ -4,6 +4,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
 import lombok.ToString;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
@@ -36,37 +37,8 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public boolean delete(final RegisteredService registeredService) {
-        return this.registeredServices.remove(registeredService);
-    }
-
-    @Override
-    public void deleteAll() {
-        this.registeredServices.clear();
-    }
-
-    @Override
-    public RegisteredService findServiceById(final long id) {
-        return this.registeredServices.stream().filter(r -> r.getId() == id).findFirst().orElse(null);
-    }
-
-    @Override
-    public Collection<RegisteredService> load() {
-        val services = new ArrayList<RegisteredService>(registeredServices.size());
-        registeredServices
-            .stream()
-            .map(this::invokeServiceRegistryListenerPostLoad)
-            .filter(Objects::nonNull)
-            .forEach(s -> {
-                publishEvent(new CasRegisteredServiceLoadedEvent(this, s));
-                services.add(s);
-            });
-        return services;
-    }
-
-    @Override
     public RegisteredService save(final RegisteredService registeredService) {
-        if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
+        if (registeredService.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE) {
             registeredService.setId(findHighestId() + 1);
         }
         invokeServiceRegistryListenerPreSave(registeredService);
@@ -79,13 +51,43 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
     }
 
     @Override
-    public long size() {
-        return registeredServices.size();
+    public boolean delete(final RegisteredService registeredService) {
+        return !registeredServices.contains(registeredService) || this.registeredServices.remove(registeredService);
+    }
+
+    @Override
+    public void deleteAll() {
+        this.registeredServices.clear();
+    }
+
+    @Override
+    public Collection<RegisteredService> load() {
+        val services = new ArrayList<RegisteredService>(registeredServices.size());
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        registeredServices
+            .stream()
+            .map(this::invokeServiceRegistryListenerPostLoad)
+            .filter(Objects::nonNull)
+            .forEach(s -> {
+                publishEvent(new CasRegisteredServiceLoadedEvent(this, s, clientInfo));
+                services.add(s);
+            });
+        return services;
     }
 
     @Override
     public Stream<? extends RegisteredService> getServicesStream() {
         return this.registeredServices.stream();
+    }
+
+    @Override
+    public RegisteredService findServiceById(final long id) {
+        return this.registeredServices.stream().filter(r -> r.getId() == id).findFirst().orElse(null);
+    }
+
+    @Override
+    public long size() {
+        return registeredServices.size();
     }
 
     /**

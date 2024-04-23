@@ -27,25 +27,7 @@ CAS provides a Consul-enabled service discovery server that is based on [Spring 
 
 When deployed and assuming default settings, the Consul dashboard would be available at: `http://localhost:8500/ui`.
 
-Note that a Consul Agent client must be available to all CAS server nodes. By default, the agent client is expected to be at `localhost:8500`. See the [Agent documentation](https://consul.io/docs/agent/basics.html) for specifics on how to start an Agent client.
-
-### Configuration Management
-
-Consul provides a [Key/Value Store](https://consul.io/docs/agent/http/kv.html) for storing configuration and other metadata. Configuration is loaded into the CAS environment during the special "bootstrap" phase at runtime. Configuration is stored in the `/config` folder by default. Multiple `PropertySource` instances are created based on the application’s name and the active profiles that mimics 
-the Spring Cloud Config order of resolving properties. For example, an application with the name `cas` and with the `dev` profile will have the following property sources created:
-
-```bash
-config/cas,dev/
-config/cas/
-config/application,dev/
-config/application/
-```
-
-The most specific property source is at the top, with the least specific at the bottom. Properties in the `config/application` folder are applicable to all applications using consul for configuration. Properties in the `config/cas` folder are only available to the instances of the service named `cas`.
-
-Configuration is currently read on startup of the application. Sending a HTTP POST to `/refresh` will cause the configuration to be reloaded. Watching the key value store (which Consul supports) is not currently possible, but will be a future addition to this project.
-
-The Consul Config Watch takes advantage of the ability of consul to [watch a key prefix](https://www.consul.io/docs/agent/watches.html). The Config Watch makes a blocking Consul HTTP API call to determine if any relevant configuration data has changed for the current application. If there is new configuration data a `Refresh Event` is published. This is equivalent to calling the `/refresh` Spring Boot actuator endpoint.
+Note that a Consul Agent client must be available to all CAS server nodes. By default, the agent client is expected to be at `localhost:8500`. See the [Agent documentation](https://www.consul.io/docs/agent) for specifics on how to start an Agent client.
 
 ## CAS Discovery Service Clients
 
@@ -53,9 +35,9 @@ Each individual CAS server is given the ability to auto-register itself with the
 
 Support is added by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-consul-client" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-consul-client" %}
 
-{% include casproperties.html thirdParty="spring.cloud.consul,spring.cloud.config.discovery" %}
+{% include_cached casproperties.html thirdParty="spring.cloud.consul,spring.cloud.config.discovery" %}
 
 ### Troubleshooting
 

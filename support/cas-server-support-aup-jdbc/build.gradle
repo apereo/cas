@@ -1,4 +1,12 @@
 description = "Apereo CAS AUP JDBC Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            title: "Acceptable Usage Policy via JDBC",
+            category: "Acceptable Usage Policy"
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-authentication")
@@ -9,10 +17,12 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-tickets")
+    
     implementation project(":support:cas-server-support-aup-core")
     implementation project(":support:cas-server-support-jpa-util")
 
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-authentication-mfa")
@@ -28,6 +38,8 @@ dependencies {
     testImplementation project(":support:cas-server-support-aup-webflow")
 
     testImplementation project(path: ":support:cas-server-support-aup-webflow", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
+
     testImplementation project(path: ":support:cas-server-support-aup-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

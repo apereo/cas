@@ -1,18 +1,13 @@
 package org.apereo.cas.support.saml;
 
-import com.codahale.metrics.MetricRegistry;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
-import net.shibboleth.utilities.java.support.xml.ParserPool;
-import org.opensaml.core.config.ConfigurationService;
-import org.opensaml.core.config.InitializationService;
+import net.shibboleth.shared.xml.ParserPool;
+import org.apache.velocity.app.VelocityEngine;
+import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistry;
 import org.opensaml.core.xml.io.MarshallerFactory;
 import org.opensaml.core.xml.io.UnmarshallerFactory;
-import org.opensaml.xmlsec.config.DecryptionParserPool;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * Load the OpenSAML config context.
@@ -20,41 +15,66 @@ import org.opensaml.xmlsec.config.DecryptionParserPool;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Slf4j
-@Getter
-public class OpenSamlConfigBean {
+public interface OpenSamlConfigBean {
 
     /**
      * Default bean name.
      */
-    public static final String DEFAULT_BEAN_NAME = "shibboleth.OpenSAMLConfig";
-    
-    private final ParserPool parserPool;
+    String DEFAULT_BEAN_NAME = "shibboleth.OpenSAMLConfig";
 
-    private final XMLObjectBuilderFactory builderFactory;
+    /**
+     * Gets parser pool.
+     *
+     * @return the parser pool
+     */
+    ParserPool getParserPool();
 
-    private final MarshallerFactory marshallerFactory;
+    /**
+     * Gets builder factory.
+     *
+     * @return the builder factory
+     */
+    XMLObjectBuilderFactory getBuilderFactory();
 
-    private final UnmarshallerFactory unmarshallerFactory;
+    /**
+     * Gets marshaller factory.
+     *
+     * @return the marshaller factory
+     */
+    MarshallerFactory getMarshallerFactory();
 
-    private final XMLObjectProviderRegistry xmlObjectProviderRegistry;
+    /**
+     * Gets unmarshaller factory.
+     *
+     * @return the unmarshaller factory
+     */
+    UnmarshallerFactory getUnmarshallerFactory();
 
-    @SneakyThrows
-    public OpenSamlConfigBean(final @NonNull ParserPool parserPool) {
-        this.parserPool = parserPool;
+    /**
+     * Gets xml object provider registry.
+     *
+     * @return the xml object provider registry
+     */
+    XMLObjectProviderRegistry getXmlObjectProviderRegistry();
 
-        LOGGER.trace("Initializing OpenSaml configuration...");
-        InitializationService.initialize();
+    /**
+     * Gets application context.
+     *
+     * @return the application context
+     */
+    ConfigurableApplicationContext getApplicationContext();
 
-        this.xmlObjectProviderRegistry = ConfigurationService.get(XMLObjectProviderRegistry.class);
-        xmlObjectProviderRegistry.setParserPool(this.parserPool);
+    /**
+     * Gets velocity engine.
+     *
+     * @return the velocity engine
+     */
+    VelocityEngine getVelocityEngine();
 
-        ConfigurationService.register(DecryptionParserPool.class, new DecryptionParserPool(this.parserPool));
-        ConfigurationService.register(MetricRegistry.class, new MetricRegistry());
-
-        this.builderFactory = xmlObjectProviderRegistry.getBuilderFactory();
-        this.marshallerFactory = xmlObjectProviderRegistry.getMarshallerFactory();
-        this.unmarshallerFactory = xmlObjectProviderRegistry.getUnmarshallerFactory();
-        LOGGER.debug("Initialized OpenSaml successfully.");
-    }
+    /**
+     * Log object.
+     *
+     * @param samlObject the saml object
+     */
+    void logObject(XMLObject samlObject);
 }

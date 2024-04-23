@@ -2,12 +2,11 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serial;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,24 +20,24 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class RegisteredServicePropertyTests {
+class RegisteredServicePropertyTests {
 
     @Test
-    public void verifyNull() {
+    void verifyNull() throws Throwable {
         val p1 = new DefaultRegisteredServiceProperty(null);
         assertNull(p1.getValue(String.class));
         assertFalse(p1.getBooleanValue());
     }
 
     @Test
-    public void verifyValue() {
+    void verifyValue() throws Throwable {
         val p1 = new DefaultRegisteredServiceProperty("true");
         assertEquals("true", p1.getValue(String.class));
         assertTrue(p1.getBooleanValue());
     }
 
     @Test
-    public void verifyTypedValue() {
+    void verifyTypedValue() throws Throwable {
         val service = mock(RegisteredService.class);
         val properties = (Map) Map.of(
             RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_CIPHER_STRATEGY_TYPE.getPropertyName(), new DefaultRegisteredServiceProperty("ENCRYPT_AND_SIGN"),
@@ -58,12 +57,10 @@ public class RegisteredServicePropertyTests {
         assertNotNull(RegisteredServiceProperties.DELEGATED_AUTHN_SAML2_MAXIMUM_AUTHN_LIFETIME.getTypedPropertyValue(service));
     }
 
-    @Getter(onMethod = @__({@Override}))
-    @RequiredArgsConstructor
-    private static class DefaultRegisteredServiceProperty implements RegisteredServiceProperty {
+    @SuppressWarnings("UnusedVariable")
+    private record DefaultRegisteredServiceProperty(String value) implements RegisteredServiceProperty {
+        @Serial
         private static final long serialVersionUID = -4878764188998002053L;
-
-        private final String value;
 
         @Override
         public Set<String> getValues() {

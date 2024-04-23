@@ -22,9 +22,8 @@ import java.security.cert.X509Certificate;
 @ToString(callSuper = true)
 public class X509SubjectAlternativeNameRFC822EmailPrincipalResolver extends AbstractX509PrincipalResolver {
 
-    public X509SubjectAlternativeNameRFC822EmailPrincipalResolver(final PrincipalResolutionContext context,
-                                                                  final String alternatePrincipalAttribute) {
-        super(context, alternatePrincipalAttribute);
+    public X509SubjectAlternativeNameRFC822EmailPrincipalResolver(final PrincipalResolutionContext context) {
+        super(context);
     }
 
     @Override
@@ -32,9 +31,9 @@ public class X509SubjectAlternativeNameRFC822EmailPrincipalResolver extends Abst
         LOGGER.debug("Resolving principal from Subject Alternative Name RFC8222 type (email) for [{}]", certificate);
         try {
             val subjectAltNames = certificate.getSubjectAlternativeNames();
-            val email = getRFC822EmailAddress(subjectAltNames);
-            if (email != null) {
-                return email;
+            val email = X509ExtractorUtils.getRFC822EmailAddress(subjectAltNames);
+            if (email.isPresent()) {
+                return email.get();
             }
         } catch (final CertificateParsingException e) {
             LoggingUtils.error(LOGGER, e);

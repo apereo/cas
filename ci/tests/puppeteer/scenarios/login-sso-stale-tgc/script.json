@@ -1,0 +1,15 @@
+{
+  "dependencies": "core",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.tgc.crypto.enabled=false"
+  ],
+  "SPRING_APPLICATION_JSON": {
+    "cas": {
+      "tgc": {
+        "path": "/cas"
+      }
+    }
+  }
+}

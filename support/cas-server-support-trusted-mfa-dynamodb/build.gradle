@@ -1,7 +1,12 @@
 description = "Apereo CAS Trusted MFA Browser/Device DynamoDb Support"
 
 ext {
-    maxParallelForksForTests = 1
+
+    publishMetadata = true
+    projectMetadata = [
+            category: "Multifactor Authentication Trusted Devices",
+            title: "Multifactor Authentication Trusted Devices via DynamoDb"
+    ]
 }
 
 dependencies {
@@ -20,6 +25,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-audit-api")
     testImplementation project(":core:cas-server-core-authentication")

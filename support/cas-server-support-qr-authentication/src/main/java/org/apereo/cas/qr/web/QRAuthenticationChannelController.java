@@ -43,7 +43,7 @@ public class QRAuthenticationChannelController {
      * Verify.
      *
      * @param message the message
-     * @return the boolean
+     * @return true/false
      */
     @MessageMapping("/accept")
     public boolean verify(final Message<String> message) {
@@ -59,7 +59,7 @@ public class QRAuthenticationChannelController {
             return false;
         }
 
-        val channelId = Objects.requireNonNull(nativeHeaders.get(QRAuthenticationConstants.QR_AUTHENTICATION_CHANNEL_ID)).get(0);
+        val channelId = Objects.requireNonNull(nativeHeaders.get(QRAuthenticationConstants.QR_AUTHENTICATION_CHANNEL_ID)).getFirst();
         val endpoint = String.format("%s/%s/verify", QRAuthenticationConstants.QR_SIMPLE_BROKER_DESTINATION_PREFIX, channelId);
         try {
             LOGGER.debug("Current channel id is [{}]", channelId);
@@ -67,7 +67,7 @@ public class QRAuthenticationChannelController {
             });
             val token = resultMap.get(TokenConstants.PARAMETER_NAME_TOKEN);
 
-            val deviceId = Objects.requireNonNull(nativeHeaders.get(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID)).get(0).toString();
+            val deviceId = Objects.requireNonNull(nativeHeaders.get(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID)).getFirst().toString();
             val validationRequest = QRAuthenticationTokenValidationRequest.builder()
                 .deviceId(deviceId)
                 .token(token)

@@ -2,8 +2,8 @@ package org.apereo.cas.authentication.handler.support;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.handler.support.jaas.JaasAuthenticationHandler;
+import org.apereo.cas.authentication.principal.Service;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -14,27 +14,28 @@ import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.security.auth.login.LoginException;
+
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-@Tag("Authentication")
-public class JaasAuthenticationHandlerSystemConfigurationTests {
+@Tag("AuthenticationHandler")
+class JaasAuthenticationHandlerSystemConfigurationTests {
 
     private static final String USERNAME = "test";
 
     private JaasAuthenticationHandler handler;
 
     @BeforeEach
-    @SneakyThrows
-    public void initialize() {
+        public void initialize() throws Exception {
         val resource = new ClassPathResource("jaas-system.conf");
         val fileName = new File(FileUtils.getTempDirectoryPath(), "jaas-system.conf");
         try (val writer = Files.newBufferedWriter(fileName.toPath(), StandardCharsets.UTF_8)) {
@@ -50,27 +51,30 @@ public class JaasAuthenticationHandlerSystemConfigurationTests {
     }
 
     @Test
-    public void verifyWithAlternativeRealm() {
+    void verifyWithAlternativeRealm() throws Throwable {
         handler.setRealm("TEST");
         assertThrows(LoginException.class,
-            () -> handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, "test1")));
+            () -> handler.authenticate(
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, "test1"), mock(Service.class)));
     }
 
     @Test
-    public void verifyWithAlternativeRealmAndValidCredentials() throws Exception {
+    void verifyWithAlternativeRealmAndValidCredentials() throws Throwable {
         handler.setRealm("TEST");
-        assertNotNull(handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, USERNAME)));
+        assertNotNull(handler.authenticate(
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, USERNAME), mock(Service.class)));
     }
 
     @Test
-    @SneakyThrows
-    public void verifyWithValidCredentials() {
-        assertNotNull(handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
+    void verifyWithValidCredentials() throws Throwable {
+        assertNotNull(handler.authenticate(
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), mock(Service.class)));
     }
 
     @Test
-    public void verifyWithInvalidCredentials() {
+    void verifyWithInvalidCredentials() throws Throwable {
         assertThrows(LoginException.class,
-            () -> this.handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, "test1")));
+            () -> handler.authenticate(
+                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(USERNAME, "test1"), mock(Service.class)));
     }
 }

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -11,13 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.test.MockRequestContext;
 
 import java.util.Map;
 
@@ -29,30 +24,25 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@DirtiesContext
-@Tag("WebflowActions")
-public class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptableUsagePolicyActionTests {
+@Tag("WebflowServiceActions")
+class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptableUsagePolicyActionTests {
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("acceptableUsagePolicyVerifyServiceAction")
+    @Qualifier(CasWebflowConstants.ACTION_ID_AUP_VERIFY_SERVICE)
     private Action acceptableUsagePolicyVerifyAction;
 
     @Test
-    public void verifyNoService() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+    void verifyNoService() throws Throwable {
+        val context = MockRequestContext.create();
         assertNull(acceptableUsagePolicyVerifyAction.execute(context));
     }
 
     @Test
-    public void verifyDisabledService() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+    void verifyDisabledService() throws Throwable {
+        val context = MockRequestContext.create();
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         val service = RegisteredServiceTestUtils.getService("https://aup.service.disabled");
@@ -69,10 +59,8 @@ public class AcceptableUsagePolicyVerifyServiceActionTests extends BaseAcceptabl
     }
 
     @Test
-    public void verifyMustAccept() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+    void verifyMustAccept() throws Throwable {
+        val context = MockRequestContext.create();
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         val service = RegisteredServiceTestUtils.getService("https://aup.service");

@@ -1,14 +1,16 @@
 package org.apereo.cas;
 
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapPasswordPolicyProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
+import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
-import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
-import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
+import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -17,20 +19,26 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DerefAliases;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SecurityStrength;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.StaticApplicationContext;
-
 import java.io.File;
-import java.net.URL;
+import java.io.Serial;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -41,11 +49,19 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Ldap")
-@EnabledIfPortOpen(port = 10389)
-public class LdapUtilsTests {
-
+@EnabledIfListeningOnPort(port = 10389)
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
+    CasCoreUtilAutoConfiguration.class
+})
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+class LdapUtilsTests {
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
     @Test
-    public void verifyGetBoolean() {
+    void verifyGetBoolean() throws Throwable {
         val entry = new LdapEntry();
         entry.addAttributes(new LdapAttribute("attr1", "true"));
         entry.addAttributes(new LdapAttribute("attr2", StringUtils.EMPTY));
@@ -56,9 +72,8 @@ public class LdapUtilsTests {
         assertTrue(input);
     }
 
-
     @Test
-    public void verifyGetLong() {
+    void verifyGetLong() throws Throwable {
         val entry = new LdapEntry();
         entry.addAttributes(new LdapAttribute("attr1", "100"));
         val input = LdapUtils.getLong(entry, "attr1", 0L);
@@ -66,7 +81,7 @@ public class LdapUtilsTests {
     }
 
     @Test
-    public void verifyGetBinary() {
+    void verifyGetBinary() throws Throwable {
         val entry = new LdapEntry();
         val attr = new LdapAttribute("attr1", "100".getBytes(StandardCharsets.UTF_8));
         attr.setBinary(true);
@@ -77,24 +92,26 @@ public class LdapUtilsTests {
     }
 
     @Test
-    public void verifyEntry() throws Exception {
-        assertFalse(LdapUtils.isLdapConnectionUrl(new URL("https://github.com")));
+    void verifyEntry() throws Throwable {
+        assertFalse(LdapUtils.isLdapConnectionUrl(new URI("https://github.com").toURL()));
         assertFalse(LdapUtils.containsResultEntry(null));
     }
 
     @Test
-    public void verifyFailsOp() throws Exception {
+    void verifyFailsOp() throws Throwable {
         val factory = mock(ConnectionFactory.class);
+        val wrapper = new LdapConnectionFactory(factory);
         when(factory.getConnectionConfig()).thenThrow(new IllegalArgumentException("fails"));
         when(factory.getConnection()).thenThrow(new IllegalArgumentException("fails"));
-        assertFalse(LdapUtils.executePasswordModifyOperation(null, factory, null, null, AbstractLdapProperties.LdapType.GENERIC));
-        assertFalse(LdapUtils.executeModifyOperation(null, factory, Map.of()));
-        assertFalse(LdapUtils.executeAddOperation(factory, new LdapEntry()));
-        assertFalse(LdapUtils.executeDeleteOperation(factory, new LdapEntry()));
+        assertFalse(wrapper.executePasswordModifyOperation(null, null, null, AbstractLdapProperties.LdapType.GENERIC));
+        assertFalse(wrapper.executeModifyOperation(null, Map.of()));
+        assertFalse(wrapper.executeAddOperation(new LdapEntry()));
+        assertFalse(wrapper.executeDeleteOperation(new LdapEntry()));
+        wrapper.close();
     }
 
     @Test
-    public void verifyScriptedFilter() {
+    void verifyScriptedFilter() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         ApplicationContextProvider.holdApplicationContext(appCtx);
@@ -102,30 +119,22 @@ public class LdapUtilsTests {
             () -> LdapUtils.newLdaptiveSearchFilter("classpath:LdapFilterQuery.groovy",
                 List.of("p1", "p2"), List.of("v1", "v2")));
 
-        val cacheMgr = new GroovyScriptResourceCacheManager();
-        ApplicationContextProvider.registerBeanIntoApplicationContext(appCtx, cacheMgr, ScriptResourceCacheManager.BEAN_NAME);
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
         var filter = LdapUtils.newLdaptiveSearchFilter("classpath:LdapFilterQuery.groovy",
             List.of("p1", "p2"), List.of("v1", "v2"));
         assertNotNull(filter);
         assertNotNull(filter.getFilter());
-        filter = LdapUtils.newLdaptiveSearchFilter("classpath:LdapFilterQuery.groovy",
-            List.of("p1", "p2"), List.of("v1", "v2"));
-        assertNotNull(filter);
-        assertNotNull(filter.getFilter());
-        filter = LdapUtils.newLdaptiveSearchFilter("classpath:UnknownLdapFilterQuery.groovy",
-            List.of("p1", "p2"), List.of("v1", "v2"));
-        assertNotNull(filter);
     }
-    
+
     @Test
-    public void verifyFilterByIndex() throws Exception {
+    void verifyFilterByIndex() throws Throwable {
         val filter = LdapUtils.newLdaptiveSearchFilter("cn={0}", List.of("casuser"));
         assertTrue(filter.getParameters().containsKey("0"));
         assertTrue(filter.getParameters().containsValue("casuser"));
     }
 
     @Test
-    public void verifyLdapAuthnAnon() throws Exception {
+    void verifyLdapAuthnAnon() throws Throwable {
         val ldap = new Ldap();
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");
@@ -139,10 +148,11 @@ public class LdapUtilsTests {
         assertThrows(IllegalArgumentException.class, () -> LdapUtils.newLdaptiveAuthenticator(ldap));
         ldap.setSearchFilter("cn=invalid-user");
         assertNotNull(LdapUtils.newLdaptiveAuthenticator(ldap));
+        assertNotNull(LdapUtils.newLdaptiveConnectionConfig(ldap));
     }
 
     @Test
-    public void verifyLdapAuthnDirect() {
+    void verifyLdapAuthnDirect() throws Throwable {
         val ldap = new Ldap();
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");
@@ -158,7 +168,56 @@ public class LdapUtilsTests {
     }
 
     @Test
-    public void verifyLdapAuthnActiveDirectory() throws Exception {
+    void verifyActiveDirectoryPasswordPolicy() throws Throwable {
+        val ldap = new Ldap();
+        ldap.setLdapUrl("ldap://localhost:10389");
+        ldap.setBindDn("cn=Directory Manager");
+        ldap.setBindCredential("password");
+        ldap.setBaseDn("ou=people,dc=example,dc=org");
+        ldap.setSearchFilter("cn=user");
+        ldap.setType(AbstractLdapAuthenticationProperties.AuthenticationTypes.AD);
+        ldap.setDnFormat("cn=%s,dc=example,dc=org");
+        val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
+        assertNotNull(authenticator);
+        val passwordPolicy = new LdapPasswordPolicyProperties()
+            .setType(AbstractLdapProperties.LdapType.AD);
+        val configuration = LdapUtils.createLdapPasswordPolicyConfiguration(
+            passwordPolicy, authenticator, ArrayListMultimap.create());
+        assertNotNull(configuration);
+        val responseHandler = Arrays.stream(authenticator.getResponseHandlers()).findFirst()
+            .map(ActiveDirectoryAuthenticationResponseHandler.class::cast)
+            .orElseThrow();
+        assertNotNull(responseHandler.getExpirationPeriod());
+        assertNotNull(responseHandler.getWarningPeriod());
+    }
+
+    @Test
+    void verifyActiveDirectoryPasswordPolicyWithoutExpiration() throws Throwable {
+        val ldap = new Ldap();
+        ldap.setLdapUrl("ldap://localhost:10389");
+        ldap.setBindDn("cn=Directory Manager");
+        ldap.setBindCredential("password");
+        ldap.setBaseDn("ou=people,dc=example,dc=org");
+        ldap.setSearchFilter("cn=user");
+        ldap.setType(AbstractLdapAuthenticationProperties.AuthenticationTypes.AD);
+        ldap.setDnFormat("cn=%s,dc=example,dc=org");
+        val authenticator = LdapUtils.newLdaptiveAuthenticator(ldap);
+        assertNotNull(authenticator);
+        val passwordPolicy = new LdapPasswordPolicyProperties()
+            .setType(AbstractLdapProperties.LdapType.AD)
+            .setPasswordExpirationNumberOfDays(-1);
+        val configuration = LdapUtils.createLdapPasswordPolicyConfiguration(
+            passwordPolicy, authenticator, ArrayListMultimap.create());
+        assertNotNull(configuration);
+        val responseHandler = Arrays.stream(authenticator.getResponseHandlers()).findFirst()
+            .map(ActiveDirectoryAuthenticationResponseHandler.class::cast)
+            .orElseThrow();
+        assertNull(responseHandler.getExpirationPeriod());
+        assertNotNull(responseHandler.getWarningPeriod());
+    }
+    
+    @Test
+    void verifyLdapAuthnActiveDirectory() throws Throwable {
         val ldap = new Ldap();
         ldap.setLdapUrl("ldap://localhost:10389");
         ldap.setBindDn("cn=Directory Manager");
@@ -175,7 +234,7 @@ public class LdapUtilsTests {
     }
 
     @Test
-    public void verifyPagedSearch() throws Exception {
+    void verifyPagedSearch() throws Throwable {
         val ldap = new Ldap();
         ldap.setBaseDn("ou=people,dc=example,dc=org");
         ldap.setLdapUrl("ldap://localhost:10389");
@@ -183,22 +242,24 @@ public class LdapUtilsTests {
         ldap.setBindCredential("password");
         ldap.setSearchFilter("cn=invalid-user");
 
-        var factory = LdapUtils.newLdaptiveConnectionFactory(ldap);
-        var response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(),
+        var factory = new LdapConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(ldap));
+        var response = factory.executeSearchOperation(ldap.getBaseDn(),
             LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter()), 10, "cn");
         assertNotNull(response);
         assertFalse(LdapUtils.containsResultEntry(response));
+        factory.close();
 
         ldap.setDisablePooling(true);
-        factory = LdapUtils.newLdaptiveConnectionFactory(ldap);
-        response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(),
+        factory = new LdapConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(ldap));
+        response = factory.executeSearchOperation(ldap.getBaseDn(),
             LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter()), 10, "cn");
         assertNotNull(response);
         assertFalse(LdapUtils.containsResultEntry(response));
+        factory.close();
     }
 
     @Test
-    public void verifyComparePooling() throws Exception {
+    void verifyComparePooling() throws Throwable {
         val ldap = new Ldap();
         ldap.setBaseDn("ou=people,dc=example,dc=org|ou=users,dc=example,dc=org");
         ldap.setLdapUrl("ldap://localhost:10389");
@@ -207,12 +268,12 @@ public class LdapUtilsTests {
         ldap.setSearchFilter("cn=invalid-user");
         ldap.getValidator().setType("compare");
 
-        val factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-        val response = LdapUtils.executeSearchOperation(factory, ldap.getBaseDn(),
+        val factory = new LdapConnectionFactory(LdapUtils.newLdaptivePooledConnectionFactory(ldap));
+        val response = factory.executeSearchOperation(ldap.getBaseDn(),
             LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter()), 10, "cn");
         assertNotNull(response);
         assertFalse(LdapUtils.containsResultEntry(response));
-        
+
         val config1 = LdapUtils.newLdaptiveConnectionConfig(ldap);
         assertNotNull(config1);
         Arrays.stream(LdapSearchEntryHandlersProperties.SearchEntryHandlerTypes.values())
@@ -223,14 +284,14 @@ public class LdapUtilsTests {
                 props.getCaseChange().setDnCaseChange(CaseChangeEntryHandler.CaseChange.UPPER.name());
                 props.getCaseChange().setAttributeValueCaseChange(CaseChangeEntryHandler.CaseChange.UPPER.name());
                 ldap.getSearchEntryHandlers().add(props);
-                val resolver = LdapUtils.newLdaptiveSearchEntryResolver(ldap, factory);
+                val resolver = LdapUtils.newLdaptiveSearchEntryResolver(ldap, factory.getConnectionFactory());
                 assertNotNull(resolver);
             });
-
+        factory.close();
     }
 
     @Test
-    public void verifyConnectionConfig() throws Exception {
+    void verifyConnectionConfig() throws Throwable {
         val ldap = new Ldap();
         ldap.setBaseDn("ou=people,dc=example,dc=org|ou=users,dc=example,dc=org");
         ldap.setLdapUrl("ldap://localhost:10389");
@@ -238,8 +299,8 @@ public class LdapUtilsTests {
         ldap.setBindCredential("password");
         ldap.setSearchFilter("cn=invalid-user");
 
-        Arrays.stream(AbstractLdapProperties.LdapConnectionStrategy.values()).forEach(s -> {
-            ldap.setConnectionStrategy(s.toString());
+        Arrays.stream(AbstractLdapProperties.LdapConnectionStrategy.values()).forEach(strategy -> {
+            ldap.setConnectionStrategy(strategy.toString());
             val config = LdapUtils.newLdaptiveConnectionConfig(ldap);
             assertNotNull(config);
         });
@@ -251,8 +312,8 @@ public class LdapUtilsTests {
         val config = LdapUtils.newLdaptiveConnectionConfig(ldap);
         assertNotNull(config);
 
-        Arrays.stream(Mechanism.values()).forEach(m -> {
-            ldap.setSaslMechanism(m.name());
+        Arrays.stream(Mechanism.values()).forEach(mechanism -> {
+            ldap.setSaslMechanism(mechanism.name());
             ldap.setSaslRealm("cas");
             ldap.setSaslMutualAuth(Boolean.FALSE);
             ldap.setSaslAuthorizationId("123456");
@@ -264,7 +325,8 @@ public class LdapUtilsTests {
         });
     }
 
-    private static class Ldap extends AbstractLdapAuthenticationProperties {
+    private static final class Ldap extends AbstractLdapAuthenticationProperties {
+        @Serial
         private static final long serialVersionUID = 7979417317490698363L;
     }
 }

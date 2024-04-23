@@ -1,0 +1,26 @@
+{
+  "dependencies": "reports",
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=AUTHENTICATED",
+
+    "--spring.security.user.name=casuser",
+    "--spring.security.user.password=Mellon",
+
+    "--logging.level.org.springframework.security=debug",
+    "--logging.level.org.apereo.cas=info",
+
+    "--management.endpoints.web.cors.allowed-headers=*",
+    "--management.endpoints.web.cors.allowed-methods=OPTIONS,GET,POST",
+    "--management.endpoints.web.cors.allowed-origin-patterns=http://localhost:8444",
+    "--management.endpoints.web.cors.exposed-headers=*",
+    "--management.endpoints.web.cors.allow-credentials=true",
+
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.enabled-by-default=true"
+  ]
+}

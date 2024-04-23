@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.io.Serializable;
 
 /**
@@ -9,6 +11,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface MessageDescriptor extends Serializable {
 
     /**

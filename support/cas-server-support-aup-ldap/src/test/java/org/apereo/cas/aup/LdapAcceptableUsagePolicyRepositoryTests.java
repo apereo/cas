@@ -1,15 +1,15 @@
 package org.apereo.cas.aup;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
-import org.apereo.cas.config.CasAcceptableUsagePolicyLdapConfiguration;
+import org.apereo.cas.config.CasAcceptableUsagePolicyLdapAutoConfiguration;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
-
+import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,9 +21,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
-
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-
+import java.util.Map;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,9 +34,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Ldap")
-@EnabledIfPortOpen(port = 10389)
-@Import(CasAcceptableUsagePolicyLdapConfiguration.class)
+@Tag("LdapRepository")
+@EnabledIfListeningOnPort(port = 10389)
+@Import(CasAcceptableUsagePolicyLdapAutoConfiguration.class)
 @TestPropertySource(properties = {
     "cas.acceptable-usage-policy.ldap[0].ldap-url=ldap://localhost:10389",
     "cas.acceptable-usage-policy.ldap[0].base-dn=ou=people,dc=example,dc=org",
@@ -44,28 +46,45 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.acceptable-usage-policy.core.aup-attribute-name=carLicense"
 })
 @Getter
-public class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
+class LdapAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
+    private static final String USER = RandomUtils.randomAlphabetic(10);
 
     private static final int LDAP_PORT = 10389;
 
     @Autowired
-    @Qualifier("acceptableUsagePolicyRepository")
+    @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
     protected AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @BeforeAll
-    @SneakyThrows
-    public static void bootstrap() {
-        ClientInfoHolder.setClientInfo(new ClientInfo(new MockHttpServletRequest()));
+    public static void bootstrap() throws Throwable {
+        ClientInfoHolder.setClientInfo(ClientInfo.from(new MockHttpServletRequest()));
         @Cleanup
         val localhost = new LDAPConnection("localhost", LDAP_PORT, "cn=Directory Manager", "password");
+
+        val ldif = IOUtils.toString(new ClassPathResource("ldif/ldap-aup.ldif").getInputStream(), StandardCharsets.UTF_8)
+            .replace("$user", USER);
         LdapIntegrationTestsOperations.populateEntries(localhost,
-            new ClassPathResource("ldif/ldap-aup.ldif").getInputStream(), "ou=people,dc=example,dc=org");
+            new ByteArrayInputStream(ldif.getBytes(StandardCharsets.UTF_8)),
+            "ou=people,dc=example,dc=org");
+    }
+
+    @Override
+    public boolean hasLiveUpdates() {
+        return true;
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyMissingUser() throws Throwable {
+        val actualPrincipalId = UUID.randomUUID().toString();
+        val credential = getCredential(actualPrincipalId);
+        val context = getRequestContext(actualPrincipalId, Map.of(), credential);
+        assertFalse(getAcceptableUsagePolicyRepository().verify(context).isAccepted());
+    }
+
+    @Test
+    void verifyOperation() throws Throwable {
         assertNotNull(acceptableUsagePolicyRepository);
-        verifyRepositoryAction("casaupldap",
+        verifyRepositoryAction(USER,
             CollectionUtils.wrap("carLicense", List.of("false"), "email", List.of("casaupldap@example.org")));
     }
 }

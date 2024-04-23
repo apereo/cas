@@ -1,4 +1,11 @@
 description = "Apereo CAS WebSockets Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Web Sockets",
+            title: "Web Socket Support & APIs"
+    ]
+}
 dependencies {
     api libraries.websockets
 

@@ -1,39 +1,27 @@
 package org.apereo.cas.pm.jdbc;
 
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasHibernateJpaConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.pm.JdbcPasswordHistoryManagementConfiguration;
-import org.apereo.cas.config.pm.JdbcPasswordManagementConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
+import org.apereo.cas.config.CasJdbcPasswordManagementAutoConfiguration;
+import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
-import org.apereo.cas.pm.config.PasswordManagementConfiguration;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.support.TransactionTemplate;
-
+import org.springframework.transaction.support.TransactionOperations;
 import javax.sql.DataSource;
 
 /**
@@ -44,45 +32,39 @@ import javax.sql.DataSource;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreAuthenticationPolicyConfiguration.class,
-    CasCoreAuthenticationMetadataConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationHandlersConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasCoreAuditConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasPersonDirectoryConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreServicesAuthenticationConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCoreConfiguration.class,
-    CasHibernateJpaConfiguration.class,
-    JdbcPasswordManagementConfiguration.class,
-    JdbcPasswordHistoryManagementConfiguration.class,
-    PasswordManagementConfiguration.class
+    WebMvcAutoConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
+    CasCoreAuditAutoConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
+    CasPersonDirectoryAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
+    CasCoreAutoConfiguration.class,
+    CasHibernateJpaAutoConfiguration.class,
+    CasJdbcPasswordManagementAutoConfiguration.class,
+    CasPasswordManagementAutoConfiguration.class
 }, properties = {
-    "cas.jdbc.show-sql=true",
-    "cas.authn.pm.enabled=true",
+    "cas.jdbc.show-sql=false",
+    "cas.authn.pm.core.enabled=true",
     "cas.authn.pm.history.core.enabled=true",
     "cas.authn.pm.jdbc.auto-commit=false",
-    "cas.authn.pm.jdbc.sql-security-questions=SELECT question, answer FROM pm_table_questions WHERE userid=?",
+
+    "cas.authn.pm.jdbc.sql-get-security-questions=SELECT question, answer FROM pm_table_questions WHERE userid=?",
+    "cas.authn.pm.jdbc.sql-delete-security-questions=DELETE FROM pm_table_questions WHERE userid=?",
+    "cas.authn.pm.jdbc.sql-update-security-questions=INSERT INTO pm_table_questions(userid, question, answer) VALUES (?,?,?);",
     "cas.authn.pm.jdbc.sql-find-email=SELECT email FROM pm_table_accounts WHERE userid=?",
     "cas.authn.pm.jdbc.sql-find-user=SELECT userid FROM pm_table_accounts WHERE email=?",
     "cas.authn.pm.jdbc.sql-find-phone=SELECT phone FROM pm_table_accounts WHERE userid=?",
+    "cas.authn.pm.jdbc.sql-unlock-account=UPDATE pm_table_accounts SET enabled=? WHERE userid=?",
     "cas.authn.pm.jdbc.sql-change-password=UPDATE pm_table_accounts SET password=? WHERE userid=?"
 })
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement(proxyTargetClass = false)
 public abstract class BaseJdbcPasswordManagementServiceTests {
     @Autowired
-    @Qualifier("passwordChangeService")
+    @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
     protected PasswordManagementService passwordChangeService;
 
     @Autowired
@@ -90,11 +72,11 @@ public abstract class BaseJdbcPasswordManagementServiceTests {
     protected DataSource jdbcPasswordManagementDataSource;
 
     @Autowired
-    @Qualifier("passwordHistoryService")
+    @Qualifier(PasswordHistoryService.BEAN_NAME)
     protected PasswordHistoryService passwordHistoryService;
 
     @Autowired
     @Qualifier("jdbcPasswordManagementTransactionTemplate")
-    protected TransactionTemplate jdbcPasswordManagementTransactionTemplate;
+    protected TransactionOperations jdbcPasswordManagementTransactionTemplate;
 
 }

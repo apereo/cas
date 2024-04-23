@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link WebAuthnMongoDbMultifactorProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("WebAuthnMongoDbMultifactorProperties")
 public class WebAuthnMongoDbMultifactorProperties extends SingleCollectionMongoDbProperties {
 
+    @Serial
     private static final long serialVersionUID = 6876845341227039713L;
 
     public WebAuthnMongoDbMultifactorProperties() {

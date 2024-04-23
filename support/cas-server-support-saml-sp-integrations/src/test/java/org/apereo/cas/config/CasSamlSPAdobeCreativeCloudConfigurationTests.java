@@ -9,11 +9,11 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
+@Tag("SAMLServiceProvider")
 @TestPropertySource(properties = {
     "cas.saml-sp.adobe-cloud.metadata=classpath:/metadata/sp-metadata.xml",
     "cas.saml-sp.adobe-cloud.name-id-attribute=cn",
     "cas.saml-sp.adobe-cloud.name-id-format=transient"
 })
-public class CasSamlSPAdobeCreativeCloudConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPAdobeCreativeCloudConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

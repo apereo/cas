@@ -10,15 +10,15 @@
         <property name="tabWidth" value="4"/>
         <property name="severity" value="error"/>
     </module>
-    
+
     <!-- TreeWalker module checks -->
     <module name="TreeWalker">
         <property name="tabWidth" value="4"/>
         <module name="SuppressionCommentFilter"/>
-        
+
         <module name="JavadocContentLocationCheck">
             <property name="severity" value="error"/>
-            <property name="location" value="SECOND_LINE" />
+            <property name="location" value="SECOND_LINE"/>
         </module>
         <module name="NoEnumTrailingComma">
             <property name="severity" value="error"/>
@@ -32,15 +32,17 @@
         <module name="NonEmptyAtclauseDescription">
             <property name="severity" value="error"/>
         </module>
-        <module name="LambdaParameterName"/>
+        <module name="LambdaParameterName">
+            <property name="format" value="__|^[a-z]([a-zA-Z1-9]+)*$"/>
+        </module>
         <module name="HiddenField">
-            <property name="tokens" value="VARIABLE_DEF" />
+            <property name="tokens" value="VARIABLE_DEF"/>
             <property name="ignoreSetter" value="true"/>
             <property name="severity" value="error"/>
             <property name="ignoreConstructorParameter" value="true"/>
         </module>
         <module name="JavadocMethod">
-            <property name="scope" value="protected"/>
+            <property name="accessModifiers" value="protected"/>
             <property name="severity" value="error"/>
             <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF"/>
         </module>
@@ -49,7 +51,7 @@
         </module>
         <module name="MissingJavadocMethod">
             <property name="allowMissingPropertyJavadoc" value="true"/>
-            <property name="scope" value="protected"/>
+            <property name="scope" value="public"/>
             <property name="severity" value="error"/>
             <property name="tokens" value="METHOD_DEF, ANNOTATION_FIELD_DEF"/>
         </module>
@@ -60,10 +62,10 @@
             <property name="allowMissingParamTags" value="true"/>
         </module>
         <module name="JavadocVariable">
-            <property name="id" value="javadocForAllProtectedAndPublicFields"/>
+            <property name="id" value="javadocForAllPublicFields"/>
             <property name="severity" value="error"/>
-            <property name="scope" value="protected"/>
-            <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER"/>
+            <property name="scope" value="public"/>
+            <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER|casProperties"/>
         </module>
         <module name="JavadocVariable">
             <property name="id" value="javadocForPropertyFields"/>
@@ -77,7 +79,13 @@
             <property name="severity" value="error"/>
         </module>
         <module name="ClassFanOutComplexity">
-            <property name="max" value="120"/>
+            <property name="max" value="130"/>
+            <property name="severity" value="error"/>
+        </module>
+        <module name="UnusedLocalVariable">
+            <property name="severity" value="error"/>
+        </module>
+        <module name="Indentation">
             <property name="severity" value="error"/>
         </module>
         <module name="CommentsIndentation">
@@ -122,6 +130,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="AbstractClassName">
+            <property name="id" value="abstractClassName"/>
             <property name="ignoreModifier" value="true"/>
             <property name="severity" value="error"/>
             <property name="format" value="^Abstract.*$|^.*Factory$|^Base.*$|^Root.*$"/>
@@ -140,6 +149,7 @@
         </module>
         <module name="UnnecessaryParentheses">
             <property name="severity" value="error"/>
+            <property name="tokens" value="EXPR,IDENT,NUM_DOUBLE,NUM_FLOAT,NUM_INT,NUM_LONG,STRING_LITERAL,LITERAL_NULL,LITERAL_FALSE,LITERAL_TRUE,ASSIGN,BAND_ASSIGN,BOR_ASSIGN,BSR_ASSIGN,BXOR_ASSIGN,DIV_ASSIGN,MINUS_ASSIGN,MOD_ASSIGN,PLUS_ASSIGN,SL_ASSIGN,SR_ASSIGN,STAR_ASSIGN,LAMBDA,TEXT_BLOCK_LITERAL_BEGIN,LITERAL_INSTANCEOF,GT,LT,GE,LE,EQUAL,NOT_EQUAL,UNARY_MINUS,UNARY_PLUS,INC,DEC,LNOT,BNOT,POST_INC,POST_DEC"/>
         </module>
         <module name="ParameterName">
             <property name="severity" value="error"/>
@@ -170,6 +180,7 @@
                       org.junit.jupiter.api.Assumptions,
                       org.mockito.Mockito,
                       org.mockito.Matchers,
+                      org.awaitility.Awaitility,
                       org.springframework.test.web.servlet.request.MockMvcRequestBuilders,
                       org.springframework.test.web.servlet.result.MockMvcResultMatchers,
                       org.springframework.test.web.client.ExpectedCount,
@@ -208,9 +219,6 @@
         <module name="UnusedImports">
             <property name="severity" value="error"/>
         </module>
-        <module name="UnnecessaryParentheses">
-            <property name="severity" value="error"/>
-        </module>
         <module name="SuperClone">
             <property name="severity" value="info"/>
         </module>
@@ -222,6 +230,7 @@
             <property name="max" value="180"/>
         </module>
         <module name="ParameterNumber">
+            <property name="id" value="parameterNumberForMethods"/>
             <property name="max" value="20"/>
             <property name="severity" value="error"/>
             <property name="tokens" value="METHOD_DEF"/>
@@ -292,7 +301,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="Indentation">
-            <property name="forceStrictCondition" value="false" />
+            <property name="forceStrictCondition" value="false"/>
             <property name="severity" value="error"/>
         </module>
         <!--
@@ -314,7 +323,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="AnonInnerLength">
-            <property name="max" value="40"/>
+            <property name="max" value="45"/>
             <property name="severity" value="error"/>
         </module>
         <module name="RightCurly">
@@ -329,9 +338,6 @@
         </module>
         <module name="IllegalInstantiation"/>
         <module name="InnerAssignment"/>
-        <module name="MissingSwitchDefault">
-            <property name="severity" value="info"/>
-        </module>
         <module name="SimplifyBooleanExpression">
             <property name="severity" value="error"/>
         </module>
@@ -339,6 +345,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="FinalClass">
+            <property name="id" value="finalClass"/>
             <property name="severity" value="error"/>
         </module>
         <!--
@@ -406,6 +413,13 @@
                       value="Do not create a standalone instance of SecureRandom. Use RandomUtils instead."/>
         </module>
         <module name="RegexpSinglelineJava">
+            <metadata name="net.sf.eclipsecs.core.comment" value="Do not create a standalone instance of SecureRandom"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="import static (org\.mockito\.Mockito|org\.junit\.jupiter\.api\.Assertions)\.[a-zA-Z]+"/>
+            <property name="message"
+                      value="Do not import individual methods for Mockito or JUnit assertions; use star imports instead"/>
+        </module>
+        <module name="RegexpSinglelineJava">
             <property name="id" value="logParameters"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Log parameters must be enclosed between brackets"/>
             <property name="severity" value="error"/>
@@ -448,12 +462,14 @@
 
         <module name="RegexpSinglelineJava">
             <property name="id" value="streamed-foreach-loop"/>
-            <metadata name="net.sf.eclipsecs.core.comment" value="Using stream().forEach() is unnecessary where forEach() can be used directly."/>
+            <metadata name="net.sf.eclipsecs.core.comment"
+                      value="Using stream().forEach() is unnecessary where forEach() can be used directly."/>
             <property name="severity" value="error"/>
             <property name="format" value="\.stream\(\)\.forEach\("/>
-            <property name="message" value="Simplify the Stream API. Using stream().forEach() is unnecessary where forEach() can be used directly."/>
+            <property name="message"
+                      value="Simplify the Stream API. Using stream().forEach() is unnecessary where forEach() can be used directly."/>
         </module>
-        
+
         <module name="RegexpSinglelineJava">
             <property name="id" value="collectionsEmpty"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Avoid using an empty immutable collection"/>
@@ -470,15 +486,6 @@
             <property name="format" value="Collections\.unmodifiable(List|Set|Map)"/>
             <property name="message"
                       value="Returning an unmodifiable collection is problematic for serialization. Try using an empty collection, of size zero, instead"/>
-        </module>
-
-        <module name="RegexpSinglelineJava">
-            <property name="id" value="namedAnnotations"/>
-            <metadata name="net.sf.eclipsecs.core.comment" value="Component/Controller/Configuration annotations must be named"/>
-            <property name="severity" value="error"/>
-            <property name="format" value="@(Configuration|Component|Controller)(\(\))*$"/>
-            <property name="message"
-                      value="You should name controller/component/configuration annotations to avoid implicit configuration"/>
         </module>
 
         <module name="RegexpSinglelineJava">
@@ -500,7 +507,7 @@
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Empty String constants"/>
             <property name="severity" value="error"/>
-            <property name="format" value="(?&lt;!\\)&quot;(?&lt;!\\)&quot;"/>
+            <property name="format" value="(?&lt;!&quot;)(?&lt;!\\)&quot;{2}(?!&quot;)"/>
             <property name="message" value="Consider using StringUtils.EMPTY instead"/>
         </module>
 
@@ -512,16 +519,17 @@
             <property name="message" value="Invalid JavaDoc @version tag."/>
         </module>
         <module name="RegexpSinglelineJava">
+            <property name="id" value="slf4jLogging"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Logging framework selection"/>
             <property name="severity" value="error"/>
             <property name="format" value="LogFactory\.getLog"/>
-            <property name="message" value="CAS uses the slf4j logging framework."/>
+            <property name="message" value="CAS uses the Slf4j logging framework."/>
         </module>
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Logger as non-static"/>
             <property name="severity" value="error"/>
             <property name="format" value="(protected|public)\s+(final\s)*Logger"/>
-            <property name="message" value="Non-static logger must be declared as static to avoid serialization issues."/>
+            <property name="message" value="Non-static logger must be declared as static."/>
         </module>
         <module name="RegexpSinglelineJava">
             <property name="id" value="sysOutConsoleLogs"/>
@@ -557,15 +565,9 @@
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="The logger object must be named &quot;logger&quot;"/>
             <property name="severity" value="error"/>
-            <property name="format" value="(private|public|protected)\s+(static\s)*(final\s)*(static\s)*Logger\s+(log|LOG|LOGGER|logger)\b"/>
+            <property name="format"
+                      value="(private|public|protected)\s+(static\s)*(final\s)*(static\s)*Logger\s+(log|LOG|LOGGER|logger)\b"/>
             <property name="message" value="Use the Lombok @Slf4j annotation to obtain a logger object instead."/>
-        </module>
-        <module name="RegexpSinglelineJava">
-            <property name="id" value="finalNonUtilClass"/>
-            <metadata name="net.sf.eclipsecs.core.comment" value="final non-utility classes"/>
-            <property name="severity" value="error"/>
-            <property name="format" value="(public\s)*(static\s)*final\s+class\s+\w+"/>
-            <property name="message" value="Non-utility class should not be marked as final"/>
         </module>
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="Qualifying logger with the &quot;this&quot; keyword"/>
@@ -619,7 +621,8 @@
             <property name="id" value="useLombokVar"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Using val for variable definitions"/>
             <property name="severity" value="error"/>
-            <property name="format" value="^\s*(?!return|throw|private|public|protected|val)(final\s+)*\b(?!var)\w+\b\s*(\b[a-z]\w*\b)(\s*=\s+(?!null).+)*;"/>
+            <property name="format"
+                      value="^\s*(?!return|throw|private|public|protected|val)(final\s+)*\b(?!var)\w+\b\s*(\b[a-z]\w*\b)(\s*=\s+(?!null).+)*;"/>
             <property name="message" value="Use lombok.val or JDK var keyword when declaring variable definitions."/>
         </module>
 
@@ -635,7 +638,7 @@
             <property name="severity" value="error"/>
             <property name="customImportOrderRules"
                       value="SAME_PACKAGE(3)###THIRD_PARTY_PACKAGE###SPECIAL_IMPORTS###STANDARD_JAVA_PACKAGE###STATIC"/>
-            <property name="specialImportsRegExp" value="^javax\."/>
+            <property name="specialImportsRegExp" value="(javax|jakarta)\."/>
             <property name="standardPackageRegExp" value="^java\."/>
             <property name="sortImportsInGroupAlphabetically" value="true"/>
             <property name="separateLineBetweenGroups" value="false"/>
@@ -655,8 +658,9 @@
         <property name="id" value="objectProvider"/>
         <property name="severity" value="error"/>
         <property name="format" value="@Autowired\s*@Qualifier\(&quot;(\w+)&quot;\)\s*(private|public|protected)\s+(\w+)\s+(\w+)\s*;"/>
-        <property name="message" value="Use ObjectProvider&lt;T&gt; for dependency injections to avoid premature/circular bean initializations"/>
-        <property name="fileExtensions" value="java" />
+        <property name="message"
+                  value="Use ObjectProvider&lt;T&gt; for dependency injections to avoid premature/circular bean initializations"/>
+        <property name="fileExtensions" value="java"/>
     </module>
 
     <module name="RegexpMultiline">
@@ -664,7 +668,7 @@
         <property name="severity" value="error"/>
         <property name="format" value="\s*\}\s*else\s*\{\s*return\s+.+;"/>
         <property name="message" value="Remove the unnecessary else clause: consider using the Elvis operator"/>
-        <property name="fileExtensions" value="java" />
+        <property name="fileExtensions" value="java"/>
     </module>
 
     <module name="RegexpMultiline">
@@ -673,7 +677,7 @@
         <property name="format"
                   value="@Autowired\s*(private|public|protected)\s+(?!.*Properties|.*Environment|FlowBuilderServices|SpringTemplateEngine|.*EventPublisher|.*ApplicationContext|ResourceLoader)\w+\s+\w+\s*;"/>
         <property name="message" value="Use @Qualifier annotation when injecting dependencies"/>
-        <property name="fileExtensions" value="java" />
+        <property name="fileExtensions" value="java"/>
     </module>
 
     <module name="NewlineAtEndOfFile">
@@ -684,7 +688,10 @@
     <module name="Translation">
         <property name="severity" value="ignore"/>
     </module>
-    <module name="FileLength"/>
+    <module name="FileLength">
+        <property name="severity" value="error"/>
+        <property name="max" value="2500"/>
+    </module>
     <module name="FileTabCharacter">
         <property name="severity" value="error"/>
     </module>
@@ -755,10 +762,11 @@
         <property name="message" value="Consider using Collections.singleton instead"/>
     </module>
     <module name="RegexpSingleline">
-        <metadata name="net.sf.eclipsecs.core.comment" value="Use org.apereo.cas.RandomUtils for random-number generation"/>
+        <metadata name="net.sf.eclipsecs.core.comment" value="Use org.apereo.cas.util.RandomUtils for random-number generation"/>
         <property name="severity" value="error"/>
-        <property name="format" value="RandomStringUtils\.(randomAlphanumeric|randomNumeric|randomAlphabetic|randomAscii|nextLong|nextInt|nextDouble|nextFloat)"/>
-        <property name="message" value="Use org.apereo.cas.RandomUtils for random-number generation instead."/>
+        <property name="format"
+                  value="RandomStringUtils\.(randomAlphanumeric|randomNumeric|randomAlphabetic|randomAscii|nextLong|nextInt|nextDouble|nextFloat)"/>
+        <property name="message" value="Use org.apereo.cas.util.RandomUtils for random-number generation instead."/>
     </module>
     <module name="RegexpSingleline">
         <metadata name="net.sf.eclipsecs.core.comment" value="Use specific request annotation"/>
@@ -775,6 +783,13 @@
         <property name="minimum" value="1"/>
         <property name="fileExtensions" value="java,groovy"/>
         <property name="message" value="There are no @since tags defined for this component's Javadocs."/>
+    </module>
+    <module name="RegexpSingleline">
+        <metadata name="net.sf.eclipsecs.core.comment" value="Formatting stream() operations"/>
+        <property name="severity" value="error"/>
+        <property name="format" value="(stream|filter|map|collect|findFirst|findAny|flatMap|reduce)\(\)\.$"/>
+        <property name="fileExtensions" value="java,groovy"/>
+        <property name="message" value="Stream operations should be separated individually on each line preceded with '.'"/>
     </module>
     <module name="SuppressionFilter">
         <property name="file" value="${checkstyle.suppressions.file}"/>

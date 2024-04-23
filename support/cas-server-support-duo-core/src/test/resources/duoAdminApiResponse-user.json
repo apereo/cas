@@ -1,0 +1,82 @@
+{
+  "stat": "OK",
+  "response": [{
+    "alias1": "joe.smith",
+    "alias2": "jsmith@example.com",
+    "alias3": null,
+    "alias4": null,
+    "aliases": {
+      "alias1": "joe.smith",
+      "alias2": "jsmith@example.com"
+    },
+    "created": 1489612729,
+    "email": "jsmith@example.com",
+    "firstname": "Joe",
+    "groups": [{
+      "desc": "People with hardware tokens",
+      "group_id": "DGXXXXXXXXXXXXXXXXX",
+      "mobile_otp_enabled": false,
+      "name": "token_users",
+      "push_enabled": false,
+      "sms_enabled": false,
+      "status": "Active",
+      "voice_enabled": false
+    }],
+    "is_enrolled": false,
+    "last_directory_sync": 1508789163,
+    "last_login": 1343921403,
+    "lastname": "Smith",
+    "notes": "",
+    "phones": [{
+      "activated": true,
+      "capabilities": [
+        "auto",
+        "push",
+        "sms",
+        "phone",
+        "mobile_otp"
+      ],
+      "encrypted": "Encrypted",
+      "extension": "",
+      "fingerprint": "Configured",
+      "last_seen": "2019-11-18T15:51:13",
+      "model": "Apple iPhone 11 Pro",
+      "name": "My iPhone",
+      "number": "15555550100",
+      "phone_id": "DPFZRS9FB0D46QFTM899",
+      "platform": "Apple iOS",
+      "postdelay": "0",
+      "predelay": "0",
+      "screenlock": "Locked",
+      "sms_passcodes_sent": true,
+      "tampered": "Not tampered",
+      "type": "Mobile"
+    }],
+    "realname": "Joe Smith",
+    "status": "active",
+    "tokens": [{
+      "serial": "123456",
+      "token_id": "DHIZ34ALBA2445ND4AI2",
+      "type": "d1"
+    }],
+    "u2ftokens": [{
+      "date_added": "1444678994",
+      "registration_id": "D21RU6X1B1DF5P54B6PV"
+    }],
+    "user_id": "DU3RP9I2WOC59VZX672N",
+    "username": "jsmith",
+    "webauthncredentials": [
+      {
+        "credential_name": "Touch ID",
+        "date_added": 1550685154,
+        "label": "Touch ID",
+        "webauthnkey": "WABFEOE007ZMV1QAZTRB"
+      },
+      {
+        "credential_name": "YubiKey C",
+        "date_added": 1550674764,
+        "label": "Security Key",
+        "webauthnkey": "WA4BD9AUVMSNUFWZGES4"
+      }]
+  }]
+}

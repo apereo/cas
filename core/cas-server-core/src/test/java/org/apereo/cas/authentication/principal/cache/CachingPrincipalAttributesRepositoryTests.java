@@ -1,32 +1,42 @@
 package org.apereo.cas.authentication.principal.cache;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCache;
-import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
+import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.test.annotation.DirtiesContext;
-
-import java.io.File;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Handles tests for {@link CachingPrincipalAttributesRepository}.
@@ -34,48 +44,128 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    CachingPrincipalAttributesRepositoryTests.CachingPrincipalAttributeRepositoryTestConfiguration.class
-})
-@DirtiesContext
 @Tag("Attributes")
-public class CachingPrincipalAttributesRepositoryTests extends AbstractCachingPrincipalAttributesRepositoryTests {
+class CachingPrincipalAttributesRepositoryTests {
+    private static final String MAIL = "mail";
 
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "cachingPrincipalAttributesRepository.json");
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).build().toObjectMapper();
+    private static final Map<String, List<Object>> REPOSITORY_ATTRIBUTES;
 
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
+    private static final Principal PRINCIPAL;
 
-    @BeforeEach
-    public void setup() {
-        ApplicationContextProvider.holdApplicationContext(applicationContext);
-        ApplicationContextProvider.getPrincipalAttributesRepositoryCache().ifPresent(PrincipalAttributesRepositoryCache::invalidate);
+    static {
+        REPOSITORY_ATTRIBUTES = new HashMap<>();
+        REPOSITORY_ATTRIBUTES.put("a1", Arrays.asList("v1", "v2", "v3"));
+
+        var email = new ArrayList<>();
+        email.add("final@example.com");
+        REPOSITORY_ATTRIBUTES.put(MAIL, email);
+
+        REPOSITORY_ATTRIBUTES.put("a6", Arrays.asList("v16", "v26", "v63"));
+        REPOSITORY_ATTRIBUTES.put("a2", List.of("v4"));
+        REPOSITORY_ATTRIBUTES.put("username", List.of("uid"));
+
+        PRINCIPAL = FunctionUtils.doUnchecked(() -> PrincipalFactoryUtils.newPrincipalFactory()
+            .createPrincipal(UUID.randomUUID().toString(),
+                Collections.singletonMap(MAIL, CollectionUtils.wrapList("final@school.com"))));
+
     }
 
-    @Override
     protected AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(final String unit, final long duration) {
-        ApplicationContextProvider.registerBeanIntoApplicationContext(this.applicationContext, this.dao, PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY);
         return new CachingPrincipalAttributesRepository(unit, duration);
     }
 
-    @Test
-    @SneakyThrows
-    public void verifySerializeACachingPrincipalAttributesRepositoryToJson() {
-        val repositoryWritten = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.toString(), 1);
-        repositoryWritten.setAttributeRepositoryIds(CollectionUtils.wrapSet("1", "2", "3"));
-        MAPPER.writeValue(JSON_FILE, repositoryWritten);
-        val repositoryRead = MAPPER.readValue(JSON_FILE, CachingPrincipalAttributesRepository.class);
-        assertEquals(repositoryWritten, repositoryRead);
+    @Nested
+    @SpringBootTest(classes = {
+        RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
+        CachingPrincipalAttributesRepositoryTests.CacheTestConfiguration.class
+    })
+    public class MergingTests {
+        private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+            .defaultTypingEnabled(true).build().toObjectMapper();
+
+        @Autowired
+        private ConfigurableApplicationContext applicationContext;
+
+
+        @Test
+        void verifySerializeACachingPrincipalAttributesRepositoryToJson() throws Throwable {
+            val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
+            val repositoryWritten = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.toString(), 1);
+            repositoryWritten.setAttributeRepositoryIds(CollectionUtils.wrapSet("1", "2", "3"));
+            MAPPER.writeValue(jsonFile, repositoryWritten);
+            val repositoryRead = MAPPER.readValue(jsonFile, CachingPrincipalAttributesRepository.class);
+            assertEquals(repositoryWritten, repositoryRead);
+        }
+
+        @Test
+        void verifyMergingStrategyWithNoncollidingAttributeAdder() throws Throwable {
+            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .applicationContext(applicationContext)
+                .principal(PRINCIPAL)
+                .registeredService(CoreAuthenticationTestUtils.getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString()))
+                .build();
+            val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5);
+            repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD);
+            repository.setAttributeRepositoryIds(Collections.singleton("Stub"));
+            val repositoryAttributes = repository.getAttributes(context);
+            assertTrue(repositoryAttributes.containsKey(MAIL));
+            val emailValue = repositoryAttributes.get(MAIL).getFirst().toString();
+            assertEquals("final@school.com", emailValue);
+        }
+
+        @Test
+        void verifyMergingStrategyWithReplacingAttributeAdder() throws Throwable {
+            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .applicationContext(applicationContext)
+                .principal(PRINCIPAL)
+                .registeredService(CoreAuthenticationTestUtils.getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString()))
+                .build();
+
+            val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5);
+            repository.setAttributeRepositoryIds(Collections.singleton("Stub"));
+            repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
+            val repositoryAttributes = repository.getAttributes(context);
+            assertTrue(repositoryAttributes.containsKey(MAIL));
+            val emailValue = repositoryAttributes.get(MAIL).getFirst().toString();
+            assertEquals("final@example.com", emailValue, () -> "Attributes found are %s".formatted(repositoryAttributes));
+
+        }
+
+        @Test
+        void verifyMergingStrategyWithMultivaluedAttributeMerger() throws Throwable {
+            val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .applicationContext(applicationContext)
+                .principal(PRINCIPAL)
+                .registeredService(CoreAuthenticationTestUtils.getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString()))
+                .build();
+
+            val repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5);
+            repository.setAttributeRepositoryIds(Collections.singleton("Stub"));
+            repository.setMergingStrategy(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
+            val repositoryAttributes = repository.getAttributes(context);
+            val mailAttr = repositoryAttributes.get(MAIL);
+            assertTrue(mailAttr.contains("final@example.com"), () -> "Attributes found are %s".formatted(repositoryAttributes));
+            assertTrue(mailAttr.contains("final@school.com"), () -> "Attributes found are %s".formatted(repositoryAttributes));
+        }
+
     }
 
-    @TestConfiguration("CachingPrincipalAttributeRepositoryTestConfiguration")
-    @Lazy(false)
-    public static class CachingPrincipalAttributeRepositoryTestConfiguration {
+    @TestConfiguration
+    static class CacheTestConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = PrincipalAttributesRepositoryCache.DEFAULT_BEAN_NAME)
+        public PersonAttributeDao attributeRepository() {
+            val dao = mock(PersonAttributeDao.class);
+            val person = mock(PersonAttributes.class);
+            when(person.getName()).thenReturn("uid");
+            when(person.getAttributes()).thenReturn(REPOSITORY_ATTRIBUTES);
+            when(dao.getPerson(any(String.class), any(), any(PersonAttributeDaoFilter.class))).thenReturn(person);
+            when(dao.getPeople(any(Map.class), any(PersonAttributeDaoFilter.class))).thenReturn(Set.of(person));
+            when(dao.getId()).thenReturn(new String[]{"Stub"});
+            return dao;
+        }
+
+        @Bean
         public PrincipalAttributesRepositoryCache principalAttributesRepositoryCache() {
             return new DefaultPrincipalAttributesRepositoryCache();
         }

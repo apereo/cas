@@ -10,6 +10,11 @@ import org.apereo.cas.authentication.principal.Service;
  */
 public interface AuthenticationServiceSelectionPlan {
     /**
+     * Bean name.
+     */
+    String BEAN_NAME = "authenticationServiceSelectionPlan";
+
+    /**
      * Register strategy handler.
      *
      * @param strategy the strategy
@@ -21,8 +26,9 @@ public interface AuthenticationServiceSelectionPlan {
      *
      * @param service the service
      * @return the service
+     * @throws Throwable the throwable
      */
-    Service resolveService(Service service);
+    Service resolveService(Service service) throws Throwable;
 
     /**
      * Resolve service t.
@@ -31,6 +37,7 @@ public interface AuthenticationServiceSelectionPlan {
      * @param service the service
      * @param clazz   the clazz
      * @return the t
+     * @throws Throwable the throwable
      */
-    <T extends Service> T resolveService(Service service, Class<T> clazz);
+    <T extends Service> T resolveService(Service service, Class<T> clazz) throws Throwable;
 }

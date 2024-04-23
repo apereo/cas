@@ -1,0 +1,56 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client2",
+  "clientSecret": "secret2",
+  "serviceId": "^https://localhost:9859/anything/mapped",
+  "name": "Sample",
+  "id": 2,
+  "supportedGrantTypes": [
+    "java.util.HashSet",
+    [
+      "authorization_code"
+    ]
+  ],
+  "supportedResponseTypes": [
+    "java.util.HashSet",
+    [
+      "code"
+    ]
+  ],
+  "bypassApprovalPrompt": true,
+  "accessStrategy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "requireAllAttributes": false,
+    "requiredAttributes": {
+      "@class": "java.util.HashMap",
+      "memberships": [
+        "java.util.HashSet",
+        [
+          "admin"
+        ]
+      ]
+    }
+  },
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [
+      "java.util.ArrayList",
+      [
+        {
+          "@class": "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+          "allowedAttributes": {
+            "@class": "java.util.TreeMap",
+            "my_email": "email",
+            "groups": "memberships"
+          }
+        },
+        {
+          "@class": "org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy"
+        },
+        {
+          "@class": "org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy"
+        }
+      ]
+    ]
+  }
+}

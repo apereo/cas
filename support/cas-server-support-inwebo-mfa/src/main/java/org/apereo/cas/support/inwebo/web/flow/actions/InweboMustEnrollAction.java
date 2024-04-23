@@ -1,10 +1,10 @@
 package org.apereo.cas.support.inwebo.web.flow.actions;
 
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+import org.apereo.cas.web.support.WebUtils;
+
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.binding.message.DefaultMessageContext;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -15,14 +15,13 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.4.0
  */
 @RequiredArgsConstructor
-public class InweboMustEnrollAction extends AbstractAction {
+public class InweboMustEnrollAction extends BaseCasWebflowAction {
 
     @Override
-    public Event doExecute(final RequestContext requestContext) {
-        val messageSource = ((DefaultMessageContext) requestContext.getMessageContext()).getMessageSource();
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val flowScope = requestContext.getFlowScope();
         flowScope.put(WebflowConstants.MUST_ENROLL, true);
-        flowScope.put(WebflowConstants.INWEBO_ERROR_MESSAGE, messageSource.getMessage("cas.inwebo.error.usernotregistered", null, LocaleContextHolder.getLocale()));
+        WebUtils.addErrorMessageToContext(requestContext, "cas.inwebo.error.usernotregistered");
         return success();
     }
 }

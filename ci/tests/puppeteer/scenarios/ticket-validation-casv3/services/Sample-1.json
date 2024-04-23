@@ -1,0 +1,48 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/sample.*",
+  "id": 1,
+  "name": "Sample",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute" : "mail",
+    "canonicalizationMode" : "UPPER"
+  },
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+    "allowedAttributes" : {
+      "@class" : "java.util.TreeMap",
+      "memberOf" :
+              '''
+              groovy {
+                def results = attributes['memberOf']?.collect({ value ->
+                    println "memberOf attribute: $value"
+                    def matcher = (value =~ ~/(CN=)(.*?)(?<!\\)-.*/)
+                    if (matcher.find()) {
+                      def match = matcher.group(2)
+                      println "Found a match: $match"
+                      return match
+                    }
+                    println "No match found for memberOf. Returning $value"
+                    return value
+                })
+
+                def ext1 = attributes['extensionAttribute1']
+                println "Values for extensionAttribute1: $ext1"
+                if (ext1 != null) results.addAll(ext1)
+
+                def ext2 = attributes['extensionAttribute2']
+                println "Values for extensionAttribute2: $ext2"
+                if (ext2 != null) results.addAll(ext2)
+
+                def ext3 = attributes['extensionAttribute3']
+                println "Values for extensionAttribute3: $ext3"
+                if (ext3 != null) results.addAll(ext3)
+
+                println "memberOf values: $results"
+                return results
+              }
+              '''
+    }
+  }
+}

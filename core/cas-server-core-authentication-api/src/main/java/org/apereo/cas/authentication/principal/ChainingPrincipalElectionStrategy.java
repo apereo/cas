@@ -2,16 +2,18 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
+import org.apereo.cas.authentication.principal.merger.AttributeMerger;
+import org.apereo.cas.authentication.principal.merger.ReplacingAttributeAdder;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.services.persondir.support.merger.IAttributeMerger;
-import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
+import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -31,11 +33,12 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 public class ChainingPrincipalElectionStrategy implements PrincipalElectionStrategy {
+    @Serial
     private static final long serialVersionUID = 3686895489996430873L;
 
     private final List<PrincipalElectionStrategy> chain;
 
-    private IAttributeMerger attributeMerger = new ReplacingAttributeAdder();
+    private AttributeMerger attributeMerger = new ReplacingAttributeAdder();
 
     public ChainingPrincipalElectionStrategy(final PrincipalElectionStrategy... chain) {
         this.chain = Stream.of(chain).collect(Collectors.toList());
@@ -53,11 +56,11 @@ public class ChainingPrincipalElectionStrategy implements PrincipalElectionStrat
 
     @Override
     public Principal nominate(final Collection<Authentication> authentications,
-                              final Map<String, List<Object>> principalAttributes) {
+                              final Map<String, List<Object>> principalAttributes) throws Throwable {
         val principal = this.chain
             .stream()
             .sorted(Comparator.comparing(PrincipalElectionStrategy::getOrder))
-            .map(strategy -> strategy.nominate(authentications, principalAttributes))
+            .map(Unchecked.function(strategy -> strategy.nominate(authentications, principalAttributes)))
             .filter(Objects::nonNull)
             .findFirst()
             .orElseThrow();
@@ -66,11 +69,11 @@ public class ChainingPrincipalElectionStrategy implements PrincipalElectionStrat
     }
 
     @Override
-    public Principal nominate(final List<Principal> principals, final Map<String, List<Object>> attributes) {
+    public Principal nominate(final List<Principal> principals, final Map<String, List<Object>> attributes) throws Throwable {
         val principal = this.chain
             .stream()
             .sorted(Comparator.comparing(PrincipalElectionStrategy::getOrder))
-            .map(strategy -> strategy.nominate(principals, attributes))
+            .map(Unchecked.function(strategy -> strategy.nominate(principals, attributes)))
             .findFirst()
             .orElseThrow();
         LOGGER.trace("Nominated principal [{}] from principal chain [{}]", principal, principals);

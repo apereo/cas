@@ -1,5 +1,9 @@
 {
   "dependencies": "pm-webflow",
+  "conditions": {
+    "docker": "true"
+  },
+
   "properties": [
     "--cas.authn.pm.core.enabled=true",
 
@@ -7,7 +11,7 @@
     "--spring.mail.port=25000",
     
     "--cas.authn.pm.reset.mail.from=cas@apereo.org",
-    "--cas.authn.pm.reset.mail.text=To reset your password, please use %s",
+    "--cas.authn.pm.reset.mail.text=To reset your password, please use ${url}",
     "--cas.authn.pm.reset.mail.subject=Reset your password",
     "--cas.authn.pm.reset.mail.attribute-name=mail",
 
@@ -18,7 +22,7 @@
     "--cas.authn.pm.google-recaptcha.version=GOOGLE_RECAPTCHA_V2",
     "--cas.authn.pm.google-recaptcha.invisible=false",
     
-    "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/forgot-password-recaptcha/accounts.json"
+    "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
   ],
   "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
 }

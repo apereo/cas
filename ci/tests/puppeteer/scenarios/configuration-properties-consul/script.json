@@ -1,0 +1,21 @@
+{
+  "dependencies": "consul-client",
+
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--spring.profiles.include=consul",
+    
+    "--spring.cloud.consul.enabled=true",
+    "--spring.cloud.consul.port=8500",
+    "--spring.cloud.consul.host=localhost",
+
+    "--spring.cloud.consul.config.enabled=true",
+    "--spring.cloud.consul.config.profile-separator=-"
+  ],
+  "initScript": "${PWD}/ci/tests/consul/run-consul-server.sh"
+}

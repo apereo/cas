@@ -1,0 +1,20 @@
+{
+  "dependencies": "oidc",
+
+  "properties": [
+    "--cas.server.tomcat.http[0].enabled=true",
+    "--cas.server.tomcat.http[0].port=8282",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--logging.level.org.apereo.cas=info",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
+
+    "--cas.authn.oidc.discovery.scopes=openid,profile,email",
+    "--cas.authn.oidc.discovery.claims=sub,name,family_name,given_name,email",
+
+    "--cas.authn.oidc.core.accepted-issuers-pattern=http:\\/\\/localhost:\\d\\d\\d\\d.*"
+  ]
+}

@@ -2,13 +2,14 @@ package org.apereo.cas.webauthn.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
 
-import com.yubico.core.RegistrationStorage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -20,29 +21,28 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 @Getter
-public class WebAuthnStartRegistrationAction extends AbstractAction {
+@Slf4j
+public class WebAuthnStartRegistrationAction extends AbstractMultifactorAuthenticationAction<WebAuthnMultifactorAuthenticationProvider> {
 
     /**
      * Attribute name that points to the web application id put into the webflow.
      */
     public static final String FLOW_SCOPE_WEB_AUTHN_APPLICATION_ID = "webauthnApplicationId";
 
-    private final RegistrationStorage webAuthnCredentialRepository;
-
     private final CasConfigurationProperties casProperties;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
-        val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn();
-
+    protected Event doExecuteInternal(final RequestContext requestContext) {
+        val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn().getCore();
         val authn = WebUtils.getAuthentication(requestContext);
-        val principal = authn.getPrincipal();
+        val principal = resolvePrincipal(authn.getPrincipal(), requestContext);
         val attributes = principal.getAttributes();
 
+        LOGGER.debug("Starting registration sequence for [{}]", principal);
         val flowScope = requestContext.getFlowScope();
         if (attributes.containsKey(webAuthn.getDisplayNameAttribute())) {
-            flowScope.put("displayName",
-                CollectionUtils.firstElement(attributes.get(webAuthn.getDisplayNameAttribute())));
+            CollectionUtils.firstElement(attributes.get(webAuthn.getDisplayNameAttribute()))
+                .ifPresent(value -> flowScope.put("displayName", value));
         } else {
             flowScope.put("displayName", principal.getId());
         }

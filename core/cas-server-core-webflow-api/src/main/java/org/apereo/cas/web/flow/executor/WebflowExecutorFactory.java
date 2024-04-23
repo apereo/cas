@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.springframework.webflow.conversation.impl.SessionBindingConversationManager;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -26,8 +25,11 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
 @RequiredArgsConstructor
 public class WebflowExecutorFactory {
     private final WebflowProperties webflowProperties;
+
     private final FlowDefinitionRegistry flowDefinitionRegistry;
+
     private final CipherExecutor webflowCipherExecutor;
+
     private final FlowExecutionListener[] executionListeners;
 
     /**
@@ -44,7 +46,7 @@ public class WebflowExecutorFactory {
 
     private FlowExecutor buildFlowExecutorViaServerSessionBindingExecution() {
         val conversationManager = new SessionBindingConversationManager();
-        val session = webflowProperties.getSession();
+        val session = webflowProperties.getSession().getServer();
         conversationManager.setLockTimeoutSeconds((int) Beans.newDuration(session.getLockTimeout()).getSeconds());
         conversationManager.setMaxConversations(session.getMaxConversations());
 
@@ -73,7 +75,6 @@ public class WebflowExecutorFactory {
         return new FlowExecutorImpl(this.flowDefinitionRegistry, factory, repository);
     }
 
-    @SneakyThrows
     private Transcoder getWebflowStateTranscoder() {
         val cipherBean = new WebflowCipherBean(this.webflowCipherExecutor);
         return new EncryptedTranscoder(cipherBean);

@@ -28,12 +28,12 @@ public class DefaultSingleLogoutMessageCreator implements SingleLogoutMessageCre
      * A ticket Id generator.
      */
     private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator(18);
-    
+
     @Override
-    public SingleLogoutMessage create(final SingleLogoutRequestContext request) {
+    public SingleLogoutMessage create(final SingleLogoutRequestContext request) throws Throwable {
         val logoutRequest = String.format("<samlp:LogoutRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" ID=\"%s\" Version=\"2.0\" "
-                + "IssueInstant=\"%s\"><saml:NameID xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">%s"
-                + "</saml:NameID><samlp:SessionIndex>%s</samlp:SessionIndex></samlp:LogoutRequest>",
+                                          + "IssueInstant=\"%s\"><saml:NameID xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\">%s"
+                                          + "</saml:NameID><samlp:SessionIndex>%s</samlp:SessionIndex></samlp:LogoutRequest>",
             GENERATOR.getNewTicketId("LR"),
             new ISOStandardDateFormat().getCurrentDateAndTime(),
             request.getExecutionRequest().getTicketGrantingTicket().getAuthentication().getPrincipal().getId(),

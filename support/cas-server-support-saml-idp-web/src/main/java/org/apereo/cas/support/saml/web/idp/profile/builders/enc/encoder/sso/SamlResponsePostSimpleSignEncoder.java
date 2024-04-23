@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso;
 
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.BaseHttpServletAwareSamlObjectEncoder;
 
 import lombok.val;
@@ -10,8 +10,8 @@ import org.opensaml.saml.saml2.binding.encoding.impl.BaseSAML2MessageEncoder;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPPostSimpleSignEncoder;
 import org.opensaml.saml.saml2.core.Response;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * This is {@link SamlResponsePostSimpleSignEncoder}.
@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 public class SamlResponsePostSimpleSignEncoder extends BaseHttpServletAwareSamlObjectEncoder<Response> {
 
     public SamlResponsePostSimpleSignEncoder(final VelocityEngine velocityEngineFactory,
-                                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                             final SamlRegisteredServiceMetadataAdaptor adaptor,
                                              final HttpServletResponse httpResponse,
                                              final HttpServletRequest httpRequest) {
         super(velocityEngineFactory, adaptor, httpResponse, httpRequest);

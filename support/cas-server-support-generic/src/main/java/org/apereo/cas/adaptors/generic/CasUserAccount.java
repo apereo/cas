@@ -3,9 +3,12 @@ package org.apereo.cas.adaptors.generic;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,9 +22,11 @@ import java.util.Map;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Getter
 @Setter
+@ToString(exclude = "password")
 public class CasUserAccount implements Serializable {
-    private static final int MAP_SIZE = 8;
+    private static final int SIZE = 8;
 
+    @Serial
     private static final long serialVersionUID = 7579594722197541062L;
 
     private String password;
@@ -30,7 +35,9 @@ public class CasUserAccount implements Serializable {
     
     private String location;
 
-    private Map<String, List<Object>> attributes = new LinkedHashMap<>(MAP_SIZE);
+    private Map<String, List<Object>> attributes = new LinkedHashMap<>(SIZE);
+
+    private List<String> warnings = new ArrayList<>(SIZE);
 
     private AccountStatus status = AccountStatus.OK;
 

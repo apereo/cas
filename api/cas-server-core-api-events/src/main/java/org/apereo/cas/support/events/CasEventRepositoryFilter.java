@@ -23,9 +23,10 @@ public interface CasEventRepositoryFilter {
      * Whether this event can be saved/tracked by CAS event repository.
      *
      * @param event the event
-     * @return true/false
+     * @return true /false
+     * @throws Throwable the throwable
      */
-    default boolean shouldSaveEvent(CasEvent event) {
+    default boolean shouldSaveEvent(final CasEvent event) throws Throwable {
         return true;
     }
 

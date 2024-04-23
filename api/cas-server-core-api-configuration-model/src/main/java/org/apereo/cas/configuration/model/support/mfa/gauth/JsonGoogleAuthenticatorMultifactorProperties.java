@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link JsonGoogleAuthenticatorMultifactorProperties}.
  *
@@ -18,5 +20,6 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class JsonGoogleAuthenticatorMultifactorProperties extends SpringResourceProperties {
+    @Serial
     private static final long serialVersionUID = 4303355159388663888L;
 }

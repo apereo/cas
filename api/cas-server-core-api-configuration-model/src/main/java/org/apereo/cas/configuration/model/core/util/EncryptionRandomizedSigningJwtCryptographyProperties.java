@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -25,6 +26,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class EncryptionRandomizedSigningJwtCryptographyProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -6802876221525521736L;
 
     /**
@@ -48,4 +50,9 @@ public class EncryptionRandomizedSigningJwtCryptographyProperties implements Ser
      * The signing/encryption algorithm to use.
      */
     private String alg = "AES";
+
+    /**
+     * Whether signing encryption operations are enabled.
+     */
+    private boolean signingEnabled = true;
 }

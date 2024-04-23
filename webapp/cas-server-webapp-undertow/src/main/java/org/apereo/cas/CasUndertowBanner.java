@@ -15,8 +15,8 @@ import java.util.Formatter;
  */
 public class CasUndertowBanner extends AbstractCasBanner {
     @Override
-    protected void injectEnvironmentInfoIntoBanner(final Formatter formatter, final Environment environment, final Class<?> sourceClass) {
+    public void injectEnvironmentInfo(final Formatter formatter, final Environment environment,
+                                      final Class<?> sourceClass) {
         formatter.format("Undertow Version: %s%n", Version.getFullVersionString());
-        formatter.format("%s%n", LINE_SEPARATOR);
     }
 }

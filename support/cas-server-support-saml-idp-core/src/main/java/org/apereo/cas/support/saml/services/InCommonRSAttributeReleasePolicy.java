@@ -1,11 +1,9 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.util.CollectionUtils;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.opensaml.saml.saml2.core.Attribute;
-
-import java.util.List;
+import java.io.Serial;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -14,37 +12,33 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class InCommonRSAttributeReleasePolicy extends MetadataEntityAttributesAttributeReleasePolicy {
-    private static final long serialVersionUID = 1532960981124784595L;
-
-    private static final List<String> ALLOWED_ATTRIBUTES = CollectionUtils.wrapList("eduPersonPrincipalName",
-        "eduPersonTargetedID", "mail", "displayName", "givenName", "sn", "eduPersonScopedAffiliation");
-
-    public InCommonRSAttributeReleasePolicy() {
-        setAllowedAttributes(ALLOWED_ATTRIBUTES);
-    }
-
-    @JsonIgnore
-    @Override
-    public String getEntityAttribute() {
-        return "http://macedir.org/entity-category";
-    }
+public class InCommonRSAttributeReleasePolicy extends BaseEntityCategoryAttributeReleasePolicy {
+    /**
+     * Map of allowed attributes by this policy in the form of attribute name linked
+     * to its equivalent urn value.
+     */
+    public static final Map<String, String> ALLOWED_ATTRIBUTES = CollectionUtils.wrap(
+        "eduPersonPrincipalName", "urn:oid:1.3.6.1.4.1.5923.1.1.1.6",
+        "eduPersonTargetedID", "urn:oid:1.3.6.1.4.1.5923.1.1.1.10",
+        "email", "urn:oid:0.9.2342.19200300.100.1.3",
+        "mail", "urn:oid:0.9.2342.19200300.100.1.3",
+        "displayName", "urn:oid:2.16.840.1.113730.3.1.241",
+        "givenName", "urn:oid:2.5.4.42",
+        "surname", "urn:oid:2.5.4.4",
+        "sn", "urn:oid:2.5.4.4",
+        "eduPersonScopedAffiliation", "urn:oid:1.3.6.1.4.1.5923.1.1.1.9");
+    @Serial
+    private static final long serialVersionUID = 7679741348026967862L;
 
     @JsonIgnore
     @Override
     public Set<String> getEntityAttributeValues() {
         return CollectionUtils.wrapSet("http://id.incommon.org/category/research-and-scholarship");
     }
-
-    @JsonIgnore
+    
     @Override
-    public String getEntityAttributeFormat() {
-        return Attribute.URI_REFERENCE;
-    }
-
     @JsonIgnore
-    @Override
-    public List<String> getAllowedAttributes() {
-        return super.getAllowedAttributes();
+    protected Map<String, String> getEntityCategoryAttributes() {
+        return ALLOWED_ATTRIBUTES;
     }
 }

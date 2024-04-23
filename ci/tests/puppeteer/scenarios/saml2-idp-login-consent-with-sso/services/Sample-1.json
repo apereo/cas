@@ -1,0 +1,27 @@
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId": "http://localhost:9443/simplesaml.+",
+  "name": "Sample",
+  "id": 1,
+  "evaluationOrder": 1,
+  "metadataLocation": "http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/default-sp",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "mergingPolicy": "REPLACE",
+    "policies": [
+      "java.util.ArrayList",
+      [
+        {
+          "@class": "org.apereo.cas.support.saml.services.EduPersonTargetedIdAttributeReleasePolicy",
+          "salt": "SomahRah5oYo",
+          "attribute": "uid"
+        },
+        {
+          "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+          "allowedAttributes" : [ "java.util.ArrayList", [ "first-name", "last-name", "email", "displayName" ] ]
+        }
+      ]
+    ]
+  }
+}
+

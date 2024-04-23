@@ -5,17 +5,20 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -29,115 +32,94 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@RequiredArgsConstructor
 @Slf4j
-public class DetermineMultifactorPasswordlessAuthenticationAction extends AbstractAction {
+public class DetermineMultifactorPasswordlessAuthenticationAction extends BasePasswordlessCasWebflowAction {
     private final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
 
     private final PrincipalFactory passwordlessPrincipalFactory;
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
-
-    private final CasConfigurationProperties casProperties;
-
+    
+    public DetermineMultifactorPasswordlessAuthenticationAction(final CasConfigurationProperties casProperties,
+                                                                final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
+                                                                final PrincipalFactory passwordlessPrincipalFactory,
+                                                                final AuthenticationSystemSupport authenticationSystemSupport) {
+        super(casProperties);
+        this.multifactorTriggerSelectionStrategy = multifactorTriggerSelectionStrategy;
+        this.passwordlessPrincipalFactory = passwordlessPrincipalFactory;
+        this.authenticationSystemSupport = authenticationSystemSupport;
+    }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
-        val user = WebUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        val user = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
         if (user == null) {
             LOGGER.error("Unable to locate passwordless account in the flow");
             return error();
         }
-        if (multifactorTriggerSelectionStrategy.getMultifactorAuthenticationTriggers().isEmpty()) {
+        if (StringUtils.isBlank(user.getPhone()) && StringUtils.isBlank(user.getEmail())) {
+            WebUtils.addErrorMessageToContext(requestContext, "passwordless.error.invalid.user");
+            return error();
+        }
+        if (multifactorTriggerSelectionStrategy.multifactorAuthenticationTriggers().isEmpty()) {
             LOGGER.debug("No multifactor authentication triggers are available or defined");
             return success();
         }
 
         if (!shouldActivateMultifactorAuthenticationFor(requestContext, user)) {
             LOGGER.debug("User [{}] is not activated to use CAS-provided multifactor authentication providers. "
-                + "You may wish to re-examine your CAS configuration to enable and allow for multifactor authentication to be "
-                + "combined with passwordless authentication", user);
+                         + "You may wish to re-examine your CAS configuration to enable and allow for multifactor authentication to be "
+                         + "combined with passwordless authentication", user);
             return success();
         }
 
-        val attributes = CoreAuthenticationUtils.convertAttributeValuesToMultiValuedObjects((Map) user.getAttributes());
-        val principal = this.passwordlessPrincipalFactory.createPrincipal(user.getName(), attributes);
-        val auth = DefaultAuthenticationBuilder.newInstance()
-            .setPrincipal(principal)
-            .build();
+        val authentication = buildAuthentication(user);
         val service = WebUtils.getService(requestContext);
 
-        val result = resolveMultifactorAuthenticationProvider(requestContext, auth, service);
+        val result = resolveMultifactorAuthenticationProvider(requestContext, authentication, service);
         if (result.isEmpty()) {
             LOGGER.debug("No CAS-provided multifactor authentication trigger required user [{}] to proceed with MFA. "
                 + "CAS will proceed with its normal passwordless authentication flow.", user);
             return success();
         }
 
-        populateContextWithAuthenticationResult(requestContext, auth, service);
-
+        populateContextWithAuthenticationResult(requestContext, authentication, service);
         LOGGER.debug("Proceed with multifactor authentication flow [{}] for user [{}]", result.get(), user);
-        return new EventFactorySupport().event(this, result.get());
+        return new EventFactorySupport().event(this, result.map(MultifactorAuthenticationProvider::getId).orElse(StringUtils.EMPTY));
     }
 
-    /**
-     * Populate context with authentication result.
-     *
-     * @param requestContext the request context
-     * @param auth           the auth
-     * @param service        the service
-     */
-    protected void populateContextWithAuthenticationResult(final RequestContext requestContext, final Authentication auth,
-                                                           final WebApplicationService service) {
+    protected Authentication buildAuthentication(final PasswordlessUserAccount user) throws Throwable {
+        val userAttributes = CollectionUtils.toMultiValuedMap((Map) user.getAttributes());
+        val resolvedPrincipal = authenticationSystemSupport.getPrincipalResolver()
+            .resolve(new BasicIdentifiableCredential(user.getUsername()));
+        val attributes = CoreAuthenticationUtils.mergeAttributes(userAttributes, resolvedPrincipal.getAttributes());
+        val principalId = resolvedPrincipal instanceof NullPrincipal ? user.getUsername() : resolvedPrincipal.getId();
+        val principal = passwordlessPrincipalFactory.createPrincipal(principalId, attributes);
+        return DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
+    }
+
+    protected void populateContextWithAuthenticationResult(final RequestContext requestContext, final Authentication authentication,
+                                                           final WebApplicationService service) throws Throwable {
         val builder = authenticationSystemSupport.getAuthenticationResultBuilderFactory().newBuilder();
         val authenticationResult = builder
-            .collect(auth)
-            .build(this.authenticationSystemSupport.getPrincipalElectionStrategy(), service);
-
+            .collect(authentication)
+            .build(authenticationSystemSupport.getPrincipalElectionStrategy(), service);
         WebUtils.putAuthenticationResultBuilder(builder, requestContext);
         WebUtils.putAuthenticationResult(authenticationResult, requestContext);
-        WebUtils.putAuthentication(auth, requestContext);
+        WebUtils.putAuthentication(authentication, requestContext);
     }
 
-    /**
-     * Resolve multifactor authentication provider.
-     *
-     * @param requestContext the request context
-     * @param auth           the auth
-     * @param service        the service
-     * @return the optional
-     */
-    protected Optional<String> resolveMultifactorAuthenticationProvider(final RequestContext requestContext, final Authentication auth,
-                                                                        final WebApplicationService service) {
+    protected Optional<MultifactorAuthenticationProvider> resolveMultifactorAuthenticationProvider(
+        final RequestContext requestContext, final Authentication authentication,
+        final WebApplicationService service) {
         try {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
             val registeredService = WebUtils.getRegisteredService(requestContext);
-            return multifactorTriggerSelectionStrategy.resolve(request, registeredService, auth, service);
-        } catch (final Exception e) {
+            return multifactorTriggerSelectionStrategy.resolve(request, response, registeredService, authentication, service);
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
-    }
-
-    /**
-     * Should activate multifactor authentication for user?
-     *
-     * @param requestContext the request context
-     * @param user           the user
-     * @return true/false
-     */
-    protected boolean shouldActivateMultifactorAuthenticationFor(final RequestContext requestContext,
-                                                                 final PasswordlessUserAccount user) {
-        val status = user.getMultifactorAuthenticationEligible();
-        if (status.isTrue()) {
-            LOGGER.trace("Passwordless account [{}] is eligible for multifactor authentication", user);
-            return true;
-        }
-        if (status.isFalse()) {
-            LOGGER.trace("Passwordless account [{}] is not eligible for multifactor authentication", user);
-            return false;
-        }
-        return casProperties.getAuthn().getPasswordless().getCore().isMultifactorAuthenticationActivated();
-
     }
 }

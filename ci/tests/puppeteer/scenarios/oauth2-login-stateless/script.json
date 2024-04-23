@@ -1,0 +1,40 @@
+{
+  "dependencies": "oauth-webflow,stateless-ticket-registry",
+  "conditions": {
+    "docker": "true"
+  },
+  "environmentVariables": [
+    "OAUTH_ACCESS_TOKEN_SIGNING_KEY=wTdzuSKFX2pnaDE7CsvTU1WpUE19R-y_py-a07C9auWC4x8KVzJluE1v8XEaA7BHIuBup88CzK5C-qNAg5JWOg"
+  ],
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--logging.level.org.apereo.cas=info",
+
+    "--cas.ticket.st.time-to-kill-in-seconds=900",
+
+    "--cas.authn.oauth.session-replication.replicate-sessions=false",
+    "--cas.authn.oauth.core.user-profile-view-type=FLAT",
+    
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+    "--cas.authn.attribute-repository.stub.attributes.organization=apereo",
+
+    "--cas.http-web-request.cors.enabled=true",
+    "--cas.http-web-request.cors.allow-origins[0]=*",
+    "--cas.http-web-request.cors.allow-credentials=false",
+    "--cas.http-web-request.cors.allow-methods[0]=*",
+    "--cas.http-web-request.cors.allow-headers[0]=*",
+
+    "--cas.webflow.crypto.signing.key=Q4tQGAuJSmuJ5WA0zByB9P6hYr5dpTd2JJifyy6Tm_CJ35pkbdhFvcgG-3igDjA4CTjau6Z0yMft-dhVUbRnPQ",
+    "--cas.webflow.crypto.encryption.key=g-Rk2ZvexS6tdooIiDh0IQ",
+
+    "--cas.authn.oauth.access-token.crypto.encryption-enabled=false",
+    "--cas.authn.oauth.access-token.crypto.signing.key=${#environmentVars['OAUTH_ACCESS_TOKEN_SIGNING_KEY']}",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}
+

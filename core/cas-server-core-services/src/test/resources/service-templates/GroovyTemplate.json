@@ -1,0 +1,16 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "name": "CAS",
+  "description": "${GivenDescription}",
+  "templateName": "GroovyTemplate",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute" : "${GivenUsernameAttribute}"
+  },
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", ${ AllowedAttributes.collect(it -> "\"$it\"") } ]
+  }
+}
+
+

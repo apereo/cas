@@ -1,0 +1,22 @@
+{
+  "dependencies": "oidc,json-service-registry",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.service-registry.core.init-from-json=false",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.server.name=https://host.k3d.internal:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.oidc.core.issuer=https://host.k3d.internal:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
+    
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+    "--cas.authn.attribute-repository.stub.id=STUB"
+  ],
+  "bootstrapScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "exitScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/exit.sh"
+}
+

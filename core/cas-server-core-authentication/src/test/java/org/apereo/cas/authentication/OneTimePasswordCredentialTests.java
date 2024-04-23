@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @Tag("Authentication")
-public class OneTimePasswordCredentialTests {
+class OneTimePasswordCredentialTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oneTimePasswordCredential.json");
 
@@ -26,7 +26,7 @@ public class OneTimePasswordCredentialTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeAnOneTimePasswordCredentialToJson()throws Exception{
+    void verifySerializeAnOneTimePasswordCredentialToJson() throws Throwable {
         val credentialWritten = new OneTimePasswordCredential("id", "password");
         MAPPER.writeValue(JSON_FILE, credentialWritten);
         val credentialRead = MAPPER.readValue(JSON_FILE, OneTimePasswordCredential.class);

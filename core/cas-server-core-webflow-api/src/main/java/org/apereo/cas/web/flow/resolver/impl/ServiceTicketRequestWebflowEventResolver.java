@@ -3,18 +3,22 @@ package org.apereo.cas.web.flow.resolver.impl;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.support.WebUtils;
-
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -31,49 +35,24 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
     }
 
     @Override
-    public Set<Event> resolveInternal(final RequestContext context) {
+    public Set<Event> resolveInternal(final RequestContext context) throws Throwable {
         if (isRequestAskingForServiceTicket(context)) {
             LOGGER.trace("Authentication request is asking for service tickets");
             val source = grantServiceTicket(context);
-            return source != null ? CollectionUtils.wrapSet(source) : null;
+            return Optional.ofNullable(source).map(CollectionUtils::wrapSet).orElse(null);
         }
         return null;
     }
 
-    private boolean validateExistingAuthentication(final Authentication authentication,
-                                                   final RequestContext requestContext) {
-        if (authentication != null) {
-            val configContext = getWebflowEventResolutionConfigurationContext();
-            val ssoStrategy = configContext.getSingleSignOnParticipationStrategy();
-            if (ssoStrategy.supports(requestContext) && !ssoStrategy.isParticipating(requestContext)) {
-                LOGGER.debug("Single sign-on strategy does not allow reusing the authentication attempt [{}]", authentication);
-                return false;
-            }
-            LOGGER.trace("Existing authentication attempt [{}] is valid", authentication);
-            return true;
-        }
-        LOGGER.trace("Cannot validate absent/missing authentication attempt");
-        return false;
-    }
-
-    /**
-     * Is request asking for service ticket?
-     *
-     * @param context the context
-     * @return true, if both service and tgt are found, and the request is not asking to renew.
-     * @since 4.1.0
-     */
-    @SneakyThrows
-    protected boolean isRequestAskingForServiceTicket(final RequestContext context) {
+    protected boolean isRequestAskingForServiceTicket(final RequestContext context) throws Throwable {
         val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
         LOGGER.trace("Located ticket-granting ticket [{}] from the request context", ticketGrantingTicketId);
 
         val service = WebUtils.getService(context);
         LOGGER.trace("Located service [{}] from the request context", service);
 
-        val configContext = getWebflowEventResolutionConfigurationContext();
         if (service != null && StringUtils.isNotBlank(ticketGrantingTicketId)) {
-            val authn = configContext.getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicketId);
+            val authn = getConfigurationContext().getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicketId);
             LOGGER.debug("Request identifies itself as one asking for service tickets. Checking for authentication context validity...");
             val validAuthn = validateExistingAuthentication(authn, context);
             if (validAuthn) {
@@ -99,13 +78,13 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
      * @return the resulting event. Warning, authentication failure or error.
      * @since 4.1.0
      */
-    protected Event grantServiceTicket(final RequestContext context) {
+    protected Event grantServiceTicket(final RequestContext context) throws Throwable {
         val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(context);
-        val credential = getCredentialFromContext(context);
+        val credentials = getCredentialFromContext(context);
 
         try {
             val service = WebUtils.getService(context);
-            val configContext = getWebflowEventResolutionConfigurationContext();
+            val configContext = getConfigurationContext();
 
             val existingAuthn = configContext.getTicketRegistrySupport().getAuthenticationFrom(ticketGrantingTicketId);
             val registeredService = configContext.getServicesManager().findServiceBy(service);
@@ -117,17 +96,14 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
                 val audit = AuditableContext.builder().service(service)
                     .authentication(existingAuthn)
                     .registeredService(registeredService)
-                    .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                     .build();
                 val accessResult = configContext.getRegisteredServiceAccessStrategyEnforcer().execute(audit);
                 accessResult.throwExceptionIfNeeded();
             }
 
-            LOGGER.trace("Finalizing authentication transaction for [{}]", credential);
-            val authenticationResult = configContext.getAuthenticationSystemSupport()
-                .handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+            val principal = getActivePrincipal(credentials, service, existingAuthn);
+            LOGGER.debug("Primary principal for this authentication session to receive a service ticket is [{}]", principal);
 
-            val principal = authenticationResult.getAuthentication().getPrincipal();
             if (existingAuthn != null && !existingAuthn.getPrincipal().equals(principal)) {
                 LOGGER.trace("Existing authentication context linked to ticket-granting ticket [{}] is issued for principal [{}] "
                         + " which does not match [{}], established by the requested authentication transaction. CAS will NOT re-use the existing "
@@ -142,4 +118,38 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
             return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
         }
     }
+
+    private boolean validateExistingAuthentication(final Authentication authentication,
+                                                   final RequestContext requestContext) throws Throwable {
+        if (authentication != null) {
+            val configContext = getConfigurationContext();
+            val ssoStrategy = configContext.getSingleSignOnParticipationStrategy();
+
+            val ssoRequest = SingleSignOnParticipationRequest.builder()
+                .requestContext(requestContext)
+                .build();
+
+            if (ssoStrategy.supports(ssoRequest) && !ssoStrategy.isParticipating(ssoRequest)) {
+                LOGGER.debug("Single sign-on strategy does not allow reusing the authentication attempt [{}]", authentication);
+                return false;
+            }
+            LOGGER.trace("Existing authentication attempt [{}] is valid", authentication);
+            return true;
+        }
+        LOGGER.trace("Cannot validate absent/missing authentication attempt");
+        return false;
+    }
+
+    protected Principal getActivePrincipal(final List<Credential> credential,
+                                           final WebApplicationService service,
+                                           final Authentication authentication) throws Throwable {
+        if (credential != null && !credential.isEmpty()) {
+            LOGGER.trace("Finalizing authentication transaction for [{}]", credential);
+            val authenticationResult = getConfigurationContext().getAuthenticationSystemSupport()
+                .finalizeAuthenticationTransaction(service, credential);
+            return authenticationResult.getAuthentication().getPrincipal();
+        }
+        return Objects.requireNonNull(authentication).getPrincipal();
+    }
+
 }

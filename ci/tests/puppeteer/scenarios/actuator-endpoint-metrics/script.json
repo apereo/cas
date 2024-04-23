@@ -1,0 +1,24 @@
+{
+  "dependencies": "reports,metrics",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    
+    "--cas.server.tomcat.http[0].enabled=true",
+    "--cas.server.tomcat.http[0].port=8080",
+    
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+
+    "--management.endpoint.prometheus.enabled=true",
+    "--management.endpoint.health.show-details=always",
+
+    "--management.prometheus.metrics.export.enabled=true",
+
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true"
+  ],
+  "bootstrapScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

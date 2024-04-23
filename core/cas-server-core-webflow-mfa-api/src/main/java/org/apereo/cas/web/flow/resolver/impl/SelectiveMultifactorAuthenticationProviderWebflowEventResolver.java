@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.resolver.impl;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -13,11 +14,12 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -40,12 +42,13 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
     }
 
     @Override
-    public Set<Event> resolveInternal(final RequestContext context) {
+    public Set<Event> resolveInternal(final RequestContext context) throws Throwable {
         val resolvedEvents = WebUtils.getResolvedEventsAsAttribute(context);
         val authentication = WebUtils.getAuthentication(context);
+        val service = WebUtils.getService(context);
         val registeredService = resolveRegisteredServiceInRequestContext(context);
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-        return resolveEventsInternal(resolvedEvents, authentication, registeredService, request, context);
+        return resolveEventsInternal(resolvedEvents, authentication, registeredService, request, context, service);
     }
 
     /**
@@ -58,48 +61,44 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
      * @param registeredService the registered service
      * @param request           the request
      * @param context           the request context
+     * @param service           the service
      * @return the set of resolved events
      */
     protected Set<Event> resolveEventsInternal(final Collection<Event> resolveEvents,
                                                final Authentication authentication,
                                                final RegisteredService registeredService,
                                                final HttpServletRequest request,
-                                               final RequestContext context) {
-        if (!resolveEvents.isEmpty()) {
+                                               final RequestContext context,
+                                               final Service service) {
+        if (resolveEvents.isEmpty()) {
+            LOGGER.trace("No events resolved for authentication transaction [{}] and service [{}]",
+                authentication, registeredService);
+        } else {
             LOGGER.trace("Collection of resolved events for this authentication sequence are:");
             resolveEvents.forEach(e -> LOGGER.trace("Event id [{}] resolved from [{}]",
                 e.getId(), e.getSource().getClass().getName()));
-        } else {
-            LOGGER.trace("No events resolved for authentication transaction [{}] and service [{}]",
-                authentication, registeredService);
         }
-        val pair = filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request);
-        WebUtils.putResolvedMultifactorAuthenticationProviders(context, pair.getValue());
-        return new HashSet<>(pair.getKey());
+        val result = filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request, service);
+        return result.map(pair -> {
+            WebUtils.putResolvedMultifactorAuthenticationProviders(context, pair.getValue());
+            return new HashSet<>(pair.getKey());
+        }).orElseGet(HashSet::new);
     }
 
-    /**
-     * Filter events by multifactor authentication providers.
-     *
-     * @param resolveEvents     the resolve events
-     * @param authentication    the authentication
-     * @param registeredService the registered service
-     * @param request           the request
-     * @return the set of events
-     */
-    protected Pair<Collection<Event>, Collection<MultifactorAuthenticationProvider>> filterEventsByMultifactorAuthenticationProvider(
+    protected Optional<Pair<Collection<Event>, Collection<MultifactorAuthenticationProvider>>> filterEventsByMultifactorAuthenticationProvider(
         final Collection<Event> resolveEvents,
         final Authentication authentication,
         final RegisteredService registeredService,
-        final HttpServletRequest request) {
+        final HttpServletRequest request,
+        final Service service) {
 
         LOGGER.debug("Locating multifactor providers to determine support for this authentication sequence");
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(
-            getWebflowEventResolutionConfigurationContext().getApplicationContext());
+            getConfigurationContext().getApplicationContext());
 
         if (providers.isEmpty()) {
             LOGGER.debug("No providers are available to honor this request. Moving on...");
-            return Pair.of(resolveEvents, new HashSet<>(0));
+            return Optional.of(Pair.of(resolveEvents, new HashSet<>(0)));
         }
 
         val providerValues = providers.values();
@@ -110,6 +109,6 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
         LOGGER.debug("Finalized set of resolved events are [{}]", resolveEvents);
         val finalEvents = new TreeSet<>(Comparator.comparing(Event::getId));
         finalEvents.addAll(resolveEvents);
-        return Pair.of(finalEvents, providerValues);
+        return Optional.of(Pair.of(finalEvents, providerValues));
     }
 }

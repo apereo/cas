@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.mfa.trigger;
 
 import org.apereo.cas.authentication.DefaultMultifactorAuthenticationProviderResolver;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -22,27 +22,26 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("MFA")
-@DirtiesContext
+@Tag("MFATrigger")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class AuthenticationAttributeMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+class AuthenticationAttributeMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
     @Order(1)
-    public void verifyOperationByProvider() {
+    void verifyOperationByProvider() throws Throwable {
         val props = new CasConfigurationProperties();
         val mfa = props.getAuthn().getMfa().getTriggers().getAuthentication();
         mfa.setGlobalAuthenticationAttributeNameTriggers("category");
         mfa.setGlobalAuthenticationAttributeValueRegex(".+object.*");
         val trigger = new AuthenticationAttributeMultifactorAuthenticationTrigger(props,
-            new DefaultMultifactorAuthenticationProviderResolver(),
+            new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
             applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
     }
 
     @Test
     @Order(2)
-    public void verifyMultipleProvider() {
+    void verifyMultipleProvider() throws Throwable {
         val otherProvider = new TestMultifactorAuthenticationProvider();
         otherProvider.setId("mfa-other");
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext, otherProvider);
@@ -52,9 +51,24 @@ public class AuthenticationAttributeMultifactorAuthenticationTriggerTests extend
         mfa.setGlobalAuthenticationAttributeNameTriggers("mfa-mode");
         mfa.setGlobalAuthenticationAttributeValueRegex(otherProvider.getId());
         val trigger = new AuthenticationAttributeMultifactorAuthenticationTrigger(props,
-            new DefaultMultifactorAuthenticationProviderResolver(),
+            new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
             applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
+    }
+
+    @Test
+    @Order(3)
+    void verifyNoMatch() throws Throwable {
+
+        val props = new CasConfigurationProperties();
+        val mfa = props.getAuthn().getMfa().getTriggers().getAuthentication();
+        mfa.setGlobalAuthenticationAttributeNameTriggers("whatever");
+        mfa.setGlobalAuthenticationAttributeValueRegex("whatever");
+        val trigger = new AuthenticationAttributeMultifactorAuthenticationTrigger(props,
+            new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
+            applicationContext);
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
+        assertTrue(result.isEmpty());
     }
 }

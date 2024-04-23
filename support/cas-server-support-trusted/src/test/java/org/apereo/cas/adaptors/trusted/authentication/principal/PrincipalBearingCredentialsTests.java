@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("Authentication")
-public class PrincipalBearingCredentialsTests {
+class PrincipalBearingCredentialsTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "principalBearingCredential.json");
 
@@ -30,17 +30,17 @@ public class PrincipalBearingCredentialsTests {
     private PrincipalBearingCredential principalBearingCredentials;
 
     @BeforeEach
-    public void initialize() {
+    public void initialize() throws Throwable {
         this.principalBearingCredentials = new PrincipalBearingCredential(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal("test"));
     }
 
     @Test
-    public void verifyGetOfPrincipal() {
+    void verifyGetOfPrincipal() throws Throwable {
         assertEquals("test", this.principalBearingCredentials.getPrincipal().getId());
     }
 
     @Test
-    public void verifySerializeAPrincipalBearingCredentialToJson() throws IOException {
+    void verifySerializeAPrincipalBearingCredentialToJson() throws IOException {
         MAPPER.writeValue(JSON_FILE, principalBearingCredentials);
         val credentialRead = MAPPER.readValue(JSON_FILE, PrincipalBearingCredential.class);
         assertEquals(principalBearingCredentials, credentialRead);

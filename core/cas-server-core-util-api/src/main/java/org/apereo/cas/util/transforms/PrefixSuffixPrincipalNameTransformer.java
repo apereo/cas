@@ -20,6 +20,7 @@ import lombok.val;
 public class PrefixSuffixPrincipalNameTransformer implements PrincipalNameTransformer {
 
     private String prefix;
+
     private String suffix;
 
     @Override

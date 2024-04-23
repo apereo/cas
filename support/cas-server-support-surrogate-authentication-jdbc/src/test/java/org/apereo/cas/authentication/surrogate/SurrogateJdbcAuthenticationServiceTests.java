@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.surrogate;
 
-import org.apereo.cas.config.SurrogateJdbcAuthenticationConfiguration;
-
+import org.apereo.cas.config.CasSurrogateJdbcAuthenticationAutoConfiguration;
 import lombok.Getter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-
 import javax.sql.DataSource;
 
 /**
@@ -20,7 +18,7 @@ import javax.sql.DataSource;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    SurrogateJdbcAuthenticationConfiguration.class,
+    CasSurrogateJdbcAuthenticationAutoConfiguration.class,
     BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class
 }, properties = {
     "cas.authn.surrogate.jdbc.surrogate-search-query=select count(*) from surrogate_accounts where username=? and surrogateAccount=?",
@@ -29,9 +27,9 @@ import javax.sql.DataSource;
 })
 @Getter
 @Tag("JDBC")
-public class SurrogateJdbcAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
+class SurrogateJdbcAuthenticationServiceTests extends BaseSurrogateAuthenticationServiceTests {
     @Autowired
-    @Qualifier("surrogateAuthenticationService")
+    @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
     private SurrogateAuthenticationService service;
 
     @Autowired
@@ -45,6 +43,7 @@ public class SurrogateJdbcAuthenticationServiceTests extends BaseSurrogateAuthen
         jdbcTemplate = new JdbcTemplate(this.surrogateAuthenticationJdbcDataSource);
         jdbcTemplate.execute("drop table surrogate_accounts if exists;");
         jdbcTemplate.execute("create table surrogate_accounts (id int, username varchar(255), surrogateAccount varchar(255));");
+        jdbcTemplate.execute("insert into surrogate_accounts values (100, 'casadmin', '" + SurrogateAuthenticationService.WILDCARD_ACCOUNT + "');");
         jdbcTemplate.execute("insert into surrogate_accounts values (100, 'casuser', 'banderson');");
         jdbcTemplate.execute("insert into surrogate_accounts values (200, 'casuser', 'surrogate2');");
         jdbcTemplate.execute("insert into surrogate_accounts values (300, 'casuser', 'surrogate3');");

@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  org.apereo.cas.trusted.config.MultifactorAuthnTrustConfiguration,\
-  org.apereo.cas.trusted.config.MultifactorAuthnTrustedDeviceFingerprintConfiguration,\
-  org.apereo.cas.trusted.config.MultifactorAuthnTrustWebflowConfiguration

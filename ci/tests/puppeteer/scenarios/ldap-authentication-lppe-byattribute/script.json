@@ -1,0 +1,23 @@
+{
+  "dependencies": "ldap",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.authn.accept.enabled=false",
+    
+    "--cas.authn.ldap[0].type=DIRECT",
+    "--cas.authn.ldap[0].dn-format=uid=%s,ou=people,dc=example,dc=org",
+    "--cas.authn.ldap[0].ldap-url=ldap://localhost:11389",
+    "--cas.authn.ldap[0].enhance-with-entry-resolver=false",
+    "--cas.authn.ldap[0].collect-dn-attribute=true",
+    "--cas.authn.ldap[0].additional-attributes=*,+",
+
+    "--cas.authn.ldap[0].password-policy.enabled=true",
+    "--cas.authn.ldap[0].password-policy.policy-attributes.pwdLockout=javax.security.auth.login.AccountLockedException"
+  ],
+  "initScript": "${PWD}/ci/tests/ldap/run-ldap-server.sh"
+}

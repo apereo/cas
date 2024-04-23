@@ -1,14 +1,9 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.MongoDbServiceRegistryConfiguration;
+import org.apereo.cas.config.CasMongoDbServiceRegistryAutoConfiguration;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
-
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.MethodOrderer;
@@ -18,8 +13,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -29,12 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2.0
  */
 @SpringBootTest(classes = {
-    MongoDbServiceRegistryConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    RefreshAutoConfiguration.class
+    CasMongoDbServiceRegistryAutoConfiguration.class,
+    AbstractServiceRegistryTests.SharedTestConfiguration.class
 },
     properties = {
         "cas.service-registry.mongo.database-name=service-registry",
@@ -46,17 +35,17 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.service-registry.mongo.drop-collection=true"
     })
 @Tag("MongoDb")
-@EnabledIfPortOpen(port = 27017)
+@EnabledIfListeningOnPort(port = 27017)
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class MongoDbServiceRegistryTests extends AbstractServiceRegistryTests {
+class MongoDbServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired
     @Qualifier("mongoDbServiceRegistry")
     private ServiceRegistry newServiceRegistry;
 
     @Test
-    public void verifySamlServiceAttributeNames() {
+    void verifySamlServiceAttributeNames() throws Throwable {
         val service = new SamlRegisteredService();
         service.setName("TestAttributeNames");
         service.setDescription("Test Description");

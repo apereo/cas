@@ -16,6 +16,11 @@ import java.io.Serializable;
 public interface AuthenticationTransactionFactory extends Serializable {
 
     /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "authenticationTransactionFactory";
+
+    /**
      * New transaction.
      *
      * @param service     the service

@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Slf4j
 @Tag("FileSystem")
-public class PathWatcherServiceTests {
+class PathWatcherServiceTests {
     private PathWatcherService watcher1;
 
     private FileWatcherService watcher2;
@@ -36,7 +36,7 @@ public class PathWatcherServiceTests {
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val file1 = createFile("file1.txt");
         val file2 = createFile("file2.txt");
 

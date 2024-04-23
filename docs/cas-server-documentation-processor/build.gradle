@@ -1,8 +1,10 @@
 description = "Apereo CAS Documentation Generator"
-project.ext["mainClassName"] = "org.apereo.cas.documentation.CasDocumentationApplication"
-project.ext["forceBootifulArtifact"] = true
-project.ext["archiveFileName"] = "casdocsgen.jar"
 
+ext {
+    mainClassName = "org.apereo.cas.documentation.CasDocumentationApplication"
+    forceBootifulArtifact = true
+    archiveFileName = "casdocsgen.jar"
+}
 apply from: rootProject.file("gradle/springboot.gradle")
 
 javadoc {
@@ -13,16 +15,47 @@ test {
     enabled(false)
 }
 
+tasks.named("bootJar") {
+    enabled = !rootProject.skipBootifulArtifact
+    notCompatibleWithConfigurationCache("bootJar is not supported by the Gradle configuration cache")
+}
+
 if (tasks.findByName("install") != null) {
     tasks.getByName("install").enabled(false)
 }
 
 dependencies {
-    api project(":api:cas-server-core-api-configuration-model")
-
-    implementation project(":core:cas-server-core-configuration-metadata-repository")
-
     libraries.each {
         implementation it.value
+    }
+
+    rootProject.subprojects.each {
+        if (it.publishable) {
+            implementation it
+        } else {
+            logger.debug("Skipping project for documentation processing: ${it.name}")
+        }
+    }
+}
+
+tasks.register('jsonDependencies') {
+    mustRunAfter(build)
+    it.notCompatibleWithConfigurationCache("Task is not compatible with configuration cache")
+    doLast {
+        def rcp = configurations.runtimeClasspath.resolvedConfiguration
+        def results = rcp.firstLevelModuleDependencies
+            .findAll { dependency ->
+                {
+                    !dependency.module.id.group.startsWith("org.apereo.cas")
+                }
+            }
+            .sort(dependency -> dependency.module.id.group + "/" + dependency.module.id.name)
+            .stream()
+            .map(dependency -> [group: dependency.module.id.group, name: dependency.module.id.name, version: dependency.module.id.version])
+            .toList()
+        def jsonFile = new File(project.layout.buildDirectory.getAsFile().get(), "dependencies.json")
+        def output = new groovy.json.JsonBuilder(results).toPrettyString();
+        jsonFile.delete()
+        jsonFile << output
     }
 }

@@ -4,9 +4,10 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -25,7 +26,6 @@ public class ChainingSingleLogoutServiceLogoutUrlBuilder implements SingleLogout
     private final List<SingleLogoutServiceLogoutUrlBuilder> singleLogoutServiceLogoutUrlBuilders;
 
     @Override
-    @SneakyThrows
     public Collection<SingleLogoutUrl> determineLogoutUrl(final RegisteredService registeredService,
                                                           final WebApplicationService singleLogoutService,
                                                           final Optional<HttpServletRequest> httpRequest) {
@@ -48,9 +48,11 @@ public class ChainingSingleLogoutServiceLogoutUrlBuilder implements SingleLogout
     }
 
     @Override
-    public boolean isServiceAuthorized(final WebApplicationService service, final Optional<HttpServletRequest> httpRequest) {
+    public boolean isServiceAuthorized(final WebApplicationService service,
+                                       final Optional<HttpServletRequest> httpRequest,
+                                       final Optional<HttpServletResponse> httpResponse) {
         return singleLogoutServiceLogoutUrlBuilders
             .stream()
-            .anyMatch(builder -> builder.isServiceAuthorized(service, httpRequest));
+            .anyMatch(builder -> builder.isServiceAuthorized(service, httpRequest, httpResponse));
     }
 }

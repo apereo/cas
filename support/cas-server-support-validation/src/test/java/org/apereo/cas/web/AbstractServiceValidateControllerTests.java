@@ -4,31 +4,27 @@ import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.config.CasThymeleafConfiguration;
 import org.apereo.cas.mock.MockValidationSpecification;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandler;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
-import org.apereo.cas.validation.Cas20WithoutProxyingValidationSpecification;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.validation.DefaultCasProtocolValidationSpecification;
 import org.apereo.cas.validation.ValidationResponseType;
-import org.apereo.cas.web.config.CasValidationConfiguration;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Objects;
 
@@ -39,11 +35,6 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Import({
-    CasThemesConfiguration.class,
-    CasThymeleafConfiguration.class,
-    CasValidationConfiguration.class
-})
 public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTests {
     protected static final String SUCCESS = "Success";
 
@@ -56,7 +47,8 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     protected AbstractServiceValidateController serviceValidateController;
 
     protected static CasProtocolValidationSpecification getValidationSpecification() {
-        return new Cas20WithoutProxyingValidationSpecification(mock(ServicesManager.class));
+        return new DefaultCasProtocolValidationSpecification(mock(ServicesManager.class),
+            input -> input.getChainedAuthentications().size() == 1);
     }
 
     protected static ProxyHandler getProxyHandler() {
@@ -71,7 +63,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         this.serviceValidateController.setApplicationContext(context);
     }
 
-    protected HttpServletRequest getHttpServletRequest() {
+    protected HttpServletRequest getHttpServletRequest() throws Throwable {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -87,13 +79,13 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
-    public void verifyEmptyParams() throws Exception {
+    void verifyEmptyParams() throws Throwable {
         assertNotNull(this.serviceValidateController.handleRequestInternal(
             new MockHttpServletRequest(), new MockHttpServletResponse()).getModel().get("code"));
     }
 
     @Test
-    public void verifyValidServiceTicketWithValidPgtAndProxyHandlerFailing() throws Exception {
+    void verifyValidServiceTicketWithValidPgtAndProxyHandlerFailing() throws Throwable {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -104,14 +96,14 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_URL, SERVICE.getId());
 
-        this.serviceValidateController.getServiceValidateConfigurationContext().setProxyHandler((credential, proxyGrantingTicketId) -> null);
+        this.serviceValidateController.getServiceValidateConfigurationContext().setProxyHandler((credential, __) -> null);
         val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
         assertFalse(Objects.requireNonNull(modelAndView.getView()).toString().contains(SUCCESS));
         assertNull(modelAndView.getModel().get(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_IOU));
     }
 
     @Test
-    public void verifyValidServiceTicket() throws Exception {
+    void verifyValidServiceTicket() throws Throwable {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -126,26 +118,26 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
-    public void verifyValidServiceTicketInvalidSpec() throws Exception {
+    void verifyValidServiceTicketInvalidSpec() throws Throwable {
         assertFalse(Objects.requireNonNull(this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
             new MockHttpServletResponse()).getView()).toString().contains(SUCCESS));
     }
 
     @Test
-    public void verifyRenewSpecFailsCorrectly() throws Exception {
+    void verifyRenewSpecFailsCorrectly() throws Throwable {
         assertFalse(Objects.requireNonNull(this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
             new MockHttpServletResponse()).getView()).toString().contains(SUCCESS));
     }
 
     @Test
-    public void verifyInvalidServiceTicket() throws Exception {
+    void verifyInvalidServiceTicket() throws Throwable {
         val ctx = CoreAuthenticationTestUtils
             .getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), SERVICE, ctx);
 
-        getCentralAuthenticationService().deleteTicket(tId.getId());
+        getTicketRegistry().deleteTicket(tId.getId());
 
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE.getId());
@@ -156,7 +148,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
-    public void verifyValidServiceTicketWithValidPgtAndProxyHandling() throws Exception {
+    void verifyValidServiceTicketWithValidPgtAndProxyHandling() throws Throwable {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -173,7 +165,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
-    public void verifyValidServiceTicketWithValidPgtButNoProxyHandlingBecausePgtIsReleased() throws Exception {
+    void verifyValidServiceTicketWithValidPgtButNoProxyHandlingBecausePgtIsReleased() throws Throwable {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), DEFAULT_SERVICE);
 
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -190,7 +182,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
-    public void verifyValidServiceTicketAndPgtUrlMismatch() throws Exception {
+    void verifyValidServiceTicketAndPgtUrlMismatch() throws Throwable {
         val svc = RegisteredServiceTestUtils.getService("proxyService");
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
@@ -208,7 +200,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
-    public void verifyValidServiceTicketAndFormatAsJson() throws Exception {
+    void verifyValidServiceTicketAndFormatAsJson() throws Throwable {
         val svc = RegisteredServiceTestUtils.getService("proxyService");
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -225,7 +217,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
-    public void verifyUnknownService() throws Exception {
+    void verifyUnknownService() throws Throwable {
         val svc = RegisteredServiceTestUtils.getService("unknown-service");
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, svc.getId());
@@ -237,7 +229,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
-    public void verifyDisabledService() throws Exception {
+    void verifyDisabledService() throws Throwable {
         val svc = RegisteredServiceTestUtils.getService("cas-access-disabled");
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, svc.getId());
@@ -250,7 +242,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
 
     @Test
-    public void verifyValidServiceTicketAndBadFormat() throws Exception {
+    void verifyValidServiceTicketAndBadFormat() throws Throwable {
         val svc = RegisteredServiceTestUtils.getService("proxyService");
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
@@ -267,7 +259,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
-    public void verifyValidServiceTicketRuntimeExceptionWithSpec() throws Exception {
+    void verifyValidServiceTicketRuntimeExceptionWithSpec() throws Throwable {
         this.serviceValidateController.addValidationSpecification(new MockValidationSpecification(false));
         assertFalse(Objects.requireNonNull(this.serviceValidateController.handleRequestInternal(getHttpServletRequest(),
             new MockHttpServletResponse()).getView()).toString().contains(SUCCESS));
@@ -277,7 +269,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         CAS10 Proxying Tests.
      */
     @Test
-    public void verifyValidServiceTicketWithDifferentEncoding() throws Exception {
+    void verifyValidServiceTicketWithDifferentEncoding() throws Throwable {
         val svc = RegisteredServiceTestUtils.getService("http://www.jasig.org?param=hello+world");
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
@@ -295,14 +287,14 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
-    public void verifyValidServiceTicketWithSecurePgtUrl() throws Exception {
+    void verifyValidServiceTicketWithSecurePgtUrl() throws Throwable {
         this.serviceValidateController.getServiceValidateConfigurationContext().setProxyHandler(new Cas10ProxyHandler());
         val modelAndView = getModelAndViewUponServiceValidationWithSecurePgtUrl(SERVICE);
         assertTrue(Objects.requireNonNull(modelAndView.getView()).toString().contains(SUCCESS));
     }
 
     @Test
-    public void verifyValidServiceTicketWithValidPgtNoProxyHandling() throws Exception {
+    void verifyValidServiceTicketWithValidPgtNoProxyHandling() throws Throwable {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -318,7 +310,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
-    public void verifyValidServiceTicketWithDifferentEncodingAndIgnoringCase() throws Exception {
+    void verifyValidServiceTicketWithDifferentEncodingAndIgnoringCase() throws Throwable {
         val origSvc = "http://www.jasig.org?param=hello+world";
         val svc = RegisteredServiceTestUtils.getService(origSvc);
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
@@ -338,7 +330,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     }
 
     @Test
-    public void verifyValidServiceTicketWithInvalidPgt() throws Exception {
+    void verifyValidServiceTicketWithInvalidPgt() throws Throwable {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), SERVICE);
 
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -357,7 +349,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     /*
     Helper methods.
      */
-    protected ModelAndView getModelAndViewUponServiceValidationWithSecurePgtUrl(final Service service) throws Exception {
+    protected ModelAndView getModelAndViewUponServiceValidationWithSecurePgtUrl(final Service service) throws Throwable {
         val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), service);
         val tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         val sId = getCentralAuthenticationService().grantServiceTicket(tId.getId(), service, ctx);

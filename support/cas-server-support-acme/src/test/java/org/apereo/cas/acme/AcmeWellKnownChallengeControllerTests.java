@@ -14,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Web")
-public class AcmeWellKnownChallengeControllerTests extends BaseAcmeTests {
+class AcmeWellKnownChallengeControllerTests extends BaseAcmeTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         acmeChallengeRepository.add("token", "challenge");
         assertNotNull(acmeWellKnownChallengeController.handleRequest("token",
             new MockHttpServletRequest(), new MockHttpServletResponse()));

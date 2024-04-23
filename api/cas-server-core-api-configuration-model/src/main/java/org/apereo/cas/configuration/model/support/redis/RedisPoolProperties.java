@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.redis;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -8,6 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,8 +24,9 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-support-redis-core")
 @JsonFilter("RedisPoolProperties")
-public class RedisPoolProperties implements Serializable {
+public class RedisPoolProperties implements CasFeatureModule, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 8534823157764550894L;
 
     /**
@@ -127,7 +131,8 @@ public class RedisPoolProperties implements Serializable {
      * before throwing an exception when the pool is exhausted. Use a negative value
      * to block indefinitely.
      */
-    private int maxWait = -1;
+    @DurationCapable
+    private String maxWait = "PT5S";
 
     /**
      * Enable the pooling configuration.

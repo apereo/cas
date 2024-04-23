@@ -17,15 +17,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OIDC")
-public class OidcServiceJsonWebKeystoreCacheExpirationPolicyTests extends AbstractOidcTests {
+class OidcServiceJsonWebKeystoreCacheExpirationPolicyTests extends AbstractOidcTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val service = getOidcRegisteredService();
-        service.setJwksCacheDuration(5);
-        service.setJwksCacheTimeUnit("milliseconds");
+        service.setJwksCacheDuration("PT0.005S");
         val policy = new OidcServiceJsonWebKeystoreCacheExpirationPolicy(casProperties);
-        assertEquals(5_000_000, policy.expireAfterUpdate(service, Optional.empty(), 1000, 1000));
+        assertEquals(5_000_000, policy.expireAfterUpdate(new OidcJsonWebKeyCacheKey(service, OidcJsonWebKeyUsage.SIGNING),
+            Optional.empty(), 1000, 1000));
     }
 
 }

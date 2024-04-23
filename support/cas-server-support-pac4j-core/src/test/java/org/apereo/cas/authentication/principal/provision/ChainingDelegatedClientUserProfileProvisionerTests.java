@@ -5,10 +5,11 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.profile.CommonProfile;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -19,22 +20,17 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Simple")
-public class ChainingDelegatedClientUserProfileProvisionerTests {
+@Tag("Delegation")
+class ChainingDelegatedClientUserProfileProvisionerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val commonProfile = new CommonProfile();
         commonProfile.setClientName("CasClient");
         commonProfile.setId("testuser");
         val client = new CasClient(new CasConfiguration("http://cas.example.org"));
 
-        val chain = new ChainingDelegatedClientUserProfileProvisioner();
-        chain.addProvisioner(mock(DelegatedClientUserProfileProvisioner.class));
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                chain.execute(CoreAuthenticationTestUtils.getPrincipal(), commonProfile, client);
-            }
-        });
+        val chain = new ChainingDelegatedClientUserProfileProvisioner(List.of(mock(DelegatedClientUserProfileProvisioner.class)));
+        assertDoesNotThrow(() -> chain.execute(CoreAuthenticationTestUtils.getPrincipal(), commonProfile, client,
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 }

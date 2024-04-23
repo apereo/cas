@@ -1,11 +1,13 @@
 package org.apereo.cas.util.serialization;
 
-import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.crypto.DecodableCipher;
+import org.apereo.cas.util.crypto.EncodableCipher;
+import org.apereo.cas.util.function.FunctionUtils;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jooq.lambda.Unchecked;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -47,11 +49,12 @@ public class SerializationUtils {
      * @param outputStream The stream to receive the object
      * @since 5.0.0
      */
-    @SneakyThrows
     public static void serialize(final Serializable object, final OutputStream outputStream) {
-        try (val out = new ObjectOutputStream(outputStream)) {
-            out.writeObject(object);
-        }
+        FunctionUtils.doUnchecked(__ -> {
+            try (val out = new ObjectOutputStream(outputStream)) {
+                out.writeObject(object);
+            }
+        });
     }
 
     /**
@@ -77,18 +80,19 @@ public class SerializationUtils {
      * @return the object
      * @since 5.0.0
      */
-    @SneakyThrows
     public static <T> T deserialize(final InputStream inputStream, final Class<T> clazz) {
-        try (val in = new ObjectInputStream(inputStream)) {
-            val obj = in.readObject();
+        return Unchecked.supplier(() -> {
+            try (val in = new ObjectInputStream(inputStream)) {
+                val obj = in.readObject();
 
-            if (!clazz.isAssignableFrom(obj.getClass())) {
-                throw new ClassCastException("Result [" + obj
-                    + " is of type " + obj.getClass()
-                    + " when we were expecting " + clazz);
+                if (!clazz.isAssignableFrom(obj.getClass())) {
+                    throw new ClassCastException("Result [" + obj
+                                                 + " is of type " + obj.getClass()
+                                                 + " when we were expecting " + clazz);
+                }
+                return (T) obj;
             }
-            return (T) obj;
-        }
+        }).get();
     }
 
     /**
@@ -100,11 +104,13 @@ public class SerializationUtils {
      * @return the byte []
      * @since 4.2
      */
-    public static byte[] serializeAndEncodeObject(final CipherExecutor cipher,
-        final Serializable object,
-        final Object[] parameters) {
-        val outBytes = serialize(object);
-        return (byte[]) cipher.encode(outBytes, parameters);
+    public static byte[] serializeAndEncodeObject(final EncodableCipher cipher,
+                                                  final Serializable object,
+                                                  final Object[] parameters) {
+        return FunctionUtils.doUnchecked(() -> {
+            val outBytes = serialize(object);
+            return (byte[]) cipher.encode(outBytes, parameters);
+        });
     }
 
     /**
@@ -114,8 +120,8 @@ public class SerializationUtils {
      * @param object the object
      * @return the byte []
      */
-    public static byte[] serializeAndEncodeObject(final CipherExecutor cipher,
-        final Serializable object) {
+    public static byte[] serializeAndEncodeObject(final EncodableCipher cipher,
+                                                  final Serializable object) {
         return serializeAndEncodeObject(cipher, object, ArrayUtils.EMPTY_OBJECT_ARRAY);
     }
 
@@ -130,11 +136,10 @@ public class SerializationUtils {
      * @return the t
      * @since 4.2
      */
-    @SneakyThrows
     public static <T extends Serializable> T decodeAndDeserializeObject(final byte[] object,
-        final CipherExecutor cipher,
-        final Class<T> type,
-        final Object[] parameters) {
+                                                                        final DecodableCipher cipher,
+                                                                        final Class<T> type,
+                                                                        final Object[] parameters) {
         val decoded = (byte[]) cipher.decode(object, parameters);
         return deserializeAndCheckObject(decoded, type);
     }
@@ -148,10 +153,9 @@ public class SerializationUtils {
      * @param type   the type
      * @return the t
      */
-    @SneakyThrows
     public static <T extends Serializable> T decodeAndDeserializeObject(final byte[] object,
-        final CipherExecutor cipher,
-        final Class<T> type) {
+                                                                        final DecodableCipher cipher,
+                                                                        final Class<T> type) {
         return decodeAndDeserializeObject(object, cipher, type, ArrayUtils.EMPTY_OBJECT_ARRAY);
     }
 
@@ -165,7 +169,6 @@ public class SerializationUtils {
      * @since 4.2
      */
     public static <T extends Serializable> T deserializeAndCheckObject(final byte[] object, final Class<T> type) {
-        val result = deserialize(object, type);
-        return (T) result;
+        return deserialize(object, type);
     }
 }

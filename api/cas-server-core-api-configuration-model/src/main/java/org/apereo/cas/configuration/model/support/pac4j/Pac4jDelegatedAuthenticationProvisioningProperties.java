@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -16,26 +17,37 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RequiresModule(name = "cas-server-support-pac4j")
+@RequiresModule(name = "cas-server-support-pac4j-webflow")
 @Getter
 @Setter
 @Accessors(chain = true)
 @JsonFilter("Pac4jDelegatedAuthenticationProvisioningProperties")
 public class Pac4jDelegatedAuthenticationProvisioningProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 3478567744591488495L;
 
     /**
-     * Hand off the provisioning task to an external rest api
-     * to create and manage establish profiles.
+     * Hand off the provisioning task to an external scim server
+     * to create and manage profiles.
      */
     @NestedConfigurationProperty
-    private Pac4jDelegatedAuthenticationRestfulProvisioningProperties rest = new Pac4jDelegatedAuthenticationRestfulProvisioningProperties();
+    private Pac4jDelegatedAuthenticationScimProvisioningProperties scim =
+        new Pac4jDelegatedAuthenticationScimProvisioningProperties();
+
+    /**
+     * Hand off the provisioning task to an external rest api
+     * to create and manage profiles.
+     */
+    @NestedConfigurationProperty
+    private Pac4jDelegatedAuthenticationRestfulProvisioningProperties rest =
+        new Pac4jDelegatedAuthenticationRestfulProvisioningProperties();
 
     /**
      * Hand off the provisioning task to an external groovy script
-     * to create and manage establish profiles.
+     * to create and manage profiles.
      */
     @NestedConfigurationProperty
-    private Pac4jDelegatedAuthenticationGroovyProvisioningProperties groovy = new Pac4jDelegatedAuthenticationGroovyProvisioningProperties();
+    private Pac4jDelegatedAuthenticationGroovyProvisioningProperties groovy =
+        new Pac4jDelegatedAuthenticationGroovyProvisioningProperties();
 
 }

@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
+import org.apereo.cas.configuration.model.core.web.session.SessionStorageTypes;
+import org.apereo.cas.configuration.model.support.replication.SessionReplicationProperties;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -7,7 +10,9 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +29,7 @@ import java.util.List;
 @Accessors(chain = true)
 @JsonFilter("SamlIdPCoreProperties")
 public class SamlIdPCoreProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -1848175783676789852L;
 
     /**
@@ -36,30 +42,33 @@ public class SamlIdPCoreProperties implements Serializable {
     /**
      * Indicates whether saml requests, and other session data,
      * collected as part of SAML flows and requests
-     * that are kept by the container http session, should be replicated
+     * that are kept by the container http session, local storage, or should be replicated
      * across the cluster.
      */
-    private boolean replicateSessions;
+    private SessionStorageTypes sessionStorageType = SessionStorageTypes.HTTP;
 
     /**
      * The SAML entity id for the deployment.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String entityId = "https://cas.example.org/idp";
 
     /**
-     * A mapping of authentication context class refs.
-     * This is where specific authentication context classes
-     * are reference and mapped to providers that CAS may support
-     * mainly for MFA purposes.
-     * <p>
-     * Example might be {@code urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo}.
+     * Authentication context class settings.
      */
-    private List<String> authenticationContextClassMappings = new ArrayList<>(0);
+    @NestedConfigurationProperty
+    private SamlIdPAuthenticationContextProperties context = new SamlIdPAuthenticationContextProperties();
 
     /**
      * A mapping of attribute names to their friendly names, defined globally.
      * Example might be {@code urn:oid:1.3.6.1.4.1.5923.1.1.1.6->eduPersonPrincipalName}.
      */
     private List<String> attributeFriendlyNames = new ArrayList<>(0);
+
+    /**
+     * Control settings for session replication.
+     */
+    @NestedConfigurationProperty
+    private SessionReplicationProperties sessionReplication = new SessionReplicationProperties();
 }

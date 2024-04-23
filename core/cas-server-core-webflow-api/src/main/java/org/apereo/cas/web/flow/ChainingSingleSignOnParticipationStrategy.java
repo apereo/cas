@@ -1,11 +1,9 @@
 package org.apereo.cas.web.flow;
 
-import org.apereo.cas.util.model.TriStateBoolean;
-
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.webflow.execution.RequestContext;
-
+import org.jooq.lambda.Unchecked;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,30 +37,31 @@ public class ChainingSingleSignOnParticipationStrategy implements SingleSignOnPa
     }
 
     @Override
-    public boolean isParticipating(final RequestContext context) {
-        val supporters = getSupportingSingleSignOnParticipationStrategies(context);
+    public boolean isParticipating(final SingleSignOnParticipationRequest ssoRequest) throws Throwable {
+        val supporters = getSupportingSingleSignOnParticipationStrategies(ssoRequest);
         if (supporters.isEmpty()) {
-            return SingleSignOnParticipationStrategy.alwaysParticipating().isParticipating(context);
+            return SingleSignOnParticipationStrategy.alwaysParticipating().isParticipating(ssoRequest);
         }
-        return supporters.stream().allMatch(p -> p.isParticipating(context));
+        return supporters.stream().allMatch(Unchecked.predicate(p -> p.isParticipating(ssoRequest)));
     }
 
     @Override
-    public boolean supports(final RequestContext context) {
-        return providers.stream().anyMatch(p -> p.supports(context));
+    public boolean supports(final SingleSignOnParticipationRequest ssoRequest) {
+        return providers.stream().anyMatch(p -> p.supports(ssoRequest));
     }
 
     @Override
-    public TriStateBoolean isCreateCookieOnRenewedAuthentication(final RequestContext context) {
+    public TriStateBoolean isCreateCookieOnRenewedAuthentication(final SingleSignOnParticipationRequest context) {
         val supporters = getSupportingSingleSignOnParticipationStrategies(context);
         val result = supporters.stream().allMatch(p -> {
             val createCookieOnRenewedAuthentication = p.isCreateCookieOnRenewedAuthentication(context);
-            return createCookieOnRenewedAuthentication.equals(TriStateBoolean.TRUE);
+            return createCookieOnRenewedAuthentication.isTrue() || createCookieOnRenewedAuthentication.isUndefined();
         });
         return TriStateBoolean.fromBoolean(result);
     }
 
-    private List<SingleSignOnParticipationStrategy> getSupportingSingleSignOnParticipationStrategies(final RequestContext context) {
+    private List<SingleSignOnParticipationStrategy> getSupportingSingleSignOnParticipationStrategies(
+        final SingleSignOnParticipationRequest context) {
         return providers.stream()
             .filter(p -> p.supports(context))
             .collect(Collectors.toList());

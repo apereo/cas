@@ -1,9 +1,9 @@
 package org.apereo.cas.support.saml.idp.metadata.generator;
 
+import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
-import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Optional;
@@ -18,6 +18,11 @@ import java.util.Optional;
 @FunctionalInterface
 public interface SamlIdPMetadataGenerator {
     /**
+     * Bean implementation id.
+     */
+    String BEAN_NAME = "samlIdPMetadataGenerator";
+
+    /**
      * Starting block of a pem certificate.
      */
     String BEGIN_CERTIFICATE = "-----BEGIN CERTIFICATE-----";
@@ -31,8 +36,9 @@ public interface SamlIdPMetadataGenerator {
      *
      * @param registeredService the registered service
      * @return the saml idp metadata document
+     * @throws Throwable the throwable
      */
-    SamlIdPMetadataDocument generate(Optional<SamlRegisteredService> registeredService);
+    SamlIdPMetadataDocument generate(Optional<SamlRegisteredService> registeredService) throws Throwable;
 
     /**
      * Clean certificate string.
@@ -52,11 +58,7 @@ public interface SamlIdPMetadataGenerator {
      * @param result the result
      * @return the applies to for
      */
-    static String getAppliesToFor(final Optional<SamlRegisteredService> result) {
-        if (result.isPresent()) {
-            val registeredService = result.get();
-            return registeredService.getName() + '-' + registeredService.getId();
-        }
-        return "CAS";
+    default String getAppliesToFor(final Optional<SamlRegisteredService> result) {
+        return SamlIdPUtils.getSamlIdPMetadataOwner(result);
     }
 }

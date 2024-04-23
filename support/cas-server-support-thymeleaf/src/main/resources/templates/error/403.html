@@ -11,11 +11,15 @@
 </head>
 
 <body>
-<main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content"  class="mdc-card p-4 w-lg-66 m-auto">
-        <h2 th:utext="#{screen.error.page.authdenied}">Authorization Denied</h2>
+<main class="container mt-3 mb-3">
+    <div layout:fragment="content" class="mdc-card card p-4 w-lg-66 m-auto">
+        <h2>
+            <i class="mdi mdi-close-box" aria-hidden="true"></i>
+            <span th:utext="#{screen.error.page.authdenied}">Authorization Denied</span>
+        </h2>
+
         <p th:utext="#{screen.error.page.permissiondenied}">You do not have permission to view this page.</p>
-        <a class="mdc-button" th:href="@{/login}">
+        <a class="mdc-button mdc-button--raised me-2 btn btn-primary" th:href="@{/login}">
             <span class="mdc-button__label" th:utext="#{screen.error.page.loginagain}">Login Again</span>
         </a>
     </div>

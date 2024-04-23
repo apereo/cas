@@ -1,11 +1,13 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.query.RegisteredServiceQueryIndex;
 
 import org.springframework.core.Ordered;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.function.Predicate;
+import java.util.List;
 
 /**
  * This is {@link ServicesManagerRegisteredServiceLocator}.
@@ -13,22 +15,34 @@ import java.util.function.Predicate;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@FunctionalInterface
 public interface ServicesManagerRegisteredServiceLocator extends Ordered {
+    /**
+     * Default order, used to determine the execution sequence.
+     */
+    int DEFAULT_ORDER = -1000;
+
     /**
      * Locate registered service.
      *
-     * @param candidates      the candidates
-     * @param service         the service id
-     * @param predicateFilter the predicate filter
+     * @param candidates the candidates
+     * @param service    the service id
      * @return the registered service
      */
-    RegisteredService locate(Collection<RegisteredService> candidates, Service service,
-        Predicate<RegisteredService> predicateFilter);
+    RegisteredService locate(Collection<? extends RegisteredService> candidates, Service service);
+
+    /**
+     * Can this locator find/locate the given registered service
+     * based on the provided service request?
+     *
+     * @param registeredService the registered service
+     * @param service           the service
+     * @return true/false
+     */
+    boolean supports(RegisteredService registeredService, Service service);
 
     @Override
     default int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE;
+        return DEFAULT_ORDER;
     }
 
     /**
@@ -38,5 +52,9 @@ public interface ServicesManagerRegisteredServiceLocator extends Ordered {
      */
     default String getName() {
         return getClass().getSimpleName();
+    }
+
+    default List<RegisteredServiceQueryIndex> getRegisteredServiceIndexes() {
+        return new ArrayList<>();
     }
 }

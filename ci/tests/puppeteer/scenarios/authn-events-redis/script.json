@@ -1,0 +1,21 @@
+{
+  "dependencies": "events-redis",
+
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.events.core.track-geolocation=true",
+
+    "--cas.events.redis.host=localhost",
+    "--cas.events.redis.port=6379",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=events",
+    "--management.endpoints.enabled-by-default=true"
+  ],
+  "jvmArgs": "-Djava.net.preferIPv4Addresses=true",
+  "initScript": "${PWD}/ci/tests/redis/run-redis-server.sh"
+}

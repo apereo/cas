@@ -1,0 +1,11 @@
+{
+  "@class" : "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId" : "^https://localhost:8082/cas/.*",
+  "name": "Sample",
+  "id": 1,
+  "jwtAccessToken": "true",
+  "generateRefreshToken": true,
+  "scopes" : [ "java.util.HashSet", ["openid", "MyCustomScope"]]
+}

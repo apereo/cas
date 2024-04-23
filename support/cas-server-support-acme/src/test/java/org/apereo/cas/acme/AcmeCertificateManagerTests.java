@@ -15,9 +15,14 @@ import org.shredzone.acme4j.toolbox.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.test.context.TestPropertySource;
+
+import java.io.Serial;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -34,7 +39,7 @@ import static org.mockito.Mockito.*;
     "cas.acme.retry-internal=PT1S",
     "cas.acme.terms-of-use-accepted=true"
 })
-public class AcmeCertificateManagerTests extends BaseAcmeTests {
+class AcmeCertificateManagerTests extends BaseAcmeTests {
 
     @Autowired
     @Qualifier("acmeCertificateManager")
@@ -50,18 +55,19 @@ public class AcmeCertificateManagerTests extends BaseAcmeTests {
     }
     
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         assertNotNull(acmeCertificateManager);
         acmeCertificateManager.fetchCertificate(casProperties.getAcme().getDomains());
     }
 
-    @TestConfiguration("AcmeTestConfiguration")
-    public static class AcmeTestConfiguration {
+    @TestConfiguration(value = "AcmeTestConfiguration", proxyBeanMethods = false)
+    static class AcmeTestConfiguration {
         @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AcmeAuthorizationExecutor acmeAuthorizationExecutor() throws Exception {
             val locator = mock(AcmeAuthorizationExecutor.class);
             val challenge = new MockHttp01Challenge();
-            when(locator.find(any())).thenReturn(challenge);
+            when(locator.find(any())).thenReturn(Optional.of(challenge));
 
             val order = mock(Order.class);
             val certificate = mock(Certificate.class);
@@ -71,7 +77,8 @@ public class AcmeCertificateManagerTests extends BaseAcmeTests {
         }
     }
 
-    private static class MockHttp01Challenge extends Http01Challenge {
+    private static final class MockHttp01Challenge extends Http01Challenge {
+        @Serial
         private static final long serialVersionUID = -5555468598931902011L;
 
         private Status status = Status.INVALID;

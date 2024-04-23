@@ -7,6 +7,8 @@ import com.hazelcast.config.DiscoveryStrategyConfig;
 import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.NetworkConfig;
 
+import java.util.Optional;
+
 /**
  * This is {@link HazelcastDiscoveryStrategy}.
  *
@@ -24,5 +26,6 @@ public interface HazelcastDiscoveryStrategy {
      * @param networkConfig the network config
      * @return the discovery strategy config
      */
-    DiscoveryStrategyConfig get(HazelcastClusterProperties cluster, JoinConfig joinConfig, Config configuration, NetworkConfig networkConfig);
+    Optional<DiscoveryStrategyConfig> get(HazelcastClusterProperties cluster, JoinConfig joinConfig,
+                                          Config configuration, NetworkConfig networkConfig);
 }

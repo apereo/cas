@@ -1,7 +1,16 @@
 description = "Apereo CAS Web Application Mongo Session Management"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "HTTP Session Management",
+            title: "HTTP Session Management via MongoDb"
+    ]
+}
+
 dependencies {
     implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
     implementation libraries.springsession
     implementation libraries.springsessionmongo
-    runtimeOnly libraries.mongo
+    implementation libraries.mongo
 }

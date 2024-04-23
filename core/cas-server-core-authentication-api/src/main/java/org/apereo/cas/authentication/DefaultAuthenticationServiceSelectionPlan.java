@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -27,12 +28,14 @@ public class DefaultAuthenticationServiceSelectionPlan implements Authentication
 
     @Override
     public void registerStrategy(final AuthenticationServiceSelectionStrategy strategy) {
-        strategies.add(strategy);
-        AnnotationAwareOrderComparator.sort(this.strategies);
+        if (BeanSupplier.isNotProxy(strategy)) {
+            strategies.add(strategy);
+            AnnotationAwareOrderComparator.sort(this.strategies);
+        }
     }
 
     @Override
-    public Service resolveService(final Service service) {
+    public Service resolveService(final Service service) throws Throwable {
         val strategy = this.strategies
             .stream()
             .filter(s -> s.supports(service))
@@ -46,7 +49,7 @@ public class DefaultAuthenticationServiceSelectionPlan implements Authentication
     }
 
     @Override
-    public <T extends Service> T resolveService(final Service service, final Class<T> clazz) {
+    public <T extends Service> T resolveService(final Service service, final Class<T> clazz) throws Throwable {
         val result = resolveService(service);
         if (result == null) {
             return null;

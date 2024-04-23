@@ -1,0 +1,47 @@
+{
+  "dependencies": "jdbc-drivers,jpa-util,reports,monitor",
+  "conditions": {
+    "docker": "true"
+  },
+
+  "properties": [
+    "--spring.security.user.roles=ADMIN",
+    
+    "--cas.jdbc.show-sql=false",
+    
+    "--cas.monitor.endpoints.endpoint.health.access=AUTHENTICATED",
+    
+    "--logging.level.org.springframework.security=debug",
+    "--logging.level.org.apereo.cas=info",
+
+    "--cas.monitor.endpoints.jdbc.password-encoder.type=DEFAULT",
+    "--cas.monitor.endpoints.jdbc.password-encoder.encoding-algorithm=SHA-256",
+    "--cas.monitor.endpoints.jdbc.role-prefix=ROLE_",
+    "--cas.monitor.endpoints.jdbc.driver-class=org.postgresql.Driver",
+    "--cas.monitor.endpoints.jdbc.ddl-auto=update",
+    "--cas.monitor.endpoints.jdbc.dialect=org.hibernate.dialect.PostgreSQLDialect",
+    "--cas.monitor.endpoints.jdbc.user=postgres",
+    "--cas.monitor.endpoints.jdbc.password=password",
+    "--cas.monitor.endpoints.jdbc.url=jdbc:postgresql://localhost:5432/webapp",
+    
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+
+    "management.health.systemHealthIndicator.enabled=true",
+    "management.health.memoryHealthIndicator.enabled=true",
+    "management.health.sessionHealthIndicator.enabled=true"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "SPRING_APPLICATION_JSON": {
+    "cas": {
+      "monitor": {
+        "endpoints": {
+          "jdbc": {
+            "query": "SELECT * FROM USERS WHERE username = ?"
+          }
+        }
+      }
+    }
+  }
+}

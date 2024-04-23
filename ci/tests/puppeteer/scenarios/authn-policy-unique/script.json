@@ -1,0 +1,11 @@
+{
+  "dependencies": "core",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.authn.policy.unique-principal.enabled=true",
+    "--cas.service-registry.core.init-from-json=true"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

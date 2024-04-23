@@ -41,19 +41,19 @@ public class WebAuthnUtils {
     }
 
     @JsonDeserialize(builder = CredentialRegistration.CredentialRegistrationBuilder.class)
-    private static class CredentialRegistrationMixin {
+    private static final class CredentialRegistrationMixin {
     }
 
     @JsonPOJOBuilder(withPrefix = StringUtils.EMPTY)
-    private static class CredentialRegistrationBuilderMixin {
+    private static final class CredentialRegistrationBuilderMixin {
     }
 
     @JsonDeserialize(builder = RegisteredCredential.RegisteredCredentialBuilder.class)
-    private static class RegisteredCredentialMixin {
+    private static final class RegisteredCredentialMixin {
     }
 
     @JsonPOJOBuilder(withPrefix = StringUtils.EMPTY)
-    private static class RegisteredCredentialBuilderMixin {
+    private static final class RegisteredCredentialBuilderMixin {
     }
 
 }

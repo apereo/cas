@@ -5,39 +5,49 @@ category: Configuration
 ---
 {% include variables.html %}
 
-
-# Overview
+# Principal Resolution
 
 Principal resolution converts information in the authentication credential into a security principal
-that commonly contains additional
-metadata attributes (i.e. user details such as affiliations, group membership, email, display name).
-
+that commonly contains additional attributes (i.e. user details such as affiliations, group membership, email, display name). 
 A CAS principal contains a unique identifier by which the authenticated user will be known to all requesting
 services. A principal also contains optional [attributes that may be released](../integration/Attribute-Release.html)
 to services to support authorization and personalization. Principal resolution is a requisite part of the
 authentication process that happens after credential authentication.
 
-CAS `AuthenticationHandler` components provide basic principal resolution machinery by default. For example,
-the `LdapAuthenticationHandler` component supports fetching attributes and setting the principal ID attribute from
-an LDAP query. In all cases principals are resolved from the same store as that which provides authentication.
-
-In many cases it is necessary to perform authentication by one means and resolve principals by another.
-The `PrincipalResolver` component provides this functionality. A common use case for this this mix-and-match strategy
-arises with X.509 authentication. It is common to store certificates in an LDAP directory and query the directory to
-resolve the principal ID and attributes from directory attributes. The `X509CertificateAuthenticationHandler` may
-be be combined with an LDAP-based principal resolver to accommodate this case.
+The attribute retrieval and resolution process that is carried out 
+by principal resolution is [discussed here](../integration/Attribute-Resolution.html).
 
 ## Configuration
 
 CAS uses the Person Directory library to provide a flexible principal resolution services against a number of data
-sources. The key to configuring `PersonDirectoryPrincipalResolver` is the definition of an `IPersonAttributeDao` object.
+sources. The key to configuring `PersonDirectoryPrincipalResolver` is the definition of an `PersonAttributeDao` object.
 
-{% include casproperties.html properties="cas.person-directory" %}
+{% include_cached casproperties.html properties="cas.person-directory" %}
 
-## `PrincipalResolver` vs. `AuthenticationHandler`
+## Custom
+  
+You may also design and register your own principal resolution strategy by supplying an implementation of
+the `PrincipalResolver` component and registering it with the runtime context:
 
-The principal resolution machinery provided by `AuthenticationHandler` components should be used in preference to
-`PrincipalResolver` in any situation where the former provides adequate functionality.
-If the principal that is resolved by the authentication handler
-suffices, then a `null` value may be passed in place of the resolver bean id in the final map.
+```java
+@AutoConfiguration
+public static class MyConfiguration {
 
+    @Bean
+    public PrincipalResolver myPrincipalResolver() {
+        return new MyPrincipalResolver();
+    }
+
+    @Bean
+    public PrincipalResolutionExecutionPlanConfigurer myExecutionPlanConfigurer(
+        @Qualifier("myPrincipalResolver")
+        final PrincipalResolver myPrincipalResolver) {
+        return plan -> {
+            plan.registerPrincipalResolver(myPrincipalResolver);
+        };
+    }
+}
+```
+
+[See this guide](../configuration/Configuration-Management-Extensions.html) to
+learn more about how to register configurations into the CAS runtime.

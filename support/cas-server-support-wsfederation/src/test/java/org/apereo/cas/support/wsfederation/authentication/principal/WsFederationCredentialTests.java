@@ -18,29 +18,29 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2.0
  */
 @Tag("WSFederation")
-public class WsFederationCredentialTests extends AbstractWsFederationTests {
+class WsFederationCredentialTests extends AbstractWsFederationTests {
     
     @Test
-    public void verifyIsValidAllGood() {
+    void verifyIsValidAllGood() throws Throwable {
         assertTrue(getCredential().isValid(AUDIENCE, ISSUER, 2000), "testIsValidAllGood() - True");
     }
 
     @Test
-    public void verifyIsValidBadAudience() {
+    void verifyIsValidBadAudience() throws Throwable {
         val standardCred = getCredential();
         standardCred.setAudience("urn:NotUs");
         assertFalse(standardCred.isValid(AUDIENCE, ISSUER, 2000), "testIsValidBadAudeience() - False");
     }
 
     @Test
-    public void verifyIsValidBadIssuer() {
+    void verifyIsValidBadIssuer() throws Throwable {
         val standardCred = getCredential();
         standardCred.setIssuer("urn:NotThem");
         assertFalse(standardCred.isValid(AUDIENCE, ISSUER, 2000), "testIsValidBadIssuer() - False");
     }
 
     @Test
-    public void verifyIsValidEarlyToken() {
+    void verifyIsValidEarlyToken() throws Throwable {
         val standardCred = getCredential();
         standardCred.setNotBefore(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1));
         standardCred.setNotOnOrAfter(ZonedDateTime.now(ZoneOffset.UTC).plusHours(1).plusDays(1));
@@ -50,7 +50,7 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void verifyIsValidOldToken() {
+    void verifyIsValidOldToken() throws Throwable {
         val standardCred = getCredential();
         standardCred.setNotBefore(ZonedDateTime.now(ZoneOffset.UTC).minusDays(1));
         standardCred.setNotOnOrAfter(ZonedDateTime.now(ZoneOffset.UTC).plusHours(1).minusDays(1));
@@ -67,7 +67,7 @@ public class WsFederationCredentialTests extends AbstractWsFederationTests {
     }
 
     @Test
-    public void verifyIsValidExpiredIssuedOn() {
+    void verifyIsValidExpiredIssuedOn() throws Throwable {
         val standardCred = getCredential();
         standardCred.setIssuedOn(ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(3));
 

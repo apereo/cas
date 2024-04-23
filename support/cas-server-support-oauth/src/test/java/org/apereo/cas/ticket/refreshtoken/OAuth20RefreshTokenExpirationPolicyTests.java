@@ -3,10 +3,12 @@ package org.apereo.cas.ticket.refreshtoken;
 import org.apereo.cas.ticket.BaseOAuth20ExpirationPolicyTests;
 
 import lombok.val;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
 
+import java.io.File;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -14,23 +16,25 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @since 5.3.0
  */
-@TestPropertySource(properties = "cas.logout.remove-descendant-tickets=true")
-@Tag("OAuth")
-public class OAuth20RefreshTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
+@TestPropertySource(properties = "cas.ticket.track-descendant-tickets=true")
+@Tag("OAuthToken")
+class OAuth20RefreshTokenExpirationPolicyTests extends BaseOAuth20ExpirationPolicyTests {
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "OAuth20RefreshTokenExpirationPolicy.json");
+
     @Test
-    public void verifyRefreshTokenExpiryWhenTgtIsExpired() {
+    void verifyRefreshTokenExpiryWhenTgtIsExpired() throws Throwable {
         val tgt = newTicketGrantingTicket();
         val at = newAccessToken(tgt);
         val rt = newRefreshToken(at);
 
         assertFalse(rt.isExpired(), "Refresh token should not be expired");
         tgt.markTicketExpired();
-        assertTrue(rt.isExpired(), "Refresh token should not be expired when TGT is expired");
+        assertTrue(rt.isExpired(), "Refresh token should be expired when TGT is expired");
         assertEquals(0, rt.getExpirationPolicy().getTimeToIdle());
     }
 
     @Test
-    public void verifyFails() {
+    void verifyFails() throws Throwable {
         val tgt = newTicketGrantingTicket();
         val at = newAccessToken(tgt);
         val rt = newRefreshToken(at);
@@ -38,7 +42,7 @@ public class OAuth20RefreshTokenExpirationPolicyTests extends BaseOAuth20Expirat
     }
 
     @Test
-    public void verifySerializeAnOAuthRefreshTokenExpirationPolicyToJson() throws Exception {
+    void verifySerializeAnOAuthRefreshTokenExpirationPolicyToJson() throws Throwable {
         val policyWritten = new OAuth20RefreshTokenExpirationPolicy(1234L);
         MAPPER.writeValue(JSON_FILE, policyWritten);
         val policyRead = MAPPER.readValue(JSON_FILE, OAuth20RefreshTokenExpirationPolicy.class);

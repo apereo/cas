@@ -2,6 +2,8 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.util.spring.beans.BeanCondition;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -13,6 +15,13 @@ import java.util.Optional;
  * @since 5.1.0
  */
 public interface DuoSecurityAuthenticationService extends Serializable {
+    /**
+     * Condition to activate Duo Security.
+     */
+    BeanCondition CONDITION = BeanCondition
+        .on("cas.authn.mfa.duo[0].duo-api-host")
+        .and("cas.authn.mfa.duo[0].duo-integration-key")
+        .and("cas.authn.mfa.duo[0].duo-secret-key");
 
     /**
      * Result key response in the duo validation payload.
@@ -54,6 +63,11 @@ public interface DuoSecurityAuthenticationService extends Serializable {
     String RESULT_KEY_MESSAGE_DETAIL = "message_detail";
 
     /**
+     * Threshold to compare against error codes returned from Duo.
+     */
+    int RESULT_CODE_ERROR_THRESHOLD = 49999;
+
+    /**
      * Verify the authentication response from Duo.
      *
      * @param credential signed request token
@@ -70,21 +84,11 @@ public interface DuoSecurityAuthenticationService extends Serializable {
     boolean ping();
 
     /**
-     * Gets api host.
+     * Gets duo properties.
      *
-     * @return the api host
+     * @return the properties.
      */
-    String getApiHost();
-
-    /**
-     * Sign request token.
-     *
-     * @param uid the uid
-     * @return the signed token
-     */
-    default Optional<String> signRequestToken(final String uid) {
-        return Optional.empty();
-    }
+    DuoSecurityMultifactorAuthenticationProperties getProperties();
 
     /**
      * Gets duo user account.
@@ -97,4 +101,11 @@ public interface DuoSecurityAuthenticationService extends Serializable {
     default Optional<Object> getDuoClient() {
         return Optional.empty();
     }
+
+    /**
+     * Gets admin api service.
+     *
+     * @return the admin api service
+     */
+    Optional<DuoSecurityAdminApiService> getAdminApiService();
 }

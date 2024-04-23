@@ -3,10 +3,17 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.SurrogateAuthenticationMetaDataPopulator;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * This is {@link SurrogateAuthenticationMetadataConfiguration}.
@@ -15,18 +22,33 @@ import org.springframework.context.annotation.Configuration;
  * @author Dmitriy Kopylenko
  * @since 5.1.0
  */
-@Configuration("SurrogateAuthenticationMetadataConfiguration")
-public class SurrogateAuthenticationMetadataConfiguration {
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
+@Configuration(value = "SurrogateAuthenticationMetadataConfiguration", proxyBeanMethods = false)
+class SurrogateAuthenticationMetadataConfiguration {
 
-    @ConditionalOnMissingBean(name = "surrogateAuthenticationMetadataPopulator")
-    @Bean
-    public AuthenticationMetaDataPopulator surrogateAuthenticationMetadataPopulator() {
-        return new SurrogateAuthenticationMetaDataPopulator();
+    @Configuration(value = "SurrogateAuthenticationMetadataBaseConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class SurrogateAuthenticationMetadataBaseConfiguration {
+
+        @ConditionalOnMissingBean(name = "surrogateAuthenticationMetadataPopulator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationMetaDataPopulator surrogateAuthenticationMetadataPopulator() {
+            return new SurrogateAuthenticationMetaDataPopulator();
+        }
+
     }
 
-    @ConditionalOnMissingBean(name = "surrogateAuthenticationMetadataConfigurer")
-    @Bean
-    public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationMetadataConfigurer() {
-        return plan -> plan.registerAuthenticationMetadataPopulator(surrogateAuthenticationMetadataPopulator());
+    @Configuration(value = "SurrogateAuthenticationMetadataPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class SurrogateAuthenticationMetadataPlanConfiguration {
+        @ConditionalOnMissingBean(name = "surrogateAuthenticationMetadataConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationMetadataConfigurer(
+            @Qualifier("surrogateAuthenticationMetadataPopulator")
+            final AuthenticationMetaDataPopulator surrogateAuthenticationMetadataPopulator) {
+            return plan -> plan.registerAuthenticationMetadataPopulator(surrogateAuthenticationMetadataPopulator);
+        }
     }
 }

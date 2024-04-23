@@ -12,20 +12,20 @@ If you wish to design your own interrupt strategy to make
 inquiries, you can design your component to make determinations:
 
 ```java
-package org.apereo.cas.support.interrupt;
-
-@Configuration("myInterruptConfiguration")
+@AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MyInterruptConfiguration {
     @Bean
-    public InterruptInquirer interruptInquirer() {
+    public InterruptInquirer myInterruptInquirer() {
       ...
     }
 
     @Bean
-    public InterruptInquiryExecutionPlanConfigurer myInterruptInquiryExecutionPlanConfigurer() {
+    public InterruptInquiryExecutionPlanConfigurer myInterruptInquiryExecutionPlanConfigurer(
+        @Qualifier("myInterruptInquirer")
+        InterruptInquirer myInterruptInquirer) {
         return plan -> {
-            plan.registerInterruptInquirer(interruptInquirer());
+            plan.registerInterruptInquirer(myInterruptInquirer);
         };
     }
 }

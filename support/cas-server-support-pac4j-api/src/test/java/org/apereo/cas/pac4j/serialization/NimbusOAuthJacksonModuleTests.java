@@ -12,6 +12,8 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serial;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,8 +23,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Simple")
-public class NimbusOAuthJacksonModuleTests {
+class NimbusOAuthJacksonModuleTests {
     private static final AbstractJacksonBackedStringSerializer SERIALIZER = new AbstractJacksonBackedStringSerializer() {
+        @Serial
         private static final long serialVersionUID = 1083978605633757365L;
 
         @Override
@@ -32,7 +35,7 @@ public class NimbusOAuthJacksonModuleTests {
     };
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val mapper = SERIALIZER.getObjectMapper();
         assertTrue(mapper.getRegisteredModuleIds().contains(NimbusOAuthJacksonModule.class.getName()));
         runTest(CodeVerifier.class, new CodeVerifier(RandomUtils.randomAlphabetic(CodeVerifier.MIN_LENGTH)));

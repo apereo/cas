@@ -1,16 +1,22 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketImpl;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketImpl;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
+
+import java.io.Serial;
 
 /**
  * This is {@link SamlIdPTicketSerializationConfiguration}.
@@ -18,11 +24,13 @@ import org.springframework.context.annotation.Configuration;
  * @author Bob Sandiford
  * @since 5.2.0
  */
-@Configuration(value = "samlIdpTicketSerializationConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SamlIdPTicketSerializationConfiguration {
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SAMLIdentityProvider)
+@Configuration(value = "SamlIdPTicketSerializationConfiguration", proxyBeanMethods = false)
+class SamlIdPTicketSerializationConfiguration {
 
     @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public TicketSerializationExecutionPlanConfigurer samlIdPTicketSerializationExecutionPlanConfigurer() {
         return plan -> {
             plan.registerTicketSerializer(new SamlArtifactTicketStringSerializer());
@@ -32,9 +40,14 @@ public class SamlIdPTicketSerializationConfiguration {
             plan.registerTicketSerializer(SamlAttributeQueryTicket.class.getName(), new SamlAttributeQueryTicketStringSerializer());
         };
     }
-    
-    private static class SamlArtifactTicketStringSerializer extends AbstractJacksonBackedStringSerializer<SamlArtifactTicketImpl> {
+
+    private static final class SamlArtifactTicketStringSerializer extends AbstractJacksonBackedStringSerializer<SamlArtifactTicketImpl> {
+        @Serial
         private static final long serialVersionUID = -2198623586274810263L;
+
+        SamlArtifactTicketStringSerializer() {
+            super(MINIMAL_PRETTY_PRINTER);
+        }
 
         @Override
         public Class<SamlArtifactTicketImpl> getTypeToSerialize() {
@@ -42,8 +55,13 @@ public class SamlIdPTicketSerializationConfiguration {
         }
     }
 
-    private static class SamlAttributeQueryTicketStringSerializer extends AbstractJacksonBackedStringSerializer<SamlAttributeQueryTicketImpl> {
+    private static final class SamlAttributeQueryTicketStringSerializer extends AbstractJacksonBackedStringSerializer<SamlAttributeQueryTicketImpl> {
+        @Serial
         private static final long serialVersionUID = -2198623586274810263L;
+
+        SamlAttributeQueryTicketStringSerializer() {
+            super(MINIMAL_PRETTY_PRINTER);
+        }
 
         @Override
         public Class<SamlAttributeQueryTicketImpl> getTypeToSerialize() {

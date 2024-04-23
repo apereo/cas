@@ -6,7 +6,8 @@ import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrate
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.slo.DefaultSingleLogoutServiceMessageHandler;
-import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.web.UrlValidator;
@@ -27,12 +28,12 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Logout")
-public class DefaultSingleLogoutServiceMessageHandlerTests {
+class DefaultSingleLogoutServiceMessageHandlerTests {
 
     @Test
-    public void verifyEmpty() {
+    void verifyEmpty() throws Throwable {
         val servicesManager = mock(ServicesManager.class);
-        val service = new RegexRegisteredService();
+        val service = new CasRegisteredService();
         service.setServiceId(UUID.randomUUID().toString());
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(service);
 

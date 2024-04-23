@@ -14,35 +14,40 @@ Accounts and password may be determined and handled using a customized Groovy sc
 import org.apereo.cas.pm.*
 
 def change(Object[] args) {
-    def credential = args[0]
-    def passwordChangeBean = args[1]
-    def logger = args[2]
+    def (passwordChangeBean,logger) = args
     return true
 }
 
 def findEmail(Object[] args) {
-    def username = (args[0] as PasswordManagementQuery).username
-    def logger = args[1]
+    def (passwordMgmtQuery,logger) = args
     return "cas@example.org"
 }
 
 def findPhone(Object[] args) {
-    def username = (args[0] as PasswordManagementQuery).username
-    def logger = args[1]
+    def (passwordMgmtQuery,logger) = args
     return "1234567890"
 }
 
 def findUsername(Object[] args) {
-    def email = (args[0] as PasswordManagementQuery).email
-    def logger = args[1]
+    def (passwordMgmtQuery,logger) = args
     return "casuser"
 }
 
 def getSecurityQuestions(Object[] args) {
-    def username = (args[0] as PasswordManagementQuery).username
-    def logger = args[1]
+    def (passwordMgmtQuery,logger) = args
     return [securityQuestion1: "securityAnswer1"]
+}
+
+def updateSecurityQuestions(Object[] args) {
+    def (passwordMgmtQuery,logger) = args
+    // Execute update...
+}
+
+def unlockAccount(Object[] args) {
+    def (credential,logger) = args
+    // Execute unlock...
+    return true
 }
 ```
 
-{% include casproperties.html properties="cas.authn.pm.groovy" %}
+{% include_cached casproperties.html properties="cas.authn.pm.groovy" %}

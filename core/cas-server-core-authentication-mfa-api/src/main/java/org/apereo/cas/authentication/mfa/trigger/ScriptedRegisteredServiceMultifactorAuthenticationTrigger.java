@@ -11,6 +11,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
@@ -27,8 +28,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
-import javax.persistence.Transient;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.persistence.Transient;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,12 +41,10 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
- * @deprecated Since 6.2
  */
 @Getter
 @Slf4j
 @RequiredArgsConstructor
-@Deprecated(since = "6.2.0")
 public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implements MultifactorAuthenticationTrigger {
     private final CasConfigurationProperties casProperties;
 
@@ -59,15 +60,16 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implement
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
-        final RegisteredService registeredService,
-        final HttpServletRequest httpServletRequest,
-        final Service service) {
+                                                                   final RegisteredService registeredService,
+                                                                   final HttpServletRequest httpServletRequest,
+                                                                   final HttpServletResponse response,
+                                                                   final Service service) throws Throwable {
         if (authentication == null || registeredService == null) {
             LOGGER.debug("No authentication or service is available to determine event for principal");
             return Optional.empty();
         }
 
-        val policy = registeredService.getMultifactorPolicy();
+        val policy = registeredService.getMultifactorAuthenticationPolicy();
         if (policy == null || StringUtils.isBlank(policy.getScript())) {
             LOGGER.trace("Multifactor authentication policy is absent or does not define a script to trigger multifactor authentication");
             return Optional.empty();
@@ -86,7 +88,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implement
             val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(mfaScript);
             val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(mfaScript);
 
-            if (matcherInline.find()) {
+            if (matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {
                 val script = new GroovyShellScript(matcherInline.group(1));
                 scriptCache.put(mfaScript, script);
                 LOGGER.trace("Caching multifactor authentication trigger script as an executable shell script");

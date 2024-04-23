@@ -17,17 +17,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @since 5.1.0
  */
 public class GraphicalUserAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
-    /**
-     * Transition to obtain username.
-     */
-    public static final String TRANSITION_ID_GUA_GET_USERID = "guaGetUserId";
-
-    static final String STATE_ID_ACCEPT_GUA = "acceptUserGraphicsForAuthentication";
-    static final String STATE_ID_GUA_GET_USERID = "guaGetUserIdView";
-    static final String STATE_ID_GUA_DISPLAY_USER_GFX = "guaDisplayUserGraphics";
-    static final String ACTION_ID_DISPLAY_USER_GRAPHICS_BEFORE_AUTHENTICATION = "displayUserGraphicsBeforeAuthenticationAction";
-
-    static final String ACTION_ID_ACCEPT_USER_GRAPHICS_FOR_AUTHENTICATION = "acceptUserGraphicsForAuthenticationAction";
 
     public GraphicalUserAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -41,19 +30,21 @@ public class GraphicalUserAuthenticationWebflowConfigurer extends AbstractCasWeb
         val flow = getLoginFlow();
         if (flow != null) {
             val state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
+            prependActionsToActionStateExecutionList(flow, state, createEvaluateAction(CasWebflowConstants.ACTION_ID_GUA_PREPARE_LOGIN));
+
             val transition = (Transition) state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
             val targetStateId = transition.getTargetStateId();
-            createTransitionForState(state, TRANSITION_ID_GUA_GET_USERID, STATE_ID_GUA_GET_USERID);
+            createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_GUA_GET_USERID, CasWebflowConstants.STATE_ID_GUA_GET_USERID);
 
-            val viewState = createViewState(flow, STATE_ID_GUA_GET_USERID, "casGuaGetUserIdView");
-            createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, STATE_ID_GUA_DISPLAY_USER_GFX);
+            val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_GUA_GET_USERID, "gua/casGuaGetUserIdView");
+            createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_GUA_DISPLAY_USER_GFX);
 
-            val viewStateGfx = createViewState(flow, STATE_ID_GUA_DISPLAY_USER_GFX, "casGuaDisplayUserGraphicsView");
-            viewStateGfx.getRenderActionList().add(createEvaluateAction(ACTION_ID_DISPLAY_USER_GRAPHICS_BEFORE_AUTHENTICATION));
-            createTransitionForState(viewStateGfx, CasWebflowConstants.TRANSITION_ID_SUBMIT, STATE_ID_ACCEPT_GUA);
+            val viewStateGfx = createViewState(flow, CasWebflowConstants.STATE_ID_GUA_DISPLAY_USER_GFX, "gua/casGuaDisplayUserGraphicsView");
+            viewStateGfx.getRenderActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_GUA_DISPLAY_USER_GRAPHICS_BEFORE_AUTHENTICATION));
+            createTransitionForState(viewStateGfx, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_ACCEPT_GUA);
 
-            val acceptState = createActionState(flow, STATE_ID_ACCEPT_GUA,
-                createEvaluateAction(ACTION_ID_ACCEPT_USER_GRAPHICS_FOR_AUTHENTICATION));
+            val acceptState = createActionState(flow, CasWebflowConstants.STATE_ID_ACCEPT_GUA,
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_GUA_ACCEPT_USER));
             createStateDefaultTransition(acceptState, targetStateId);
         }
     }

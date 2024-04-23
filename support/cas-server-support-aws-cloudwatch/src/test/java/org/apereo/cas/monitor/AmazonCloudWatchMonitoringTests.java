@@ -1,0 +1,57 @@
+package org.apereo.cas.monitor;
+
+import org.apereo.cas.config.CasAmazonCloudWatchAutoConfiguration;
+import org.apereo.cas.config.CasAmazonCoreAutoConfiguration;
+import org.apereo.cas.config.CasMetricsAutoConfiguration;
+import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import io.micrometer.core.instrument.MeterRegistry;
+import lombok.val;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import software.amazon.awssdk.core.SdkSystemSetting;
+import java.time.Duration;
+import java.util.UUID;
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * This is {@link AmazonCloudWatchMonitoringTests}.
+ *
+ * @author Misagh Moayyed
+ * @since 7.1.0
+ */
+@Tag("AmazonWebServices")
+@EnabledIfListeningOnPort(port = 4566)
+@SpringBootTest(
+    classes = {
+        MetricsAutoConfiguration.class,
+        CasMetricsAutoConfiguration.class,
+        CasAmazonCoreAutoConfiguration.class,
+        CasAmazonCloudWatchAutoConfiguration.class
+    },
+    properties = "management.cloudwatch.metrics.export.enabled=true")
+public class AmazonCloudWatchMonitoringTests {
+    static {
+        System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
+        System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");
+        System.setProperty(SdkSystemSetting.AWS_SESSION_TOKEN.property(), UUID.randomUUID().toString());
+        System.setProperty(CasAmazonCloudWatchAutoConfiguration.AWS_SYSTEM_PROPERTY_CLOUDWATCH_ENDPOINT, "http://127.0.0.1:4566");
+    }
+
+    @Autowired
+    @Qualifier("cloudWatchMeterRegistry")
+    private MeterRegistry cloudWatchMeterRegistry;
+
+    @Test
+    void verifyOperation() throws Exception {
+        val startTime = System.currentTimeMillis();
+        val execTimer = cloudWatchMeterRegistry.timer("cas.test.Execution", "tag1", "tag2");
+        assertEquals(HttpStatus.OK, HttpRequestUtils.pingUrl("http://127.0.0.1:4566/_localstack/health"));
+        execTimer.record(Duration.ofMillis(System.currentTimeMillis() - startTime));
+    }
+}

@@ -1,9 +1,9 @@
 package org.apereo.cas.ticket;
 
-import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
-
+import org.apereo.cas.authentication.AuthenticationPolicy;
 import lombok.Getter;
 import lombok.NonNull;
+import java.io.Serial;
 
 /**
  * Error condition arising at ticket creation or validation time when a ticketing operation relying on authentication
@@ -15,9 +15,7 @@ import lombok.NonNull;
 @Getter
 public class UnsatisfiedAuthenticationPolicyException extends AbstractTicketException {
 
-    /**
-     * Serializable ID for unique id.
-     */
+    @Serial
     private static final long serialVersionUID = -827432780367197133L;
 
     /**
@@ -28,15 +26,10 @@ public class UnsatisfiedAuthenticationPolicyException extends AbstractTicketExce
     /**
      * Unfulfilled policy that caused this exception.
      */
-    private final ContextualAuthenticationPolicy<?> policy;
+    private final AuthenticationPolicy policy;
 
-    /**
-     * Creates a new instance with no cause.
-     *
-     * @param policy Non-null unfulfilled security policy that caused exception.
-     */
-    public UnsatisfiedAuthenticationPolicyException(final @NonNull ContextualAuthenticationPolicy<?> policy) {
-        super(policy.getCode().orElse(CODE));
+    public UnsatisfiedAuthenticationPolicyException(final @NonNull AuthenticationPolicy policy) {
+        super(CODE);
         this.policy = policy;
     }
 

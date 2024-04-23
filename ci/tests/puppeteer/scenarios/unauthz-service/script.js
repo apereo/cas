@@ -1,16 +1,10 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
+
+const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true
-    });
-    const page = await browser.newPage();
-    await page.goto("https://localhost:8443/cas/login?service=unknown-service");
-
-    const header = await page.$eval('#content h2', el => el.innerText)
-    console.log(header)
-    assert(header === "Application Not Authorized to Use CAS")
-    
+    const browser = await cas.newBrowser(cas.browserOptions());
+    const page = await cas.newPage(browser);
+    await cas.gotoLogin(page, "unknown-service");
+    await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
     await browser.close();
 })();

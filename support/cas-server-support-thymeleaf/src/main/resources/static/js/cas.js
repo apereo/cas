@@ -1,45 +1,3 @@
-(function (material, $) {
-    var cas = {
-        init: function () {
-            cas.attachFields();
-            material.autoInit();
-        },
-        attachFields: function () {
-            var divs = document.querySelectorAll('.mdc-text-field'),
-                field;
-            var div;
-            for (i = 0; i < divs.length; ++i) {
-                div = divs[i];
-                field = material.textField.MDCTextField.attachTo(div);
-                if (div.classList.contains('caps-check')) {
-                    field.foundation.adapter.registerInputInteractionHandler('keypress', cas.checkCaps);
-                }
-            }
-            let selector = document.querySelector('.mdc-select.authn-source');
-            if (selector != null) {
-                const select = new material.select.MDCSelect(selector);
-                select.listen('MDCSelect:change', () => {
-                    $('#source').val(select.value);
-                });
-                $('#source').val(select.value);
-            }
-        },
-        checkCaps: function (ev) {
-            var s = String.fromCharCode(ev.which);
-            if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
-                ev.target.parentElement.classList.add('caps-on');
-            } else {
-                console.log('caps off')
-                ev.target.parentElement.classList.remove('caps-on');
-            }
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        cas.init();
-    });
-})(mdc, jQuery);
-
 function randomWord() {
     let things = ["admiring", "adoring", "affectionate", "agitated", "amazing",
         "angry", "awesome", "beautiful", "blissful", "bold", "boring",
@@ -48,7 +6,7 @@ function randomWord() {
         "relaxed", "romantic", "sad", "serene", "sharp", "quirky", "scared",
         "sleepy", "stoic", "strange", "suspicious", "sweet", "tender", "thirsty",
         "trusting", "unruffled", "upbeat", "vibrant", "vigilant", "vigorous",
-        "wizardly", "wonderful", "youthful", "zealous", "zen"]
+        "wizardly", "wonderful", "youthful", "zealous", "zen"];
 
     let names = ["austin", "borg", "bohr", "wozniak", "bose", "wu", "wing", "wilson",
         "boyd", "guss", "jobs", "hawking", "hertz", "ford", "solomon", "spence",
@@ -56,11 +14,11 @@ function randomWord() {
         "darwin", "buck", "brown", "benz", "boss", "allen", "gates", "bose",
         "edison", "einstein", "feynman", "ferman", "franklin", "lincoln", "jefferson",
         "mandela", "gandhi", "curie", "newton", "tesla", "faraday", "bell",
-        "aristotle", "hubble", "nobel", "pascal", "washington", "galileo"]
+        "aristotle", "hubble", "nobel", "pascal", "washington", "galileo"];
 
-    let n1 = things[Math.floor(Math.random() * things.length)];
-    let n2 = names[Math.floor(Math.random() * names.length)];
-    return n1 + "_" + n2
+    const n1 = things[Math.floor(Math.random() * things.length)];
+    const n2 = names[Math.floor(Math.random() * names.length)];
+    return `${n1}_${n2}`;
 }
 
 function copyClipboard(element) {
@@ -70,12 +28,12 @@ function copyClipboard(element) {
 }
 
 function isValidURL(str) {
-    let pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-        '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-        '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-        '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    let pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+        '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
     return !!pattern.test(str);
 }
 
@@ -107,42 +65,30 @@ function logGeoLocationError(error) {
 }
 
 function showGeoPosition(position) {
-    let loc = position.coords.latitude + ',' + position.coords.longitude
-        + ',' + position.coords.accuracy + ',' + position.timestamp;
-    console.log("Tracking geolocation for " + loc);
+    let loc = `${position.coords.latitude},${position.coords.longitude},${position.coords.accuracy},${position.timestamp}`;
+    console.log(`Tracking geolocation for ${loc}`);
     $('[name="geolocation"]').val(loc);
 }
 
-
 function preserveAnchorTagOnForm() {
-    $('#fm1').submit(function () {
-        var location = self.document.location;
-        var hash = decodeURIComponent(location.hash);
+    $('#fm1').submit(() => {
+        let location = self.document.location;
 
-        if (hash != undefined && hash != '' && hash.indexOf('#') === -1) {
-            hash = '#' + hash;
-        }
-
-        var action = $('#fm1').attr('action');
-        if (action == undefined) {
+        let action = $('#fm1').attr('action');
+        if (action === undefined) {
             action = location.href;
         } else {
-            var qidx = location.href.indexOf('?');
-            if (qidx != -1) {
-                var queryParams = location.href.substring(qidx);
-                action += queryParams;
-            }
+            action += location.search + encodeURIComponent(location.hash);
         }
-        action += hash;
         $('#fm1').attr('action', action);
 
     });
 }
 
 function preventFormResubmission() {
-    $('form').submit(function () {
+    $('form').submit(() => {
         $(':submit').attr('disabled', true);
-        var altText = $(':submit').attr('data-processing-text');
+        let altText = $(':submit').attr('data-processing-text');
         if (altText) {
             $(':submit').attr('value', altText);
         }
@@ -150,10 +96,85 @@ function preventFormResubmission() {
     });
 }
 
+function writeToLocalStorage(browserStorage) {
+    if (typeof (Storage) === "undefined") {
+        console.log("Browser does not support local storage for write-ops");
+    } else {
+        let payload = readFromLocalStorage(browserStorage);
+        window.localStorage.removeItem("CAS");
+        payload[browserStorage.context] = browserStorage.payload;
+        window.localStorage.setItem("CAS", JSON.stringify(payload));
+        console.log(`Stored ${browserStorage.payload} in local storage under key ${browserStorage.context}`);
+    }
+}
+
+function readFromLocalStorage(browserStorage) {
+    if (typeof (Storage) === "undefined") {
+        console.log("Browser does not support local storage for read-ops");
+        return null;
+    }
+    try {
+        let payload = window.localStorage.getItem("CAS");
+        console.log(`Read ${payload} in local storage`);
+        return payload === null ? {} : JSON.parse(payload);
+    } catch (e) {
+        console.log(`Failed to read from local storage: ${e}`);
+        window.localStorage.removeItem("CAS");
+        return {};
+    }
+}
+
+function clearLocalStorage() {
+    if (typeof (Storage) === "undefined") {
+        console.log("Browser does not support local storage for write-ops");
+    } else {
+        window.localStorage.clear();
+    }
+}
+
+function writeToSessionStorage(browserStorage) {
+    if (typeof (Storage) === "undefined") {
+        console.log("Browser does not support session storage for write-ops");
+    } else {
+        let payload = readFromSessionStorage(browserStorage);
+        window.sessionStorage.removeItem("CAS");
+        payload[browserStorage.context] = browserStorage.payload;
+        window.sessionStorage.setItem("CAS", JSON.stringify(payload));
+        console.log(`Stored ${browserStorage.payload} in session storage under key ${browserStorage.context}`);
+    }
+}
+
+function clearSessionStorage() {
+    if (typeof (Storage) === "undefined") {
+        console.log("Browser does not support session storage for write-ops");
+    } else {
+        window.sessionStorage.clear();
+        console.log("Cleared session storage")
+    }
+}
+
+function readFromSessionStorage(browserStorage) {
+    if (typeof (Storage) === "undefined") {
+        console.log("Browser does not support session storage for read-ops");
+        return null;
+    }
+    try {
+        let payload = window.sessionStorage.getItem("CAS");
+        console.log(`Read ${payload} in session storage`);
+        return payload === null ? {} : JSON.parse(payload);
+    } catch (e) {
+        console.log(`Failed to read from session storage: ${e}`);
+        window.sessionStorage.removeItem("CAS");
+        return {};
+    }
+}
+
+function loginFormSubmission() {
+    return true;
+}
+
 function resourceLoadedSuccessfully() {
-
-    $(document).ready(function () {
-
+    $(document).ready(() => {
         if (trackGeoLocation) {
             requestGeoPosition();
         }
@@ -167,22 +188,27 @@ function resourceLoadedSuccessfully() {
         $('#fm1 input[name="username"],[name="password"]').trigger('input');
         $('#fm1 input[name="username"]').focus();
 
-        let $revealpassword = $('.reveal-password');
-        $revealpassword.mouseup(function (ev) {
-            $('.pwd').attr('type', 'password');
-            $(".reveal-password-icon").removeClass("mdi mdi-eye-off").addClass("mdi mdi-eye");
-            ev.preventDefault();
-        })
-
-        $revealpassword.mousedown(function (ev) {
-            $('.pwd').attr('type', 'text');
-            $(".reveal-password-icon").removeClass("mdi mdi-eye").addClass("mdi mdi-eye-off");
+        $('.reveal-password').click(ev => {
+            if ($('.pwd').attr('type') === 'text') {
+                $('.pwd').attr('type', 'password');
+                $(".reveal-password-icon").removeClass("mdi mdi-eye-off").addClass("mdi mdi-eye");
+            } else {
+                $('.pwd').attr('type', 'text');
+                $(".reveal-password-icon").removeClass("mdi mdi-eye").addClass("mdi mdi-eye-off");
+            }
             ev.preventDefault();
         });
-
+        // console.log(`JQuery Ready: ${typeof (jqueryReady)}`);
         if (typeof (jqueryReady) == 'function') {
             jqueryReady();
         }
     });
+}
 
+function autoHideElement(id, timeout = 1500) {
+    let elementToFadeOut = document.getElementById(id);
+    function hideElement() {
+        $(elementToFadeOut).fadeOut(500);
+    }
+    setTimeout(hideElement, timeout);
 }

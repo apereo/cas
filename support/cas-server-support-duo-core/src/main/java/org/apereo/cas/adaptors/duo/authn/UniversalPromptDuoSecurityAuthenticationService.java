@@ -1,19 +1,19 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpClient;
-
 import com.duosecurity.Client;
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.EqualsAndHashCode;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
+import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +28,7 @@ import java.util.Optional;
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
 public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecurityAuthenticationService {
+    @Serial
     private static final long serialVersionUID = -1690808348975271382L;
 
     private final Client duoClient;
@@ -35,24 +36,24 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
     public UniversalPromptDuoSecurityAuthenticationService(
         final DuoSecurityMultifactorAuthenticationProperties duoProperties,
         final HttpClient httpClient,
-        final CasConfigurationProperties casProperties) {
-        this(duoProperties, httpClient, getDuoClient(duoProperties, casProperties));
-    }
-
-    UniversalPromptDuoSecurityAuthenticationService(
-        final DuoSecurityMultifactorAuthenticationProperties duoProperties,
-        final HttpClient httpClient,
-        final Client duoClient) {
-        super(duoProperties, httpClient);
+        final Client duoClient,
+        final List<MultifactorAuthenticationPrincipalResolver> multifactorAuthenticationPrincipalResolver,
+        final Cache<String, DuoSecurityUserAccount> userAccountCache) {
+        super(duoProperties, httpClient, multifactorAuthenticationPrincipalResolver, userAccountCache);
         this.duoClient = duoClient;
     }
 
     @Override
-    public DuoSecurityAuthenticationResult authenticateInternal(final Credential c) throws Exception {
-        val credential = (DuoSecurityUniversalPromptCredential) c;
+    public Optional<Object> getDuoClient() {
+        return Optional.of(this.duoClient);
+    }
+
+    @Override
+    public DuoSecurityAuthenticationResult authenticateInternal(final Credential credential) throws Exception {
+        val duoCredential = (DuoSecurityUniversalPromptCredential) credential;
         LOGGER.trace("Exchanging Duo Security authorization code [{}]", credential.getId());
-        val result = duoClient.exchangeAuthorizationCodeFor2FAResult(credential.getId(),
-            credential.getAuthentication().getPrincipal().getId());
+        val principal = resolvePrincipal(duoCredential.getAuthentication().getPrincipal());
+        val result = duoClient.exchangeAuthorizationCodeFor2FAResult(credential.getId(), principal.getId());
         LOGGER.debug("Validated Duo Security code [{}] with result [{}]", credential.getId(), result);
 
         val username = StringUtils.defaultIfBlank(result.getPreferred_username(), result.getSub());
@@ -132,19 +133,5 @@ public class UniversalPromptDuoSecurityAuthenticationService extends BaseDuoSecu
             LoggingUtils.warn(LOGGER, e);
         }
         return false;
-    }
-
-    @Override
-    public Optional<Object> getDuoClient() {
-        return Optional.of(this.duoClient);
-    }
-
-    @SneakyThrows
-    private static Client getDuoClient(final DuoSecurityMultifactorAuthenticationProperties duoProperties,
-        final CasConfigurationProperties casProperties) {
-        return new Client(duoProperties.getDuoIntegrationKey(),
-            duoProperties.getDuoSecretKey(),
-            duoProperties.getDuoApiHost(),
-            casProperties.getServer().getLoginUrl());
     }
 }

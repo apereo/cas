@@ -3,7 +3,7 @@ package org.apereo.cas.api;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link AuthenticationRiskContingencyPlan}.
@@ -22,9 +22,10 @@ public interface AuthenticationRiskContingencyPlan {
      * @param score          the score
      * @param request        the request
      * @return the authentication risk contingency response
+     * @throws Throwable the throwable
      */
     AuthenticationRiskContingencyResponse execute(Authentication authentication,
                                                   RegisteredService service,
                                                   AuthenticationRiskScore score,
-                                                  HttpServletRequest request);
+                                                  HttpServletRequest request) throws Throwable;
 }

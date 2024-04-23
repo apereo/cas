@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("MemoryMonitorProperties")
 public class MemoryMonitorProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -7147060071480971606L;
 
     /**
@@ -28,5 +30,5 @@ public class MemoryMonitorProperties implements Serializable {
      * If the amount of free memory available reaches this point
      * the memory monitor will report back a warning status as a health check.
      */
-    private int freeMemThreshold = 10;
+    private double freeMemThreshold = 10;
 }

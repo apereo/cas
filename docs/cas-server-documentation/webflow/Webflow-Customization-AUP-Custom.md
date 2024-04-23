@@ -13,7 +13,7 @@ If you wish to design your own storage mechanism, you may follow the below appro
 ```java
 package org.apereo.cas.custom;
 
-@Configuration("myUsagePolicyConfiguration")
+@AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MyUsagePolicyConfiguration {
 

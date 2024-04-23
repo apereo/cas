@@ -12,15 +12,6 @@ import org.springframework.webflow.execution.RequestContext;
 public interface IPAddressIntelligenceService {
 
     /**
-     * Examine ip address and produce an intelligence response.
-     *
-     * @param context         the context
-     * @param clientIpAddress the client ip address
-     * @return the ip address intelligence response
-     */
-    IPAddressIntelligenceResponse examine(RequestContext context, String clientIpAddress);
-
-    /**
      * NoOp ip address intelligence service.
      *
      * @return the ip address intelligence service
@@ -37,4 +28,14 @@ public interface IPAddressIntelligenceService {
     static IPAddressIntelligenceService banned() {
         return (context, clientIpAddress) -> IPAddressIntelligenceResponse.banned();
     }
+
+    /**
+     * Examine ip address and produce an intelligence response.
+     *
+     * @param context         the context
+     * @param clientIpAddress the client ip address
+     * @return the ip address intelligence response
+     * @throws Throwable the throwable
+     */
+    IPAddressIntelligenceResponse examine(RequestContext context, String clientIpAddress) throws Throwable;
 }

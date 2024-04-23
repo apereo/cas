@@ -28,9 +28,11 @@ import org.springframework.webflow.execution.RequestContext;
 @Setter
 public class WsFederationAction extends AbstractAuthenticationAction {
     private static final String WA = "wa";
+
     private static final String WSIGNIN = "wsignin1.0";
 
     private final WsFederationResponseValidator wsFederationResponseValidator;
+
     private final WsFederationRequestBuilder wsFederationRequestBuilder;
 
     public WsFederationAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
@@ -43,25 +45,19 @@ public class WsFederationAction extends AbstractAuthenticationAction {
         this.wsFederationRequestBuilder = wsFederationRequestBuilder;
     }
 
-    /**
-     * Executes the webflow action.
-     *
-     * @param context the context
-     * @return the event
-     */
     @Override
-    protected Event doExecute(final RequestContext context) {
+    protected Event doExecuteInternal(final RequestContext context) {
         try {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
             val wa = request.getParameter(WA);
             if (StringUtils.isNotBlank(wa) && wa.equalsIgnoreCase(WSIGNIN)) {
                 wsFederationResponseValidator.validateWsFederationAuthenticationRequest(context);
-                return super.doExecute(context);
+                return super.doExecuteInternal(context);
             }
             return wsFederationRequestBuilder.buildAuthenticationRequestEvent(context);
-        } catch (final Exception ex) {
+        } catch (final Throwable ex) {
             LoggingUtils.error(LOGGER, ex);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, ex.getMessage());
+            throw UnauthorizedServiceException.wrap(ex);
         }
     }
 }

@@ -1,0 +1,21 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "https://localhost:9859/anything/2",
+  "name": "Sample",
+  "id": 2,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "authorizedToReleaseAuthenticationAttributes": false,
+    "attributeFilter" : {
+      "@class": "org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilter",
+      "patterns": {
+        "@class" : "java.util.TreeMap",
+        "groupMembership2": "^\\w{4}$"
+      },
+      "excludeUnmappedAttributes": true,
+      "completeMatch": false,
+      "caseInsensitive": true
+    },
+    "allowedAttributes" : [ "java.util.ArrayList", [ "accountId", "groupMembership2" ] ]
+  }
+}

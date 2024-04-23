@@ -1,6 +1,7 @@
 package org.apereo.cas.qr.authentication;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.qr.BaseQRAuthenticationTokenValidatorServiceTests;
@@ -22,9 +23,11 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link QRAuthenticationTokenAuthenticationHandlerTests}.
@@ -32,19 +35,19 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Authentication")
+@Tag("AuthenticationHandler")
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class)
-public class QRAuthenticationTokenAuthenticationHandlerTests {
+class QRAuthenticationTokenAuthenticationHandlerTests {
     @Autowired
     @Qualifier("qrAuthenticationTokenAuthenticationHandler")
     private AuthenticationHandler qrAuthenticationTokenAuthenticationHandler;
 
     @Autowired
-    @Qualifier("tokenTicketJwtBuilder")
+    @Qualifier(JwtBuilder.TICKET_JWT_BUILDER_BEAN_NAME)
     private JwtBuilder jwtBuilder;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Autowired
@@ -61,14 +64,14 @@ public class QRAuthenticationTokenAuthenticationHandlerTests {
 
 
     @Test
-    public void verifySupports() {
+    void verifySupports() throws Throwable {
         val credential = new QRAuthenticationTokenCredential("token", UUID.randomUUID().toString());
         assertTrue(qrAuthenticationTokenAuthenticationHandler.supports(credential));
         assertTrue(qrAuthenticationTokenAuthenticationHandler.supports(QRAuthenticationTokenCredential.class));
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         assertNotNull(qrAuthenticationTokenAuthenticationHandler);
 
         val tgt = new MockTicketGrantingTicket("casuser");
@@ -81,19 +84,19 @@ public class QRAuthenticationTokenAuthenticationHandlerTests {
             .subject(tgt.getAuthentication().getPrincipal().getId())
             .jwtId(tgt.getId())
             .issuer(casProperties.getServer().getPrefix())
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .attributes(Map.of(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID, List.of(deviceId)))
             .build();
         val jwt = jwtBuilder.build(payload);
         val credential = new QRAuthenticationTokenCredential(jwt, UUID.randomUUID().toString());
         credential.setDeviceId(deviceId);
-        val result = qrAuthenticationTokenAuthenticationHandler.authenticate(credential);
+        val result = qrAuthenticationTokenAuthenticationHandler.authenticate(credential, mock(Service.class));
         assertEquals(tgt.getAuthentication().getPrincipal().getId(), result.getPrincipal().getId());
     }
 
     @Test
-    public void verifyFailsOperation() {
+    void verifyFailsOperation() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
@@ -101,12 +104,12 @@ public class QRAuthenticationTokenAuthenticationHandlerTests {
             .subject("unknown")
             .jwtId(tgt.getId())
             .issuer(casProperties.getServer().getPrefix())
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .build();
         val jwt = jwtBuilder.build(payload);
         val credential = new QRAuthenticationTokenCredential(jwt, UUID.randomUUID().toString());
         assertThrows(FailedLoginException.class,
-            () -> qrAuthenticationTokenAuthenticationHandler.authenticate(credential));
+            () -> qrAuthenticationTokenAuthenticationHandler.authenticate(credential, mock(Service.class)));
     }
 }

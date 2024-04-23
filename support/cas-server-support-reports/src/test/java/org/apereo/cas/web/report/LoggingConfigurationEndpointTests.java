@@ -30,14 +30,14 @@ import static org.junit.jupiter.api.Assertions.*;
     "logging.config=file:${java.io.tmpdir}/log4j2.xml"
 })
 @Tag("ActuatorEndpoint")
-public class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests {
+class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("loggingConfigurationEndpoint")
     private LoggingConfigurationEndpoint loggingConfigurationEndpoint;
 
     @BeforeAll
     public static void setup() throws Exception {
-        val content = IOUtils.toString(new ClassPathResource("log4j2-test.xml").getInputStream(), StandardCharsets.UTF_8);
+        val content = IOUtils.toString(new ClassPathResource("log4j2-test.xml.template").getInputStream(), StandardCharsets.UTF_8);
         try (val writer = new FileWriter(new File(FileUtils.getTempDirectory(), "log4j2.xml"), StandardCharsets.UTF_8)) {
             IOUtils.write(content, writer);
             writer.flush();
@@ -45,7 +45,7 @@ public class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests 
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(loggingConfigurationEndpoint);
         val configuration = loggingConfigurationEndpoint.configuration();
         assertNotNull(configuration);
@@ -54,7 +54,7 @@ public class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests 
     }
 
     @Test
-    public void verifyUpdateOperation() {
+    void verifyUpdateOperation() throws Throwable {
         assertNotNull(loggingConfigurationEndpoint);
         assertDoesNotThrow(() ->
             loggingConfigurationEndpoint.updateLoggerLevel("org.apereo", "warn", false));

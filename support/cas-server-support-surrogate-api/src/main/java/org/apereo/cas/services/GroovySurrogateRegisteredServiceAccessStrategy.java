@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
@@ -11,7 +12,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
-import java.util.Map;
+import java.io.Serial;
 
 /**
  * This is {@link GroovySurrogateRegisteredServiceAccessStrategy}.
@@ -24,15 +25,17 @@ import java.util.Map;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 public class GroovySurrogateRegisteredServiceAccessStrategy extends BaseSurrogateRegisteredServiceAccessStrategy {
+    @Serial
     private static final long serialVersionUID = -3998531629984937388L;
 
+    @ExpressionLanguageCapable
     private String groovyScript;
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
-        if (isSurrogateAuthenticationSession(principalAttributes)) {
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) throws Throwable {
+        if (isSurrogateAuthenticationSession(request)) {
             try {
-                val args = new Object[]{principal, principalAttributes, LOGGER};
+                val args = new Object[]{request.getPrincipalId(), request.getAttributes(), LOGGER};
                 val resource = ResourceUtils.getResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript));
                 return ScriptingUtils.executeGroovyScript(resource, args, Boolean.class, true);
             } catch (final Exception e) {
@@ -40,6 +43,6 @@ public class GroovySurrogateRegisteredServiceAccessStrategy extends BaseSurrogat
             }
             return false;
         }
-        return super.doPrincipalAttributesAllowServiceAccess(principal, principalAttributes);
+        return super.authorizeRequest(request);
     }
 }

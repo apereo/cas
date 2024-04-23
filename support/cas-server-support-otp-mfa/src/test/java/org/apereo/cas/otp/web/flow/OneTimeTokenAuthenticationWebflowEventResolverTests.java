@@ -4,30 +4,20 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepositoryTests;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.util.MockServletContext;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
-
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link OneTimeTokenAuthenticationWebflowEventResolverTests}.
@@ -37,19 +27,17 @@ import static org.mockito.Mockito.when;
  */
 @Tag("WebflowEvents")
 @SpringBootTest(classes = BaseOneTimeTokenRepositoryTests.SharedTestConfiguration.class)
-public class OneTimeTokenAuthenticationWebflowEventResolverTests {
+class OneTimeTokenAuthenticationWebflowEventResolverTests {
     @Autowired
     @Qualifier("oneTimeTokenAuthenticationWebflowEventResolver")
     private CasWebflowEventResolver resolver;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
-    public void verifyResolver() {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    void verifyResolver() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
 
         val authn = RegisteredServiceTestUtils.getAuthentication("casuser");
         val builder = mock(AuthenticationResultBuilder.class);

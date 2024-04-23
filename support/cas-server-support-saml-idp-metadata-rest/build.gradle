@@ -1,4 +1,11 @@
 description = "Apereo CAS SAML Identity Provider Metadata Resolution Via REST"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "SAML2 Metadata Management",
+            title: "SAML2 Metadata Management via REST"
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-web-api")
@@ -21,7 +28,8 @@ dependencies {
     implementation libraries.shibutiljavasupport
 
     testImplementation project(":support:cas-server-support-person-directory")
-
+    testImplementation project(":support:cas-server-support-consent-core")
+    
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-tickets")
@@ -32,6 +40,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":core:cas-server-core-validation-api")
+    testImplementation project(":core:cas-server-core-monitor")
     testImplementation project(":core:cas-server-core-webflow")
     
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

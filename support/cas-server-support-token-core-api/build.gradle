@@ -5,21 +5,18 @@ dependencies {
     api project(":api:cas-server-core-api-util")
 
     implementation libraries.nimbus
-    implementation libraries.casclient
+    implementation libraries.bouncycastle
     
     implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-configuration-api")
-    implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")
-    implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-authentication-api")
-    implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-services-authentication")
     
-    implementation project(":support:cas-server-support-pac4j-authentication")
-
+    testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-tickets")
@@ -27,6 +24,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-web")
     
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

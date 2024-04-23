@@ -1,6 +1,8 @@
 package org.apereo.cas.web;
 
-import javax.servlet.http.HttpServletRequest;
+import org.apereo.cas.token.TokenConstants;
+import org.apache.commons.lang3.StringUtils;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link TokenRequestExtractor}.
@@ -8,8 +10,17 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@FunctionalInterface
 public interface TokenRequestExtractor {
+
+    /**
+     * Default extractor token request.
+     *
+     * @return the token request extractor
+     */
+    static TokenRequestExtractor defaultExtractor() {
+        return new TokenRequestExtractor() {
+        };
+    }
 
     /**
      * Extract string.
@@ -17,5 +28,11 @@ public interface TokenRequestExtractor {
      * @param request the request
      * @return the string
      */
-    String extract(HttpServletRequest request);
+    default String extract(final HttpServletRequest request) {
+        var authTokenValue = request.getParameter(TokenConstants.PARAMETER_NAME_TOKEN);
+        if (StringUtils.isBlank(authTokenValue)) {
+            authTokenValue = request.getHeader(TokenConstants.PARAMETER_NAME_TOKEN);
+        }
+        return authTokenValue;
+    }
 }

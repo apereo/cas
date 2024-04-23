@@ -1,0 +1,20 @@
+{
+  "dependencies": "oauth-webflow",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.oidc.discovery.scopes=read,update",
+
+    "--cas.authn.oauth.access-token.crypto.encryption-enabled=false",
+    "--cas.authn.oauth.access-token.crypto.signing.key=wTdzuSKFX2pnaDE7CsvTU1WpUE19R-y_py-a07C9auWC4x8KVzJluE1v8XEaA7BHIuBup88CzK5C-qNAg5JWOg",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}
+

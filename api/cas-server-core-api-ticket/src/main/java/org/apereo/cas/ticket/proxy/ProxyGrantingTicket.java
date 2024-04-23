@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.proxy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -30,16 +31,15 @@ public interface ProxyGrantingTicket extends TicketGrantingTicket {
     /**
      * Grant a proxy ticket for a specific service.
      *
-     * @param id                         The unique identifier for this ticket.
-     * @param service                    The service for which we are granting a ticket
-     * @param expirationPolicy           the expiration policy.
-     * @param onlyTrackMostRecentSession track the most recent session by keeping the latest service ticket
-     * @return the service ticket granted to a specific service for the
-     * principal of the TicketGrantingTicket
+     * @param id               The unique identifier for this ticket.
+     * @param service          The service for which we are granting a ticket
+     * @param expirationPolicy the expiration policy.
+     * @param trackingPolicy   the tracking policy
+     * @return the service ticket granted to a specific service for the principal of the TicketGrantingTicket
      */
     ProxyTicket grantProxyTicket(String id, Service service,
                                  ExpirationPolicy expirationPolicy,
-                                 boolean onlyTrackMostRecentSession);
+                                 TicketTrackingPolicy trackingPolicy);
 
 }
 

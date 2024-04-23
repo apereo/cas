@@ -2,38 +2,25 @@ package org.apereo.cas.okta;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
-import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
-import org.apereo.cas.config.CasCoreTicketsConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.config.CasOktaAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.OktaAuthenticationConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
+import com.okta.authn.sdk.AuthenticationStateHandler;
+import com.okta.authn.sdk.client.AuthenticationClient;
+import com.okta.authn.sdk.resource.AuthenticationResponse;
+import com.okta.authn.sdk.resource.User;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import javax.security.auth.login.FailedLoginException;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link OktaAuthenticationStateHandlerTests}.
@@ -42,39 +29,63 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    OktaAuthenticationConfiguration.class,
-    CasCoreConfiguration.class,
-    CasCoreTicketsConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreTicketIdGeneratorsConfiguration.class,
-    CasCoreTicketCatalogConfiguration.class,
-    CasCoreAuthenticationConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasCoreWebConfiguration.class,
+    CasOktaAuthenticationAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasRegisteredServicesTestConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    CasAuthenticationEventExecutionPlanTestConfiguration.class,
-    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class
+    BaseOktaTests.SharedTestConfiguration.class
 },
-    properties = "cas.authn.okta.organization-url=https://dev-159539.oktapreview.com")
-@Tag("Authentication")
-public class OktaAuthenticationStateHandlerTests {
+    properties = {
+        "cas.authn.okta.proxy-host=localhost",
+        "cas.authn.okta.proxy-port=1234",
+        "cas.authn.okta.proxy-username=username",
+        "cas.authn.okta.proxy-password=password",
+        "cas.authn.okta.organization-url=https://dev-159539.oktapreview.com"
+    })
+@Tag("AuthenticationHandler")
+class OktaAuthenticationStateHandlerTests {
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    private ServicesManager servicesManager;
+
     @Autowired
     @Qualifier("oktaAuthenticationHandler")
     private AuthenticationHandler oktaAuthenticationHandler;
 
+    @Autowired
+    @Qualifier("oktaPrincipalFactory")
+    private PrincipalFactory oktaPrincipalFactory;
+
     @Test
-    public void verifyOperation() {
-        val c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
+    void verifyOperation() throws Throwable {
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
             "casuser@apereo.org", "a8BuQH@6B7z");
-        assertThrows(FailedLoginException.class, () -> oktaAuthenticationHandler.authenticate(c));
+        assertThrows(FailedLoginException.class, () -> oktaAuthenticationHandler.authenticate(credential, mock(Service.class)));
+    }
+
+    @Test
+    void verifySuccess() throws Throwable {
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(
+            "casuser@apereo.org", "a8BuQH@6B7z");
+        val response = mock(AuthenticationResponse.class);
+
+        val user = mock(User.class);
+        when(user.getLogin()).thenReturn("casuser");
+        when(user.getId()).thenReturn("casuser");
+        when(response.getUser()).thenReturn(user);
+        when(response.getSessionToken()).thenReturn("token");
+        val client = mock(AuthenticationClient.class);
+        when(client.authenticate(anyString(), any(), any(), any(AuthenticationStateHandler.class)))
+            .thenAnswer(invocationOnMock -> {
+                val adapter = invocationOnMock.getArgument(3, AuthenticationStateHandler.class);
+                adapter.handleSuccess(response);
+                return response;
+            });
+        val handler = new OktaAuthenticationHandler(null, servicesManager,
+            oktaPrincipalFactory, casProperties.getAuthn().getOkta(), client);
+        assertNotNull(handler.authenticate(credential, mock(Service.class)));
+        assertNotNull(handler.getOktaAuthenticationClient());
+        assertNotNull(handler.getProperties());
     }
 }

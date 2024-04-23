@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationRegistrationProperties;
 
 /**
  * This is {@link DuoSecurityMultifactorAuthenticationProvider}.
@@ -18,10 +19,9 @@ public interface DuoSecurityMultifactorAuthenticationProvider extends Multifacto
     DuoSecurityAuthenticationService getDuoAuthenticationService();
 
     /**
-     * Link to the registration portal where new users
-     * will be redirected to sign up for duo.
+     * Gets registration settings for this provider.
      *
-     * @return the url.
+     * @return the registration
      */
-    String getRegistrationUrl();
+    DuoSecurityMultifactorAuthenticationRegistrationProperties getRegistration();
 }

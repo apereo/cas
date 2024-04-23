@@ -13,13 +13,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Simple")
-public class SpringExpressionLanguageValueResolverTests {
+class SpringExpressionLanguageValueResolverTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();
 
         assertNotNull(resolver.apply("HelloWorld"));
-        
+
         assertEquals("Hello World", resolver.resolve("${'Hello World'}"));
         assertEquals("Literal Value", resolver.resolve("Literal Value"));
         assertEquals("Hello World!", resolver.resolve("${'Hello World'.concat('!')}"));

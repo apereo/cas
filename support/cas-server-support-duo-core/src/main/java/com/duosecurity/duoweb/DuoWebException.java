@@ -1,8 +1,11 @@
 package com.duosecurity.duoweb;
 
-public class DuoWebException extends Exception {
+import lombok.experimental.StandardException;
 
-  public DuoWebException(String message) {
-    super(message);
-  }
+import java.io.Serial;
+
+@StandardException
+public class DuoWebException extends Exception {
+    @Serial
+    private static final long serialVersionUID = -6943858564875112962L;
 }

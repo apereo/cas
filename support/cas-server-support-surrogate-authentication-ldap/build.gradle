@@ -1,16 +1,25 @@
 description = "Apereo CAS Surrogate Authentication LDAP Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Impersonation",
+            title: "Impersonation via LDAP & Active Directory"
+    ]
+}
 dependencies {
     implementation libraries.ldaptive
     
     implementation project(":support:cas-server-support-surrogate-authentication")
+    implementation project(":support:cas-server-support-surrogate-api")
+    implementation project(":support:cas-server-support-surrogate-core")
     implementation project(":support:cas-server-support-ldap-core")
+
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
-    implementation project(":support:cas-server-support-surrogate-api")
 
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-tickets")
@@ -23,10 +32,13 @@ dependencies {
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-rest")
     testImplementation project(":support:cas-server-support-themes")
 
     testImplementation project(path: ":support:cas-server-support-surrogate-authentication", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-ldap-core", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
+    
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

@@ -16,19 +16,19 @@ public class WebAuthnCredentialRegistrationCipherExecutor extends BaseStringCiph
                                                         final int encryptionKeySize) {
         super(secretKeyEncryption, secretKeySigning, alg, signingKeySize, encryptionKeySize);
     }
-    
-    @Override
-    protected String getEncryptionKeySetting() {
-        return "cas.authn.mfa.web-authn.crypto.encryption.key";
-    }
-
-    @Override
-    protected String getSigningKeySetting() {
-        return "cas.authn.mfa.web-authn.crypto.signing.key";
-    }
 
     @Override
     public String getName() {
         return "WebAuthN Authentication";
+    }
+
+    @Override
+    public String getEncryptionKeySetting() {
+        return "cas.authn.mfa.web-authn.crypto.encryption.key";
+    }
+
+    @Override
+    public String getSigningKeySetting() {
+        return "cas.authn.mfa.web-authn.crypto.signing.key";
     }
 }

@@ -1,0 +1,26 @@
+{
+  "dependencies": "generic,oidc",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    
+    "--logging.level.PROTOCOL_MESSAGE=info",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
+
+    "--cas.authn.oidc.discovery.claims=sub,name,family_name,given_name,cn,given-name,gender,organization",
+    "--cas.authn.oidc.discovery.scopes=openid,profile,email,MyCustomScope,eduPerson",
+    
+    "--cas.authn.oidc.core.user-defined-scopes.MyCustomScope=gender,name,family_name,given_name",
+
+    "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+
+    "--cas.authn.attribute-repository.json[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attribute-repository.json",
+    "--cas.authn.attribute-repository.json[0].id=MyJson",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ]
+}
+

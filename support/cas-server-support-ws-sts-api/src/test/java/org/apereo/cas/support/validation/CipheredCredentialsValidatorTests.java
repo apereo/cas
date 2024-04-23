@@ -22,10 +22,10 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("WSFederation")
-public class CipheredCredentialsValidatorTests {
+class CipheredCredentialsValidatorTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val id = UUID.randomUUID().toString();
         val validator = new CipheredCredentialsValidator(CipherExecutor.noOp());
 
@@ -38,7 +38,7 @@ public class CipheredCredentialsValidatorTests {
     }
 
     @Test
-    public void verifyFailsOperation() {
+    void verifyFailsOperation() throws Throwable {
         val id = UUID.randomUUID().toString();
         val validator = new CipheredCredentialsValidator(CipherExecutor.noOp());
         val credential = new Credential();

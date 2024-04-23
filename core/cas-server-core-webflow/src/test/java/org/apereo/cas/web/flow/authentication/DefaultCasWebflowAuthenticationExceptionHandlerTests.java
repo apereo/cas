@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationExceptio
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -13,12 +14,6 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.binding.message.MessageContext;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.net.URI;
@@ -26,7 +21,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultCasWebflowAuthenticationExceptionHandlerTests}.
@@ -34,32 +28,27 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Authentication")
-public class DefaultCasWebflowAuthenticationExceptionHandlerTests {
+@Tag("AuthenticationHandler")
+class DefaultCasWebflowAuthenticationExceptionHandlerTests {
     private CasWebflowExceptionHandler handler;
 
     private RequestContext context;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws Exception {
         val errors = new LinkedHashSet<Class<? extends Throwable>>();
         errors.add(UnauthorizedServiceForPrincipalException.class);
         errors.add(UnauthorizedAuthenticationException.class);
+        val catalog = new DefaultCasWebflowExceptionCatalog();
+        catalog.registerExceptions(errors);
 
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        this.context = mock(RequestContext.class);
-        when(context.getMessageContext()).thenReturn(mock(MessageContext.class));
-        when(context.getFlowScope()).thenReturn(new LocalAttributeMap<>());
-        when(context.getFlashScope()).thenReturn(new LocalAttributeMap<>());
-        when(context.getExternalContext()).thenReturn(new ServletExternalContext(new MockServletContext(), request, response));
-
-        this.handler = new DefaultCasWebflowAuthenticationExceptionHandler(errors,
+        this.context = MockRequestContext.create();
+        this.handler = new DefaultCasWebflowAuthenticationExceptionHandler(catalog,
             MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
     }
 
     @Test
-    public void verifyServiceUnauthz() throws Exception {
+    void verifyServiceUnauthz() throws Throwable {
         assertTrue(handler.supports(new UnauthorizedAuthenticationException("failure"), context));
 
         WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, new URI("https://github.com"));
@@ -71,7 +60,7 @@ public class DefaultCasWebflowAuthenticationExceptionHandlerTests {
     }
 
     @Test
-    public void verifyUnknown() {
+    void verifyUnknown() throws Throwable {
         val ex = new AuthenticationException(new InvalidLoginLocationException("failure"));
         val event = handler.handle(ex, context);
         assertNotNull(event);
@@ -79,7 +68,7 @@ public class DefaultCasWebflowAuthenticationExceptionHandlerTests {
     }
 
     @Test
-    public void verifyAuthUnauthz() {
+    void verifyAuthUnauthz() throws Throwable {
         val ex = new AuthenticationException(new UnauthorizedAuthenticationException("failure"));
         val event = handler.handle(ex, context);
         assertNotNull(event);

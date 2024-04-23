@@ -1,11 +1,13 @@
 package org.apereo.cas.mfa.simple;
 
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.configuration.model.support.mfa.CasSimpleMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredService;
 
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+
+import java.io.Serial;
 
 
 /**
@@ -17,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 @NoArgsConstructor
 public class CasSimpleMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
 
+    @Serial
     private static final long serialVersionUID = 4789727148634156909L;
 
     @Override

@@ -1,0 +1,19 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/refeds-sp",
+  "name" : "Sample",
+  "id" : 1,
+  "evaluationOrder" : 1,
+  "requiredAuthenticationContextClass": "https://refeds.org/profile/mfa",
+  "metadataLocation" : "http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/refeds-sp",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute" : "email",
+    "canonicalizationMode" : "LOWER"
+  },
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy",
+    "principalIdAttribute": "casuser",
+    "authorizedToReleaseAuthenticationAttributes": false
+  }
+}

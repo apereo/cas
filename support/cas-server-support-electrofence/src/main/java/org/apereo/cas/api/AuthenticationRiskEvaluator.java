@@ -3,8 +3,8 @@ package org.apereo.cas.api;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Set;
+import org.apereo.inspektr.common.web.ClientInfo;
+import java.util.List;
 
 /**
  * This is {@link AuthenticationRiskEvaluator}.
@@ -19,15 +19,26 @@ public interface AuthenticationRiskEvaluator {
      *
      * @return the calculators
      */
-    Set<AuthenticationRequestRiskCalculator> getCalculators();
+    List<AuthenticationRequestRiskCalculator> getCalculators();
 
     /**
      * Calculate final authentication risk score.
      *
      * @param authentication the authentication
      * @param service        the service
-     * @param request        the request
+     * @param clientInfo     the client info
      * @return the authentication risk score
      */
-    AuthenticationRiskScore eval(Authentication authentication, RegisteredService service, HttpServletRequest request);
+    AuthenticationRiskScore evaluate(Authentication authentication, RegisteredService service, ClientInfo clientInfo);
+
+    /**
+     * Is risky authentication risk score?.
+     *
+     * @param score          the score
+     * @param authentication the authentication
+     * @param service        the service
+     * @return true or false
+     */
+    boolean isRiskyAuthenticationScore(AuthenticationRiskScore score, Authentication authentication, RegisteredService service);
+
 }

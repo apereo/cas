@@ -1,12 +1,16 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.encoder.MessageEncodingException;
 import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.saml2.binding.encoding.impl.HTTPRedirectDeflateEncoder;
 import org.opensaml.xmlsec.SignatureSigningParameters;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
@@ -34,12 +38,15 @@ public class SamlIdPHttpRedirectDeflateEncoder extends HTTPRedirectDeflateEncode
 
     private String encodedRequest;
 
+    @Setter
+    private String relayState;
+
     @Override
     public void doEncode() throws MessageEncodingException {
         this.messageContext = new MessageContext();
         if (request.isSigned()) {
             LOGGER.trace("Request is signed for [{}]", request.getElementQName());
-            val signingContext = messageContext.getSubcontext(SecurityParametersContext.class, true);
+            val signingContext = messageContext.ensureSubcontext(SecurityParametersContext.class);
             val signingParams = new SignatureSigningParameters();
             val signature = request.getSignature();
             signingParams.setSigningCredential(Objects.requireNonNull(signature).getSigningCredential());
@@ -47,10 +54,11 @@ public class SamlIdPHttpRedirectDeflateEncoder extends HTTPRedirectDeflateEncode
             Objects.requireNonNull(signingContext).setSignatureSigningParameters(signingParams);
         }
 
-        val samlObject = SAMLObject.class.cast(request);
+        val samlObject = (SAMLObject) request;
         removeSignature(samlObject);
         encodedRequest = deflateAndBase64Encode(samlObject);
         messageContext.setMessage(request);
+        FunctionUtils.doIfNotNull(relayState, value -> SAMLBindingSupport.setRelayState(messageContext, value));
 
         this.redirectUrl = buildRedirectURL(messageContext, endpointUrl, encodedRequest);
         LOGGER.debug("Created redirect URL [{}] based on endpoint [{}]", this.redirectUrl, endpointUrl);

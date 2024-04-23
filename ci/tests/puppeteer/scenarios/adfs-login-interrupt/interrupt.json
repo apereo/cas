@@ -1,0 +1,6 @@
+{
+  "casuser@apereo.org" : {
+    "message" : "We interrupted your login",
+    "interrupt" : true
+  }
+}

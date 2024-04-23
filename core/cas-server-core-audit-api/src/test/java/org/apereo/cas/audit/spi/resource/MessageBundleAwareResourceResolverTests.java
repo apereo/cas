@@ -20,10 +20,10 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Web")
-public class MessageBundleAwareResourceResolverTests {
+@Tag("Audits")
+class MessageBundleAwareResourceResolverTests {
     @Test
-    public void verifyOperationByExceptionMessage() {
+    void verifyOperationByExceptionMessage() throws Throwable {
         val jp = mock(JoinPoint.class);
         when(jp.getArgs()).thenReturn(new Object[]{"something", RegisteredServiceTestUtils.getService()});
         val context = mock(ApplicationContext.class);

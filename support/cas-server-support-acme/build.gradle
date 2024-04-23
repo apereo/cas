@@ -1,9 +1,17 @@
 description = "Apereo CAS Automatic Certificate Management Environment (ACME) protocol Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Integrations",
+            title: "ACME & Let's Encrypt",
+            aliases: ["acme"]
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-cookie")
 
-    implementation libraries.pac4jcore
     implementation libraries.acme
     implementation libraries.jose4j
     implementation libraries.bouncycastle

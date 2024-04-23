@@ -5,6 +5,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.uma.ticket.resource.ResourceSet;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -18,21 +19,16 @@ import java.util.Map;
  * @since 6.0.0
  */
 @RequiredArgsConstructor
+@Getter
 public class DefaultUmaPermissionTicketFactory implements UmaPermissionTicketFactory {
-    /**
-     * Default instance for the ticket id generator.
-     */
     protected final UniqueTicketIdGenerator idGenerator;
-
-    /**
-     * ExpirationPolicy for refresh tokens.
-     */
-    protected final ExpirationPolicyBuilder expirationPolicy;
+    protected final ExpirationPolicyBuilder expirationPolicyBuilder;
 
     @Override
-    public UmaPermissionTicket create(final ResourceSet resourceSet, final Collection<String> scopes, final Map<String, Object> claims) {
+    public UmaPermissionTicket create(final ResourceSet resourceSet, final Collection<String> scopes,
+                                      final Map<String, Object> claims) throws Throwable {
         val codeId = this.idGenerator.getNewTicketId(UmaPermissionTicket.PREFIX);
-        return new DefaultUmaPermissionTicket(codeId, resourceSet, this.expirationPolicy.buildTicketExpirationPolicy(), scopes, claims);
+        return new DefaultUmaPermissionTicket(codeId, resourceSet, this.expirationPolicyBuilder.buildTicketExpirationPolicy(), scopes, claims);
     }
 
     @Override

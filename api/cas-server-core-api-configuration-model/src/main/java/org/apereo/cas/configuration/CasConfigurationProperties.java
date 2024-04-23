@@ -1,12 +1,13 @@
 package org.apereo.cas.configuration;
 
-import org.apereo.cas.configuration.model.core.CasJavaClientProperties;
+import org.apereo.cas.configuration.model.core.CasServerCoreProperties;
 import org.apereo.cas.configuration.model.core.CasServerHostProperties;
 import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationProperties;
 import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authz.AccessStrategyProperties;
 import org.apereo.cas.configuration.model.core.config.cloud.SpringCloudConfigurationProperties;
 import org.apereo.cas.configuration.model.core.config.standalone.StandaloneConfigurationProperties;
 import org.apereo.cas.configuration.model.core.events.EventsProperties;
@@ -15,7 +16,7 @@ import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.configuration.model.core.rest.RestProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
-import org.apereo.cas.configuration.model.core.slo.SingleLogOutProperties;
+import org.apereo.cas.configuration.model.core.slo.SingleLogoutProperties;
 import org.apereo.cas.configuration.model.core.sso.SingleSignOnProperties;
 import org.apereo.cas.configuration.model.core.util.TicketProperties;
 import org.apereo.cas.configuration.model.core.web.LocaleProperties;
@@ -23,9 +24,11 @@ import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpRequestProperties;
 import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
+import org.apereo.cas.configuration.model.support.account.AccountManagementRegistrationProperties;
 import org.apereo.cas.configuration.model.support.acme.AcmeProperties;
 import org.apereo.cas.configuration.model.support.analytics.GoogleAnalyticsProperties;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
+import org.apereo.cas.configuration.model.support.aws.AmazonSecurityTokenServiceProperties;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.configuration.model.support.clearpass.ClearpassProperties;
 import org.apereo.cas.configuration.model.support.consent.ConsentProperties;
@@ -33,27 +36,27 @@ import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookiePro
 import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties;
 import org.apereo.cas.configuration.model.support.custom.CasCustomProperties;
 import org.apereo.cas.configuration.model.support.firebase.GoogleFirebaseCloudMessagingProperties;
-import org.apereo.cas.configuration.model.support.geo.googlemaps.GoogleMapsProperties;
-import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
+import org.apereo.cas.configuration.model.support.geo.GeoLocationProperties;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
-import org.apereo.cas.configuration.model.support.replication.SessionReplicationProperties;
 import org.apereo.cas.configuration.model.support.saml.SamlCoreProperties;
-import org.apereo.cas.configuration.model.support.saml.googleapps.GoogleAppsProperties;
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
 import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderProperties;
 import org.apereo.cas.configuration.model.support.scim.ScimProperties;
+import org.apereo.cas.configuration.model.support.slack.SlackMessagingProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProvidersProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.validation.annotation.Validated;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Clock;
 import java.time.Instant;
@@ -64,17 +67,20 @@ import java.time.Instant;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties(value = "cas")
+@ConfigurationProperties("cas")
 @Getter
 @Setter
 @Accessors(chain = true)
 @JsonFilter("CasConfigurationProperties")
+@RequiresModule(name = "cas-server-core-api", automated = true)
+@Validated
 public class CasConfigurationProperties implements Serializable {
     /**
      * Prefix used for all CAS-specific settings.
      */
     public static final String PREFIX = "cas";
 
+    @Serial
     private static final long serialVersionUID = -8620267783496071683L;
 
     /**
@@ -99,6 +105,12 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private ConsentProperties consent = new ConsentProperties();
+
+    /**
+     * Access Strategy and authorization-related functionality.
+     */
+    @NestedConfigurationProperty
+    private AccessStrategyProperties accessStrategy = new AccessStrategyProperties();
 
     /**
      * ACME functionality.
@@ -173,12 +185,6 @@ public class CasConfigurationProperties implements Serializable {
     private CasServerProperties server = new CasServerProperties();
 
     /**
-     * Settings that configure the Java CAS client instance used internally for validation ops, etc.
-     */
-    @NestedConfigurationProperty
-    private CasJavaClientProperties client = new CasJavaClientProperties();
-
-    /**
      * Service registry functionality.
      */
     @NestedConfigurationProperty
@@ -188,7 +194,7 @@ public class CasConfigurationProperties implements Serializable {
      * SLO functionality.
      */
     @NestedConfigurationProperty
-    private SingleLogOutProperties slo = new SingleLogOutProperties();
+    private SingleLogoutProperties slo = new SingleLogoutProperties();
 
     /**
      * SSO functionality.
@@ -233,6 +239,12 @@ public class CasConfigurationProperties implements Serializable {
     private GoogleFirebaseCloudMessagingProperties googleFirebaseMessaging = new GoogleFirebaseCloudMessagingProperties();
 
     /**
+     * Slack Messaging functionality.
+     */
+    @NestedConfigurationProperty
+    private SlackMessagingProperties slackMessaging = new SlackMessagingProperties();
+
+    /**
      * Google reCAPTCHA settings.
      */
     @NestedConfigurationProperty
@@ -269,34 +281,28 @@ public class CasConfigurationProperties implements Serializable {
     private WarningCookieProperties warningCookie = new WarningCookieProperties();
 
     /**
+     * GeoLocation settings.
+     */
+    @NestedConfigurationProperty
+    private GeoLocationProperties geoLocation = new GeoLocationProperties();
+
+    /**
      * SAML SP integration settings.
      */
     @NestedConfigurationProperty
     private SamlServiceProviderProperties samlSp = new SamlServiceProviderProperties();
 
     /**
-     * MaxMind settings.
-     */
-    @NestedConfigurationProperty
-    private MaxmindProperties maxmind = new MaxmindProperties();
-
-    /**
-     * Google Maps settings.
-     */
-    @NestedConfigurationProperty
-    private GoogleMapsProperties googleMaps = new GoogleMapsProperties();
-
-    /**
      * General database and hibernate settings.
      */
     @NestedConfigurationProperty
     private DatabaseProperties jdbc = new DatabaseProperties();
-
+    
     /**
-     * Google Apps integration settings.
+     * Integration settings for amazon sts.
      */
     @NestedConfigurationProperty
-    private GoogleAppsProperties googleApps = new GoogleAppsProperties();
+    private AmazonSecurityTokenServiceProperties amazonSts = new AmazonSecurityTokenServiceProperties();
 
     /**
      * SAML Metadata UI settings and parsing.
@@ -347,29 +353,14 @@ public class CasConfigurationProperties implements Serializable {
     private SpringCloudConfigurationProperties spring = new SpringCloudConfigurationProperties();
 
     /**
-     * Session replication properties.
+     * Account registration settings.
      */
     @NestedConfigurationProperty
-    private SessionReplicationProperties sessionReplication = new SessionReplicationProperties();
+    private AccountManagementRegistrationProperties accountRegistration = new AccountManagementRegistrationProperties();
 
     /**
-     * Hold configuration settings in a parent
-     * field mainly used for serialization.
-     *
-     * @return the serializable
+     * Core internal settings.
      */
-    public Serializable withHolder() {
-        return new Holder(this);
-    }
-
-    @RequiredArgsConstructor
-    @Getter
-    private static class Holder implements Serializable {
-        private static final long serialVersionUID = -3129941286238115568L;
-
-        /**
-         * Reference to configuration settings.
-         */
-        private final CasConfigurationProperties cas;
-    }
+    @NestedConfigurationProperty
+    private CasServerCoreProperties core = new CasServerCoreProperties();
 }

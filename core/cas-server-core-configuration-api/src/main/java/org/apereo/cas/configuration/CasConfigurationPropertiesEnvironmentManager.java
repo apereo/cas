@@ -1,20 +1,12 @@
 package org.apereo.cas.configuration;
 
-import org.apereo.cas.configuration.support.RelaxedPropertyNames;
-
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.env.Environment;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Objects;
+import org.springframework.core.env.CompositePropertySource;
+import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
  * This is {@link CasConfigurationPropertiesEnvironmentManager}.
@@ -24,105 +16,55 @@ import java.util.Objects;
  */
 
 @Slf4j
-@RequiredArgsConstructor
-@Getter
-public class CasConfigurationPropertiesEnvironmentManager {
+public record CasConfigurationPropertiesEnvironmentManager(ConfigurationPropertiesBindingPostProcessor binder) {
 
     /**
-     * Property name passed to the environment that indicates the path to the standalone configuration file.
+     * Default bean name.
      */
-    public static final String PROPERTY_CAS_STANDALONE_CONFIGURATION_FILE = "cas.standalone.configuration-file";
-    /**
-     * Property name passed to the environment that indicates the path to the standalone configuration directory.
-     */
-    public static final String PROPERTY_CAS_STANDALONE_CONFIGURATION_DIRECTORY = "cas.standalone.configuration-directory";
-
-    /**
-     * Configuration directories for CAS, listed in order.
-     */
-    private static final File[] DEFAULT_CAS_CONFIG_DIRECTORIES = {
-        new File("/etc/cas/config"),
-        new File("/opt/cas/config"),
-        new File("/var/cas/config")
-    };
-
-    private final @NonNull ConfigurationPropertiesBindingPostProcessor binder;
-
-    private final Environment environment;
+    public static final String BEAN_NAME = "configurationPropertiesEnvironmentManager";
 
     /**
      * Rebind cas configuration properties.
      *
      * @param binder             the binder
      * @param applicationContext the application context
+     * @return the application context
      */
-    public static void rebindCasConfigurationProperties(final ConfigurationPropertiesBindingPostProcessor binder,
+    public static ApplicationContext rebindCasConfigurationProperties(
+        final ConfigurationPropertiesBindingPostProcessor binder,
         final ApplicationContext applicationContext) {
-
-        val map = applicationContext.getBeansOfType(CasConfigurationProperties.class);
-        val name = map.keySet().iterator().next();
-        LOGGER.trace("Reloading CAS configuration via [{}]", name);
-        val e = applicationContext.getBean(name);
-        binder.postProcessBeforeInitialization(e, name);
-        val bean = applicationContext.getAutowireCapableBeanFactory().initializeBean(e, name);
+        val config = applicationContext.getBean(CasConfigurationProperties.class);
+        val name = String.format("%s-%s", CasConfigurationProperties.PREFIX, config.getClass().getName());
+        binder.postProcessBeforeInitialization(config, name);
+        val bean = applicationContext.getAutowireCapableBeanFactory().initializeBean(config, name);
         applicationContext.getAutowireCapableBeanFactory().autowireBean(bean);
         LOGGER.debug("Reloaded CAS configuration [{}]", name);
+        return applicationContext;
     }
+
 
     /**
      * Rebind cas configuration properties.
      *
      * @param applicationContext the application context
+     * @return the application context
      */
-    public void rebindCasConfigurationProperties(final ApplicationContext applicationContext) {
-        rebindCasConfigurationProperties(this.binder, applicationContext);
+    public ApplicationContext rebindCasConfigurationProperties(final ApplicationContext applicationContext) {
+        return rebindCasConfigurationProperties(this.binder, applicationContext);
     }
 
     /**
-     * Gets standalone profile configuration directory.
+     * Configure environment property sources property source.
      *
-     * @return the standalone profile configuration directory
+     * @param environment the environment
+     * @return the property source
      */
-    public File getStandaloneProfileConfigurationDirectory() {
-        val values = new LinkedHashSet<>(RelaxedPropertyNames.forCamelCase(PROPERTY_CAS_STANDALONE_CONFIGURATION_DIRECTORY).getValues());
-        values.add(PROPERTY_CAS_STANDALONE_CONFIGURATION_DIRECTORY);
-
-        val file = values
-            .stream()
-            .map(key -> environment.getProperty(key, File.class))
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElse(null);
-
-        if (file != null && file.exists()) {
-            LOGGER.trace("Received standalone configuration directory [{}]", file);
-            return file;
-        }
-
-        return Arrays.stream(DEFAULT_CAS_CONFIG_DIRECTORIES)
-            .filter(File::exists)
-            .findFirst()
-            .orElse(null);
-    }
-
-    /**
-     * Gets standalone profile configuration file.
-     *
-     * @return the standalone profile configuration file
-     */
-    public File getStandaloneProfileConfigurationFile() {
-        val values = new LinkedHashSet<>(RelaxedPropertyNames.forCamelCase(PROPERTY_CAS_STANDALONE_CONFIGURATION_FILE).getValues());
-        values.add(PROPERTY_CAS_STANDALONE_CONFIGURATION_FILE);
-
-        return values
-            .stream()
-            .map(key -> environment.getProperty(key, File.class))
-            .filter(Objects::nonNull)
-            .findFirst()
-            .orElse(null);
-    }
-
-    public String getApplicationName() {
-        return environment.getRequiredProperty("spring.application.name");
+    public static CompositePropertySource configureEnvironmentPropertySources(final ConfigurableEnvironment environment) {
+        val nativePropertySources = new CompositePropertySource("casNativeCompositeSource");
+        val propertySources = environment.getPropertySources();
+        FunctionUtils.doIfNotNull(propertySources.get("commandLineArgs"), nativePropertySources::addFirstPropertySource);
+        FunctionUtils.doIfNotNull(propertySources.get("systemProperties"), nativePropertySources::addPropertySource);
+        FunctionUtils.doIfNotNull(propertySources.get("systemEnvironment"), nativePropertySources::addPropertySource);
+        return nativePropertySources;
     }
 }

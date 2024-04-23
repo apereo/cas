@@ -22,6 +22,22 @@ import java.util.List;
  */
 public interface StringSerializer<T> extends Serializable {
     /**
+     * Helper method with reusable code.
+     *
+     * @param <T>  the type param
+     * @param elem the elem
+     * @return collection
+     */
+    private static <T> Collection<T> makeCollectionOf(final T elem) {
+        if (elem != null) {
+            val list = new ArrayList<T>(1);
+            list.add(elem);
+            return list;
+        }
+        return new ArrayList<>(0);
+    }
+
+    /**
      * Create the object type from the given  string.
      *
      * @param data the  string
@@ -143,22 +159,33 @@ public interface StringSerializer<T> extends Serializable {
     Class<T> getTypeToSerialize();
 
     /**
-     * Helper method with reusable code.
+     * Read and consume the input
+     * and parse the result into a list/collection.
      *
-     * @param <T> the type param
-     * @param elem the elem
-     * @return collection
+     * @param json the json
+     * @return the list
      */
-    private static <T> Collection<T> makeCollectionOf(T elem) {
-        if (elem != null) {
-            val list = new ArrayList<T>(1);
-            list.add(elem);
-            return list;
-        }
-        return new ArrayList<>(0);
-    }
+    List<T> fromList(String json);
 
+    /**
+     * Collect a list of objects and transform them into a String
+     * in the intended format.
+     *
+     * @param json the json
+     * @return the string
+     */
+    String fromList(Collection<T> json);
+    
     default List<MediaType> getContentTypes() {
         return List.of(MediaType.TEXT_PLAIN);
     }
+
+    /**
+     * Merge.
+     *
+     * @param baseEntity  the base entity
+     * @param childEntity the child entity
+     * @return the result
+     */
+    T merge(T baseEntity, T childEntity);
 }

@@ -1,22 +1,31 @@
 package org.apereo.cas.cosmosdb;
 
+import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.cosmosdb.BaseCosmosDbProperties;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
-import com.microsoft.azure.documentdb.ConnectionPolicy;
-import com.microsoft.azure.documentdb.ConsistencyLevel;
-import com.microsoft.azure.documentdb.DocumentClient;
-import com.microsoft.azure.spring.data.documentdb.DocumentDbFactory;
-import com.microsoft.azure.spring.data.documentdb.common.GetHashMac;
-import com.microsoft.azure.spring.data.documentdb.core.DocumentDbTemplate;
-import com.microsoft.azure.spring.data.documentdb.core.convert.MappingDocumentDbConverter;
-import com.microsoft.azure.spring.data.documentdb.core.mapping.DocumentDbMappingContext;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import com.azure.cosmos.ConsistencyLevel;
+import com.azure.cosmos.CosmosClient;
+import com.azure.cosmos.CosmosClientBuilder;
+import com.azure.cosmos.CosmosContainer;
+import com.azure.cosmos.ThrottlingRetryOptions;
+import com.azure.cosmos.implementation.Configs;
+import com.azure.cosmos.models.CosmosContainerProperties;
+import com.azure.cosmos.models.IndexingMode;
+import com.azure.cosmos.models.IndexingPolicy;
+import com.azure.cosmos.models.PartitionKeyDefinition;
+import com.azure.cosmos.models.PartitionKind;
+import com.azure.cosmos.models.ThroughputProperties;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslProvider;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.autoconfigure.domain.EntityScanner;
-import org.springframework.context.ApplicationContext;
-import org.springframework.data.annotation.Persistent;
+import org.springframework.data.util.ReflectionUtils;
+
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CosmosDbObjectFactory}.
@@ -24,108 +33,111 @@ import org.springframework.data.annotation.Persistent;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiredArgsConstructor
+@Slf4j
 public class CosmosDbObjectFactory {
-    private static final String USER_AGENT_SUFFIX = "spring-boot-starter/0.2.0";
+    private final BaseCosmosDbProperties properties;
 
-    private final ApplicationContext applicationContext;
+    private final CosmosClient client;
 
-    /**
-     * Gets database link.
-     *
-     * @param databaseName the database name
-     * @return the database link
-     */
-    public static String getDatabaseLink(final String databaseName) {
-        return "dbs/" + databaseName;
+    public CosmosDbObjectFactory(final BaseCosmosDbProperties properties,
+                                 final CasSSLContext casSSLContext) {
+        this.properties = properties;
+        val throttlingRetryOptions = new ThrottlingRetryOptions()
+            .setMaxRetryAttemptsOnThrottledRequests(properties.getMaxRetryAttemptsOnThrottledRequests())
+            .setMaxRetryWaitTime(Beans.newDuration(properties.getMaxRetryWaitTime()));
+
+        val uri = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getUri());
+        val builder = new CosmosClientBuilder()
+            .endpoint(uri)
+            .key(SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getKey()))
+            .preferredRegions(properties.getPreferredRegions())
+            .consistencyLevel(ConsistencyLevel.valueOf(properties.getConsistencyLevel()))
+            .directMode()
+            .contentResponseOnWriteEnabled(false)
+            .clientTelemetryEnabled(properties.isAllowTelemetry())
+            .userAgentSuffix(properties.getUserAgentSuffix())
+            .throttlingRetryOptions(throttlingRetryOptions)
+            .endpointDiscoveryEnabled(properties.isEndpointDiscoveryEnabled())
+            .directMode();
+        LOGGER.debug("Building CosmosDb client for [{}]", uri);
+        FunctionUtils.doUnchecked(__ -> {
+            val sslContext = SslContextBuilder
+                .forClient()
+                .sslProvider(SslProvider.JDK)
+                .trustManager(casSSLContext.getTrustManagerFactory())
+                .build();
+            val configsMethod = ReflectionUtils.findRequiredMethod(builder.getClass(), "configs");
+            configsMethod.trySetAccessible();
+            val configs = (Configs) configsMethod.invoke(builder);
+            val sslContextField = ReflectionUtils.findRequiredField(configs.getClass(), "sslContext");
+            sslContextField.trySetAccessible();
+            sslContextField.set(configs, sslContext);
+        });
+        this.client = builder.buildClient();
     }
 
     /**
-     * Gets collection link.
+     * Gets container.
      *
-     * @param databaseName   the database name
-     * @param collectionName the collection name
-     * @return the collection link
+     * @param name the name
+     * @return the container
      */
-    public static String getCollectionLink(final String databaseName, final String collectionName) {
-        return getDatabaseLink(databaseName) + "/colls/" + collectionName;
+    public CosmosContainer getContainer(final String name) {
+        LOGGER.debug("Fetching CosmosDb database [{}]", properties.getDatabase());
+        val databaseResponse = client.createDatabaseIfNotExists(properties.getDatabase());
+        val database = client.getDatabase(databaseResponse.getProperties().getId());
+        LOGGER.debug("Fetching CosmosDb container [{}]", name);
+        return database.getContainer(name);
     }
 
     /**
-     * Gets document link.
-     *
-     * @param databaseName   the database name
-     * @param collectionName the collection name
-     * @param documentId     the document id
-     * @return the document link
+     * Create database.
      */
-    public static String getDocumentLink(final String databaseName, final String collectionName, final String documentId) {
-        return getCollectionLink(databaseName, collectionName) + "/docs/" + documentId;
+    public void createDatabaseIfNecessary() {
+        val response = client.createDatabaseIfNotExists(properties.getDatabase(),
+            ThroughputProperties.createAutoscaledThroughput(properties.getDatabaseThroughput()));
+        LOGGER.debug("Created/Located database [{}]", response.getProperties().getId());
     }
 
     /**
-     * Create document client.
-     *
-     * @param properties the properties
-     * @return the document client
+     * Drop database.
      */
-    public DocumentClient createDocumentClient(final BaseCosmosDbProperties properties) {
-        val policy = ConnectionPolicy.GetDefault();
-        var userAgent = (policy.getUserAgentSuffix() == null
-            ? StringUtils.EMPTY
-            : ';' + policy.getUserAgentSuffix()) + ';' + USER_AGENT_SUFFIX;
-        if (properties.isAllowTelemetry() && GetHashMac.getHashMac() != null) {
-            userAgent += ';' + GetHashMac.getHashMac();
-        }
-        policy.setUserAgentSuffix(userAgent);
-        return new DocumentClient(properties.getUri(), properties.getKey(), policy,
-            ConsistencyLevel.valueOf(properties.getConsistencyLevel()));
+    public void dropDatabase() {
+        client.getDatabase(properties.getDatabase()).delete();
+        LOGGER.debug("Removed database [{}]", properties.getDatabase());
     }
 
     /**
-     * Create document db factory.
+     * Create container.
      *
-     * @param properties the properties
-     * @return the document db factory
+     * @param name         the name
+     * @param timeout      the timeout
+     * @param partitionKey the partition key
+     * @return the cosmos container
      */
-    public DocumentDbFactory createDocumentDbFactory(final BaseCosmosDbProperties properties) {
-        val documentClient = createDocumentClient(properties);
-        return new DocumentDbFactory(documentClient);
+    public CosmosContainer createContainer(final String name, final Long timeout, final String... partitionKey) {
+        val database = client.getDatabase(properties.getDatabase());
+        LOGGER.debug("Creating CosmosDb container [{}]", name);
+
+        val partitionDefn = new PartitionKeyDefinition();
+        partitionDefn.setPaths(Arrays.stream(partitionKey).map(key -> '/' + key).collect(Collectors.toList()));
+        partitionDefn.setKind(PartitionKind.HASH);
+        val containerProperties = new CosmosContainerProperties(name, partitionDefn);
+        containerProperties.setIndexingPolicy(new IndexingPolicy()
+            .setIndexingMode(IndexingMode.valueOf(properties.getIndexingMode())));
+        containerProperties.setDefaultTimeToLiveInSeconds(timeout.intValue());
+        val response = database.createContainerIfNotExists(containerProperties);
+        LOGGER.debug("Created CosmosDb container [{}]", response.getProperties().getId());
+        return getContainer(name);
     }
 
     /**
-     * Create document db template document db template.
+     * Create container.
      *
-     * @param documentDbFactory the document db factory
-     * @param properties        the properties
-     * @return the document db template
+     * @param name         the name
+     * @param partitionKey the partition key
      */
-    public DocumentDbTemplate createDocumentDbTemplate(final DocumentDbFactory documentDbFactory,
-                                                       final BaseCosmosDbProperties properties) {
-        val documentDbMappingContext = createDocumentDbMappingContext();
-        val mappingDocumentDbConverter = createMappingDocumentDbConverter(documentDbMappingContext);
-        return new DocumentDbTemplate(documentDbFactory, mappingDocumentDbConverter, properties.getDatabase());
-    }
-
-    /**
-     * Create document db mapping context.
-     *
-     * @return the document db mapping context
-     */
-    @SneakyThrows
-    public DocumentDbMappingContext createDocumentDbMappingContext() {
-        val documentDbMappingContext = new DocumentDbMappingContext();
-        documentDbMappingContext.setInitialEntitySet(new EntityScanner(applicationContext).scan(Persistent.class));
-        return documentDbMappingContext;
-    }
-
-    /**
-     * Create mapping document db converter.
-     *
-     * @param documentDbMappingContext the document db mapping context
-     * @return the mapping document db converter
-     */
-    private static MappingDocumentDbConverter createMappingDocumentDbConverter(final DocumentDbMappingContext documentDbMappingContext) {
-        return new MappingDocumentDbConverter(documentDbMappingContext);
+    public CosmosContainer createContainer(final String name, final String... partitionKey) {
+        return createContainer(name, -1L, partitionKey);
     }
 }

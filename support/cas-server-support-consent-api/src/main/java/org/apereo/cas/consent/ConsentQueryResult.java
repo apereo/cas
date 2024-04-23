@@ -1,9 +1,13 @@
 package org.apereo.cas.consent;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.principal.Service;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-
+import lombok.With;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -13,39 +17,24 @@ import java.io.Serializable;
  * @since 6.1.0
  */
 @ToString
-@RequiredArgsConstructor
+@RequiredArgsConstructor(staticName = "of")
+@AllArgsConstructor
 @Getter
+@With
 public class ConsentQueryResult implements Serializable {
+    @Serial
     private static final long serialVersionUID = 742133551083867719L;
 
     private final boolean required;
-    private final ConsentDecision consentDecision;
+    private ConsentDecision consentDecision;
+    private Service service;
+    private Authentication authentication;
 
-    /**
-     * Required consent query result.
-     *
-     * @return the consent query result
-     */
-    public static ConsentQueryResult required() {
-        return required(null);
+    static ConsentQueryResult ignored() {
+        return ConsentQueryResult.of(false);
     }
 
-    /**
-     * Required consent query result.
-     *
-     * @param decision the decision
-     * @return the consent query result
-     */
-    public static ConsentQueryResult required(final ConsentDecision decision) {
-        return new ConsentQueryResult(true, decision);
-    }
-
-    /**
-     * Ignored consent query result.
-     *
-     * @return the consent query result
-     */
-    public static ConsentQueryResult ignored() {
-        return new ConsentQueryResult(false, null);
+    static ConsentQueryResult required() {
+        return ConsentQueryResult.of(true);
     }
 }

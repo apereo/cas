@@ -1,0 +1,114 @@
+[
+  {
+    "name": "boolean[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "byte[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "char[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "double[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "float[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "int[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "long[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "short[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "java.math.BigDecimal[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "java.math.BigInteger[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "java.lang.Boolean[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "java.lang.Byte[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "java.lang.Character[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "java.lang.Double[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "java.lang.Float[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "java.lang.Integer[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "java.lang.Long[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "java.lang.Short[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "java.lang.String[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "java.lang.Class[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "java.util.Date[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "java.util.Calendar[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "java.io.File[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "java.sql.Date[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "java.sql.Time[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "java.sql.Timestamp[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "java.net.URL[]",
+    "unsafeAllocated": true
+  },
+  {
+    "name": "org.springframework.core.annotation.TypeMappedAnnotation[]",
+    "unsafeAllocated": true
+  }
+]

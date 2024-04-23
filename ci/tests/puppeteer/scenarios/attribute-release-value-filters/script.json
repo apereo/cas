@@ -1,0 +1,26 @@
+{
+  "dependencies": "core",
+  "conditions": {
+    "docker": "true"
+  },
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.ticket.st.time-to-kill-in-seconds=60",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.authn.attribute-repository.stub.attributes.groupMembership1=STUD",
+    "--cas.authn.attribute-repository.stub.attributes.groupMembership2=ADMN",
+    "--cas.authn.attribute-repository.stub.attributes.groupMembership3=FACULTY",
+    "--cas.authn.attribute-repository.stub.attributes.groupMembership4=MATH101",
+    "--cas.authn.attribute-repository.stub.attributes.groupMembership5=CHEMISTRY",
+    "--cas.authn.attribute-repository.stub.attributes.groupMembership6=SOFTENG",
+
+    "--cas.authn.attribute-repository.stub.attributes.accountId=9Wy1B3m3f66bPPmU5"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

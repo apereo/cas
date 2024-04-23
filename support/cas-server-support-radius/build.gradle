@@ -1,4 +1,24 @@
+/*
+ * The following resolution strategy
+ * is required for JRadius library that relies
+ * on an old version of bouncycastle.
+ */
+def dependencyUpdates = gradle.startParameter.taskNames.any {task -> task.equalsIgnoreCase('dependencyUpdates') }
+if (!dependencyUpdates) {
+    ["runtimeClasspath", "testRuntimeClasspath"].forEach(name -> {
+        configurations.named(name).configure {it.resolutionStrategy.force "org.bouncycastle:bcprov-jdk15on:1.63"}
+    })
+}
+
 description = "Apereo CAS RADIUS Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "RADIUS Authentication"
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api")
@@ -11,17 +31,17 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
-    testImplementation project(":core:cas-server-core-notifications")
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-webflow-mfa-api")
 
-    compileOnlyApi  project(":support:cas-server-support-trusted-mfa")
+    compileOnly project(":support:cas-server-support-trusted-mfa")
 
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-webflow-mfa")
+    testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-util")
@@ -36,4 +56,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow-mfa-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
+
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 }

@@ -12,6 +12,7 @@ import lombok.val;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 /**
  * This is {@link HazelcastJCloudsDiscoveryStrategy}.
@@ -22,8 +23,8 @@ import java.util.HashMap;
 public class HazelcastJCloudsDiscoveryStrategy implements HazelcastDiscoveryStrategy {
 
     @Override
-    public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig,
-                                       final Config configuration, final NetworkConfig networkConfig) {
+    public Optional<DiscoveryStrategyConfig> get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig,
+                                                 final Config configuration, final NetworkConfig networkConfig) {
         val jclouds = cluster.getDiscovery().getJclouds();
         val properties = new HashMap<String, Comparable>();
         if (StringUtils.hasText(jclouds.getCredential())) {
@@ -42,7 +43,9 @@ public class HazelcastJCloudsDiscoveryStrategy implements HazelcastDiscoveryStra
             properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_IDENTITY, jclouds.getIdentity());
         }
         if (jclouds.getPort() > 0) {
-            properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_HZ_PORT, jclouds.getPort());
+            properties.put(
+                HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_HZ_PORT,
+                Integer.toString(jclouds.getPort()));
         }
         if (StringUtils.hasText(jclouds.getProvider())) {
             properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_PROVIDER, jclouds.getProvider());
@@ -62,7 +65,7 @@ public class HazelcastJCloudsDiscoveryStrategy implements HazelcastDiscoveryStra
         if (StringUtils.hasText(jclouds.getZones())) {
             properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_ZONES, jclouds.getZones());
         }
-        return new DiscoveryStrategyConfig(new JCloudsDiscoveryStrategyFactory(), properties);
+        return Optional.of(new DiscoveryStrategyConfig(new JCloudsDiscoveryStrategyFactory(), properties));
     }
 
 }

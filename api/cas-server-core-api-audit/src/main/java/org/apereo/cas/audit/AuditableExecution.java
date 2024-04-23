@@ -15,10 +15,21 @@ package org.apereo.cas.audit;
 public interface AuditableExecution {
 
     /**
+     * Auditable enforcer to check registered service access.
+     */
+    String AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS = "registeredServiceAccessStrategyEnforcer";
+
+    /**
+     * Auditable enforcer to check registered service access for delegated authentication policy.
+     */
+    String AUDITABLE_EXECUTION_DELEGATED_AUTHENTICATION_ACCESS = "registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer";
+
+    /**
      * Execute auditable action.
      *
      * @param context the context
      * @return the result
+     * @throws Throwable the throwable
      */
-    AuditableExecutionResult execute(AuditableContext context);
+    AuditableExecutionResult execute(AuditableContext context) throws Throwable;
 }

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -83,6 +84,7 @@ public class HazelcastJCloudsDiscoveryProperties implements Serializable {
      */
     public static final String JCLOUDS_DISCOVERY_CREDENTIAL_PATH = "credentialPath";
 
+    @Serial
     private static final long serialVersionUID = -8281247687171101766L;
 
     /**

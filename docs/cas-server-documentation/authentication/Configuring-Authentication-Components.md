@@ -37,20 +37,18 @@ There are a variety of authentication handlers and methods supported
 by CAS. Use the menu to navigate around the site and choose. By default, CAS is configured 
 to accept a pre-defined set of credentials that are supplied via the CAS configuration.
 
-<div class="alert alert-warning"><strong>Default Credentials</strong><p>To test the default authentication scheme in CAS,
+<div class="alert alert-warning">:warning: <strong>Default Credentials</strong><p>To test the default authentication scheme in CAS,
 use <strong>casuser</strong> and <strong>Mellon</strong> as the username and password respectively. These are automatically
 configured via the static authentication handler, and <strong>MUST</strong> be removed from the configuration
 prior to production rollouts.</p></div>
 
-{% include casproperties.html properties="cas.authn.accept" %}
+{% include_cached casproperties.html properties="cas.authn.accept" %}
 
-### Administrative Endpoints
+### Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                  | Description
-|---------------------------|------------------------------------------------
-| `authenticationHandlers`  | A `GET` request presents the collection of registered authentication handlers. An individual authentication handler can be queried via `GET` by its name using a selector path (i.e. `authenticationHandlers/{name}`).
+
+{% include_cached actuators.html endpoints="authenticationHandlers" casModule="cas-server-support-reports" %}
 
 ### Resolution Strategy
 
@@ -81,10 +79,6 @@ Authentication failures are typically collected in CAS by the name of each authe
 ## Authentication Policy
 
 Please see [authentication security policies](Configuring-Authentication-Policy.html) for more details.
-
-## Principal Resolution
-
-Please see [this guide](Configuring-Authentication-PrincipalResolution.html) for more details.
 
 ## Long Term Authentication
 

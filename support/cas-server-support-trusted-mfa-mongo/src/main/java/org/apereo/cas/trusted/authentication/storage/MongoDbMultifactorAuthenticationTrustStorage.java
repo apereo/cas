@@ -6,7 +6,6 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -100,7 +99,6 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
             getTrustedDevicesMultifactorProperties().getMongo().getCollection());
     }
 
-    @SneakyThrows
     @Override
     protected MultifactorAuthenticationTrustRecord saveInternal(final MultifactorAuthenticationTrustRecord record) {
         this.mongoTemplate.save(record, getTrustedDevicesMultifactorProperties().getMongo().getCollection());

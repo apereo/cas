@@ -1,0 +1,18 @@
+{
+  "dependencies": "throttle,throttle-bucket4j",
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.throttle.failure.threshold=1",
+    "--cas.authn.throttle.failure.range-seconds=5",
+
+    "--cas.authn.throttle.bucket4j.bandwidth[0].capacity=1",
+    "--cas.authn.throttle.bucket4j.bandwidth[0].duration=PT5S",
+    "--cas.authn.throttle.bucket4j.blocking=true",
+
+    "--logging.level.org.apereo.cas=info"
+  ]
+}
+

@@ -1,41 +1,36 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
+
+const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true
-    });
-    const page = await browser.newPage();
-    const url = "https://localhost:8443/cas/oidc/authorize?" +
+    const browser = await cas.newBrowser(cas.browserOptions());
+    const page = await cas.newPage(browser);
+    const redirectUrl = "https://localhost:9859/post";
+    const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
         "client_id=client&" +
-        "redirect_uri=https%3A%2F%2Foidcdebugger.com%2Fdebug&" +
+        `redirect_uri=${redirectUrl}&` +
         "scope=openid%20email%20profile%20address%20phone&" +
         "response_type=id_token&" +
         "response_mode=form_post&" +
+        "state=abc1234567890&" +
         "nonce=vn4qulthnx";
-    await page.goto(url);
+    await cas.goto(page, url);
+    await cas.loginWith(page);
+    await cas.click(page, "#allow");
+    await cas.waitForNavigation(page);
+    await cas.sleep(3000);
+    await cas.logPage(page);
+    await cas.screenshot(page);
 
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
-    await page.waitForTimeout(5000)
-
-    await click(page, "#allow");
-    await page.waitForNavigation();
-    await page.waitForTimeout(5000)
-
-    let element = await page.$('h1.green-text');
-    let header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
-    assert(header === "Success!")
-
+    const responseUrl = new URL(await page.url());
+    const params = new URLSearchParams(responseUrl.search);
+    assert(params.getAll("").length === 0);
+    const fragment = responseUrl.hash.substring(1);
+    await cas.log(fragment);
+    assert(fragment.includes("id_token="));
+    assert(fragment.includes("nonce="));
+    assert(fragment.includes("state="));
+    assert(!fragment.includes("access_token="));
     await browser.close();
 })();
 
-async function click(page, button) {
-    await page.evaluate((button) => {
-        document.querySelector(button).click();
-    }, button);
-}

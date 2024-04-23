@@ -23,9 +23,9 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Audits")
-public class SurrogateAuditPrincipalIdProviderTests {
+class SurrogateAuditPrincipalIdProviderTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() throws Throwable {
         val p = new SurrogateAuditPrincipalIdProvider();
         assertEquals(Credential.UNKNOWN_ID, p.getPrincipalIdFrom(null, null, null, null));
 
@@ -41,7 +41,7 @@ public class SurrogateAuditPrincipalIdProviderTests {
     }
 
     @Test
-    public void verifyNoSurrogateAction() {
+    void verifyNoSurrogateAction() throws Throwable {
         val p = new SurrogateAuditPrincipalIdProvider();
         assertTrue(p.getOrder() > 0);
         val auth = CoreAuthenticationTestUtils.getAuthentication(CoreAuthenticationTestUtils.getPrincipal());

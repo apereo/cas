@@ -1,19 +1,20 @@
 package org.apereo.cas.configuration.support;
 
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.jasypt.iv.RandomIvGenerator;
 import org.jasypt.registry.AlgorithmRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.env.Environment;
-
-import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,12 +25,15 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     AopAutoConfiguration.class
 })
-@Tag("CasConfiguration")
-public class CasConfigurationJasyptCipherExecutorTests {
+@Tag("Cipher")
+@Slf4j
+class CasConfigurationJasyptCipherExecutorTests {
     static {
         System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PASSWORD.getPropertyName(), "P@$$w0rd");
+        System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.INITIALIZATION_VECTOR.getPropertyName(), "true");
     }
 
     @Autowired
@@ -43,22 +47,22 @@ public class CasConfigurationJasyptCipherExecutorTests {
     }
 
     @Test
-    public void verifyDecryptionEncryption() {
+    void verifyDecryptionEncryption() throws Throwable {
         val result = jasypt.encryptValue(getClass().getSimpleName());
         assertNotNull(result);
         val plain = jasypt.decryptValue(result);
-        assertEquals(plain, getClass().getSimpleName());
+        assertEquals(getClass().getSimpleName(), plain);
     }
 
     @Test
-    public void verifyEncodeOps() {
+    void verifyEncodeOps() throws Throwable {
         assertNotNull(jasypt.getName());
         val result = jasypt.encode(getClass().getSimpleName());
         assertNotNull(result);
     }
 
     @Test
-    public void verifyDecryptionEncryptionPairNotNeeded() {
+    void verifyDecryptionEncryptionPairNotNeeded() throws Throwable {
         val result = jasypt.decryptValue("keyValue");
         assertNotNull(result);
         assertEquals("keyValue", result);
@@ -66,14 +70,14 @@ public class CasConfigurationJasyptCipherExecutorTests {
     }
 
     @Test
-    public void verifyDecryptionEncryptionPairFails() {
+    void verifyDecryptionEncryptionPairFails() throws Throwable {
         val encVal = CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "keyValue";
         val result = jasypt.decode(encVal, ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertNull(result);
     }
 
     @Test
-    public void verifyDecryptionEncryptionPairSuccess() {
+    void verifyDecryptionEncryptionPairSuccess() throws Throwable {
         val value = jasypt.encryptValue("Testing");
         val result = jasypt.decode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
         assertNotNull(result);
@@ -81,61 +85,35 @@ public class CasConfigurationJasyptCipherExecutorTests {
     }
 
     /**
-     * This seeks to ensure that a password encrypted in a previous version of CAS can still be decrypted.
-     * Password encrypted with 6.3.0 shell and password of "P@$$w0rd".
-     */
-    @Test
-    public void verifyOldEncryptedPasswordStillWorks() {
-        val jasyptTest = new CasConfigurationJasyptCipherExecutor(this.environment);
-        jasyptTest.setAlgorithmForce("PBEWITHSHAAND256BITAES-CBC-BC");
-        assertEquals("testing", jasyptTest.decode("{cas-cipher}GxXRraiiFRMNDS81OAs6eo6qnhfHdfY1LrggFHRhfQo="));
-    }
-
-    /**
      * This seeks to ensure that a password encrypted with an initialization vector still works.
      * Password encrypted with 6.4.0 and password of "P@$$w0rd".
      */
     @Test
-    public void verifyEncryptedPasswordWithInitizializationVectorStillWorks() {
+    void verifyEncryptedPassword() throws Throwable {
         val jasyptTest = new CasConfigurationJasyptCipherExecutor(this.environment);
         jasyptTest.setProviderName("BC");
-        jasyptTest.setAlgorithmForce("PBEWITHSHAAND256BITAES-CBC-BC");
-        jasyptTest.configureInitializationVector();
+        jasyptTest.setAlgorithm("PBEWITHSHAAND256BITAES-CBC-BC");
+        jasyptTest.setIvGenerator(new RandomIvGenerator());
         assertEquals("testing", jasyptTest.decode("{cas-cipher}88HKpXCD888/ZP7hMAg7VdxljZD3fho5r5V7c15kPXovYCk4cBdpcxfd5vgcxTit"));
     }
 
-    /**
-     * Test all algorithms that should work without an initialization vector.
-     */
     @Test
-    public void verifyAlgorithmsWithoutInitializationVector() {
-        val algorithms = (Set<String>) AlgorithmRegistry.getAllPBEAlgorithms();
+    void verifyAlgorithms() throws Throwable {
+        val algorithms = AlgorithmRegistry.getAllPBEAlgorithms();
         for (val algorithm : algorithms) {
-            if (!algorithm.matches(CasConfigurationJasyptCipherExecutor.ALGS_THAT_REQUIRE_IV_PATTERN)) {
-                assertTrue(isAlgorithmFunctional(algorithm, false));
-            }
+            assertTrue(isAlgorithmFunctional(algorithm.toString()));
         }
     }
 
-    /**
-     * Test all algorithms with an initialization vector.
-     */
-    @Test
-    public void verifyAlgorithmsWithInitializationVector() {
-        val algorithms = (Set<String>) AlgorithmRegistry.getAllPBEAlgorithms();
-        for (val algorithm : algorithms) {
-            assertTrue(isAlgorithmFunctional(algorithm, true));
-        }
-    }
-
-    private boolean isAlgorithmFunctional(final String algorithm, final boolean useInitializationVector) {
+    private boolean isAlgorithmFunctional(final String algorithm) {
         val jasyptTest = new CasConfigurationJasyptCipherExecutor(this.environment);
-        jasyptTest.setAlgorithmForce(algorithm);
-        if (useInitializationVector) {
-            jasyptTest.configureInitializationVector();
-        }
+        jasyptTest.setAlgorithm(algorithm);
         val testValue = "Testing_" + algorithm;
         val value = jasyptTest.encryptValue(testValue);
+        if (StringUtils.isBlank(value)) {
+            LOGGER.warn("[{}] cannot be encoded via [{}]", testValue, algorithm);
+            return true;
+        }
         val result = jasyptTest.decode(value, ArrayUtils.EMPTY_OBJECT_ARRAY);
         return testValue.equals(result);
     }

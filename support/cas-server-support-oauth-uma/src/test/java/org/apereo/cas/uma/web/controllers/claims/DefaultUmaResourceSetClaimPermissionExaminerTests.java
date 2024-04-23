@@ -26,10 +26,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("UMA")
-public class DefaultUmaResourceSetClaimPermissionExaminerTests extends BaseUmaEndpointControllerTests {
+class DefaultUmaResourceSetClaimPermissionExaminerTests extends BaseUmaEndpointControllerTests {
 
     @Test
-    public void verifyUnmatchedOperation() {
+    void verifyUnmatchedOperation() throws Throwable {
         val ticketId = UUID.randomUUID().toString();
         val permissionTicket = mock(UmaPermissionTicket.class);
         when(permissionTicket.getId()).thenReturn(ticketId);
@@ -50,14 +50,15 @@ public class DefaultUmaResourceSetClaimPermissionExaminerTests extends BaseUmaEn
         permission.setScopes(CollectionUtils.wrapHashSet("s1", "s2"));
         policy.setPermissions(CollectionUtils.wrapHashSet(permission));
         resourceSet.setPolicies(CollectionUtils.wrapHashSet(policy));
-        
-        val result = umaResourceSetClaimPermissionExaminer.examine(resourceSet, permissionTicket);
+
+        when(permissionTicket.getResourceSet()).thenReturn(resourceSet);
+        val result = umaResourceSetClaimPermissionExaminer.examine(permissionTicket);
         assertNotNull(result);
         assertTrue(result.getDetails().containsKey(permission.getId()));
     }
 
     @Test
-    public void verifyMatchedOperation() {
+    void verifyMatchedOperation() throws Throwable {
         val ticketId = UUID.randomUUID().toString();
         val permissionTicket = mock(UmaPermissionTicket.class);
         when(permissionTicket.getId()).thenReturn(ticketId);
@@ -79,7 +80,8 @@ public class DefaultUmaResourceSetClaimPermissionExaminerTests extends BaseUmaEn
         policy.setPermissions(CollectionUtils.wrapHashSet(permission));
         resourceSet.setPolicies(CollectionUtils.wrapHashSet(policy));
 
-        val result = umaResourceSetClaimPermissionExaminer.examine(resourceSet, permissionTicket);
+        when(permissionTicket.getResourceSet()).thenReturn(resourceSet);
+        val result = umaResourceSetClaimPermissionExaminer.examine(permissionTicket);
         assertNotNull(result);
         assertFalse(result.getDetails().containsKey(permission.getId()));
     }

@@ -1,7 +1,7 @@
 package org.apereo.cas.memcached.kryo.serial;
 
 import org.apereo.cas.memcached.kryo.CasKryoPool;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.esotericsoftware.kryo.io.ByteBufferOutput;
 import com.esotericsoftware.kryo.io.Input;
@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
+import java.net.URI;
 import java.net.URL;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,14 +22,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Memcached")
-@EnabledIfPortOpen(port = 11211)
-public class URLSerializerTests {
+@EnabledIfListeningOnPort(port = 11211)
+class URLSerializerTests {
     @Test
-    public void verifyTranscoderWorks() throws Exception {
+    void verifyTranscoderWorks() throws Throwable {
         val pool = new CasKryoPool();
         try (val kryo = pool.borrow()) {
             val output = new ByteBufferOutput(4096);
-            kryo.writeObject(output, new URL("https://github.com"));
+            kryo.writeObject(output, new URI("https://github.com").toURL());
             val inputStream = new ByteArrayInputStream(output.toBytes());
             assertNotNull(kryo.readObject(new Input(inputStream), URL.class));
         }

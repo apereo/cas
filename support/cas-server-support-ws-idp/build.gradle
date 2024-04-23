@@ -1,4 +1,12 @@
-description = "Apereo CAS WS-Security IdP"
+description = "Apereo CAS WS-Security Identity Provider"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "WSFED Protocol",
+            title: "WS Federation Identity Provider"
+    ]
+}
+
 dependencies {
     implementation libraries.opensaml
     implementation libraries.dropwizard
@@ -6,7 +14,7 @@ dependencies {
     implementation libraries.apachecxf
     implementation libraries.apachefediz
     implementation libraries.wss4j
-    implementation libraries.casclient
+
 
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
@@ -16,6 +24,7 @@ dependencies {
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-cookie-api")
+    implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-mfa")
     implementation project(":core:cas-server-core-authentication-api")
@@ -29,8 +38,8 @@ dependencies {
     implementation project(":support:cas-server-support-ws-sts")
     implementation project(":support:cas-server-support-ws-idp-api")
 
-    compileOnlyApi  project(":support:cas-server-support-jpa-util")
-    
+    compileOnly project(":support:cas-server-support-jpa-util")
+
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-cookie")
@@ -50,4 +59,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 }

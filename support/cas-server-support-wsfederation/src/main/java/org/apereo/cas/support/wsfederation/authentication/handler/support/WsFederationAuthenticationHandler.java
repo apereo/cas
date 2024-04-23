@@ -4,15 +4,14 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 
 import lombok.val;
 
 import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * This handler authenticates Security token/credentials.
@@ -39,11 +38,11 @@ public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcess
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws Throwable {
         val wsFederationCredentials = (WsFederationCredential) credential;
         if (wsFederationCredentials != null) {
             val attributes = wsFederationCredentials.getAttributes();
-            val principal = this.principalFactory.createPrincipal(wsFederationCredentials.getId(), (Map) attributes);
+            val principal = principalFactory.createPrincipal(wsFederationCredentials.getId(), attributes);
             return this.createHandlerResult(wsFederationCredentials, principal, new ArrayList<>(0));
         }
         throw new FailedLoginException();

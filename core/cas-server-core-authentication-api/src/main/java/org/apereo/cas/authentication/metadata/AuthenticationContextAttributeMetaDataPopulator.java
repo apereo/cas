@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.Credential;
 
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.springframework.util.StringUtils;
 
 /**
  * This is {@link AuthenticationContextAttributeMetaDataPopulator}.
@@ -19,14 +20,17 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public class AuthenticationContextAttributeMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
     private final String authenticationContextAttribute;
+
     private final AuthenticationHandler authenticationHandler;
+
     private final String authenticationContextAttributeValue;
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         if (builder.hasAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE,
-            obj -> obj.toString().equals(this.authenticationHandler.getName()))) {
-            builder.mergeAttribute(this.authenticationContextAttribute, this.authenticationContextAttributeValue);
+            obj -> obj.toString().equals(authenticationHandler.getName()))) {
+            StringUtils.commaDelimitedListToSet(authenticationContextAttribute).forEach(attribute ->
+                builder.mergeAttribute(attribute, authenticationContextAttributeValue));
         }
     }
 

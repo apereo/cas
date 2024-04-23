@@ -38,9 +38,9 @@ public class QRAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigu
             val qrSubmission = getState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
             createTransitionForState(qrSubmission, CasWebflowConstants.TRANSITION_ID_VALIDATE, STATE_ID_VALIDATE_QR_TOKEN);
 
-            val validateAction = createActionState(flow, STATE_ID_VALIDATE_QR_TOKEN, "qrAuthenticationValidateWebSocketChannelAction");
+            val validateAction = createActionState(flow, STATE_ID_VALIDATE_QR_TOKEN, CasWebflowConstants.ACTION_ID_QR_AUTHENTICATION_VALIDATE_CHANNEL);
             createTransitionForState(validateAction, CasWebflowConstants.TRANSITION_ID_FINALIZE, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
-            state.getEntryActionList().add(createEvaluateAction("qrAuthenticationGenerateCodeAction"));
+            state.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_QR_AUTHENTICATION_GENERATE_CODE));
         }
     }
 }

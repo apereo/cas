@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,10 +24,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class MultifactorAuthenticationContingencyPlanTests {
+class MultifactorAuthenticationContingencyPlanTests {
 
     @Test
-    public void verifyNoProvider() {
+    void verifyNoProvider() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -39,12 +38,12 @@ public class MultifactorAuthenticationContingencyPlanTests {
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         assertThrows(AuthenticationException.class, () -> plan.execute(authentication, registeredService,
-            new AuthenticationRiskScore(BigDecimal.ONE), new MockHttpServletRequest()));
+            AuthenticationRiskScore.highestRiskScore(), new MockHttpServletRequest()));
 
     }
 
     @Test
-    public void verifyManyProviders() {
+    void verifyManyProviders() throws Throwable {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
 
@@ -52,13 +51,13 @@ public class MultifactorAuthenticationContingencyPlanTests {
 
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(appCtx, new TestMultifactorAuthenticationProvider());
         TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(appCtx, new TestMultifactorAuthenticationProvider("mfa-two"));
-        
+
         val plan = new MultifactorAuthenticationContingencyPlan(props, appCtx);
         val principal = CoreAuthenticationTestUtils.getPrincipal(CollectionUtils.wrap("mail", List.of("cas@example.org")));
         val authentication = CoreAuthenticationTestUtils.getAuthentication(principal);
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         assertThrows(AuthenticationException.class, () -> plan.execute(authentication, registeredService,
-            new AuthenticationRiskScore(BigDecimal.ONE), new MockHttpServletRequest()));
+            AuthenticationRiskScore.highestRiskScore(), new MockHttpServletRequest()));
 
     }
 

@@ -18,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Simple")
-public class HCaptchaValidatorTests {
+class HCaptchaValidatorTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val props = new GoogleRecaptchaProperties()
             .setScore(.1)
             .setSecret(UUID.randomUUID().toString())

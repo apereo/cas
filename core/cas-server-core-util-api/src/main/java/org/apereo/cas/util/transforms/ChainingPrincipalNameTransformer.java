@@ -2,7 +2,9 @@ package org.apereo.cas.util.transforms;
 
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.val;
 
@@ -17,15 +19,17 @@ import java.util.List;
  */
 @ToString
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ChainingPrincipalNameTransformer implements PrincipalNameTransformer {
 
-    private final List<PrincipalNameTransformer> transformers = new ArrayList<>(0);
+    private List<PrincipalNameTransformer> transformers = new ArrayList<>(0);
 
     @Override
-    public String transform(final String formUserId) {
+    public String transform(final String formUserId) throws Throwable{
         var idToTransform = formUserId;
-        for (val t : this.transformers) {
-            idToTransform = t.transform(idToTransform);
+        for (val transformer : this.transformers) {
+            idToTransform = transformer.transform(idToTransform);
         }
         return idToTransform;
     }

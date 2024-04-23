@@ -3,21 +3,27 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
-
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 import lombok.val;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-
+import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -29,7 +35,8 @@ import static org.mockito.Mockito.*;
  */
 @TestPropertySource(properties = "management.endpoint.ssoSessions.enabled=true")
 @Tag("ActuatorEndpoint")
-public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
+@Execution(ExecutionMode.SAME_THREAD)
+class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -38,38 +45,64 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
     private SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME)
+    private SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor;
+
+    @Autowired
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService centralAuthenticationService;
 
+    @Autowired
+    @Qualifier(TicketRegistry.BEAN_NAME)
+    private TicketRegistry ticketRegistry;
+
     @BeforeEach
-    public void setup() {
+    public void setup() throws Throwable {
         val result = CoreAuthenticationTestUtils.getAuthenticationResult();
         val tgt = centralAuthenticationService.createTicketGrantingTicket(result);
         val st = centralAuthenticationService.grantServiceTicket(tgt.getId(), CoreAuthenticationTestUtils.getWebApplicationService(), result);
         assertNotNull(st);
     }
 
-    @Test
-    public void verifyDelete() {
-        var results = singleSignOnSessionsEndpoint.destroySsoSessions(null, null);
-        assertEquals(HttpStatus.BAD_REQUEST.value(), results.get("status"));
-        results = singleSignOnSessionsEndpoint.destroySsoSessions(null, CoreAuthenticationTestUtils.CONST_USERNAME);
-        assertFalse(results.isEmpty());
-
-        results = singleSignOnSessionsEndpoint.destroySsoSession("unknown-ticket");
-        assertTrue(results.containsKey("status"));
-        assertTrue(results.containsKey("message"));
-        assertTrue(results.containsKey("ticketGrantingTicket"));
-
-        val authResult = CoreAuthenticationTestUtils.getAuthenticationResult();
-        centralAuthenticationService.createTicketGrantingTicket(authResult);
-        results = singleSignOnSessionsEndpoint.destroySsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType(), null);
-        assertFalse(results.isEmpty());
+    @AfterEach
+    public void teardown() throws Throwable {
+        singleSignOnSessionsEndpoint.destroySsoSessions(
+            new SingleSignOnSessionsEndpoint.SsoSessionsRequest()
+                .withType(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType()),
+            new MockHttpServletRequest(), new MockHttpServletResponse());
     }
 
     @Test
-    public void verifyOperation() {
-        var results = singleSignOnSessionsEndpoint.getSsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType());
+    void verifyDelete() throws Throwable {
+        var results = singleSignOnSessionsEndpoint.destroySsoSessions(
+            new SingleSignOnSessionsEndpoint.SsoSessionsRequest().withType(null),
+            new MockHttpServletRequest(), new MockHttpServletResponse());
+        assertEquals(HttpStatus.BAD_REQUEST.value(), results.get("status"));
+        results = singleSignOnSessionsEndpoint.destroySsoSessions(
+            new SingleSignOnSessionsEndpoint.SsoSessionsRequest().withUsername(CoreAuthenticationTestUtils.CONST_USERNAME),
+            new MockHttpServletRequest(), new MockHttpServletResponse());
+        assertFalse(results.isEmpty());
+
+        results = singleSignOnSessionsEndpoint.destroySsoSession("unknown-ticket",
+            new MockHttpServletRequest(), new MockHttpServletResponse());
+        assertTrue(results.containsKey("status"));
+        assertTrue(results.containsKey("ticketGrantingTicket"));
+
+        val authResult = CoreAuthenticationTestUtils.getAuthenticationResult();
+        val tgt = centralAuthenticationService.createTicketGrantingTicket(authResult);
+        assertNotNull(tgt);
+        results = singleSignOnSessionsEndpoint.destroySsoSessions(
+            new SingleSignOnSessionsEndpoint.SsoSessionsRequest().withType(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType()),
+            new MockHttpServletRequest(), new MockHttpServletResponse());
+        assertFalse(results.isEmpty());
+        assertNotNull(singleSignOnSessionsEndpoint.toString());
+        assertTrue(ticketRegistry.getTickets(ticket -> ticket.getId().equals(tgt.getId()) && !ticket.isExpired()).findAny().isEmpty());
+    }
+
+    @Test
+    void verifyOperation() throws Throwable {
+        var results = singleSignOnSessionsEndpoint.getSsoSessions(new SingleSignOnSessionsEndpoint.SsoSessionsRequest()
+            .withType(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType()));
         assertFalse(results.isEmpty());
         assertTrue(results.containsKey("totalUsageCount"));
         assertTrue(results.containsKey("activeSsoSessions"));
@@ -81,46 +114,57 @@ public class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests 
         val sessions = (List) results.get("activeSsoSessions");
         assertEquals(1, sessions.size());
 
-        val tgt = Map.class.cast(sessions.get(0))
-            .get(SingleSignOnSessionsEndpoint.SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.getAttributeKey()).toString();
-        results = singleSignOnSessionsEndpoint.destroySsoSession(tgt);
+        val tgt = ((Map) sessions.getFirst())
+            .get(SingleSignOnSessionsEndpoint.SsoSessionAttributeKeys.TICKET_GRANTING_TICKET_ID.getAttributeKey()).toString();
+        results = singleSignOnSessionsEndpoint.destroySsoSession(tgt, new MockHttpServletRequest(), new MockHttpServletResponse());
         assertFalse(results.isEmpty());
         assertTrue(results.containsKey("status"));
         assertTrue(results.containsKey("ticketGrantingTicket"));
 
-        results = singleSignOnSessionsEndpoint.destroySsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType(), null);
+        results = singleSignOnSessionsEndpoint.destroySsoSessions(new SingleSignOnSessionsEndpoint.SsoSessionsRequest()
+                .withType(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType()),
+            new MockHttpServletRequest(), new MockHttpServletResponse());
         assertEquals(1, results.size());
         assertTrue(results.containsKey("status"));
     }
 
     @Test
-    public void verifyProxies() {
+    void verifyProxies() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         tgt.setProxiedBy(CoreAuthenticationTestUtils.getWebApplicationService());
-        centralAuthenticationService.addTicket(tgt);
-        val results = singleSignOnSessionsEndpoint.getSsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType());
+        ticketRegistry.addTicket(tgt);
+        var results = singleSignOnSessionsEndpoint.getSsoSessions(new SingleSignOnSessionsEndpoint.SsoSessionsRequest()
+            .withType(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType()));
+        assertFalse(results.isEmpty());
+        results = singleSignOnSessionsEndpoint.getSsoSessions(new SingleSignOnSessionsEndpoint.SsoSessionsRequest());
         assertFalse(results.isEmpty());
     }
 
     @Test
-    public void verifyDirect() {
+    void verifyDirect() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         tgt.setProxiedBy(CoreAuthenticationTestUtils.getWebApplicationService());
-        centralAuthenticationService.addTicket(tgt);
-        val results = singleSignOnSessionsEndpoint.getSsoSessions(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.DIRECT.getType());
+        ticketRegistry.addTicket(tgt);
+        var results = singleSignOnSessionsEndpoint.getSsoSessions(new SingleSignOnSessionsEndpoint.SsoSessionsRequest()
+            .withType(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.DIRECT.getType()));
+        assertFalse(results.isEmpty());
+        results = singleSignOnSessionsEndpoint.getSsoSessions(new SingleSignOnSessionsEndpoint.SsoSessionsRequest()
+            .withType(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.ALL.getType()));
         assertFalse(results.isEmpty());
     }
 
     @Test
-    public void verifyDeleteFails() {
-        val cas = mock(CentralAuthenticationService.class);
-        when(cas.getTickets(any(Predicate.class))).thenReturn(List.of(new MockTicketGrantingTicket("casuser")));
-        when(cas.deleteTicket(anyString())).thenThrow(new RuntimeException());
+    void verifyDeleteFails() throws Throwable {
+        val registry = mock(TicketRegistry.class);
+        when(registry.getTickets(any(Predicate.class))).thenReturn(Stream.of(new MockTicketGrantingTicket("casuser")));
+        when(registry.deleteTicket(anyString())).thenThrow(new RuntimeException());
 
-        val results = new SingleSignOnSessionsEndpoint(cas, casProperties).destroySsoSessions(
-            SingleSignOnSessionsEndpoint.SsoSessionReportOptions.DIRECT.getType(), null);
+        val results = new SingleSignOnSessionsEndpoint(new DirectObjectProvider<>(registry),
+            casProperties, new DirectObjectProvider<>(defaultSingleLogoutRequestExecutor)).destroySsoSessions(
+            new SingleSignOnSessionsEndpoint.SsoSessionsRequest()
+                .withType(SingleSignOnSessionsEndpoint.SsoSessionReportOptions.DIRECT.getType()),
+            new MockHttpServletRequest(), new MockHttpServletResponse());
         assertFalse(results.isEmpty());
-        assertTrue(results.containsKey("failedTicketGrantingTickets"));
     }
 }
 

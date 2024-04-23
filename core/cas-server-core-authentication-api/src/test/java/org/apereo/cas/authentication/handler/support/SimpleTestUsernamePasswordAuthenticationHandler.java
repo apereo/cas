@@ -2,12 +2,12 @@ package org.apereo.cas.authentication.handler.support;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +17,11 @@ import org.apache.commons.lang3.StringUtils;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
+
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,6 +54,9 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
      */
     private final Map<String, Exception> usernameErrorMap = DEFAULT_USERNAME_ERROR_MAP;
 
+    private final List<MessageDescriptor> warnings = new ArrayList<>();
+    private final Map<String, List<Object>> userAttributes = new HashMap<>();
+
     public SimpleTestUsernamePasswordAuthenticationHandler() {
         this(StringUtils.EMPTY);
     }
@@ -59,35 +65,47 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
         super(name, null, PrincipalFactoryUtils.newPrincipalFactory(), null);
     }
 
+    public void addMessageDescriptor(final MessageDescriptor msg) {
+        this.warnings.add(msg);
+    }
+
+    public SimpleTestUsernamePasswordAuthenticationHandler putAttribute(final String name, final List<Object> values) {
+        this.userAttributes.put(name, values);
+        return this;
+    }
+
+    public SimpleTestUsernamePasswordAuthenticationHandler putAttributes(final Map<String, List<Object>> attributes) {
+        this.userAttributes.putAll(attributes);
+        return this;
+    }
+
     @Override
-    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword)
-        throws GeneralSecurityException, PreventedException {
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
 
         val username = credential.getUsername();
-        val password = credential.getPassword();
+        val password = credential.toPassword();
 
         val exception = this.usernameErrorMap.get(username);
-        if (exception instanceof GeneralSecurityException) {
-            throw (GeneralSecurityException) exception;
+        if (exception instanceof final GeneralSecurityException gse) {
+            throw gse;
         }
-        if (exception instanceof PreventedException) {
-            throw (PreventedException) exception;
+        if (exception instanceof final PreventedException pe) {
+            throw pe;
         }
-        if (exception instanceof RuntimeException) {
-            throw (RuntimeException) exception;
+        if (exception instanceof final RuntimeException re) {
+            throw re;
         }
         if (exception != null) {
             LOGGER.debug("Cannot throw checked exception [{}] since it is not declared by method signature.",
-                exception.getClass().getName(),
-                exception);
+                exception.getClass().getName(), exception);
         }
 
         if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)
             && (username.equals(password) || password.equals(StringUtils.reverse(username)))) {
             LOGGER.debug("User [{}] was successfully authenticated.", username);
-            return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential),
-                this.principalFactory.createPrincipal(username));
+            return new DefaultAuthenticationHandlerExecutionResult(this,
+                credential, principalFactory.createPrincipal(username, this.userAttributes), this.warnings);
         }
         LOGGER.debug("User [{}] failed authentication", username);
         throw new FailedLoginException();

@@ -13,8 +13,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -29,7 +27,7 @@ import java.util.HashMap;
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
-public abstract class AbstractAuthenticationAction extends AbstractAction {
+public abstract class AbstractAuthenticationAction extends BaseCasWebflowAction {
 
     private final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
 
@@ -38,12 +36,11 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
     private final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
-        val agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext(requestContext);
-        val geoLocation = WebUtils.getHttpServletRequestGeoLocationFromRequestContext(requestContext);
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+        if (!evaluateAdaptiveAuthenticationPolicy(requestContext)) {
+            val agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext(requestContext);
+            val geoLocation = WebUtils.getHttpServletRequestGeoLocationFromRequestContext(requestContext);
 
-        if (geoLocation != null && StringUtils.isNotBlank(agent)
-            && !adaptiveAuthenticationPolicy.apply(requestContext, agent, geoLocation)) {
             val msg = "Adaptive authentication policy does not allow this request for " + agent + " and " + geoLocation;
             LOGGER.warn(msg);
             val map = CollectionUtils.<String, Throwable>wrap(UnauthorizedAuthenticationException.class.getSimpleName(),
@@ -55,24 +52,23 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
             return event;
         }
 
-        val serviceTicketEvent = this.serviceTicketRequestWebflowEventResolver.resolveSingle(requestContext);
+        val serviceTicketEvent = serviceTicketRequestWebflowEventResolver.resolveSingle(requestContext);
         if (serviceTicketEvent != null) {
             fireEventHooks(serviceTicketEvent, requestContext);
             return serviceTicketEvent;
         }
 
-        val finalEvent = this.initialAuthenticationAttemptWebflowEventResolver.resolveSingle(requestContext);
+        val finalEvent = initialAuthenticationAttemptWebflowEventResolver.resolveSingle(requestContext);
         fireEventHooks(finalEvent, requestContext);
         return finalEvent;
     }
 
-    /**
-     * Fire event hooks.
-     *
-     * @param event the event
-     * @param ctx   the ctx
-     * @return the event
-     */
+    protected boolean evaluateAdaptiveAuthenticationPolicy(final RequestContext requestContext) throws Throwable {
+        val agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext(requestContext);
+        val geoLocation = WebUtils.getHttpServletRequestGeoLocationFromRequestContext(requestContext);
+        return adaptiveAuthenticationPolicy.isAuthenticationRequestAllowed(requestContext, agent, geoLocation);
+    }
+
     protected Event fireEventHooks(final Event event, final RequestContext ctx) {
         val id = event.getId();
         if (id.equals(CasWebflowConstants.TRANSITION_ID_ERROR) || id.equals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE)) {
@@ -87,27 +83,12 @@ public abstract class AbstractAuthenticationAction extends AbstractAction {
         return event;
     }
 
-    /**
-     * On warn.
-     *
-     * @param context the context
-     */
     protected void onWarn(final RequestContext context) {
     }
 
-    /**
-     * On success.
-     *
-     * @param context the context
-     */
     protected void onSuccess(final RequestContext context) {
     }
 
-    /**
-     * On error.
-     *
-     * @param context the context
-     */
     protected void onError(final RequestContext context) {
     }
 }

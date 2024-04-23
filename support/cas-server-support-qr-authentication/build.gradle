@@ -1,5 +1,11 @@
 description = "Apereo CAS QR Authentication Support"
-
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "QR Code Authentication"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-webflow")

@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link Pac4jDelegatedAuthenticationGitHubProperties}.
  *
@@ -18,12 +20,12 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class Pac4jDelegatedAuthenticationGitHubProperties extends Pac4jIdentifiableClientProperties {
 
+    @Serial
     private static final long serialVersionUID = -5663033494303169583L;
 
     /**
      * The requested scope from the provider.
-     *  The default scope is {@code user}, i.e. {@code read/write} access to the GitHub user account.
-     *  For a full list of possible scopes, <a href="https://developer.github.com/apps/building-oauth-apps/understanding-scopes-for-oauth-apps/">see this</a>).
+     * The default scope is {@code user}, i.e. {@code read/write} access to the GitHub user account.
      */
     private String scope;
 

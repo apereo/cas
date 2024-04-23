@@ -4,7 +4,6 @@ import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.commons.lang3.StringUtils;
-
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Arrays;
@@ -177,8 +176,40 @@ public class DigestUtils {
     public static byte[] rawDigest(final String alg, final String salt, final String... data) {
         try {
             val digest = getMessageDigestInstance(alg);
-            Arrays.stream(data).forEach(d -> digest.update(d.getBytes(StandardCharsets.UTF_8)));
+            Arrays.stream(data)
+                .filter(StringUtils::isNotBlank)
+                .forEach(d -> digest.update(d.getBytes(StandardCharsets.UTF_8)));
             return digest.digest(salt.getBytes(StandardCharsets.UTF_8));
+        } catch (final Exception cause) {
+            throw new SecurityException(cause);
+        }
+    }
+
+
+    /**
+     * Raw digest string.
+     *
+     * @param alg         the alg
+     * @param staticSalt  the static salt
+     * @param dynamicSalt the dynamic salt
+     * @param value       the value
+     * @param iterations  the iterations
+     * @return the string
+     */
+    public static String rawDigest(final String alg, final byte[] staticSalt, final byte[] dynamicSalt,
+                                   final String value, final long iterations) {
+        try {
+            val salt = new byte[staticSalt.length + dynamicSalt.length];
+            System.arraycopy(staticSalt, 0, salt, 0, staticSalt.length);
+            System.arraycopy(dynamicSalt, 0, salt, staticSalt.length, dynamicSalt.length);
+            val digest = getMessageDigestInstance(alg);
+            digest.update(salt);
+
+            var hashedPassword = digest.digest(value.getBytes(StandardCharsets.UTF_8));
+            for (int i = 0; i < iterations - 1; i++) {
+                hashedPassword = digest.digest(hashedPassword);
+            }
+            return EncodingUtils.hexEncode(hashedPassword);
         } catch (final Exception cause) {
             throw new SecurityException(cause);
         }
@@ -191,7 +222,18 @@ public class DigestUtils {
      * @return the string
      */
     public static String abbreviate(final String str) {
-        return StringUtils.abbreviate(str, ABBREVIATE_MAX_WIDTH);
+        return abbreviate(str, ABBREVIATE_MAX_WIDTH);
+    }
+
+    /**
+     * Abbreviate string.
+     *
+     * @param str      the str
+     * @param maxWidth the max width; negative/zero values disable abbreviation
+     * @return the string
+     */
+    public static String abbreviate(final String str, final int maxWidth) {
+        return maxWidth <= 0 ? str : StringUtils.abbreviate(str, maxWidth);
     }
 
     private static MessageDigest getMessageDigestInstance(final String alg) throws Exception {

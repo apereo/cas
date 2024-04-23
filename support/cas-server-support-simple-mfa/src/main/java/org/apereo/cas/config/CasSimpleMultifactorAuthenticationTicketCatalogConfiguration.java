@@ -1,19 +1,22 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket;
 import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicketImpl;
 import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketCatalog;
-
+import org.apereo.cas.ticket.TicketCatalogConfigurer;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 
 /**
@@ -22,23 +25,28 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Configuration(value = "casSimpleMultifactorAuthenticationTicketCatalogConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CasSimpleMultifactorAuthenticationTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {
-    @Autowired
-    @Qualifier("casSimpleMultifactorAuthenticationTicketExpirationPolicy")
-    private ObjectProvider<ExpirationPolicyBuilder> casSimpleMultifactorAuthenticationTicketExpirationPolicy;
-
-    @Override
-    public void configureTicketCatalog(final TicketCatalog plan) {
-        LOGGER.trace("Registering ticket definitions...");
-        val definition = buildTicketDefinition(plan, CasSimpleMultifactorAuthenticationTicket.PREFIX,
-            CasSimpleMultifactorAuthenticationTicketImpl.class, Ordered.HIGHEST_PRECEDENCE);
-        val properties = definition.getProperties();
-        properties.setStorageName("casSimpleMultifactorAuthenticationTicketsCache");
-        val timeToLive = casSimpleMultifactorAuthenticationTicketExpirationPolicy.getObject().buildTicketExpirationPolicy().getTimeToLive();
-        properties.setStorageTimeout(timeToLive);
-        registerTicketDefinition(plan, definition);
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SimpleMFA)
+@Configuration(value = "CasSimpleMultifactorAuthenticationTicketCatalogConfiguration", proxyBeanMethods = false)
+class CasSimpleMultifactorAuthenticationTicketCatalogConfiguration {
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public TicketCatalogConfigurer casSimpleMultifactorAuthenticationTicketCatalogConfigurer(
+        @Qualifier("casSimpleMultifactorAuthenticationTicketExpirationPolicy")
+        final ExpirationPolicyBuilder casSimpleMultifactorAuthenticationTicketExpirationPolicy) {
+        return new BaseTicketCatalogConfigurer() {
+            @Override
+            public void configureTicketCatalog(final TicketCatalog plan, final CasConfigurationProperties casProperties) {
+                LOGGER.trace("Registering ticket definitions...");
+                val definition = buildTicketDefinition(plan, CasSimpleMultifactorAuthenticationTicket.PREFIX,
+                    CasSimpleMultifactorAuthenticationTicket.class, CasSimpleMultifactorAuthenticationTicketImpl.class, Ordered.HIGHEST_PRECEDENCE);
+                val properties = definition.getProperties();
+                properties.setStorageName("casSimpleMultifactorAuthenticationTicketsCache");
+                val timeToLive = casSimpleMultifactorAuthenticationTicketExpirationPolicy.buildTicketExpirationPolicy().getTimeToLive();
+                properties.setStorageTimeout(timeToLive);
+                registerTicketDefinition(plan, definition);
+            }
+        };
     }
 }

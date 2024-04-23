@@ -10,6 +10,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServiceMappedRegexAttributeFilter {
 
+    @Serial
     private static final long serialVersionUID = 543145306984660628L;
 
     @Override
@@ -80,7 +82,7 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
             val matcher = pattern.matcher(v.toString());
             val matches = isCompleteMatch() ? matcher.matches() : matcher.find();
             if (matches) {
-                LOGGER.debug("Found a successful match for [{}] while filtering attribute values with [{}]", v.toString(), pattern.pattern());
+                LOGGER.debug("Found a successful match for [{}] while filtering attribute values with [{}]", v, pattern.pattern());
                 if (StringUtils.isNotBlank(returnValue)) {
                     val count = matcher.groupCount();
                     var resultValue = returnValue;

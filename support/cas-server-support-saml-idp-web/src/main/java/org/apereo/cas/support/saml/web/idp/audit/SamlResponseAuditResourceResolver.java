@@ -21,39 +21,40 @@ import java.util.HashMap;
 public class SamlResponseAuditResourceResolver extends ReturnValueAsStringResourceResolver {
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object returnValue) {
-        if (returnValue instanceof Response) {
-            return getPrincipalIdFromSamlResponse((Response) returnValue);
+        if (returnValue instanceof final Response value) {
+            return getPrincipalIdFromSamlResponse(value);
         }
-        if (returnValue instanceof Envelope) {
-            return getPrincipalIdFromSamlEcpResponse((Envelope) returnValue);
+        if (returnValue instanceof final Envelope value) {
+            return getPrincipalIdFromSamlEcpResponse(value);
         }
         LOGGER.error("Could not determine the SAML response in the returned value");
         return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
-    private String[] getPrincipalIdFromSamlEcpResponse(final Envelope envelope) {
+    protected String[] getPrincipalIdFromSamlEcpResponse(final Envelope envelope) {
         val objects = envelope.getBody().getUnknownXMLObjects();
         if (objects.isEmpty()) {
             return ArrayUtils.EMPTY_STRING_ARRAY;
         }
-        val object = objects.get(0);
-        if (object instanceof Response) {
-            return getPrincipalIdFromSamlResponse((Response) object);
+        val object = objects.getFirst();
+        if (object instanceof final Response response) {
+            return getPrincipalIdFromSamlResponse(response);
         }
-        if (object instanceof Fault) {
-            return getPrincipalIdFromSamlEcpFault((Fault) object);
+        if (object instanceof final Fault fault) {
+            return getPrincipalIdFromSamlEcpFault(fault);
         }
         return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
-    private String[] getPrincipalIdFromSamlResponse(final Response response) {
+    protected String[] getPrincipalIdFromSamlResponse(final Response response) {
         val values = new HashMap<>();
         values.put("issuer", response.getIssuer().getValue());
         values.put("destination", response.getDestination());
+        values.put("responseId", response.getID());
         return new String[]{auditFormat.serialize(values)};
     }
 
-    private String[] getPrincipalIdFromSamlEcpFault(final Fault fault) {
+    protected String[] getPrincipalIdFromSamlEcpFault(final Fault fault) {
         val values = new HashMap<>();
         values.put("actor", fault.getActor().getURI());
         values.put("message", fault.getMessage().getValue());

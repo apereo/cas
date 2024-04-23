@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.duo.web;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
@@ -26,8 +26,8 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@Tag("MFA")
-public class DuoSecurityPingEndpointTests {
+@Tag("DuoSecurity")
+class DuoSecurityPingEndpointTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -35,12 +35,15 @@ public class DuoSecurityPingEndpointTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
 
         val duoService = mock(DuoSecurityAuthenticationService.class);
         when(duoService.ping()).thenReturn(true);
-        when(duoService.getApiHost()).thenReturn("https://api.duosecurity.com");
+
+        val props = new DuoSecurityMultifactorAuthenticationProperties()
+            .setDuoApiHost("https://api.duosecurity.com");
+        when(duoService.getProperties()).thenReturn(props);
 
         val bean = mock(DuoSecurityMultifactorAuthenticationProvider.class);
         when(bean.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);

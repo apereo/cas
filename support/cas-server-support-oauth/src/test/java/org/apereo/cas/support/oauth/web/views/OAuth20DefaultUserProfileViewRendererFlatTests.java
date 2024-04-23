@@ -5,7 +5,6 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 
 import lombok.val;
-import org.hjson.JsonValue;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,22 +24,22 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @Tag("OAuth")
-@TestPropertySource(properties = "cas.authn.oauth.user-profile-view-type=FLAT")
-public class OAuth20DefaultUserProfileViewRendererFlatTests extends AbstractOAuth20Tests {
+@TestPropertySource(properties = "cas.authn.oauth.core.user-profile-view-type=FLAT")
+class OAuth20DefaultUserProfileViewRendererFlatTests extends AbstractOAuth20Tests {
 
     @Autowired
-    @Qualifier("oauthUserProfileViewRenderer")
+    @Qualifier(OAuth20UserProfileViewRenderer.BEAN_NAME)
     private OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer;
 
     @Test
-    public void verifyNestedOption() {
+    void verifyNestedOption() throws Throwable {
         val map = CollectionUtils.wrap(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, "cas",
             OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES,
             CollectionUtils.wrap("email", "cas@example.org", "name", "Test"),
             "something", CollectionUtils.wrapList("something"));
         val json = oauthUserProfileViewRenderer.render((Map) map, mock(OAuth20AccessToken.class), new MockHttpServletResponse());
         assertNotNull(json.getBody());
-        val value = JsonValue.readJSON(json.getBody().toString()).asObject();
+        val value = (Map) json.getBody();
         assertNotNull(value.get(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID));
         assertNotNull(value.get("email"));
         assertNotNull(value.get("name"));

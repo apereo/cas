@@ -1,7 +1,7 @@
 package org.apereo.cas.throttle;
 
 import lombok.val;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -15,11 +15,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Authentication")
-public class DefaultThrottledRequestResponseHandlerTests {
+@Tag("AuthenticationThrottling")
+class DefaultThrottledRequestResponseHandlerTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter("username", "casuser");
         val handler = new DefaultThrottledRequestResponseHandler("username");

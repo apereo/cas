@@ -1,0 +1,94 @@
+description = "Apereo CAS Admin UI"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+        category: "Administration",
+        title: "Admin UI & Dashboard",
+        aliases: ["palantir", "adminui", "management"]
+    ]
+}
+
+apply plugin: "com.github.node-gradle.node"
+
+dependencies {
+    api project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api-protocol")
+
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-cookie-api")
+    implementation project(":core:cas-server-core-webflow-mfa")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-authentication-mfa")
+    implementation project(":core:cas-server-core-logout-api")
+    implementation project(":core:cas-server-core-audit-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-authentication-attributes")
+    implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-services-registry")
+    implementation project(":core:cas-server-core-services-authentication")
+    implementation project(":core:cas-server-core-notifications-api")
+    implementation project(":core:cas-server-core-authentication-mfa-api")
+    implementation project(":core:cas-server-core-webflow-mfa-api")
+
+    implementation libraries.pac4jcore
+    implementation libraries.nimbus
+    implementation libraries.mail
+    implementation libraries.jasypt
+    implementation libraries.bouncycastle
+    implementation libraries.snakeyaml
+    implementation libraries.jose4j
+    implementation libraries.springsecurityweb
+    implementation libraries.springsecurityconfig
+    implementation libraries.classgraph
+    implementation libraries.jsonschema
+
+    testImplementation libraries.springboottomcat
+
+    testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-person-directory")
+    
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-notifications")
+
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+}
+
+node {
+    version = "${nodeVersion}"
+    yarnVersion = ''
+    download = true
+    distBaseUrl = null
+    nodeProjectDir = new File("${project.projectDir}", "client")
+}
+
+tasks.register("build-ui", NpxTask) {
+    dependsOn("npmInstall")
+    outputs.cacheIf { true }
+    outputs.dir(file("build/generated/assets"))
+    command = "vite"
+    args = ["build", "--emptyOutDir", "--outDir", "../build/generated/assets" ]
+    inputs.files('client/package.json','client/vite.config.js')
+            .withPropertyName('uiBuildConfig')
+            .withPathSensitivity(PathSensitivity.RELATIVE)
+    environment = ["BUILD_PATH": "build"]
+}
+build.dependsOn(tasks.named("build-ui"))

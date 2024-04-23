@@ -1,0 +1,7 @@
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId" : "https://apereo.github.io.*",
+  "name" : "Sample",
+  "id" : 1,
+  "supportedProtocols": [ "java.util.HashSet", [ "SAML1" ] ]
+}

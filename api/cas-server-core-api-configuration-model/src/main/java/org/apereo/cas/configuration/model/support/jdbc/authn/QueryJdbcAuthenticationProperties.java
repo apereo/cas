@@ -8,8 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serial;
 
 /**
  * This is {@link QueryJdbcAuthenticationProperties}.
@@ -24,6 +23,7 @@ import java.util.List;
 @JsonFilter("QueryJdbcAuthenticationProperties")
 public class QueryJdbcAuthenticationProperties extends BaseJdbcAuthenticationProperties {
 
+    @Serial
     private static final long serialVersionUID = 7806132208223986680L;
 
     /**
@@ -47,9 +47,4 @@ public class QueryJdbcAuthenticationProperties extends BaseJdbcAuthenticationPro
      * Boolean field that should indicate whether the account is disabled.
      */
     private String fieldDisabled;
-
-    /**
-     * List of column names to fetch as user attributes.
-     */
-    private List<String> principalAttributeList = new ArrayList<>(0);
 }

@@ -1,6 +1,6 @@
 package org.apereo.cas.webauthn;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
@@ -16,9 +16,9 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.web-authn.jpa.password=password",
     "cas.authn.mfa.web-authn.jpa.driver-class=org.postgresql.Driver",
     "cas.authn.mfa.web-authn.jpa.url=jdbc:postgresql://localhost:5432/mfa",
-    "cas.authn.mfa.web-authn.jpa.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
+    "cas.authn.mfa.web-authn.jpa.dialect=org.hibernate.dialect.PostgreSQLDialect"
 })
-@EnabledIfPortOpen(port = 5432)
+@EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
-public class PostgresJpaWebAuthnCredentialRepositoryTests extends JpaWebAuthnCredentialRepositoryTests {
+class PostgresJpaWebAuthnCredentialRepositoryTests extends JpaWebAuthnCredentialRepositoryTests {
 }

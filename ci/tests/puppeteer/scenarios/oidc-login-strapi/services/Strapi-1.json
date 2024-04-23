@@ -1,0 +1,23 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "strapi",
+  "clientSecret": "strapisecret",
+  "bypassApprovalPrompt": true,
+  "serviceId": "http://localhost:1337/.*",
+  "name": "Strapi",
+  "id": 1,
+  "description": "Sample Service",
+  "evaluationOrder": 1,
+  "scopes" : [ "java.util.HashSet", [ "profile", "email" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code", "token", "id_token token", "id_token" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "client_credentials", "refresh_token", "authorization_code" ] ],
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "email", "username" ] ],
+    "consentPolicy": {
+      "@class": "org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy",
+      "includeOnlyAttributes": ["java.util.LinkedHashSet", ["email", "username"]],
+      "status": "TRUE"
+    }    
+  }
+}

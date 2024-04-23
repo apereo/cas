@@ -1,6 +1,11 @@
 description = "Apereo CAS Google Authenticator Redis"
 ext {
-    maxParallelForksForTests = 1
+
+    publishMetadata = true
+    projectMetadata = [
+            category: "Google Authenticator Multifactor Authentication",
+            title: "Google Authenticator Support via Redis"
+    ]
 }
 dependencies {
     implementation libraries.redis

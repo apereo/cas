@@ -23,15 +23,16 @@ dependencies {
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-cookie-api")
 
-    compileOnlyApi project(":support:cas-server-support-jpa-util")
+    compileOnly project(":support:cas-server-support-jpa-util")
 
     implementation project(":support:cas-server-support-token-core-api")
-    implementation project(":support:cas-server-support-oauth-core")
+
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-oauth-core-api")
     implementation project(":support:cas-server-support-oauth-services")
-    implementation project(":support:cas-server-support-throttle")
     implementation project(":support:cas-server-support-pac4j-api")
+
+    testImplementation libraries.springboottomcat
 
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
@@ -45,11 +46,14 @@ dependencies {
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-cookie")
-    
+    testImplementation project(":core:cas-server-core-webflow-mfa")
+    testImplementation project(":core:cas-server-core-webflow")
+
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-validation")
+    testImplementation project(":support:cas-server-support-throttle")
 
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
@@ -57,4 +61,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 }

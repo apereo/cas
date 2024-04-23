@@ -8,14 +8,20 @@ dependencies {
     api project(":api:cas-server-core-api-validation")
 
     api libraries.webauthn
+
+    implementation libraries.springsecurityconfig
+    implementation libraries.springsecurityweb
+    implementation libraries.bouncycastle
     
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-services-api")
 
     testImplementation project(":core:cas-server-core-notifications")
+    testImplementation project(":support:cas-server-support-webconfig")
 
     testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")

@@ -1,9 +1,21 @@
 description = "Apereo CAS Web Application Reports"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Reporting",
+            title: "Reports & Actuators",
+            aliases: ["reports", "actuators"]
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-cookie")
+    api project(":api:cas-server-core-api-logout")
     
     implementation project(":support:cas-server-support-reports-core")
-    
+    implementation project(":support:cas-server-support-validation-core")
+    implementation project(":support:cas-server-support-person-directory-core")
+
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-util-api")
@@ -40,6 +52,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-metrics")
     testImplementation project(":support:cas-server-support-discovery-profile")
+    testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")
 
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
@@ -51,4 +64,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-validation", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+
+    testImplementation libraries.springboottomcat
 }

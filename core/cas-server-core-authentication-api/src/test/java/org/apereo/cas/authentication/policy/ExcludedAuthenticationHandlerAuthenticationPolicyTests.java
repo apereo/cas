@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 
-import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,17 +17,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Authentication")
-public class ExcludedAuthenticationHandlerAuthenticationPolicyTests {
+@Tag("AuthenticationHandler")
+class ExcludedAuthenticationHandlerAuthenticationPolicyTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
-        
+
         val input = new ExcludedAuthenticationHandlerAuthenticationPolicy(Set.of("Hello"), true);
-        assertTrue(input.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), Set.of(),
-            applicationContext, Optional.empty()).isSuccess());
+        assertTrue(input.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication(), Set.of(), applicationContext).isSuccess());
 
     }
 

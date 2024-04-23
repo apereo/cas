@@ -1,7 +1,10 @@
 package org.apereo.cas.util.spring;
 
+import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.NoArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.core.io.Resource;
 
 import java.time.ZonedDateTime;
 
@@ -23,6 +26,17 @@ public class Converters {
         @Override
         public String convert(final ZonedDateTime zonedDateTime) {
             return zonedDateTime.toString();
+        }
+    }
+
+    /**
+     * Converts a String to a resource instance.
+     */
+    public static class StringToResourceConverter implements Converter<String, Resource> {
+
+        @Override
+        public Resource convert(final String resource) {
+            return FunctionUtils.doUnchecked(() -> ResourceUtils.getRawResourceFrom(resource));
         }
     }
 }

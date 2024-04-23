@@ -1,0 +1,4 @@
+cas:
+  audit:
+    jdbc:
+      max-age-days: 30

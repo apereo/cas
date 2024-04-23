@@ -7,23 +7,24 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
-
+import org.apereo.cas.util.function.FunctionUtils;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
-
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -43,27 +44,29 @@ import java.util.Set;
 @Getter
 @EqualsAndHashCode(of = "id")
 @SuppressWarnings("JdkObsolete")
-public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketState {
+public class MockTicketGrantingTicket implements TicketGrantingTicket {
 
     public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
 
+    @Serial
     private static final long serialVersionUID = 6546995681334670659L;
 
     @Setter
-    private Service proxiedBy;
-
-    private final String id;
+    private String id;
 
     private final Authentication authentication;
-
-    @Setter
-    private ZonedDateTime created;
 
     private final Map<String, Service> services = new HashMap<>();
 
     private final Map<String, Service> proxyGrantingTickets = new HashMap<>();
 
     private final Set<String> descendantTickets = new LinkedHashSet<>();
+
+    @Setter
+    private Service proxiedBy;
+
+    @Setter
+    private ZonedDateTime created;
 
     private int usageCount;
 
@@ -72,9 +75,9 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     @Setter
     private ExpirationPolicy expirationPolicy = new TicketGrantingTicketExpirationPolicy(100, 100);
 
-    public MockTicketGrantingTicket(final String principalId, final Credential c,
+    public MockTicketGrantingTicket(final String principalId, final Credential credential,
                                     final Map<String, List<Object>> principalAttributes) {
-        this(principalId, c, principalAttributes, Map.of());
+        this(principalId, credential, principalAttributes, Map.of());
     }
 
     public MockTicketGrantingTicket(final String principalId, final Map<String, List<Object>> principalAttributes,
@@ -87,19 +90,18 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     public MockTicketGrantingTicket(final String principalId, final Credential credential,
                                     final Map<String, List<Object>> principalAttributes,
                                     final Map<String, List<Object>> authnAttributes) {
-        this(new DefaultAuthenticationBuilder(PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(principalId, principalAttributes))
-            .addCredential(new BasicCredentialMetaData(credential))
+        this(new DefaultAuthenticationBuilder(getPrincipal(principalId, principalAttributes))
+            .addCredential(credential)
             .setAttributes(authnAttributes)
             .addAttribute(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS,
                 List.of(SimpleTestUsernamePasswordAuthenticationHandler.class.getSimpleName()))
             .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
-                new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(),
-                    new BasicCredentialMetaData(credential)))
+                new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(), credential))
             .build());
     }
 
     public MockTicketGrantingTicket(final Authentication authentication) {
-        id = ID_GENERATOR.getNewTicketId("TGT");
+        id = FunctionUtils.doUnchecked(() -> ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX));
         created = ZonedDateTime.now(ZoneOffset.UTC);
         this.authentication = authentication;
     }
@@ -114,23 +116,23 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
             principalAttributes);
     }
 
-    public ServiceTicket grantServiceTicket(final Service service) {
+    private static Principal getPrincipal(final String principalId, final Map<String, List<Object>> principalAttributes) {
+        return FunctionUtils.doUnchecked(() -> PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(principalId, principalAttributes));
+    }
+
+    public ServiceTicket grantServiceTicket(final Service service,
+                                            final TicketTrackingPolicy trackingPolicy) throws Throwable {
         return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null,
-            false, true);
+            false, trackingPolicy);
     }
 
     @Override
     public ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
-                                            final boolean credentialProvided, final boolean onlyTrackMostRecentSession) {
-        update();
+                                            final boolean credentialProvided,
+                                            final TicketTrackingPolicy trackingPolicy) {
         val st = new MockServiceTicket(id, service, this, expirationPolicy);
-        this.services.put(id, service);
+        trackingPolicy.trackTicket(this, st);
         return st;
-    }
-
-    @Override
-    public Collection<String> getDescendantTickets() {
-        return this.descendantTickets;
     }
 
     @Override
@@ -143,6 +145,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     }
 
     @Override
+    @CanIgnoreReturnValue
     public TicketGrantingTicket getRoot() {
         return this;
     }
@@ -150,6 +153,11 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     @Override
     public List<Authentication> getChainedAuthentications() {
         return new ArrayList<>(0);
+    }
+
+    @Override
+    public Collection<String> getDescendantTickets() {
+        return this.descendantTickets;
     }
 
     @Override
@@ -201,4 +209,6 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     public int compareTo(final Ticket o) {
         return this.id.compareTo(o.getId());
     }
+
+
 }

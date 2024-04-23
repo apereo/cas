@@ -8,6 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link OAuth20CodeExpirationPolicy}.
  *
@@ -19,6 +21,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class OAuth20CodeExpirationPolicy extends MultiTimeUseOrTimeoutExpirationPolicy {
+    @Serial
     private static final long serialVersionUID = -8383186621682727360L;
 
     /**

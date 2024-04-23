@@ -2,16 +2,15 @@ package org.apereo.cas.scim.v2;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 
-import com.unboundid.scim2.common.types.Meta;
-import com.unboundid.scim2.common.types.Name;
-import com.unboundid.scim2.common.types.UserResource;
+import de.captaingoldfish.scim.sdk.common.resources.User;
+import de.captaingoldfish.scim.sdk.common.resources.complex.Meta;
+import de.captaingoldfish.scim.sdk.common.resources.complex.Name;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 
-import java.net.URI;
-import java.util.Calendar;
+import java.time.Clock;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,11 +20,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Attributes")
-public class ScimV2PrincipalAttributeMapperTests {
+@Tag("SCIM")
+class ScimV2PrincipalAttributeMapperTests {
     @Test
-    public void verifyAction() throws Exception {
-        val user = new UserResource();
+    void verifyAction() throws Throwable {
+        val user = new User();
         user.setActive(true);
         user.setDisplayName("CASUser");
         user.setId("casuser");
@@ -34,17 +33,14 @@ public class ScimV2PrincipalAttributeMapperTests {
         user.setName(name);
         val meta = new Meta();
         meta.setResourceType("User");
-        meta.setCreated(Calendar.getInstance());
-        meta.setLocation(new URI("http://localhost:8218"));
+        meta.setCreated(LocalDateTime.now(Clock.systemUTC()));
+        meta.setLocation("http://localhost:8218");
         user.setMeta(meta);
 
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() throws Throwable {
-                val mapper = new ScimV2PrincipalAttributeMapper();
-                mapper.map(user, CoreAuthenticationTestUtils.getPrincipal(),
-                    CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-            }
+        assertDoesNotThrow(() -> {
+            val mapper = new DefaultScimV2PrincipalAttributeMapper();
+            mapper.map(user, CoreAuthenticationTestUtils.getPrincipal(),
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         });
     }
 }

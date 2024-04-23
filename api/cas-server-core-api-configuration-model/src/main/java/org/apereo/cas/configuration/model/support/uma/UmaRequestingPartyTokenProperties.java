@@ -11,6 +11,7 @@ import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.FileSystemResource;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -25,10 +26,11 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("UmaRequestingPartyTokenProperties")
 public class UmaRequestingPartyTokenProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 3988708361481340920L;
 
     /**
-     * Hard timeout to kill the access token and expire it.
+     * Hard timeout to kill the RP token and expire it.
      */
     @DurationCapable
     private String maxTimeToLiveInSeconds = "PT3M";

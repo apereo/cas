@@ -11,13 +11,26 @@ import java.util.List;
  * @since 5.3.0
  */
 public interface AuthenticationThrottlingExecutionPlan {
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "authenticationThrottlingExecutionPlan";
 
     /**
      * Register authentication throttle interceptor.
      *
      * @param handler the handler
+     * @return the authentication throttling execution plan
      */
-    void registerAuthenticationThrottleInterceptor(HandlerInterceptor handler);
+    AuthenticationThrottlingExecutionPlan registerAuthenticationThrottleInterceptor(HandlerInterceptor handler);
+
+    /**
+     * Register authentication throttle filter.
+     *
+     * @param filter the filter
+     * @return the authentication throttling execution plan
+     */
+    AuthenticationThrottlingExecutionPlan registerAuthenticationThrottleFilter(ThrottledRequestFilter filter);
 
     /**
      * Gets authentication throttle interceptor.
@@ -25,4 +38,11 @@ public interface AuthenticationThrottlingExecutionPlan {
      * @return the authentication throttle interceptor
      */
     List<HandlerInterceptor> getAuthenticationThrottleInterceptors();
+
+    /**
+     * Gets authentication throttle filter.
+     *
+     * @return the authentication throttle filter
+     */
+    ThrottledRequestFilter getAuthenticationThrottleFilter();
 }

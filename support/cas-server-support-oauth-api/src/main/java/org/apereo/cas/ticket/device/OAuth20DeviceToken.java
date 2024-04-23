@@ -2,7 +2,7 @@ package org.apereo.cas.ticket.device;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketState;
+
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  * @since 6.0.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface OAuth20DeviceToken extends Ticket, TicketState {
+public interface OAuth20DeviceToken extends Ticket {
     /**
      * Prefix generally applied to unique ids.
      */
@@ -34,9 +34,9 @@ public interface OAuth20DeviceToken extends Ticket, TicketState {
     String getUserCode();
 
     /**
-     * Instantiates a new Assign user code.
+     * Assign user code.
      *
      * @param userCode the user code
      */
-    void assignUserCode(OAuth20DeviceUserCode userCode);
+    void setUserCode(String userCode);
 }

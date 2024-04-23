@@ -1,0 +1,31 @@
+{
+  "dependencies": "stateless-ticket-registry,reports,generic",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.ticket.st.time-to-kill-in-seconds=120",
+
+    "--cas.authn.accept.name=STATIC",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoint.health.show-details=always",
+    "--management.endpoints.enabled-by-default=true",
+
+    "--cas.audit.engine.audit-format=JSON",
+    "--cas.audit.engine.include-validation-assertion=true",
+
+    "--cas.authn.attribute-repository.json[0].location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/attribute-repository.json",
+    "--cas.authn.attribute-repository.json[0].id=MyJson",
+
+    "--cas.tgc.remember-me-max-age=P1D",
+
+    "--cas.ticket.tgt.remember-me.enabled=true",
+    "--cas.ticket.tgt.remember-me.time-to-kill-in-seconds=P1D"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

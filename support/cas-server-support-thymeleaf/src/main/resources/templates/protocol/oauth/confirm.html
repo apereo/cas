@@ -6,11 +6,11 @@
 </head>
 
 <body id="cas">
-    <div layout:fragment="content" class="banner banner-success mdc-card p-4 m-auto w-lg-66">
+    <div layout:fragment="content" class="banner banner-success mdc-card card p-4 m-auto w-lg-66">
         <h2 th:text="#{screen.oauth.confirm.header}" />
         <p th:text="#{screen.oauth.confirm.message(${serviceName})}" />
         <p>
-            <a class="mdc-button mdc-button--raised" id="allow" name="allow" th:href="@{${callbackUrl}}">
+            <a class="mdc-button mdc-button--raised btn btn-primary" id="allow" name="allow" th:href="@{${callbackUrl}}">
                 <span class="mdc-button__label" th:text="#{screen.oauth.confirm.allow}">Allow</span>
             </a>
         </p>

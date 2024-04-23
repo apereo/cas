@@ -19,6 +19,11 @@ The key concepts are:
 - The `TGT` (Ticket Granting Ticket), stored in the `TGC` cookie, represents a SSO session for a user.
 - The `ST` (Service Ticket), transmitted as a `GET` parameter in urls, stands for the access granted by the CAS server to the *CASified* application for a specific user.
 
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="casValidate" casModule="cas-server-support-reports" %}
 
 ## Specification Versions
 
@@ -26,30 +31,53 @@ The following specification versions are recognized and implemented by Apereo CA
 
 ### 3.0.3
 
-The current CAS protocol specification is `3.0.3`. The actual protocol specification [is available here](CAS-Protocol-Specification.html), which is hereby implemented by the Apereo CAS Server as the official reference implementation. It's mainly a capture of the most common enhancements built on top of the CAS protocol revision `2.0`. Among other features, the most noticeable update between versions `2.0` and `3.0` is the ability to return the authentication/user attributes through the new `/p3/serviceValidate` endpoint.
+The current CAS protocol specification is `3.0.3`. The actual protocol 
+specification [is available here](CAS-Protocol-Specification.html), which is hereby implemented by 
+the Apereo CAS Server as the official reference implementation. It's mainly a capture of the most 
+common enhancements built on top of the CAS protocol revision `2.0`. Among other features, the most 
+noticeable update between versions `2.0` and `3.0` is the ability to return the authentication/user 
+attributes through the new `/p3/serviceValidate` endpoint.
 
 ### 2.0
 
 The version `2.0` protocol specification is available at [CAS-Protocol-Specification](CAS-Protocol-V2-Specification.html). 
 
-## Web flow diagram
+### Troubleshooting
 
-<a href="../images/cas_flow_diagram.png" target="_blank"><img src="../images/cas_flow_diagram.png" alt="CAS Web flow diagram" title="CAS Web flow diagram" /></a>
+To enable additional logging, configure the log4j configuration file to add the following levels:
 
+```xml
+...
+<Logger name="PROTOCOL_MESSAGE" level="debug" additivity="false">
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
+</Logger>
+...
+```
 
-## Proxy web flow diagram
-One of the most powerful feature of the CAS protocol is the ability for a CAS service to act as a proxy for another CAS service, transmitting the user identity.
+## Webflow Diagram
 
-<a href="../images/cas_proxy_flow_diagram.jpg" target="_blank"><img src="../images/cas_proxy_flow_diagram.jpg" alt="CAS Proxy web flow diagram" title="CAS Proxy web flow diagram" /></a>
+<a href="../images/cas_flow_diagram.png" data-lightbox="image-0">
+    <img src="../images/cas_flow_diagram.png" alt="CAS Web flow diagram" title="CAS Web flow diagram" />
+</a>
+
+## Proxy Webflow Diagram
+
+One of the most powerful feature of the CAS protocol is the ability for a CAS service to act as a 
+proxy for another CAS service, transmitting the user identity.
+
+<a href="../images/cas_proxy_flow_diagram.jpg" data-lightbox="image-1">
+    <img src="../images/cas_proxy_flow_diagram.jpg" alt="CAS Proxy web flow diagram" title="CAS Proxy web flow diagram" />
+</a>
 
 
 ## Other Protocols
 
 Even if the primary goal of the CAS server is to implement the CAS protocol, other protocols are also supported as extensions:
 
-- [OpenID](../protocol/OpenID-Protocol.html)
 - [OAuth2](../protocol/OAuth-Protocol.html)
-- [SAML](../protocol/SAML-Protocol.html)
+- [SAML1](../protocol/SAML-v1-Protocol.html)
+- [SAML2](../authentication/Configuring-SAML2-Authentication.html)
 - [OpenID Connect](../protocol/OIDC-Protocol.html)
 - [REST](../protocol/REST-Protocol.html)
 - [WsFederation](../protocol/WS-Federation-Protocol.html)
@@ -57,5 +85,7 @@ Even if the primary goal of the CAS server is to implement the CAS protocol, oth
 ***
 
 # Delegated Authentication
-Using the CAS protocol, the CAS server can also be configured to [delegate the authentication](../integration/Delegate-Authentication.html) to another CAS server.
+
+Using the CAS protocol, the CAS server can also be configured 
+to [delegate the authentication](../integration/Delegate-Authentication.html) to another CAS server.
 

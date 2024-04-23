@@ -1,6 +1,5 @@
 package org.apereo.cas.web.flow.decorator;
 
-import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -16,8 +15,8 @@ public interface WebflowDecorator {
      * and manipulate relevant scopes. Note that objects put into the webflow
      * as the result of decorations MUST be serializable.
      *
-     * @param requestContext     the context
-     * @param applicationContext the application context
+     * @param requestContext the context
+     * @throws Throwable the throwable
      */
-    void decorate(RequestContext requestContext, ApplicationContext applicationContext);
+    void decorate(RequestContext requestContext) throws Throwable;
 }

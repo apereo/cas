@@ -1,0 +1,20 @@
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId" : "^https://localhost:9859/anything/.*",
+  "bypassApprovalPrompt": true,
+  "name" : "Sample",
+  "id" : 1,
+  "scopes" : [ "java.util.HashSet", [ "read", "write", "update" ] ],
+  "generateRefreshToken": true,
+  "supportedGrantTypes": [ "java.util.HashSet", [ "client_credentials", "urn:ietf:params:oauth:grant-type:token-exchange" ] ],
+  "tokenExchangePolicy": {
+    "@class": "org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy",
+    "allowedTokenTypes": [ "java.util.HashSet", [
+      "urn:ietf:params:oauth:token-type:access_token",
+      "urn:ietf:params:oauth:token-type:refresh_token",
+      "urn:ietf:params:oauth:token-type:jwt"
+    ] ]
+  }
+}

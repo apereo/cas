@@ -1,9 +1,11 @@
 package org.apereo.cas.support.saml.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,52 +23,66 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("SAML")
+@Tag("SAMLAttributes")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
-    
+class PatternMatchingEntityIdAttributeReleasePolicyTests extends BaseSamlIdPConfigurationTests {
     @BeforeEach
     public void setup() {
         servicesManager.deleteAll();
-        defaultSamlRegisteredServiceCachingMetadataResolver.invalidate();
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
     }
-    
+
     @Test
     @Order(1)
-    public void verifyPatternDoesNotMatch() {
+    void verifyPatternDoesNotMatch() throws Throwable {
         val filter = new PatternMatchingEntityIdAttributeReleasePolicy();
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid"));
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
-        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
-            CoreAuthenticationTestUtils.getService(), registeredService);
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
+            .build();
+        val attributes = filter.getAttributes(context);
         assertTrue(attributes.isEmpty());
     }
 
     @Test
     @Order(2)
-    public void verifyPatternDoesNotMatchAndReversed() {
+    void verifyPatternDoesNotMatchAndReversed() throws Throwable {
         val filter = new PatternMatchingEntityIdAttributeReleasePolicy();
         filter.setAllowedAttributes(CollectionUtils.wrapList("cn"));
         filter.setEntityIds("helloworld");
         filter.setReverseMatch(true);
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
-        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
-            CoreAuthenticationTestUtils.getService(), registeredService);
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
+            .build();
+        val attributes = filter.getAttributes(context);
         assertFalse(attributes.isEmpty());
     }
 
     @Test
     @Order(3)
-    public void verifyPatternDoesMatch() {
+    void verifyPatternDoesMatch() throws Throwable {
         val filter = new PatternMatchingEntityIdAttributeReleasePolicy();
         filter.setEntityIds("https://sp.+");
         filter.setAllowedAttributes(CollectionUtils.wrapList("uid", "givenName", "displayName"));
         val registeredService = SamlIdPTestUtils.getSamlRegisteredService();
         registeredService.setAttributeReleasePolicy(filter);
-        val attributes = filter.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
-            CoreAuthenticationTestUtils.getService(), registeredService);
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
+            .build();
+        val attributes = filter.getAttributes(context);
         assertFalse(attributes.isEmpty());
     }
 }

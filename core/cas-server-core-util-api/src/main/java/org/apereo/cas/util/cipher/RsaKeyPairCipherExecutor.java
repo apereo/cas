@@ -1,5 +1,6 @@
 package org.apereo.cas.util.cipher;
 
+import org.apereo.cas.util.crypto.RsaCipherExecutor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ import java.security.PublicKey;
 @Getter
 @RequiredArgsConstructor
 @NoArgsConstructor(force = true)
-public class RsaKeyPairCipherExecutor extends BaseStringCipherExecutor {
+public class RsaKeyPairCipherExecutor extends BaseStringCipherExecutor implements RsaCipherExecutor {
     private final PrivateKey privateKeySigning;
 
     private final PublicKey publicKeySigning;
@@ -39,7 +40,7 @@ public class RsaKeyPairCipherExecutor extends BaseStringCipherExecutor {
     }
 
     public RsaKeyPairCipherExecutor(final String privateKeySigning, final String publicKeySigning,
-        final String privateKeyEncryption, final String publicKeyEncryption) {
+                                    final String privateKeyEncryption, final String publicKeyEncryption) {
         this.privateKeySigning = extractPrivateKeyFromResource(privateKeySigning);
         this.publicKeySigning = extractPublicKeyFromResource(publicKeySigning);
 
@@ -70,13 +71,13 @@ public class RsaKeyPairCipherExecutor extends BaseStringCipherExecutor {
     }
 
     private void configureEncryptionParametersForDecoding() {
-        setSecretKeyEncryptionKey(privateKeyEncryption);
+        setEncryptionKey(privateKeyEncryption);
         setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
         setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
     }
 
     private void configureEncryptionParametersForEncoding() {
-        setSecretKeyEncryptionKey(publicKeyEncryption);
+        setEncryptionKey(publicKeyEncryption);
         setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
         setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
     }

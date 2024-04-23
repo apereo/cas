@@ -1,0 +1,36 @@
+{
+  "dependencies": "throttle,throttle-jdbc,audit-jdbc",
+  "conditions": {
+    "docker": "true"
+  },
+
+  "properties": [
+    "--cas.jdbc.show-sql=true",
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    
+    "--cas.authn.throttle.failure.threshold=2",
+    "--cas.authn.throttle.failure.range-seconds=10",
+    "--cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",
+
+    "--cas.audit.jdbc.leak-threshold=PT10S",
+    "--cas.audit.jdbc.user=postgres",
+    "--cas.audit.jdbc.password=password",
+    "--cas.audit.jdbc.driver-class=org.postgresql.Driver",
+    "--cas.audit.jdbc.url=jdbc:postgresql://localhost:5432/audit",
+    "--cas.audit.jdbc.dialect=org.hibernate.dialect.PostgreSQLDialect",
+
+    "--cas.authn.throttle.jdbc.leak-threshold=PT10S",
+    "--cas.authn.throttle.jdbc.user=postgres",
+    "--cas.authn.throttle.jdbc.password=password",
+    "--cas.authn.throttle.jdbc.driver-class=org.postgresql.Driver",
+    "--cas.authn.throttle.jdbc.url=jdbc:postgresql://localhost:5432/audit",
+    "--cas.authn.throttle.jdbc.dialect=org.hibernate.dialect.PostgreSQLDialect",
+    
+    "--logging.level.org.apereo.cas=info",
+    "--logging.level.org.apereo.cas.web.support=debug"
+  ],
+  "initScript": "${PWD}/ci/tests/postgres/run-postgres-server.sh",
+  "jvmArgs": "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true"
+}
+

@@ -1,7 +1,15 @@
 {
   "dependencies": "core",
+
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.ticket.crypto.enabled=true",
+    
     "--cas.service-registry.core.init-from-json=true",
-    "--cas.authn.accept.name=STATIC"
+    "--cas.authn.accept.name=STATIC",
+
+    "--logging.level.org.apereo.cas.services.web.view=debug"
   ]
 }

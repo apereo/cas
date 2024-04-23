@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.Resource;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Serial;
 import java.util.Map;
 
 /**
@@ -22,6 +23,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class StaticUserGraphicalAuthenticationRepository implements UserGraphicalAuthenticationRepository {
+    @Serial
     private static final long serialVersionUID = 421732017215881244L;
 
     private final Map<String, Resource> graphicResource;

@@ -15,7 +15,7 @@ to enhance the authentication flow.
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "https://app.example.org/.+",
   "name" : "ExampleApp",
   "id" : 1,
@@ -29,10 +29,10 @@ to enhance the authentication flow.
 
 The following fields may be assigned to the policy:
 
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------
-| `requiredAuthenticationHandlers`  | A set of identifiers/names for the required authentication handlers available and configured in CAS. These names can be used to enforce a service definition to only use the authentication strategy carrying that name when an authentication request is submitted to CAS. 
-| `excludedAuthenticationHandlers`  | A set of identifiers/names for excluded authentication handlers. These names can be used to enforce a service definition to *exclude* and disqualify certain authentication handlers when an authentication request is submitted to CAS.
+| Parameter                        | Description                                                                                                                                                                                                                                                                 |
+|----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `requiredAuthenticationHandlers` | A set of identifiers/names for the required authentication handlers available and configured in CAS. These names can be used to enforce a service definition to only use the authentication strategy carrying that name when an authentication request is submitted to CAS. |
+| `excludedAuthenticationHandlers` | A set of identifiers/names for excluded authentication handlers. These names can be used to enforce a service definition to *exclude* and disqualify certain authentication handlers when an authentication request is submitted to CAS.                                    |
 
 Note that while authentication methods in CAS all are given a default name, most if not all methods can be assigned a name via CAS settings.
 
@@ -50,7 +50,7 @@ Maps to the `Required` [authentication policy](../authentication/Configuring-Aut
 
 ```json
 {
-  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "@class": "org.apereo.cas.services.CasRegisteredService",
   "serviceId": "^(https|imaps)://.*",
   "name": "Example",
   "id": 1,
@@ -70,7 +70,7 @@ Enable the authentication policy criteria to exclude and disqualify indicated au
 
 ```json
 {
-  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "@class": "org.apereo.cas.services.CasRegisteredService",
   "serviceId": "^(https|imaps)://.*",
   "name": "Example",
   "id": 1,
@@ -90,7 +90,7 @@ Maps to the `Any` [authentication policy](../authentication/Configuring-Authenti
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "https://app.example.org/.+",
   "name" : "ExampleApp",
   "id" : 1,
@@ -110,7 +110,7 @@ Maps to the `All` [authentication policy](../authentication/Configuring-Authenti
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "https://app.example.org/.+",
   "name" : "ExampleApp",
   "id" : 1,
@@ -129,7 +129,7 @@ Maps to the `Not Prevented` [authentication policy](../authentication/Configurin
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "https://app.example.org/.+",
   "name" : "ExampleApp",
   "id" : 1,
@@ -148,7 +148,7 @@ Maps to the `Groovy` [authentication policy](../authentication/Configuring-Authe
 
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "https://app.example.org/.+",
   "name" : "ExampleApp",
   "id" : 1,
@@ -170,7 +170,7 @@ The `script` attribute can either be an inline Groovy script or a reference to a
  
 ```json
 {
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
   "serviceId" : "https://app.example.org/.+",
   "name" : "ExampleApp",
   "id" : 1,

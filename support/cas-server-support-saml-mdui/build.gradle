@@ -1,4 +1,11 @@
 description = "Apereo CAS SAML Server MDUI Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "SAML2 Protocol",
+            title: "SAML2 MDUI Support"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     
@@ -14,6 +21,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-services-api")
 
     implementation libraries.opensaml
     implementation libraries.dropwizard

@@ -1,7 +1,7 @@
 package org.apereo.cas.support.events;
 
-import org.apereo.cas.config.CasEventsDynamoDbRepositoryConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.config.CasEventsDynamoDbRepositoryAutoConfiguration;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +20,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
  */
 @Tag("DynamoDb")
 @SpringBootTest(classes = {
-    CasEventsDynamoDbRepositoryConfiguration.class,
+    CasEventsDynamoDbRepositoryAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
     properties = {
@@ -30,15 +30,15 @@ import software.amazon.awssdk.core.SdkSystemSetting;
         "cas.events.dynamo-db.region=us-east-1"
     })
 @Getter
-@EnabledIfPortOpen(port = 8000)
-public class DynamoDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
+@EnabledIfListeningOnPort(port = 8000)
+class DynamoDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
         System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");
     }
 
     @Autowired
-    @Qualifier("casEventRepository")
+    @Qualifier(CasEventRepository.BEAN_NAME)
     private CasEventRepository eventRepository;
 
     @Autowired
@@ -46,7 +46,7 @@ public class DynamoDbCasEventRepositoryTests extends AbstractCasEventRepositoryT
     private DynamoDbCasEventsFacilitator dynamoDbCasEventsFacilitator;
 
     @BeforeEach
-    public void beforeEach() {
+    public void beforeEach() throws Exception {
         dynamoDbCasEventsFacilitator.deleteAll();
     }
 }

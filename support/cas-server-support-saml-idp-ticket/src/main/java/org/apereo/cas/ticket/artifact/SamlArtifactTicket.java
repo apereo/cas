@@ -29,7 +29,6 @@ public interface SamlArtifactTicket extends ServiceTicket {
      */
     String getRelyingPartyId();
 
-
     /**
      * Gets saml object.
      *

@@ -17,100 +17,97 @@ you can review the registration record inside the CAS service registry to adjust
 **NOTE:** In the event that special attributes and/or name ids are required for the integration, you are required
 to ensure all such [attributes are properly resolved](Attribute-Resolution.html) and are available to the CAS principal.
 
-<div class="alert alert-warning"><strong>Remember</strong><p>SAML2 service provider integrations listed here attempt to automate CAS configuration based on known and documented integration guidelines and recipes provided by the service provider owned by the vendor. These recipes can change and break CAS over time and needless to say, they need to be properly and thoroughly tested as the project itself does not have a subscription to each application to test for correctness. YMMV. If you find an issue with an automated integration strategy here, please <strong>speak up</strong>.</p></div>
+<div class="alert alert-warning">:warning: <strong>Remember</strong><p>SAML2 service provider integrations listed here attempt to automate CAS configuration based on known and documented integration guidelines and recipes provided by the service provider owned by the vendor. These recipes can change and break CAS over time and needless to say, they need to be properly and thoroughly tested as the project itself does not have a subscription to each application to test for correctness. YMMV. If you find an issue with an automated integration strategy here, please <strong>speak up</strong>.</p></div>
 
 Support is enabled by including the following module in the WAR Overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-sp-integrations" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-saml-sp-integrations" %}
 
 The following SAML SP integrations, as samples, are provided by CAS:
 
 <div class="img-cloud">
-<a href="http://www.incommon.org/federation/metadata.html">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052578/47d6f570-dd60-11e6-8f03-02cb99d6106d.gif" height="48" width="110"></a> 
+<a href="#">
+<img src="https://user-images.githubusercontent.com/1205228/233796715-5bc5c1de-0307-4ea7-984a-0e7776a3eec1.png" height="48" width="110"></a> 
 
-<a href="https://support.zoom.us/hc/en-us/articles/201363003-Getting-Started-with-SSO">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052568/475f36d4-dd60-11e6-84f4-a88eb33f3f0a.jpg" height="30" width="110"></a> 
+<a href="https://zoom.us">
+<img src="https://user-images.githubusercontent.com/1205228/233796726-3035dbe1-2717-40b0-aab5-a2c41f57cde6.png" height="30" width="110"></a> 
 
 <a href="https://www.dropbox.com/guide/admin/security/configure-single-sign-on">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052575/47ba8930-dd60-11e6-8cb1-9334066d5f0f.png" height="48" width="140"></a> 
+<img src="https://user-images.githubusercontent.com/1205228/233796752-9e53b09e-2d10-4ef9-aef5-db42681932d5.png" height="48" width="140"></a> 
 
-<a href="https://blog.samanage.com/company/saml-single-sign-on-support-samanage/">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052581/47e7bcfc-dd60-11e6-85e9-c09926736e5e.png" height="48" width="140"></a> 
+<a href="https://samanage.com">
+<img src="https://user-images.githubusercontent.com/1205228/233796766-53e570b8-a233-4e65-ad71-618462591911.png" height="48" width="140"></a> 
 
 <a href="https://help.salesforce.com/HTViewHelpDoc?id=sso_saml.htm">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052579/47da9d74-dd60-11e6-8eac-d66b67e2ebf7.png" height="60" width="100"></a>
+<img src="https://user-images.githubusercontent.com/1205228/233796783-cb802464-f540-438a-9962-ec0d4d310455.png" height="60" width="100"></a>
 
-<a href="https://community.box.com/t5/For-Admins/Single-Sign-On-SSO-with-Box-For-Administrators/ta-p/1263">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052572/47ace302-dd60-11e6-9842-4eda5a9ab5cf.png" height="48" width="90"></a> 
+<a href="https://box.com">
+<img src="https://user-images.githubusercontent.com/1205228/233796794-96b90d2a-92e7-494d-83e5-7875c6ee7096.png" height="48" width="90"></a> 
 
-<a href="http://wiki.servicenow.com/index.php?title=SAML_2.0_Web_Browser_SSO_Profile">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052583/4805e2c2-dd60-11e6-8150-80aaa4bbab0e.png" height="20" width="100"></a> 
+<a href="http://servicenow.com">
+<img src="https://user-images.githubusercontent.com/1205228/233796813-51c1e6e2-fd2a-498c-ab1c-11456720237d.png" height="20" width="100"></a> 
 
 <a href="http://www.workday.com/">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052587/4816e04a-dd60-11e6-9ceb-6ccec1290e19.png" height="48" width="100"></a>
+<img src="https://user-images.githubusercontent.com/1205228/233796838-fd211896-06cd-4378-a2b7-a46ab3407948.png" height="48" width="100"></a>
 
-<a href="https://help.webex.com/docs/DOC-1067">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052574/47af8206-dd60-11e6-95d0-5827e0d88d73.jpg" height="48" width="100"></a>
+<a href="https://help.webex.com/en-us/article/g5ey83/Configure-Single-Sign-On-for-Cisco-Webex-Site">
+<img src="https://user-images.githubusercontent.com/1205228/233796858-7399f83a-059c-499f-a577-06e5ab4d1708.png" height="48" width="100"></a>
 
-<a href="https://www.collegeboard.org/powerfaids/net-partner">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052570/47abea6a-dd60-11e6-85a0-387c3c2ce8e7.png" height="48" width="140"></a> 
+<a href="https://powerfaids.collegeboard.org">
+<img src="https://user-images.githubusercontent.com/1205228/233796867-579269a0-9117-42c9-aa12-728bcf378ac6.png" height="48" width="140"></a> 
 
 <a href="https://msdn.microsoft.com/en-us/library/azure/dn641269.aspx">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22053102/d64da904-dd63-11e6-8a68-977526634b9d.png" height="48" width="110"></a> 
+<img src="https://user-images.githubusercontent.com/1205228/233796891-6ac3488d-5ae3-4e59-a3be-ce2593026032.png" height="48" width="110"></a> 
 
-<a href="https://asana.com/guide/help/premium/authentication#gl-saml">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052569/478b8c16-dd60-11e6-82f4-e292243ff076.png" height="48" width="100"></a> 
+<a href="https://asana.com">
+<img src="https://user-images.githubusercontent.com/1205228/233796907-c6e9df3b-c51e-4da4-a7b3-56ffdbd6711c.png" height="48" width="100"></a> 
 
 <a href="https://onlinehelp.tableau.com/current/server/en-us/saml_requ.htm">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052586/480cffc6-dd60-11e6-939c-1ceb34f3186d.png" height="48" width="140"></a> 
+<img src="https://user-images.githubusercontent.com/1205228/233796919-1943f738-f192-4e23-83b8-027e2e341220.png" height="48" width="140"></a> 
 
-<a href="https://help.evernote.com/hc/en-us/articles/209005217-How-to-configure-SSO-for-your-business">
-<img src="https://cloud.githubusercontent.com/assets/1205228/22052577/47d6b6e6-dd60-11e6-810e-dd875bf25d17.png" height="48" width="110"></a> 
+<a href="https://evernote.com">
+<img src="https://user-images.githubusercontent.com/1205228/233796964-51945275-2f35-4826-a8af-1c01417cdc8e.png" height="48" width="110"></a> 
 
 <a href="http://www.ellucian.com/Software/Colleague-WebAdvisor/">
-<img src="https://cloud.githubusercontent.com/assets/1205228/23185912/5c3f2f50-f89a-11e6-8450-6da44a1a9d9d.png" height="48" width="140"></a>
+<img src="https://user-images.githubusercontent.com/1205228/233796972-548fdc7f-983b-4cd2-a538-7181c75e1a88.png" height="48" width="140"></a>
 
-<a href="https://docs.openathens.net/display/public/MD/SAML+interoperability+requirements/">
-<img src="https://cloud.githubusercontent.com/assets/1205228/24070833/ffb5f63a-0bd9-11e7-8bda-28301c37188b.png" height="48" width="140"></a>
+<a href="https://docs.openathens.net">
+<img src="https://user-images.githubusercontent.com/1205228/233796988-85683cf4-4128-4d38-84bd-8da3adb4dac1.png" height="48" width="140"></a>
 
 <a href="http://server.arcgis.com/en/portal/latest/administer/linux/configuring-a-saml-compliant-identity-provider-with-your-portal.htm">
-<img src="https://cloud.githubusercontent.com/assets/1205228/24108414/c3851e14-0da2-11e7-97d7-086a93d6873d.png" height="48" width="130"></a>
+<img src="https://user-images.githubusercontent.com/1205228/233797015-9bc9a9e1-d3e7-4d70-8d1c-2ea59479bada.png" height="48" width="130"></a>
 
 <a href="https://helpx.adobe.com/enterprise/kb/configure_shibboleth_idp_for_use_with_Adobe_SSO.html">
-<img src="https://cloud.githubusercontent.com/assets/1205228/24562072/ac5964ec-165e-11e7-9986-92108c30eb9b.png" height="48" width="90"></a>
+<img src="https://user-images.githubusercontent.com/1205228/233797023-8d3dd298-d35e-474f-9692-e3a268e83957.png" height="48" width="90"></a>
 
-<a href="https://www.academicworks.com/why-academicworks/user-authentication/">
-<img src="https://cloud.githubusercontent.com/assets/1205228/24624808/3c5909b6-18c2-11e7-9922-52ee604aff55.png" height="48" width="200"></a>
+<a href="#">
+<img src="https://user-images.githubusercontent.com/1205228/233797059-4dd4895b-870e-4b8f-ab16-7712fc52ae08.png" height="48" width="120"></a>
 
-<a href="https://www.infinitecampus.com/">
-<img src="https://cloud.githubusercontent.com/assets/1205228/24698286/4c4d8740-1a05-11e7-844e-54d328e64e2f.png" height="48" width="120"></a>
-
-<a href="http://kb.securingthehuman.org/Other-Resources/55708668/Single-Sign-On-Technical-Overview-Guide.htm">
-<img src="https://cloud.githubusercontent.com/assets/1205228/24699366/fbfbcf5a-1a08-11e7-9664-f37d6e50a5a3.png" height="48" width="120"></a>
+<a href="https://sc.edu">
+<img src="https://user-images.githubusercontent.com/1205228/233797078-f6a107e8-7efa-4265-a2c1-b1739cbfefc7.png" height="48" width="120"></a>
 
 <a href="https://get.slack.help/hc/en-us/articles/205168057">
-<img src="https://cloud.githubusercontent.com/assets/1205228/24858382/5b15c512-1e01-11e7-87ac-f0b091cd7885.png" height="48" width="110"></a>
+<img src="https://user-images.githubusercontent.com/1205228/233797093-200aebac-3c48-4563-9962-8ca591b44cdd.png" height="48" width="110"></a>
 
 <a href="https://support.zendesk.com/hc/en-us/articles/203663676-Using-SAML-for-single-sign-on-Professional-and-Enterprise-">
-<img src="https://cloud.githubusercontent.com/assets/1205228/24858342/34441006-1e01-11e7-9209-9b78081de4db.png" height="48" width="120"></a>
+<img src="https://user-images.githubusercontent.com/1205228/233797108-625c0f96-9da1-4335-85a3-50241b5a811b.png" height="48" width="120"></a>
 
-<a href="https://www.gartner.com/">
-<img src="https://cloud.githubusercontent.com/assets/1205228/25349422/a29a98f6-28d6-11e7-9d10-e286d0080cbe.png" height="48" width="90"></a>
+<a href="#">
+<img src="https://user-images.githubusercontent.com/1205228/233797125-6bf0d02d-0d32-4661-a05d-bfd26383d6f0.png" height="48" width="90"></a>
 
 <a href="https://www.cherwell.com/">
 <img src="https://user-images.githubusercontent.com/1205228/30205883-84174ebc-949f-11e7-9afc-a66c2ab19f59.png" height="48" width="110"></a>
 
-<a href="https://www.bynder.com">
+<a href="#">
 <img src="https://user-images.githubusercontent.com/1205228/30205852-69921a5e-949f-11e7-8326-ba4c00fceba4.png" height="48" width="120"></a>
 
 <a href="https://www.everbridge.com/">
 <img src="https://user-images.githubusercontent.com/1205228/30205910-a560ec90-949f-11e7-8485-e3a833f8109b.png" height="48" width="120"></a>
 
-<a href="https://sserca.fau.edu/">
+<a href="#">
 <img src="https://user-images.githubusercontent.com/1205228/30221936-5e90af04-94da-11e7-8046-483fc26a1c01.png" height="48" width="170"></a>
 
-<a href="https://newrelic.com/new">
+<a href="https://newrelic.com">
 <img src="https://user-images.githubusercontent.com/1205228/30247067-541cef96-9620-11e7-88d7-c3749ba55ecf.png" height="48" width="90"></a>
 
 <a href="https://www.egnyte.com/">
@@ -122,17 +119,11 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.symplicity.com/">
 <img src="https://user-images.githubusercontent.com/1205228/30271318-192b48fc-9705-11e7-9c18-3be401a39e84.png" height="48" width="200"></a>
 
-<a href="Google-Apps-Integration.html">
-<img src="https://cloud.githubusercontent.com/assets/1205228/25385497/18e09c84-2979-11e7-94c1-5ad430b3d768.png" height="48" width="120"></a>
-
 <a href="http://www.accruent.com/">
 <img src="https://user-images.githubusercontent.com/1205228/30735450-f9a12792-9f8b-11e7-941d-7ab4ac7628b9.png" height="48" width="120"></a>
 
-<a href="https://www.gitlab.com/">
+<a href="https://docs.gitlab.com/ee/administration/auth/">
 <img src="https://user-images.githubusercontent.com/1205228/33747990-4d8da06e-db83-11e7-9551-f52630f7d4f0.png" height="38" width="120"></a>
-
-<a href="https://www.hipchat.com/">
-<img src="https://user-images.githubusercontent.com/1205228/33751445-2b45394e-db98-11e7-9526-1eda07a70d99.png" height="58" width="100"></a>
 
 <a href="https://www.appdynamics.com/">
 <img src="https://user-images.githubusercontent.com/1205228/33800340-3c2c072e-dcfb-11e7-9f10-7a7b2488c9b2.png" height="58" width="120"></a>
@@ -146,16 +137,16 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.polleverywhere.com/">
 <img src="https://user-images.githubusercontent.com/1205228/36302795-026f57d2-12c7-11e8-931e-0f8700df1864.png" height="58" width="180"></a>
 
-<a href="https://www.blackbaud.com/files/support/helpfiles/auth/content/auth-saml.html">
+<a href="https://www.blackbaud.com">
 <img src="https://user-images.githubusercontent.com/1205228/39860502-c72d1614-5452-11e8-956d-28a4b3a7a757.png" height="58" width="150"></a>
 
-<a href="https://www.givecampus.com/">
+<a href="#">
 <img src="https://user-images.githubusercontent.com/1205228/39876988-eb009f5c-5489-11e8-8b74-940f75997f41.png" height="58" width="130"></a>
 
 <a href="https://www.warpwire.com/">
 <img src="https://user-images.githubusercontent.com/1205228/39861404-b73f4bca-5455-11e8-9035-e0ecf1f8dcd0.png" height="58" width="150"></a>
 
-<a href="https://rocket.chat/docs/administrator-guides/authentication/saml/">
+<a href="https://rocket.chat">
 <img src="https://user-images.githubusercontent.com/1205228/39877039-1128c7ae-548a-11e8-8735-1abf90883df6.png" height="58" width="150"></a>
 
 <a href="https://armssoftware.com/">
@@ -170,7 +161,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.conexed.com/">
 <img src="https://user-images.githubusercontent.com/1205228/55275622-ff6e2200-52a5-11e9-833d-f48518e58d0e.png" height="58" width="170"></a>
 
-<a href="https://www.cccco.edu/">
+<a href="#">
 <img src="https://user-images.githubusercontent.com/1205228/55275721-62ac8400-52a7-11e9-89c2-121f2c494920.png" height="98" width="90"></a>
 
 <a href="https://www.zimbra.com/">
@@ -182,7 +173,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.atlassian.com/software/jira">
 <img src="https://user-images.githubusercontent.com/1205228/55322296-cb733800-5430-11e9-93e7-0f57e1a1ae89.png" height="78" width="90"></a>
 
-<a href="https://www.pagerduty.com/">
+<a href="#">
 <img src="https://user-images.githubusercontent.com/1205228/55322626-b34fe880-5431-11e9-8574-74cc9ab9643f.png" height="78" width="120"></a>
 
 <a href="https://www.crashplan.com/">
@@ -205,7 +196,7 @@ The following SAML SP integrations, as samples, are provided by CAS:
 
 </div>
 
-<div class="alert alert-info"><strong>Configure Once, Run Everywhere</strong>
+<div class="alert alert-info">:information_source: <strong>Configure Once, Run Everywhere</strong>
 <p>If you have developed a recipe for integrating
 with a SAML service provider, consider contributing that recipe to the project so its configuration
 can be automated once and for all to use. Let the change become a feature of the project, 
@@ -215,7 +206,7 @@ rather than something you alone have to maintain.</p></div>
 
 Allow CAS to register and enable a number of built-in SAML service provider integrations.
 
-<div class="alert alert-warning"><strong>Remember</strong><p>SAML2 service provider integrations listed 
+<div class="alert alert-warning">:warning: <strong>Remember</strong><p>SAML2 service provider integrations listed 
 here attempt to automate CAS configuration based on known and documented integration 
 guidelines and recipes provided by the service provider owned by the vendor. These 
 recipes can change and break CAS over time.</p></div>
@@ -227,30 +218,24 @@ SAML service providers with CAS which would depend on your service registry of c
 
 The SAML2 service provider supports the following settings:
 
-| Name                  |  Description
-|-----------------------|---------------------------------------------------------------------------
-| `metadata`            | Location of metadata for the service provider (i.e URL, path, etc)
-| `name`                | The name of the service provider registered in the service registry.
-| `description`         | The description of the service provider registered in the service registry.
-| `name-id-attribute`   | Attribute to use when generating name ids for this service provider.
-| `name-id-format`      | The forced NameID Format identifier (i.e. `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress`).
-| `attributes`          | Attributes to release to the service provider, which may virtually be mapped and renamed.
-| `signature-location`  | Signature location to verify metadata.
-| `entity-ids`          | List of entity ids allowed for this service provider.
-| `sign-responses`      | Indicate whether responses should be signed. Default is `true`.
-| `sign-assertions`     | Indicate whether assertions should be signed. Default is `false`.
+| Name                 | Description                                                                                          |
+|----------------------|------------------------------------------------------------------------------------------------------|
+| `metadata`           | Location of metadata for the service provider (i.e URL, path, etc)                                   |
+| `name`               | The name of the service provider registered in the service registry.                                 |
+| `description`        | The description of the service provider registered in the service registry.                          |
+| `name-id-attribute`  | Attribute to use when generating name ids for this service provider.                                 |
+| `name-id-format`     | The forced NameID Format identifier (i.e. `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress`). |
+| `attributes`         | Attributes to release to the service provider, which may virtually be mapped and renamed.            |
+| `signature-location` | Signature location to verify metadata.                                                               |
+| `entity-ids`         | List of entity ids allowed for this service provider.                                                |
+| `sign-responses`     | Indicate whether responses should be signed. Default is `true`.                                      |
+| `sign-assertions`    | Indicate whether assertions should be signed. Default is `false`.                                    |
 
 The only required setting that would activate the automatic configuration for a
 service provider is the presence and definition of metadata. All other settings are optional.
      
-{% include casproperties.html properties="cas.saml-sp" %}
+{% include_cached casproperties.html properties="cas.saml-sp" %}
 
 **Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to
-filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds
-can be regular expression patterns and are mapped to
+filter the InCommon metadata. EntityIds can be regular expression patterns and are mapped to
 CAS' `serviceId` field in the registry. The signature location MUST BE the public key used to sign the metadata.
-
-## Google Apps
-
-The Google Apps SAML integration is also provided by 
-CAS natively [based on this guide](Google-Apps-Integration.html).

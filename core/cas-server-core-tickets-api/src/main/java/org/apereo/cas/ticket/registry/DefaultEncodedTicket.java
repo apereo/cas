@@ -3,26 +3,22 @@ package org.apereo.cas.ticket.registry;
 import org.apereo.cas.ticket.EncodedTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.EncodingUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.Table;
-import java.time.ZonedDateTime;
+import java.io.Serial;
 
 /**
  * Ticket implementation that encodes a source ticket and stores the encoded
@@ -34,34 +30,25 @@ import java.time.ZonedDateTime;
 @Slf4j
 @ToString(of = "id")
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 @EqualsAndHashCode(of = "id")
-@AllArgsConstructor
-@Entity
-@Table(name = "ENCODEDTICKET")
+@RequiredArgsConstructor
 public class DefaultEncodedTicket implements EncodedTicket {
 
+    @Serial
     private static final long serialVersionUID = -7078771807487764116L;
 
-    @Id
-    @Column(name = "ID", nullable = false)
-    private String id;
+    private final String id;
 
-    @Lob
-    @Column(name = "ENCODED_TICKET", length = Integer.MAX_VALUE, nullable = false)
-    private byte[] encodedTicket;
+    private final byte[] encodedTicket;
 
-    @Column(name = "PREFIX", nullable = false)
-    private String prefix;
+    private final String prefix;
 
-    /**
-     * Instantiates a new Encoded ticket.
-     *
-     * @param encodedTicket   the encoded ticket that will be decoded from base64
-     * @param encodedTicketId the encoded ticket id
-     * @param prefix          the ticket prefix
-     */
-    @SneakyThrows
+    private boolean stateless;
+
+    @Setter
+    private ExpirationPolicy expirationPolicy;
+
     @JsonCreator
     public DefaultEncodedTicket(@JsonProperty("encoded") final String encodedTicket,
                                 @JsonProperty("id") final String encodedTicketId,
@@ -71,53 +58,23 @@ public class DefaultEncodedTicket implements EncodedTicket {
         this.prefix = prefix;
     }
 
-    @JsonIgnore
-    @Override
-    public int getCountOfUses() {
-        LOGGER.trace("[Retrieving ticket usage count]");
-        return 0;
-    }
-
-    @JsonIgnore
-    @Override
-    public ExpirationPolicy getExpirationPolicy() {
-        LOGGER.trace(getOpNotSupportedMessage("[Retrieving expiration policy]"));
-        return null;
+    public DefaultEncodedTicket(@JsonProperty("encoded") final String encodedTicket,
+                                @JsonProperty("prefix") final String prefix) {
+        this.id = encodedTicket;
+        this.prefix = prefix;
+        this.encodedTicket = ArrayUtils.EMPTY_BYTE_ARRAY;
     }
 
     @Override
     @JsonIgnore
-    public ZonedDateTime getCreationTime() {
-        LOGGER.trace(getOpNotSupportedMessage("[Retrieving ticket creation time]"));
-        return null;
-    }
-
-    @Override
-    @JsonIgnore
-    public TicketGrantingTicket getTicketGrantingTicket() {
-        LOGGER.trace(getOpNotSupportedMessage("[Retrieving parent ticket-granting ticket]"));
-        return null;
-    }
-
-    @JsonIgnore
-    @Override
-    public boolean isExpired() {
-        LOGGER.trace(getOpNotSupportedMessage("[Ticket expiry checking]"));
-        return false;
-    }
-
-    @Override
-    @JsonIgnore
-    public void markTicketExpired() {
-    }
-
-    @Override
     public int compareTo(final Ticket o) {
         return getId().compareTo(o.getId());
     }
 
-    private String getOpNotSupportedMessage(final String op) {
-        return op + " operation not supported on a " + getClass().getSimpleName() + ". Ticket must be decoded first";
+    @Override
+    @CanIgnoreReturnValue
+    public Ticket markTicketStateless() {
+        stateless = true;
+        return this;
     }
-
 }

@@ -3,7 +3,7 @@ package org.apereo.cas.support.saml.metadata.resolver;
 import org.apereo.cas.support.saml.BaseMongoDbSamlMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -14,11 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.TestPropertySource;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,11 +41,11 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.file-system.location=file:/tmp"
 })
 @Tag("MongoDb")
-@EnabledIfPortOpen(port = 27017)
-public class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlMetadataTests {
+@EnabledIfListeningOnPort(port = 27017)
+class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongoDbSamlMetadataTests {
     @Autowired
     @Qualifier("mongoDbSamlMetadataResolverTemplate")
-    private MongoTemplate mongoDbSamlIdPMetadataTemplate;
+    private MongoOperations mongoDbSamlIdPMetadataTemplate;
 
     @BeforeEach
     public void setup() {
@@ -55,7 +54,7 @@ public class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongo
     }
 
     @Test
-    public void verifyResolver() throws IOException {
+    void verifyResolver() throws Throwable {
         val res = new ClassPathResource("sp-metadata.xml");
         val md = new SamlMetadataDocument();
         md.setName("SP");
@@ -74,7 +73,7 @@ public class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongo
     }
 
     @Test
-    public void verifyFailsResolver() throws IOException {
+    void verifyFailsResolver() throws Throwable {
         val res = new ByteArrayResource("bad-data".getBytes(StandardCharsets.UTF_8));
         val md = new SamlMetadataDocument();
         md.setName("SP");
@@ -89,7 +88,7 @@ public class MongoDbSamlRegisteredServiceMetadataResolverTests extends BaseMongo
     }
 
     @Test
-    public void verifyResolverDoesNotSupport() {
+    void verifyResolverDoesNotSupport() throws Throwable {
         assertFalse(resolver.supports(null));
 
     }

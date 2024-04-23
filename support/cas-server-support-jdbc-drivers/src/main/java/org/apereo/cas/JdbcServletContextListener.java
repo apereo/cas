@@ -1,12 +1,10 @@
 package org.apereo.cas;
 
 import lombok.val;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,28 +21,23 @@ import java.util.logging.Logger;
  * @since 6.2.0
  */
 @WebListener
+@SuppressWarnings("JdkObsolete")
 public class JdbcServletContextListener implements ServletContextListener {
-
-    @Override
-    public void contextInitialized(final ServletContextEvent sce) {
-    }
-
     @Override
     public final void contextDestroyed(final ServletContextEvent sce) {
         val logger = Logger.getLogger(CentralAuthenticationService.NAMESPACE);
         logger.fine("Unregistering JDBC drivers...");
 
         val cl = Thread.currentThread().getContextClassLoader();
-        @SuppressWarnings("JdkObsolete")
         val drivers = DriverManager.getDrivers().asIterator();
-        
+
         while (drivers.hasNext()) {
             val driver = drivers.next();
             if (driver.getClass().getClassLoader() == cl) {
                 try {
                     logger.fine("Attempting to deregister JDBC driver " + driver);
                     DriverManager.deregisterDriver(driver);
-                } catch (final SQLException ex) {
+                } catch (final Exception ex) {
                     logger.log(Level.WARNING, "Error deregistering JDBC driver ", ex);
                 }
             } else {

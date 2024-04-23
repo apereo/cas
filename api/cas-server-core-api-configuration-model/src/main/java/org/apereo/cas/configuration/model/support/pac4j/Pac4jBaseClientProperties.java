@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -7,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -20,8 +23,9 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("Pac4jBaseClientProperties")
-public class Pac4jBaseClientProperties implements Serializable {
+public class Pac4jBaseClientProperties implements CasFeatureModule, Serializable {
 
+    @Serial
     private static final long serialVersionUID = -7885975876831784206L;
 
     /**
@@ -35,12 +39,14 @@ public class Pac4jBaseClientProperties implements Serializable {
     /**
      * Auto-redirect to this client.
      */
-    private boolean autoRedirect;
+    private DelegationAutoRedirectTypes autoRedirectType = DelegationAutoRedirectTypes.NONE;
 
     /**
-     * The attribute to use as the principal identifier built during and upon a successful authentication attempt.
+     * The attribute found in the identity provider response
+     * that may be used to establish the authenticated
+     * user and build a profile for CAS.
      */
-    private String principalAttributeId;
+    private String principalIdAttribute;
 
     /**
      * Whether the client/external identity provider should be considered
@@ -52,6 +58,13 @@ public class Pac4jBaseClientProperties implements Serializable {
      * CSS class that should be assigned to this client.
      */
     private String cssClass;
+
+    /**
+     * Indicate the title or display name of the client
+     * for decoration and client presentation purposes.
+     * If left blank, the client original name would be used by default.
+     */
+    private String displayName;
 
     /**
      * Determine how the callback url should be resolved.
@@ -69,7 +82,7 @@ public class Pac4jBaseClientProperties implements Serializable {
      * will be used as the basis of the final callback url.
      */
     private String callbackUrl;
-    
+
     /**
      * The callback url types.
      */

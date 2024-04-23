@@ -6,6 +6,8 @@ import org.apereo.cas.authentication.principal.Principal;
 
 import lombok.Getter;
 
+import java.io.Serial;
+
 /**
  * Describes an error condition where non-identical principals have been resolved while authenticating
  * multiple credentials.
@@ -16,9 +18,7 @@ import lombok.Getter;
 @Getter
 public class MixedPrincipalException extends PrincipalException {
 
-    /**
-     * Serialization version marker.
-     */
+    @Serial
     private static final long serialVersionUID = -9040132618070273997L;
 
     /**

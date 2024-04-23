@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @Tag("AmazonWebServices")
-public class AmazonEnvironmentAwareClientBuilderTests {
+class AmazonEnvironmentAwareClientBuilderTests {
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
         System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");
@@ -31,7 +31,7 @@ public class AmazonEnvironmentAwareClientBuilderTests {
     private Environment environment;
 
     @Test
-    public void verifyAction() {
+    void verifyAction() throws Throwable {
         val builder = new AmazonEnvironmentAwareClientBuilder("aws", environment);
         val mock = mock(AwsClientBuilder.class);
         when(mock.build()).thenReturn(new Object());

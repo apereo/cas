@@ -1,15 +1,17 @@
 package org.apereo.cas.support.events.redis;
 
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.RedisEventsConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasRedisEventsAutoConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
-
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.WebProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -21,8 +23,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  */
 @Tag("Redis")
 @SpringBootTest(classes = {
-    RedisEventsConfiguration.class,
-    CasCoreHttpConfiguration.class,
+    CasRedisEventsAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
     RefreshAutoConfiguration.class
 },
     properties = {
@@ -30,10 +32,11 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
         "cas.events.redis.port=6379"
     })
 @Getter
-@EnabledIfPortOpen(port = 6379)
-public class RedisCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
+@EnabledIfListeningOnPort(port = 6379)
+@EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
+class RedisCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
 
     @Autowired
-    @Qualifier("casEventRepository")
+    @Qualifier(CasEventRepository.BEAN_NAME)
     private CasEventRepository eventRepository;
 }

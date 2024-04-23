@@ -24,7 +24,7 @@ Copyright © 2005, Yale University
 This is the official specification of the CAS 1.0 and 2.0 protocols. It is subject to change.
 
 ## 1.1. Conventions & Definitions
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY",
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY",
 and "OPTIONAL" in this document are to be interpreted as described in RFC 2119[1].
 
 * "Client" refers to the end user and/or the web browser.
@@ -61,16 +61,16 @@ to present credentials regardless of the existence of a single sign-on session w
 with the "gateway" parameter. Services redirecting to the */login* URI and login form views posting to the */login* URI
 SHOULD NOT set both the "renew" and "gateway" request parameters. Behavior is undefined if both are set. It is RECOMMENDED
 that CAS implementations ignore the "gateway" parameter if "renew" is set. It is RECOMMENDED that when the renew parameter
-is set itsvalue be "true".
+is set, its value be `true`.
 3. `gateway [OPTIONAL]` - if this parameter is set, CAS will not ask the client for credentials. If the client has a pre-existing
 single sign-on session with CAS, or if a single sign-on session can be established through non-interactive means
-(i.e. trust authentication), CAS MAY redirect the client to the URL specified by the "service" parameter, appending a valid
+(i.e. trust authentication), CAS MAY redirect the client to the URL specified by the `service` parameter, appending a valid
 service ticket. (CAS also MAY interpose an advisory page informing the client that a CAS authentication has taken place.)
 If the client does not have a single sign-on session with CAS, and a non-interactive authentication cannot be established, CAS
-MUST redirect the client to the URL specified by the "service" parameter with no "ticket" parameter appended to the URL.
-If the "service" parameter is not specified and "gateway" is set, the behavior of CAS is undefined. It is RECOMMENDED that in
-this case, CAS request credentials as if neither parameter was specified. This parameter is not compatible with the "renew"
-parameter. Behavior is undefined if both are set. It is RECOMMENDED that when the gateway parameter is set its value be "true".
+MUST redirect the client to the URL specified by the `service` parameter with no `ticket` parameter appended to the URL.
+If the `service` parameter is not specified and "gateway" is set, the behavior of CAS is undefined. It is RECOMMENDED that in
+this case, CAS request credentials as if neither parameter was specified. This parameter is not compatible with the `renew`
+parameter. Behavior is undefined if both are set. It is RECOMMENDED that when the gateway parameter is set its value be `true`.
 
 ### 2.1.2. URL examples of */login*
 Simple login example:
@@ -88,8 +88,8 @@ Always prompt for username/password:
 ### 2.1.3. response for username/password authentication
 When */login* behaves as a credential requestor, the response will vary depending on the type of credentials it is requesting.
 In most cases, CAS will respond by displaying a login screen requesting a username and password. This page MUST include a form
-with the parameters, "username", "password", and "lt". The form MAY also include the parameter, "warn". If "service" was
-specified to */login*, "service" MUST also be a parameter of the form, containing the value originally passed to */login*. These
+with the parameters, "username", "password", and "lt". The form MAY also include the parameter, "warn". If `service` was
+specified to */login*, `service` MUST also be a parameter of the form, containing the value originally passed to */login*. These
 parameters are discussed in detail in Section 2.2.1. The form MUST be submitted through the HTTP POST method to */login* which
 will then act as a credential acceptor, discussed in Section 2.2.
 
@@ -139,10 +139,10 @@ of the HTTP request.
 ### 2.2.4. response
 One of the following responses MUST be provided by /login when it is operating as a credential acceptor.
 
-1. successful login: redirect the client to the URL specified by the "service" parameter in a manner that will not cause
+1. successful login: redirect the client to the URL specified by the `service` parameter in a manner that will not cause
 the client's credentials to be forwarded to the service. This redirection MUST result in the client issuing a GET request
-to the service. The request MUST include a valid service ticket, passed as the HTTP request parameter, "ticket".
-See Appendix B for more information. If "service" was not specified, CAS MUST display a message notifying the client that
+to the service. The request MUST include a valid service ticket, passed as the HTTP request parameter, `ticket`.
+See Appendix B for more information. If `service` was not specified, CAS MUST display a message notifying the client that
 it has successfully initiated a single sign-on session.
 2. failed login: return to /login as a credential requestor. It is RECOMMENDED in this case that the CAS server display
 an error message be displayed to the user describing why login failed (e.g. bad password, locked account, etc.), and if
@@ -347,7 +347,7 @@ The following HTTP request parameters MUST be specified to /proxy. They are both
 1. `pgt [REQUIRED]` - the proxy-granting ticket acquired by the service during service ticket or proxy ticket validation
 2. `targetService [REQUIRED]` - the service identifier of the back-end service. Note that not all back-end services are
 web services so this service identifier will not always be a URL. However, the service identifier specified here MUST
-match the "service" parameter specified to /proxyValidate upon validation of the proxy ticket.
+match the `service` parameter specified to /proxyValidate upon validation of the proxy ticket.
 
 ### 2.7.2. response
 */proxy* will return an XML-formatted CAS serviceResponse as described in the XML schema in Appendix A.

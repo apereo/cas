@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pm;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,8 +23,9 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("RestfulPasswordManagementProperties")
-public class RestfulPasswordManagementProperties implements Serializable {
+public class RestfulPasswordManagementProperties implements CasFeatureModule, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 5262948164099973872L;
 
     /**
@@ -50,6 +53,12 @@ public class RestfulPasswordManagementProperties implements Serializable {
     private String endpointUrlSecurityQuestions;
 
     /**
+     * Endpoint URL to use when unlocking account.
+     */
+    @RequiredProperty
+    private String endpointUrlAccountUnlock;
+
+    /**
      * Endpoint URL to use when updating passwords..
      */
     @RequiredProperty
@@ -66,4 +75,25 @@ public class RestfulPasswordManagementProperties implements Serializable {
      */
     @RequiredProperty
     private String endpointPassword;
+
+    /**
+     * Field name for username field
+     * when password change requests are submitted.
+     */
+    @RequiredProperty
+    private String fieldNameUser = "username";
+
+    /**
+     * Field name for password field
+     * when password change requests are submitted.
+     */
+    @RequiredProperty
+    private String fieldNamePassword = "password";
+
+    /**
+     * Field name for oldPassword field
+     * when password change requests are submitted.
+     */
+    @RequiredProperty
+    private String fieldNamePasswordOld = "oldPassword";
 }

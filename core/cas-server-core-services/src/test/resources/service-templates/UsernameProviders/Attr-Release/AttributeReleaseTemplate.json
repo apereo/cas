@@ -1,0 +1,9 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "name": "CAS",
+  "templateName": "AttributeReleaseTemplate",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "email", "username" ] ]
+  }
+}

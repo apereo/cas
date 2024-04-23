@@ -13,4 +13,4 @@ matched against attributes names and values. If a successful match is produced w
 examines the collection of both authentication and principal attributes, the 
 authentication flow would be interrupted.
 
-{% include casproperties.html properties="cas.interrupt.attribute-" %}
+{% include_cached casproperties.html properties="cas.interrupt.regex" %}

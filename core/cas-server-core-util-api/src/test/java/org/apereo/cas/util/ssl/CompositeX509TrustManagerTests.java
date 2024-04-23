@@ -9,6 +9,7 @@ import org.springframework.core.io.ClassPathResource;
 
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
+
 import java.security.KeyStore;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -24,14 +25,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("X509")
-public class CompositeX509TrustManagerTests {
+class CompositeX509TrustManagerTests {
     @Test
-    public void verifyIssuers() throws Exception {
+    void verifyIssuers() throws Throwable {
         val tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         tmf.init((KeyStore) null);
 
         val managers = Arrays.stream(tmf.getTrustManagers())
-            .filter(tm -> tm instanceof X509TrustManager)
+            .filter(X509TrustManager.class::isInstance)
             .map(X509TrustManager.class::cast)
             .collect(Collectors.toList());
 
@@ -40,12 +41,12 @@ public class CompositeX509TrustManagerTests {
     }
 
     @Test
-    public void verifyCert() throws Exception {
+    void verifyCert() throws Throwable {
         val tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         tmf.init((KeyStore) null);
 
         val managers = Arrays.stream(tmf.getTrustManagers())
-            .filter(tm -> tm instanceof X509TrustManager)
+            .filter(X509TrustManager.class::isInstance)
             .map(X509TrustManager.class::cast)
             .collect(Collectors.toList());
 

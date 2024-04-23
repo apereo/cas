@@ -28,13 +28,13 @@ ticket expires.
 * Supported browser.
 * CAS is running MIT kerberos against the AD domain controller.
 
-<div class="alert alert-info"><strong>JCE Requirement</strong><p>It's safe to make 
+<div class="alert alert-info">:information_source: <strong>JCE Requirement</strong><p>It's safe to make 
 sure you have the proper JCE bundle installed in your Java environment that is used 
 by CAS, specially if you need to consume encrypted payloads issued by ADFS. Be sure 
 to pick the right version of the JCE for your Java version. Java versions can be 
 detected via the <code>java -version</code> command.</p></div>
 
-<div class="alert alert-info"><strong>Large Kerberos Tickets</strong><p>If organization 
+<div class="alert alert-info">:information_source: <strong>Large Kerberos Tickets</strong><p>If organization 
 users have large kerberos tickets, likely cause by being a member of a large number 
 of groups, the Tomcat connector will need to have the <code>maxHttpHeaderSize</code> 
 value increased from the default amount to allow the ticket to be passed to the CAS Server application.</p></div>
@@ -43,7 +43,7 @@ value increased from the default amount to allow the ticket to be passed to the 
 
 SPNEGO support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-spnego-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-spnego-webflow" %}
 
 ### JCIFS SDK
 
@@ -172,7 +172,7 @@ URL, e.g. `https://cas.example.com`.
 
 Make sure you have at least specified the JCIFS Service Principal in the CAS configuration.
 
-{% include casproperties.html properties="cas.authn.spnego,cas.authn.ntlm" %}
+{% include_cached casproperties.html properties="cas.authn.spnego" %}
 
 You may provide a JAAS `login.conf` file:
 
@@ -195,7 +195,7 @@ current authentication/browser request. The state that is available to the webfl
 is `evaluateClientRequest` which will attempt to start SPNEGO authentication
 or resume normally, depending on the client action strategy chosen below.
 
-{% include casproperties.html properties="cas.authn.spnego.host-name-client-action-strategy,cas.authn.spnego.alternative-remote-host-attribute,cas.authn.spnego.ips-to-check-pattern,cas.authn.spnego.dns-timeout,cas.authn.spnego.host-name-pattern-string" %}
+{% include_cached casproperties.html properties="cas.authn.spnego.host-name-client-action-strategy,cas.authn.spnego.alternative-remote-host-attribute,cas.authn.spnego.ips-to-check-pattern,cas.authn.spnego.dns-timeout,cas.authn.spnego.host-name-pattern-string" %}
 
 ### By Remote IP
 
@@ -210,7 +210,7 @@ Checks to see if the request's remote hostname matches a predefine pattern.
 Checks an LDAP instance for the remote hostname, to locate a pre-defined attribute whose mere existence
 would allow the webflow to resume to SPNEGO.
 
-{% include casproperties.html properties="cas.authn.spnego.ldap,cas.authn.spnego.spnego-attribute-name" %}
+{% include_cached casproperties.html properties="cas.authn.spnego.ldap,cas.authn.spnego.spnego-attribute-name" %}
 
 ## Logging
 
@@ -219,8 +219,8 @@ To enable additional logging, configure the log4j configuration file to add the 
 ```xml
 ...
 <Logger name="jcifs.spnego" level="debug" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 ...
 ```

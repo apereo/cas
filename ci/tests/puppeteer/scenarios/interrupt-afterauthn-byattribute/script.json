@@ -1,0 +1,16 @@
+{
+  "dependencies": "generic,interrupt-webflow",
+  "properties": [
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.interrupt.core.trigger-mode=AFTER_AUTHENTICATION",
+
+    "--cas.interrupt.regex.attribute-name=groups",
+    "--cas.interrupt.regex.attribute-value=^st[a]ff$",
+
+    "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
+    "--cas.authn.accept.enabled=false"
+  ]
+}

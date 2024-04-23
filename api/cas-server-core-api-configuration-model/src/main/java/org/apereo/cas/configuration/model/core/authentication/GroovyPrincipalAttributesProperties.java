@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link GroovyPrincipalAttributesProperties}.
  *
@@ -21,13 +23,8 @@ import lombok.experimental.Accessors;
 @JsonFilter("GroovyPrincipalAttributesProperties")
 public class GroovyPrincipalAttributesProperties extends SpringResourceProperties {
 
+    @Serial
     private static final long serialVersionUID = 7901595963842506684L;
-
-    /**
-     * Whether attribute repository should consider the underlying
-     * attribute names in a case-insensitive manner.
-     */
-    private boolean caseInsensitive;
 
     /**
      * The order of this attribute repository in the chain of repositories.
@@ -40,4 +37,9 @@ public class GroovyPrincipalAttributesProperties extends SpringResourcePropertie
      * A value can be assigned to this field to uniquely identify this resolver.
      */
     private String id;
+
+    /**
+     * Whether attribute resolution based on this source is enabled.
+     */
+    private AttributeRepositoryStates state = AttributeRepositoryStates.ACTIVE;
 }

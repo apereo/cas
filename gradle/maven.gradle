@@ -35,48 +35,8 @@ ext.createPom = { pom, project ->
             name = "Jérôme Leleu"
         }
         developer {
-            id = "tduehr"
-            name = "Timur Duehr"
-        }
-        developer {
-            id = "mindblender"
-            name = "Jeff Sittler"
-        }
-        developer {
-            id = "apetro"
-            name = "Andrew Petro"
-        }
-        developer {
-            id = "wgthom"
-            name = "William G. Thompson"
-        }
-        developer {
-            id = "serac"
-            name = "Marvin S. Addison"
-        }
-        developer {
-            id = "battags"
-            name = "Scott Battaglia"
-        }
-        developer {
             id = "mmoayyed"
             name = "Misagh Moayyed"
-        }
-        developer {
-            id = "robertoschwald"
-            name = "Robert Oschwald"
-        }
-        developer {
-            id = "frett"
-            name = "Daniel Frett"
-        }
-        developer {
-            id = "dima767"
-            name = "Dmitriy Kopylenko"
-        }
-        developer {
-            id = "tsschmidt"
-            name = "Travis Schmidt"
         }
         developer {
             id = "hdeadman"
@@ -85,6 +45,46 @@ ext.createPom = { pom, project ->
     }
 
     pom.contributors {
+        contributor {
+            id = "dima767"
+            name = "Dmitriy Kopylenko"
+        }
+        contributor {
+            id = "tduehr"
+            name = "Timur Duehr"
+        }
+        contributor {
+            id = "mindblender"
+            name = "Jeff Sittler"
+        }
+        contributor {
+            id = "apetro"
+            name = "Andrew Petro"
+        }
+        contributor {
+            id = "wgthom"
+            name = "William G. Thompson"
+        }
+        contributor {
+            id = "serac"
+            name = "Marvin S. Addison"
+        }
+        contributor {
+            id = "battags"
+            name = "Scott Battaglia"
+        }
+        contributor {
+            id = "tsschmidt"
+            name = "Travis Schmidt"
+        }
+        contributor {
+            id = "robertoschwald"
+            name = "Robert Oschwald"
+        }
+        contributor {
+            id = "frett"
+            name = "Daniel Frett"
+        }
         contributor {
             name = "Adam Rybicki"
             email = "arybicki@unicon.net"
@@ -175,21 +175,15 @@ ext.createPomRepositories = { node ->
 
     repository = repositories.appendNode("repository")
     repository.appendNode("id", "shib-release")
-    repository.appendNode("url", "https://build.shibboleth.net/nexus/content/repositories/releases")
+    repository.appendNode("url", "https://build.shibboleth.net/maven/releases/")
     repository.appendNode("releases").appendNode("enabled", "true")
     repository.appendNode("snapshots").appendNode("enabled", "false")
 
     repository = repositories.appendNode("repository")
-    repository.appendNode("id", "jitpack")
-    repository.appendNode("url", "https://jitpack.io")
-    repository.appendNode("releases").appendNode("enabled", "true")
-    repository.appendNode("snapshots").appendNode("enabled", "false")
-
-    repository = repositories.appendNode("repository")
-    repository.appendNode("id", "couchbase")
-    repository.appendNode("url", "https://files.couchbase.com/maven2/")
-    repository.appendNode("releases").appendNode("enabled", "true")
-    repository.appendNode("snapshots").appendNode("enabled", "false")
+    repository.appendNode("id", "shib-snapshots")
+    repository.appendNode("url", "https://build.shibboleth.net/maven/snapshots/")
+    repository.appendNode("releases").appendNode("enabled", "false")
+    repository.appendNode("snapshots").appendNode("enabled", "true")
 
     repository = repositories.appendNode("repository")
     repository.appendNode("id", "sonatype-snapshot")
@@ -198,9 +192,22 @@ ext.createPomRepositories = { node ->
     repository.appendNode("releases").appendNode("enabled", "false")
 
     repository = repositories.appendNode("repository")
-    repository.appendNode("id", "jfrog-snapshot")
-    repository.appendNode("url", "https://oss.jfrog.org/artifactory/oss-snapshot-local")
+    repository.appendNode("id", "apache-snapshot")
+    repository.appendNode("url", "https://repository.apache.org/content/repositories/snapshots")
     repository.appendNode("snapshots").appendNode("enabled", "true")
     repository.appendNode("releases").appendNode("enabled", "false")
+
+    repository = repositories.appendNode("repository")
+    repository.appendNode("id", "spring-milestone")
+    repository.appendNode("url", "https://repo.spring.io/milestone")
+    repository.appendNode("snapshots").appendNode("enabled", "false")
+    repository.appendNode("releases").appendNode("enabled", "true")
+
+    repository = repositories.appendNode("repository")
+    repository.appendNode("id", "jitpack")
+    repository.appendNode("url", "https://jitpack.io")
+    repository.appendNode("snapshots").appendNode("enabled", "false")
+    repository.appendNode("releases").appendNode("enabled", "true")
+
 }
 

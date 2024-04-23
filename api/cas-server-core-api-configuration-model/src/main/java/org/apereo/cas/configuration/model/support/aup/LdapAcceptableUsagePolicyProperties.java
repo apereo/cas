@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+import java.util.Locale;
+
 /**
  * This is {@link LdapAcceptableUsagePolicyProperties}.
  *
@@ -20,11 +23,12 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("LdapAcceptableUsagePolicyProperties")
 public class LdapAcceptableUsagePolicyProperties extends AbstractLdapSearchProperties {
+    @Serial
     private static final long serialVersionUID = -7991011278378393382L;
 
     /**
      * Attribute value that indicates whether AUP has been accepted
      * for the LDAP record.
      */
-    private String aupAcceptedAttributeValue = Boolean.TRUE.toString().toUpperCase();
+    private String aupAcceptedAttributeValue = Boolean.TRUE.toString().toUpperCase(Locale.ENGLISH);
 }

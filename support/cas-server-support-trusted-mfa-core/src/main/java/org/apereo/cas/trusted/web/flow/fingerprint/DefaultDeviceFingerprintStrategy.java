@@ -1,34 +1,33 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import org.springframework.core.OrderComparator;
-import org.springframework.webflow.execution.RequestContext;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
+import org.jooq.lambda.Unchecked;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * Default {@link DeviceFingerprintStrategy} implementation that uses {@link DeviceFingerprintComponentExtractor} to generate
+ * Default {@link DeviceFingerprintStrategy} implementation that uses {@link DeviceFingerprintComponentManager} to generate
  * a fingerprint.
  *
  * @author Daniel Frett
  * @since 5.3.0
  */
-@RequiredArgsConstructor
-@Getter
-public class DefaultDeviceFingerprintStrategy implements DeviceFingerprintStrategy {
-    private final List<DeviceFingerprintComponentExtractor> deviceFingerprintComponentExtractors;
-
-    private final String componentSeparator;
-
+public record DefaultDeviceFingerprintStrategy(List<DeviceFingerprintComponentManager> deviceFingerprintComponentManagers, String componentSeparator) implements DeviceFingerprintStrategy {
     @Override
-    public String determineFingerprint(final String principal, final RequestContext context, final boolean isNew) {
-        return deviceFingerprintComponentExtractors
+    public String determineFingerprintComponent(final String principal,
+                                                final HttpServletRequest request,
+                                                final HttpServletResponse response) {
+        return deviceFingerprintComponentManagers
             .stream()
-            .sorted(OrderComparator.INSTANCE)
-            .map(component -> component.extractComponent(principal, context, isNew))
+            .filter(BeanSupplier::isNotProxy)
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .map(Unchecked.function(component -> component.extractComponent(principal, request, response)))
             .filter(Optional::isPresent)
             .map(Optional::get)
             .collect(Collectors.joining(componentSeparator));

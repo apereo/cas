@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +23,7 @@ import java.io.Serializable;
 @JsonFilter("TrustedDevicesMultifactorCoreProperties")
 public class TrustedDevicesMultifactorCoreProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1585013239016790473L;
 
     /**
@@ -40,21 +42,8 @@ public class TrustedDevicesMultifactorCoreProperties implements Serializable {
     private boolean deviceRegistrationEnabled = true;
 
     /**
-     * Indicates how record keys for trusted devices would be generated
-     * so they can be signed/verified on fetch operations.
+     * When device registration is enabled, indicate whether
+     * a device name should be automatically selected and assigned by CAS.
      */
-    private TrustedDevicesKeyGeneratorTypes keyGeneratorType = TrustedDevicesKeyGeneratorTypes.DEFAULT;
-
-    public enum TrustedDevicesKeyGeneratorTypes {
-        /**
-         * Uses a combination of the username, device name and device fingerprint to generate the device key.
-         */
-        DEFAULT,
-        /**
-         * Deprecated. Uses a combination of the username, record date and device fingerprint to generate the device key.
-         * @deprecated since 6.3.0
-         */
-        @Deprecated(since = "6.3.0")
-        LEGACY
-    }
+    private boolean autoAssignDeviceName;
 }

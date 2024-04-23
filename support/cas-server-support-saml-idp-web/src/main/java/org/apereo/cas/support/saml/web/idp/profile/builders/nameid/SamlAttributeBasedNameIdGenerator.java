@@ -2,12 +2,12 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.nameid;
 
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.profile.context.ProfileRequestContext;
@@ -38,7 +38,6 @@ public class SamlAttributeBasedNameIdGenerator extends AbstractSAML2NameIDGenera
      * @param attributeValue the attribute value
      * @return the generator for
      */
-    @SneakyThrows
     public static SAML2NameIDGenerator get(final Optional<RequestAbstractType> authnRequest,
                                            final String nameFormat,
                                            final SamlRegisteredService service,
@@ -49,14 +48,14 @@ public class SamlAttributeBasedNameIdGenerator extends AbstractSAML2NameIDGenera
         encoder.setDefaultIdPNameQualifierLookupStrategy(baseContexts -> service.getNameIdQualifier());
         encoder.setDefaultSPNameQualifierLookupStrategy(baseContexts -> service.getServiceProviderNameIdQualifier());
 
-        authnRequest.ifPresent(request -> SamlIdPUtils.getNameIDPolicy(request).ifPresent(policy -> {
+        authnRequest.flatMap(SamlIdPUtils::getNameIDPolicy).ifPresent(policy -> {
             val qualifier = policy.getSPNameQualifier();
             LOGGER.debug("NameID SP qualifier is set to [{}]", qualifier);
             encoder.setSPNameQualifier(qualifier);
-        }));
+        });
         encoder.setIdPNameQualifier(service.getNameIdQualifier());
         encoder.setOmitQualifiers(service.isSkipGeneratingNameIdQualifiers());
-        encoder.initialize();
+        FunctionUtils.doUnchecked(__ -> encoder.initialize());
         return encoder;
     }
 

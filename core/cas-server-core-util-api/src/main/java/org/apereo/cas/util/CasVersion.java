@@ -1,11 +1,14 @@
 package org.apereo.cas.util;
 
-import lombok.SneakyThrows;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-
-import java.time.Instant;
+import org.apache.commons.lang3.StringUtils;
+import java.net.URL;
+import java.time.Clock;
 import java.time.ZonedDateTime;
+import java.util.jar.Manifest;
 
 /**
  * Class that exposes the CAS version. Fetches the "Implementation-Version"
@@ -15,20 +18,24 @@ import java.time.ZonedDateTime;
  * @since 3.0.0
  */
 @UtilityClass
+@SuppressWarnings("CatchAndPrintStackTrace")
 public class CasVersion {
+    private static final String IMPLEMENTATION_DATE;
+
     /**
      * To string.
      *
      * @return the string
      */
     public static String asString() {
-        return getVersion() + " - " + getSpecificationVersion() + " - " + getDateTime().toString();
+        return getVersion() + " - " + getSpecificationVersion();
     }
 
     /**
      * The full CAS version string.
+     *
      * @return Return the full CAS version string.
-     * @see java.lang.Package#getImplementationVersion
+     * @see Package#getImplementationVersion
      */
     public static String getVersion() {
         return CasVersion.class.getPackage().getImplementationVersion();
@@ -43,16 +50,20 @@ public class CasVersion {
         return CasVersion.class.getPackage().getSpecificationVersion();
     }
 
-    /**
-     * Gets last modified date/time for the module.
-     *
-     * @return the date/time
-     */
-    @SneakyThrows
     public static ZonedDateTime getDateTime() {
-        val clazz = CasVersion.class;
-        val resource = clazz.getResource(clazz.getSimpleName() + ".class");
-        val time = Instant.ofEpochMilli(resource.openConnection().getLastModified());
-        return DateTimeUtils.zonedDateTimeOf(time);
+        return DateTimeUtils.zonedDateTimeOf(IMPLEMENTATION_DATE);
+    }
+
+    static {
+        IMPLEMENTATION_DATE = CasRuntimeHintsRegistrar.inNativeImage()
+            ? ZonedDateTime.now(Clock.systemUTC()).toString()
+            : FunctionUtils.doAndHandle(() -> {
+                val className = CasVersion.class.getSimpleName() + ".class";
+                val classPath = CasVersion.class.getResource(className).toString();
+                val manifestPath = classPath.substring(0, classPath.lastIndexOf('!') + 1) + "/META-INF/MANIFEST.MF";
+                val manifest = new Manifest(new URL(manifestPath).openStream());
+                val attributes = manifest.getMainAttributes();
+                return StringUtils.defaultIfBlank(attributes.getValue("Implementation-Date"), ZonedDateTime.now(Clock.systemUTC()).toString());
+            });
     }
 }

@@ -1,0 +1,29 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client1",
+  "clientSecret": "secret1",
+  "serviceId": "^https://localhost:9859/anything/sample1",
+  "name": "Sample",
+  "id": 1,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [ "java.util.ArrayList",
+      [
+        {
+          "@class": "org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy",
+          "order": 0
+        },
+        {
+          "@class": "org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy",
+          "order": 1
+        }
+      ]
+    ]
+  },
+  "bypassApprovalPrompt": false,
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PrincipalAttributeRegisteredServiceUsernameProvider",
+    "usernameAttribute" : "mail",
+    "canonicalizationMode" : "UPPER"
+  }
+}

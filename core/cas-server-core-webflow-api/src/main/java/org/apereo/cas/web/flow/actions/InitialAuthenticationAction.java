@@ -1,9 +1,9 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-
 
 /**
  * This is {@link InitialAuthenticationAction},
@@ -13,6 +13,7 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Monitorable
 public class InitialAuthenticationAction extends AbstractAuthenticationAction {
     public InitialAuthenticationAction(final CasDelegatingWebflowEventResolver delegatingWebflowEventResolver,
                                        final CasWebflowEventResolver webflowEventResolver,

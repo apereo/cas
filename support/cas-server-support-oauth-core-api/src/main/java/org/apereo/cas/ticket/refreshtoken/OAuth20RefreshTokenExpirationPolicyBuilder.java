@@ -2,14 +2,14 @@ package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.services.RegisteredServiceDefinition;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import java.io.Serial;
 
 /**
  * This is {@link OAuth20RefreshTokenExpirationPolicyBuilder}.
@@ -17,25 +17,14 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RequiredArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@ToString
-@Getter
-public class OAuth20RefreshTokenExpirationPolicyBuilder implements ExpirationPolicyBuilder<OAuth20RefreshToken> {
+public record OAuth20RefreshTokenExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<OAuth20RefreshToken> {
+    @Serial
     private static final long serialVersionUID = -3597980180617072826L;
-    /**
-     * The Cas properties.
-     */
-    protected final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {
         return toTicketExpirationPolicy();
-    }
-
-    @Override
-    public Class<OAuth20RefreshToken> getTicketType() {
-        return OAuth20RefreshToken.class;
     }
 
     /**
@@ -46,9 +35,26 @@ public class OAuth20RefreshTokenExpirationPolicyBuilder implements ExpirationPol
     public ExpirationPolicy toTicketExpirationPolicy() {
         val rtProps = casProperties.getAuthn().getOauth().getRefreshToken();
         val timeout = Beans.newDuration(rtProps.getTimeToKillInSeconds()).getSeconds();
-        if (casProperties.getLogout().isRemoveDescendantTickets()) {
+        return buildExpirationPolicyFor(timeout);
+    }
+
+    @Override
+    public ExpirationPolicy buildTicketExpirationPolicyFor(final RegisteredServiceDefinition registeredService) {
+        if (registeredService instanceof final OAuthRegisteredService service && service.getRefreshTokenExpirationPolicy() != null) {
+            val policy = service.getRefreshTokenExpirationPolicy();
+            val timeToKill = policy.getTimeToKill();
+            if (StringUtils.isNotBlank(timeToKill)) {
+                val timeToKillInSeconds = Beans.newDuration(timeToKill).getSeconds();
+                return buildExpirationPolicyFor(timeToKillInSeconds);
+            }
+        }
+        return toTicketExpirationPolicy();
+    }
+
+    private OAuth20RefreshTokenExpirationPolicy buildExpirationPolicyFor(final long timeout) {
+        if (casProperties.getTicket().isTrackDescendantTickets()) {
             return new OAuth20RefreshTokenExpirationPolicy(timeout);
         }
-        return new OAuth20RefreshTokenExpirationPolicy.OAuthRefreshTokenStandaloneExpirationPolicy(timeout);
+        return new OAuth20RefreshTokenStandaloneExpirationPolicy(timeout);
     }
 }

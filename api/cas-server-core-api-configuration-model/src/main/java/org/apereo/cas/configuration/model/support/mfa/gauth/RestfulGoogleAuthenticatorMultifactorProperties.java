@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link RestfulGoogleAuthenticatorMultifactorProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("RestfulGoogleAuthenticatorMultifactorProperties")
 public class RestfulGoogleAuthenticatorMultifactorProperties extends BaseRestEndpointProperties {
+    @Serial
     private static final long serialVersionUID = 4518622579150572559L;
 
     /**

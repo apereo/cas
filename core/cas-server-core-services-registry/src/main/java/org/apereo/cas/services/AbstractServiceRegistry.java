@@ -21,15 +21,9 @@ import java.util.Collection;
 @Getter
 public abstract class AbstractServiceRegistry implements ServiceRegistry {
 
-    /**
-     * The Event publisher.
-     */
-    private final transient ConfigurableApplicationContext applicationContext;
+    private final ConfigurableApplicationContext applicationContext;
 
-    /**
-     * The Service registry listeners.
-     */
-    private final transient Collection<ServiceRegistryListener> serviceRegistryListeners;
+    private final Collection<ServiceRegistryListener> serviceRegistryListeners;
 
     /**
      * Publish event.
@@ -37,18 +31,12 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
      * @param event the event
      */
     public void publishEvent(final ApplicationEvent event) {
-        if (this.applicationContext != null) {
+        if (applicationContext != null) {
             LOGGER.trace("Publishing event [{}]", event);
-            this.applicationContext.publishEvent(event);
+            applicationContext.publishEvent(event);
         }
     }
 
-    /**
-     * Invoke service registry listener pre save.
-     *
-     * @param registeredService the registered service
-     * @return the registered service
-     */
     protected RegisteredService invokeServiceRegistryListenerPreSave(final RegisteredService registeredService) {
         if (serviceRegistryListeners != null) {
             serviceRegistryListeners.forEach(listener -> listener.preSave(registeredService));
@@ -56,12 +44,6 @@ public abstract class AbstractServiceRegistry implements ServiceRegistry {
         return registeredService;
     }
 
-    /**
-     * Invoke service registry listener post load.
-     *
-     * @param registeredService the registered service
-     * @return the registered service
-     */
     protected RegisteredService invokeServiceRegistryListenerPostLoad(final RegisteredService registeredService) {
         if (serviceRegistryListeners != null) {
             serviceRegistryListeners.forEach(listener -> listener.postLoad(registeredService));

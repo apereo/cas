@@ -9,13 +9,12 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
-
+@Tag("SAMLServiceProvider")
 @TestPropertySource(properties = {
     "cas.saml-sp.evernote.metadata=classpath:/metadata/sp-metadata.xml",
     "cas.saml-sp.evernote.name-id-attribute=cn",
     "cas.saml-sp.evernote.name-id-format=transient"
 })
-public class CasSamlSPEvernoteConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPEvernoteConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
 }

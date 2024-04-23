@@ -3,10 +3,11 @@ package org.apereo.cas.web.flow.action;
 import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
-import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
-import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
-import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.MutableCredential;
+import org.apereo.cas.authentication.SurrogateAuthenticationPrincipalBuilder;
+import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -14,8 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.binding.message.MessageBuilder;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -29,50 +28,46 @@ import java.util.HashMap;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class SurrogateSelectionAction extends AbstractAction {
+public class SurrogateSelectionAction extends BaseCasWebflowAction {
     /**
      * Surrogate Target parameter name.
      */
     public static final String PARAMETER_NAME_SURROGATE_TARGET = "surrogateTarget";
 
-    private final SurrogatePrincipalBuilder surrogatePrincipalBuilder;
+    private final SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder;
 
     @Audit(action = AuditableActions.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION,
         actionResolverName = AuditActionResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.SURROGATE_AUTHENTICATION_ELIGIBILITY_SELECTION_RESOURCE_RESOLVER)
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val resultMap = new HashMap<String, Object>();
         try {
             val credential = WebUtils.getCredential(requestContext);
-            if (credential instanceof UsernamePasswordCredential) {
-                val target = requestContext.getExternalContext().getRequestParameterMap().get(PARAMETER_NAME_SURROGATE_TARGET);
-                LOGGER.debug("Located surrogate target as [{}]", target);
-                if (StringUtils.isNotBlank(target)) {
-                    val currentAuth = WebUtils.getAuthentication(requestContext);
-                    AuthenticationCredentialsThreadLocalBinder.bindCurrent(currentAuth);
-                    resultMap.put(PARAMETER_NAME_SURROGATE_TARGET, target);
+            if (credential instanceof final MutableCredential mutableCredential) {
+                val surrogateTarget = WebUtils.getRequestParameterOrAttribute(requestContext, PARAMETER_NAME_SURROGATE_TARGET).orElse(StringUtils.EMPTY);
+                LOGGER.debug("Located surrogate target as [{}]", surrogateTarget);
+
+                if (StringUtils.isNotBlank(surrogateTarget)) {
+                    resultMap.put(PARAMETER_NAME_SURROGATE_TARGET, surrogateTarget);
                     val registeredService = WebUtils.getRegisteredService(requestContext);
                     val builder = WebUtils.getAuthenticationResultBuilder(requestContext);
-                    val result = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(builder, credential, target, registeredService);
+                    mutableCredential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait(surrogateTarget));
+                    val result = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(builder, mutableCredential, registeredService);
                     result.ifPresent(bldr -> WebUtils.putAuthenticationResultBuilder(bldr, requestContext));
                 } else {
                     LOGGER.warn("No surrogate identifier was selected or provided");
                 }
                 resultMap.put("primary", credential.getId());
             } else {
-                LOGGER.debug("Current credential in the webflow is not one of [{}]", UsernamePasswordCredential.class.getName());
+                LOGGER.debug("Credential is not supported [{}]", credential);
             }
             return success(resultMap);
-        } catch (final Exception e) {
-            requestContext.getMessageContext().addMessage(new MessageBuilder()
-                .error()
-                .source("surrogate")
-                .code("screen.surrogates.account.selection.error")
-                .defaultText("Unable to accept or authorize selection")
-                .build());
+        } catch (final Throwable e) {
+            WebUtils.addErrorMessageToContext(requestContext, "screen.surrogates.account.selection.error",
+                "Unable to accept or authorize selection");
             LoggingUtils.error(LOGGER, e);
-            return error(e);
+            return error(new RuntimeException(e));
         }
     }
 }

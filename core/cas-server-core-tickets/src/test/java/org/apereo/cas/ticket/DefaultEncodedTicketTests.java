@@ -17,16 +17,17 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Tickets")
-public class DefaultEncodedTicketTests {
+class DefaultEncodedTicketTests {
     @Test
-    public void verifyDefaults() {
+    void verifyDefaults() throws Throwable {
         val id = UUID.randomUUID().toString();
         val ticket1 = new DefaultEncodedTicket(UUID.randomUUID().toString(),
-            id, TicketGrantingTicket.PREFIX);
+            id, TicketGrantingTicket.PREFIX).markTicketStateless();
+        assertTrue(ticket1.isStateless());
         val ticket2 = new DefaultEncodedTicket(UUID.randomUUID().toString(),
-            id, TicketGrantingTicket.PREFIX);
+            id, TicketGrantingTicket.PREFIX).markTicketStateless();
+        assertTrue(ticket2.isStateless());
 
-        assertNull(ticket1.getTicketGrantingTicket());
         assertNull(ticket1.getCreationTime());
         assertNull(ticket1.getExpirationPolicy());
         assertEquals(0, ticket1.compareTo(ticket2));

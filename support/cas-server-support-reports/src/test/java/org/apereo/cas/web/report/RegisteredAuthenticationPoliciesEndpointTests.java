@@ -18,14 +18,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "management.endpoint.authenticationPolicies.enabled=true")
 @Tag("ActuatorEndpoint")
-public class RegisteredAuthenticationPoliciesEndpointTests extends AbstractCasEndpointTests {
+class RegisteredAuthenticationPoliciesEndpointTests extends AbstractCasEndpointTests {
 
     @Autowired
     @Qualifier("registeredAuthenticationPoliciesEndpoint")
     private RegisteredAuthenticationPoliciesEndpoint endpoint;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertFalse(endpoint.handle().isEmpty());
         assertNotNull(endpoint.fetchPolicy(AtLeastOneCredentialValidatedAuthenticationPolicy.class.getSimpleName()));
     }

@@ -1,0 +1,24 @@
+description = "Apereo CAS Hazelcast Discovery Apache ZooKeeper Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Hazelcast Discovery",
+            title: "Hazelcast Discovery via Apache ZooKeeper"
+    ]
+}
+dependencies {
+    implementation libraries.hazelcast
+    implementation libraries.hazelcastzookeeper
+    implementation libraries.zookeeper
+
+    implementation project(":support:cas-server-support-hazelcast-core")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-configuration-api")
+
+    compileOnly project(":support:cas-server-support-hazelcast-ticket-registry")
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+
+    testImplementation project(":support:cas-server-support-hazelcast-ticket-registry")
+}

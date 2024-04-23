@@ -31,8 +31,10 @@ public class PathRegexPatternTreeFilter extends TreeFilter {
         return true;
     }
 
+    //CHECKSTYLE:OFF
     @Override
     public TreeFilter clone() {
         return new PathRegexPatternTreeFilter(this.pattern);
     }
+    //CHECKSTYLE:ON
 }

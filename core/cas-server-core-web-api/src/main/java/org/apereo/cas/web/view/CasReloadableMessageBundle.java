@@ -4,9 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-
+import jakarta.annotation.Nonnull;
 import java.util.Locale;
-import java.util.stream.IntStream;
 
 /**
  * An extension of the {@link ReloadableResourceBundleMessageSource} whose sole concern
@@ -28,40 +27,29 @@ import java.util.stream.IntStream;
 @Slf4j
 public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageSource {
 
-    private String[] basenames;
-
-    @Override
-    protected String getDefaultMessage(final String code) {
-        val messageToReturn = super.getDefaultMessage(code);
-        if (StringUtils.isNotBlank(messageToReturn) && messageToReturn.equals(code)) {
-            LOGGER.debug("The code [{}] cannot be found in the default language bundle and will be used as the message itself.", code);
-        }
-        return messageToReturn;
-    }
-
     @Override
     protected String getMessageInternal(final String code, final Object[] args, final Locale locale) {
-        if (!locale.equals(Locale.ENGLISH)) {
-            val foundCode = IntStream.range(0, this.basenames.length)
-                .filter(i -> {
-                    val filename = this.basenames[i] + '_' + locale;
-                    LOGGER.trace("Examining language bundle [{}] for the code [{}]", filename, code);
-                    val holder = this.getProperties(filename);
-                    return holder != null && holder.getProperties() != null && holder.getProperty(code) != null;
-                })
-                .findFirst()
-                .isPresent();
+        if (locale != null && !locale.equals(Locale.ENGLISH)) {
+            val foundCode = getBasenameSet().stream().anyMatch(basename -> {
+                val filename = basename + '_' + locale;
+                LOGGER.trace("Examining bundle [{}] for the key [{}]", filename, code);
+                val holder = getProperties(filename);
+                return holder.getProperties() != null && holder.getProperty(code) != null;
+            });
             if (!foundCode) {
-                LOGGER.trace("The code [{}] cannot be found in the language bundle for the locale [{}]", code, locale);
+                LOGGER.trace("The key [{}] cannot be found in the bundle for the locale [{}]", code, locale);
             }
         }
         return super.getMessageInternal(code, args, locale);
     }
 
     @Override
-    public void setBasenames(final String... basenames) {
-        this.basenames = basenames;
-        super.setBasenames(basenames);
+    protected String getDefaultMessage(@Nonnull final String code) {
+        val messageToReturn = super.getDefaultMessage(code);
+        if (StringUtils.isNotBlank(messageToReturn) && messageToReturn.equals(code)) {
+            LOGGER.trace("The code [{}] cannot be found in the default language bundle and will be used as the message itself.", code);
+        }
+        return messageToReturn;
     }
 
 }

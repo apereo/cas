@@ -1,6 +1,12 @@
 package org.apereo.cas.token.cipher;
 
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
+
+import lombok.val;
+
+import java.util.Optional;
 
 
 /**
@@ -57,12 +63,12 @@ public class JwtTicketCipherExecutor extends BaseStringCipherExecutor {
 
 
     @Override
-    protected String getEncryptionKeySetting() {
+    public String getEncryptionKeySetting() {
         return "cas.authn.token.crypto.encryption.key";
     }
 
     @Override
-    protected String getSigningKeySetting() {
+    public String getSigningKeySetting() {
         return "cas.authn.token.crypto.signing.key";
     }
 
@@ -70,4 +76,24 @@ public class JwtTicketCipherExecutor extends BaseStringCipherExecutor {
     public String getName() {
         return "Token/JWT Tickets";
     }
+
+    /**
+     * Gets cipher operations order.
+     *
+     * @param registeredService the registered service
+     * @return the cipher operations order
+     */
+    protected Optional<CipherOperationsStrategyType> getCipherOperationsStrategyType(final RegisteredService registeredService) {
+        val property = getCipherStrategyTypeRegisteredServiceProperty(registeredService);
+        if (property.isAssignedTo(registeredService)) {
+            val order = property.getPropertyValue(registeredService).value();
+            return Optional.of(CipherOperationsStrategyType.valueOf(order));
+        }
+        return Optional.empty();
+    }
+
+    protected RegisteredServiceProperty.RegisteredServiceProperties getCipherStrategyTypeRegisteredServiceProperty(final RegisteredService registeredService) {
+        return RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_CIPHER_STRATEGY_TYPE;
+    }
+    
 }

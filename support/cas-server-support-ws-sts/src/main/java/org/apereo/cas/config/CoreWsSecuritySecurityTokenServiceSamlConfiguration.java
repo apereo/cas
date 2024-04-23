@@ -1,18 +1,19 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-
-import lombok.SneakyThrows;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.wss4j.common.crypto.WSProviderConfig;
 import org.apache.wss4j.common.saml.OpenSAMLUtil;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.util.ReflectionUtils;
 
 /**
@@ -22,38 +23,11 @@ import org.springframework.util.ReflectionUtils;
  * @author Paul Spaude
  * @since 5.3.6
  */
-@Configuration(value = "coreWsSecuritySecurityTokenServiceSamlConfiguration", proxyBeanMethods = false)
 @Slf4j
-@AutoConfigureAfter(CoreSamlConfiguration.class)
-public class CoreWsSecuritySecurityTokenServiceSamlConfiguration implements InitializingBean {
-
-    @Autowired
-    @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-    private ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
-
-    @Override
-    public void afterPropertiesSet() {
-        val warningMessage = "The security token service configuration of CAS will try to disable the OpenSAML bootstrapping process by wss4j, "
-            + "as it interferes with and prevents CAS' own initialization of OpenSAML. Given the current API limitations of the wss4j library, "
-            + "which is responsible for the implementation of the security token service in CAS, "
-            + "Java reflection is used to disable the OpenSAML bootstrapping process. This approach is prone to error, "
-            + "and may be revisited in future versions of CAS, "
-            + "once the wss4j library opens up its OpenSAML bootstrapping API in more extensible ways";
-        LOGGER.info(warningMessage);
-
-        LOGGER.trace("Initializing WS provider configuration...");
-        WSProviderConfig.init();
-
-        LOGGER.trace("Marking OpenSAML components as initialized...");
-        val openSaml = openSamlConfigBean.getObject();
-        findFieldAndSetValue("providerRegistry", openSaml.getXmlObjectProviderRegistry());
-        findFieldAndSetValue("builderFactory", openSaml.getBuilderFactory());
-        findFieldAndSetValue("marshallerFactory", openSaml.getMarshallerFactory());
-        findFieldAndSetValue("unmarshallerFactory", openSaml.getUnmarshallerFactory());
-        findFieldAndSetValue("samlEngineInitialized", Boolean.TRUE);
-    }
-
-    @SneakyThrows
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.WsFederationIdentityProvider)
+@AutoConfigureAfter(CasCoreSamlAutoConfiguration.class)
+@Configuration(value = "CoreWsSecuritySecurityTokenServiceSamlConfiguration", proxyBeanMethods = false)
+class CoreWsSecuritySecurityTokenServiceSamlConfiguration {
     private static void findFieldAndSetValue(final String fieldName, final Object value) {
         LOGGER.trace("Locating field name [{}]", fieldName);
         val field = ReflectionUtils.findField(OpenSAMLUtil.class, fieldName);
@@ -62,8 +36,33 @@ public class CoreWsSecuritySecurityTokenServiceSamlConfiguration implements Init
             return;
         }
         ReflectionUtils.makeAccessible(field);
-
         LOGGER.trace("Setting field name [{}]", fieldName);
-        field.set(null, value);
+        Unchecked.consumer(f -> field.set(null, value)).accept(field);
+    }
+
+    @Bean
+    @Lazy(false)
+    public InitializingBean wsSecurityTokenServiceInitializingBean(
+        @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
+        final OpenSamlConfigBean openSamlConfigBean) {
+        return () -> {
+            val warningMessage = "The security token service configuration of CAS will try to disable the OpenSAML bootstrapping process by wss4j, "
+                                 + "as it interferes with and prevents CAS' own initialization of OpenSAML. Given the current API limitations of the wss4j library, "
+                                 + "which is responsible for the implementation of the security token service in CAS, "
+                                 + "Java reflection is used to disable the OpenSAML bootstrapping process. This approach is prone to error, "
+                                 + "and may be revisited in future versions of CAS, "
+                                 + "once the wss4j library opens up its OpenSAML bootstrapping API in more extensible ways";
+            LOGGER.info(warningMessage);
+
+            LOGGER.trace("Initializing WS provider configuration...");
+            WSProviderConfig.init();
+
+            LOGGER.trace("Marking OpenSAML components as initialized...");
+            findFieldAndSetValue("providerRegistry", openSamlConfigBean.getXmlObjectProviderRegistry());
+            findFieldAndSetValue("builderFactory", openSamlConfigBean.getBuilderFactory());
+            findFieldAndSetValue("marshallerFactory", openSamlConfigBean.getMarshallerFactory());
+            findFieldAndSetValue("unmarshallerFactory", openSamlConfigBean.getUnmarshallerFactory());
+            findFieldAndSetValue("samlEngineInitialized", Boolean.TRUE);
+        };
     }
 }

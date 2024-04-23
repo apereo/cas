@@ -8,7 +8,6 @@ import org.apereo.cas.util.CollectionUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import lombok.val;
 
 /**
  * This is {@link CredentialCustomFieldsAttributeMetaDataPopulator}.
@@ -21,10 +20,12 @@ import lombok.val;
 public class CredentialCustomFieldsAttributeMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
-        transaction.getPrimaryCredential().ifPresent(cred -> {
-            val upc = UsernamePasswordCredential.class.cast(cred);
-            upc.getCustomFields().forEach((key, value) -> builder.mergeAttribute(key, CollectionUtils.toCollection(value)));
-        });
+        transaction
+            .getCredentials()
+            .stream()
+            .filter(this::supports)
+            .map(UsernamePasswordCredential.class::cast)
+            .forEach(upc -> upc.getCustomFields().forEach((key, value) -> builder.mergeAttribute(key, CollectionUtils.toCollection(value))));
     }
 
     @Override

@@ -9,7 +9,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Lazy;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,21 +23,20 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 })
 @Tag("CasConfiguration")
-public class CasConfigurationPropertiesTests {
+class CasConfigurationPropertiesTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifySerialization() {
+    void verifySerialization() throws Throwable {
         val result = SerializationUtils.serialize(casProperties);
         assertNotNull(result);
         val props = SerializationUtils.deserialize(result);
         assertNotNull(props);
     }
 
-    @TestConfiguration("CasPropertiesTestConfiguration")
+    @TestConfiguration(value = "CasPropertiesTestConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @Lazy(false)
-    public static class CasPropertiesTestConfiguration {
+    static class CasPropertiesTestConfiguration {
     }
 }

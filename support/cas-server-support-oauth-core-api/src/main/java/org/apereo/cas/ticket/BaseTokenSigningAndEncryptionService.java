@@ -4,11 +4,11 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.EncodingUtils;
-
-import lombok.AccessLevel;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.jwt.JsonWebTokenSigner;
+import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -16,9 +16,11 @@ import org.jose4j.jwk.PublicJsonWebKey;
 import org.jose4j.jwt.JwtClaims;
 
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
-import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * This is {@link BaseTokenSigningAndEncryptionService}.
@@ -27,80 +29,84 @@ import java.util.Optional;
  * @since 6.0.0
  */
 @Slf4j
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(force = true)
 @Getter
 public abstract class BaseTokenSigningAndEncryptionService implements OAuth20TokenSigningAndEncryptionService {
-    private final String issuer;
+    @Override
+    public JwtClaims decode(final String token, final Optional<OAuthRegisteredService> registeredService) {
+        return FunctionUtils.doUnchecked(() -> {
+            val jsonWebKey = getJsonWebKeySigningKey(registeredService);
+            FunctionUtils.throwIf(jsonWebKey.getPublicKey() == null,
+                () -> new IllegalArgumentException("JSON web key to validate the id token signature has no public key"));
+            val jwt = Objects.requireNonNull(verifySignature(token, jsonWebKey),
+                "Unable to verify signature of the token using the JSON web key public key");
+            val result = new String(jwt, StandardCharsets.UTF_8);
+            val claims = JwtBuilder.parse(result);
 
-    /**
-     * Create json web encryption json web encryption.
-     *
-     * @param encryptionAlg      the encryption alg
-     * @param encryptionEncoding the encryption encoding
-     * @param keyIdHeaderValue   the key id header value
-     * @param publicKey          the public key
-     * @param payload            the payload
-     * @return the json web encryption
-     */
-    @SneakyThrows
-    protected static String encryptToken(final String encryptionAlg,
-                                  final String encryptionEncoding,
-                                  final String keyIdHeaderValue,
-                                  final Key publicKey,
-                                  final String payload) {
-        return EncodingUtils.encryptValueAsJwt(publicKey, payload, encryptionAlg,
-            encryptionEncoding, keyIdHeaderValue, new HashMap<>(0));
+            FunctionUtils.throwIf(StringUtils.isBlank(claims.getIssuer()),
+                () -> new IllegalArgumentException("Claims do not contain an issuer"));
+
+            validateIssuerClaim(claims, registeredService);
+
+            FunctionUtils.throwIf(StringUtils.isBlank(claims.getStringClaim(OAuth20Constants.CLIENT_ID)),
+                () -> new IllegalArgumentException("Claims do not contain a client id claim"));
+            return JwtClaims.parse(claims.toString());
+        });
     }
 
     /**
-     * Configure json web signature for id token signing.
+     * Gets allowed signing algorithms.
+     * Returning an empty collection indicates that all algorithms should be supported, except none.
      *
-     * @param svc        the svc
-     * @param claims     the claims
-     * @param jsonWebKey the json web key
-     * @return the json web signature
+     * @param registeredService the svc
+     * @return the allowed signing algorithms
      */
-    protected String signToken(final OAuthRegisteredService svc,
+    public abstract Set<String> getAllowedSigningAlgorithms(OAuthRegisteredService registeredService);
+
+    protected void validateIssuerClaim(final JWTClaimsSet claims, final Optional<OAuthRegisteredService> service) throws Throwable {
+        LOGGER.debug("Validating claims as [{}] with issuer [{}]", claims, claims.getIssuer());
+        val iss = resolveIssuer(service);
+        Objects.requireNonNull(iss, "Issuer cannot be null or undefined");
+        FunctionUtils.throwIf(!claims.getIssuer().equalsIgnoreCase(iss),
+            () -> new IllegalArgumentException("Issuer assigned to claims "
+                + claims.getIssuer() + " does not match " + iss));
+    }
+
+    protected String signToken(final OAuthRegisteredService registeredService,
                                final JwtClaims claims,
                                final PublicJsonWebKey jsonWebKey) {
-        LOGGER.debug("Service [{}] is set to sign id tokens", svc);
-        return EncodingUtils.signJws(claims, jsonWebKey, getJsonWebKeySigningAlgorithm(svc), new HashMap<>(0));
+        LOGGER.debug("Service [{}] is set to sign id tokens", registeredService.getServiceId());
+        return JsonWebTokenSigner.builder()
+            .key(Optional.ofNullable(jsonWebKey)
+                .map(PublicJsonWebKey::getPrivateKey)
+                .orElse(null))
+            .keyId(Optional.ofNullable(jsonWebKey)
+                .map(PublicJsonWebKey::getKeyId)
+                .orElseGet(() -> UUID.randomUUID().toString()))
+            .algorithm(getJsonWebKeySigningAlgorithm(registeredService, jsonWebKey))
+            .allowedAlgorithms(new LinkedHashSet<>(getAllowedSigningAlgorithms(registeredService)))
+            .mediaType(getSigningMediaType())
+            .build()
+            .sign(claims);
     }
 
-    @Override
-    @SneakyThrows
-    public JwtClaims decode(final String token, final Optional<OAuthRegisteredService> service) {
-        val jsonWebKey = getJsonWebKeySigningKey();
-        if (jsonWebKey.getPublicKey() == null) {
-            throw new IllegalArgumentException("JSON web key used to validate the id token signature has no associated public key");
-        }
-        val jwt = EncodingUtils.verifyJwsSignature(jsonWebKey.getPublicKey(), token);
-        if (jwt == null) {
-            throw new IllegalArgumentException("Unable to verify signature of the token using the JSON web key public key");
-        }
-        val result = new String(jwt, StandardCharsets.UTF_8);
-        val claims = JwtBuilder.parse(result);
-
-        if (StringUtils.isBlank(claims.getIssuer())) {
-            throw new IllegalArgumentException("Claims do not container an issuer");
-        }
-
-        LOGGER.debug("Validating claims as [{}] with issuer [{}]", claims, claims.getIssuer());
-        if (!claims.getIssuer().equalsIgnoreCase(this.issuer)) {
-            throw new IllegalArgumentException("Issuer assigned to claims " + claims.getIssuer() + " does not match " + this.issuer);
-        }
-
-        if (StringUtils.isBlank(claims.getStringClaim(OAuth20Constants.CLIENT_ID))) {
-            throw new IllegalArgumentException("Claims do not contain a client id claim");
-        }
-        return JwtClaims.parse(claims.toString());
+    protected String getSigningMediaType() {
+        return "JWT";
     }
 
-    /**
-     * Gets signing key.
-     *
-     * @return the signing key
-     */
-    protected abstract PublicJsonWebKey getJsonWebKeySigningKey();
+    protected String signTokenIfNecessary(final JwtClaims claims, final OAuthRegisteredService registeredService) throws Throwable {
+        if (shouldSignToken(registeredService)) {
+            LOGGER.debug("Fetching JSON web key to sign the token for : [{}]", registeredService.getClientId());
+            val jsonWebKey = getJsonWebKeySigningKey(Optional.of(registeredService));
+            LOGGER.debug("Found JSON web key to sign the token: [{}]", jsonWebKey);
+            Objects.requireNonNull(jsonWebKey.getPrivateKey(), "JSON web key used to sign the token has no associated private key");
+            return signToken(registeredService, claims, jsonWebKey);
+        }
+        val claimSet = JwtBuilder.parse(claims.toJson());
+        return JwtBuilder.buildPlain(claimSet, Optional.of(registeredService));
+    }
 
+    protected byte[] verifySignature(final String token, final PublicJsonWebKey jsonWebKey) {
+        return EncodingUtils.verifyJwsSignature(jsonWebKey.getPublicKey(), token);
+    }
 }

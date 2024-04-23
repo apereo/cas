@@ -1,16 +1,17 @@
 // CHECKSTYLE:OFF
 package org.apereo.cas.support.inwebo.service.soap.generated;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * The generated SOAP class.
- * 
+ *
  * <pre>
  * &lt;complexType name="LoginSearchResult"&gt;
  *   &lt;complexContent&gt;
@@ -62,40 +63,52 @@ public class LoginSearchResult {
 
     @XmlElement(required = true, nillable = true)
     protected String err;
+
     protected int n;
+
     @XmlElement(required = true, nillable = true)
     protected List<Long> id;
+
     @XmlElement(required = true, nillable = true)
     protected List<String> login;
+
     @XmlElement(required = true, nillable = true)
     protected List<String> code;
+
     @XmlElement(required = true, nillable = true)
     protected List<Long> status;
+
     @XmlElement(required = true, nillable = true)
     protected List<Long> role;
+
     @XmlElement(required = true, nillable = true)
     protected List<String> firstname;
+
     @XmlElement(required = true, nillable = true)
     protected List<String> name;
+
     @XmlElement(required = true, nillable = true)
     protected List<String> mail;
+
     @XmlElement(required = true, nillable = true)
     protected List<String> phone;
+
     @XmlElement(required = true, nillable = true)
     protected List<String> extrafields;
+
     @XmlElement(required = true, nillable = true)
     protected List<Long> createdby;
+
     @XmlElement(name = "activation_status", required = true, nillable = true)
     protected List<Long> activationStatus;
+
     protected long count;
 
     /**
      * Obtient la valeur de la propriété err.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getErr() {
         return err;
@@ -103,13 +116,11 @@ public class LoginSearchResult {
 
     /**
      * Définit la valeur de la propriété err.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setErr(String value) {
+    public void setErr(final String value) {
         this.err = value;
     }
 
@@ -127,354 +138,354 @@ public class LoginSearchResult {
      *
      * @param value the n property
      */
-    public void setN(int value) {
+    public void setN(final int value) {
         this.n = value;
     }
 
     /**
      * Gets the value of the id property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the id property.
-     * 
+     * This is why there is not a {@code set} method for the id property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getId().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
-     * 
+     *
      * @return the ids
      */
     public List<Long> getId() {
         if (id == null) {
-            id = new ArrayList<Long>();
+            id = new ArrayList<>();
         }
         return this.id;
     }
 
     /**
      * Gets the value of the login property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the login property.
-     * 
+     * This is why there is not a {@code set} method for the login property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getLogin().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      * @return the logins
      */
     public List<String> getLogin() {
         if (login == null) {
-            login = new ArrayList<String>();
+            login = new ArrayList<>();
         }
         return this.login;
     }
 
     /**
      * Gets the value of the code property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the code property.
-     * 
+     * This is why there is not a {@code set} method for the code property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCode().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      * @return the codes
      */
     public List<String> getCode() {
         if (code == null) {
-            code = new ArrayList<String>();
+            code = new ArrayList<>();
         }
         return this.code;
     }
 
     /**
      * Gets the value of the status property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the status property.
-     * 
+     * This is why there is not a {@code set} method for the status property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getStatus().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
-     * 
+     *
      * @return the statuses
      */
     public List<Long> getStatus() {
         if (status == null) {
-            status = new ArrayList<Long>();
+            status = new ArrayList<>();
         }
         return this.status;
     }
 
     /**
      * Gets the value of the role property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the role property.
-     * 
+     * This is why there is not a {@code set} method for the role property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRole().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
-     * 
+     *
      * @return the roles
      */
     public List<Long> getRole() {
         if (role == null) {
-            role = new ArrayList<Long>();
+            role = new ArrayList<>();
         }
         return this.role;
     }
 
     /**
      * Gets the value of the firstname property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the firstname property.
-     * 
+     * This is why there is not a {@code set} method for the firstname property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFirstname().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      * @return the first names
      */
     public List<String> getFirstname() {
         if (firstname == null) {
-            firstname = new ArrayList<String>();
+            firstname = new ArrayList<>();
         }
         return this.firstname;
     }
 
     /**
      * Gets the value of the name property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the name property.
-     * 
+     * This is why there is not a {@code set} method for the name property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getName().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      * @return the names
      */
     public List<String> getName() {
         if (name == null) {
-            name = new ArrayList<String>();
+            name = new ArrayList<>();
         }
         return this.name;
     }
 
     /**
      * Gets the value of the mail property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the mail property.
-     * 
+     * This is why there is not a {@code set} method for the mail property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMail().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      * @return the emails
      */
     public List<String> getMail() {
         if (mail == null) {
-            mail = new ArrayList<String>();
+            mail = new ArrayList<>();
         }
         return this.mail;
     }
 
     /**
      * Gets the value of the phone property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the phone property.
-     * 
+     * This is why there is not a {@code set} method for the phone property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getPhone().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      * @return the phones
      */
     public List<String> getPhone() {
         if (phone == null) {
-            phone = new ArrayList<String>();
+            phone = new ArrayList<>();
         }
         return this.phone;
     }
 
     /**
      * Gets the value of the extrafields property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the extrafields property.
-     * 
+     * This is why there is not a {@code set} method for the extrafields property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getExtrafields().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
+     *
      * @return the extra fields
      */
     public List<String> getExtrafields() {
         if (extrafields == null) {
-            extrafields = new ArrayList<String>();
+            extrafields = new ArrayList<>();
         }
         return this.extrafields;
     }
 
     /**
      * Gets the value of the createdby property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the createdby property.
-     * 
+     * This is why there is not a {@code set} method for the createdby property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCreatedby().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
-     * 
+     *
      * @return the created by properties
      */
     public List<Long> getCreatedby() {
         if (createdby == null) {
-            createdby = new ArrayList<Long>();
+            createdby = new ArrayList<>();
         }
         return this.createdby;
     }
 
     /**
      * Gets the value of the activationStatus property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the activationStatus property.
-     * 
+     * This is why there is not a {@code set} method for the activationStatus property.
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getActivationStatus().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Long }
-     * 
+     *
      * @return the activation statuses
      */
     public List<Long> getActivationStatus() {
         if (activationStatus == null) {
-            activationStatus = new ArrayList<Long>();
+            activationStatus = new ArrayList<>();
         }
         return this.activationStatus;
     }
@@ -493,7 +504,7 @@ public class LoginSearchResult {
      *
      * @param value the count
      */
-    public void setCount(long value) {
+    public void setCount(final long value) {
         this.count = value;
     }
 

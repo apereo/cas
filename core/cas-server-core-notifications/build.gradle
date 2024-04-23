@@ -7,14 +7,12 @@ dependencies {
 
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-notifications-api")
 
-    implementation libraries.jose4j
-    implementation libraries.nimbus
-    implementation libraries.bouncycastle
-    implementation libraries.semver
-    implementation libraries.oshi
     implementation libraries.mail
 
+    testImplementation project(":core:cas-server-core-util")
+    
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
 }

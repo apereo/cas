@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link GroovyPasswordManagementProperties}.
  *
@@ -20,5 +22,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("GroovyPasswordManagementProperties")
 public class GroovyPasswordManagementProperties extends SpringResourceProperties {
+    @Serial
     private static final long serialVersionUID = 8079027843747126083L;
 }

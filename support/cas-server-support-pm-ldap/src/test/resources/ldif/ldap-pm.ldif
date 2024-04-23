@@ -12,5 +12,12 @@ telephoneNumber: 1234567890
 registeredAddress: RegisteredAddressQuestion
 postalCode: PostalCodeQuestion
 roomNumber: 666
+businessCategory: true
 teletexTerminalIdentifier: 1776
 
+dn: cn=invalid,ou=people,dc=example,dc=org
+objectClass: organizationalRole
+objectClass: inetOrgPerson
+objectClass: person
+cn: invalid
+sn: invalid

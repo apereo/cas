@@ -30,7 +30,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement(proxyTargetClass = false)
 @Transactional(transactionManager = "transactionManagerMfaAuthnTrust")
 @Slf4j
 @ToString
@@ -63,29 +63,17 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
             if (entry.getRecordDate().isBefore(onOrAfterDate)) {
                 return true;
             }
-            val decodedKey = this.cipherExecutor.decode(entry.getRecordKey());
+            val decodedKey = cipherExecutor.decode(entry.getRecordKey());
             val currentKey = keyGenerationStrategy.generate(entry);
             return StringUtils.isBlank(decodedKey) || !decodedKey.equals(currentKey);
         });
         return res;
     }
 
-    /**
-     * Generate key.
-     *
-     * @param r the record
-     * @return the string
-     */
     protected String generateKey(final MultifactorAuthenticationTrustRecord r) {
         val key = keyGenerationStrategy.generate(r);
         return cipherExecutor.encode(key);
     }
 
-    /**
-     * Set records.
-     *
-     * @param record the record
-     * @return the record
-     */
     protected abstract MultifactorAuthenticationTrustRecord saveInternal(MultifactorAuthenticationTrustRecord record);
 }

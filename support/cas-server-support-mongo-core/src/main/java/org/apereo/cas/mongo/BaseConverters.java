@@ -1,8 +1,8 @@
 package org.apereo.cas.mongo;
 
+import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.RegexUtils;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
-import org.apereo.services.persondir.IPersonAttributes;
 import org.bson.BsonReader;
 import org.bson.BsonTimestamp;
 import org.bson.BsonWriter;
@@ -27,7 +26,7 @@ import org.slf4j.Logger;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
-
+import jakarta.annotation.Nonnull;
 import java.lang.ref.ReferenceQueue;
 import java.security.cert.CertPath;
 import java.time.ZoneId;
@@ -55,7 +54,8 @@ public abstract class BaseConverters {
     public static class NullConverter<I, O> implements Converter<I, O> {
 
         @Override
-        public O convert(final I i) {
+        public O convert(
+            @Nonnull final I i) {
             return null;
         }
     }
@@ -87,7 +87,7 @@ public abstract class BaseConverters {
      *
      * @since 4.1
      */
-    public static class PersonAttributesConverter extends NullConverter<IPersonAttributes, DBObject> {
+    public static class PersonAttributesConverter extends NullConverter<PersonAttributes, DBObject> {
     }
 
     /**
@@ -161,10 +161,10 @@ public abstract class BaseConverters {
     /**
      * The type Date to zoned date time converter.
      */
-    @SuppressWarnings("JavaUtilDate")
     public static class DateToZonedDateTimeConverter implements Converter<Date, ZonedDateTime> {
         @Override
-        public ZonedDateTime convert(final Date source) {
+        public ZonedDateTime convert(
+            @Nonnull final Date source) {
             return Optional.ofNullable(source)
                 .map(date -> ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()))
                 .orElse(null);
@@ -177,7 +177,8 @@ public abstract class BaseConverters {
     @ReadingConverter
     static class StringToZonedDateTimeConverter implements Converter<String, ZonedDateTime> {
         @Override
-        public ZonedDateTime convert(final String source) {
+        public ZonedDateTime convert(
+            @Nonnull final String source) {
             if (StringUtils.isBlank(source)) {
                 return null;
             }
@@ -198,8 +199,8 @@ public abstract class BaseConverters {
      */
     public static class ZonedDateTimeToDateConverter implements Converter<ZonedDateTime, Date> {
         @Override
-        @SuppressWarnings("JavaUtilDate")
-        public Date convert(final ZonedDateTime source) {
+        public Date convert(
+            @Nonnull final ZonedDateTime source) {
             return Optional.ofNullable(source).map(zonedDateTime -> Date.from(zonedDateTime.toInstant())).orElse(null);
         }
     }
@@ -210,8 +211,9 @@ public abstract class BaseConverters {
     @WritingConverter
     public static class ZonedDateTimeToStringConverter implements Converter<ZonedDateTime, String> {
         @Override
-        public String convert(final ZonedDateTime source) {
-            return Optional.ofNullable(source).map(ZonedDateTime::toString).orElse(null);
+        public String convert(
+            @Nonnull final ZonedDateTime source) {
+            return Optional.of(source).map(ZonedDateTime::toString).orElse(null);
         }
     }
 
@@ -220,7 +222,6 @@ public abstract class BaseConverters {
      */
     public static class BsonTimestampToDateConverter implements Converter<BsonTimestamp, Date> {
         @Override
-        @SuppressWarnings("JavaUtilDate")
         public Date convert(final BsonTimestamp source) {
             return new Date(source.getTime());
         }
@@ -229,7 +230,8 @@ public abstract class BaseConverters {
     @ReadingConverter
     static class StringToPatternConverter implements Converter<String, Pattern> {
         @Override
-        public Pattern convert(final String source) {
+        public Pattern convert(
+            @Nonnull final String source) {
             if (StringUtils.isBlank(source)) {
                 return null;
             }
@@ -253,7 +255,6 @@ public abstract class BaseConverters {
      */
     public static class BsonTimestampToStringConverter implements Converter<BsonTimestamp, String> {
         @Override
-        @SuppressWarnings("JavaUtilDate")
         public String convert(final BsonTimestamp source) {
             return String.valueOf(source.getTime());
         }
@@ -281,8 +282,8 @@ public abstract class BaseConverters {
             }
             return null;
         }
-        @SuppressWarnings("JavaUtilDate")
-        private static class ZonedDateTimeCodec implements Codec<ZonedDateTime> {
+
+        private static final class ZonedDateTimeCodec implements Codec<ZonedDateTime> {
             @Override
             public ZonedDateTime decode(final BsonReader reader, final DecoderContext decoderContext) {
                 val stamp = reader.readTimestamp();

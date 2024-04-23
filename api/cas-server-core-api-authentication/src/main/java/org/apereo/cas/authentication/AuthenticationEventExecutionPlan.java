@@ -21,11 +21,17 @@ import java.util.stream.Collectors;
 public interface AuthenticationEventExecutionPlan {
 
     /**
+     * Default bean name.
+     */
+    String DEFAULT_BEAN_NAME = "authenticationEventExecutionPlan";
+
+    /**
      * Register authentication handler.
      *
      * @param handler the handler
+     * @return true/false
      */
-    void registerAuthenticationHandler(AuthenticationHandler handler);
+    boolean registerAuthenticationHandler(AuthenticationHandler handler);
 
     /**
      * Register authentication handlers.
@@ -104,8 +110,9 @@ public interface AuthenticationEventExecutionPlan {
      *
      * @param handler           the handler
      * @param principalResolver the principal resolver
+     * @return true if handler was able to successfully register itself, otherwise false.
      */
-    void registerAuthenticationHandlerWithPrincipalResolver(AuthenticationHandler handler, PrincipalResolver principalResolver);
+    boolean registerAuthenticationHandlerWithPrincipalResolver(AuthenticationHandler handler, PrincipalResolver principalResolver);
 
     /**
      * Register authentication handlers with principal resolver.
@@ -113,7 +120,7 @@ public interface AuthenticationEventExecutionPlan {
      * @param handlers          the handlers
      * @param principalResolver the principal resolver
      */
-    void registerAuthenticationHandlerWithPrincipalResolvers(Collection<AuthenticationHandler> handlers, PrincipalResolver principalResolver);
+    void registerAuthenticationHandlersWithPrincipalResolver(Collection<AuthenticationHandler> handlers, PrincipalResolver principalResolver);
 
     /**
      * Register authentication handler with principal resolvers.
@@ -121,15 +128,16 @@ public interface AuthenticationEventExecutionPlan {
      * @param handlers          the handlers
      * @param principalResolver the principal resolver
      */
-    void registerAuthenticationHandlerWithPrincipalResolvers(List<AuthenticationHandler> handlers, List<PrincipalResolver> principalResolver);
+    void registerAuthenticationHandlersWithPrincipalResolver(List<AuthenticationHandler> handlers, List<PrincipalResolver> principalResolver);
 
     /**
      * Gets authentication handlers for transaction.
      *
      * @param transaction the transaction
      * @return the authentication handlers for transaction
+     * @throws Throwable the throwable
      */
-    Set<AuthenticationHandler> getAuthenticationHandlers(AuthenticationTransaction transaction);
+    Set<AuthenticationHandler> getAuthenticationHandlers(AuthenticationTransaction transaction) throws Throwable;
 
     /**
      * Gets authentication handlers.

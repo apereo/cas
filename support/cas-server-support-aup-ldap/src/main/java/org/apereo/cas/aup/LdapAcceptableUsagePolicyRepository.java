@@ -1,13 +1,13 @@
 package org.apereo.cas.aup;
 
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.configuration.model.support.aup.LdapAcceptableUsagePolicyProperties;
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
-import org.apereo.cas.util.LoggingUtils;
-
+import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Triple;
@@ -16,7 +16,7 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchResponse;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.webflow.execution.RequestContext;
-
+import java.io.Serial;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +34,7 @@ import java.util.Set;
  */
 @Slf4j
 public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository implements DisposableBean {
+    @Serial
     private static final long serialVersionUID = 1600024683199961892L;
 
     private final Map<String, ConnectionFactory> connectionFactoryList;
@@ -43,6 +44,31 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
                                                final Map<String, ConnectionFactory> connectionFactoryList) {
         super(ticketRegistrySupport, aupProperties);
         this.connectionFactoryList = connectionFactoryList;
+    }
+
+    @Override
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) throws Throwable {
+        var status = super.verify(requestContext);
+        if (status.isDenied()) {
+            val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+            return aupProperties.getLdap()
+                .stream()
+                .sorted(Comparator.comparing(LdapAcceptableUsagePolicyProperties::getName))
+                .map(Unchecked.function(ldap -> searchLdapForId(ldap, principal.getId())))
+                .filter(Optional::isPresent)
+                .findFirst()
+                .filter(Optional::isPresent)
+                .map(result -> result.get().getMiddle().getEntry())
+                .map(entry -> {
+                    val attribute = entry.getAttribute(aupProperties.getCore().getAupAttributeName());
+                    return attribute != null && attribute.getStringValues()
+                        .stream()
+                        .anyMatch(value -> value.equalsIgnoreCase(getAcceptedAttributeValue()));
+                })
+                .map(result -> new AcceptableUsagePolicyStatus(TriStateBoolean.fromBoolean(result), status.getPrincipal()))
+                .orElseGet(() -> AcceptableUsagePolicyStatus.denied(status.getPrincipal()));
+        }
+        return status;
     }
 
     /**
@@ -60,37 +86,34 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
             CollectionUtils.wrap(id));
         LOGGER.debug("Constructed LDAP filter [{}]", filter);
-        val connectionFactory = connectionFactoryList.get(ldap.getLdapUrl());
-        val response = LdapUtils.executeSearchOperation(connectionFactory,
-            ldap.getBaseDn(), filter, ldap.getPageSize());
+        val connectionFactory = new LdapConnectionFactory(connectionFactoryList.get(ldap.getLdapUrl()));
+        val response = connectionFactory.executeSearchOperation(ldap.getBaseDn(), filter, ldap.getPageSize());
         if (LdapUtils.containsResultEntry(response)) {
             LOGGER.debug("LDAP query located an entry for [{}] and responded with [{}]", id, response);
-            return Optional.of(Triple.of(connectionFactory, response, ldap));
+            return Optional.of(Triple.of(connectionFactory.getConnectionFactory(), response, ldap));
         }
         LOGGER.debug("LDAP query could not locate an entry for [{}]", id);
         return Optional.empty();
     }
 
     @Override
-    public boolean submit(final RequestContext requestContext, final Credential credential) {
-        try {
-            val response = aupProperties.getLdap()
-                .stream()
-                .sorted(Comparator.comparing(LdapAcceptableUsagePolicyProperties::getName))
-                .map(Unchecked.function(ldap -> searchLdapForId(ldap, credential.getId())))
-                .filter(Optional::isPresent)
-                .findFirst();
+    public boolean submit(final RequestContext requestContext) {
+        val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+        val response = aupProperties.getLdap()
+            .stream()
+            .sorted(Comparator.comparing(LdapAcceptableUsagePolicyProperties::getName))
+            .map(Unchecked.function(ldap -> searchLdapForId(ldap, principal.getId())))
+            .filter(Optional::isPresent)
+            .findFirst();
 
-            if (response.isPresent()) {
-                val result = response.get().get();
-                val currentDn = result.getMiddle().getEntry().getDn();
-                LOGGER.debug("Updating [{}]", currentDn);
-                val attributes = CollectionUtils.<String, Set<String>>wrap(aupProperties.getCore().getAupAttributeName(),
-                    CollectionUtils.wrapSet(result.getRight().getAupAcceptedAttributeValue()));
-                return LdapUtils.executeModifyOperation(currentDn, result.getLeft(), attributes);
-            }
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
+        if (response.isPresent()) {
+            val result = response.get().get();
+            val currentDn = result.getMiddle().getEntry().getDn();
+            LOGGER.debug("Updating [{}]", currentDn);
+            val attributes = CollectionUtils.<String, Set<String>>wrap(aupProperties.getCore().getAupAttributeName(),
+                CollectionUtils.wrapSet(result.getRight().getAupAcceptedAttributeValue()));
+            val factory = new LdapConnectionFactory(result.getLeft());
+            return factory.executeModifyOperation(currentDn, attributes);
         }
         return false;
     }

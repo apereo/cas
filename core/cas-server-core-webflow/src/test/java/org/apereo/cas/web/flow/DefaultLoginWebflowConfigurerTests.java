@@ -1,25 +1,20 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.binding.expression.Expression;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
+import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
+import org.springframework.webflow.engine.EndState;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.execution.RequestContextHolder;
 import org.springframework.webflow.execution.ViewFactory;
-import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -31,10 +26,14 @@ import static org.mockito.Mockito.*;
  */
 @Tag("WebflowConfig")
 @TestPropertySource(properties = "cas.view.custom-login-form-fields.field1.required=false")
-public class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
+        val interceptors = casWebflowExecutionPlan.getWebflowInterceptors();
+        assertEquals(2, interceptors.size());
+        assertTrue(interceptors.stream().anyMatch(CasLocaleChangeInterceptor.class::isInstance));
+        assertTrue(interceptors.stream().anyMatch(ResourceUrlProviderExposingInterceptor.class::isInstance));
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
@@ -54,13 +53,8 @@ public class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTes
     }
 
     @Test
-    public void verifyRenderAction() {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+    void verifyRenderAction() throws Throwable {
+        MockRequestContext.create();
 
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val cfg = casWebflowExecutionPlan.getWebflowConfigurers().iterator().next();
@@ -78,5 +72,29 @@ public class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTes
         assertNull(cfg.createViewState(null, "ViewState", (ViewFactory) null));
         assertNull(cfg.createViewState(null, "ViewState", (Expression) null, null));
         assertNotNull(cfg.createViewState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, (ViewFactory) null));
+    }
+
+    @Test
+    void verifyWebflowConfigError() throws Throwable {
+        val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val stopState = (EndState) flow.getState(CasWebflowConstants.STATE_ID_VIEW_WEBFLOW_CONFIG_ERROR);
+        val context = MockRequestContext.create(applicationContext);
+        context.setActiveFlow(flow);
+        context.getFlashScope().put(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, new RuntimeException());
+        assertDoesNotThrow(() -> stopState.enter(context));
+    }
+
+    @Test
+    void verifyStorageStates() throws Exception {
+        val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val writeState = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_WRITE);
+        assertNotNull(writeState);
+        assertEquals(1, writeState.getEntryActionList().size());
+        assertEquals(CasWebflowConstants.STATE_ID_SERVICE_CHECK, writeState.getTransition(CasWebflowConstants.TRANSITION_ID_CONTINUE).getTargetStateId());
+        val readState = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_BROWSER_STORAGE_READ);
+        assertNotNull(readState);
+        assertEquals(1, readState.getRenderActionList().size());
+        assertEquals(0, readState.getEntryActionList().size());
+        assertEquals(CasWebflowConstants.STATE_ID_VERIFY_BROWSER_STORAGE_READ, readState.getTransition(CasWebflowConstants.TRANSITION_ID_CONTINUE).getTargetStateId());
     }
 }

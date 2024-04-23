@@ -1,0 +1,11 @@
+{
+  "@class" : "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/cas.*",
+  "name": "Sample",
+  "id" : 1,
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
+    "bypassPrincipalAttributeName": "bypassEnabled",
+    "bypassPrincipalAttributeValue": "true"
+  }
+}

@@ -15,20 +15,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@Tag("Authentication")
-public class CacheCredentialsMetaDataPopulatorTests {
+@Tag("AuthenticationMetadata")
+class CacheCredentialsMetaDataPopulatorTests {
 
     @Test
-    public void verifyPasswordAsAuthenticationAttribute() {
+    void verifyPasswordAsAuthenticationAttribute() throws Throwable {
         val populator = new CacheCredentialsMetaDataPopulator();
-
-        val c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
+        val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         val builder = DefaultAuthenticationBuilder.newInstance(CoreAuthenticationTestUtils.getAuthentication());
-        populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(c));
+        populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credential));
         val authn = builder.build();
-        assertTrue(authn.getAttributes().containsKey(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD));
-        assertEquals(c.getPassword(), authn.getAttributes().get(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD).get(0).toString());
+        assertTrue(authn.containsAttribute(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD));
+        assertEquals(credential.toPassword(), authn.getAttributes().get(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD).getFirst().toString());
     }
-
 
 }

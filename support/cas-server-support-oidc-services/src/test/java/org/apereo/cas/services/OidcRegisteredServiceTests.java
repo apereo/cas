@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
@@ -14,8 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,9 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @Tag("OIDC")
-public class OidcRegisteredServiceTests {
+class OidcRegisteredServiceTests {
 
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oidcRegisteredService.json");
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -36,7 +36,7 @@ public class OidcRegisteredServiceTests {
 
     private final ServiceRegistry dao;
 
-    public OidcRegisteredServiceTests() throws Exception {
+    OidcRegisteredServiceTests() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         this.dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
@@ -52,7 +52,7 @@ public class OidcRegisteredServiceTests {
     }
 
     @Test
-    public void checkSaveMethod() {
+    void checkSaveMethod() {
         val r = new OidcRegisteredService();
         r.setName("checkSaveMethod");
         r.setServiceId("testId");
@@ -60,18 +60,18 @@ public class OidcRegisteredServiceTests {
         r.setSignIdToken(true);
         r.setBypassApprovalPrompt(true);
         val r2 = this.dao.save(r);
-        assertTrue(r2 instanceof OidcRegisteredService);
+        assertInstanceOf(OidcRegisteredService.class, r2);
         this.dao.load();
         val r3 = this.dao.findServiceById(r2.getId());
-        assertTrue(r3 instanceof OidcRegisteredService);
+        assertInstanceOf(OidcRegisteredService.class, r3);
         assertEquals(r, r2);
         assertEquals(r2, r3);
-        assertNotNull(r.newInstance());
         assertNotNull(r.getFriendlyName());
     }
 
     @Test
-    public void verifySerializeAOidcRegisteredServiceToJson() throws IOException {
+    void verifySerializeAOidcRegisteredServiceToJson() throws IOException {
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
         val serviceWritten = new OidcRegisteredService();
         serviceWritten.setName("verifySerializeAOidcRegisteredServiceToJson");
         serviceWritten.setServiceId("testId");
@@ -79,8 +79,10 @@ public class OidcRegisteredServiceTests {
         serviceWritten.setSignIdToken(true);
         serviceWritten.setBypassApprovalPrompt(true);
         serviceWritten.setUsernameAttributeProvider(new PairwiseOidcRegisteredServiceUsernameAttributeProvider());
-        MAPPER.writeValue(JSON_FILE, serviceWritten);
-        val serviceRead = MAPPER.readValue(JSON_FILE, OidcRegisteredService.class);
+        MAPPER.writeValue(jsonFile, serviceWritten);
+        val serviceRead = MAPPER.readValue(jsonFile, OidcRegisteredService.class);
         assertEquals(serviceWritten, serviceRead);
     }
+
+
 }

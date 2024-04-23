@@ -14,10 +14,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("MFA")
-public class WebAuthnCredentialTests {
+@Tag("MFAProvider")
+class WebAuthnCredentialTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val c1 = new WebAuthnCredential(UUID.randomUUID().toString());
         assertNotNull(c1.getToken());
         val c2 = new WebAuthnCredential();

@@ -3,7 +3,7 @@ package org.apereo.cas.support.x509;
 import lombok.val;
 import org.apache.cxf.sts.request.ReceivedToken;
 import org.apache.cxf.sts.token.delegation.TokenDelegationParameters;
-import org.apache.wss4j.dom.WSConstants;
+import org.apache.wss4j.common.WSS4JConstants;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
@@ -20,15 +20,15 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("WSFederation")
-public class X509TokenDelegationHandlerTests {
+class X509TokenDelegationHandlerTests {
 
     @Test
-    public void verifyHandle() {
+    void verifyHandle() throws Throwable {
         val handler = new X509TokenDelegationHandler();
 
         val elementResponse = mock(Element.class);
-        when(elementResponse.getLocalName()).thenReturn(WSConstants.X509_DATA_LN);
-        when(elementResponse.getNamespaceURI()).thenReturn(WSConstants.SIG_NS);
+        when(elementResponse.getLocalName()).thenReturn(WSS4JConstants.X509_DATA_LN);
+        when(elementResponse.getNamespaceURI()).thenReturn(WSS4JConstants.SIG_NS);
 
         val token = mock(ReceivedToken.class);
         when(token.getToken()).thenReturn(elementResponse);
@@ -36,13 +36,13 @@ public class X509TokenDelegationHandlerTests {
     }
 
     @Test
-    public void verifyDelegation() {
+    void verifyDelegation() throws Throwable {
         val params = new TokenDelegationParameters();
 
         val handler = new X509TokenDelegationHandler();
 
         val elementResponse = mock(Element.class);
-        when(elementResponse.getLocalName()).thenReturn(WSConstants.X509_DATA_LN);
+        when(elementResponse.getLocalName()).thenReturn(WSS4JConstants.X509_DATA_LN);
 
         val token = mock(ReceivedToken.class);
         when(token.getToken()).thenReturn(elementResponse);

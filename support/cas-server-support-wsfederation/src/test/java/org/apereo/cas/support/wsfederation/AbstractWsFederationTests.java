@@ -1,14 +1,11 @@
 package org.apereo.cas.support.wsfederation;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.config.CasWsFederationAuthenticationAutoConfiguration;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
-import org.apereo.cas.support.wsfederation.config.WsFederationAuthenticationComponentSerializationConfiguration;
-import org.apereo.cas.support.wsfederation.config.WsFederationAuthenticationConfiguration;
-import org.apereo.cas.support.wsfederation.config.support.authentication.WsFedAuthenticationEventExecutionPlanConfiguration;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
-
+import org.apereo.cas.util.spring.beans.BeanContainer;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,10 +17,8 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +51,7 @@ public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
 
     @Autowired
     @Qualifier("wsFederationConfigurations")
-    protected Collection<WsFederationConfiguration> wsFederationConfigurations;
+    protected BeanContainer<WsFederationConfiguration> wsFederationConfigurations;
 
     @Autowired
     @Qualifier("wsFederationCookieManager")
@@ -65,10 +60,6 @@ public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
     @Autowired
     @Qualifier("wsFederationHelper")
     protected WsFederationHelper wsFederationHelper;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    protected ServicesManager servicesManager;
 
     public static WsFederationCredential getCredential() {
         val attributes = new HashMap<>(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap());
@@ -92,15 +83,13 @@ public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
 
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-        SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
+        SecurityAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration
     @Import({
-        WsFederationAuthenticationConfiguration.class,
-        WsFederationAuthenticationComponentSerializationConfiguration.class,
-        WsFedAuthenticationEventExecutionPlanConfiguration.class,
+        CasWsFederationAuthenticationAutoConfiguration.class,
         AbstractOpenSamlTests.SharedTestConfiguration.class
     })
     public static class SharedTestConfiguration {

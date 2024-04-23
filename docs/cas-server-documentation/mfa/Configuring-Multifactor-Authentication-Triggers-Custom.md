@@ -23,7 +23,7 @@ Note that:
 
 You will need to have compile-time access to the following modules in the Overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-core-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-core-webflow" %}
 
 These are modules that ship with CAS by default and thou shall mark them with a `compile` or `provided` scope in your build configuration.
 
@@ -59,23 +59,19 @@ The below example demonstrates a reasonable outline of a custom event resolver:
 ```java
 package org.apereo.cas.custom.config;
 
-@Configuration("SomethingConfiguration")
+@AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class SomethingConfiguration {
-
-    @Autowired
-    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private CasDelegatingWebflowEventResolver initialEventResolver;
-    
     @Bean
     public MultifactorAuthenticationTrigger exampleMultifactorAuthenticationTrigger() {
         return new ExampleMultifactorAuthenticationTrigger();
     }
     
     @Bean
-    @RefreshScope
-    public CasWebflowEventResolver exampleMultifactorAuthenticationWebflowEventResolver() {
-        val r = new DefaultMultifactorAuthenticationProviderEventResolver(
+    public CasWebflowEventResolver exampleMultifactorAuthenticationWebflowEventResolver(
+        @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+        final CasDelegatingWebflowEventResolver initialEventResolver) {
+        val resolver = new DefaultMultifactorAuthenticationProviderEventResolver(
             authenticationSystemSupport.getObject(),
             centralAuthenticationService.getObject(),
             servicesManager.getObject(),
@@ -84,8 +80,8 @@ public class SomethingConfiguration {
             authenticationRequestServiceSelectionStrategies.getObject(),
             multifactorAuthenticationProviderSelector.getObject(),
             exampleMultifactorAuthenticationTrigger());
-        this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r);
-        return r;
+        initialEventResolver.addDelegate(resolver);
+        return resolver;
     }
 }
 ```

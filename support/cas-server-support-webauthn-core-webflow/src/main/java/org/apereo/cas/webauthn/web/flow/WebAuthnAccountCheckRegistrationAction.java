@@ -1,13 +1,14 @@
 package org.apereo.cas.webauthn.web.flow;
 
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
 
 import com.yubico.core.RegistrationStorage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -20,13 +21,13 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @RequiredArgsConstructor
 @Slf4j
-public class WebAuthnAccountCheckRegistrationAction extends AbstractAction {
+public class WebAuthnAccountCheckRegistrationAction extends AbstractMultifactorAuthenticationAction<WebAuthnMultifactorAuthenticationProvider> {
     private final RegistrationStorage webAuthnCredentialRepository;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
-        val principal = authentication.getPrincipal();
+        val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
         LOGGER.trace("Checking registration record for [{}]", principal.getId());
         val registrations = webAuthnCredentialRepository.getRegistrationsByUsername(principal.getId());
         if (!registrations.isEmpty()) {

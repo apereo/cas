@@ -9,4 +9,4 @@ category: Authentication
 
 Stores authentication events into memory for a very limited time period.
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-events-memory" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-events-memory" %}

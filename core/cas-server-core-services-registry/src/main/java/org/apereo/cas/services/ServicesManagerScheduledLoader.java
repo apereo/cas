@@ -24,8 +24,8 @@ public class ServicesManagerScheduledLoader implements Runnable {
     }
 
     @Scheduled(
-        initialDelayString = "${cas.service-registry.schedule.start-delay:20000}",
-        fixedDelayString = "${cas.service-registry.schedule.repeat-interval:60000}"
+        initialDelayString = "${cas.service-registry.schedule.start-delay:PT20S}",
+        fixedDelayString = "${cas.service-registry.schedule.repeat-interval:PT60S}"
     )
     @Override
     public void run() {

@@ -6,7 +6,7 @@ networks:
 
 services:
   zookeeper-server:
-    image: 'bitnami/zookeeper:latest'
+    image: 'bitnami/zookeeper:3.9.1'
     networks:
       - kafka-net
     ports:
@@ -14,7 +14,7 @@ services:
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
   kafka:
-    image: 'bitnami/kafka:latest'
+    image: 'bitnami/kafka:3.6.1'
     networks:
       - kafka-net
     ports:
@@ -28,6 +28,7 @@ services:
       - KAFKA_CFG_LISTENERS=CLIENT://:9092,EXTERNAL://:9093
       - KAFKA_CFG_ADVERTISED_LISTENERS=CLIENT://localhost:9092,EXTERNAL://localhost:9093
       - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
+      - KAFKA_ENABLE_KRAFT=no
     depends_on:
       - zookeeper-server
 

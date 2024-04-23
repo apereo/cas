@@ -1,7 +1,9 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -11,6 +13,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,9 +33,7 @@ import java.util.List;
 @AllArgsConstructor
 public class DefaultAuthenticationHandlerExecutionResult implements AuthenticationHandlerExecutionResult {
 
-    /**
-     * Serialization support.
-     */
+    @Serial
     private static final long serialVersionUID = -3113998493287982485L;
 
     /**
@@ -43,7 +44,7 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
     /**
      * Credential meta data.
      */
-    private CredentialMetaData credentialMetaData;
+    private Credential credential;
 
     /**
      * Resolved principal for authenticated credential.
@@ -55,34 +56,39 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
      */
     private List<MessageDescriptor> warnings = new ArrayList<>(0);
 
-    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData) {
-        this(source, metaData, null, new ArrayList<>(0));
+    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final Credential credential) {
+        this(source, credential, null, new ArrayList<>(0));
+    }
+
+    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final Credential credential,
+                                                       final Principal principal) {
+        this(source, credential, principal, new ArrayList<>(0));
     }
 
 
-    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
-                                                       final Principal p) {
-        this(source, metaData, p, new ArrayList<>(0));
-    }
-
-
-    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
+    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final Credential credential,
                                                        final @NonNull List<MessageDescriptor> warnings) {
-        this(source, metaData, null, warnings);
+        this(source, credential, null, warnings);
     }
 
-    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
-                                                       final Principal p, final @NonNull List<MessageDescriptor> warnings) {
-        this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(), metaData, p, warnings);
+    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final Credential credential,
+                                                       final Principal principal, final @NonNull List<MessageDescriptor> warnings) {
+        this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(), credential, principal, warnings);
+    }
+
+    public DefaultAuthenticationHandlerExecutionResult(final String source, final Principal principal) {
+        this(source, new BasicIdentifiableCredential(principal.getId()), principal, new ArrayList<>());
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationHandlerExecutionResult addWarning(final MessageDescriptor message) {
         this.warnings.add(message);
         return this;
     }
 
     @Override
+    @CanIgnoreReturnValue
     public AuthenticationHandlerExecutionResult clearWarnings() {
         this.warnings.clear();
         return this;

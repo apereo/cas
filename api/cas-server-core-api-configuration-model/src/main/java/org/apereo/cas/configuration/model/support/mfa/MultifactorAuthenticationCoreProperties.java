@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
-import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,6 +25,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("MultifactorAuthenticationCoreProperties")
 public class MultifactorAuthenticationCoreProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 7426521468929733907L;
 
     /**
@@ -40,33 +42,19 @@ public class MultifactorAuthenticationCoreProperties implements Serializable {
      * define a failure mode and override the global.
      */
     private MultifactorAuthenticationProviderFailureModes globalFailureMode = MultifactorAuthenticationProviderFailureModes.CLOSED;
-    
+
     /**
      * Content-type that is expected to be specified by non-web clients such as curl, etc in the
      * event that the provider supports variations of non-browser based MFA.
      * The value is treated as a regular expression.
      */
+    @RegularExpressionCapable
     private String contentType = "application/cas";
 
     /**
-     * In the event that multiple multifactor authentication
-     * providers are determined for a multifactor authentication transaction,
-     * by default CAS will attempt to sort the collection of providers based on their rank and
-     * will pick one with the highest priority. This use case may arise if multiple triggers
-     * are defined where each decides on a different multifactor authentication provider, or
-     * the same provider instance is configured multiple times with many instances.
-     * Provider selection may also be carried out using Groovy scripting strategies more dynamically.
-     * The following example should serve as an outline of how to select multifactor providers based on a Groovy script.
+     * In the event that multiple multifactor authentication providers are determined for
+     * a multifactor authentication transaction, the collection of settings here control mfa selection rules.
      */
     @NestedConfigurationProperty
-    private SpringResourceProperties providerSelectorGroovyScript = new SpringResourceProperties();
-
-    /**
-     * In the event that multiple multifactor authentication providers are determined for a multifactor authentication transaction,
-     * this setting will allow one to interactively choose a provider out of the list of available providers.
-     * A trigger may be designed to support more than one provider, and rather than letting CAS auto-determine
-     * the selected provider via scripts or ranking strategies, this method puts the choice back onto the user
-     * to decide which provider makes the most sense at any given time.
-     */
-    private boolean providerSelectionEnabled;
+    private MultifactorAuthenticationProviderSelectionProperties providerSelection = new MultifactorAuthenticationProviderSelectionProperties();
 }

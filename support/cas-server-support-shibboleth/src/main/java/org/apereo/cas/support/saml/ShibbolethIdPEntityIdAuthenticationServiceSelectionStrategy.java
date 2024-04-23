@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -15,10 +16,12 @@ import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.hc.core5.net.URIBuilder;
 
+import java.io.Serial;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -31,11 +34,12 @@ import java.util.Optional;
 @Slf4j
 @Getter
 public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy extends BaseAuthenticationServiceSelectionStrategy {
+    @Serial
     private static final long serialVersionUID = -2059445756475980894L;
 
     private final String idpServerPrefix;
 
-    private final transient AuditableExecution registeredServiceAccessStrategyEnforcer;
+    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     public ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy(final ServicesManager servicesManager,
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory, final String idpServerPrefix,
@@ -55,7 +59,7 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy extends
      * @return - the resolved service.
      */
     @Override
-    public Service resolveServiceFrom(final Service service) {
+    public Service resolveServiceFrom(final Service service) throws Throwable {
         val result = getEntityIdAsParameter(service);
         if (result.isPresent()) {
             val entityId = result.get();
@@ -72,17 +76,18 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy extends
     @Override
     public boolean supports(final Service service) {
         val casPattern = "^".concat(idpServerPrefix).concat(".*");
-        return service != null && service.getId().matches(casPattern) && getEntityIdAsParameter(service).isPresent();
+        val matches = service != null && service.getId().matches(casPattern);
+        LOGGER.trace("Does service id [{}] match against [{}]: [{}]",
+            service, idpServerPrefix, BooleanUtils.toStringYesNo(matches));
+        val supported = matches && getEntityIdAsParameter(service).isPresent();
+        LOGGER.trace("Is request from [{}] supported by [{}]: [{}]",
+            service, getClass().getSimpleName(), BooleanUtils.toStringYesNo(supported));
+        return supported;
     }
-
-    /**
-     * Gets entity id as parameter.
-     *
-     * @param service the service
-     * @return the entity id as parameter
-     */
+    
     protected static Optional<String> getEntityIdAsParameter(final Service service) {
         try {
+            LOGGER.trace("Checking for query parameters in [{}] to locate entity id", service.getId());
             val builder = new URIBuilder(service.getId());
             val param = builder.getQueryParams()
                 .stream()
@@ -90,16 +95,24 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy extends
                 .findFirst();
 
             if (param.isPresent()) {
-                LOGGER.debug("Found entity Id in service id [{}]", param.get().getValue());
+                LOGGER.debug("Found entity id in service id [{}]", param.get().getValue());
                 return Optional.of(param.get().getValue());
             }
+
+            if (service.getAttributes().containsKey(SamlProtocolConstants.PARAMETER_ENTITY_ID)) {
+                val entityId = CollectionUtils.firstElement(service.getAttributes().get(SamlProtocolConstants.PARAMETER_ENTITY_ID)).map(Object::toString);
+                LOGGER.debug("Found entity id in service attributes [{}]", entityId);
+                return entityId;
+            }
+            
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
             if (request != null && StringUtils.isNotBlank(request.getQueryString())) {
+                LOGGER.debug("Evaluating http request query string [{}]", request.getQueryString());
                 val query = request.getQueryString().split("&");
                 val paramRequest = Arrays.stream(query)
                     .map(p -> {
                         var params = Splitter.on("=").splitToList(p);
-                        return Pair.of(params.get(0), params.get(1));
+                        return Pair.of(params.getFirst(), params.get(1));
                     })
                     .filter(p -> p.getKey().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
                     .map(Pair::getValue)
@@ -108,13 +121,14 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy extends
                 LOGGER.debug("Found entity id as part of request url [{}]", paramRequest);
                 return paramRequest;
             }
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
+        LOGGER.trace("Unable to locate entity id for [{}]", service);
         return Optional.empty();
     }
 
-    private boolean isEntityIdServiceRegistered(final String entityId, final Service original) {
+    private boolean isEntityIdServiceRegistered(final String entityId, final Service original) throws Throwable {
         val service = createService(entityId, original);
         val registeredService = getServicesManager().findServiceBy(service);
         val audit = AuditableContext.builder()

@@ -11,6 +11,6 @@ This strategy allows one to store tokens and manage their expiration policy usin
 
 Support is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-jpa" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-passwordless-jpa" %}
 
-{% include casproperties.html properties="cas.authn.passwordless.tokens.jpa" %}
+{% include_cached casproperties.html properties="cas.authn.passwordless.tokens.jpa" %}

@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ import java.util.Map;
 @JsonFilter("DatabaseProperties")
 public class DatabaseProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7740236971148591965L;
 
     /**

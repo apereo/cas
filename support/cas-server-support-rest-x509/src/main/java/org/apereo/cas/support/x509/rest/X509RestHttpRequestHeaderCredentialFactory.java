@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.MultiValueMap;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class X509RestHttpRequestHeaderCredentialFactory implements RestHttpReque
         if (certFromHeader != null) {
             LOGGER.debug("Certificate found in HTTP request via [{}]", certificateExtractor.getClass().getName());
             val credentials = new ArrayList<Credential>(1);
-            credentials.add(new X509CertificateCredential(certFromHeader));
+            credentials.add(prepareCredential(request, new X509CertificateCredential(certFromHeader)));
             return credentials;
         }
         return new ArrayList<>(0);

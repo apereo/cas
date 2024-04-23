@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
+
 /**
  * This is {@link JdbcPasswordManagementProperties}.
  *
@@ -24,6 +26,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @JsonFilter("JdbcPasswordManagementProperties")
 public class JdbcPasswordManagementProperties extends AbstractJpaProperties {
 
+    @Serial
     private static final long serialVersionUID = 4746591112640513465L;
 
     /**
@@ -59,6 +62,21 @@ public class JdbcPasswordManagementProperties extends AbstractJpaProperties {
     /**
      * SQL query to locate security questions for the account, if any.
      */
-    private String sqlSecurityQuestions;
+    private String sqlGetSecurityQuestions;
+
+    /**
+     * SQL query to update security questions for the account, if any.
+     */
+    private String sqlUpdateSecurityQuestions;
+
+    /**
+     * SQL query to unlock accounts.
+     */
+    private String sqlUnlockAccount;
+
+    /**
+     * SQL query to delete security questions for the account, if any.
+     */
+    private String sqlDeleteSecurityQuestions;
 }
 

@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.radius;
 
-import org.apereo.cas.util.HttpRequestUtils;
-
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import net.jradius.dictionary.vsa_microsoft.Attr_MSCHAP2Success;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -9,9 +8,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import java.security.Security;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -35,23 +32,23 @@ public abstract class AbstractRadiusServerTests {
         request.setRemoteAddr("1.2.3.4");
         request.setLocalAddr("4.5.6.7");
         request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
     }
 
     @Test
-    public void verifyAuthenticationSuccess() throws Exception {
+    void verifyAuthenticationSuccess() throws Throwable {
         val server = getRadiusServer();
         val response = server.authenticate("casuser", "Mellon");
-        assertEquals(2, response.getCode());
-        assertFalse(response.getAttributes().isEmpty());
-        assertTrue(response.getAttributes().stream()
+        assertEquals(2, response.code());
+        assertFalse(response.attributes().isEmpty());
+        assertTrue(response.attributes().stream()
             .anyMatch(a -> a.getAttributeName().equals(Attr_MSCHAP2Success.NAME)));
     }
 
     public abstract RadiusServer getRadiusServer();
 
     @Test
-    public void verifyAuthenticationFails() throws Exception {
+    void verifyAuthenticationFails() throws Throwable {
         val server = getRadiusServer();
         val response = server.authenticate("casuser", "badpsw");
         assertNull(response);

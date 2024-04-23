@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{cas.login.pagetitle}">CAS Interrupt View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+
+    <script th:inline="javascript" th:if="${interrupt.autoRedirect}">
+        /*<![CDATA[*/
+
+        let autoRedirect = /*[[${interrupt.autoRedirect}]]*/;
+        let emptyLinks = /*[[${#maps.isEmpty(interrupt.links)}]]*/;
+
+        if (autoRedirect && !emptyLinks) {
+
+            let link = /*[[${interrupt.links.values().toArray()[0]}]]*/;
+            let redirectTimeout = /*[[${interrupt.autoRedirectAfterSeconds}]]*/;
+
+            setTimeout(() => {
+                window.location = link;
+            }, redirectTimeout <= 0 ? 0 : redirectTimeout * 1000);
+
+        }
+        /*]]>*/
+    </script>
+</head>
+
+<body>
+<main class="container mt-3 mb-3">
+    <div id="content" layout:fragment="content" class="mdc-card card p-4 m-auto w-lg-66">
+        <h1 th:text="#{screen.interrupt.title}">Authentication Interrupt</h1>
+        <p th:utext="#{screen.interrupt.message(${principal.id})}">The authentication flow has been interrupted.</p>
+
+        <div th:if="${not #strings.isEmpty(interrupt.message) || not #strings.isEmpty(interrupt.messageCode) }">
+            <div class="alert alert-info">
+                <p id="interruptMessage" th:if="${interrupt.message}" th:utext="${interrupt.message}"> Interrupt message</p>
+                <p id="interruptMessage" th:unless="${interrupt.message}" th:utext="#{${interrupt.messageCode}}"> Interrupt message</p>
+
+                <div id="interruptLinks" th:if="${interrupt.links}">
+                    <form method="post" id="formlinks">
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                        <input type="hidden" name="_eventId" value="redirect"/>
+                        <input type="hidden" id="linkToRedirect" name="link"/>
+                    </form>
+
+                    <span th:with="linkid=${#strings.toLowerCase(#strings.replace(link.key, ' ', ''))}"
+                          th:each="link : ${interrupt.links}">
+                        <a class="mdc-button mdc-button--outline btn btn-primary me-2"
+                           th:text="${link.key}"
+                           th:id="${linkid}">
+                            <span class="mdc-button__label">link.key</span>
+                        </a>
+                        <script th:inline="javascript">
+                            /*<![CDATA[*/
+                            $(document).on("click", /*[[${'#' + linkid}]]*/, () => {
+                                let link = /*[[${link.value}]]*/;
+                                $("#linkToRedirect").val(link);
+                                $("#formlinks").submit();
+                            });
+                            /*]]>*/
+                        </script>
+                     </span>
+
+                </div>
+            </div>
+            <div class="mdc-data-table table-responsive mt-2 mb-4">
+                <table id="attributesTable"
+                       th:if="${interrupt.data} and ${#maps.size(interrupt.data) > 0}"
+                       class="table table-striped w-100"
+                       aria-label="Attributes">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell">Field</th>
+                        <th class="mdc-data-table__header-cell">Value</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    <tr th:each="attribute : ${interrupt.data}" class="mdc-data-table__row">
+                        <td class="mdc-data-table__cell">
+                            <code th:id="${attribute.key}"><span th:utext="${attribute.key}"/></code>
+                        </td>
+                        <td class="mdc-data-table__cell">
+                            <code th:id="${attribute.key + '-value'}"><span th:utext="${attribute.value}"/></code>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <form method="post" id="fm1" th:unless="${interrupt.block}">
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            <input type="hidden" name="_eventId" value="proceed"/>
+            <div class="form-actions d-flex align-items-center">
+                <button class="mdc-button mdc-button--raised btn btn-primary me-2"
+                        name="proceed"
+                        id="proceed"
+                        type="submit"
+                        accesskey="l">
+                    <span class="mdc-button__label" th:text="#{screen.interrupt.btn.proceed}">Proceed</span>
+                </button>
+            </div>
+        </form>
+
+        <div th:if="${interrupt.block}">
+            <a class="mdc-button mdc-button--raised me-2 btn btn-outline-secondary" id="cancel" name="cancel" th:href="@{/login}">
+                <span th:if="${interruptTriggerMode == 'AFTER_AUTHENTICATION'}" class="mdc-button__label"
+                      th:text="#{screen.interrupt.btn.cancel}">Cancel</span>
+
+                <span th:if="${interruptTriggerMode == 'AFTER_SSO'}" class="mdc-button__label"
+                      th:text="#{screen.interrupt.btn.proceed}">Proceed</span>
+            </a>
+        </div>
+    </div>
+</main>
+</body>
+
+</html>

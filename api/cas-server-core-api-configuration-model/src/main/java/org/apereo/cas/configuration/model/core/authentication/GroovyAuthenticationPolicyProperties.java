@@ -1,12 +1,12 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import org.apereo.cas.configuration.model.core.authentication.policy.BaseAuthenticationPolicyProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
-import java.io.Serializable;
+import java.io.Serial;
 
 /**
  * This is {@link GroovyAuthenticationPolicyProperties}.
@@ -18,12 +18,14 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class GroovyAuthenticationPolicyProperties implements Serializable {
+public class GroovyAuthenticationPolicyProperties extends BaseAuthenticationPolicyProperties {
 
+    @Serial
     private static final long serialVersionUID = 8713917167124116270L;
 
     /**
      * Path to the groovy script to execute.
      */
+    @RequiredProperty
     private String script;
 }

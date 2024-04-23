@@ -1,0 +1,15 @@
+#load password policy module
+dn: cn=module{0},cn=config
+changetype: modify
+add: olcModuleLoad
+olcModuleLoad: {0}ppolicy
+
+# configure password policy module
+dn: olcOverlay=ppolicy,olcDatabase={1}{{ LDAP_BACKEND }},cn=config
+changetype: add
+objectClass: olcPPolicyConfig
+objectClass: olcOverlayConfig
+olcOverlay: ppolicy
+olcPPolicyDefault: cn=default,ou=pwpolicies,{{ LDAP_BASE_DN }}
+olcPPolicyHashCleartext: TRUE
+olcPPolicyUseLockout: TRUE

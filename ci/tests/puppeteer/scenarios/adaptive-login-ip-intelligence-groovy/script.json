@@ -1,0 +1,12 @@
+{
+  "dependencies": "core",
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.adaptive.ip-intel.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/IP.groovy",
+    "--cas.service-registry.core.init-from-json=true"
+  ],
+  "jvmArgs": "-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true"
+}

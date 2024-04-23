@@ -8,8 +8,8 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.SecurityTokenTicket;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.ws.idp.WSFederationConstants;
@@ -18,10 +18,6 @@ import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
 
 import lombok.val;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
-import org.jasig.cas.client.authentication.AttributePrincipalImpl;
-import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
-import org.jasig.cas.client.validation.Assertion;
-import org.jasig.cas.client.validation.AssertionImpl;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +29,9 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
 
-import java.net.URL;
+import java.time.Clock;
+import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -49,25 +47,25 @@ import static org.mockito.Mockito.*;
 @Tag("WSFederation")
 @TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
 @Import(WSFederationValidateRequestCallbackControllerTests.WSFederationValidateRequestCallbackControllerTestConfiguration.class)
-public class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
+class WSFederationValidateRequestCallbackControllerTests extends BaseCoreWsSecurityIdentityProviderConfigurationTests {
     @Autowired
     @Qualifier("federationValidateRequestCallbackController")
     private WSFederationValidateRequestCallbackController federationValidateRequestCallbackController;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("ticketGrantingTicketCookieGenerator")
+    @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
     private CasCookieBuilder ticketGrantingTicketCookieGenerator;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Test
-    public void verifyWithTicketGrantingTicket() throws Exception {
+    void verifyWithTicketGrantingTicket() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -82,34 +80,37 @@ public class WSFederationValidateRequestCallbackControllerTests extends BaseCore
 
         val token = new SecurityToken(UUID.randomUUID().toString());
 
-        val id = UUID.randomUUID().toString();
+        val id = SecurityTokenTicket.PREFIX + '-' + UUID.randomUUID();
         val sts = mock(SecurityTokenTicket.class);
         when(sts.getPrefix()).thenReturn(SecurityTokenTicket.PREFIX);
-        when(sts.getId()).thenReturn(SecurityTokenTicket.PREFIX + '-' + id);
+        when(sts.getId()).thenReturn(id);
         when(sts.isExpired()).thenReturn(Boolean.FALSE);
         when(sts.getSecurityToken()).thenReturn(token);
+        when(sts.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
+        when(sts.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()));
 
         ticketRegistry.addTicket(sts);
 
         val tgt = new MockTicketGrantingTicket("casuser");
-        tgt.getDescendantTickets().add(sts.getId());
+        tgt.getDescendantTickets().add(id);
         ticketRegistry.addTicket(tgt);
 
-        val service = RegisteredServiceTestUtils.getService("customService");
+        val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
+        service.getAttributes().put(WSFederationConstants.WREPLY, List.of(registeredService.getServiceId()));
+
         val st = new MockServiceTicket("123456", service, tgt);
         ticketRegistry.addTicket(st);
 
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, st.getId());
-
         ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
         request.setCookies(response.getCookies());
 
         mv = federationValidateRequestCallbackController.handleFederationRequest(response, request);
         assertEquals(CasWebflowConstants.VIEW_ID_POST_RESPONSE, mv.getViewName());
     }
-    
+
     @Test
-    public void verifyWithoutTicketGrantingTicket() throws Exception {
+    void verifyWithoutTicketGrantingTicket() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
@@ -122,7 +123,8 @@ public class WSFederationValidateRequestCallbackControllerTests extends BaseCore
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
-        val service = RegisteredServiceTestUtils.getService("customService");
+        val service = RegisteredServiceTestUtils.getService(registeredService.getServiceId());
+        service.getAttributes().put(WSFederationConstants.WREPLY, List.of(registeredService.getServiceId()));
         val st = new MockServiceTicket("123456", service, tgt);
         ticketRegistry.addTicket(st);
 
@@ -130,7 +132,7 @@ public class WSFederationValidateRequestCallbackControllerTests extends BaseCore
 
         ticketGrantingTicketCookieGenerator.addCookie(response, tgt.getId());
         request.setCookies(response.getCookies());
-        
+
         val mv = federationValidateRequestCallbackController.handleFederationRequest(response, request);
         assertEquals(CasWebflowConstants.VIEW_ID_POST_RESPONSE, mv.getViewName());
     }
@@ -148,41 +150,21 @@ public class WSFederationValidateRequestCallbackControllerTests extends BaseCore
         return registeredService;
     }
 
-    @TestConfiguration
-    public static class WSFederationValidateRequestCallbackControllerTestConfiguration {
+    @TestConfiguration(value = "WSFederationValidateRequestCallbackControllerTestConfiguration", proxyBeanMethods = false)
+    static class WSFederationValidateRequestCallbackControllerTestConfiguration {
         @Bean
-        public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer() {
+        public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer() throws Exception {
             val producer = mock(WSFederationRelyingPartyTokenProducer.class);
             when(producer.produce(any(), any(), any(), any(), any())).thenReturn(UUID.randomUUID().toString());
             return producer;
         }
 
         @Bean
-        public SecurityTokenServiceTokenFetcher securityTokenServiceTokenFetcher() {
+        public SecurityTokenServiceTokenFetcher securityTokenServiceTokenFetcher() throws Throwable {
             val token = new SecurityToken(UUID.randomUUID().toString());
             val fetcher = mock(SecurityTokenServiceTokenFetcher.class);
             when(fetcher.fetch(any(), anyString())).thenReturn(Optional.of(token));
             return fetcher;
-        }
-
-        @Bean
-        public AbstractUrlBasedTicketValidator casClientTicketValidator() {
-            return new AbstractUrlBasedTicketValidator("https://cas.example.org") {
-                @Override
-                protected String getUrlSuffix() {
-                    return "/cas";
-                }
-
-                @Override
-                protected Assertion parseResponseFromServer(final String s) {
-                    return new AssertionImpl(new AttributePrincipalImpl("casuser", CollectionUtils.wrap("name", "value")));
-                }
-
-                @Override
-                protected String retrieveResponseFromServer(final URL url, final String s) {
-                    return "theresponse";
-                }
-            };
         }
     }
 }

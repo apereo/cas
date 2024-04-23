@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 
+import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +19,9 @@ import java.util.Map;
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
 public class GroovyPrincipalFactory extends DefaultPrincipalFactory {
+    @Serial
     private static final long serialVersionUID = -3999695695604948495L;
+
     private final transient WatchableGroovyScriptResource watchableScript;
 
     public GroovyPrincipalFactory(final Resource groovyResource) {
@@ -26,7 +29,7 @@ public class GroovyPrincipalFactory extends DefaultPrincipalFactory {
     }
 
     @Override
-    public Principal createPrincipal(final String id, final Map<String, List<Object>> attributes) {
+    public Principal createPrincipal(final String id, final Map<String, List<Object>> attributes) throws Throwable {
         return watchableScript.execute(new Object[]{id, attributes, LOGGER}, Principal.class);
     }
 }

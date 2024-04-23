@@ -5,18 +5,19 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,8 +28,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     BaseSamlIdPConfigurationTests.SharedTestConfiguration.class,
-    CasSamlServiceProvidersConfiguration.class
+    CasSamlServiceProvidersAutoConfiguration.class
 }, properties = {
     "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
     "cas.authn.saml-idp.metadata.core.require-valid-metadata=false",
@@ -42,11 +44,11 @@ public abstract class BaseCasSamlSPConfigurationTests {
     protected CasConfigurationProperties casProperties;
 
     @Autowired
-    @Qualifier("servicesManager")
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("webApplicationServiceFactory")
+    @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
     protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     @AfterEach
@@ -55,9 +57,11 @@ public abstract class BaseCasSamlSPConfigurationTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         LOGGER.debug("Looking for service id [{}]", getServiceProviderId());
         val service = webApplicationServiceFactory.createService(getServiceProviderId());
+        service.getAttributes().put(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.of(getServiceProviderId()));
+        
         assertNotNull(servicesManager.findServiceBy(service, SamlRegisteredService.class));
     }
 

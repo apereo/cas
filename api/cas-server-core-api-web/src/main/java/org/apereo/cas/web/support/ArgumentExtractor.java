@@ -3,7 +3,8 @@ package org.apereo.cas.web.support;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
 import java.util.List;
 
 /**
@@ -13,6 +14,11 @@ import java.util.List;
  * @since 3.1
  */
 public interface ArgumentExtractor {
+    /**
+     * Bean implementation name.
+     */
+    String BEAN_NAME = "argumentExtractor";
+
     /**
      * Retrieve the service from the request.
      *

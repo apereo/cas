@@ -1,4 +1,12 @@
 description = "Apereo CAS GeoLocation Tracking Maxmind Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "GeoLocation",
+            title: "Maxmind GeoLocation",
+            aliases: ["maxmind"]
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")

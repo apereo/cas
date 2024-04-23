@@ -4,8 +4,12 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
+import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
 /**
@@ -16,6 +20,40 @@ import java.util.stream.Stream;
  * @since 3.1
  */
 public interface ServiceRegistry {
+
+    /**
+     * Bean name.
+     */
+    String BEAN_NAME = "serviceRegistry";
+
+    /**
+     * Persist the service in the data store.
+     *
+     * @param supplier       the supplier
+     * @param andThenConsume the and then consume
+     * @param countExclusive the count exclusive
+     * @return the count of saved services
+     */
+    default Long save(final Supplier<RegisteredService> supplier,
+                      final Consumer<RegisteredService> andThenConsume,
+                      final long countExclusive) {
+        return LongStream.range(0, countExclusive)
+            .mapToObj(count -> supplier.get())
+            .filter(Objects::nonNull)
+            .map(this::save)
+            .peek(andThenConsume)
+            .count();
+    }
+
+    /**
+     * Save.
+     *
+     * @param toSave the to save
+     * @return the stream
+     */
+    default Stream<RegisteredService> save(final Stream<RegisteredService> toSave) {
+        return toSave.map(this::save);
+    }
 
     /**
      * Persist the service in the data store.
@@ -82,11 +120,11 @@ public interface ServiceRegistry {
 
         if (!clazz.isAssignableFrom(service.getClass())) {
             throw new ClassCastException("Object [" + service + " is of type " + service.getClass()
-                + " when we were expecting " + clazz);
+                                         + " when we were expecting " + clazz);
         }
         return clazz.cast(service);
     }
-    
+
     /**
      * Find a service by matching with the service id.
      *
@@ -94,9 +132,11 @@ public interface ServiceRegistry {
      * @return the registered service
      */
     default RegisteredService findServiceBy(final String id) {
-        return getServicesStream().filter(r -> r.matches(id))
-                .findFirst()
-                .orElse(null);
+        return getServicesStream()
+            .sorted()
+            .filter(r -> r.matches(id))
+            .findFirst()
+            .orElse(null);
     }
 
     /**
@@ -106,8 +146,8 @@ public interface ServiceRegistry {
      * @return the registered service
      */
     default RegisteredService findServiceByExactServiceId(final String id) {
-        return load()
-            .stream()
+        return getServicesStream()
+            .sorted()
             .filter(r -> StringUtils.isNotBlank(r.getServiceId()) && r.getServiceId().equals(id))
             .findFirst()
             .orElse(null);
@@ -120,8 +160,8 @@ public interface ServiceRegistry {
      * @return the registered service
      */
     default RegisteredService findServiceByExactServiceName(final String name) {
-        return load()
-            .stream()
+        return getServicesStream()
+            .sorted()
             .filter(r -> r.getName().equals(name))
             .findFirst()
             .orElse(null);
@@ -143,7 +183,7 @@ public interface ServiceRegistry {
 
         if (!clazz.isAssignableFrom(service.getClass())) {
             throw new ClassCastException("Object [" + service + " is of type " + service.getClass()
-                + " when we were expecting " + clazz);
+                                         + " when we were expecting " + clazz);
         }
         return clazz.cast(service);
     }
@@ -155,8 +195,8 @@ public interface ServiceRegistry {
      * @return the registered service
      */
     default Collection<RegisteredService> findServicePredicate(final Predicate<RegisteredService> predicate) {
-        return load()
-            .stream()
+        return getServicesStream()
+            .sorted()
             .filter(predicate)
             .collect(Collectors.toList());
     }

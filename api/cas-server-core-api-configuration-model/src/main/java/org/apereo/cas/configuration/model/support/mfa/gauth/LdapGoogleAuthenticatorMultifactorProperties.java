@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link LdapGoogleAuthenticatorMultifactorProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("LdapGoogleAuthenticatorMultifactorProperties")
 public class LdapGoogleAuthenticatorMultifactorProperties extends AbstractLdapSearchProperties {
+    @Serial
     private static final long serialVersionUID = -100556119517414696L;
 
     /**

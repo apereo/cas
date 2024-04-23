@@ -1,23 +1,25 @@
 package org.apereo.cas.support.saml;
 
-import org.apereo.cas.config.CoreSamlConfigurationTests;
+import org.apereo.cas.config.BaseSamlConfigurationTests;
 import org.apereo.cas.support.saml.util.NonInflatingSaml20ObjectBuilder;
-
 import lombok.val;
+import net.shibboleth.shared.xml.ParserPool;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.velocity.app.VelocityEngine;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.XMLObjectBuilderFactory;
+import org.opensaml.core.xml.io.MarshallerFactory;
+import org.opensaml.core.xml.io.UnmarshallerFactory;
 import org.opensaml.saml.saml2.core.AuthnRequest;
-import org.opensaml.saml.saml2.core.NameID;
+import org.opensaml.saml.saml2.core.NameIDType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-
 import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -28,27 +30,57 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("SAML")
-@SpringBootTest(classes = CoreSamlConfigurationTests.SharedTestConfiguration.class)
-public class SamlUtilsTests {
+@SpringBootTest(classes = BaseSamlConfigurationTests.SharedTestConfiguration.class)
+class SamlUtilsTests {
+    @Autowired
+    @Qualifier("shibboleth.VelocityEngine")
+    protected VelocityEngine velocityEngineFactoryBean;
+
     @Autowired
     @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
-    private OpenSamlConfigBean openSamlConfigBean;
+    protected OpenSamlConfigBean openSamlConfigBean;
+
+    @Autowired
+    @Qualifier("shibboleth.ParserPool")
+    protected ParserPool parserPool;
+
+    @Autowired
+    @Qualifier("shibboleth.BuilderFactory")
+    protected XMLObjectBuilderFactory builderFactory;
+
+    @Autowired
+    @Qualifier("shibboleth.MarshallerFactory")
+    protected MarshallerFactory marshallerFactory;
+
+    @Autowired
+    @Qualifier("shibboleth.UnmarshallerFactory")
+    protected UnmarshallerFactory unmarshallerFactory;
 
     @Test
-    public void verifyCert() {
+    void verify() {
+        assertNotNull(velocityEngineFactoryBean);
+        assertNotNull(openSamlConfigBean);
+        assertNotNull(parserPool);
+        assertNotNull(builderFactory);
+        assertNotNull(marshallerFactory);
+        assertNotNull(unmarshallerFactory);
+    }
+    
+    @Test
+    void verifyCert() throws Throwable {
         val x509 = SamlUtils.readCertificate(new ClassPathResource("idp-signing.crt"));
         assertNotNull(x509);
     }
 
     @Test
-    public void verifyCertFails() {
+    void verifyCertFails() throws Throwable {
         assertThrows(IllegalArgumentException.class, () -> SamlUtils.readCertificate(mock(Resource.class)));
     }
 
     @Test
-    public void verifyTransformFails() {
+    void verifyTransformFails() throws Throwable {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
-        val attr = builder.getNameID(NameID.TRANSIENT, "value");
+        val attr = builder.getNameID(NameIDType.TRANSIENT, "value");
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, attr).toString();
         assertThrows(SamlException.class, () -> SamlUtils.transformSamlObject(openSamlConfigBean,
             xml.getBytes(StandardCharsets.UTF_8), AuthnRequest.class));

@@ -1,16 +1,12 @@
 package org.apereo.cas.metadata;
 
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
-import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorAuthenticationProperties;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import java.io.File;
 import java.util.List;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -20,21 +16,19 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("CasConfiguration")
-public class CasConfigurationMetadataRepositoryTests {
+class CasConfigurationMetadataRepositoryTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val repository = new CasConfigurationMetadataRepository();
         var properties = repository.getPropertiesWithType(LdapAuthenticationProperties.class);
-        assertTrue(properties.isEmpty());
-        properties = repository.getPropertiesWithType(GoogleAuthenticatorMultifactorAuthenticationProperties.class);
-        assertTrue(properties.isEmpty());
+        assertFalse(properties.isEmpty());
         properties = repository.getPropertiesWithType(Set.class);
         assertFalse(properties.isEmpty());
     }
 
     @Test
-    public void verifyQueryOperation() throws Exception {
+    void verifyQueryOperation() throws Throwable {
         var properties = CasConfigurationMetadataCatalog.query(ConfigurationMetadataCatalogQuery
             .builder()
             .build());
@@ -48,7 +42,7 @@ public class CasConfigurationMetadataRepositoryTests {
             .builder()
             .queryType(ConfigurationMetadataCatalogQuery.QueryTypes.CAS)
             .build());
-        assertTrue(properties.properties().isEmpty());
+        assertFalse(properties.properties().isEmpty());
 
         properties = CasConfigurationMetadataCatalog.query(ConfigurationMetadataCatalogQuery
             .builder()

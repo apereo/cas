@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.quartz;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,8 +25,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Accessors(chain = true)
 @JsonFilter("ScheduledJobProperties")
-public class ScheduledJobProperties implements Serializable {
+public class ScheduledJobProperties implements CasFeatureModule, Serializable {
 
+    @Serial
     private static final long serialVersionUID = 9059671958275130605L;
 
     /**
@@ -32,10 +35,4 @@ public class ScheduledJobProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SchedulingProperties schedule = new SchedulingProperties();
-
-    public ScheduledJobProperties(final String startDelay, final String repeatInterval) {
-        schedule.setEnabled(true);
-        schedule.setStartDelay(startDelay);
-        schedule.setRepeatInterval(repeatInterval);
-    }
 }

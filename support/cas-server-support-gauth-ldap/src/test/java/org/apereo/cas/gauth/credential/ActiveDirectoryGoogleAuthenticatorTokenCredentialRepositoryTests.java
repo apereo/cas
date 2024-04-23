@@ -1,6 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.Modification;
@@ -8,7 +8,6 @@ import com.unboundid.ldap.sdk.ModificationType;
 import com.unboundid.util.ssl.SSLUtil;
 import com.unboundid.util.ssl.TrustAllTrustManager;
 import lombok.Cleanup;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.ldaptive.BindConnectionInitializer;
@@ -39,12 +38,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         "cas.authn.mfa.gauth.crypto.enabled=true"
     })
 @EnableScheduling
-@Tag("Ldap")
-@EnabledIfPortOpen(port = 10636)
-public class ActiveDirectoryGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests {
+@Tag("ActiveDirectory")
+@EnabledIfListeningOnPort(port = 10636)
+class ActiveDirectoryGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests {
     @Override
-    @SneakyThrows
-    protected String getUsernameUnderTest() {
+    protected String getUsernameUnderTest() throws Exception {
         val uid = "aham";
 
         val bindInit = new BindConnectionInitializer("CN=admin,CN=Users,DC=cas,DC=example,DC=org", new Credential("P@ssw0rd"));
@@ -53,11 +51,11 @@ public class ActiveDirectoryGoogleAuthenticatorTokenCredentialRepositoryTests ex
         val socketFactory = sslUtil.createSSLSocketFactory();
 
         @Cleanup
-        val c = new LDAPConnection(socketFactory, "localhost", 10636,
+        val connection = new LDAPConnection(socketFactory, "localhost", 10636,
             bindInit.getBindDn(), bindInit.getBindCredential().getString());
 
         val mod = new Modification(ModificationType.REPLACE, "streetAddress", " ");
-        c.modify(String.format("CN=%s,CN=Users,DC=cas,DC=example,DC=org", uid), mod);
+        connection.modify(String.format("CN=%s,CN=Users,DC=cas,DC=example,DC=org", uid), mod);
 
         return uid;
     }

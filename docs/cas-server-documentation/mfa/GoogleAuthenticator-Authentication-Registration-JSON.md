@@ -13,4 +13,4 @@ The behavior is only activated when a path to a JSON data store file is provided
 and otherwise CAS may fallback to keeping records in memory. This feature is mostly
 useful during development and for demo purposes.
 
-{% include casproperties.html properties="cas.authn.mfa.gauth.json" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.gauth.json" %}

@@ -20,13 +20,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("OIDC")
-public class OidcJsonWebKeyStoreJacksonDeserializerTests extends AbstractOidcTests {
+class OidcJsonWebKeyStoreJacksonDeserializerTests extends AbstractOidcTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     @Test
-    public void verifyOperation() throws Exception {
-        val key = OidcJsonWebKeyStoreUtils.generateJsonWebKey("rsa", 2048);
+    void verifyOperation() throws Throwable {
+        val key = OidcJsonWebKeyStoreUtils.generateJsonWebKey("rsa", 2048, OidcJsonWebKeyUsage.SIGNING);
         val keyset = new JsonWebKeySet(key).toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
 
         val module = new SimpleModule();

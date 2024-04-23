@@ -1,21 +1,14 @@
 package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
-import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
-import org.apereo.cas.config.CasSupportMongoDbAuditConfiguration;
-import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
-
+import org.apereo.cas.config.CasSupportMongoDbAuditAutoConfiguration;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 /**
  * This is {@link MongoDbAuditTrailManagerTests}.
@@ -24,13 +17,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  * @since 5.2.0
  */
 @SpringBootTest(classes = {
-    CasCoreAuditConfiguration.class,
-    CasSupportMongoDbAuditConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    CasWebApplicationServiceFactoryConfiguration.class,
-    RefreshAutoConfiguration.class,
-    CasCoreWebConfiguration.class
+    BaseAuditConfigurationTests.SharedTestConfiguration.class,
+    CasSupportMongoDbAuditAutoConfiguration.class
 },
     properties = {
         "cas.audit.mongo.host=localhost",
@@ -44,8 +32,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     })
 @Tag("MongoDb")
 @Getter
-@EnabledIfPortOpen(port = 27017)
-public class MongoDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
+@EnabledIfListeningOnPort(port = 27017)
+class MongoDbAuditTrailManagerTests extends BaseAuditConfigurationTests {
 
     @Autowired
     @Qualifier("mongoDbAuditTrailManager")

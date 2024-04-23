@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,6 +25,7 @@ import java.io.Serializable;
 @JsonFilter("HazelcastDiscoveryProperties")
 public class HazelcastDiscoveryProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8281223487171101795L;
 
     /**
@@ -60,6 +62,12 @@ public class HazelcastDiscoveryProperties implements Serializable {
     private HazelcastAzureDiscoveryProperties azure = new HazelcastAzureDiscoveryProperties();
 
     /**
+     * Describe discovery strategy based on Zookeeper.
+     */
+    @NestedConfigurationProperty
+    private HazelcastZooKeeperDiscoveryProperties zookeeper = new HazelcastZooKeeperDiscoveryProperties();
+
+    /**
      * Describe discovery strategy based on Kubernetes.
      */
     @NestedConfigurationProperty
@@ -70,6 +78,12 @@ public class HazelcastDiscoveryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private HazelcastDockerSwarmDiscoveryProperties dockerSwarm = new HazelcastDockerSwarmDiscoveryProperties();
+
+    /**
+     * Describe discovery strategy based on google cloud platform.
+     */
+    @NestedConfigurationProperty
+    private HazelcastGoogleCloudPlatformDiscoveryProperties gcp = new HazelcastGoogleCloudPlatformDiscoveryProperties();
 
     /**
      * Multicast discovery settings.

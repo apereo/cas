@@ -1,0 +1,7 @@
+{
+  "disabled" : {
+    "email" : "disabled@example.org",
+    "password" : "disabled",
+    "status": "DISABLED"
+  }
+}

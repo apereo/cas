@@ -1,8 +1,8 @@
 package org.apereo.cas.services.consent;
 
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.services.RegisteredServiceConsentPolicy;
-import org.apereo.cas.util.model.TriStateBoolean;
-
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
@@ -11,11 +11,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ChainingRegisteredServiceConsentPolicy implements RegisteredServiceConsentPolicy {
+    @Serial
     private static final long serialVersionUID = -2949244688986345692L;
 
     private final List<RegisteredServiceConsentPolicy> policies = new ArrayList<>(0);
@@ -42,8 +44,9 @@ public class ChainingRegisteredServiceConsentPolicy implements RegisteredService
      * @param policy the policy
      */
     public void addPolicies(final Collection<RegisteredServiceConsentPolicy> policy) {
-        this.policies.addAll(policy);
-        AnnotationAwareOrderComparator.sortIfNecessary(this.policies);
+        if (policies.addAll(policy.stream().filter(BeanSupplier::isNotProxy).toList())) {
+            AnnotationAwareOrderComparator.sortIfNecessary(this.policies);
+        }
     }
 
     /**
@@ -52,20 +55,33 @@ public class ChainingRegisteredServiceConsentPolicy implements RegisteredService
      * @param policy the policy
      */
     public void addPolicy(final RegisteredServiceConsentPolicy policy) {
-        this.policies.add(policy);
-        AnnotationAwareOrderComparator.sortIfNecessary(this.policies);
+        if (BeanSupplier.isNotProxy(policy)) {
+            policies.add(policy);
+            AnnotationAwareOrderComparator.sortIfNecessary(this.policies);
+        }
     }
 
     @Override
     @JsonIgnore
     public TriStateBoolean getStatus() {
-        if (this.policies.stream().anyMatch(policy -> policy.getStatus().isTrue())) {
+        if (this.policies.stream().filter(BeanSupplier::isNotProxy).anyMatch(policy -> policy.getStatus().isTrue())) {
             return TriStateBoolean.TRUE;
         }
-        if (this.policies.stream().allMatch(policy -> policy.getStatus().isFalse())) {
+        if (this.policies.stream().filter(BeanSupplier::isNotProxy).allMatch(policy -> policy.getStatus().isFalse())) {
             return TriStateBoolean.FALSE;
         }
         return TriStateBoolean.UNDEFINED;
+    }
+
+    @Override
+    @JsonIgnore
+    public Set<String> getExcludedServices() {
+        return this.policies
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .map(RegisteredServiceConsentPolicy::getExcludedServices)
+            .flatMap(Set::stream)
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @JsonIgnore
@@ -73,7 +89,9 @@ public class ChainingRegisteredServiceConsentPolicy implements RegisteredService
     public Set<String> getExcludedAttributes() {
         return this.policies
             .stream()
+            .filter(BeanSupplier::isNotProxy)
             .map(RegisteredServiceConsentPolicy::getExcludedAttributes)
+            .filter(Objects::nonNull)
             .flatMap(Set::stream)
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
@@ -84,6 +102,7 @@ public class ChainingRegisteredServiceConsentPolicy implements RegisteredService
     public Set<String> getIncludeOnlyAttributes() {
         return this.policies
             .stream()
+            .filter(BeanSupplier::isNotProxy)
             .map(RegisteredServiceConsentPolicy::getIncludeOnlyAttributes)
             .flatMap(Set::stream)
             .collect(Collectors.toCollection(LinkedHashSet::new));

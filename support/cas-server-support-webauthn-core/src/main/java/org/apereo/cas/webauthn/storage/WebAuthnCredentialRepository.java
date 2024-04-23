@@ -1,8 +1,9 @@
 package org.apereo.cas.webauthn.storage;
 
-import com.yubico.core.InMemoryRegistrationStorage;
 import com.yubico.core.RegistrationStorage;
-import com.yubico.webauthn.CredentialRepository;
+import com.yubico.data.CredentialRegistration;
+
+import java.util.stream.Stream;
 
 /**
  * This is {@link WebAuthnCredentialRepository}.
@@ -10,17 +11,16 @@ import com.yubico.webauthn.CredentialRepository;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-public interface WebAuthnCredentialRepository extends RegistrationStorage, CredentialRepository, WebAuthnRegistrationStorageCleaner {
+public interface WebAuthnCredentialRepository extends RegistrationStorage, WebAuthnRegistrationStorageCleaner {
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "webAuthnCredentialRepository";
 
     /**
-     * In memory web authn credential repository.
+     * Stream.
      *
-     * @return the web authn credential repository
+     * @return the stream
      */
-    static WebAuthnCredentialRepository inMemory() {
-        return new InMemoryWebAuthn();
-    }
-
-    class InMemoryWebAuthn extends InMemoryRegistrationStorage implements WebAuthnCredentialRepository {
-    }
+    Stream<? extends CredentialRegistration> stream();
 }

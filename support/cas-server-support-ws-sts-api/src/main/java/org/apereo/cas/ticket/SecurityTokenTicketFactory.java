@@ -17,6 +17,7 @@ public interface SecurityTokenTicketFactory extends TicketFactory {
      * @param ticket                  the ticket
      * @param securityTokenSerialized the security token
      * @return the security token ticket
+     * @throws Throwable the throwable
      */
-    SecurityTokenTicket create(TicketGrantingTicket ticket, byte[] securityTokenSerialized);
+    SecurityTokenTicket create(TicketGrantingTicket ticket, byte[] securityTokenSerialized) throws Throwable;
 }

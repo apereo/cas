@@ -1,0 +1,29 @@
+description = "Apereo CAS Spring Boot Admin"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Integrations",
+            title: "Spring BootAdmin Server",
+            aliases: ["bootadmin", "sba"]
+    ]
+}
+dependencies {
+    api libraries.springbootadminserver
+    api libraries.springbootadminclient
+
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-logging-api")
+    implementation project(":core:cas-server-core-util-api")
+
+    implementation libraries.springsecurityweb
+    implementation libraries.springsecurityconfig
+    implementation libraries.thymeleaf
+    implementation libraries.hibernatevalidator
+
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-logging")
+
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+}

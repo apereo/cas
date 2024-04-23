@@ -26,26 +26,26 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @ExtendWith(MockitoExtension.class)
 @Tag("X509")
-public class X509RestHttpRequestHeaderCredentialFactoryTests {
+class X509RestHttpRequestHeaderCredentialFactoryTests {
     private static final String HEADER = "ssl_client_cert";
 
     private final X509RestHttpRequestHeaderCredentialFactory factory =
         new X509RestHttpRequestHeaderCredentialFactory(new RequestHeaderX509CertificateExtractor(HEADER));
 
     @Test
-    public void createX509Credential() throws IOException {
+    void createX509Credential() throws IOException {
         val request = new MockHttpServletRequest();
-        try (val scan = new Scanner(new ClassPathResource("ldap-crl.crt").getFile(), StandardCharsets.UTF_8.name())) {
+        try (val scan = new Scanner(new ClassPathResource("ldap-crl.crt").getFile(), StandardCharsets.UTF_8)) {
             val certStr = scan.useDelimiter("\\Z").next();
             request.addHeader(HEADER, certStr);
 
-            val cred = factory.fromRequest(request, null).iterator().next();
-            assertTrue(cred instanceof X509CertificateCredential);
+            val cred = factory.fromRequest(request, null).getFirst();
+            assertInstanceOf(X509CertificateCredential.class, cred);
         }
     }
 
     @Test
-    public void createDefaultCredential() {
+    void createDefaultCredential() {
         val request = new MockHttpServletRequest();
         val requestBody = new LinkedMultiValueMap<String, String>();
         requestBody.add("username", "name");

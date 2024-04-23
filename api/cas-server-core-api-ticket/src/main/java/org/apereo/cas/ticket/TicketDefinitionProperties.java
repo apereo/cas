@@ -19,18 +19,18 @@ package org.apereo.cas.ticket;
 public interface TicketDefinitionProperties {
 
     /**
-     * Sets exclude from cascade.
-     *
-     * @param value the value
-     */
-    void setExcludeFromCascade(boolean value);
-
-    /**
      * Is exclude from cascade ?
      *
      * @return true/false
      */
     boolean isExcludeFromCascade();
+
+    /**
+     * Sets exclude from cascade.
+     *
+     * @param value the value
+     */
+    void setExcludeFromCascade(boolean value);
 
     /**
      * Generically describes if this ticket is linked to all ticket entities

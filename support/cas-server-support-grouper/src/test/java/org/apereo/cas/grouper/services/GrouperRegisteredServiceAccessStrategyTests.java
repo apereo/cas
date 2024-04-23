@@ -1,6 +1,7 @@
 package org.apereo.cas.grouper.services;
 
 import org.apereo.cas.services.JsonServiceRegistry;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyRequest;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
@@ -17,13 +18,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -37,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2
  */
 @Tag("RegisteredService")
-public class GrouperRegisteredServiceAccessStrategyTests {
+class GrouperRegisteredServiceAccessStrategyTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
@@ -47,7 +48,7 @@ public class GrouperRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkAccessStrategyJson() throws Exception {
+    void checkAccessStrategyJson() throws Exception {
         val attributes = new HashMap<String, Set<String>>();
         val v1 = new HashSet<String>();
         v1.add("admin");
@@ -72,8 +73,9 @@ public class GrouperRegisteredServiceAccessStrategyTests {
     }
 
     @Test
-    public void checkGrouperAttributes() {
+    void checkGrouperAttributes() {
         val strategy = new GrouperRegisteredServiceAccessStrategy() {
+            @Serial
             private static final long serialVersionUID = 8533229193475808261L;
 
             @Override
@@ -91,30 +93,33 @@ public class GrouperRegisteredServiceAccessStrategyTests {
         val requiredAttributes = new HashMap<String, Set<String>>();
         requiredAttributes.put(GrouperRegisteredServiceAccessStrategy.GROUPER_GROUPS_ATTRIBUTE_NAME, Collections.singleton("SampleGroup"));
         strategy.setRequiredAttributes(requiredAttributes);
-        val attrs = (Map) RegisteredServiceTestUtils.getTestAttributes("banderson");
-        assertTrue(strategy.doPrincipalAttributesAllowServiceAccess("banderson", attrs));
+        assertTrue(executeStrategy(strategy));
     }
 
     @Test
-    public void checkGrouperNoGroups() {
+    void checkGrouperNoGroups() {
         val strategy = new GrouperRegisteredServiceAccessStrategy() {
+            @Serial
             private static final long serialVersionUID = 8533229193475808261L;
+
             @Override
             protected Collection<WsGetGroupsResult> fetchWsGetGroupsResults(final String principal) {
                 return List.of();
             }
         };
-        val attrs = (Map) RegisteredServiceTestUtils.getTestAttributes("banderson");
-        assertFalse(strategy.doPrincipalAttributesAllowServiceAccess("banderson", attrs));
+        assertFalse(executeStrategy(strategy));
     }
 
     @Test
-    public void checkFailsConfig() {
+    void checkFailsConfig() {
         val strategy = new GrouperRegisteredServiceAccessStrategy();
         strategy.getConfigProperties().put("grouperClient.webService.url", "http://localhost:8012");
         strategy.getConfigProperties().put("grouperClient.webService.login", "unknown");
         strategy.getConfigProperties().put("grouperClient.webService.password", "unknown");
-        val attrs = (Map) RegisteredServiceTestUtils.getTestAttributes("banderson");
-        assertFalse(strategy.doPrincipalAttributesAllowServiceAccess("banderson", attrs));
+        assertFalse(executeStrategy(strategy));
+    }
+
+    private static boolean executeStrategy(final GrouperRegisteredServiceAccessStrategy strategy) {
+        return strategy.authorizeRequest(RegisteredServiceAccessStrategyRequest.builder().principalId("banderson").build());
     }
 }

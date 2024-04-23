@@ -1,7 +1,6 @@
 package org.apereo.cas.support.inwebo.authentication;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -15,23 +14,23 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("MFA")
-public class InweboAuthenticationDeviceMetadataPopulatorTests {
+@Tag("MFAProvider")
+class InweboAuthenticationDeviceMetadataPopulatorTests {
     private final InweboAuthenticationDeviceMetadataPopulator populator =
         new InweboAuthenticationDeviceMetadataPopulator();
 
     @Test
-    public void verifyPopulator() {
+    void verifyPopulator() throws Throwable {
         val credentials = new InweboCredential();
         credentials.setDeviceName("MyDeviceName");
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         assertTrue(this.populator.supports(credentials));
         assertNotNull(populator.toString());
-        this.populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
+        this.populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
         val auth = builder.build();
         assertEquals(
             credentials.getDeviceName(),
             auth.getAttributes()
-                .get(InweboAuthenticationDeviceMetadataPopulator.ATTRIBUTE_NAME_INWEBO_AUTHENTICATION_DEVICE).get(0));
+                .get(InweboAuthenticationDeviceMetadataPopulator.ATTRIBUTE_NAME_INWEBO_AUTHENTICATION_DEVICE).getFirst());
     }
 }

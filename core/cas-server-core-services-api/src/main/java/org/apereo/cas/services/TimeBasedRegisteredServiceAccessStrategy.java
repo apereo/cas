@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
@@ -13,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -26,38 +29,47 @@ import java.time.ZonedDateTime;
  * @since 4.2
  */
 @Slf4j
-@ToString(callSuper = true)
+@ToString
 @EqualsAndHashCode(callSuper = true)
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
-public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
+public class TimeBasedRegisteredServiceAccessStrategy extends BaseRegisteredServiceAccessStrategy {
 
+    @Serial
     private static final long serialVersionUID = -6180748828025837047L;
 
+    @ExpressionLanguageCapable
     private String startingDateTime;
 
+    @ExpressionLanguageCapable
     private String endingDateTime;
 
+    @ExpressionLanguageCapable
     private String zoneId = ZoneOffset.UTC.getId();
 
-    /**
-     * Initiates the time-based access strategy.
-     *
-     * @param enabled    is service access allowed?
-     * @param ssoEnabled is service allowed to take part in SSO?
-     */
-    public TimeBasedRegisteredServiceAccessStrategy(final boolean enabled, final boolean ssoEnabled) {
-        super(enabled, ssoEnabled);
+    @Override
+    public boolean isServiceAccessAllowed(final RegisteredService registeredService, final Service service) {
+        return doesStartingTimeAllowServiceAccess() && doesEndingTimeAllowServiceAccess();
     }
 
-    @Override
-    public boolean isServiceAccessAllowed() {
-        if (!doesStartingTimeAllowServiceAccess()) {
-            return false;
-        }
-        return doesEndingTimeAllowServiceAccess() && super.isServiceAccessAllowed();
+    public String getStartingDateTime() {
+        return StringUtils.isBlank(startingDateTime)
+            ? null
+            : SpringExpressionLanguageValueResolver.getInstance().resolve(startingDateTime);
+    }
+
+    public String getEndingDateTime() {
+        return StringUtils.isBlank(endingDateTime)
+            ? null
+            : SpringExpressionLanguageValueResolver.getInstance().resolve(endingDateTime);
+    }
+
+    public String getZoneId() {
+        return StringUtils.isBlank(zoneId)
+            ? ZoneOffset.UTC.getId()
+            : SpringExpressionLanguageValueResolver.getInstance().resolve(zoneId);
     }
 
     /**
@@ -116,23 +128,5 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
             }
         }
         return true;
-    }
-
-    public String getStartingDateTime() {
-        return StringUtils.isBlank(startingDateTime)
-            ? null
-            : SpringExpressionLanguageValueResolver.getInstance().resolve(startingDateTime);
-    }
-
-    public String getEndingDateTime() {
-        return StringUtils.isBlank(endingDateTime)
-            ? null
-            : SpringExpressionLanguageValueResolver.getInstance().resolve(endingDateTime);
-    }
-
-    public String getZoneId() {
-        return StringUtils.isBlank(zoneId)
-            ? ZoneOffset.UTC.getId()
-            : SpringExpressionLanguageValueResolver.getInstance().resolve(zoneId);
     }
 }

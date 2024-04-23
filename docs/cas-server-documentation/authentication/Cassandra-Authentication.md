@@ -12,7 +12,7 @@ Verify and authenticate credentials using [Apache Cassandra](http://cassandra.ap
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-cassandra-authentication" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-cassandra-authentication" %}
 
-{% include casproperties.html properties="cas.authn.cassandra" %}
+{% include_cached casproperties.html properties="cas.authn.cassandra" %}
 

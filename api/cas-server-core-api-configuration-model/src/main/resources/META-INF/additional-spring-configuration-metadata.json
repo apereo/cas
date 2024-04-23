@@ -1,11 +1,263 @@
 {
   "properties": [
     {
+      "name": "cas.authn.pac4j.oidc[0].azure.principal-attribute-id",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.pac4j.oidc[0].azure.principal-id-attribute",
+        "reason": "This setting is renamed.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.logout.remove-descendant-tickets",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.ticket.track-descendant-tickets",
+        "reason": "This setting is renamed and moved to the ticket namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.sso.allow-missing-service-parameter",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.sso.services.allow-missing-service-parameter",
+        "reason": "This setting is moved into a services namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.pac4j.saml[0].service-provider-metadata-path",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location",
+        "reason": "This setting is moved into a metadata namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.pac4j.saml[0].identity-provider-metadata-path",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path",
+        "reason": "This setting is moved into a metadata namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.oidc.core.include-id-token-claims",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.id-token.include-id-token-claims",
+        "reason": "This setting is moved into a id-token namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.mfa.simple.token-length",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.simple.token.core.token-length",
+        "reason": "This setting is moved into a token core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.mfa.simple.time-to-kill-in-seconds",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.simple.token.core.time-to-kill-in-seconds",
+        "reason": "This setting is moved into a token core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.oidc.jwks.jwks-file",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.jwks.file-system.jwks-file",
+        "reason": "This setting is moved into a file-system sub namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.oidc.jwks.jwks-cache-in-minutes",
+      "type": "java.lang.Integer",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.jwks.jwks-cache-expiration",
+        "reason": "This setting should be defined as duration value, i.e. PT60M.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.oidc.jwks.jwks-cache-expiration",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.jwks.core.jwks-cache-expiratio",
+        "reason": "This setting is moved into a core sub namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.oauth.user-profile-view-type",
+      "type": "org.apereo.cas.configuration.model.support.oauth.OAuthCoreProperties.UserProfileViewTypes",
+      "deprecation": {
+        "replacement": "cas.authn.oauth.core.user-profile-view-type",
+        "reason": "Setting is moved into a core sub namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.pm.core.policy-pattern",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.pm.core.password-policy-pattern",
+        "reason": "Setting is renamed to indicate it's the 'password' policy pattern.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.consent.enabled",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.consent.core.enabled",
+        "reason": "Setting is moved into a core sub namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.consent.reminder-time-unit",
+      "type": "java.time.temporal.ChronoUnit",
+      "deprecation": {
+        "replacement": "cas.consent.core.reminder-time-unit",
+        "reason": "Setting is moved into a core sub namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.consent.active",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.consent.core.active",
+        "reason": "Setting is moved into a core sub namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.consent.crypto.signing.key",
+      "type": "org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties",
+      "deprecation": {
+        "replacement": "cas.consent.core.crypto.signing.key",
+        "reason": "Setting is moved into a core sub namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.consent.crypto.encryption.key",
+      "type": "org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties",
+      "deprecation": {
+        "replacement": "cas.consent.core.crypto.encryption.key",
+        "reason": "Setting is moved into a core sub namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.throttle.username-parameter",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.throttle.core.username-parameter",
+        "reason": "Setting is moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.throttle.app-code",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.throttle.core.app-code",
+        "reason": "Setting is moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.mfa.gauth.code-digits",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.gauth.core.code-digits",
+        "reason": "Setting is moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.mfa.gauth.time-step-size",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.gauth.core.time-step-size",
+        "reason": "Setting is moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.mfa.gauth.issuer",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.gauth.core.issuer",
+        "reason": "Setting is moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.mfa.gauth.label",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.gauth.core.label",
+        "reason": "Setting is moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.mfa.gauth.trusted-device-enabled",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.gauth.core.trusted-device-enabled",
+        "reason": "Setting is moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.interrupt.attribute-name",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.interrupt.regex.attribute-name",
+        "reason": "Setting is moved into the regex namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.saml-idp.core.replicate-sessions",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.authn.saml-idp.core.session-storage-type",
+        "reason": "Session replication settings for SAML2 are moved to cas.authn.saml-idp.core.session-storage-type.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.interrupt.attribute-value",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.interrupt.regex.attribute-value",
+        "reason": "Setting is moved into the regex namespace.",
+        "level": "error"
+      }
+    },
+    {
       "name": "cas.rest.attribute-name",
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.rest.services.attribute-name",
-        "reason": "Setting is now moved into the services namespace.",
+        "reason": "Setting is moved into the services namespace.",
         "level": "error"
       }
     },
@@ -14,7 +266,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.rest.services.attribute-value",
-        "reason": "Setting is now moved into the services namespace.",
+        "reason": "Setting is moved into the services namespace.",
         "level": "error"
       }
     },
@@ -23,7 +275,16 @@
       "type": "java.lang.Boolean",
       "deprecation": {
         "replacement": "cas.authn.mfa.core.provider-selection-enabled",
-        "reason": "provider-selection-enabled setting is now moved into the cas.authn.mfa.core namespace.",
+        "reason": "provider-selection-enabled setting is moved into the cas.authn.mfa.core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.mfa.core.provider-selection-enabled",
+      "type": "java.lang.Boolean",
+      "deprecation": {
+        "replacement": "cas.authn.mfa.core.provider-selection.provider-selection-enabled",
+        "reason": "provider-selection-enabled setting is moved into the cas.authn.mfa.core.provider-selection namespace.",
         "level": "error"
       }
     },
@@ -32,7 +293,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.mfa.triggers.global.global-provider-id",
-        "reason": "global-provider-id setting is now moved into the cas.authn.mfa.triggers.global namespace.",
+        "reason": "global-provider-id setting is moved into the cas.authn.mfa.triggers.global namespace.",
         "level": "error"
       }
     },
@@ -41,7 +302,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.mfa.triggers.authentication.global-authentication-attribute-name-triggers",
-        "reason": "global-authentication-attribute-name-triggers setting is now moved into the cas.authn.mfa.triggers.authentication namespace.",
+        "reason": "global-authentication-attribute-name-triggers setting is moved into the cas.authn.mfa.triggers.authentication namespace.",
         "level": "error"
       }
     },
@@ -50,7 +311,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.mfa.triggers.authentication.global-authentication-attribute-value-regex",
-        "reason": "global-authentication-attribute-value-regex setting is now moved into the cas.authn.mfa.triggers.authentication namespace.",
+        "reason": "global-authentication-attribute-value-regex setting is moved into the cas.authn.mfa.triggers.authentication namespace.",
         "level": "error"
       }
     },
@@ -59,7 +320,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.mfa.triggers.principal.global-principal-attribute-name-triggers",
-        "reason": "global-principal-attribute-name-triggers setting is now moved into the cas.authn.mfa.triggers.principal namespace.",
+        "reason": "global-principal-attribute-name-triggers setting is moved into the cas.authn.mfa.triggers.principal namespace.",
         "level": "error"
       }
     },
@@ -68,7 +329,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.mfa.triggers.principal.global-principal-attribute-value-regex",
-        "reason": "global-principal-attribute-value-regex setting is now moved into the cas.authn.mfa.triggers.principal namespace.",
+        "reason": "global-principal-attribute-value-regex setting is moved into the cas.authn.mfa.triggers.principal namespace.",
         "level": "error"
       }
     },
@@ -77,7 +338,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.mfa.triggers.rest.url",
-        "reason": "url setting is now moved into the cas.authn.mfa.triggers.rest namespace.",
+        "reason": "url setting is moved into the cas.authn.mfa.triggers.rest namespace.",
         "level": "error"
       }
     },
@@ -86,7 +347,7 @@
       "type": "java.lang.Integer",
       "deprecation": {
         "replacement": "cas.ticket.tgt.primary.max-time-to-live-in-seconds",
-        "reason": "max-time-to-live-in-seconds setting is now moved into the primary namespace.",
+        "reason": "max-time-to-live-in-seconds setting is moved into the primary namespace.",
         "level": "error"
       }
     },
@@ -95,7 +356,7 @@
       "type": "java.lang.Integer",
       "deprecation": {
         "replacement": "cas.ticket.tgt.primary.time-to-kill-in-seconds",
-        "reason": "time-to-kill-in-seconds setting is now moved into the primary namespace.",
+        "reason": "time-to-kill-in-seconds setting is moved into the primary namespace.",
         "level": "error"
       }
     },
@@ -104,7 +365,7 @@
       "type": "java.lang.Boolean",
       "deprecation": {
         "replacement": "cas.service.registry.core.init-from-json",
-        "reason": "init-from-json setting is now moved into the core namespace.",
+        "reason": "init-from-json setting is moved into the core namespace.",
         "level": "error"
       }
     },
@@ -113,7 +374,7 @@
       "type": "java.util.List",
       "deprecation": {
         "replacement": "cas.ticket.registry.hazelcast.cluster.network.members",
-        "reason": "members setting is now moved into the network namespace.",
+        "reason": "members setting is moved into the network namespace.",
         "level": "error"
       }
     },
@@ -122,7 +383,7 @@
       "type": "java.lang.Integer",
       "deprecation": {
         "replacement": "cas.ticket.registry.hazelcast.cluster.network.port",
-        "reason": "port setting is now moved into the network namespace.",
+        "reason": "port setting is moved into the network namespace.",
         "level": "error"
       }
     },
@@ -131,7 +392,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.ticket.registry.hazelcast.cluster.network.instance-name",
-        "reason": "instance-name setting is now moved into the network namespace.",
+        "reason": "instance-name setting is moved into the network namespace.",
         "level": "error"
       }
     },
@@ -140,7 +401,7 @@
       "type": "java.lang.Boolean",
       "deprecation": {
         "replacement": "cas.ticket.registry.hazelcast.cluster.network.port-auto-increment",
-        "reason": "port-auto-increment setting is now moved into the network namespace.",
+        "reason": "port-auto-increment setting is moved into the network namespace.",
         "level": "error"
       }
     },
@@ -149,7 +410,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.audit.engine.alternate-client-addr-header-name",
-        "reason": "alternate-client-addr-header-name setting is now moved into the engine namespace.",
+        "reason": "alternate-client-addr-header-name setting is moved into the engine namespace.",
         "level": "error"
       }
     },
@@ -158,7 +419,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.saml-idp.metadata.file-system.location",
-        "reason": "location setting is now moved into the file-system namespace.",
+        "reason": "location setting is moved into the file-system namespace.",
         "level": "error"
       }
     },
@@ -167,7 +428,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.saml-idp.metadata.mdq.basic-authn-username",
-        "reason": "basic-authn-username setting is now moved into the mdq namespace.",
+        "reason": "basic-authn-username setting is moved into the mdq namespace.",
         "level": "error"
       }
     },
@@ -176,7 +437,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.saml-idp.metadata.mdq.basic-authn-password",
-        "reason": "basic-authn-password setting is now moved into the mdq namespace.",
+        "reason": "basic-authn-password setting is moved into the mdq namespace.",
         "level": "error"
       }
     },
@@ -185,7 +446,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.saml-idp.metadata.mdq.supported-content-types",
-        "reason": "supported-content-types setting is now moved into the mdq namespace.",
+        "reason": "supported-content-types setting is moved into the mdq namespace.",
         "level": "error"
       }
     },
@@ -194,7 +455,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.saml-idp.core.entity-id",
-        "reason": "entity-id setting is now moved into the core namespace.",
+        "reason": "entity-id setting is moved into the core namespace.",
         "level": "error"
       }
     },
@@ -202,8 +463,8 @@
       "name": "cas.authn.saml-idp.authentication-context-class-mappings",
       "type": "java.lang.String",
       "deprecation": {
-        "replacement": "cas.authn.saml-idp.core.authentication-context-class-mappings",
-        "reason": "authentication-context-class-mappings setting is now moved into the core namespace.",
+        "replacement": "cas.authn.saml-idp.core.context.authentication-context-class-mappings",
+        "reason": "authentication-context-class-mappings setting is moved into the core.context namespace.",
         "level": "error"
       }
     },
@@ -212,7 +473,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.saml-idp.core.attribute-friendly-names",
-        "reason": "attribute-friendly-names setting is now moved into the core namespace.",
+        "reason": "attribute-friendly-names setting is moved into the core namespace.",
         "level": "error"
       }
     },
@@ -221,7 +482,7 @@
       "type": "java.lang.Boolean",
       "deprecation": {
         "replacement": "cas.authn.pm.core.enabled",
-        "reason": "enabled setting is now moved into the core namespace.",
+        "reason": "enabled setting is moved into the core namespace.",
         "level": "error"
       }
     },
@@ -230,7 +491,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.pm.core.policy-pattern",
-        "reason": "policy-pattern setting is now moved into the core namespace.",
+        "reason": "policy-pattern setting is moved into the core namespace.",
         "level": "error"
       }
     },
@@ -239,7 +500,7 @@
       "type": "java.lang.Boolean",
       "deprecation": {
         "replacement": "cas.events.core.enabled",
-        "reason": "enabled setting is now moved into the core namespace.",
+        "reason": "enabled setting is moved into the core namespace.",
         "level": "error"
       }
     },
@@ -248,7 +509,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.audit.engine.audit-format",
-        "reason": "audit-format is now moved into the engine namespace.",
+        "reason": "audit-format is moved into the engine namespace.",
         "level": "error"
       }
     },
@@ -257,7 +518,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.oidc.core.issuer",
-        "reason": "issuer is now moved into the core namespace.",
+        "reason": "issuer is moved into the core namespace.",
         "level": "error"
       }
     },
@@ -266,7 +527,16 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.oidc.core.dynamic-client-registration-mode",
-        "reason": "dynamic-client-registration-mode is now moved into the core namespace.",
+        "reason": "dynamic-client-registration-mode is moved into the core namespace.",
+        "level": "error"
+      }
+    },
+    {
+      "name": "cas.authn.oidc.core.dynamic-client-registration-mode",
+      "type": "java.lang.String",
+      "deprecation": {
+        "replacement": "cas.authn.oidc.registration.dynamic-client-registration-mode",
+        "reason": "dynamic-client-registration-mode is moved into the registration namespace.",
         "level": "error"
       }
     },
@@ -275,7 +545,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.oidc.core.user-defined-scopes",
-        "reason": "user-defined-scopes is now moved into the core namespace.",
+        "reason": "user-defined-scopes is moved into the core namespace.",
         "level": "error"
       }
     },
@@ -284,7 +554,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.oidc.core.claims-map",
-        "reason": "claims-map is now moved into the core namespace.",
+        "reason": "claims-map is moved into the core namespace.",
         "level": "error"
       }
     },
@@ -293,7 +563,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.oidc.discovery.scopes",
-        "reason": "scopes settings is now moved into the discovery namespace.",
+        "reason": "scopes settings is moved into the discovery namespace.",
         "level": "error"
       }
     },
@@ -302,7 +572,7 @@
       "type": "java.lang.String",
       "deprecation": {
         "replacement": "cas.authn.oidc.discovery.claims",
-        "reason": "claims setting is now moved into the discovery namespace.",
+        "reason": "claims setting is moved into the discovery namespace.",
         "level": "error"
       }
     },
@@ -311,7 +581,7 @@
       "type": "java.util.List",
       "deprecation": {
         "replacement": "cas.authn.oidc.discovery.response-types-supported",
-        "reason": "response-types-supported setting is now moved into the discovery namespace.",
+        "reason": "response-types-supported setting is moved into the discovery namespace.",
         "level": "error"
       }
     },
@@ -320,7 +590,7 @@
       "type": "java.util.List",
       "deprecation": {
         "replacement": "cas.authn.oidc.discovery.subject-types",
-        "reason": "subject-types setting is now moved into the discovery namespace.",
+        "reason": "subject-types setting is moved into the discovery namespace.",
         "level": "error"
       }
     },
@@ -329,7 +599,7 @@
       "type": "java.util.List",
       "deprecation": {
         "replacement": "cas.authn.oidc.discovery.claim-types-supported",
-        "reason": "claim-types-supported setting is now moved into the discovery namespace.",
+        "reason": "claim-types-supported setting is moved into the discovery namespace.",
         "level": "error"
       }
     },
@@ -338,7 +608,7 @@
       "type": "java.util.List",
       "deprecation": {
         "replacement": "cas.authn.oidc.discovery.grant-types-supported",
-        "reason": "grant-types-supported setting is now moved into the discovery namespace.",
+        "reason": "grant-types-supported setting is moved into the discovery namespace.",
         "level": "error"
       }
     },
@@ -534,15 +804,6 @@
       "type": "java.lang.String",
       "deprecation": {
         "reason": "management endpoints security under cas.monitor.endpoints.endpoint.*",
-        "level": "error"
-      }
-    },
-    {
-      "name": "cas.authn.x509.cache-time-to-idle-seconds",
-      "type": "java.lang.Integer",
-      "deprecation": {
-        "replacement": "cas.authn.x509.cache-time-to-live-seconds",
-        "reason": "This setting no longer applies to the ehcache 3 cache used for x509 CRL caching.",
         "level": "error"
       }
     },

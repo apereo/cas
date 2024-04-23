@@ -5,7 +5,6 @@ import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 
 import java.io.File;
 
@@ -17,21 +16,31 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@EnableAutoConfiguration
 @Tag("SHELL")
-public class GenerateDdlCommandTests extends BaseCasShellCommandTests {
+class GenerateDdlCommandTests extends BaseCasShellCommandTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val file = File.createTempFile("ddl", "sql");
-        var result = shell.evaluate(() -> "generate-ddl --file " + file + " --dialect HSQL");
-        assertNotNull(result);
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-ddl --createSchema --dropSchema --file " + file + " --dialect HSQL"));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-ddl --file " + file + " --dialect HSQL"));
     }
 
     @Test
-    public void verifyBadDialect() throws Exception {
+    void verifyCreateOperation() throws Throwable {
         val file = File.createTempFile("ddl", "sql");
-        val result = shell.evaluate(() -> "generate-ddl --file " + file + " --dialect XYZ");
-        assertNull(result);
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-ddl --createSchema --file " + file + " --dialect HSQL"));
+    }
+
+    @Test
+    void verifyDropOperation() throws Throwable {
+        val file = File.createTempFile("ddl", "sql");
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-ddl --url jdbc:hsqldb:mem:cas2 --dropSchema --file " + file + " --dialect HSQL"));
+    }
+
+    @Test
+    void verifyBadDialect() throws Throwable {
+        val file = File.createTempFile("ddl", "sql");
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-ddl --file " + file + " --dialect XYZ"));
     }
 }
 

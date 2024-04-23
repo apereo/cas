@@ -2,35 +2,37 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.SurrogateAuthenticationException;
-import org.apereo.cas.authentication.SurrogatePrincipalBuilder;
-import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
+import org.apereo.cas.authentication.SurrogateAuthenticationPrincipalBuilder;
+import org.apereo.cas.authentication.surrogate.DefaultSurrogateCredentialParser;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
+import org.apereo.cas.authentication.surrogate.SurrogateCredentialParser;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SurrogateWebflowConfigurer;
 import org.apereo.cas.web.flow.action.LoadSurrogatesListAction;
 import org.apereo.cas.web.flow.action.SurrogateAuthorizationAction;
 import org.apereo.cas.web.flow.action.SurrogateInitialAuthenticationAction;
 import org.apereo.cas.web.flow.action.SurrogateSelectionAction;
-import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
-import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
+import org.apereo.cas.web.flow.authentication.CasWebflowExceptionCatalog;
 
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-
-import java.util.Set;
 
 /**
  * This is {@link SurrogateAuthenticationWebflowConfiguration}.
@@ -40,94 +42,126 @@ import java.util.Set;
  * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
-@Configuration("surrogateAuthenticationWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SurrogateAuthenticationWebflowConfiguration implements InitializingBean {
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SurrogateAuthentication)
+@Configuration(value = "SurrogateAuthenticationWebflowConfiguration", proxyBeanMethods = false)
+class SurrogateAuthenticationWebflowConfiguration {
 
-    @Autowired
-    @Qualifier("surrogatePrincipalBuilder")
-    private ObjectProvider<SurrogatePrincipalBuilder> surrogatePrincipalBuilder;
-
-    @Autowired
-    @Qualifier("surrogateAuthenticationService")
-    private ObjectProvider<SurrogateAuthenticationService> surrogateAuthenticationService;
-
-    @Autowired
-    @Qualifier("registeredServiceAccessStrategyEnforcer")
-    private ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer;
-    
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("adaptiveAuthenticationPolicy")
-    private ObjectProvider<AdaptiveAuthenticationPolicy> adaptiveAuthenticationPolicy;
-
-    @Autowired
-    @Qualifier("serviceTicketRequestWebflowEventResolver")
-    private ObjectProvider<CasWebflowEventResolver> serviceTicketRequestWebflowEventResolver;
-
-    @Autowired
-    @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
-    private ObjectProvider<CasDelegatingWebflowEventResolver> initialAuthenticationAttemptWebflowEventResolver;
-
-    @Autowired
-    @Qualifier("loginFlowRegistry")
-    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
-
-    @Autowired
-    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
-
-    @Autowired
-    @Qualifier("handledAuthenticationExceptions")
-    private Set<Class<? extends Throwable>> handledAuthenticationExceptions;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @ConditionalOnMissingBean(name = "surrogateWebflowConfigurer")
-    @Bean
-    @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer surrogateWebflowConfigurer() {
-        return new SurrogateWebflowConfigurer(flowBuilderServices.getObject(),
-            loginFlowDefinitionRegistry.getObject(), applicationContext, casProperties);
+    @Configuration(value = "SurrogateAuthenticationWebflowBaseConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class SurrogateAuthenticationWebflowBaseConfiguration {
+        @ConditionalOnMissingBean(name = "surrogateWebflowConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowConfigurer surrogateWebflowConfigurer(
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext) {
+            return new SurrogateWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+                applicationContext, casProperties);
+        }
     }
 
-    @ConditionalOnMissingBean(name = "selectSurrogateAction")
-    @Bean
-    public Action selectSurrogateAction() {
-        return new SurrogateSelectionAction(surrogatePrincipalBuilder.getObject());
+    @Configuration(value = "SurrogateAuthenticationWebflowActionConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class SurrogateAuthenticationWebflowActionConfiguration {
+
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SELECT_SURROGATE_ACTION)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action selectSurrogateAction(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(SurrogateAuthenticationPrincipalBuilder.BEAN_NAME)
+            final SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new SurrogateSelectionAction(surrogatePrincipalBuilder))
+                .withId(CasWebflowConstants.ACTION_ID_SELECT_SURROGATE_ACTION)
+                .build()
+                .get();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = SurrogateCredentialParser.BEAN_NAME)
+        public SurrogateCredentialParser surrogateCredentialParser(final CasConfigurationProperties casProperties) {
+            return new DefaultSurrogateCredentialParser(casProperties.getAuthn().getSurrogate());
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SURROGATE_INITIAL_AUTHENTICATION)
+        public Action surrogateInitialAuthenticationAction(
+            @Qualifier(SurrogateCredentialParser.BEAN_NAME) final SurrogateCredentialParser surrogateCredentialParser) {
+            return new SurrogateInitialAuthenticationAction(surrogateCredentialParser);
+        }
+
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_SURROGATE_AUTHORIZATION_CHECK)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action surrogateAuthorizationCheck(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
+            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new SurrogateAuthorizationAction(registeredServiceAccessStrategyEnforcer))
+                .withId(CasWebflowConstants.ACTION_ID_SURROGATE_AUTHORIZATION_CHECK)
+                .build()
+                .get();
+        }
+
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_LOAD_SURROGATES_LIST_ACTION)
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Action loadSurrogatesListAction(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
+            final SurrogateAuthenticationService surrogateAuthenticationService,
+            @Qualifier(SurrogateAuthenticationPrincipalBuilder.BEAN_NAME)
+            final SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new LoadSurrogatesListAction(surrogateAuthenticationService, surrogatePrincipalBuilder))
+                .withId(CasWebflowConstants.ACTION_ID_LOAD_SURROGATES_LIST_ACTION)
+                .build()
+                .get();
+        }
     }
 
-    @Bean
-    public Action authenticationViaFormAction() {
-        return new SurrogateInitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver.getObject(),
-            serviceTicketRequestWebflowEventResolver.getObject(),
-            adaptiveAuthenticationPolicy.getObject(),
-            casProperties.getAuthn().getSurrogate().getSeparator());
+    @Configuration(value = "SurrogateAuthenticationInitializerConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class SurrogateAuthenticationInitializerConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Lazy(false)
+        public InitializingBean surrogateAuthenticationWebflowInitializer(
+            @Qualifier("handledAuthenticationExceptions")
+            final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
+            return () -> handledAuthenticationExceptions.registerException(SurrogateAuthenticationException.class);
+        }
     }
 
-    @ConditionalOnMissingBean(name = "surrogateAuthorizationCheck")
-    @Bean
-    public Action surrogateAuthorizationCheck() {
-        return new SurrogateAuthorizationAction(registeredServiceAccessStrategyEnforcer.getObject());
-    }
+    @Configuration(value = "SurrogateAuthenticationWebflowPlanConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class SurrogateAuthenticationWebflowPlanConfiguration {
 
-    @ConditionalOnMissingBean(name = "loadSurrogatesListAction")
-    @Bean
-    public Action loadSurrogatesListAction() {
-        return new LoadSurrogatesListAction(surrogateAuthenticationService.getObject(),
-            surrogatePrincipalBuilder.getObject());
-    }
-
-    @Override
-    public void afterPropertiesSet() {
-        this.handledAuthenticationExceptions.add(SurrogateAuthenticationException.class);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "surrogateCasWebflowExecutionPlanConfigurer")
-    public CasWebflowExecutionPlanConfigurer surrogateCasWebflowExecutionPlanConfigurer() {
-        return plan -> plan.registerWebflowConfigurer(surrogateWebflowConfigurer());
+        @Bean
+        @ConditionalOnMissingBean(name = "surrogateCasWebflowExecutionPlanConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowExecutionPlanConfigurer surrogateCasWebflowExecutionPlanConfigurer(
+            @Qualifier("surrogateWebflowConfigurer")
+            final CasWebflowConfigurer surrogateWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(surrogateWebflowConfigurer);
+        }
     }
 }

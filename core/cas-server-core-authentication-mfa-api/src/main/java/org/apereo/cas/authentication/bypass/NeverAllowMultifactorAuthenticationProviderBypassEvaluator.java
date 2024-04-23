@@ -4,34 +4,25 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 
-import javax.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.Serial;
 
 /**
- * Multifactor Bypass provider based on Credentials.
+ * Multifactor bypass provider that will never allow MFA to execute and will always bypass.
  *
- * @author Travis Schmidt
+ * @author Misagh Moayyed
  * @since 6.0
  */
+@Slf4j
 public class NeverAllowMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
+    @Serial
     private static final long serialVersionUID = -2433888418344342672L;
 
-    private static MultifactorAuthenticationProviderBypassEvaluator INSTANCE;
-
-    protected NeverAllowMultifactorAuthenticationProviderBypassEvaluator() {
-        super(NeverAllowMultifactorAuthenticationProviderBypassEvaluator.class.getSimpleName());
-    }
-
-
-    /**
-     * Gets instance.
-     *
-     * @return the instance
-     */
-    public static MultifactorAuthenticationProviderBypassEvaluator getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new NeverAllowMultifactorAuthenticationProviderBypassEvaluator();
-        }
-        return INSTANCE;
+    public NeverAllowMultifactorAuthenticationProviderBypassEvaluator(final ApplicationContext applicationContext) {
+        super(NeverAllowMultifactorAuthenticationProviderBypassEvaluator.class.getName(), applicationContext);
     }
 
     @Override
@@ -39,6 +30,7 @@ public class NeverAllowMultifactorAuthenticationProviderBypassEvaluator extends 
                                                                           final RegisteredService registeredService,
                                                                           final MultifactorAuthenticationProvider provider,
                                                                           final HttpServletRequest request) {
+        LOGGER.debug("Provider [{}] will always allow multifactor authentication to execute", provider.getId());
         return true;
     }
 }

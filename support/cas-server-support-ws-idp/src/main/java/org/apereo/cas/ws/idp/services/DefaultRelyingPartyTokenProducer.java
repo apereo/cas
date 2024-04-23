@@ -1,17 +1,15 @@
 package org.apereo.cas.ws.idp.services;
 
-import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.SecurityTokenServiceClient;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.ws.idp.WSFederationClaims;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.validation.TicketValidationResult;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
@@ -21,17 +19,17 @@ import org.apache.cxf.rt.security.SecurityConstants;
 import org.apache.cxf.staxutils.W3CDOMStreamWriter;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.cxf.ws.security.trust.STSUtils;
-import org.jasig.cas.client.validation.Assertion;
 import org.w3c.dom.Element;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import javax.xml.XMLConstants;
+import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import java.io.StringWriter;
-import java.util.Set;
 
 /**
  * This is {@link DefaultRelyingPartyTokenProducer}.
@@ -46,20 +44,9 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
 
     private final CipherExecutor<String, String> credentialCipherExecutor;
 
-    private final Set<String> customClaims;
+    private final WSFederationRelyingPartyAttributeWriter attributeWriter;
 
-    @Override
-    public String produce(final SecurityToken securityToken, final WSFederationRegisteredService service,
-                          final WSFederationRequest fedRequest, final HttpServletRequest request,
-                          final Assertion assertion) {
-        val sts = clientBuilder.buildClientForRelyingPartyTokenResponses(securityToken, service);
-        mapAttributesToRequestedClaims(service, sts, assertion);
-        val rpToken = requestSecurityTokenResponse(service, sts, assertion);
-        return serializeRelyingPartyToken(rpToken);
-    }
-
-    @SneakyThrows
-    private static String serializeRelyingPartyToken(final Element rpToken) {
+    private static String serializeRelyingPartyToken(final Element rpToken) throws Exception {
         val sw = new StringWriter();
         val transformerFactory = TransformerFactory.newInstance();
         transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -69,61 +56,48 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         return sw.toString();
     }
 
-    private void mapAttributesToRequestedClaims(final WSFederationRegisteredService service,
-                                                final SecurityTokenServiceClient sts,
-                                                final Assertion assertion) {
-        try {
-            val writer = new W3CDOMStreamWriter();
-            writer.writeStartElement("wst", "Claims", STSUtils.WST_NS_05_12);
-            writer.writeNamespace("wst", STSUtils.WST_NS_05_12);
-            writer.writeNamespace("ic", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
-            writer.writeAttribute("Dialect", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
-
-            val attributes = assertion.getPrincipal().getAttributes();
-            LOGGER.debug("Mapping principal attributes [{}] to claims for service [{}]", attributes, service);
-
-            attributes.forEach((k, v) -> {
-                try {
-                    val claimName = ProtocolAttributeEncoder.decodeAttribute(k);
-                    if (WSFederationClaims.contains(claimName)) {
-                        val uri = WSFederationClaims.valueOf(k).getUri();
-                        LOGGER.debug("Requested claim [{}] mapped to [{}]", k, uri);
-                        writeAttributeValue(writer, uri, v, service);
-                    } else if (WSFederationClaims.containsUri(claimName)) {
-                        LOGGER.debug("Requested claim [{}] directly mapped to [{}]", k, claimName);
-                        writeAttributeValue(writer, claimName, v, service);
-                    } else if (customClaims.contains(claimName)) {
-                        LOGGER.debug("Requested custom claim [{}]", claimName);
-                        writeAttributeValue(writer, claimName, v, service);
-                    } else {
-                        LOGGER.debug("Requested claim [{}] is not defined/supported by CAS", claimName);
-                        writeAttributeValue(writer, WSFederationConstants.getClaimInCasNamespace(claimName), v, service);
-                    }
-                } catch (final Exception e) {
-                    LoggingUtils.error(LOGGER, e);
-                }
-            });
-
-            writer.writeEndElement();
-
-            val claims = writer.getDocument().getDocumentElement();
-            sts.setClaims(claims);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
+    @Override
+    public String produce(final SecurityToken securityToken, final WSFederationRegisteredService service,
+                          final WSFederationRequest fedRequest, final HttpServletRequest request,
+                          final TicketValidationResult assertion) throws Exception {
+        val sts = clientBuilder.buildClientForRelyingPartyTokenResponses(securityToken, service);
+        mapAttributesToRequestedClaims(service, sts, assertion);
+        val rpToken = requestSecurityTokenResponse(service, sts, assertion);
+        return serializeRelyingPartyToken(rpToken);
     }
 
-    @SneakyThrows
+
+    protected void mapAttributesToRequestedClaims(final WSFederationRegisteredService service,
+                                                  final SecurityTokenServiceClient sts,
+                                                  final TicketValidationResult assertion) throws Exception {
+        val writer = new W3CDOMStreamWriter();
+        writer.writeStartElement("wst", "Claims", STSUtils.WST_NS_05_12);
+        writer.writeNamespace("wst", STSUtils.WST_NS_05_12);
+        writer.writeNamespace("ic", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
+        writer.writeAttribute("Dialect", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
+
+        writeAttributes(writer, assertion, service);
+
+        writer.writeEndElement();
+        val claims = writer.getDocument().getDocumentElement();
+        sts.setClaims(claims);
+    }
+
+    protected void writeAttributes(final XMLStreamWriter writer,
+                                   final TicketValidationResult assertion,
+                                   final WSFederationRegisteredService service) {
+        attributeWriter.write(writer, assertion.getPrincipal(), service);
+    }
+
     private Element requestSecurityTokenResponse(final WSFederationRegisteredService service,
                                                  final SecurityTokenServiceClient sts,
-                                                 final Assertion assertion) {
+                                                 final TicketValidationResult assertion) {
         try {
             val properties = sts.getProperties();
-            properties.put(SecurityConstants.USERNAME, assertion.getPrincipal().getName());
-            val uid = credentialCipherExecutor.encode(assertion.getPrincipal().getName());
+            properties.put(SecurityConstants.USERNAME, assertion.getPrincipal().getId());
+            val uid = credentialCipherExecutor.encode(assertion.getPrincipal().getId());
             properties.put(SecurityConstants.PASSWORD, uid);
-
-            return sts.requestSecurityTokenResponse(service.getAppliesTo());
+            return FunctionUtils.doUnchecked(() -> sts.requestSecurityTokenResponse(service.getAppliesTo()));
         } catch (final SoapFault ex) {
             if (ex.getFaultCode() != null && "RequestFailed".equals(ex.getFaultCode().getLocalPart())) {
                 throw new IllegalArgumentException(new ProcessingException(ProcessingException.TYPE.BAD_REQUEST));
@@ -131,31 +105,5 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
             LoggingUtils.error(LOGGER, ex);
             throw ex;
         }
-    }
-
-    /**
-     * Write attribute value.
-     *
-     * @param writer         the writer
-     * @param uri            the uri
-     * @param attributeValue the attribute value
-     * @param service        the service
-     * @throws Exception the exception
-     */
-    protected void writeAttributeValue(final W3CDOMStreamWriter writer, final String uri,
-                                       final Object attributeValue,
-                                       final WSFederationRegisteredService service) throws Exception {
-        LOGGER.trace("Mapping attribute [{}] with value [{}] for service [{}]", uri, attributeValue, service.getServiceId());
-        writer.writeStartElement("ic", "ClaimValue", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
-        writer.writeAttribute("Uri", uri);
-        writer.writeAttribute("Optional", Boolean.TRUE.toString());
-
-        val values = CollectionUtils.toCollection(attributeValue);
-        for (val value : values) {
-            writer.writeStartElement("ic", "Value", WSFederationConstants.HTTP_SCHEMAS_XMLSOAP_ORG_WS_2005_05_IDENTITY);
-            writer.writeCharacters(value.toString());
-            writer.writeEndElement();
-        }
-        writer.writeEndElement();
     }
 }

@@ -1,0 +1,20 @@
+{
+  "dependencies": "reports",
+
+  "properties": [
+    "--spring.profiles.include=fancy,simple",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.audit.engine.audit-format=JSON",
+    
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=registeredServices",
+    "--management.endpoints.enabled-by-default=true",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.core.init-default-services=false"
+  ],
+  "buildScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/include.gradle"
+}

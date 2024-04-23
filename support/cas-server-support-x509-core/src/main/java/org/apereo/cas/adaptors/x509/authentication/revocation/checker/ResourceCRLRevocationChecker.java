@@ -5,9 +5,9 @@ import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
@@ -45,7 +45,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
     /**
      * Executor responsible for refreshing CRL data.
      */
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, Thread.ofVirtual().factory());
 
     /**
      * CRL refresh interval in seconds.
@@ -107,10 +107,6 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
         this(new ResourceCRLFetcher(), crls, DEFAULT_REFRESH_INTERVAL);
     }
 
-    public ResourceCRLRevocationChecker(final Resource... crls) {
-        this(new ResourceCRLFetcher(), CollectionUtils.wrapList(crls), DEFAULT_REFRESH_INTERVAL);
-    }
-
     /**
      * Instantiates a new Resource cRL revocation checker.
      *
@@ -131,20 +127,19 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
     /**
      * Initializes the process that periodically fetches CRL data.
      */
-    @SneakyThrows
     @SuppressWarnings("FutureReturnValueIgnored")
     public void init() {
         if (!validateConfiguration()) {
             return;
         }
 
-        val results = this.fetcher.fetch(getResources());
-        ResourceCRLRevocationChecker.this.addCrls(results);
+        val results = FunctionUtils.doUnchecked(() -> this.fetcher.fetch(getResources()));
+        this.addCrls(results);
 
         final Runnable scheduledFetcher = () -> {
             try {
                 val fetchedResults = getFetcher().fetch(getResources());
-                ResourceCRLRevocationChecker.this.addCrls(fetchedResults);
+                this.addCrls(fetchedResults);
             } catch (final Exception e) {
                 LOGGER.debug(e.getMessage(), e);
             }
@@ -157,22 +152,16 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
             TimeUnit.SECONDS);
     }
 
-    private boolean validateConfiguration() {
-        if (this.resources == null || this.resources.isEmpty()) {
-            LOGGER.debug("[{}] is not configured with resources. Skipping configuration...",
-                this.getClass().getSimpleName());
-            return false;
-        }
-        return true;
+    @Override
+    public void destroy() {
+        shutdown();
     }
 
     /**
-     * Add fetched crls to the map.
-     *
-     * @param results the results
+     * Shutdown scheduler.
      */
-    private void addCrls(final Collection<X509CRL> results) {
-        results.forEach(entry -> addCRL(entry.getIssuerX500Principal(), entry));
+    public void shutdown() {
+        this.scheduler.shutdown();
     }
 
     @Override
@@ -193,15 +182,21 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker i
         return new ArrayList<>(0);
     }
 
-    @Override
-    public void destroy() {
-        shutdown();
+    private boolean validateConfiguration() {
+        if (this.resources == null || this.resources.isEmpty()) {
+            LOGGER.debug("[{}] is not configured with resources. Skipping configuration...",
+                this.getClass().getSimpleName());
+            return false;
+        }
+        return true;
     }
 
     /**
-     * Shutdown scheduler.
+     * Add fetched crls to the map.
+     *
+     * @param results the results
      */
-    public void shutdown() {
-        this.scheduler.shutdown();
+    private void addCrls(final Collection<X509CRL> results) {
+        results.forEach(entry -> addCRL(entry.getIssuerX500Principal(), entry));
     }
 }

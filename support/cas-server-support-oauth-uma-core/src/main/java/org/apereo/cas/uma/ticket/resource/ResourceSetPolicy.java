@@ -1,24 +1,26 @@
 package org.apereo.cas.uma.ticket.resource;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.experimental.Accessors;
+import org.hibernate.annotations.Type;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This is {@link ResourceSetPolicy}.
@@ -28,7 +30,6 @@ import java.util.HashSet;
  */
 @Getter
 @Setter
-@Embeddable
 @Table(name = "UMA_ResourceSetPolicy")
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
@@ -37,15 +38,16 @@ public class ResourceSetPolicy implements Serializable {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
     
+    @Serial
     private static final long serialVersionUID = 1664113523427391736L;
 
     @org.springframework.data.annotation.Id
     @Id
     private long id;
 
-    @Lob
-    @Column(length = Integer.MAX_VALUE)
-    private HashSet<ResourceSetPolicyPermission> permissions = new HashSet<>(0);
+    @Column(columnDefinition = "json")
+    @Type(JsonType.class)
+    private Set<ResourceSetPolicyPermission> permissions = new HashSet<>(0);
 
     /**
      * As json string.
@@ -53,8 +55,7 @@ public class ResourceSetPolicy implements Serializable {
      * @return the string
      */
     @JsonIgnore
-    @SneakyThrows
     public String toJson() {
-        return MAPPER.writeValueAsString(this);
+        return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(this));
     }
 }

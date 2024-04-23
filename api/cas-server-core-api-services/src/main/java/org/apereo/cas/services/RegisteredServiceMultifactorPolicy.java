@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -46,7 +47,7 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
     String getPrincipalAttributeValueToMatch();
 
     /**
-     * Indicates whether authentication should be skipped.
+     * Indicates whether multifactor authentication should be skipped.
      *
      * @return true/false
      */
@@ -55,6 +56,7 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
     /**
      * Whether multifactor authentication should forcefully trigger,
      * even if the existing authentication context can be satisfied without MFA.
+     *
      * @return true/false
      */
     boolean isForceExecution();
@@ -62,6 +64,7 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
     /**
      * Whether multifactor authentication should bypass trusted device registration,
      * and check for device records and/or skip prompt for registration.
+     *
      * @return true/false
      */
     boolean isBypassTrustedDeviceEnabled();
@@ -82,10 +85,19 @@ public interface RegisteredServiceMultifactorPolicy extends Serializable {
     String getBypassPrincipalAttributeValue();
 
     /**
+     * Indicates whether bypass should be enabled and activated
+     * if the defined bypass principal attribute is not found.
+     *
+     * @return true/false
+     */
+    boolean isBypassIfMissingPrincipalAttribute();
+
+    /**
      * Path to an external/embedded script
      * that allows for triggering of MFA.
      *
      * @return MFA trigger as a script path or embedded script.
      */
+    @ExpressionLanguageCapable
     String getScript();
 }

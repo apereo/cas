@@ -1,14 +1,14 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.consent.ConsentableAttributeBuilder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
-import org.apereo.cas.util.model.TriStateBoolean;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -16,14 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.test.MockRequestContext;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -34,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowActions")
 @Import(CheckConsentRequiredActionTests.ConsentTestConfiguration.class)
-public class CheckConsentRequiredActionTests extends BaseConsentActionTests {
+class CheckConsentRequiredActionTests extends BaseConsentActionTests {
 
     @BeforeEach
     public void beforeEach() {
@@ -42,10 +35,8 @@ public class CheckConsentRequiredActionTests extends BaseConsentActionTests {
     }
 
     @Test
-    public void verifyNoConsentWithoutServiceOrAuthn() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+    void verifyNoConsentWithoutServiceOrAuthn() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
 
         assertNull(checkConsentRequiredAction.execute(context));
 
@@ -58,10 +49,8 @@ public class CheckConsentRequiredActionTests extends BaseConsentActionTests {
     }
 
     @Test
-    public void verifyOperationGlobalConsentActive() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+    void verifyOperationGlobalConsentActive() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
 
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
 
@@ -84,10 +73,8 @@ public class CheckConsentRequiredActionTests extends BaseConsentActionTests {
     }
 
     @Test
-    public void verifyOperationServiceEnabled() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+    void verifyOperationServiceEnabled() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         val registeredService = getRegisteredServiceWithConsentStatus(TriStateBoolean.TRUE);
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService(registeredService.getServiceId()));
@@ -95,10 +82,8 @@ public class CheckConsentRequiredActionTests extends BaseConsentActionTests {
     }
 
     @Test
-    public void verifyOperationServiceDisabled() throws Exception {
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
+    void verifyOperationServiceDisabled() throws Throwable {
+        val context = MockRequestContext.create();
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         val registeredService = getRegisteredServiceWithConsentStatus(TriStateBoolean.FALSE);
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService(registeredService.getServiceId()));
@@ -115,7 +100,7 @@ public class CheckConsentRequiredActionTests extends BaseConsentActionTests {
         return registeredService;
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "ConsentTestConfiguration", proxyBeanMethods = false)
     static class ConsentTestConfiguration {
         @Bean
         public ConsentableAttributeBuilder testConsentableAttributeBuilder() {

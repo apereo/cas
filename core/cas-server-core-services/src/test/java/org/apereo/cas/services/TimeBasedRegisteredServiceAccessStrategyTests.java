@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2
  */
 @Tag("RegisteredService")
-public class TimeBasedRegisteredServiceAccessStrategyTests {
+class TimeBasedRegisteredServiceAccessStrategyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "timeBasedRegisteredServiceAccessStrategy.json");
 
@@ -32,69 +33,67 @@ public class TimeBasedRegisteredServiceAccessStrategyTests {
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void checkAuthorizationByRangePass() {
-        val authz =
-            new TimeBasedRegisteredServiceAccessStrategy(true, true);
+    void checkAuthorizationByRangePass() {
+        val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(10).toString());
-        assertTrue(authz.isServiceAccessAllowed());
+        assertTrue(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
 
     }
 
     @Test
-    public void checkAuthorizationByRangeFailStartTime() {
-        val authz =
-            new TimeBasedRegisteredServiceAccessStrategy(true, true);
+    void checkAuthorizationByRangeFailStartTime() {
+        val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusDays(1).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusMinutes(10).toString());
-        assertFalse(authz.isServiceAccessAllowed());
+        assertFalse(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
 
     }
 
     @Test
-    public void checkFailWithNowAfterEndTime() {
-        var authz = new TimeBasedRegisteredServiceAccessStrategy(true, true);
+    void checkFailWithNowAfterEndTime() {
+        var authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).minusDays(10).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).minusDays(5).toString());
-        assertFalse(authz.isServiceAccessAllowed());
+        assertFalse(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
     }
 
     @Test
-    public void checkLocalFailWithNowAfterEndTime() {
-        val authz = new TimeBasedRegisteredServiceAccessStrategy(true, true);
+    void checkLocalFailWithNowAfterEndTime() {
+        val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(LocalDateTime.now(ZoneOffset.UTC).minusDays(10).toString());
         authz.setEndingDateTime(LocalDateTime.now(ZoneOffset.UTC).minusDays(5).toString());
-        assertFalse(authz.isServiceAccessAllowed());
+        assertFalse(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
     }
 
     @Test
-    public void checkLocalFailWithNowBeforeStartTime() {
-        val authz = new TimeBasedRegisteredServiceAccessStrategy(true, true);
+    void checkLocalFailWithNowBeforeStartTime() {
+        val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(LocalDateTime.now(ZoneOffset.UTC).plusDays(10).toString());
         authz.setEndingDateTime(LocalDateTime.now(ZoneOffset.UTC).minusDays(15).toString());
-        assertFalse(authz.isServiceAccessAllowed());
+        assertFalse(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
     }
 
     @Test
-    public void checkExpressionLanguage() {
-        val authz = new TimeBasedRegisteredServiceAccessStrategy(true, true);
+    void checkExpressionLanguage() {
+        val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime("${#localStartDay}");
         authz.setEndingDateTime("${#localEndDay}");
         authz.setZoneId("${#zoneId}");
-        assertTrue(authz.isServiceAccessAllowed());
+        assertTrue(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
     }
 
     @Test
-    public void checkAuthorizationByRangePassEndTime() {
-        val authz = new TimeBasedRegisteredServiceAccessStrategy(true, true);
+    void checkAuthorizationByRangePassEndTime() {
+        val authz = new TimeBasedRegisteredServiceAccessStrategy();
         authz.setStartingDateTime(ZonedDateTime.now(ZoneOffset.UTC).toString());
         authz.setEndingDateTime(ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(30).toString());
-        assertTrue(authz.isServiceAccessAllowed());
+        assertTrue(authz.isServiceAccessAllowed(RegisteredServiceTestUtils.getRegisteredService(), CoreAuthenticationTestUtils.getService()));
     }
 
     @Test
-    public void verifySerializeATimeBasedRegisteredServiceAccessStrategyToJson() throws IOException {
-        val authWritten = new TimeBasedRegisteredServiceAccessStrategy(true, true);
+    void verifySerializeATimeBasedRegisteredServiceAccessStrategyToJson() throws IOException {
+        val authWritten = new TimeBasedRegisteredServiceAccessStrategy();
         MAPPER.writeValue(JSON_FILE, authWritten);
         val credentialRead = MAPPER.readValue(JSON_FILE, TimeBasedRegisteredServiceAccessStrategy.class);
         assertEquals(authWritten, credentialRead);

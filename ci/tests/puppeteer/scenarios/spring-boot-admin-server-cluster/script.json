@@ -1,0 +1,34 @@
+{
+  "dependencies": "bootadmin",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.http-client.host-name-verifier=none",
+
+    "--spring.security.user.name=s#kiooritea",
+    "--spring.security.user.password=p@$$W0rd",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=AUTHENTICATED",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true"
+  ],
+  "instances": 2,
+  "instance1": {
+    "properties": [
+      "--cas.host.name=CASInstance1",
+      "--spring.boot.admin.server.enabled=true"
+    ]
+  },
+  "instance2": {
+    "properties": [
+      "--cas.host.name=CASInstance2",
+
+      "--spring.boot.admin.client.url=https://localhost:8443/cas${spring.boot.admin.context-path}",
+      "--spring.boot.admin.client.instance.management-base-url=https://localhost:8444/cas",
+
+      "--spring.boot.admin.discovery.enabled=false",
+      "--spring.boot.admin.server.enabled=false"
+    ]
+  }
+}

@@ -16,9 +16,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Groovy")
-public class OidcGroovyWebFingerUserInfoRepositoryTests {
+class OidcGroovyWebFingerUserInfoRepositoryTests {
     @Test
-    public void verifyFindByEmail() {
+    void verifyFindByEmail() throws Throwable {
         val repo = new OidcGroovyWebFingerUserInfoRepository(new ClassPathResource("webfinger.groovy"));
         val results = repo.findByEmailAddress("cas@example.org");
         assertNotNull(results);
@@ -28,7 +28,7 @@ public class OidcGroovyWebFingerUserInfoRepositoryTests {
     }
 
     @Test
-    public void verifyFindByUsername() {
+    void verifyFindByUsername() throws Throwable {
         val repo = new OidcGroovyWebFingerUserInfoRepository(new ClassPathResource("webfinger.groovy"));
         val results = repo.findByUsername("cas");
         assertNotNull(results);

@@ -6,16 +6,17 @@ connections and queries.
 
 {% assign jdbcProperties = "cas.jdbc." | split: "," %}
 
-<table>
+<table class="cas-datatable">
+    <thead><tr><th></th></tr></thead>
     <tbody>
     {% for prop in jdbcProperties %} 
-        {% for module in site.data[version] %}
+        {% for module in site.data[siteDataVersion] %}
             {% assign moduleEntry = module[1] %}
             {% for cfg in moduleEntry %}
                 {% assign configBlock = cfg[1] %}
                 {% for config in configBlock %}
                     {% if config.name contains prop %}  
-                        {% include casproperty.html 
+                        {% include_cached casproperty.html 
                             name=config.name 
                             defaultValue=config.defaultValue 
                             description=config.description 

@@ -1,0 +1,8 @@
+{
+  "dependencies": "yaml-service-registry",
+
+  "properties": [
+    "--cas.service-registry.core.init-from-json=false",
+    "--cas.service-registry.yaml.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ]
+}

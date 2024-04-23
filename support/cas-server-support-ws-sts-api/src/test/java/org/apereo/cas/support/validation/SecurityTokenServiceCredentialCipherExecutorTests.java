@@ -12,11 +12,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("WSFederation")
-public class SecurityTokenServiceCredentialCipherExecutorTests {
+@Tag("Cipher")
+class SecurityTokenServiceCredentialCipherExecutorTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val cipher = new SecurityTokenServiceCredentialCipherExecutor(null,
             null, null, 0, 0);
         val encoded = cipher.encode("value");

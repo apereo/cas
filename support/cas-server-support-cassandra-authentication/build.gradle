@@ -1,7 +1,12 @@
 description = "Apereo CAS Apache Cassandra Authentication Support"
 
 ext {
-    maxParallelForksForTests = 1
+
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "Apache Cassandra Authentication"
+    ]
 }
 
 dependencies {
@@ -15,6 +20,7 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-notifications")
     implementation project(":core:cas-server-core-util-api")
+    
     implementation project(":support:cas-server-support-cassandra-core")
 
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
@@ -22,6 +28,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-configuration")

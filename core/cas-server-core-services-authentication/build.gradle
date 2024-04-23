@@ -7,7 +7,6 @@ dependencies {
     api project(":api:cas-server-core-api-web")
     
     implementation project(":core:cas-server-core-authentication-api")
-
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
 

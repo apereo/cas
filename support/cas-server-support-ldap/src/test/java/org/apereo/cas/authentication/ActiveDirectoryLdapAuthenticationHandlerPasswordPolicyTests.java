@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
-
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
@@ -11,10 +11,8 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link LdapAuthenticationHandler}.
@@ -42,9 +40,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     "cas.authn.ldap[0].password-policy.type=AD",
     "cas.authn.ldap[0].password-policy.enabled=true"
 })
-@EnabledIfPortOpen(port = 10390)
-@Tag("Ldap")
-public class ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
+@EnabledIfListeningOnPort(port = 10390)
+@Tag("ActiveDirectory")
+class ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests extends BaseActiveDirectoryLdapAuthenticationHandlerTests {
 
     @Override
     protected String getUsername() {
@@ -52,14 +50,15 @@ public class ActiveDirectoryLdapAuthenticationHandlerPasswordPolicyTests extends
     }
 
     @Test
-    public void verifyAuthenticateWarnings() {
-        assertNotEquals(handler.size(), 0);
+    void verifyAuthenticateWarnings() throws Throwable {
+        assertNotEquals(0, ldapAuthenticationHandlers.size());
 
-        this.handler.forEach(Unchecked.consumer(h -> {
+        ldapAuthenticationHandlers.toList().forEach(Unchecked.consumer(h -> {
             val credential = new UsernamePasswordCredential(getUsername(), getSuccessPassword());
-            val result = h.authenticate(credential);
+            val result = h.authenticate(credential, mock(Service.class));
             assertTrue(result.getWarnings() != null && !result.getWarnings().isEmpty());
-            assertTrue(result.getWarnings().stream().anyMatch(messageDescriptor -> messageDescriptor.getCode().equals("password.expiration.warning")));
+            assertTrue(result.getWarnings().stream()
+                .anyMatch(messageDescriptor -> "password.expiration.warning".equals(messageDescriptor.getCode())));
             assertNotNull(result.getPrincipal());
             assertEquals(credential.getUsername(), result.getPrincipal().getId());
             val attributes = result.getPrincipal().getAttributes();

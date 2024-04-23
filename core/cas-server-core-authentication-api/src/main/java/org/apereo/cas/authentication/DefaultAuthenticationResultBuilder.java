@@ -2,14 +2,20 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.merger.AttributeMerger;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -26,37 +32,25 @@ import java.util.Set;
  */
 @Slf4j
 @NoArgsConstructor
+@Getter
 public class DefaultAuthenticationResultBuilder implements AuthenticationResultBuilder {
 
+    @Serial
     private static final long serialVersionUID = 6180465589526463843L;
+
     private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>(0));
+
     private final List<Credential> providedCredentials = new ArrayList<>(0);
 
-    private static void buildAuthenticationHistory(final Set<Authentication> authentications,
-                                                   final Map<String, List<Object>> authenticationAttributes,
-                                                   final Map<String, List<Object>> principalAttributes,
-                                                   final AuthenticationBuilder authenticationBuilder,
-                                                   final PrincipalElectionStrategy principalElectionStrategy) {
-        
-        val merger = principalElectionStrategy.getAttributeMerger();
-        LOGGER.trace("Collecting authentication history based on [{}] authentication events", authentications.size());
-        authentications.forEach(authn -> {
-            val authenticatedPrincipal = authn.getPrincipal();
-            LOGGER.debug("Evaluating authentication principal [{}] for inclusion in result", authenticatedPrincipal);
-
-            principalAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(principalAttributes, authenticatedPrincipal.getAttributes(), merger));
-            LOGGER.debug("Collected principal attributes [{}] for inclusion in this result for principal [{}]",
-                principalAttributes, authenticatedPrincipal.getId());
-
-            authenticationAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(authenticationAttributes, authn.getAttributes(), merger));
-            LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result", authenticationAttributes);
-
-            authenticationBuilder
-                .addSuccesses(authn.getSuccesses())
-                .addFailures(authn.getFailures())
-                .addWarnings(authn.getWarnings())
-                .addCredentials(authn.getCredentials());
-        });
+    /**
+     * Principal id is and must be enforced to be the same for all authentications.
+     * Based on that restriction, it's safe to grab the first principal id in the chain
+     * when composing the authentication chain for the caller.
+     */
+    private static Principal getPrimaryPrincipal(final PrincipalElectionStrategy principalElectionStrategy,
+                                                 final Set<Authentication> authentications,
+                                                 final Map<String, List<Object>> principalAttributes) throws Throwable {
+        return principalElectionStrategy.nominate(new LinkedHashSet<>(authentications), principalAttributes);
     }
 
     @Override
@@ -71,22 +65,6 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     }
 
     @Override
-    public AuthenticationResultBuilder collect(final Authentication authentication) {
-        if (authentication != null) {
-            this.authentications.add(authentication);
-        }
-        return this;
-    }
-
-    @Override
-    public AuthenticationResultBuilder collect(final Credential credential) {
-        if (credential != null) {
-            this.providedCredentials.add(credential);
-        }
-        return this;
-    }
-
-    @Override
     public Optional<Credential> getInitialCredential() {
         if (this.providedCredentials.isEmpty()) {
             LOGGER.warn("Provided credentials chain is empty as no credentials have been collected");
@@ -95,12 +73,33 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     }
 
     @Override
-    public AuthenticationResult build(final PrincipalElectionStrategy principalElectionStrategy) {
+    @CanIgnoreReturnValue
+    public AuthenticationResultBuilder collect(final Authentication authentication) {
+        Optional.ofNullable(authentication).ifPresent(authentications::add);
+        return this;
+    }
+
+    @Override
+    @CanIgnoreReturnValue
+    public AuthenticationResultBuilder collect(final Collection<Authentication> authentications) {
+        this.authentications.addAll(authentications);
+        return this;
+    }
+
+    @Override
+    @CanIgnoreReturnValue
+    public AuthenticationResultBuilder collect(final Credential... credential) {
+        providedCredentials.addAll(Arrays.asList(credential));
+        return this;
+    }
+
+    @Override
+    public AuthenticationResult build(final PrincipalElectionStrategy principalElectionStrategy) throws Throwable {
         return build(principalElectionStrategy, null);
     }
 
     @Override
-    public AuthenticationResult build(final PrincipalElectionStrategy principalElectionStrategy, final Service service) {
+    public AuthenticationResult build(final PrincipalElectionStrategy principalElectionStrategy, final Service service) throws Throwable {
         val authentication = buildAuthentication(principalElectionStrategy);
         if (authentication == null) {
             LOGGER.info("Authentication result cannot be produced because no authentication is recorded into in the chain. Returning null");
@@ -112,11 +111,48 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         return res;
     }
 
+    protected void mergeAuthenticationAttributes(final Map<String, List<Object>> authenticationAttributes,
+                                                 final AttributeMerger merger, final Authentication authn) {
+        authenticationAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(authenticationAttributes, authn.getAttributes(), merger));
+        LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result", authenticationAttributes);
+    }
+
+    protected void mergePrincipalAttributes(final Map<String, List<Object>> principalAttributes,
+                                            final AttributeMerger merger,
+                                            final Authentication authn) {
+        val authenticatedPrincipal = authn.getPrincipal();
+        LOGGER.debug("Evaluating authentication principal [{}] for inclusion in result", authenticatedPrincipal);
+
+        principalAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(principalAttributes, authenticatedPrincipal.getAttributes(), merger));
+        LOGGER.debug("Collected principal attributes [{}] for inclusion in this result for principal [{}]",
+            principalAttributes, authenticatedPrincipal.getId());
+    }
+
+    private void buildAuthenticationHistory(final Set<Authentication> authentications,
+                                            final Map<String, List<Object>> authenticationAttributes,
+                                            final Map<String, List<Object>> principalAttributes,
+                                            final AuthenticationBuilder authenticationBuilder,
+                                            final PrincipalElectionStrategy principalElectionStrategy) {
+
+        val merger = principalElectionStrategy.getAttributeMerger();
+        LOGGER.trace("Collecting authentication history based on [{}] authentication events", authentications.size());
+        authentications.forEach(authn -> {
+            mergePrincipalAttributes(principalAttributes, merger, authn);
+            mergeAuthenticationAttributes(authenticationAttributes, merger, authn);
+
+            authenticationBuilder
+                .addSuccesses(authn.getSuccesses())
+                .addFailures(authn.getFailures())
+                .addWarnings(authn.getWarnings())
+                .addCredentials(authn.getCredentials());
+        });
+    }
+
     private boolean isEmpty() {
         return this.authentications.isEmpty();
     }
 
-    private Authentication buildAuthentication(final PrincipalElectionStrategy principalElectionStrategy) {
+    private Authentication buildAuthentication(final PrincipalElectionStrategy principalElectionStrategy) throws Throwable {
         if (isEmpty()) {
             LOGGER.warn("No authentication event has been recorded; CAS cannot finalize the authentication result");
             return null;
@@ -131,8 +167,8 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         synchronized (this.authentications) {
             val primaryPrincipal = getPrimaryPrincipal(principalElectionStrategy, this.authentications, principalAttributes);
             authenticationBuilder.setPrincipal(primaryPrincipal);
-            LOGGER.debug("Determined primary authentication principal to be [{}]", primaryPrincipal);
         }
+        LOGGER.debug("Determined primary authentication principal to be [{}]", authenticationBuilder.getPrincipal());
 
         authenticationBuilder.setAttributes(authenticationAttributes);
         LOGGER.trace("Collected authentication attributes for this result are [{}]", authenticationAttributes);
@@ -142,16 +178,5 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         val auth = authenticationBuilder.build();
         LOGGER.trace("Authentication result commenced at [{}]", auth.getAuthenticationDate());
         return auth;
-    }
-
-    /**
-     * Principal id is and must be enforced to be the same for all authentications.
-     * Based on that restriction, it's safe to grab the first principal id in the chain
-     * when composing the authentication chain for the caller.
-     */
-    private static Principal getPrimaryPrincipal(final PrincipalElectionStrategy principalElectionStrategy,
-                                                 final Set<Authentication> authentications,
-                                                 final Map<String, List<Object>> principalAttributes) {
-        return principalElectionStrategy.nominate(new LinkedHashSet<>(authentications), principalAttributes);
     }
 }

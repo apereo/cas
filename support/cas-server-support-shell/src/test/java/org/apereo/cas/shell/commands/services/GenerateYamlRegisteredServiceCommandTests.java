@@ -8,7 +8,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.support.StaticApplicationContext;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -22,24 +22,25 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@EnableAutoConfiguration
 @Tag("SHELL")
-public class GenerateYamlRegisteredServiceCommandTests extends BaseCasShellCommandTests {
+class GenerateYamlRegisteredServiceCommandTests extends BaseCasShellCommandTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
         val file = File.createTempFile("service", ".json");
         val yaml = File.createTempFile("service", ".yaml");
         val svc = RegisteredServiceTestUtils.getRegisteredService("example");
         try (val writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
-            new RegisteredServiceJsonSerializer().to(writer, svc);
+            new RegisteredServiceJsonSerializer(appCtx).to(writer, svc);
             writer.flush();
         }
         assertTrue(file.exists() && file.length() > 0);
-        assertNotNull(shell.evaluate(() -> "generate-yaml --file " + file.getPath() + " --destination " + yaml.getPath()));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-yaml --file " + file.getPath() + " --destination " + yaml.getPath()));
         assertTrue(yaml.exists());
         val badFile = File.createTempFile("first", ".second");
-        assertNotNull(shell.evaluate(() -> "generate-yaml --file " + badFile + " --destination " + yaml.getPath()));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-yaml --file " + badFile + " --destination " + yaml.getPath()));
         FileUtils.write(badFile, "data", StandardCharsets.UTF_8);
-        assertNotNull(shell.evaluate(() -> "generate-yaml --file " + badFile + " --destination " + yaml.getPath()));
+        assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-yaml --file " + badFile + " --destination " + yaml.getPath()));
     }
 }

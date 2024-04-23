@@ -1,0 +1,23 @@
+apply plugin: "war"
+ext {
+    mainClassName = "org.apereo.cas.web.CasWebApplication"
+    casWebApplication = true
+}
+description = "Apereo CAS Web Application"
+
+sourceSets {
+    main {
+        resources {
+            srcDirs "${project.layout.buildDirectory.getAsFile().get().path}/generated-src/main/resources"
+        }
+    }
+}
+
+apply from: rootProject.file("gradle/springboot.gradle")
+apply from: rootProject.file("gradle/webapp-dependencies.gradle")
+
+def buildScript = providers.systemProperty("buildScript").getOrNull()
+if (buildScript?.trim() && file(buildScript).exists()) {
+    ansi.green "Applying build script ${buildScript}"
+    apply from: file(buildScript)
+}

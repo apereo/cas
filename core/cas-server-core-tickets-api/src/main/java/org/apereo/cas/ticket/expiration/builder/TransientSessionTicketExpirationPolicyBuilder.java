@@ -4,12 +4,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TransientSessionTicket;
-import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
+import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
+import lombok.val;
+
+import java.io.Serial;
 
 /**
  * This is {@link TransientSessionTicketExpirationPolicyBuilder}.
@@ -17,25 +17,14 @@ import lombok.ToString;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RequiredArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@ToString
-@Getter
-public class TransientSessionTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<TransientSessionTicket> {
+public record TransientSessionTicketExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<TransientSessionTicket> {
+    @Serial
     private static final long serialVersionUID = -1587980180617072826L;
-    /**
-     * The Cas properties.
-     */
-    protected final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {
         return toTransientSessionTicketExpirationPolicy();
-    }
-
-    @Override
-    public Class<TransientSessionTicket> getTicketType() {
-        return TransientSessionTicket.class;
     }
 
     /**
@@ -44,7 +33,9 @@ public class TransientSessionTicketExpirationPolicyBuilder implements Expiration
      * @return the expiration policy
      */
     public ExpirationPolicy toTransientSessionTicketExpirationPolicy() {
-        return new HardTimeoutExpirationPolicy(casProperties.getTicket().getTst().getTimeToKillInSeconds());
+        val tst = casProperties.getTicket().getTst();
+        return new MultiTimeUseOrTimeoutExpirationPolicy.TransientSessionTicketExpirationPolicy(
+            tst.getNumberOfUses(),
+            tst.getTimeToKillInSeconds());
     }
-
 }

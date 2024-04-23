@@ -1,9 +1,15 @@
 description = "Apereo CAS Redis Authentication"
 ext {
-    maxParallelForksForTests = 1
+
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "Redis Authentication"
+    ]
 }
 dependencies {
     implementation libraries.redis
+
 
     api project(":api:cas-server-core-api-util")
     
@@ -14,6 +20,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":support:cas-server-support-redis-core")
+    implementation project(":support:cas-server-support-person-directory-core")
     implementation project(":support:cas-server-support-person-directory")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

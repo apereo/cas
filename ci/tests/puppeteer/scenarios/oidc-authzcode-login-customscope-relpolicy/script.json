@@ -1,0 +1,31 @@
+{
+  "dependencies": "oidc",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--logging.level.org.apereo.cas=info",
+
+    "--cas.authn.attribute-repository.stub.attributes.name=CASName",
+    "--cas.authn.attribute-repository.stub.attributes.given_name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.family_name=Apereo",
+    "--cas.authn.attribute-repository.stub.attributes.entitlements=ent1,ent2,ent3,ent4",
+
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.discovery.scopes=openid,profile,email,MyCustomScope",
+    "--cas.authn.oidc.discovery.claims=sub,name,cn,given_name,family_name,entitlements",
+
+    "--cas.authn.oidc.core.user-defined-scopes.MyCustomScope=entitlements",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
+    
+    "--cas.authn.oauth.core.user-profile-view-type=FLAT",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}
+

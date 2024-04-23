@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link OAuth20DeviceTokenExpirationPolicy}.
  *
@@ -24,15 +26,13 @@ import lombok.ToString;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class OAuth20DeviceTokenExpirationPolicy extends HardTimeoutExpirationPolicy {
+    @Serial
     private static final long serialVersionUID = -1283286621686527360L;
 
-    /**
-     * Instantiates a new OAuth device code expiration policy.
-     *
-     * @param timeToLive the time to kill in seconds
-     */
     @JsonCreator
-    public OAuth20DeviceTokenExpirationPolicy(@JsonProperty("timeToLive") final long timeToLive) {
+    public OAuth20DeviceTokenExpirationPolicy(
+        @JsonProperty("timeToLive")
+        final long timeToLive) {
         super(timeToLive);
     }
 }

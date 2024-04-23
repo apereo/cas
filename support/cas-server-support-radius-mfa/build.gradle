@@ -1,4 +1,25 @@
+/*
+ * The following resolution strategy
+ * is required for JRadius library that relies
+ * on an old version of bouncycastle.
+ */
+def dependencyUpdates = gradle.startParameter.taskNames.any {task -> task.equalsIgnoreCase('dependencyUpdates') }
+if (!dependencyUpdates) {
+    ["runtimeClasspath", "testRuntimeClasspath"].forEach(name -> {
+        configurations.named(name).configure {it.resolutionStrategy.force("org.bouncycastle:bcprov-jdk15on:1.63") }
+    })
+}
+
 description = "Apereo CAS RADIUS RSA MFA Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Multifactor Authentication",
+            title: "RADIUS",
+            aliases: ["radiusmfa"]
+    ]
+}
+
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api")
@@ -18,7 +39,7 @@ dependencies {
     implementation project(":support:cas-server-support-radius-core-mfa")
     implementation project(":support:cas-server-support-trusted-mfa-core")
 
-    compileOnlyApi  project(":support:cas-server-support-trusted-mfa")
+    compileOnly project(":support:cas-server-support-trusted-mfa")
 
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-authentication-mfa")
@@ -31,6 +52,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-audit")
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")
@@ -44,4 +66,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-webflow-mfa-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 }

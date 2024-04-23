@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -20,15 +21,16 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class ProxyTicketProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -3690545027059561010L;
 
     /**
      * Number of uses allowed.
      */
-    private int numberOfUses = 1;
+    private long numberOfUses = 1;
 
     /**
      * Number of seconds after which this ticket becomes invalid.
      */
-    private int timeToKillInSeconds = 10;
+    private long timeToKillInSeconds = 10;
 }

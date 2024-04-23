@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-authentication-mfa")
 public abstract class BaseMultifactorAuthenticationProviderProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -2690281104343633871L;
 
     /**
@@ -70,6 +72,9 @@ public abstract class BaseMultifactorAuthenticationProviderProperties implements
 
     /**
      * The name of the authentication handler used to verify credentials in MFA.
+     * Remember that if you have more than one authentication handler of the same type,
+     * the names must be defined uniquely for each authentication scheme. Failing to do so
+     * may force CAS to not register authentication handlers with a duplicate name.
      */
     private String name;
 
@@ -114,7 +119,11 @@ public abstract class BaseMultifactorAuthenticationProviderProperties implements
         /**
          * The default one indicating that no failure mode is set at all.
          */
-        UNDEFINED
-    }
+        UNDEFINED;
 
+        public boolean isAllowedToBypass() {
+            return this == MultifactorAuthenticationProviderFailureModes.OPEN
+                   || this == MultifactorAuthenticationProviderFailureModes.PHANTOM;
+        }
+    }
 }

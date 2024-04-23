@@ -1,0 +1,19 @@
+{
+  "dependencies": "reports,hazelcast-ticket-registry",
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+
+    "--cas.tgc.crypto.enabled=false",
+    "--cas.tgc.remember-me-max-age=P1D",
+    "--cas.ticket.tgt.remember-me.enabled=true",
+    "--cas.ticket.tgt.remember-me.time-to-kill-in-seconds=86400",
+    
+    "--cas.ticket.tgt.hard-timeout.time-to-kill-in-seconds=3"
+  ]
+}

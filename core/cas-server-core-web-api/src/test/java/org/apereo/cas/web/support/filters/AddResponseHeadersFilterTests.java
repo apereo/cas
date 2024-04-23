@@ -20,10 +20,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Web")
-public class AddResponseHeadersFilterTests {
+class AddResponseHeadersFilterTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val ctx = new MockServletContext();

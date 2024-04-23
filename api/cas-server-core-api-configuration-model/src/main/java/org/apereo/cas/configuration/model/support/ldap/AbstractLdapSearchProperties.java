@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,12 +24,13 @@ import java.util.List;
 @Accessors(chain = true)
 @JsonFilter("AbstractLdapSearchProperties")
 public abstract class AbstractLdapSearchProperties extends AbstractLdapProperties {
+    @Serial
     private static final long serialVersionUID = 3009946735155362639L;
 
     /**
      * User filter to use for searching.
      * Syntax is {@code cn={user}} or {@code cn={0}}.
-     * 
+     * <p>
      * You may also provide an external groovy script
      * in the syntax of {@code file:/path/to/GroovyScript.groovy}
      * to fully build the final filter template dynamically.

@@ -1,9 +1,8 @@
 package org.apereo.cas.gauth.credential;
 
-import org.apereo.cas.config.CasHibernateJpaConfiguration;
-import org.apereo.cas.config.GoogleAuthenticatorJpaConfiguration;
+import org.apereo.cas.config.CasGoogleAuthenticatorJpaAutoConfiguration;
+import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
-
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,9 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,20 +24,20 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @SpringBootTest(classes = {
-    GoogleAuthenticatorJpaConfiguration.class,
-    CasHibernateJpaConfiguration.class,
+    CasGoogleAuthenticatorJpaAutoConfiguration.class,
+    CasHibernateJpaAutoConfiguration.class,
     BaseOneTimeTokenCredentialRepositoryTests.SharedTestConfiguration.class
 },
     properties = {
         "cas.jdbc.show-sql=true",
         "cas.authn.mfa.gauth.crypto.enabled=false"
     })
-@EnableTransactionManagement(proxyTargetClass = true)
-@EnableAspectJAutoProxy(proxyTargetClass = true)
+@EnableTransactionManagement(proxyTargetClass = false)
+@EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @Getter
-@Tag("JDBC")
-public class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
+@Tag("JDBCMFA")
+class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
     @Autowired(required = false)
     @Qualifier("googleAuthenticatorAccountRegistry")
     private OneTimeTokenCredentialRepository registry;
@@ -51,7 +48,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOn
     }
     
     @Test
-    public void verifyCreateUniqueNames() {
+    void verifyCreateUniqueNames() throws Throwable {
         var acct1 = getAccount("verifyCreateUniqueNames", UUID.randomUUID().toString());
         assertNotNull(acct1);
         val repo = getRegistry("verifyCreate");

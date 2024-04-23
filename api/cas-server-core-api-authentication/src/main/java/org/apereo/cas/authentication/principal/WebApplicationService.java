@@ -9,6 +9,10 @@ import org.apereo.cas.validation.ValidationResponseType;
  * @since 3.1
  */
 public interface WebApplicationService extends Service {
+    /**
+     * Bean name for the factory implementation that creates this service type.
+     */
+    String BEAN_NAME_FACTORY = "webApplicationServiceFactory";
 
     /**
      * Retrieves the artifact supplied with the service. May be null.
@@ -24,14 +28,6 @@ public interface WebApplicationService extends Service {
      * @return the source if it exists, null otherwise.
      */
     String getSource();
-
-    /**
-     * Return the original url provided (as {@code service} or {@code targetService} request parameter).
-     * Used to reconstruct the redirect url.
-     *
-     * @return the original url provided.
-     */
-    String getOriginalUrl();
 
     /**
      * Ticket validation response MUST be produced based on the parameter value.

@@ -1,12 +1,16 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import jakarta.annotation.Nonnull;
+
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -19,14 +23,30 @@ import java.util.Set;
 @SuperBuilder
 @Getter
 public class ServicesManagerConfigurationContext {
+
+    /**
+     * Implementation bean name.
+     */
+    public static final String BEAN_NAME = "servicesManagerConfigurationContext";
+
+    @Nonnull
     private final ServiceRegistry serviceRegistry;
 
+    @Nonnull
     private final ConfigurableApplicationContext applicationContext;
 
-    private final Set<String> environments;
+    @Builder.Default
+    private final Set<String> environments = new HashSet<>();
 
+    @Nonnull
     private final Cache<Long, RegisteredService> servicesCache;
 
     @Builder.Default
     private final List<ServicesManagerRegisteredServiceLocator> registeredServiceLocators = new ArrayList<>();
+
+    @Nonnull
+    private final RegisteredServicesTemplatesManager registeredServicesTemplatesManager;
+
+    @Nonnull
+    private final CasConfigurationProperties casProperties;
 }

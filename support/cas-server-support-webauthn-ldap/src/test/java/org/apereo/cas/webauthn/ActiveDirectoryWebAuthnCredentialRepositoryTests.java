@@ -1,9 +1,8 @@
 package org.apereo.cas.webauthn;
 
-import org.apereo.cas.config.LdapWebAuthnConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.config.CasLdapWebAuthnAutoConfiguration;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepositoryTests;
-
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.Modification;
 import com.unboundid.ldap.sdk.ModificationType;
@@ -11,7 +10,6 @@ import com.unboundid.util.ssl.SSLUtil;
 import com.unboundid.util.ssl.TrustAllTrustManager;
 import lombok.Cleanup;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.ldaptive.BindConnectionInitializer;
@@ -39,14 +37,13 @@ import org.springframework.test.context.TestPropertySource;
         "cas.authn.mfa.web-authn.ldap.min-pool-size=0",
         "cas.authn.mfa.web-authn.ldap.hostname-verifier=DEFAULT"
     })
-@Tag("Ldap")
-@EnabledIfPortOpen(port = 10636)
+@Tag("ActiveDirectory")
+@EnabledIfListeningOnPort(port = 10636)
 @Getter
-@Import(LdapWebAuthnConfiguration.class)
-public class ActiveDirectoryWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
+@Import(CasLdapWebAuthnAutoConfiguration.class)
+class ActiveDirectoryWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
     @Override
-    @SneakyThrows
-    protected String getUsername() {
+    protected String getUsername() throws Exception {
         val uid = super.getUsername();
 
         val bindInit = new BindConnectionInitializer("CN=admin,CN=Users,DC=cas,DC=example,DC=org", new Credential("P@ssw0rd"));
@@ -55,12 +52,12 @@ public class ActiveDirectoryWebAuthnCredentialRepositoryTests extends BaseWebAut
         val socketFactory = sslUtil.createSSLSocketFactory();
 
         @Cleanup
-        val c = new LDAPConnection(socketFactory, "localhost", 10636,
+        val connection = new LDAPConnection(socketFactory, "localhost", 10636,
             bindInit.getBindDn(), bindInit.getBindCredential().getString());
 
-        c.add(getLdif(uid));
+        connection.add(getLdif(uid));
         val mod = new Modification(ModificationType.REPLACE, "streetAddress", " ");
-        c.modify(String.format("CN=%s,CN=Users,DC=cas,DC=example,DC=org", uid), mod);
+        connection.modify(String.format("CN=%s,CN=Users,DC=cas,DC=example,DC=org", uid), mod);
 
         return uid;
     }

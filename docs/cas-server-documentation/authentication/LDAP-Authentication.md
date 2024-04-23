@@ -10,7 +10,7 @@ category: Authentication
 
 LDAP integration is enabled by including the following dependency in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-ldap" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-ldap" %}
 
 ## Configuration
 
@@ -25,12 +25,16 @@ server, increment the index and specify the settings for the next LDAP server.
 retrieved from other attribute repository sources, if any.
 Attributes retrieved directly as part of LDAP authentication trump all other attributes.
 
-{% include casproperties.html properties="cas.authn.ldap" %}
-
+{% include_cached casproperties.html properties="cas.authn.ldap" %}
 
 ## Password Policy Enforcement
 
 To learn how to enforce a password policy for LDAP, please [review this guide](../installation/Password-Policy-Enforcement.html).
+
+## Password Policy Enforcement
+              
+You may also be interested in synchronizing account passwords with one or more LDAP servers. To learn more, 
+please [review this guide](../password_management/Password-Synchronization.html).
 
 ## Troubleshooting
 
@@ -38,7 +42,7 @@ To enable additional logging, modify the logging configuration file to add the f
 
 ```xml
 <Logger name="org.ldaptive" level="debug" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 ```

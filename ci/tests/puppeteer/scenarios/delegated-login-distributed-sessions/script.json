@@ -1,0 +1,23 @@
+{
+  "dependencies": "pac4j-webflow",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--logging.level.org.apereo.cas=info",
+
+    "--cas.authn.pac4j.core.session-replication.replicate-sessions=true",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.http-client.host-name-verifier=none",
+
+    "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
+    "--cas.authn.pac4j.cas[0].protocol=CAS30",
+    "--cas.authn.pac4j.cas[0].client-name=CasClient"
+  ],
+  "initScript": "${PWD}/ci/tests/cas/run-cas-server.sh"
+}

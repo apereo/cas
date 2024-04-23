@@ -7,6 +7,8 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serial;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -16,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("ExpirationPolicy")
-public class SurrogateSessionExpirationPolicyJsonSerializerTests {
+class SurrogateSessionExpirationPolicyJsonSerializerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val policy = new SurrogateSessionExpirationPolicy();
         val serializer = new SurrogateSessionExpirationPolicyJsonSerializer();
         val result = serializer.toString(policy);
@@ -28,8 +30,13 @@ public class SurrogateSessionExpirationPolicyJsonSerializerTests {
         assertEquals(policy, newPolicy);
     }
 
-    private static class SurrogateSessionExpirationPolicyJsonSerializer extends AbstractJacksonBackedStringSerializer<ExpirationPolicy> {
+    private static final class SurrogateSessionExpirationPolicyJsonSerializer extends AbstractJacksonBackedStringSerializer<ExpirationPolicy> {
+        @Serial
         private static final long serialVersionUID = -7883370764375218898L;
+
+        SurrogateSessionExpirationPolicyJsonSerializer() {
+            super(MINIMAL_PRETTY_PRINTER);
+        }
 
         @Override
         public Class<ExpirationPolicy> getTypeToSerialize() {

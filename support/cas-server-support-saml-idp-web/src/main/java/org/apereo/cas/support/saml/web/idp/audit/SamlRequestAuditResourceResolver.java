@@ -20,33 +20,36 @@ import java.util.HashMap;
 public class SamlRequestAuditResourceResolver extends ReturnValueAsStringResourceResolver {
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object returnValue) {
-        if (returnValue instanceof Pair) {
-            return getAuditResourceFromSamlRequest((Pair) returnValue);
+        if (returnValue instanceof final Pair context) {
+            return getAuditResourceFromSamlRequest((XMLObject) context.getLeft());
+        }
+        if (returnValue instanceof final XMLObject xmlObject) {
+            return getAuditResourceFromSamlRequest(xmlObject);
         }
         return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
-    private String[] getAuditResourceFromSamlRequest(final Pair result) {
-        val returnValue = (XMLObject) result.getLeft();
-        if (returnValue instanceof AuthnRequest) {
-            return getAuditResourceFromSamlAuthnRequest((AuthnRequest) returnValue);
+    protected String[] getAuditResourceFromSamlRequest(final XMLObject returnValue) {
+        if (returnValue instanceof final AuthnRequest authnRequest) {
+            return getAuditResourceFromSamlAuthnRequest(authnRequest);
         }
-        if (returnValue instanceof LogoutRequest) {
-            return getAuditResourceFromSamlLogoutRequest((LogoutRequest) returnValue);
+        if (returnValue instanceof final LogoutRequest logoutRequest) {
+            return getAuditResourceFromSamlLogoutRequest(logoutRequest);
         }
         return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
-    private String[] getAuditResourceFromSamlLogoutRequest(final LogoutRequest returnValue) {
+    protected String[] getAuditResourceFromSamlLogoutRequest(final LogoutRequest returnValue) {
         val values = new HashMap<>();
         values.put("issuer", returnValue.getIssuer().getValue());
         return new String[]{auditFormat.serialize(values)};
     }
 
-    private String[] getAuditResourceFromSamlAuthnRequest(final AuthnRequest returnValue) {
+    protected String[] getAuditResourceFromSamlAuthnRequest(final AuthnRequest returnValue) {
         val values = new HashMap<>();
         values.put("issuer", returnValue.getIssuer().getValue());
         values.put("binding", returnValue.getProtocolBinding());
+        values.put("destination", returnValue.getDestination());
         return new String[]{auditFormat.serialize(values)};
     }
 }

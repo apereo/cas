@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.idp.metadata;
 import org.apereo.cas.support.saml.BaseGitSamlMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -29,28 +30,31 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @TestPropertySource(properties = {
+    "cas.authn.saml-idp.metadata.http.metadata-backup-location=file://${java.io.tmpdir}/metadata-backups",
+
     "cas.authn.saml-idp.metadata.git.sign-commits=false",
     "cas.authn.saml-idp.metadata.git.idp-metadata-enabled=true",
-    "cas.authn.saml-idp.metadata.git.repository-url=file:${java.io.tmpdir}/cas-metadata-idp-gen.git"
+    "cas.authn.saml-idp.metadata.git.repository-url=file://${java.io.tmpdir}/cas-saml-metadata"
 })
-@Tag("FileSystem")
+@Tag("Git")
 @Slf4j
-public class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
+class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
     @BeforeAll
     public static void setup() {
         try {
-            val sourceGit = new File(FileUtils.getTempDirectory(), "cas-metadata-idp-gen");
-            if (sourceGit.exists()) {
-                PathUtils.deleteDirectory(sourceGit.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
-            }
             val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
             if (gitDir.exists()) {
-                PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+                FunctionUtils.doAndHandle(
+                    __ -> PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
             }
-            val git = Git.init().setDirectory(gitDir).setBare(false).call();
-            FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
-            git.add().addFilepattern("*.*").call();
-            git.commit().setSign(false).setMessage("Initial commit").call();
+            if (!gitDir.mkdir()) {
+                throw new IllegalArgumentException("Git repository directory location " + gitDir + " cannot be located/created");
+            }
+            try (val git = Git.init().setDirectory(gitDir).setBare(false).call()) {
+                FileUtils.write(new File(gitDir, "readme.txt"), "text", StandardCharsets.UTF_8);
+                git.add().addFilepattern("*.*").call();
+                git.commit().setSign(false).setMessage("Initial commit").call();
+            }
             assertTrue(gitDir.exists());
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
@@ -60,19 +64,15 @@ public class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
 
     @AfterAll
     public static void cleanUp() throws Exception {
-        val sourceGit = new File(FileUtils.getTempDirectory(), "cas-metadata-idp-gen");
-        if (sourceGit.exists()) {
-            PathUtils.deleteDirectory(sourceGit.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
-        }
         val gitDir = new File(FileUtils.getTempDirectory(), "cas-saml-metadata");
         if (gitDir.exists()) {
-            PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY);
+            FunctionUtils.doAndHandle(
+                __ -> PathUtils.deleteDirectory(gitDir.toPath(), StandardDeleteOption.OVERRIDE_READ_ONLY));
         }
     }
 
-
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         this.samlIdPMetadataGenerator.generate(Optional.empty());
         assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
         assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
@@ -82,7 +82,7 @@ public class GitSamlIdPMetadataGeneratorTests extends BaseGitSamlMetadataTests {
     }
 
     @Test
-    public void verifyService() {
+    void verifyService() throws Throwable {
         val service = new SamlRegisteredService();
         service.setName("TestShib");
         service.setId(1000);

@@ -4,6 +4,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.qr.authentication.QRAuthenticationDeviceRepository;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
@@ -20,10 +23,10 @@ import java.util.Collection;
  */
 @Endpoint(id = "qrDevices", enableByDefault = false)
 public class QRAuthenticationDeviceRepositoryEndpoint extends BaseCasActuatorEndpoint {
-    private final QRAuthenticationDeviceRepository repository;
+    private final ObjectProvider<QRAuthenticationDeviceRepository> repository;
 
     public QRAuthenticationDeviceRepositoryEndpoint(final CasConfigurationProperties casProperties,
-        final QRAuthenticationDeviceRepository repository) {
+                                                    final ObjectProvider<QRAuthenticationDeviceRepository> repository) {
         super(casProperties);
         this.repository = repository;
     }
@@ -35,8 +38,9 @@ public class QRAuthenticationDeviceRepositoryEndpoint extends BaseCasActuatorEnd
      * @return the collection
      */
     @ReadOperation
+    @Operation(summary = "Get registered and authorized devices for the principal", parameters = @Parameter(name = "principal", required = true))
     public Collection<String> devices(@Selector final String principal) {
-        return repository.getAuthorizedDevicesFor(principal);
+        return repository.getObject().getAuthorizedDevicesFor(principal);
     }
 
     /**
@@ -45,8 +49,9 @@ public class QRAuthenticationDeviceRepositoryEndpoint extends BaseCasActuatorEnd
      * @param deviceId the device id
      */
     @DeleteOperation
+    @Operation(summary = "Remove authorized device using the device id", parameters = @Parameter(name = "deviceId", required = true))
     public void removeDevice(@Selector final String deviceId) {
-        repository.removeDevice(deviceId);
+        repository.getObject().removeDevice(deviceId);
     }
 
     /**
@@ -56,7 +61,12 @@ public class QRAuthenticationDeviceRepositoryEndpoint extends BaseCasActuatorEnd
      * @param deviceId  the device id
      */
     @WriteOperation
+    @Operation(summary = "Register device using the principal id and device id",
+        parameters = {
+            @Parameter(name = "principal", required = true),
+            @Parameter(name = "deviceId", required = true)
+        })
     public void registerDevice(@Selector final String principal, @Selector final String deviceId) {
-        repository.authorizeDeviceFor(principal, deviceId);
+        repository.getObject().authorizeDeviceFor(principal, deviceId);
     }
 }

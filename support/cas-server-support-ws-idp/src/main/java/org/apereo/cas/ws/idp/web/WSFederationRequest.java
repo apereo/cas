@@ -2,14 +2,10 @@ package org.apereo.cas.ws.idp.web;
 
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link WSFederationRequest}.
@@ -17,37 +13,8 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@ToString
-@Getter
-@Setter
-@RequiredArgsConstructor
-public class WSFederationRequest {
-
-    private final String wtrealm;
-
-    private final String wreply;
-
-    private final String wctx;
-
-    private final String wfresh;
-
-    private final String whr;
-
-    private final String wresult;
-
-    private final String relayState;
-
-    private final String samlResponse;
-
-    private final String state;
-
-    private final String code;
-
-    private final String wa;
-
-    private final String wauth;
-
-    private final String wreq;
+public record WSFederationRequest(String wtrealm, String wreply, String wctx, String wfresh, String whr, String wresult, String relayState, String samlResponse, String state, String code,
+                                  String wa, String wauth, String wreq) {
 
     /**
      * Create federation request.

@@ -1,0 +1,33 @@
+{
+  "dependencies": "reports,ldap-core",
+  "conditions": {
+    "docker": "true"
+  },
+  "environmentVariables": [
+    "CAS_LDAP_BIND_DN=cn=Directory Manager"
+  ],
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=AUTHENTICATED",
+    "--cas.monitor.endpoints.form-login-enabled=true",
+
+    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.web.exposure.include=*",
+
+    "--cas.monitor.endpoints.ldap.ldap-url=ldap://localhost:10389",
+    "--cas.monitor.endpoints.ldap.base-dn=ou=people,dc=example,dc=org",
+    "--cas.monitor.endpoints.ldap.search-filter=uid={user}",
+    "--cas.monitor.endpoints.ldap.bind-dn=${CAS_LDAP_BIND_DN}",
+    "--cas.monitor.endpoints.ldap.bind-credential=password",
+    
+    "--cas.monitor.endpoints.ldap.ldap-authz.base-dn=ou=people,dc=example,dc=org",
+    "--cas.monitor.endpoints.ldap.ldap-authz.search-filter=uid={user}",
+    "--cas.monitor.endpoints.ldap.ldap-authz.role-attribute=description",
+    "--cas.monitor.endpoints.ldap.ldap-authz.role-prefix=ROLE_",
+
+    "--spring.security.user.roles=admin"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}

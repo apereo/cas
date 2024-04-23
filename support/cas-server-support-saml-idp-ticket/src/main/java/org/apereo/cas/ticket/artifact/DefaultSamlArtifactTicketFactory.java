@@ -8,9 +8,11 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
+import org.apereo.cas.util.function.FunctionUtils;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.opensaml.saml.common.SAMLObject;
 
@@ -23,10 +25,8 @@ import org.opensaml.saml.common.SAMLObject;
 @RequiredArgsConstructor
 public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFactory {
 
-    /**
-     * ExpirationPolicy for tokens.
-     */
-    protected final ExpirationPolicyBuilder<SamlArtifactTicket> expirationPolicy;
+    @Getter
+    protected final ExpirationPolicyBuilder<SamlArtifactTicket> expirationPolicyBuilder;
 
     /**
      * The opensaml config bean.
@@ -38,23 +38,26 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
      */
     protected final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
+    protected final TicketTrackingPolicy descendantTicketsTrackingPolicy;
+
     @Override
-    @SneakyThrows
     public SamlArtifactTicket create(final String artifactId,
                                      final Authentication authentication,
                                      final TicketGrantingTicket ticketGrantingTicket, final String issuer,
                                      final String relyingParty, final SAMLObject samlObject) {
-        try (val w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
-            val codeId = createTicketIdFor(artifactId);
+        return FunctionUtils.doUnchecked(() -> {
+            try (val w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
+                val codeId = createTicketIdFor(artifactId);
 
-            val service = this.webApplicationServiceFactory.createService(relyingParty);
-            val at = new SamlArtifactTicketImpl(codeId, service, authentication,
-                this.expirationPolicy.buildTicketExpirationPolicy(), ticketGrantingTicket, issuer, relyingParty, w.toString());
-            if (ticketGrantingTicket != null) {
-                ticketGrantingTicket.getDescendantTickets().add(at.getId());
+                val service = this.webApplicationServiceFactory.createService(relyingParty);
+                val at = new SamlArtifactTicketImpl(codeId, service, authentication,
+                    this.expirationPolicyBuilder.buildTicketExpirationPolicy(), ticketGrantingTicket, issuer, relyingParty, w.toString());
+
+                descendantTicketsTrackingPolicy.trackTicket(ticketGrantingTicket, at);
+
+                return at;
             }
-            return at;
-        }
+        });
     }
 
     @Override

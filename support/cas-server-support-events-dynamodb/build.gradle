@@ -1,9 +1,13 @@
 description = "Apereo CAS DynamoDb Events"
 
 ext {
-    maxParallelForksForTests = 1
-}
 
+    publishMetadata = true
+    projectMetadata = [
+            category: "Events",
+            title: "Authentication Events via DynamoDb"
+    ]
+}
 dependencies {
     implementation libraries.awsjavadynamodb
 

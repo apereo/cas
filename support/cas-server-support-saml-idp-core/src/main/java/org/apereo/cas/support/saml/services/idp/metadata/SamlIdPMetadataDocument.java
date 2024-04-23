@@ -10,14 +10,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
 
-import javax.persistence.Column;
-import javax.persistence.Lob;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+import jakarta.persistence.Column;
+import jakarta.persistence.Lob;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -31,9 +33,10 @@ import java.io.Serializable;
 @Setter
 @AllArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@Builder
+@SuperBuilder
 public class SamlIdPMetadataDocument implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -705737727407407083L;
     /**
      * The Id.

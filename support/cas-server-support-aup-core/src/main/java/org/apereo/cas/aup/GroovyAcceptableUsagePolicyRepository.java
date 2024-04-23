@@ -1,6 +1,5 @@
 package org.apereo.cas.aup;
 
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.LoggingUtils;
@@ -12,6 +11,7 @@ import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serial;
 import java.util.Optional;
 
 /**
@@ -22,6 +22,7 @@ import java.util.Optional;
  */
 @Slf4j
 public class GroovyAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository {
+    @Serial
     private static final long serialVersionUID = 2773808902502739L;
 
     private final transient WatchableGroovyScriptResource watchableScript;
@@ -38,29 +39,29 @@ public class GroovyAcceptableUsagePolicyRepository extends BaseAcceptableUsagePo
     }
 
     @Override
-    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext, final Credential credential) {
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) throws Throwable {
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
         return watchableScript.execute("verify", AcceptableUsagePolicyStatus.class,
-            requestContext, credential, applicationContext, principal, LOGGER);
+            requestContext, applicationContext, principal, LOGGER);
     }
 
     @Override
-    public Optional<AcceptableUsagePolicyTerms> fetchPolicy(final RequestContext requestContext, final Credential credential) {
+    public Optional<AcceptableUsagePolicyTerms> fetchPolicy(final RequestContext requestContext) {
         try {
             val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
             val result = watchableScript.execute("fetch", AcceptableUsagePolicyTerms.class,
-                requestContext, credential, applicationContext, principal, LOGGER);
+                requestContext, applicationContext, principal, LOGGER);
             return Optional.ofNullable(result);
-        } catch (final Exception e) {
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
     }
 
     @Override
-    public boolean submit(final RequestContext requestContext, final Credential credential) {
+    public boolean submit(final RequestContext requestContext) throws Throwable {
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
         return watchableScript.execute("submit", Boolean.class, requestContext,
-            credential, applicationContext, principal, LOGGER);
+            applicationContext, principal, LOGGER);
     }
 }

@@ -19,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("OAuth")
-public class OAuth20AccessTokenAtHashGeneratorTests extends AbstractOAuth20Tests {
+class OAuth20AccessTokenAtHashGeneratorTests extends AbstractOAuth20Tests {
     @Test
-    public void verifyNoneAlgorithm() {
+    void verifyNoneAlgorithm() throws Throwable {
         val hash = generateHashWithAlgorithm("none");
         assertEquals("QVQtMTIzNDU2", hash);
     }
@@ -30,16 +30,10 @@ public class OAuth20AccessTokenAtHashGeneratorTests extends AbstractOAuth20Tests
         val accessToken = getAccessToken();
         val registeredService = getRegisteredService("example", "secret", new LinkedHashSet<>());
 
-        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.builder()
-            .accessToken(accessToken)
-            .registeredService(registeredService)
-            .service(accessToken.getService())
-            .casProperties(casProperties)
-            .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .build()
-            .encode();
-
-        return OAuth20AccessTokenAtHashGenerator.builder()
+        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(accessTokenJwtBuilder, registeredService,
+            accessToken, accessToken.getService(), casProperties, false).encode(accessToken.getId());
+        return OAuth20AccessTokenAtHashGenerator
+            .builder()
             .algorithm(alg)
             .registeredService(registeredService)
             .encodedAccessToken(encodedAccessToken)
@@ -48,25 +42,25 @@ public class OAuth20AccessTokenAtHashGeneratorTests extends AbstractOAuth20Tests
     }
 
     @Test
-    public void verifySha512Algorithm() {
+    void verifySha512Algorithm() throws Throwable {
         val hash = generateHashWithAlgorithm(AlgorithmIdentifiers.RSA_USING_SHA512);
         assertEquals("EZsVCVYBY_zw4RAkJ3s759RxOZ8UingrP-52KQX4G6E", hash);
     }
 
     @Test
-    public void verifySha256Algorithm() {
+    void verifySha256Algorithm() throws Throwable {
         val hash = generateHashWithAlgorithm(AlgorithmIdentifiers.RSA_USING_SHA256);
         assertEquals("IzG3xSUlcgF_gHDCvKd3fQ", hash);
     }
 
     @Test
-    public void verifySha384Algorithm() {
+    void verifySha384Algorithm() throws Throwable {
         val hash = generateHashWithAlgorithm(AlgorithmIdentifiers.RSA_USING_SHA384);
         assertEquals("9Kb1tRRQ1YATHOB95-YAH3LHmnF2Lu7l", hash);
     }
 
     @Test
-    public void verifyUnknownAlgorithm() {
+    void verifyUnknownAlgorithm() throws Throwable {
         assertThrows(IllegalArgumentException.class, () -> generateHashWithAlgorithm("xyz"));
     }
 }

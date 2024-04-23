@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.throttle.ThrottledSubmissionHandlerEndpoint;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 
 import lombok.val;
@@ -27,17 +28,17 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Import(BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class)
 @Tag("ActuatorEndpoint")
-public class ThrottledSubmissionHandlerEndpointTests extends AbstractCasEndpointTests {
+class ThrottledSubmissionHandlerEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("throttledSubmissionHandlerEndpoint")
     private ThrottledSubmissionHandlerEndpoint throttledSubmissionHandlerEndpoint;
 
     @Autowired
-    @Qualifier("authenticationThrottle")
+    @Qualifier(ThrottledSubmissionHandlerInterceptor.BEAN_NAME)
     private ThrottledSubmissionHandlerInterceptor throttle;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertTrue(throttledSubmissionHandlerEndpoint.getRecords().isEmpty());
 
         val request = new MockHttpServletRequest();
@@ -45,9 +46,11 @@ public class ThrottledSubmissionHandlerEndpointTests extends AbstractCasEndpoint
         request.setLocalAddr("4.5.6.7");
         request.setRemoteUser("cas");
         request.addHeader("User-Agent", "Firefox");
-        ClientInfoHolder.setClientInfo(new ClientInfo(request));
+        ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         throttle.recordSubmissionFailure(request);
         assertFalse(throttledSubmissionHandlerEndpoint.getRecords().isEmpty());
+        assertDoesNotThrow(() -> throttledSubmissionHandlerEndpoint.release(false));
+        assertDoesNotThrow(() -> throttledSubmissionHandlerEndpoint.release(true));
     }
 }

@@ -9,7 +9,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.MultiValueMap;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +38,6 @@ public class YubiKeyRestHttpRequestCredentialFactory implements RestHttpRequestC
         if (StringUtils.isBlank(otp)) {
             return new ArrayList<>(0);
         }
-        return CollectionUtils.wrap(new YubiKeyCredential(otp));
+        return CollectionUtils.wrap(prepareCredential(request, new YubiKeyCredential(otp)));
     }
 }

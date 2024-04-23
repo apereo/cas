@@ -1,12 +1,15 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Configuration properties class for Person Directory.
@@ -20,6 +23,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class PersonDirectoryPrincipalResolverProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 8929912041234879300L;
 
     /**
@@ -34,14 +38,14 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
     /**
      * Return a null principal object if no attributes can be found for the principal.
      */
-    private boolean returnNull;
+    private TriStateBoolean returnNull = TriStateBoolean.UNDEFINED;
 
     /**
      * When true, throws an error back indicating that principal resolution
      * has failed and no principal can be found based on the authentication requirements.
      * Otherwise, logs the condition as an error without raising a catastrophic error.
      */
-    private boolean principalResolutionFailureFatal;
+    private TriStateBoolean principalResolutionFailureFatal = TriStateBoolean.UNDEFINED;
 
     /**
      * Uses an existing principal id that may have already
@@ -50,13 +54,13 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
      * authentication is delegated to an external identity provider
      * and a principal is first established to then query an attribute source.
      */
-    private boolean useExistingPrincipalId;
+    private TriStateBoolean useExistingPrincipalId = TriStateBoolean.UNDEFINED;
 
     /**
      * Whether attribute repositories should be contacted
-     * to fetch person attributes.
+     * to fetch person attributes. Defaults to true if not set.
      */
-    private boolean attributeResolutionEnabled = true;
+    private TriStateBoolean attributeResolutionEnabled = TriStateBoolean.UNDEFINED;
 
     /**
      * Activated attribute repository identifiers
@@ -64,7 +68,7 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
      * if attribute resolution is enabled.
      * The list here may include identifiers separated by comma.
      */
-    private String activeAttributeRepositoryIds;
+    private String activeAttributeRepositoryIds = "*";
 
     /**
      * In the event that the principal resolution engine resolves
@@ -75,4 +79,19 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
      */
     private String principalResolutionConflictStrategy = "last";
 
+    /**
+     * Principal transformation properties.
+     */
+    @NestedConfigurationProperty
+    private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
+
+    /**
+     * Control the behavior of the attribute repository selection by authentication method or handler.
+     * The map here is keyed by the authentication handler name, and the value is the attribute repository
+     * identifiers separated by comma. When the authentication handler is executed, the attribute repositories
+     * assigned to this handler will be selected to fetch attributes.
+     * Note that the resolution engine will always favor attribute repositories assigned to the
+     * service definition, if any and as part of its authentication policy, over this global setting.
+     */
+    private Map<String, String> attributeRepositorySelection = new HashMap<>();
 }

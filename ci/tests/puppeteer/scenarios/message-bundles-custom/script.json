@@ -1,0 +1,12 @@
+{
+  "dependencies": "core",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.message-bundle.cache-seconds=0",
+    "--cas.message-bundle.use-code-message=false",
+
+    "--cas.message-bundle.base-names=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/custom_messages,classpath:messages"
+  ]
+}

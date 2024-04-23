@@ -2,10 +2,12 @@ package org.apereo.cas.util.cipher;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOptionalJwtCryptographyProperties;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
+
+import static org.jooq.lambda.Unchecked.*;
 
 /**
  * This is {@link CipherExecutorUtils}.
@@ -16,7 +18,6 @@ import lombok.val;
 @UtilityClass
 public class CipherExecutorUtils {
 
-
     /**
      * New string cipher executor.
      *
@@ -25,18 +26,20 @@ public class CipherExecutorUtils {
      * @param cipherClass the cipher class
      * @return the t
      */
-    @SneakyThrows
-    public static <T extends BaseStringCipherExecutor> T newStringCipherExecutor(final EncryptionJwtSigningJwtCryptographyProperties crypto,
-                                                                                 final Class<T> cipherClass) {
-        val ctor = cipherClass.getDeclaredConstructor(String.class, String.class,
-            String.class, int.class, int.class);
-        val cipher = (T) ctor.newInstance(crypto.getEncryption().getKey(),
-            crypto.getSigning().getKey(),
-            crypto.getAlg(),
-            crypto.getSigning().getKeySize(),
-            crypto.getEncryption().getKeySize());
-        cipher.setStrategyType(BaseStringCipherExecutor.CipherOperationsStrategyType.valueOf(crypto.getStrategyType()));
-        return cipher;
+    public static <T extends BaseStringCipherExecutor> T newStringCipherExecutor(
+        final EncryptionJwtSigningJwtCryptographyProperties crypto,
+        final Class<T> cipherClass) {
+        return supplier(() -> {
+            val ctor = cipherClass.getDeclaredConstructor(String.class, String.class,
+                String.class, int.class, int.class);
+            val cipher = (T) ctor.newInstance(crypto.getEncryption().getKey(),
+                crypto.getSigning().getKey(),
+                crypto.getAlg(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
+            cipher.setStrategyType(BaseStringCipherExecutor.CipherOperationsStrategyType.valueOf(crypto.getStrategyType()));
+            return cipher;
+        }).get();
     }
 
     /**
@@ -47,19 +50,23 @@ public class CipherExecutorUtils {
      * @param cipherClass the cipher class
      * @return the t
      */
-    @SneakyThrows
-    public static <T extends BaseStringCipherExecutor> T newStringCipherExecutor(final EncryptionOptionalSigningOptionalJwtCryptographyProperties crypto,
-                                                                                 final Class<T> cipherClass) {
-        val ctor = cipherClass.getDeclaredConstructor(String.class, String.class,
-            String.class, boolean.class, boolean.class, int.class, int.class);
-        val cipher = (T) ctor.newInstance(crypto.getEncryption().getKey(),
-            crypto.getSigning().getKey(),
-            crypto.getAlg(),
-            crypto.isEncryptionEnabled(),
-            crypto.isSigningEnabled(),
-            crypto.getSigning().getKeySize(),
-            crypto.getEncryption().getKeySize());
-        cipher.setStrategyType(BaseStringCipherExecutor.CipherOperationsStrategyType.valueOf(crypto.getStrategyType()));
-        return cipher;
+    public static <T extends BaseStringCipherExecutor> T newStringCipherExecutor(
+        final EncryptionOptionalSigningOptionalJwtCryptographyProperties crypto,
+        final Class<T> cipherClass) {
+        return supplier(() -> {
+            val ctor = cipherClass.getDeclaredConstructor(String.class, String.class,
+                String.class, boolean.class, boolean.class, int.class, int.class);
+            val resolver = SpringExpressionLanguageValueResolver.getInstance();
+            val cipher = (T) ctor.newInstance(
+                resolver.resolve(crypto.getEncryption().getKey()),
+                resolver.resolve(crypto.getSigning().getKey()),
+                resolver.resolve(crypto.getAlg()),
+                crypto.isEncryptionEnabled(),
+                crypto.isSigningEnabled(),
+                crypto.getSigning().getKeySize(),
+                crypto.getEncryption().getKeySize());
+            cipher.setStrategyType(BaseStringCipherExecutor.CipherOperationsStrategyType.valueOf(crypto.getStrategyType()));
+            return cipher;
+        }).get();
     }
 }

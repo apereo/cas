@@ -3,7 +3,8 @@ package org.apereo.cas.git;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
+
+import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,19 +14,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Simple")
-public class LoggingGitProgressMonitorTests {
+@Tag("Git")
+class LoggingGitProgressMonitorTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val monitor = new LoggingGitProgressMonitor();
-        assertDoesNotThrow(new Executable() {
-            @Override
-            public void execute() {
-                monitor.onUpdate("taskName", 10);
-                monitor.onUpdate("taskName", 10, 100, 10);
-                monitor.onEndTask("taskName", 10, 100, 10);
-                monitor.onEndTask("taskName", 10, 100, 10);
-            }
+        assertDoesNotThrow(() -> {
+            monitor.onUpdate("taskName", 10, Duration.ZERO);
+            monitor.onUpdate("taskName", 10, 100, 10, Duration.ZERO);
+            monitor.onEndTask("taskName", 10, 100, 10, Duration.ZERO);
+            monitor.onEndTask("taskName", 10, 100, 10, Duration.ZERO);
         });
     }
 }

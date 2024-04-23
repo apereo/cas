@@ -5,10 +5,10 @@ import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaMapSerializer;
 import org.apereo.cas.memcached.kryo.serial.ImmutableNativeJavaSetSerializer;
 import org.apereo.cas.memcached.kryo.serial.ThrowableSerializer;
 import org.apereo.cas.memcached.kryo.serial.URLSerializer;
-import org.apereo.cas.memcached.kryo.serial.ZonedDateTimeSerializer;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.serializers.DefaultSerializers;
+import com.esotericsoftware.kryo.serializers.TimeSerializers;
 import com.esotericsoftware.kryo.util.DefaultInstantiatorStrategy;
 import de.javakaffee.kryoserializers.ArraysAsListSerializer;
 import de.javakaffee.kryoserializers.CollectionsEmptyListSerializer;
@@ -34,7 +34,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 import org.springframework.beans.factory.FactoryBean;
 
@@ -44,7 +43,11 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.security.GeneralSecurityException;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -52,6 +55,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -67,6 +71,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.regex.Pattern;
 
 /**
@@ -110,7 +116,9 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
         registerNativeJdkComponentsWithKryo(kryo);
         registerImmutableOrEmptyCollectionsWithKryo(kryo);
 
-        classesToRegister.forEach(c -> {
+        val classes = new ArrayList<>(classesToRegister);
+        classes.sort(Comparator.comparing(Class::getName));
+        classes.forEach(c -> {
             LOGGER.trace("Registering serializable class [{}] with Kryo", c.getName());
             kryo.register(c);
         });
@@ -148,10 +156,12 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
 
         ImmutableMultimapSerializer.registerSerializers(kryo);
 
-        kryo.register(Collections.EMPTY_LIST.getClass(), new CollectionsEmptyListSerializer());
-        kryo.register(Collections.EMPTY_MAP.getClass(), new CollectionsEmptyMapSerializer());
-        kryo.register(Collections.EMPTY_SET.getClass(), new CollectionsEmptySetSerializer());
-
+        //CHECKSTYLE:OFF
+        kryo.register(Collections.emptyList().getClass(), new CollectionsEmptyListSerializer());
+        kryo.register(Collections.emptyMap().getClass(), new CollectionsEmptyMapSerializer());
+        kryo.register(Collections.emptySet().getClass(), new CollectionsEmptySetSerializer());
+        //CHECKSTYLE:ON
+        
         /*
          * Can't directly access Collections classes (private class),
          * so instantiate one and do a getClass().
@@ -167,6 +177,8 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
 
         val list = Arrays.asList("key");
         kryo.register(list.getClass(), new ArraysAsListSerializer());
+
+        kryo.register(String.CASE_INSENSITIVE_ORDER.getClass());
     }
 
     private static void registerNativeJdkComponentsWithKryo(final Kryo kryo) {
@@ -179,6 +191,8 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
         kryo.register(HashMap.class);
         kryo.register(LinkedHashMap.class);
         kryo.register(LinkedHashSet.class);
+        kryo.register(ConcurrentSkipListSet.class);
+        kryo.register(ConcurrentSkipListMap.class, new DefaultSerializers.ConcurrentSkipListMapSerializer());
         kryo.register(TreeMap.class);
         kryo.register(TreeSet.class);
         kryo.register(HashSet.class);
@@ -193,7 +207,9 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
         kryo.register(double[].class);
         kryo.register(float[].class);
         kryo.register(long[].class);
+        kryo.register(char[].class);
         kryo.register(int[].class);
+        kryo.register(short[].class);
         kryo.register(byte[].class);
         kryo.register(ByteBuffer.class);
 
@@ -202,15 +218,24 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
         kryo.register(Pattern.class, new RegexSerializer());
         kryo.register(UUID.class, new UUIDSerializer());
 
-        kryo.register(ZonedDateTime.class, new ZonedDateTimeSerializer());
         kryo.register(Date.class, new DateSerializer(Date.class));
         kryo.register(Calendar.class, new GregorianCalendarSerializer());
         kryo.register(GregorianCalendar.class, new GregorianCalendarSerializer());
-        kryo.register(LocalDate.class, new JodaLocalDateSerializer());
+
+        kryo.register(Duration.class, new TimeSerializers.DurationSerializer());
+        kryo.register(Period.class, new TimeSerializers.PeriodSerializer());
+        kryo.register(LocalDate.class, new TimeSerializers.LocalDateSerializer());
+        kryo.register(ZonedDateTime.class, new TimeSerializers.ZonedDateTimeSerializer());
+        kryo.register(LocalDateTime.class, new TimeSerializers.LocalDateTimeSerializer());
+
+        kryo.register(org.joda.time.LocalDate.class, new JodaLocalDateSerializer());
         kryo.register(DateTime.class, new JodaDateTimeSerializer());
-        kryo.register(LocalDateTime.class, new JodaLocalDateTimeSerializer());
+        kryo.register(org.joda.time.LocalDateTime.class, new JodaLocalDateTimeSerializer());
+        
+        kryo.register(ZoneOffset.class, new TimeSerializers.ZoneOffsetSerializer());
+        kryo.register(ZoneId.class, new TimeSerializers.ZoneIdSerializer());
+        
         kryo.register(Clock.systemUTC().getClass());
-        kryo.register(ZoneOffset.class);
         kryo.register(EnumSet.class, new EnumSetSerializer());
     }
 }

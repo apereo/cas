@@ -13,12 +13,14 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Misagh Moayyed
  * @since 6.2.0
+ * @deprecated Since 7.0.0
  */
 @Tag("Memcached")
-public class MemcachedUtilsTests {
+@Deprecated(since = "7.0.0")
+class MemcachedUtilsTests {
 
     @Test
-    public void verifySerial() {
+    void verifySerial() throws Throwable {
         val props = new BaseMemcachedProperties();
         props.setTranscoder(BaseMemcachedProperties.TranscoderTypes.SERIAL);
         val coder = MemcachedUtils.newTranscoder(props);
@@ -26,7 +28,7 @@ public class MemcachedUtilsTests {
     }
 
     @Test
-    public void verifyWhalin() {
+    void verifyWhalin() throws Throwable {
         val props = new BaseMemcachedProperties();
         props.setTranscoder(BaseMemcachedProperties.TranscoderTypes.WHALIN);
         val coder = MemcachedUtils.newTranscoder(props);
@@ -34,7 +36,7 @@ public class MemcachedUtilsTests {
     }
 
     @Test
-    public void verifyWhalinv1() {
+    void verifyWhalinv1() throws Throwable {
         val props = new BaseMemcachedProperties();
         props.setTranscoder(BaseMemcachedProperties.TranscoderTypes.WHALINV1);
         val coder = MemcachedUtils.newTranscoder(props);
@@ -42,7 +44,7 @@ public class MemcachedUtilsTests {
     }
 
     @Test
-    public void verifyKryo() {
+    void verifyKryo() throws Throwable {
         val props = new BaseMemcachedProperties();
         props.setTranscoder(BaseMemcachedProperties.TranscoderTypes.KRYO);
         val coder = MemcachedUtils.newTranscoder(props);

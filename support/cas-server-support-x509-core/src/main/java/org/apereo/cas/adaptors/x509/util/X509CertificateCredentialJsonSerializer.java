@@ -4,7 +4,6 @@ import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCred
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
@@ -23,24 +22,28 @@ public class X509CertificateCredentialJsonSerializer extends JsonSerializer<X509
 
     @Override
     public void serialize(final X509CertificateCredential value,
-                          final JsonGenerator generator, final SerializerProvider serializerProvider)
+                          final JsonGenerator generator, final SerializerProvider serializers)
         throws IOException {
 
-        generator.writeArrayFieldStart("certificates");
+        if (serializers.getAttribute("WithType") != null) {
+            generator.writeArrayFieldStart("certificates");
+        }
         Arrays.stream(value.getCertificates()).forEach(Unchecked.consumer(c -> generator.writeBinary(c.getEncoded())));
-        generator.writeEndArray();
+        if (serializers.getAttribute("WithType") != null) {
+            generator.writeEndArray();
+        }
     }
 
     @Override
     public void serializeWithType(final X509CertificateCredential value, final JsonGenerator generator,
                                   final SerializerProvider serializers, final TypeSerializer typeSer) throws IOException {
         try {
-
+            serializers.setAttribute("WithType", Boolean.TRUE);
             typeSer.writeTypePrefix(generator, typeSer.typeId(value, JsonToken.START_OBJECT));
             serialize(value, generator, serializers);
             typeSer.writeTypeSuffix(generator, typeSer.typeId(value, JsonToken.START_OBJECT));
-        } catch (final Exception e) {
-            throw new JsonMappingException(generator, "Unable to serialize X509 certificate", e);
+        } finally {
+            serializers.setAttribute("WithType", Boolean.FALSE);
         }
     }
 

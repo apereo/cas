@@ -7,11 +7,8 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -23,20 +20,19 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("OAuth")
-public class DefaultOAuth20ProfileScopeToAttributesFilterTests extends AbstractOAuth20Tests {
+class DefaultOAuth20ProfileScopeToAttributesFilterTests extends AbstractOAuth20Tests {
 
     @Autowired
-    @Qualifier("profileScopeToAttributesFilter")
+    @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
     private OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val principal = RegisteredServiceTestUtils.getPrincipal();
         val input = profileScopeToAttributesFilter.filter(
             RegisteredServiceTestUtils.getService(),
             principal,
             RegisteredServiceTestUtils.getRegisteredService(),
-            new JEEContext(new MockHttpServletRequest(), new MockHttpServletResponse()),
             mock(OAuth20AccessToken.class));
         assertEquals(input, principal);
         assertTrue(profileScopeToAttributesFilter.getAttributeReleasePolicies().isEmpty());

@@ -8,8 +8,12 @@ import org.apereo.cas.services.RegisteredService;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ApplicationContext;
+import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.Serial;
 
 /**
  * Multifactor Bypass based on Principal Attributes.
@@ -20,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @Getter
 public class PrincipalMultifactorAuthenticationProviderBypassEvaluator extends BaseMultifactorAuthenticationProviderBypassEvaluator {
+    @Serial
     private static final long serialVersionUID = -7553435418344342672L;
 
     private final String attributeName;
@@ -27,14 +32,13 @@ public class PrincipalMultifactorAuthenticationProviderBypassEvaluator extends B
     private final String attributeValue;
 
     public PrincipalMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
-                                                                     final String providerId) {
-        this(bypassProperties.getPrincipalAttributeName(), bypassProperties.getPrincipalAttributeValue(), providerId);
+                                                                     final String providerId, final ApplicationContext applicationContext) {
+        this(bypassProperties.getPrincipalAttributeName(), bypassProperties.getPrincipalAttributeValue(), providerId, applicationContext);
     }
 
-    public PrincipalMultifactorAuthenticationProviderBypassEvaluator(final String attributeName,
-                                                                     final String attributeValue,
-                                                                     final String providerId) {
-        super(providerId);
+    public PrincipalMultifactorAuthenticationProviderBypassEvaluator(final String attributeName, final String attributeValue,
+                                                                     final String providerId, final ApplicationContext applicationContext) {
+        super(providerId, applicationContext);
         this.attributeName = attributeName;
         this.attributeValue = attributeValue;
     }
@@ -44,10 +48,11 @@ public class PrincipalMultifactorAuthenticationProviderBypassEvaluator extends B
                                                                           final RegisteredService registeredService,
                                                                           final MultifactorAuthenticationProvider provider,
                                                                           final HttpServletRequest request) {
-        val principal = authentication.getPrincipal();
+        val principal = resolvePrincipal(authentication.getPrincipal());
         LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], service [{}] and provider [{}]",
             principal.getId(), registeredService, provider);
-        val bypass = locateMatchingAttributeValue(this.attributeName, this.attributeValue, principal.getAttributes(), true);
+        val bypass = locateMatchingAttributeValue(this.attributeName, StringUtils.commaDelimitedListToSet(attributeValue),
+            principal.getAttributes(), true);
         if (bypass) {
             LOGGER.debug("Bypass rules for principal [{}] indicate the request may be ignored", principal.getId());
             return false;

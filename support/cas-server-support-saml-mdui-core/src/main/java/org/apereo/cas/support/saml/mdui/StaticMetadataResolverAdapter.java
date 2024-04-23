@@ -16,11 +16,6 @@ import java.util.Map;
  */
 @NoArgsConstructor
 public class StaticMetadataResolverAdapter extends AbstractMetadataResolverAdapter {
-    /**
-     * Instantiates a new static metadata resolver adapter.
-     *
-     * @param metadataResources the metadata resources
-     */
     public StaticMetadataResolverAdapter(final Map<Resource, MetadataFilterChain> metadataResources) {
         super(metadataResources);
     }

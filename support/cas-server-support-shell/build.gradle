@@ -1,9 +1,18 @@
-project.ext["mainClassName"] = "org.apereo.cas.CasCommandLineShellApplication"
-project.ext["forceBootifulArtifact"] = true
+ext {
+    forceBootifulArtifact = true
+    mainClassName = "org.apereo.cas.CasCommandLineShellApplication"
+    publishMetadata = true
+    projectMetadata = [
+            category: "Developer",
+            title: "Command-line Shell",
+            aliases: ["shell"],
+            selectable: false
+    ]
+}
 
 apply from: rootProject.file("gradle/springboot.gradle")
 
-description = "Apereo CAS Shell Support via Spring Shell"
+description = "Apereo CAS Commandline Shell Support via Spring Shell"
 
 dependencies {
     api project(":api:cas-server-core-api-services")
@@ -16,14 +25,16 @@ dependencies {
     implementation project(":core:cas-server-core-logging-api")
     implementation project(":core:cas-server-core-configuration-metadata-repository")
 
+    implementation project(":support:cas-server-support-shell-core")
     implementation project(":support:cas-server-support-jpa-util")
     implementation project(":support:cas-server-support-jpa-hibernate")
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":support:cas-server-support-oidc-services")
+    implementation project(":support:cas-server-support-oidc-core-api")
     implementation project(":support:cas-server-support-saml-core-api")
+    implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-idp-core")
     implementation project(":support:cas-server-support-ws-idp-api")
-    implementation project(":support:cas-server-support-gauth-core-mfa")
     implementation project(":support:cas-server-support-otp-mfa-core")
     implementation project(":support:cas-server-support-consent-api")
     
@@ -34,6 +45,7 @@ dependencies {
     implementation libraries.nimbus
     implementation libraries.snakeyaml
     implementation libraries.jasypt
+    implementation libraries.jose4j
     implementation libraries.bouncycastle
     implementation libraries.opensaml
     implementation libraries.dropwizard

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.cas.Pac4jCasClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oauth.Pac4jOAuth20ClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
@@ -13,6 +14,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +32,7 @@ import java.util.List;
 @JsonFilter("Pac4jDelegatedAuthenticationProperties")
 public class Pac4jDelegatedAuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 4388567744591488495L;
 
     /**
@@ -44,6 +47,14 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private Pac4jDelegatedAuthenticationProvisioningProperties provisioning = new Pac4jDelegatedAuthenticationProvisioningProperties();
+
+    /**
+     * Handle profile selection ops when checking for multiple profiles
+     * from external identity providers.
+     */
+    @NestedConfigurationProperty
+    private Pac4jDelegatedAuthenticationProfileSelectionProperties profileSelection = new Pac4jDelegatedAuthenticationProfileSelectionProperties();
+
 
     /**
      * Settings that deal with having Facebook as an external delegated-to authentication provider.
@@ -88,12 +99,6 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private Pac4jDelegatedAuthenticationDropboxProperties dropbox = new Pac4jDelegatedAuthenticationDropboxProperties();
-
-    /**
-     * Settings that deal with having Orcid as an external delegated-to authentication provider.
-     */
-    @NestedConfigurationProperty
-    private Pac4jDelegatedAuthenticationOrcidProperties orcid = new Pac4jDelegatedAuthenticationOrcidProperties();
 
     /**
      * Settings that deal with having Github as an external delegated-to authentication provider.
@@ -169,4 +174,10 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private Pac4jDelegatedAuthenticationCookieProperties cookie = new Pac4jDelegatedAuthenticationCookieProperties();
+
+    /**
+     * Webflow auto-configuration settings.
+     */
+    @NestedConfigurationProperty
+    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties();
 }

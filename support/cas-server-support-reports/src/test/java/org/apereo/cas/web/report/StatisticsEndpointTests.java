@@ -21,17 +21,17 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "management.endpoint.statistics.enabled=true")
 @Tag("ActuatorEndpoint")
-public class StatisticsEndpointTests extends AbstractCasEndpointTests {
+class StatisticsEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("statisticsReportEndpoint")
     private StatisticsEndpoint statisticsEndpoint;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
+    @Qualifier(CentralAuthenticationService.BEAN_NAME)
     private CentralAuthenticationService centralAuthenticationService;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws Throwable {
         val result = CoreAuthenticationTestUtils.getAuthenticationResult();
         val tgt1 = centralAuthenticationService.createTicketGrantingTicket(result);
         val st1 = centralAuthenticationService.grantServiceTicket(tgt1.getId(),
@@ -47,7 +47,7 @@ public class StatisticsEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val results = statisticsEndpoint.handle();
         assertFalse(results.isEmpty());
     }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.MediaType;
 
+import java.io.Serial;
 import java.net.URL;
 
 /**
@@ -24,6 +25,7 @@ public class LogoutHttpMessage extends HttpMessage {
      */
     public static final String LOGOUT_REQUEST_PARAMETER = "logoutRequest";
 
+    @Serial
     private static final long serialVersionUID = 399581521957873727L;
 
     public LogoutHttpMessage(final URL url, final String message, final boolean asynchronous) {

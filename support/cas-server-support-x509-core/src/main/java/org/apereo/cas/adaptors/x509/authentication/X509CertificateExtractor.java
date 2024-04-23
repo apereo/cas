@@ -1,6 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.cert.X509Certificate;
 
 /**

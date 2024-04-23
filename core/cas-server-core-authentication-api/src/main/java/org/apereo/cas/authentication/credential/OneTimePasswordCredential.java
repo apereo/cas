@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.credential;
 
-import org.apereo.cas.authentication.CredentialMetaData;
+import org.apereo.cas.authentication.CredentialMetadata;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -8,12 +8,14 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * Describes a one-time-password credential that contains an optional unique identifier and required password.
  * The primary difference between this component and {@link UsernamePasswordCredential} is that the username/ID is optional
  * in the former and requisite in the latter.
  * <p>
- * This class implements {@link CredentialMetaData} since the one-time-password is safe for long-term storage after
+ * This class implements {@link CredentialMetadata} since the one-time-password is safe for long-term storage after
  * authentication. Note that metadata is stored only _after_ authentication, at which time the OTP has already
  * been consumed and by definition is no longer useful for authentication.
  *
@@ -25,9 +27,7 @@ import lombok.ToString;
 @ToString(callSuper = true, exclude = "password")
 public class OneTimePasswordCredential extends BasicIdentifiableCredential {
 
-    /**
-     * Serialization version marker.
-     */
+    @Serial
     private static final long serialVersionUID = 1892587671827699709L;
 
     /**

@@ -1,47 +1,25 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders;
 
-import org.apereo.cas.support.saml.SamlException;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.util.Saml20ObjectBuilder;
 
 import org.opensaml.core.xml.XMLObject;
-import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.saml.saml2.core.RequestAbstractType;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * The {@link SamlProfileObjectBuilder} defines the operations
  * required for building the saml response for an RP.
  *
- * @param <T> the type parameter
  * @author Misagh Moayyed
+ * @param <T> the type parameter
  * @since 5.0.0
  */
-@FunctionalInterface
-public interface SamlProfileObjectBuilder<T extends XMLObject> {
+public interface SamlProfileObjectBuilder<T extends XMLObject> extends Saml20ObjectBuilder {
 
     /**
-     * Build response.
+     * Build.
      *
-     * @param authnRequest          the authn request
-     * @param request               the request
-     * @param response              the response
-     * @param assertion             the assertion
-     * @param service               the service
-     * @param adaptor               the adaptor
-     * @param binding               the binding
-     * @param messageContext        the message context
+     * @param context the context
      * @return the response
-     * @throws SamlException the exception
+     * @throws Exception the exception
      */
-    T build(RequestAbstractType authnRequest,
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Object assertion,
-            SamlRegisteredService service,
-            SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-            String binding,
-            MessageContext messageContext) throws SamlException;
+    T build(SamlProfileBuilderContext context) throws Exception;
 }

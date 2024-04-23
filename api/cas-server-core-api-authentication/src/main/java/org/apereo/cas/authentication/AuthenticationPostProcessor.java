@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.Ordered;
 
 /**
@@ -12,7 +13,7 @@ import org.springframework.core.Ordered;
  * @since 5.2.0
  */
 @FunctionalInterface
-public interface AuthenticationPostProcessor extends Ordered {
+public interface AuthenticationPostProcessor extends Ordered, DisposableBean {
 
     @Override
     default int getOrder() {
@@ -24,17 +25,32 @@ public interface AuthenticationPostProcessor extends Ordered {
      *
      * @param builder     Builder object that temporarily holds authentication metadata.
      * @param transaction The authentication transaction.
-     * @throws AuthenticationException the authn security exception
+     * @throws Throwable the authn security exception
      */
-    void process(AuthenticationBuilder builder, AuthenticationTransaction transaction) throws AuthenticationException;
+    void process(AuthenticationBuilder builder, AuthenticationTransaction transaction) throws Throwable;
 
     /**
      * Determines whether the processor has the capability to perform tasks on the given credential.
      *
      * @param credential The credential to check.
      * @return True if processor supports the Credential, false otherwise.
+     * @throws Throwable the throwable
      */
-    default boolean supports(final Credential credential) {
+    default boolean supports(final Credential credential) throws Throwable {
         return true;
+    }
+
+    @Override
+    default void destroy() throws Exception {
+    }
+
+    /**
+     * No authentication post processor.
+     *
+     * @return the authentication post processor
+     */
+    static AuthenticationPostProcessor none() {
+        return (builder, transaction) -> {
+        };
     }
 }

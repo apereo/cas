@@ -41,13 +41,13 @@ It's worth pointing out some important characteristics of this architecture:
 * Dependent systems can tolerate up to N-1 node failures. (Where N is the total number of nodes.)
 * CAS itself can tolerate up to N-1 node failures.
 * Loss of a cache node DOES NOT cause loss of SSO state data (i.e. tickets) in replicating caches.
-* Loss of a cache node MAY cause loss of SSO state data in non-replicating caches (e.g. memcached).
+* Loss of a cache node MAY cause loss of SSO state data in non-replicating caches.
 * Loss of SSO state data is always graceful: users re-authenticate.
 
 Before proceeding into a detailed discussion of various aspects of the recommended architecture, we offer a guiding
 principle for planning a highly available deployment:
 
-<div class="alert alert-info"><strong>Aim for Simplicity</strong><p>Design the simplest solution that meets performance and availability requirements.</p></div>
+<div class="alert alert-info">:information_source: <strong>Aim for Simplicity</strong><p>Design the simplest solution that meets performance and availability requirements.</p></div>
 
 Experience has shown that simplicity is a vital system characteristic of successful and robust HA deployments.
 Strive for simplicity and you will be well served.
@@ -196,7 +196,7 @@ desirable periods for node failover. A [reverse proxy](http://httpd.apache.org/d
 [software load balancer](http://www.linuxvirtualserver.org/software/ipvs.html) are recommended alternatives to hardware.
 
 
-### HA Ticket Registry
+## HA Ticket Registry
 
 The following [ticket storage components](../ticketing/Configuring-Ticketing-Components.html) provide the best tradeoff among ease of use, scalability, and
 fault tolerance and are suitable for both active/passive and active/active setups.
@@ -206,47 +206,40 @@ and availability considerations. It's hardly valuable to have a high-performance
 expertise to troubleshoot when problems invariably arise.
 
 The technology considerations of the various storage components merit some discussion since there are notable
-differences that impact availability and performance characteristics. Cache systems like Ehcache and Hazelcast
+differences that impact availability and performance characteristics. Cache systems like Hazelcast
 offer a distributed cache that presents a single, consistent view of entries regardless
-of the node contacted. Distributed caches rely on replication to provide for consistency. Cache systems like memcached
-store the ticket on exactly 1 node and use a deterministic algorithm to locate the node containing the ticket:
+of the node contacted. Distributed caches rely on replication to provide for consistency. These sorts of cache systems 
+do not require replication and generally provide for simplicity at the expense of some durability.
 
-    N' = f(h(T), N1, N2, N3, ... Nm)
-
-where _h(T)_ is the hash of the ticket ID, _N1 ... Nm_ is the set of cache nodes, and _N'_ is member of _N ... Nm_.
-
-These sorts of cache systems do not require replication and generally provide for simplicity at the expense of some
-durability.
-
-##### Secure Cache Replication
+### Secure Cache Replication
 
 A number of cache-based ticket registries support secure replication of ticket data across the wire, 
 so that tickets are encrypted and signed on replication attempts to prevent sniffing and eavesdrops. 
 [See this guide](../installation/Ticket-Registry-Replication-Encryption.html) for more info. 
 
 
-### Distributing Service Definitions
+## Distributing Service Definitions
 
 In an HA environment, service definitions must be replicated and accessible by all nodes in 
 the CAS cluster. Typically, this may be achieved by leveraging centralized [registry implementations](../services/Service-Management.html) that are backed 
 by JPA, LDAP, MongoDb, etc. Registries that are backed by the file system need to devise a process of ensuring proper file 
 replication, either manually or via a background daemon.
 
-### Connection Pooling
+## Connection Pooling
 
 We _strongly_ recommend that all IO connections to a back-end data stores, such as LDAP directories and databases,
 leverage connection pooling where possible. It makes the best use of computational 
 (especially for SSL/TLS connections) and IO resources while providing the best performance characteristics.
 
 
-### Monitoring
+## Monitoring
 
 CAS adopters typically implement monitoring of the availability of the CAS service using the tools already 
 in use in operational practice for monitoring other enterprise web applications. CAS introduces a new 
 modest monitoring page with authentication by default by the remote_address of the requestor.
 
 
-### Channel Confidentiality
+## Channel Confidentiality
 
 Channel Confidentiality (via SSL/TLS) is assumed and critical to the security posture of the CAS system. 
 This includes both front-channel (between user browser-agent and CAS server) and back-channel 
@@ -255,7 +248,7 @@ content filters and CAS nodes, as well as primary authentication (e.g. LDAPS) an
 Any break in the privacy controls at any stage comprises the overall security of the system.
 
 
-### Upgrades
+## Upgrades
 
 CAS server upgrades should be carried out through the recommended [WAR overlay approach](../installation/WAR-Overlay-Installation.html). Established as a best 
 practice, the overlay approach allows one to seamlessly obtain the intended CAS server version from well 

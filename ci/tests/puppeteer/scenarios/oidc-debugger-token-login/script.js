@@ -1,41 +1,24 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
+
+const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: false
-    });
-    const page = await browser.newPage();
-    const url = "https://localhost:8443/cas/oidc/authorize?" +
+    const browser = await cas.newBrowser(cas.browserOptions());
+    const page = await cas.newPage(browser);
+    const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
         "client_id=client&" +
         "redirect_uri=https%3A%2F%2Foidcdebugger.com%2Fdebug&" +
         "scope=openid%20email%20profile%20address%20phone&" +
         "response_type=token&" +
         "response_mode=form_post&" +
         "nonce=vn4qulthnx";
-    await page.goto(url);
+    await cas.goto(page, url);
 
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
-    await page.waitForTimeout(1000)
+    await cas.loginWith(page);
+    await cas.sleep(1000);
 
-    await click(page, "#allow");
-    await page.waitForNavigation();
-    await page.waitForTimeout(2000)
-
-    let element = await page.$('h1.green-text');
-    let header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
-    assert(header === "Success!")
-
+    await cas.click(page, "#allow");
+    await cas.waitForNavigation(page);
+    await cas.assertTextContent(page, "h1.green-text", "Success!");
     await browser.close();
 })();
 
-async function click(page, button) {
-    await page.evaluate((button) => {
-        document.querySelector(button).click();
-    }, button);
-}

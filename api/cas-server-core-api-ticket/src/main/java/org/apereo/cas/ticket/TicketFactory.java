@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 /**
  * The {@link TicketFactory} is an abstraction that decides
  * how CAS ticket factory objects are created.
@@ -7,8 +9,12 @@ package org.apereo.cas.ticket;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@FunctionalInterface
 public interface TicketFactory {
+
+    /**
+     * Default implementation bean name.
+     */
+    String BEAN_NAME = "defaultTicketFactory";
 
     /**
      * Gets name.
@@ -25,7 +31,8 @@ public interface TicketFactory {
      * @param clazz the clazz
      * @return ticket factory object
      */
-    default TicketFactory get(Class<? extends Ticket> clazz) {
+    @CanIgnoreReturnValue
+    default TicketFactory get(final Class<? extends Ticket> clazz) {
         return this;
     }
 
@@ -35,4 +42,11 @@ public interface TicketFactory {
      * @return the ticket type
      */
     Class<? extends Ticket> getTicketType();
+
+    /**
+     * Gets expiration policy builder.
+     *
+     * @return the expiration policy builder
+     */
+    ExpirationPolicyBuilder getExpirationPolicyBuilder();
 }

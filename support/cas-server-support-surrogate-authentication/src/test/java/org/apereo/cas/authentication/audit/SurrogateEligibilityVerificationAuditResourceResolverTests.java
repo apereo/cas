@@ -20,10 +20,10 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Audits")
-public class SurrogateEligibilityVerificationAuditResourceResolverTests {
+class SurrogateEligibilityVerificationAuditResourceResolverTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val resolver = new SurrogateEligibilityVerificationAuditResourceResolver();
         val jp = mock(JoinPoint.class);
         val result = AuditableExecutionResult.builder()

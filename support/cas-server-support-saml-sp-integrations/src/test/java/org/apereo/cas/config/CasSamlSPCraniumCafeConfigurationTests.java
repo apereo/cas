@@ -9,16 +9,16 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
+@Tag("SAMLServiceProvider")
 @TestPropertySource(properties = {
     "cas.saml-sp.cranium-cafe.metadata=classpath:/metadata/sp-metadata.xml",
     "cas.saml-sp.cranium-cafe.name-id-attribute=cn",
     "cas.saml-sp.cranium-cafe.name-id-format=transient"
 })
-public class CasSamlSPCraniumCafeConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPCraniumCafeConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
     @Override
     protected String getServiceProviderId() {
-        return casProperties.getSamlSp().getCraniumCafe().getEntityIds().get(0);
+        return casProperties.getSamlSp().getCraniumCafe().getEntityIds().getFirst();
     }
 }

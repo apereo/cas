@@ -1,20 +1,26 @@
 package org.apereo.cas.pm.impl;
 
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
-import org.apereo.cas.pm.config.PasswordManagementConfiguration;
-
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -25,34 +31,49 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    PasswordManagementConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreUtilConfiguration.class
+    WebMvcAutoConfiguration.class,
+    CasPasswordManagementAutoConfiguration.class,
+    CasCoreTicketsAutoConfiguration.class,
+    CasCoreServicesAutoConfiguration.class,
+    CasCoreWebAutoConfiguration.class,
+    CasCoreNotificationsAutoConfiguration.class,
+    CasCoreAuditAutoConfiguration.class,
+    CasCoreUtilAutoConfiguration.class,
+    CasCoreAutoConfiguration.class,
+    CasCoreLogoutAutoConfiguration.class,
+    CasCoreAuthenticationAutoConfiguration.class
 }, properties = {
     "cas.authn.pm.core.enabled=true",
     "cas.authn.pm.groovy.location=classpath:/GroovyPasswordMgmt.groovy"
 })
 @Tag("Groovy")
-public class GroovyResourcePasswordManagementServiceTests {
+class GroovyResourcePasswordManagementServiceTests {
 
     @Autowired
-    @Qualifier("passwordChangeService")
+    @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
     private PasswordManagementService passwordChangeService;
 
     @Test
-    public void verifyFindEmail() {
+    void verifyFindEmail() throws Throwable {
         assertNotNull(passwordChangeService.findEmail(PasswordManagementQuery.builder().username("casuser").build()));
     }
 
     @Test
-    public void verifyFindUser() {
+    void verifyFindUser() throws Throwable {
         assertNotNull(passwordChangeService.findUsername(PasswordManagementQuery.builder().username("casuser@example.org").build()));
     }
 
     @Test
-    public void verifyChangePassword() {
-        assertTrue(passwordChangeService.change(
-            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "password"),
-            new PasswordChangeRequest("casuser", "password", "password")));
+    void verifyChangePassword() throws Throwable {
+        val request = new PasswordChangeRequest("casuser", "current-psw".toCharArray(), "password".toCharArray(), "password".toCharArray());
+        assertTrue(passwordChangeService.change(request));
+    }
+
+    @Test
+    void verifySecurityQuestions() throws Throwable {
+        val query = PasswordManagementQuery.builder().username("casuser@example.org").build();
+        assertFalse(passwordChangeService.getSecurityQuestions(query).isEmpty());
+        query.securityQuestion("Q1", "A1");
+        assertDoesNotThrow(() -> passwordChangeService.updateSecurityQuestions(query));
     }
 }

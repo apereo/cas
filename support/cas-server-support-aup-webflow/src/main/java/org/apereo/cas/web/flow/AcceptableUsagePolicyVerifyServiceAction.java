@@ -6,13 +6,16 @@ import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
-import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.aup.AcceptableUsagePolicyStatus;
+import org.apereo.cas.services.WebBasedRegisteredService;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -24,20 +27,21 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.1
  */
 @RequiredArgsConstructor
-public class AcceptableUsagePolicyVerifyServiceAction extends AbstractAction {
+public class AcceptableUsagePolicyVerifyServiceAction extends BaseCasWebflowAction {
     private final AcceptableUsagePolicyRepository repository;
 
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
-    /**
-     * Verify whether the policy is accepted.
-     *
-     * @param context    the context
-     * @param credential the credential
-     * @return success if policy is accepted. {@link CasWebflowConstants#TRANSITION_ID_AUP_MUST_ACCEPT} otherwise.
-     */
-    private Event verify(final RequestContext context, final Credential credential) {
-        val registeredService = WebUtils.getRegisteredService(context);
+    @Audit(action = AuditableActions.AUP_VERIFY,
+        actionResolverName = AuditActionResolvers.AUP_VERIFY_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.AUP_VERIFY_RESOURCE_RESOLVER)
+    @Override
+    protected Event doExecuteInternal(final RequestContext requestContext) {
+        return FunctionUtils.doUnchecked(() -> verify(requestContext));
+    }
+
+    private Event verify(final RequestContext context) throws Throwable {
+        val registeredService = (WebBasedRegisteredService) WebUtils.getRegisteredService(context);
 
         if (registeredService != null) {
             val authentication = WebUtils.getAuthentication(context);
@@ -47,25 +51,18 @@ public class AcceptableUsagePolicyVerifyServiceAction extends AbstractAction {
                 .service(service)
                 .authentication(authentication)
                 .registeredService(registeredService)
-                .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                 .build();
             val accessResult = registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
 
             val aupEnabled = registeredService.getAcceptableUsagePolicy() != null
-                && registeredService.getAcceptableUsagePolicy().isEnabled();
-            if (aupEnabled && !repository.verify(context, credential).isAccepted()) {
+                             && registeredService.getAcceptableUsagePolicy().isEnabled();
+            val res = ObjectUtils.defaultIfNull(aupEnabled ? repository.verify(context) : null,
+                AcceptableUsagePolicyStatus.skipped(authentication.getPrincipal()));
+            if (res.isDenied()) {
                 return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_AUP_MUST_ACCEPT);
             }
         }
         return null;
-    }
-
-    @Audit(action = AuditableActions.AUP_VERIFY,
-        actionResolverName = AuditActionResolvers.AUP_VERIFY_ACTION_RESOLVER,
-        resourceResolverName = AuditResourceResolvers.AUP_VERIFY_RESOURCE_RESOLVER)
-    @Override
-    public Event doExecute(final RequestContext requestContext) {
-        return verify(requestContext, WebUtils.getCredential(requestContext));
     }
 }

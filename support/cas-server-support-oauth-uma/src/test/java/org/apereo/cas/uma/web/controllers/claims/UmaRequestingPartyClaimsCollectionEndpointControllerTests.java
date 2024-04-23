@@ -2,17 +2,17 @@ package org.apereo.cas.uma.web.controllers.claims;
 
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.InvalidTicketException;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.servlet.view.RedirectView;
-
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -23,9 +23,9 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("UMA")
-public class UmaRequestingPartyClaimsCollectionEndpointControllerTests extends BaseUmaEndpointControllerTests {
+class UmaRequestingPartyClaimsCollectionEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
-    public void verifyOp() {
+    void verifyOp() throws Throwable {
         val id = UUID.randomUUID().toString();
         val service = getRegisteredService(id, "secret");
         servicesManager.save(service);
@@ -33,20 +33,28 @@ public class UmaRequestingPartyClaimsCollectionEndpointControllerTests extends B
         val results = authenticateUmaRequestWithProtectionScope();
 
         val ticketId = UUID.randomUUID().toString();
-        val permissionTicket = mock(UmaPermissionTicket.class);
-        when(permissionTicket.getId()).thenReturn(ticketId);
-        when(permissionTicket.isExpired()).thenReturn(Boolean.FALSE);
-        when(permissionTicket.getClaims()).thenReturn(new HashMap<>());
+        val permissionTicket = getUmaPermissionTicket(ticketId);
+
         ticketRegistry.addTicket(permissionTicket);
 
         val view = umaRequestingPartyClaimsCollectionEndpointController.getClaims(id,
             service.getServiceId(), ticketId,
             "state", results.getLeft(), results.getMiddle());
-        assertTrue(view instanceof RedirectView);
+        assertInstanceOf(RedirectView.class, view);
+    }
+
+    private static UmaPermissionTicket getUmaPermissionTicket(final String ticketId) {
+        val permissionTicket = mock(UmaPermissionTicket.class);
+        when(permissionTicket.getId()).thenReturn(ticketId);
+        when(permissionTicket.isExpired()).thenReturn(Boolean.FALSE);
+        when(permissionTicket.getClaims()).thenReturn(new HashMap<>());
+        when(permissionTicket.getCreationTime()).thenReturn(ZonedDateTime.now(Clock.systemUTC()));
+        when(permissionTicket.getExpirationPolicy()).thenReturn(NeverExpiresExpirationPolicy.INSTANCE);
+        return permissionTicket;
     }
 
     @Test
-    public void verifyInvalidRedirect() {
+    void verifyInvalidRedirect() throws Throwable {
         val id = UUID.randomUUID().toString();
         val service = getRegisteredService(id, "secret");
         servicesManager.save(service);
@@ -54,10 +62,7 @@ public class UmaRequestingPartyClaimsCollectionEndpointControllerTests extends B
         val results = authenticateUmaRequestWithProtectionScope();
 
         val ticketId = UUID.randomUUID().toString();
-        val permissionTicket = mock(UmaPermissionTicket.class);
-        when(permissionTicket.getId()).thenReturn(ticketId);
-        when(permissionTicket.isExpired()).thenReturn(Boolean.FALSE);
-        when(permissionTicket.getClaims()).thenReturn(new HashMap<>());
+        val permissionTicket = getUmaPermissionTicket(ticketId);
         ticketRegistry.addTicket(permissionTicket);
 
         assertThrows(UnauthorizedServiceException.class,
@@ -67,7 +72,7 @@ public class UmaRequestingPartyClaimsCollectionEndpointControllerTests extends B
     }
 
     @Test
-    public void verifyInvalidTicket() {
+    void verifyInvalidTicket() throws Throwable {
         val id = UUID.randomUUID().toString();
         val service = getRegisteredService(id, "secret");
         servicesManager.save(service);
@@ -75,10 +80,8 @@ public class UmaRequestingPartyClaimsCollectionEndpointControllerTests extends B
         val results = authenticateUmaRequestWithProtectionScope();
 
         val ticketId = UUID.randomUUID().toString();
-        val permissionTicket = mock(UmaPermissionTicket.class);
-        when(permissionTicket.getId()).thenReturn(ticketId);
+        val permissionTicket = getUmaPermissionTicket(ticketId);
         when(permissionTicket.isExpired()).thenReturn(Boolean.TRUE);
-        when(permissionTicket.getClaims()).thenReturn(new HashMap<>());
         ticketRegistry.addTicket(permissionTicket);
 
         assertThrows(InvalidTicketException.class,

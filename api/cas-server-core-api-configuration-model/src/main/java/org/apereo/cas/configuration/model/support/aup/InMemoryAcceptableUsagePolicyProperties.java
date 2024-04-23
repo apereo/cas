@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.aup;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -7,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -20,7 +22,8 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("InMemoryAcceptableUsagePolicyProperties")
-public class InMemoryAcceptableUsagePolicyProperties implements Serializable {
+public class InMemoryAcceptableUsagePolicyProperties implements CasFeatureModule, Serializable {
+    @Serial
     private static final long serialVersionUID = 8164227843747126083L;
 
     /**

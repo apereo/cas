@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 public class ChainingMultifactorAuthenticationProviderSelector extends RankedMultifactorAuthenticationProviderSelector {
-
+    private final ConfigurableApplicationContext applicationContext;
     private final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator;
 
     @Override
@@ -27,7 +28,7 @@ public class ChainingMultifactorAuthenticationProviderSelector extends RankedMul
         final List<MultifactorAuthenticationProvider> providers) {
 
         if (providers.size() > 1) {
-            val provider = new DefaultChainingMultifactorAuthenticationProvider(failureModeEvaluator);
+            val provider = new DefaultChainingMultifactorAuthenticationProvider(applicationContext, failureModeEvaluator);
             provider.addMultifactorAuthenticationProviders(providers);
             return provider;
         }

@@ -1,12 +1,11 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.attr;
 
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.util.DefaultSaml20AttributeBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.opensaml.saml.saml2.core.Attribute;
@@ -23,14 +22,13 @@ import org.opensaml.saml.saml2.core.AttributeStatement;
 public class SamlProfileSamlRegisteredServiceAttributeBuilder extends DefaultSaml20AttributeBuilder {
     private final SamlRegisteredService service;
 
-    private final SamlRegisteredServiceServiceProviderMetadataFacade adaptor;
+    private final SamlRegisteredServiceMetadataAdaptor adaptor;
 
     private final SamlIdPObjectEncrypter samlObjectEncrypter;
 
     @Override
-    @SneakyThrows
     public void build(final AttributeStatement attrStatement, final Attribute attribute) {
-        if (!service.isEncryptAttributes() || !shouldEncryptAttribute(attribute)) {
+        if (!service.isEncryptAttributes() || !shouldEncryptAttribute(attribute) || service.isEncryptAssertions()) {
             LOGGER.debug("Service [{}] is configured to not encrypt attributes for [{}]", service.getName(), attribute.getName());
             super.build(attrStatement, attribute);
             return;
@@ -52,7 +50,7 @@ public class SamlProfileSamlRegisteredServiceAttributeBuilder extends DefaultSam
             LOGGER.debug("No explicit attribute encryption rules are defined; Attribute [{}] is selected for encryption.", attribute.getName());
             return true;
         }
-        if (encryptableAttributes.contains(attribute.getName())) {
+        if (encryptableAttributes.contains(attribute.getName()) || encryptableAttributes.contains(attribute.getFriendlyName())) {
             LOGGER.debug("Attribute encryption rules allow [{}] to be encrypted", attribute.getName());
             return true;
         }

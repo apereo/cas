@@ -1,11 +1,14 @@
 package org.apereo.cas.ticket.expiration;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.ticket.TicketState;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import java.io.Serial;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -17,35 +20,36 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Tickets")
-public class DelegatingExpirationPolicyTests {
+class DelegatingExpirationPolicyTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val policy = new BaseDelegatingExpirationPolicy() {
+            @Serial
             private static final long serialVersionUID = -5896270899735612574L;
 
             @Override
-            protected String getExpirationPolicyNameFor(final TicketState ticketState) {
-                if (ticketState.getAuthentication().getPrincipal().getId().equals("expired")) {
+            protected String getExpirationPolicyNameFor(final AuthenticationAwareTicket ticketState) {
+                if ("expired".equals(ticketState.getAuthentication().getPrincipal().getId())) {
                     return AlwaysExpiresExpirationPolicy.class.getSimpleName();
                 }
                 return POLICY_NAME_DEFAULT;
             }
         };
-        policy.addPolicy(BaseDelegatingExpirationPolicy.POLICY_NAME_DEFAULT, new AlwaysExpiresExpirationPolicy());
+        policy.addPolicy(BaseDelegatingExpirationPolicy.POLICY_NAME_DEFAULT, AlwaysExpiresExpirationPolicy.INSTANCE);
         policy.addPolicy(new NeverExpiresExpirationPolicy());
 
-        var ticketState = mock(TicketState.class);
+        var ticketState = mock(TicketGrantingTicketAwareTicket.class);
         when(ticketState.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("cas"));
         assertTrue(policy.isExpired(ticketState));
-        assertEquals((long) policy.getTimeToLive(ticketState), 0);
-        assertEquals((long) policy.getTimeToLive(), 0);
-        assertEquals((long) policy.getTimeToIdle(), 0);
+        assertEquals(0, (long) policy.getTimeToLive(ticketState));
+        assertEquals(0, (long) policy.getTimeToLive());
+        assertEquals(0, (long) policy.getTimeToIdle());
 
-        ticketState = mock(TicketState.class);
+        ticketState = mock(TicketGrantingTicketAwareTicket.class);
         when(ticketState.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("expired"));
         assertFalse(policy.isExpired(ticketState));
-        assertEquals((long) policy.getTimeToLive(ticketState), 0);
+        assertEquals(0, (long) policy.getTimeToLive(ticketState));
         assertNotNull(policy.toString());
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web.view;
 
+import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -27,6 +29,7 @@ import java.util.Map;
 @JsonFilter("ViewProperties")
 public class ViewProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 2719748442042197738L;
 
     /**
@@ -39,7 +42,10 @@ public class ViewProperties implements Serializable {
 
     /**
      * The default redirect URL if none is specified
-     * after a successful authentication event.
+     * after a successful login or logout event.
+     * For logout redirects, this setting is closely
+     * related to and requires {@link LogoutProperties#isFollowServiceRedirects()}.
+     * This URL must be registered i the CAS server's service registry.
      */
     private String defaultRedirectUrl;
 
@@ -54,8 +60,28 @@ public class ViewProperties implements Serializable {
 
     /**
      * Comma separated paths to where CAS templates may be found.
+     * Example might be {@code classpath:templates,file:/templates}.
      */
     private List<String> templatePrefixes = new ArrayList<>(1);
+
+    /**
+     * How to search for theme resource bundles and how to deal with multiple property files found for a given theme.
+     * The {@link ThemeSourceTypes#DEFAULT} type uses the first theme resource bundle found across the template prefixes.
+     * The {@link ThemeSourceTypes#AGGREGATE} type combines all the bundles found across template prefixes with the last
+     * prefix overriding the first.
+     */
+    private ThemeSourceTypes themeSourceType = ThemeSourceTypes.DEFAULT;
+
+    public enum ThemeSourceTypes {
+        /**
+         * Theme source that gets the first theme property file found in the prefix locations.
+         */
+        DEFAULT,
+        /**
+         * Theme source that combines all themes property files in all template prefix locations.
+         */
+        AGGREGATE
+    }
 
     /**
      * CAS1 views and locations.

@@ -1,6 +1,8 @@
 package org.apereo.cas.consent;
 
 
+import java.io.Serial;
+
 /**
  * This is {@link InMemoryConsentRepository}.
  *
@@ -8,5 +10,6 @@ package org.apereo.cas.consent;
  * @since 5.2.0
  */
 public class InMemoryConsentRepository extends BaseConsentRepository {
+    @Serial
     private static final long serialVersionUID = 2701737592960770840L;
 }

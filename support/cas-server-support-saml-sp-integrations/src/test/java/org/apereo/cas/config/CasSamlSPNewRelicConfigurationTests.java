@@ -9,12 +9,12 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
+@Tag("SAMLServiceProvider")
 @TestPropertySource(properties = {
     "cas.saml-sp.new-relic.metadata=classpath:/metadata/sp-metadata.xml",
     "cas.saml-sp.new-relic.name-id-attribute=cn",
     "cas.saml-sp.new-relic.name-id-format=transient"
 })
-public class CasSamlSPNewRelicConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPNewRelicConfigurationTests extends BaseCasSamlSPConfigurationTests {
 
 }

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration shutdownHook="disable">
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
+        </Console>
+        <RollingRandomAccessFile name="rolling-random" fileName="build/cas-rolling-rand.log"
+                                 filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="90 MB"/>
+            </Policies>
+        </RollingRandomAccessFile>
+
+        <File name="file" fileName="build/cas.log">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+            </PatternLayout>
+        </File>
+        <RandomAccessFile name="random" fileName="build/cas-random.log">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+            </PatternLayout>
+        </RandomAccessFile>
+        <MemoryMappedFile name="memory" fileName="build/cas-mem.log">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+            </PatternLayout>
+        </MemoryMappedFile>
+        <RollingFile name="rolling" fileName="build/cas-rolling.log"
+                     filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="90 MB"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.apereo" level="error"   />
+        <Logger name="org.springframework.data" level="error" />
+        <Logger name="org.springframework.web" level="error" />
+        <Logger name="org.springframework.boot" level="error" />
+        <Logger name="org.springframework.security" level="error" />
+        <Root level="off">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="rolling-random"/>
+            <AppenderRef ref="file"/>
+            <AppenderRef ref="random"/>
+            <AppenderRef ref="memory"/>
+            <AppenderRef ref="rolling"/>
+        </Root>
+    </Loggers>
+</Configuration>

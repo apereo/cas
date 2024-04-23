@@ -7,8 +7,9 @@
     </Appenders>
     <Loggers>
         <Logger name="org.apereo.cas" level="error" />
-        <Logger name="com.datastax.driver" level="warn" />
-        <Root level="off">
+        <Logger name="com.datastax.driver" level="debug" />
+        <Logger name="org.springframework.data.cassandra" level="info" />
+        <Root level="error">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

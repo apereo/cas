@@ -4,9 +4,9 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
-
+import org.apereo.cas.services.WebBasedRegisteredService;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -18,9 +18,11 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 public abstract class BaseInterruptInquirer implements InterruptInquirer {
     @Override
-    public final InterruptResponse inquire(final Authentication authentication, final RegisteredService registeredService,
-                                           final Service service, final Credential credential,
-                                           final RequestContext requestContext) {
+    public final InterruptResponse inquire(final Authentication authentication,
+                                           final RegisteredService registeredService,
+                                           final Service service,
+                                           final Credential credential,
+                                           final RequestContext requestContext) throws Throwable {
         if (shouldSkipInterruptForRegisteredService(registeredService)) {
             return InterruptResponse.none();
         }
@@ -35,31 +37,22 @@ public abstract class BaseInterruptInquirer implements InterruptInquirer {
      */
     protected boolean shouldSkipInterruptForRegisteredService(final RegisteredService registeredService) {
         if (registeredService != null) {
-            LOGGER.debug("Checking interrupt rules for service [{}]", registeredService.getName());
-            if (RegisteredServiceProperties.SKIP_INTERRUPT_NOTIFICATIONS.isAssignedTo(registeredService)) {
-                LOGGER.debug("Service [{}] is set to skip interrupt notifications", registeredService.getName());
+            LOGGER.trace("Checking interrupt rules for service [{}]", registeredService.getName());
+            val policy = ((WebBasedRegisteredService) registeredService).getWebflowInterruptPolicy();
+            if (policy != null && !policy.isEnabled()) {
+                LOGGER.debug("Service [{}] is assigned an interrupt policy that disables interrupt notifications", registeredService.getName());
                 return true;
             }
-            LOGGER.debug("Service [{}] is set to not skip interrupt notifications", registeredService.getName());
+            LOGGER.debug("Service [{}] is set to allow interrupt notifications", registeredService.getName());
         } else {
-            LOGGER.debug("No service was found in the request context. Proceeding as usual...");
+            LOGGER.trace("No service was found in the request context to trigger interrupt. Proceeding as usual...");
         }
         return false;
     }
 
-    /**
-     * Inquire internal interrupt response.
-     *
-     * @param authentication    the authentication
-     * @param registeredService the registered service
-     * @param service           the service
-     * @param credential        the credential
-     * @param requestContext    the request context
-     * @return the interrupt response
-     */
     protected abstract InterruptResponse inquireInternal(Authentication authentication,
                                                          RegisteredService registeredService,
                                                          Service service,
                                                          Credential credential,
-                                                         RequestContext requestContext);
+                                                         RequestContext requestContext) throws Throwable;
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pm;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -11,6 +12,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +29,9 @@ import java.util.List;
 @NoArgsConstructor
 @Accessors(chain = true)
 @JsonFilter("PasswordManagementProperties")
-public class PasswordManagementProperties implements Serializable {
+public class PasswordManagementProperties implements CasFeatureModule, Serializable {
 
+    @Serial
     private static final long serialVersionUID = -260644582798411176L;
 
     /**
@@ -42,7 +45,7 @@ public class PasswordManagementProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private GoogleRecaptchaProperties googleRecaptcha = new GoogleRecaptchaProperties();
-    
+
     /**
      * Manage account passwords in LDAP.
      */
@@ -76,7 +79,7 @@ public class PasswordManagementProperties implements Serializable {
      * Settings related to fetching usernames.
      */
     @NestedConfigurationProperty
-    private ForgotUsernamePasswordManagementProperties forgotUsername = 
+    private ForgotUsernamePasswordManagementProperties forgotUsername =
         new ForgotUsernamePasswordManagementProperties();
 
     /**

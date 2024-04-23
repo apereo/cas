@@ -3,8 +3,7 @@ package org.apereo.cas.support.events.dao;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.stream.Stream;
 
 /**
  * This is {@link NoOpCasEventRepository}.
@@ -28,15 +27,20 @@ public class NoOpCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    public void saveInternal(final CasEvent event) {
+    public CasEvent saveInternal(final CasEvent event) {
         /*
          * A no-op event repository
          * does not save events.
          */
+        return event;
     }
 
     @Override
-    public Collection<CasEvent> load() {
-        return new ArrayList<>(0);
+    public Stream<? extends CasEvent> load() {
+        return Stream.empty();
+    }
+
+    @Override
+    public void removeAll() {
     }
 }

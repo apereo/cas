@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.adaptive;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 
+import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import java.util.Map;
  */
 public class UnauthorizedAuthenticationException extends AuthenticationException {
 
+    @Serial
     private static final long serialVersionUID = 4386330975702952112L;
 
     public UnauthorizedAuthenticationException(final String message, final Map<String, Throwable> handlerErrors) {

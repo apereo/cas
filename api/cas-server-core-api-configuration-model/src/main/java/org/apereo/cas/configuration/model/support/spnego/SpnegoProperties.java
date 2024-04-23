@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPri
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -12,6 +13,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +31,13 @@ import java.util.List;
 @JsonFilter("SpnegoProperties")
 public class SpnegoProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 8084143496524446970L;
 
     /**
      * Spnego settings that apply as system properties.
      */
+    @NestedConfigurationProperty
     private final SpnegoSystemProperties system = new SpnegoSystemProperties();
 
     /**
@@ -84,11 +88,13 @@ public class SpnegoProperties implements Serializable {
     /**
      * A regex pattern that indicates whether the client host name is allowed for spnego.
      */
+    @RegularExpressionCapable
     private String hostNamePatternString = ".+";
 
     /**
      * A regex pattern that indicates whether the client IP is allowed for spnego.
      */
+    @RegularExpressionCapable
     private String ipsToCheckPattern = "127.+";
 
     /**
@@ -100,11 +106,6 @@ public class SpnegoProperties implements Serializable {
      * In case LDAP is used to validate clients, this is the attribute that indicates the host.
      */
     private String spnegoAttributeName = "distinguishedName";
-
-    /**
-     * Determines the header to set and the message prefix when negotiating spnego.
-     */
-    private boolean ntlm;
 
     /**
      * If true, does not terminate authentication and allows CAS to resume
@@ -144,6 +145,17 @@ public class SpnegoProperties implements Serializable {
      * The webflow configuration.
      */
     @NestedConfigurationProperty
-    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties().setOrder(100);
+    private WebflowAutoConfigurationProperties webflow = new WebflowAutoConfigurationProperties().setOrder(90);
 
+    /**
+     * The size of the pool used to validate SPNEGO tokens.
+     * A pool is used to provider better performance than what was previously offered by the simple Lombok {@code Synchronized} annotation.
+     */
+    private int poolSize = 10;
+
+    /**
+     * The timeout of the pool used to validate SPNEGO tokens.
+     */
+    @DurationCapable
+    private String poolTimeout = "PT2S";
 }

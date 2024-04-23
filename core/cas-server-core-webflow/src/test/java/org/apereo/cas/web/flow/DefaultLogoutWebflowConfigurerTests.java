@@ -1,8 +1,11 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
+
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.servlet.resource.ResourceUrlProviderExposingInterceptor;
 import org.springframework.webflow.engine.Flow;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,11 +17,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("WebflowConfig")
-public class DefaultLogoutWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class DefaultLogoutWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
+        val interceptors = casWebflowExecutionPlan.getWebflowInterceptors();
+        assertEquals(2, interceptors.size());
+        assertTrue(interceptors.stream().anyMatch(CasLocaleChangeInterceptor.class::isInstance));
+        assertTrue(interceptors.stream().anyMatch(ResourceUrlProviderExposingInterceptor.class::isInstance));
         val flow = (Flow) this.logoutFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGOUT);
         assertNotNull(flow);
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_TERMINATE_SESSION));
@@ -27,5 +34,6 @@ public class DefaultLogoutWebflowConfigurerTests extends BaseWebflowConfigurerTe
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_FRONT_LOGOUT));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_DO_LOGOUT));
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_CONFIRM_LOGOUT_VIEW));
+        assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_POST_VIEW));
     }
 }

@@ -6,6 +6,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,12 +21,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2.0
  */
 @Tag("WSFederation")
-public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests {
+class WsFederationAttributeMutatorTests extends AbstractWsFederationTests {
 
     private static final String UPN_PARAM = "upn";
 
     @Test
-    public void verifyModifyAttributes() {
+    void verifyModifyAttributes() throws Throwable {
         val attributes = new HashMap<String, List<Object>>();
 
         val values = new ArrayList<>();
@@ -36,12 +37,13 @@ public class WsFederationAttributeMutatorTests extends AbstractWsFederationTests
         instance.modifyAttributes(attributes);
 
         assertTrue(attributes.containsKey("test"));
-        assertTrue("newtest".equalsIgnoreCase(attributes.get("test").get(0).toString()));
+        assertTrue("newtest".equalsIgnoreCase(attributes.get("test").getFirst().toString()));
         assertTrue(attributes.containsKey(UPN_PARAM));
-        assertTrue("testing".equalsIgnoreCase(attributes.get(UPN_PARAM).get(0).toString()));
+        assertTrue("testing".equalsIgnoreCase(attributes.get(UPN_PARAM).getFirst().toString()));
     }
 
-    private static class TestWsFederationAttributeMutator implements WsFederationAttributeMutator {
+    private static final class TestWsFederationAttributeMutator implements WsFederationAttributeMutator {
+        @Serial
         private static final long serialVersionUID = -1858140387002752668L;
 
         @Override

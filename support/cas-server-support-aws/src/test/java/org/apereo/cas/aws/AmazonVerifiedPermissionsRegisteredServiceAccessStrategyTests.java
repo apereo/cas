@@ -1,0 +1,67 @@
+package org.apereo.cas.aws;
+
+import org.apereo.cas.aws.authz.AmazonVerifiedPermissionsRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyRequest;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.val;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import software.amazon.awssdk.core.SdkSystemSetting;
+import java.io.File;
+import java.io.IOException;
+import java.util.Set;
+import java.util.UUID;
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * This is {@link AmazonVerifiedPermissionsRegisteredServiceAccessStrategyTests}.
+ *
+ * @author Misagh Moayyed
+ * @since 7.0.0
+ */
+@Tag("AmazonWebServices")
+class AmazonVerifiedPermissionsRegisteredServiceAccessStrategyTests {
+
+    static {
+        System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
+        System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");
+    }
+
+    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "AmazonVerifiedPermissionsRegisteredServiceAccessStrategyTests.json");
+
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(true).build().toObjectMapper();
+
+    @Test
+    void verifySerializeToJson() throws IOException {
+        val strategy = new AmazonVerifiedPermissionsRegisteredServiceAccessStrategy();
+        strategy.setActionId("read");
+        strategy.setCredentialAccessKey(UUID.randomUUID().toString());
+        strategy.setCredentialSecretKey(UUID.randomUUID().toString());
+        strategy.setPolicyStoreId("123456");
+        strategy.setRegion("us-east-1");
+        strategy.setContext(CollectionUtils.wrap("key1", "value1"));
+        MAPPER.writeValue(JSON_FILE, strategy);
+        val read = MAPPER.readValue(JSON_FILE, AmazonVerifiedPermissionsRegisteredServiceAccessStrategy.class);
+        assertEquals(strategy, read);
+    }
+
+    @Test
+    void verifyOperation() throws Throwable {
+        val strategy = new AmazonVerifiedPermissionsRegisteredServiceAccessStrategy();
+        strategy.setActionId("read");
+
+        val accessRequest = RegisteredServiceAccessStrategyRequest.builder()
+            .principalId("casuser")
+            .registeredService(RegisteredServiceTestUtils.getRegisteredService())
+            .service(RegisteredServiceTestUtils.getService())
+            .attributes(CollectionUtils.wrap("key1", Set.of("value1")))
+            .build();
+        assertFalse(strategy.authorizeRequest(accessRequest));
+    }
+
+}

@@ -1,4 +1,11 @@
 description = "Apereo CAS Memcached Monitor Integration"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Monitoring",
+            title: "Apereo CAS Memcached Monitoring"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-util")
 
@@ -24,5 +31,5 @@ dependencies {
     
     provided project(":support:cas-server-support-memcached-spy")
 
-    compileOnlyApi project(":support:cas-server-support-saml")
+    compileOnly project(":support:cas-server-support-saml")
 }

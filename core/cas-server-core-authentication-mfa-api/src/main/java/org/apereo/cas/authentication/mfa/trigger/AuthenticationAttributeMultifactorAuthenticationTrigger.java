@@ -19,11 +19,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Optional;
 
-import static org.springframework.util.StringUtils.commaDelimitedListToSet;
+import static org.springframework.util.StringUtils.*;
 
 /**
  * This is {@link AuthenticationAttributeMultifactorAuthenticationTrigger}.
@@ -45,8 +46,11 @@ public class AuthenticationAttributeMultifactorAuthenticationTrigger implements 
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
-    public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication, final RegisteredService registeredService,
-                                                                   final HttpServletRequest httpServletRequest, final Service service) {
+    public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
+                                                                   final RegisteredService registeredService,
+                                                                   final HttpServletRequest httpServletRequest,
+                                                                   final HttpServletResponse response,
+                                                                   final Service service) {
 
         val mfa = casProperties.getAuthn().getMfa().getTriggers().getAuthentication();
         val globalAuthenticationAttributeValueRegex = mfa.getGlobalAuthenticationAttributeValueRegex();
@@ -73,7 +77,7 @@ public class AuthenticationAttributeMultifactorAuthenticationTrigger implements 
             val provider = providers.iterator().next();
             LOGGER.debug("Found a single multifactor provider [{}] in the application context", provider);
             val result = multifactorAuthenticationProviderResolver.resolveEventViaAuthenticationAttribute(
-                authentication, attributeNames, registeredService, Optional.empty(), providers,
+                authentication, attributeNames, registeredService, service, Optional.empty(), providers,
                 (attributeValue, mfaProvider) -> attributeValue != null && attributeValue.matches(globalAuthenticationAttributeValueRegex));
             if (result != null && !result.isEmpty()) {
                 return Optional.of(provider);
@@ -81,14 +85,11 @@ public class AuthenticationAttributeMultifactorAuthenticationTrigger implements 
         }
 
         val result = multifactorAuthenticationProviderResolver.resolveEventViaAuthenticationAttribute(authentication, attributeNames,
-            registeredService, Optional.empty(), providers,
+            registeredService, service, Optional.empty(), providers,
             (attributeValue, mfaProvider) -> attributeValue != null && mfaProvider.matches(attributeValue));
         if (result != null && !result.isEmpty()) {
             val id = CollectionUtils.firstElement(result);
-            if (id.isEmpty()) {
-                return Optional.empty();
-            }
-            return MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(id.get().toString(), applicationContext);
+            return id.flatMap(value -> MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(value.toString(), applicationContext));
         }
         return Optional.empty();
     }

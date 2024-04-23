@@ -2,12 +2,12 @@ package org.apereo.cas.support.claims;
 
 import org.apereo.cas.ws.idp.WSFederationConstants;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.rt.security.claims.Claim;
 import org.apache.cxf.sts.claims.ClaimsParameters;
 
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +22,6 @@ public class NonWSFederationClaimsClaimsHandler extends WrappingSecurityTokenSer
         super(handlerRealm, issuer);
     }
 
-    @SneakyThrows
     @Override
     protected String createProcessedClaimType(final Claim requestClaim, final ClaimsParameters parameters) {
         val tokenType = parameters.getTokenRequirements().getTokenType();
@@ -37,7 +36,8 @@ public class NonWSFederationClaimsClaimsHandler extends WrappingSecurityTokenSer
         return new NonWSFederationClaimsList();
     }
 
-    private static class NonWSFederationClaimsList extends ArrayList<String> {
+    private static final class NonWSFederationClaimsList extends ArrayList<String> {
+        @Serial
         private static final long serialVersionUID = -50278523307446738L;
 
         @Override

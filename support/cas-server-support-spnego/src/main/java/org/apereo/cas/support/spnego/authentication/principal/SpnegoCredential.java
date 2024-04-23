@@ -1,18 +1,19 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
-import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.credential.AbstractCredential;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.util.function.FunctionUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.io.ByteSource;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
-import lombok.SneakyThrows;
 import lombok.ToString;
 
+import java.io.Serial;
 import java.util.stream.IntStream;
 
 /**
@@ -27,12 +28,10 @@ import java.util.stream.IntStream;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = {"initToken", "nextToken", "principal"})
-public class SpnegoCredential implements Credential {
+@EqualsAndHashCode(of = {"initToken", "nextToken", "principal"}, callSuper = false)
+public class SpnegoCredential extends AbstractCredential {
 
-    /**
-     * Unique id for serialization.
-     */
+    @Serial
     private static final long serialVersionUID = 84084596791289548L;
 
     private static final int NTLM_TOKEN_MAX_LENGTH = 8;
@@ -49,12 +48,14 @@ public class SpnegoCredential implements Credential {
      * The SPNEGO Init Token.
      */
     @ToString.Exclude
+    @JsonIgnore
     private byte[] initToken;
 
     /**
      * The SPNEGO Next Token.
      */
     @ToString.Exclude
+    @JsonIgnore
     private byte[] nextToken;
 
     /**
@@ -67,19 +68,9 @@ public class SpnegoCredential implements Credential {
      */
     private boolean isNtlm;
 
-    /**
-     * Instantiates a new SPNEGO credential.
-     *
-     * @param initToken the init token
-     */
-    public SpnegoCredential(final @NonNull byte[] initToken) {
+    public SpnegoCredential(final byte[] initToken) {
         this.initToken = consumeByteSourceOrNull(ByteSource.wrap(initToken));
         this.isNtlm = isTokenNtlm(this.initToken);
-    }
-
-    @Override
-    public String getId() {
-        return this.principal != null ? this.principal.getId() : UNKNOWN_ID;
     }
 
     /**
@@ -89,10 +80,8 @@ public class SpnegoCredential implements Credential {
      * @return true, if  token ntlm
      */
     private static boolean isTokenNtlm(final byte[] token) {
-        if (token == null || token.length < NTLM_TOKEN_MAX_LENGTH) {
-            return false;
-        }
-        return IntStream.range(0, NTLM_TOKEN_MAX_LENGTH).noneMatch(i -> NTLMSSP_SIGNATURE[i] != token[i]);
+        return token != null && token.length >= NTLM_TOKEN_MAX_LENGTH
+               && IntStream.range(0, NTLM_TOKEN_MAX_LENGTH).noneMatch(i -> NTLMSSP_SIGNATURE[i] != token[i]);
     }
 
     /**
@@ -101,11 +90,17 @@ public class SpnegoCredential implements Credential {
      * @param source the byte array source
      * @return the byte[] read from the source or null
      */
-    @SneakyThrows
     private static byte[] consumeByteSourceOrNull(final ByteSource source) {
-        if (source == null || source.isEmpty()) {
-            return null;
-        }
-        return source.read();
+        return FunctionUtils.doUnchecked(() -> {
+            if (source == null || source.isEmpty()) {
+                return null;
+            }
+            return source.read();
+        });
+    }
+
+    @Override
+    public String getId() {
+        return this.principal != null ? this.principal.getId() : UNKNOWN_ID;
     }
 }

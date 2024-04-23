@@ -1,0 +1,13 @@
+{
+  "dependencies": "core",
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.http-client.host-name-verifier=none",
+    "--cas.authn.adaptive.ip-intel.rest.url=http://localhost:5423/ip",
+    
+    "--cas.service-registry.core.init-from-json=true"
+  ]
+}

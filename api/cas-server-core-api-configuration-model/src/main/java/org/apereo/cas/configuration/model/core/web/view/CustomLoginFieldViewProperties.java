@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -19,6 +20,7 @@ import java.io.Serializable;
 @Setter
 @JsonFilter("CustomLoginFieldViewProperties")
 public class CustomLoginFieldViewProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -7122345678378395582L;
 
     /**

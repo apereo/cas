@@ -1,0 +1,9 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "entityId",
+  "name" : "SampleSAML",
+  "id" : 1001,
+  "evaluationOrder" : 1,
+  "metadataLocation" : "file:///path/to/metadata.xml",
+  "signAssertions": "UNDEFINED"
+}

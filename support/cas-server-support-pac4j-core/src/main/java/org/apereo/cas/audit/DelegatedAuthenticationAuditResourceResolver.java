@@ -19,7 +19,7 @@ public class DelegatedAuthenticationAuditResourceResolver extends ReturnValueAsS
     @Override
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
         Objects.requireNonNull(retval, "Return value must not be null");
-        val result = AuditableExecutionResult.class.cast(retval);
+        val result = (AuditableExecutionResult) retval;
         val accessCheckOutcome = "Client Access " + BooleanUtils.toString(result.isExecutionFailure(), "Denied", "Granted");
 
         val values = new HashMap<>();
@@ -29,7 +29,7 @@ public class DelegatedAuthenticationAuditResourceResolver extends ReturnValueAsS
         }
         result.getRegisteredService().ifPresent(service ->
             values.put("registeredService", service.getName() + ':' + service.getServiceId()));
-
+        result.getService().ifPresent(service -> values.put("service", service.getId()));
         return new String[]{auditFormat.serialize(values)};
     }
 }

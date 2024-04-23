@@ -4,37 +4,38 @@
 
 # Central Authentication Service (CAS)
 
-[![License](https://img.shields.io/hexpm/l/plug.svg)](https://github.com/apereo/cas/blob/master/LICENSE)
-[![Twitter](https://img.shields.io/badge/Apereo%20CAS-Twitter-blue.svg)](https://twitter.com/apereo)
-[![Support](https://img.shields.io/badge/Support-Mailing%20Lists-green.svg?colorB=ff69b4)][cassupport]
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)][casgitter]
-[![Slack](https://img.shields.io/badge/Slack-join%20chat-blue.svg)][casslack]
-[![Stack Overflow](http://img.shields.io/:stack%20overflow-cas-brightgreen.svg)](http://stackoverflow.com/questions/tagged/cas)
+[![License](https://img.shields.io/hexpm/l/plug.svg?style=for-the-badge&logo=apache)](https://github.com/apereo/cas/blob/master/LICENSE)
+[![Twitter](https://img.shields.io/badge/Apereo%20CAS-Twitter-blue.svg?style=for-the-badge&logo=twitter)](https://twitter.com/apereo)
+[![Gitter](https://img.shields.io/badge/Gitter-join%20chat-blue.svg?style=for-the-badge&colorB=a832a6&logo=gitter)][casgitter]
+[![Slack](https://img.shields.io/badge/Slack-join%20chat-blue.svg?style=for-the-badge&logo=slack)][casslack]
+[![Stack Overflow](http://img.shields.io/:stack%20overflow-cas-brightgreen.svg?style=for-the-badge&logo=stackoverflow)](http://stackoverflow.com/questions/tagged/cas)
+[![Support](https://img.shields.io/badge/Support-Mailing%20Lists-green.svg?colorB=ff69b4&style=for-the-badge)][cassupport]
 
 ## Introduction
 
-Welcome to the home of the [Central Authentication Service project](https://www.apereo.org/cas), more commonly referred to as CAS. CAS is an
+Welcome to the home of the [Central Authentication Service project](https://www.apereo.org/projects/cas), more commonly referred to as CAS. CAS is an
 enterprise multilingual single sign-on solution for the web and attempts to be a comprehensive platform for your authentication and authorization needs.
 
 CAS is an open and well-documented authentication protocol. The primary implementation of the protocol is an open-source Java server
-component by the same name hosted here, with support for a plethora of additional authentication protocols and features.
+component by the same name hosted here, with support for a plethora of additional authentication protocols and features such a SAML2, OpenID Connect
+and many many more.
 
 ## Contributions
 
-[![Contributing Guide](https://img.shields.io/badge/Contributions-guide-green.svg?style=flat)][contribute]
-[![Open Pull Requests](https://img.shields.io/github/issues-pr/apereo/cas.svg?style=flat)][contribute]
+[![Contributing Guide](https://img.shields.io/badge/Contributions-guide-green.svg?style=for-the-badge&logo=github)][contribute]
+[![Open Pull Requests](https://img.shields.io/github/issues-pr/apereo/cas.svg?style=for-the-badge&logo=github)][contribute]
 
 - [How to contribute][contribute]
 
 If you have already identified an enhancement or a bug, it is STRONGLY recommended that you submit a pull request to address the case.
 There is no need for special ceremony to create separate issues. The pull request IS the issue and it will be tracked and tagged as such.
 
-## Documentation [![Javadoc](https://img.shields.io/badge/Documentation-Javadoc-ff69b4.svg)](https://www.javadoc.io/doc/org.apereo.cas/cas-server-core)
+## Documentation [![Javadoc](https://img.shields.io/badge/Documentation-Javadoc-ff69b4.svg?style=for-the-badge&logo=readme)][casjavadocs]
 
-| Version         | Reference
-|------------|-----------------------------------
-| ![](https://img.shields.io/badge/Development-WIP-blue.svg?style=flat) | [Link](https://apereo.github.io/cas/development)
-| ![](https://img.shields.io/badge/6.3.x-Current-green.svg?style=flat) | [Link](https://apereo.github.io/cas/6.3.x)
+| Version                                                                                    | Reference                                        |
+|--------------------------------------------------------------------------------------------|--------------------------------------------------|
+| ![](https://img.shields.io/badge/Development-WIP-blue.svg?style=for-the-badge&logo=github) | [Link](https://apereo.github.io/cas/development) |
+| ![](https://img.shields.io/badge/7.0.x-Current-green.svg?style=for-the-badge&logo=github)  | [Link](https://apereo.github.io/cas/7.0.x)       |
 
 Additional resources are available as follows:
 
@@ -44,17 +45,15 @@ Additional resources are available as follows:
 - [Maintenance Policy][maintenance]
 - [Release Schedule][releaseschedule]
 
-## Deployment
+## Getting Started
 
-[![Contributing Guide](https://img.shields.io/badge/Contributions-guide-green.svg?style=flat)][contribute]
-[![Open Pull Requests](https://img.shields.io/github/issues-pr/apereo/cas.svg?style=flat)][contribute]
-![CAS Build](https://github.com/apereo/cas/workflows/Build/badge.svg)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-core/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/org.apereo.cas/cas-server-core)
-[![Github Releases](https://img.shields.io/github/release/apereo/cas.svg)](https://github.com/apereo/cas/releases)
-[![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg)](https://codecov.io/gh/apereo/cas)
+[![Maven Central](https://img.shields.io/maven-central/v/org.apereo.cas/cas-server-webapp?style=for-the-badge&logo=apachemaven)][casmavencentral]
+[![GitHub Releases](https://img.shields.io/github/release/apereo/cas.svg?style=for-the-badge&logo=github)][githubreleases]
 
 It is recommended to deploy CAS locally using the [WAR Overlay method][overlay]. Cloning or downloading the CAS codebase
 is **ONLY** required if you wish to contribute to the development of the project.
+
+We recommend that you review [this page][gettingstarted] to get started with your CAS deployment.
 
 ## Features
 
@@ -63,48 +62,51 @@ The following features are supported by the CAS project:
 * CAS v1, v2 and v3 Protocol
 * SAML v1 and v2 Protocol
 * OAuth v2 Protocol
-* OpenID & OpenID Connect Protocol
+* OpenID Connect Protocol
 * WS-Federation Passive Requestor Protocol
-* Authentication via JAAS, LDAP, RDBMS, X.509, Radius, SPNEGO, JWT, Remote, Apache Cassandra, Trusted, BASIC, Apache Shiro, MongoDb, Pac4J and more.
-* Delegated authentication to WS-FED, Facebook, Twitter, SAML IdP, OpenID, OpenID Connect, CAS and more.
+* Authentication via JAAS, LDAP, RDBMS, X.509, Radius, SPNEGO, JWT, Remote, Apache Cassandra, Trusted, BASIC, MongoDB, Pac4J and more.
+* Delegated authentication to WS-FED, Facebook, Twitter, SAML IdP, OpenID Connect, CAS and more.
 * Authorization via ABAC, Time/Date, REST, Internet2's Grouper and more.
-* HA clustered deployments via Hazelcast, Ehcache, JPA, Apache Cassandra, Memcached, Apache Ignite, MongoDb, Redis, DynamoDb, Couchbase and more.
-* Application registration backed by JSON, LDAP, YAML, Apache Cassandra, JPA, Couchbase, MongoDb, DynamoDb, Redis and more.
-* Multifactor authentication via Duo Security, YubiKey, RSA, Google Authenticator, U2F, WebAuthn and more.
+* HA clustered deployments via Hazelcast, JPA, Apache Cassandra, Memcached, Apache Ignite, MongoDB, Redis, DynamoDb, and more.
+* Application registration backed by JSON, LDAP, YAML, Apache Cassandra, JPA, MongoDB, DynamoDb, Redis and more.
+* Multifactor authentication via Duo Security, YubiKey, RSA, Google Authenticator, WebAuthn and more.
 * Administrative UIs to manage logging, monitoring, statistics, configuration, client registration and more.
 * Global and per-application user interface theme and branding.
 * Password management and password policy enforcement.
 * Deployment options using Apache Tomcat, Jetty, Undertow, packaged and running as Docker containers.
 
 The foundations of CAS are built upon: [Spring Boot](https://projects.spring.io/spring-boot) and
-[Spring Cloud](http://projects.spring.io/spring-cloud/).
+[Spring Cloud](https://projects.spring.io/spring-cloud/).
 
-## Development
+## Development [![Revved up by Develocity](https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A)][devlocity] [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg?style=for-the-badge)][cascodecov]
 
-[![CLA assistant](https://cla-assistant.io/readme/badge/apereo/cas)](https://cla-assistant.io/apereo/cas)
-
-To build the project locally, please follow [this guide](https://apereo.github.io/cas/developer/Build-Process.html).
-The release schedule is [available here][releaseschedule].
+- To build the project locally, please follow [this guide][casbuildprocess].
+- The release schedule is [available here][releaseschedule].
 
 ## Support
 
 CAS is 100% free open source software managed by [Apereo](https://www.apereo.org/), licensed under [Apache v2](LICENSE). Our
 community has access to all releases of the CAS software with absolutely no costs. We welcome contributions from our community of all
 types and sizes. The time and effort to develop and maintain this project is dedicated by a group
-of [volunteers and contributors](https://github.com/apereo/cas/graphs/contributors). Support options may be [found here][cassupport].
+of [volunteers and contributors][githubcontributors]. Support options may be [found here][cassupport].
 If you (or your employer) benefit from this project, please consider becoming a [Friend of Apereo](https://www.apereo.org/friends) and contribute.
 
-[maintenance]: https://apereo.github.io/cas/developer/Maintenance-Policy.html
+[cascodecov]: https://codecov.io/gh/apereo/cas
+[devlocity]: https://develocity.apereo.org
+[maintenance]: https://apereo.github.io/cas/development/developer/Maintenance-Policy.html
 [releaseschedule]: https://github.com/apereo/cas/milestones
 [wiki]: https://apereo.github.io/cas
+[githubreleases]: https://github.com/apereo/cas/releases
+[gettingstarted]: https://apereo.github.io/cas/development/planning/Getting-Started.html
 [overlay]: https://apereo.github.io/cas/development/installation/WAR-Overlay-Installation.html
 [contribute]: https://apereo.github.io/cas/developer/Contributor-Guidelines.html
-[downloadcas]: http://www.apereo.org/cas/download
 [cassonatype]: https://oss.sonatype.org/content/repositories/snapshots/org/apereo/cas/
-[casmavencentral]: http://mvnrepository.com/artifact/org.apereo.cas
-[downloadcasgithub]: https://github.com/apereo/cas/archive/master.zip
+[casmavencentral]: https://search.maven.org/search?q=g:org.apereo.cas
 [releasenotes]: https://github.com/apereo/cas/releases
 [cassupport]: https://apereo.github.io/cas/Support.html
 [casgitter]: https://gitter.im/apereo/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 [casslack]: https://apereo.slack.com/
 [blog]: https://apereo.github.io/
+[casbuildprocess]: https://apereo.github.io/cas/development/developer/Build-Process.html
+[githubcontributors]: https://github.com/apereo/cas/graphs/contributors
+[casjavadocs]: https://www.javadoc.io/doc/org.apereo.cas/cas-server-core

@@ -18,14 +18,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "management.endpoint.authenticationHandlers.enabled=true")
 @Tag("ActuatorEndpoint")
-public class RegisteredAuthenticationHandlersEndpointTests extends AbstractCasEndpointTests {
+class RegisteredAuthenticationHandlersEndpointTests extends AbstractCasEndpointTests {
 
     @Autowired
     @Qualifier("registeredAuthenticationHandlersEndpoint")
     private RegisteredAuthenticationHandlersEndpoint endpoint;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertFalse(endpoint.handle().isEmpty());
         assertNotNull(endpoint.fetchAuthnHandler(HttpBasedServiceCredentialsAuthenticationHandler.class.getSimpleName()));
     }

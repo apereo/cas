@@ -22,11 +22,11 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.acceptable-usage-policy.core.aup-attribute-name=accepted"
 })
 @Tag("JDBC")
-public class JdbcAcceptableUsagePolicyRepositoryTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {
+class JdbcAcceptableUsagePolicyRepositoryTests extends BaseJdbcAcceptableUsagePolicyRepositoryTests {
 
     @BeforeEach
     public void initialize() throws Exception {
-        try (val c = this.acceptableUsagePolicyDataSource.getObject().getConnection()) {
+        try (val c = this.acceptableUsagePolicyDataSource.getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);
                 s.execute("CREATE TABLE aup_table (id int primary key, username varchar(255), accepted boolean)");
@@ -37,7 +37,7 @@ public class JdbcAcceptableUsagePolicyRepositoryTests extends BaseJdbcAcceptable
     
     @AfterEach
     public void cleanup() throws Exception {
-        try (val c = this.acceptableUsagePolicyDataSource.getObject().getConnection()) {
+        try (val c = this.acceptableUsagePolicyDataSource.getConnection()) {
             try (val s = c.createStatement()) {
                 c.setAutoCommit(true);
                 s.execute("DROP TABLE aup_table;");
@@ -46,12 +46,12 @@ public class JdbcAcceptableUsagePolicyRepositoryTests extends BaseJdbcAcceptable
     }
     
     @Test
-    public void verifyRepositoryAction() {
+    void verifyRepositoryAction() throws Throwable {
         verifyRepositoryAction("casuser", CollectionUtils.wrap("accepted", "false"));
     }
     
     @Test
-    public void determinePrincipalId() {
+    void determinePrincipalId() throws Throwable {
         val principalId = determinePrincipalId("casuser", CollectionUtils.wrap("accepted", "false"));
         assertEquals("casuser", principalId);
     }

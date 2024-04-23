@@ -1,4 +1,11 @@
 description = "Apereo CAS SAML Identity Provider Metadata Resolution Via Redis"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "SAML2 Metadata Management",
+            title: "SAML2 Metadata Management via Redis"
+    ]
+}
 dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-web-api")
@@ -23,6 +30,9 @@ dependencies {
     implementation libraries.shibutiljavasupport
 
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-consent-core")
+    
+    testImplementation project(":core:cas-server-core-monitor")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-tickets")

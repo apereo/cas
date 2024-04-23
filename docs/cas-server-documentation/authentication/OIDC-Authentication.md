@@ -9,11 +9,15 @@ category: Protocols
 
 Allow CAS to act as an [OpenId Connect Provider (OP)](http://openid.net/connect/).
 
-<div class="alert alert-info"><strong>Remember</strong><p>OpenId Connect is a continuation of the <a href="OAuth-Authentication.html">OAuth protocol</a> with some additional variations. If you enable OpenId Connect, you will have automatically enabled OAuth as well. Options and behaviors that are documented for the <a href="OAuth-OpenId-Authentication.html">OAuth protocol</a> support may apply here just the same.</p></div>
+<div class="alert alert-info">:information_source: <strong>Remember</strong><p>OpenId Connect is a continuation of 
+the <a href="OAuth-Authentication.html">OAuth protocol</a> with some additional variations. If 
+you enable OpenId Connect, you will have automatically enabled OAuth as well. Options and 
+behaviors that are documented for the <a href="OAuth-Authentication.html">OAuth protocol</a> 
+support may apply here just the same.</p></div>
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-oidc" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-oidc" %}
 
 To learn more about OpenId Connect, please [review this guide](http://openid.net/specs/openid-connect-basic-1_0.html).
 
@@ -30,115 +34,48 @@ The current implementation provides support for:
 
 ## Endpoints
 
-| Field                                     | Description
-|-------------------------------------------|-------------------------------------------------------
-| `/oidc/.well-known`                       | The discovery endpoint used to query for CAS OIDC configuration information and metadata.
-| `/oidc/.well-known/openid-configuration`  | Same as `.well-known` discovery endpoint.
-| `/oidc/.well-known/webfinger`             | [WebFinger](http://tools.ietf.org/html/rfc7033) discovery endpoint
-| `/oidc/jwks`                              | Contains the server’s public signing keys, which clients may use to verify the digital signatures of access tokens and ID tokens issued by CAS.
-| `/oidc/authorize`                         | Authorization requests are handled here.
-| `/oidc/profile`                           | User profile requests are handled here.
-| `/oidc/introspect`                        | Query CAS to detect the status of a given access token via [introspection](https://tools.ietf.org/html/rfc7662). This endpoint expects HTTP basic authentication with OIDC service `client_id` and `client_secret` associated as username and password.
-| `/oidc/accessToken`, `/oidc/token`        | Produces authorized access tokens.
-| `/oidc/revoke`                            | [Revoke](https://tools.ietf.org/html/rfc7009) access or refresh tokens. This endpoint expects HTTP basic authentication with OIDC service `client_id` and `client_secret` associated as username and password.
-| `/oidc/register`                          | Register clients via the [dynamic client registration](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01) protocol.
+| Field                                    | Description                                                                                                                                                                                                                                                                                             |
+|------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `/oidc/.well-known`                      | The discovery endpoint used to query for CAS OIDC configuration information and metadata.                                                                                                                                                                                                               |
+| `/oidc/.well-known/openid-configuration` | Same as `.well-known` discovery endpoint.                                                                                                                                                                                                                                                               |
+| `/oidc/.well-known/webfinger`            | [WebFinger](https://tools.ietf.org/html/rfc7033) discovery endpoint                                                                                                                                                                                                                                     |
+| `/oidc/jwks`                             | Contains the [server’s public keys](OIDC-Authentication-JWKS.html), which clients may use to verify the digital signatures of access tokens and ID tokens issued by CAS. Accepts an optional `state` query parameter to narrow down keys by their current state (i.e. `current`, `previous`, `future`). |
+| `/oidc/authorize`                        | Authorization requests are handled here.                                                                                                                                                                                                                                                                |
+| `/oidc/profile`                          | User profile requests are handled here.                                                                                                                                                                                                                                                                 |
+| `/oidc/logout`                           | Logout requests are handled here.                                                                                                                                                                                                                                                                       |
+| `/oidc/introspect`                       | Query CAS to detect the status of a given access token via [introspection](https://tools.ietf.org/html/rfc7662). This endpoint expects HTTP basic authentication with OIDC service `client_id` and `client_secret` associated as username and password.                                                 |
+| `/oidc/accessToken`, `/oidc/token`       | Produces authorized access tokens.                                                                                                                                                                                                                                                                      |
+| `/oidc/revoke`                           | [Revoke](https://tools.ietf.org/html/rfc7009) access or refresh tokens. This endpoint expects HTTP basic authentication with OIDC service `client_id` and `client_secret` associated as username and password.                                                                                          |
+| `/oidc/register`                         | Register clients via the [dynamic client registration](https://tools.ietf.org/html/draft-ietf-oauth-dyn-reg-management-01) protocol.                                                                                                                                                                    |
+| `/oidc/initToken`                        | Obtain an initial *master* access token required for dynamic client registration when operating in `PROTECTED` mode.                                                                                                                                                                                    |
+| `/oidc/clientConfig`                     | [Update or retrieve client](OIDC-Authentication-Dynamic-Registration.html) application definitions, registered with the server.                                                                                                                                                                         |
 
-## Register Clients
-
-Please [see this guide](OIDC-Authentication-Claims.html).
+<div class="alert alert-warning">:warning: <strong>Use Discovery</strong><p>The above endpoints
+are not strictly defined in the OpenID Connect specification. The CAS software may choose to change URL endpoints
+at any point in time. Do <strong>NOT</strong> hardcode these endpoints in your application configuration.
+Instead, use the Dynamic Discovery endpoint and parse the discovery document to discover the endpoints.</p></div>
 
 ## Configuration
 
-{% include casproperties.html properties="cas.authn.oidc.core,cas.client" %}
-
-### Discovery
-
-{% include casproperties.html properties="cas.authn.oidc.discovery" %}
-
-### JWKS
-
-{% include casproperties.html properties="cas.authn.oidc.jwks" %}
-
-### Scopes & Claims
-
-{% include casproperties.html properties="cas.authn.oidc.core" %}
-
-### Logout
-
-{% include casproperties.html properties="cas.authn.oidc.logout" %}
-
-## Server Configuration
-
-Remember that OpenID Connect features of CAS require session affinity (and optionally session replication),
-as the authorization responses throughout the login flow are stored via server-backed session storage mechanisms. 
-You will need to configure your deployment environment and load-balancers accordingly.
-
-## Session Replication
-
-{% include casproperties.html properties="cas.session-replication" %}
+{% include_cached casproperties.html properties="cas.authn.oidc.core" %}
 
 ## Sample Client Applications
 
-- [MITREid Sample Java Webapp](https://github.com/cas-projects/oidc-sample-java-webapp)
+- [MITREid Sample Java Webapp](https://github.com/apereo/oidc-sample-java-webapp)
 
-## Claims
+## Troubleshooting
 
-Please [see this guide](OIDC-Authentication-Claims.html).
+To enable additional logging, configure the log4j configuration file to add the following levels:
 
-## Authentication Context Class
-
-Support for authentication context class references is implemented in form of `acr_values` as part of the original 
-authorization request, which is mostly taken into account by 
-the [multifactor authentication features](../mfa/Configuring-Multifactor-Authentication.html) of CAS. 
-Once successful, `acr` and `amr` values are passed back to the relying party as part of the id token.
-
-## Pairwise Identifiers
-
-When `pairwise` subject type is used, CAS will calculate a unique `sub` value for each sector identifier. This identifier 
-should not be reversible by any party other than CAS and is somewhat akin to CAS generating persistent anonymous user 
-identifiers. Each value provided to every relying party is different so as not 
-to enable clients to correlate the user's activities without permission.
-
-```json
-{
-  "@class" : "org.apereo.cas.services.OidcRegisteredService",
-  "clientId": "client",
-  "clientSecret": "secret",
-  "serviceId" : "^<https://the-redirect-uri>",
-  "usernameAttributeProvider" : {
-    "@class" : "org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider",
-    "persistentIdGenerator" : {
-      "@class" : "org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator",
-      "salt" : "aGVsbG93b3JsZA=="
-    }
-  }
-}
+```xml
+...
+<Logger name="org.apereo.cas.oidc" level="debug" additivity="false">
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
+</Logger>
+<Logger name="PROTOCOL_MESSAGE" level="debug" additivity="false">
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
+</Logger>
+...
 ```
-
-## Keystores
-
-Each registered application in CAS can contain its own keystore as a `jwks` resource. By default,
-a global keystore can be expected and defined via CAS properties. The format of the keystore
-file is similar to the following:
-
-```json
-{
-  "keys": [
-    {
-      "d": "...",
-      "e": "AQAB",
-      "n": "...",
-      "kty": "RSA",
-      "kid": "cas"
-    }
-  ]
-}
-```
-
-CAS will attempt to auto-generate a keystore if it can't find one, but if you wish to generate one manually, 
-a JWKS can be generated using [this tool](https://mkjwk.org/)
-or [this tool](http://connect2id.com/products/nimbus-jose-jwt/generator).
-
-## WebFinger Issuer Discovery
-
-Please see [this guide](OIDC-Authentication-WebFinger.html).

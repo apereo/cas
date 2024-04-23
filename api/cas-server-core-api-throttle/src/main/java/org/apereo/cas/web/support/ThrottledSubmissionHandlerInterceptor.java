@@ -3,8 +3,10 @@ package org.apereo.cas.web.support;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Nonnull;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -15,6 +17,11 @@ import java.util.List;
  * @since 5.0.0
  */
 public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInterceptor {
+
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "authenticationThrottle";
 
     /**
      * No op throttled submission handler interceptor.
@@ -56,7 +63,13 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
     /**
      * Decrement the the throttle so authentication can resume.
      */
-    default void decrement() {
+    default void release() {
+    }
+
+    /**
+     * Clear records and remove all.
+     */
+    default void clear() {
     }
 
     /**
@@ -69,29 +82,33 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
     }
 
     @Override
-    default boolean preHandle(final HttpServletRequest request,
+    default boolean preHandle(
+        final HttpServletRequest request,
         final HttpServletResponse response,
         final Object handler) throws Exception {
         return true;
     }
 
     @Override
-    default void postHandle(final HttpServletRequest request,
+    default void postHandle(
+        final HttpServletRequest request,
         final HttpServletResponse response,
         final Object handler,
         final ModelAndView modelAndView) {
     }
 
     @Override
-    default void afterCompletion(final HttpServletRequest request,
+    default void afterCompletion(
+        final HttpServletRequest request,
         final HttpServletResponse response,
         final Object handler,
         final Exception e) throws Exception {
     }
 
     @Override
-    default void afterConcurrentHandlingStarted(final HttpServletRequest request,
-        final HttpServletResponse response,
-        final Object handler) throws Exception {
+    default void afterConcurrentHandlingStarted(
+        @Nonnull final HttpServletRequest request,
+        @Nonnull final HttpServletResponse response,
+        @Nonnull final Object handler) throws Exception {
     }
 }

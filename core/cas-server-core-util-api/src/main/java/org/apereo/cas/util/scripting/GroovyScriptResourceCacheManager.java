@@ -1,17 +1,15 @@
 package org.apereo.cas.util.scripting;
 
+import org.apereo.cas.configuration.model.core.cache.ExpiringSimpleCacheProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.RemovalListener;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import java.time.Duration;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -22,25 +20,17 @@ import java.util.Set;
  */
 @Slf4j
 public class GroovyScriptResourceCacheManager implements ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> {
-    private static final Duration EXPIRATION_AFTER_ACCESS = Duration.ofHours(8);
+    private final CasReentrantLock lock = new CasReentrantLock();
 
     private final Cache<String, ExecutableCompiledGroovyScript> cache;
 
-    public GroovyScriptResourceCacheManager() {
-        this.cache = Caffeine.newBuilder()
-            .initialCapacity(100)
-            .maximumSize(1000)
-            .expireAfterAccess(EXPIRATION_AFTER_ACCESS)
-            .removalListener((RemovalListener<String, ExecutableCompiledGroovyScript>) (key, value, cause) -> {
-                LOGGER.trace("Removing script [{}] from cache under [{}]; removal cause is [{}]", value, key, cause);
-                Objects.requireNonNull(value).close();
-            })
-            .build();
+    public GroovyScriptResourceCacheManager(final ExpiringSimpleCacheProperties properties) {
+        this.cache = Beans.newCacheBuilder(properties).build();
     }
 
     @Override
     public ExecutableCompiledGroovyScript get(final String key) {
-        return this.cache.getIfPresent(key);
+        return lock.tryLock(() -> cache.getIfPresent(key));
     }
 
     @Override
@@ -49,26 +39,37 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
     }
 
     @Override
-    public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> put(final String key,
-                                                                                  final ExecutableCompiledGroovyScript value) {
-        this.cache.put(key, value);
-        return this;
+    @CanIgnoreReturnValue
+    public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> put(
+        final String key, final ExecutableCompiledGroovyScript value) {
+        return lock.tryLock(() -> {
+            this.cache.put(key, value);
+            return this;
+        });
     }
 
     @Override
+    @CanIgnoreReturnValue
     public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> remove(final String key) {
-        this.cache.invalidate(key);
-        return this;
+        return lock.tryLock(() -> {
+            this.cache.invalidate(key);
+            return this;
+        });
+    }
+
+    @Override
+    public Set<String> getKeys() {
+        return lock.tryLock(() -> cache.asMap().keySet());
     }
 
     @Override
     public void close() {
-        cache.invalidateAll();
+        lock.tryLock(__ -> cache.invalidateAll());
     }
 
     @Override
     public boolean isEmpty() {
-        return cache.asMap().isEmpty();
+        return lock.tryLock(() -> cache.asMap().isEmpty());
     }
 
     @Override
@@ -89,7 +90,14 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
                     val resource = ResourceUtils.getResourceFrom(scriptPath);
                     script = new WatchableGroovyScriptResource(resource);
                 } else {
-                    script = new GroovyShellScript(scriptResource);
+                    var resourceToUse = scriptResource;
+                    if (ScriptingUtils.isInlineGroovyScript(resourceToUse)) {
+                        val matcher = ScriptingUtils.getMatcherForInlineGroovyScript(resourceToUse);
+                        if (matcher.find()) {
+                            resourceToUse = matcher.group(1);
+                        }
+                    }
+                    script = new GroovyShellScript(resourceToUse);
                 }
                 LOGGER.trace("Groovy script [{}] for key [{}] is not cached", scriptResource, cacheKey);
                 put(cacheKey, script);
@@ -99,10 +107,5 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
             }
         }
         return script;
-    }
-
-    @Override
-    public Set<String> getKeys() {
-        return this.cache.asMap().keySet();
     }
 }

@@ -1,0 +1,25 @@
+{
+  "dependencies": "syncope-authentication,events-configuration",
+  "conditions": {
+    "docker": "true"
+  },
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.accept.users=casuser::paSSw0rd",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+
+    "--cas.authn.attribute-repository.syncope.url=http://localhost:18080/syncope",
+    "--cas.authn.attribute-repository.syncope.basic-auth-username=admin",
+    "--cas.authn.attribute-repository.syncope.basic-auth-password=password",
+    "--cas.authn.attribute-repository.syncope.search-filter=username=={user}",
+
+    "--cas.standalone.configuration-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config.yml"
+  ],
+  "initScript": "${PWD}/ci/tests/syncope/run-syncope-server.sh"
+}

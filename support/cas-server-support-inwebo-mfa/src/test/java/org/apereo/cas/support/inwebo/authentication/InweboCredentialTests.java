@@ -12,11 +12,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("MFA")
-public class InweboCredentialTests {
+@Tag("MFAProvider")
+class InweboCredentialTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val results = new InweboCredential("user");
         results.setAlreadyAuthenticated(true);
         results.setDeviceName("DeviceName");

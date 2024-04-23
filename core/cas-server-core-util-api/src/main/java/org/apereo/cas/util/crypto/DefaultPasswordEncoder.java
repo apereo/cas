@@ -23,6 +23,7 @@ import java.nio.charset.Charset;
 @RequiredArgsConstructor
 public class DefaultPasswordEncoder implements PasswordEncoder {
     private final String encodingAlgorithm;
+
     private final String characterEncoding;
 
     @Override

@@ -27,7 +27,7 @@ POST /cas/v1/tickets/{TGT id} HTTP/1.0
 service={form encoded parameter for the service url}&renew=true&username=casuser&password=password
 ```
 
-You may also submit service ticket requests using the semantics [SAML1 protocol](SAML-Protocol.html).
+You may also submit service ticket requests using the semantics [SAML1 protocol](SAML-v1-Protocol.html).
 
 ## Successful Response
 
@@ -43,6 +43,6 @@ may be issued as JWTs instead. See [this guide](../installation/Configure-Servic
 
 Support is enabled by including the following in your overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-rest-tokens" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-rest-tokens" %}
 
-{% include casproperties.html properties="cas.authn.token" %}
+{% include_cached casproperties.html properties="cas.authn.token" %}

@@ -10,6 +10,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -28,6 +29,7 @@ import java.io.Serializable;
 @SuperBuilder
 public class YubiKeyDeviceRegistrationRequest implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 661869140885521905L;
 
     @JsonProperty("username")

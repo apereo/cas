@@ -8,7 +8,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.ext.saml2mdui.Description;
 import org.opensaml.saml.ext.saml2mdui.DisplayName;
+import org.opensaml.saml.ext.saml2mdui.InformationURL;
 import org.opensaml.saml.ext.saml2mdui.Logo;
+import org.opensaml.saml.ext.saml2mdui.PrivacyStatementURL;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
 
 import java.util.List;
@@ -22,10 +24,10 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("SAML")
-public class SamlMetadataUIInfoTests {
+@Tag("SAMLMetadata")
+class SamlMetadataUIInfoTests {
     @Test
-    public void verifyInfoNotAvailable() {
+    void verifyInfoNotAvailable() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         service.setPrivacyUrl("http://cas.example.org");
         service.setInformationUrl("http://cas.example.org");
@@ -39,7 +41,7 @@ public class SamlMetadataUIInfoTests {
     }
 
     @Test
-    public void verifyInfo() {
+    void verifyInfo() throws Throwable {
         val mdui = mock(UIInfo.class);
         val description = mock(Description.class);
         when(description.getValue()).thenReturn("Description");
@@ -58,10 +60,27 @@ public class SamlMetadataUIInfoTests {
         when(logo.getHeight()).thenReturn(16);
         when(mdui.getLogos()).thenReturn(List.of(logo));
 
+        val infoUrl = mock(InformationURL.class);
+        when(infoUrl.getURI()).thenReturn("https://github.com");
+        when(mdui.getInformationURLs()).thenReturn(CollectionUtils.wrapList(infoUrl));
+
+        val privacyUrl = mock(PrivacyStatementURL.class);
+        when(privacyUrl.getURI()).thenReturn("https://github.com");
+        when(mdui.getPrivacyStatementURLs()).thenReturn(CollectionUtils.wrapList(privacyUrl));
+
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val info = new SamlMetadataUIInfo(mdui, service);
-        assertEquals(names.getValue(), info.getDisplayName());
-        assertEquals(description.getValue(), info.getDescription());
+        assertEquals("Name", info.getDisplayName());
+        assertEquals("Description", info.getDescription());
+        assertFalse(info.getDescriptions().isEmpty());
+        assertFalse(info.getDisplayNames().isEmpty());
+        assertFalse(info.getInformationURLs().isEmpty());
+        assertFalse(info.getPrivacyStatementURLs().isEmpty());
+        assertNotNull(info.getInformationURL());
+        assertNotNull(info.getPrivacyStatementURL());
         assertFalse(info.getLogoUrls().isEmpty());
+
+        assertNotNull(info.toString());
+        assertNotNull(info.getUiInfo());
     }
 }

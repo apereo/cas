@@ -1,0 +1,53 @@
+---
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  hosts:
+    - name: localhost
+    - name: host.k3d.internal
+
+readinessProbe:
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  failureThreshold: 10
+
+startupProbe:
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  failureThreshold: 25
+
+caCerts:
+  enabled: true
+  secret: cas-cert
+
+initSysctl:
+  enabled: false
+
+prometheusExporter:
+  enabled: false
+
+image:
+  repository: sonarqube
+  tag: lts-community
+  pullPolicy: Always
+  
+plugins:
+  image: "curlimages/curl:latest"
+  install:
+    - https://github.com/vaulttec/sonar-auth-oidc/releases/download/v2.1.1/sonar-auth-oidc-plugin-2.1.1.jar
+
+# If you browse to sonarqube the properties set here aren't reflected in UI, but they do work.
+# There is a chance that future sonarqube version will limit sonar.properties to system properties in which case helm
+# chart would likely need to set these settings in DB via api or something. This works for the time being.
+sonarProperties:
+  sonar.auth.oidc.enabled: "true"
+  sonar.auth.oidc.issuerUri: 'https://host.k3d.internal:8443/cas/oidc'
+  sonar.auth.oidc.clientId.secured: 'sonarqube'
+  sonar.auth.oidc.clientSecret.secured: 'S0n@rq#b3S3cr3t'
+  sonar.core.serverBaseURL: 'https://host.k3d.internal'
+  sonar.log.level.web: "info"
+  sonar.log.level.app: "info"
+  sonar.auth.oidc.allowUsersToSignUp: "true"
+  sonar.auth.oidc.loginButtonText: "CAS OpenID Connect"
+  sonar.plugins.risk.consent: "ACCEPTED"

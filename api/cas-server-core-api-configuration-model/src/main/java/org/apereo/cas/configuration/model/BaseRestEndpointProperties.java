@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -7,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +23,8 @@ import java.util.Map;
 @Setter
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Accessors(chain = true)
-public class BaseRestEndpointProperties implements Serializable {
+public class BaseRestEndpointProperties implements CasFeatureModule, Serializable {
+    @Serial
     private static final long serialVersionUID = 2687020856160473089L;
 
     /**
@@ -49,4 +52,5 @@ public class BaseRestEndpointProperties implements Serializable {
      * and the value in the map should be the header value.
      */
     private Map<String, String> headers = new HashMap<>();
+
 }

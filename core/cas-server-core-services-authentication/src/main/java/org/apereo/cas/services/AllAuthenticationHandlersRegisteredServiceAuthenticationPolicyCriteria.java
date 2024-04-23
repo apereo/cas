@@ -10,6 +10,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria}.
  *
@@ -23,6 +25,7 @@ import lombok.ToString;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria implements RegisteredServiceAuthenticationPolicyCriteria {
+    @Serial
     private static final long serialVersionUID = -2905826778096374574L;
 
     @Override

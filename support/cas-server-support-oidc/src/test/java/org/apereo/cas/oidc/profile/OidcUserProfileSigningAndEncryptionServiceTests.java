@@ -18,29 +18,31 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
-@TestPropertySource(properties = "cas.authn.oidc.discovery.user-info-encryption-alg-values-supported=none,RSA1_5")
-public class OidcUserProfileSigningAndEncryptionServiceTests extends AbstractOidcTests {
+@TestPropertySource(properties = "cas.authn.oidc.discovery.user-info-encryption-alg-values-supported=none,RSA1_5,RSA-OAEP-256")
+class OidcUserProfileSigningAndEncryptionServiceTests extends AbstractOidcTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val service = getOidcRegisteredService();
         service.setUserInfoEncryptedResponseEncoding(OidcUserProfileSigningAndEncryptionService.USER_INFO_RESPONSE_ENCRYPTION_ENCODING_DEFAULT);
         service.setUserInfoEncryptedResponseAlg("RSA-OAEP-256");
         service.setUserInfoSigningAlg("RS256");
         val input = oidcUserProfileSigningAndEncryptionService.encode(service, getClaims());
         assertFalse(input.isEmpty());
-        oidcUserProfileSigningAndEncryptionService.decode(input, Optional.of(service));
+        assertDoesNotThrow(() -> {
+            oidcUserProfileSigningAndEncryptionService.decode(input, Optional.of(service));
+        });
     }
 
     @Test
-    public void verifyOAuth() {
+    void verifyOAuth() throws Throwable {
         val service = getOAuthRegisteredService("example", "https://example.org");
         val input = oidcUserProfileSigningAndEncryptionService.encode(service, getClaims());
         assertFalse(input.isEmpty());
     }
 
     @Test
-    public void verifyNoSigningEncryption() {
+    void verifyNoSigningEncryption() throws Throwable {
         val service = getOidcRegisteredService();
         service.setUserInfoSigningAlg("RS256");
         service.setUserInfoEncryptedResponseEncoding(OidcUserProfileSigningAndEncryptionService.USER_INFO_RESPONSE_ENCRYPTION_ENCODING_DEFAULT);

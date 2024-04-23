@@ -23,9 +23,9 @@ import java.nio.charset.StandardCharsets;
  * @since 6.1.0
  */
 @Tag("RestfulApi")
-public class RestfulDelegatedClientUserProfileProvisionerTests {
+class RestfulDelegatedClientUserProfileProvisionerTests {
     @Test
-    public void verifyAllowedOperation() {
+    void verifyAllowedOperation() throws Throwable {
         val commonProfile = new CommonProfile();
         commonProfile.setClientName("CasClient");
         commonProfile.setId("testuser");
@@ -38,7 +38,8 @@ public class RestfulDelegatedClientUserProfileProvisionerTests {
             val props = new RestEndpointProperties();
             props.setUrl("http://localhost:9192");
             val service = new RestfulDelegatedClientUserProfileProvisioner(props);
-            service.execute(CoreAuthenticationTestUtils.getPrincipal(), commonProfile, client);
+            service.execute(CoreAuthenticationTestUtils.getPrincipal(), commonProfile, client,
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         }
     }
 }

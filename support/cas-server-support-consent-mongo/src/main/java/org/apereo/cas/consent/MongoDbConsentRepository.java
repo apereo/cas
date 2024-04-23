@@ -6,10 +6,11 @@ import org.apereo.cas.services.RegisteredService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import java.io.Serial;
 import java.util.Collection;
 
 /**
@@ -20,9 +21,11 @@ import java.util.Collection;
  */
 @RequiredArgsConstructor
 public class MongoDbConsentRepository implements ConsentRepository {
+    @Serial
     private static final long serialVersionUID = 7734163279139907616L;
 
-    private final transient MongoTemplate mongoTemplate;
+    private final transient MongoOperations mongoTemplate;
+
     private final String collectionName;
 
     @Override
@@ -62,5 +65,11 @@ public class MongoDbConsentRepository implements ConsentRepository {
         val query = new Query(Criteria.where("principal").is(principal));
         val result = this.mongoTemplate.remove(query, ConsentDecision.class, this.collectionName);
         return result.getDeletedCount() > 0;
+    }
+
+    @Override
+    public void deleteAll() {
+        val query = new Query(Criteria.where("principal").exists(true));
+        mongoTemplate.remove(query, ConsentDecision.class, this.collectionName);
     }
 }

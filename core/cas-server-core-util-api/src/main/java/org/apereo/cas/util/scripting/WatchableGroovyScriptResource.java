@@ -1,12 +1,14 @@
 package org.apereo.cas.util.scripting;
 
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
-
 import groovy.lang.GroovyObject;
 import lombok.Getter;
-import lombok.SneakyThrows;
+import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.io.Resource;
@@ -20,24 +22,31 @@ import org.springframework.core.io.Resource;
 @Slf4j
 @Getter
 @ToString(of = "resource")
+@Accessors(chain = true)
 public class WatchableGroovyScriptResource implements ExecutableCompiledGroovyScript {
-    private final transient Resource resource;
+    private final CasReentrantLock lock = new CasReentrantLock();
 
-    private transient FileWatcherService watcherService;
+    private final Resource resource;
 
-    private transient GroovyObject groovyScript;
+    private FileWatcherService watcherService;
 
-    @SneakyThrows
+    private GroovyObject groovyScript;
+
+    @Setter
+    private boolean failOnError = true;
+
     public WatchableGroovyScriptResource(final Resource script, final boolean enableWatcher) {
         this.resource = script;
-
         if (ResourceUtils.doesResourceExist(script)) {
             if (ResourceUtils.isFile(script) && enableWatcher) {
-                this.watcherService = new FileWatcherService(script.getFile(), Unchecked.consumer(file -> {
-                    LOGGER.debug("Reloading script at [{}]", file);
-                    compileScriptResource(script);
-                }));
-                this.watcherService.start(script.getFilename());
+                watcherService = FunctionUtils.doUnchecked(
+                    () -> new FileWatcherService(script.getFile(),
+                        Unchecked.consumer(file -> {
+                            LOGGER.debug("Reloading script at [{}]", file);
+                            compileScriptResource(script);
+                            LOGGER.info("Reloaded script at [{}]", file);
+                        })));
+                watcherService.start(script.getFilename());
             }
             compileScriptResource(script);
         }
@@ -47,49 +56,33 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
         this(script, true);
     }
 
-    /**
-     * Execute.
-     *
-     * @param <T>   the type parameter
-     * @param args  the args
-     * @param clazz the clazz
-     * @return the result
-     */
     @Override
-    public <T> T execute(final Object[] args, final Class<T> clazz) {
-        return execute(args, clazz, true);
-    }
-
-    /**
-     * Execute.
-     *
-     * @param args the args
-     */
-    @Override
-    public void execute(final Object[] args) {
-        execute(args, Void.class, true);
-    }
-
-    /**
-     * Execute.
-     *
-     * @param <T>         the type parameter
-     * @param args        the args
-     * @param clazz       the clazz
-     * @param failOnError the fail on error
-     * @return the t
-     */
-    @Override
-    public <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) {
-        if (this.groovyScript != null) {
-            return ScriptingUtils.executeGroovyScript(this.groovyScript, args, clazz, failOnError);
-        }
-        return null;
+    public <T> T execute(final Object[] args, final Class<T> clazz) throws Throwable {
+        return execute(args, clazz, failOnError);
     }
 
     @Override
-    public <T> T execute(final String methodName, final Class<T> clazz, final Object... args) {
-        return execute(methodName, clazz, true, args);
+    public void execute(final Object[] args) throws Throwable {
+        execute(args, Void.class, failOnError);
+    }
+
+    @Override
+    public <T> T execute(final String methodName, final Class<T> clazz, final Object... args) throws Throwable {
+        return execute(methodName, clazz, failOnError, args);
+    }
+
+    @Override
+    public <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) throws Throwable {
+        return lock.tryLock(() -> {
+            try {
+                LOGGER.trace("Beginning to execute script [{}]", this);
+                return groovyScript != null
+                    ? ScriptingUtils.executeGroovyScript(this.groovyScript, args, clazz, failOnError)
+                    : null;
+            } finally {
+                LOGGER.trace("Completed script execution [{}]", this);
+            }
+        });
     }
 
     /**
@@ -102,13 +95,20 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
      * @param args        the args
      * @return the t
      */
-    public <T> T execute(final String methodName, final Class<T> clazz, final boolean failOnError, final Object... args) {
-        if (this.groovyScript != null) {
-            return ScriptingUtils.executeGroovyScript(this.groovyScript, methodName, args, clazz, failOnError);
-        }
-        return null;
+    public <T> T execute(final String methodName, final Class<T> clazz, final boolean failOnError,
+                         final Object... args) throws Throwable {
+        return lock.tryLock(() -> {
+            try {
+                LOGGER.trace("Beginning to execute script [{}]", this);
+                return groovyScript != null
+                    ? ScriptingUtils.executeGroovyScript(groovyScript, methodName, args, clazz, failOnError)
+                    : null;
+            } finally {
+                LOGGER.trace("Completed script execution [{}]", this);
+            }
+        });
     }
-
+    
     @Override
     public void close() {
         if (watcherService != null) {
@@ -118,6 +118,6 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledGroovySc
     }
 
     private void compileScriptResource(final Resource script) {
-        this.groovyScript = ScriptingUtils.parseGroovyScript(script, true);
+        this.groovyScript = ScriptingUtils.parseGroovyScript(script, failOnError);
     }
 }

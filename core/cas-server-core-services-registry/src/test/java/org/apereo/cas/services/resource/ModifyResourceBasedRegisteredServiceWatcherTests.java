@@ -3,7 +3,6 @@ package org.apereo.cas.services.resource;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -26,11 +25,10 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("RegisteredService")
-public class ModifyResourceBasedRegisteredServiceWatcherTests {
+class ModifyResourceBasedRegisteredServiceWatcherTests {
 
     @Test
-    @SneakyThrows
-    public void verifyOperationFoundModified() {
+    void verifyOperationFoundModified() throws Throwable {
         val result = new AtomicBoolean(false);
         val mockAppContext = mock(ConfigurableApplicationContext.class);
         doAnswer(args -> {
@@ -39,7 +37,7 @@ public class ModifyResourceBasedRegisteredServiceWatcherTests {
             return null;
         }).when(mockAppContext).publishEvent(any());
         val registry = new AbstractResourceBasedServiceRegistry(new ClassPathResource("services"),
-            List.of(new RegisteredServiceJsonSerializer()), mockAppContext,
+            List.of(new RegisteredServiceJsonSerializer(mockAppContext)), mockAppContext,
             new ArrayList<>()) {
             @Override
             protected String[] getExtensions() {
@@ -52,7 +50,7 @@ public class ModifyResourceBasedRegisteredServiceWatcherTests {
         service.setEvaluationOrder(666);
         registry.load();
         val temp = new FileSystemResource(File.createTempFile("Sample-1", ".json"));
-        new RegisteredServiceJsonSerializer().to(temp.getFile(), service);
+        new RegisteredServiceJsonSerializer(mockAppContext).to(temp.getFile(), service);
 
         val watcher = new ModifyResourceBasedRegisteredServiceWatcher(registry);
         watcher.accept(temp.getFile());

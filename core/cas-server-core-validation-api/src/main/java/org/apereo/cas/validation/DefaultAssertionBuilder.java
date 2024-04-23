@@ -1,12 +1,17 @@
 package org.apereo.cas.validation;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link DefaultAssertionBuilder}.
@@ -15,72 +20,31 @@ import java.util.List;
  * @since 5.2.0
  */
 @Getter
+@SuperBuilder
 public class DefaultAssertionBuilder {
-    /**
-     * The Auth.
-     */
-    private final Authentication auth;
-    /**
-     * The Authentications.
-     */
-    private List<Authentication> authentications = new ArrayList<>(0);
-    /**
-     * The Service.
-     */
-    private WebApplicationService service;
-    /**
-     * The New login.
-     */
-    private boolean newLogin;
+    private final Authentication primaryAuthentication;
+    private final Authentication originalAuthentication;
 
-    /**
-     * Instantiates a new Default assertion builder.
-     *
-     * @param auth the auth
-     */
-    public DefaultAssertionBuilder(final Authentication auth) {
-        this.auth = auth;
-    }
+    @Builder.Default
+    private final List<Authentication> authentications = new ArrayList<>(0);
 
-    /**
-     * With default assertion builder.
-     *
-     * @param authentications the authentications
-     * @return the default assertion builder
-     */
-    public DefaultAssertionBuilder with(final List<Authentication> authentications) {
-        this.authentications = authentications;
-        return this;
-    }
+    private final Service service;
 
-    /**
-     * With default assertion builder.
-     *
-     * @param service the service
-     * @return the default assertion builder
-     */
-    public DefaultAssertionBuilder with(final WebApplicationService service) {
-        this.service = service;
-        return this;
-    }
+    private final boolean newLogin;
+    
+    private final boolean stateless;
 
-    /**
-     * With default assertion builder.
-     *
-     * @param newLogin the new login
-     * @return the default assertion builder
-     */
-    public DefaultAssertionBuilder with(final boolean newLogin) {
-        this.newLogin = newLogin;
-        return this;
-    }
+    private final RegisteredService registeredService;
+
+    private final Map<String, Serializable> context;
 
     /**
      * Build assertion.
      *
      * @return the assertion
      */
-    public Assertion build() {
-        return new ImmutableAssertion(this.auth, this.authentications, this.newLogin, this.service);
+    public Assertion assemble() {
+        return new ImmutableAssertion(this.primaryAuthentication, this.originalAuthentication,
+            this.authentications, this.newLogin, this.stateless, this.service, this.registeredService, this.context);
     }
 }

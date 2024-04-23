@@ -1,18 +1,16 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.support.spnego.util.SpnegoConstants;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.StringUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -34,7 +32,7 @@ import java.util.List;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class SpnegoNegotiateCredentialsAction extends AbstractAction {
+public class SpnegoNegotiateCredentialsAction extends BaseCasWebflowAction {
     /**
      * Sets supported browsers by their user agent. The user agent
      * header defined will be compared against this list. The user agents configured
@@ -43,11 +41,6 @@ public class SpnegoNegotiateCredentialsAction extends AbstractAction {
      * the check will pass.
      */
     private final List<String> supportedBrowser;
-
-    /**
-     * Whether this is using the NTLM protocol or not.
-     */
-    private final boolean ntlm;
 
     /**
      * Sets whether mixed mode authentication should be enabled. If it is
@@ -63,7 +56,7 @@ public class SpnegoNegotiateCredentialsAction extends AbstractAction {
     private final boolean mixedModeAuthentication;
 
     @Override
-    protected Event doExecute(final RequestContext context) {
+    protected Event doExecuteInternal(final RequestContext context) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
@@ -82,15 +75,13 @@ public class SpnegoNegotiateCredentialsAction extends AbstractAction {
             return error();
         }
 
-        val prefix = constructMessagePrefix();
         if (!StringUtils.hasText(authorizationHeader)
-            || !authorizationHeader.startsWith(prefix)
-            || authorizationHeader.length() <= prefix.length()) {
+            || !authorizationHeader.startsWith(SpnegoConstants.NEGOTIATE)
+            || authorizationHeader.length() <= SpnegoConstants.NEGOTIATE.length()) {
 
-            val wwwHeader = this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE;
             LOGGER.debug("Authorization header not found or does not match the message prefix [{}]. Sending [{}] header [{}]",
-                prefix, SpnegoConstants.HEADER_AUTHENTICATE, wwwHeader);
-            response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, wwwHeader);
+                SpnegoConstants.NEGOTIATE, SpnegoConstants.HEADER_AUTHENTICATE, SpnegoConstants.NEGOTIATE);
+            response.setHeader(SpnegoConstants.HEADER_AUTHENTICATE, SpnegoConstants.NEGOTIATE);
 
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             /*
@@ -98,24 +89,14 @@ public class SpnegoNegotiateCredentialsAction extends AbstractAction {
              because another object has taken care of it. If mixed mode authentication is allowed
              then responseComplete should not be called so that webflow will display the login page.
               */
-            if (!this.mixedModeAuthentication) {
+            if (this.mixedModeAuthentication) {
+                LOGGER.debug("Mixed-mode authentication is enabled");
+            } else {
                 LOGGER.debug("Mixed-mode authentication is disabled. Executing completion of response");
                 context.getExternalContext().recordResponseComplete();
-            } else {
-                LOGGER.debug("Mixed-mode authentication is enabled");
             }
         }
         return success();
-    }
-
-    /**
-     * Construct message prefix.
-     *
-     * @return if {@link #ntlm} is enabled, {@link SpnegoConstants#NTLM}, otherwise
-     * {@link SpnegoConstants#NEGOTIATE}. An extra space is appended to the end.
-     */
-    protected String constructMessagePrefix() {
-        return (this.ntlm ? SpnegoConstants.NTLM : SpnegoConstants.NEGOTIATE) + ' ';
     }
 
     /**

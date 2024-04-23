@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("SpnegoSystemProperties")
 public class SpnegoSystemProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = -7213507143858237596L;
 
     /**

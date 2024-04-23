@@ -10,8 +10,11 @@ category: Ticketing
 
 Memcached integration is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" 
-module="cas-server-support-memcached-ticket-registry,cas-server-support-memcached-core" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-ticket-registry" %}
+
+<div class="alert alert-warning">:warning: <strong>Usage</strong>
+<p><strong>This feature is deprecated and is scheduled to be removed in the future.</strong></p>
+</div>
 
 This registry stores tickets in one or more [memcached](http://memcached.org/) instances. 
 Memcached stores data in exactly one node among many in a distributed cache, thus avoiding the requirement to replicate
@@ -27,14 +30,19 @@ Note that a change in the set of available cache nodes may produce a different t
 
 The actual memcached implementation may be supported via one of the following options, expected to be defined in the overlay.
 
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>Not all ticket 
+registry operations are supported by the memcached ticket registry implementation. In particular, operations
+that execute bulk queries such as deleting and fetching all tickets in a single request may be unsupported,
+as memcached itself is rather unable to process and support that type of query.</p></div>
+
 ##  Spymemcached
 
-Enable support via the [spymemcached library](https://code.google.com/p/spymemcached/). This is a simple, asynchronous, 
+Enable support via the [spymemcached library](). This is a simple, asynchronous, 
 single-threaded memcached client that should be the default choice for the majority of deployments.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-spy" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-spy" %}
 
 ## AWS ElastiCache
 
@@ -56,7 +64,7 @@ This metadata is updated whenever nodes are added or removed from the cluster.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-aws-elasticache" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-memcached-aws-elasticache" %}
 
 ## Configuration Considerations
 
@@ -94,17 +102,16 @@ The consistent strategy generally provides a target node that does not vary with
 should be used in cases where the memcached pool may grow or shrink dynamically, including due to frequent node
 failure.
 
-
 ### Object Serialization
 
 Memcached stores bytes of data, so CAS tickets must be serialized to a byte array prior to storage. CAS ships with
-a custom serialization component `KryoTranscoder` based on the [Kryo](https://code.google.com/p/kryo/) serialization
+a custom serialization component `KryoTranscoder` based on the [Kryo](https://github.com/EsotericSoftware/kryo) serialization
 framework. This component is recommended over the default Java serialization mechanism since it produces much more
 compact data, which benefits both storage requirements and throughput.
 
 ## Configuration
 
-{% include casproperties.html properties="cas.ticket.registry.memcached" %}
+{% include_cached casproperties.html properties="cas.ticket.registry.memcached" %}
 
 ## High Availability Considerations
 

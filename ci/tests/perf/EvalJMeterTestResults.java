@@ -14,7 +14,7 @@ public class EvalJMeterTestResults {
         if (matcher.find()) {
             var count = Integer.parseInt(matcher.group(1));
             if (count > 0) {
-                System.out.format("JMeter tests contain %d errors.", count);
+                System.out.format("JMeter tests contain %d error(s)s.\n", count);
                 System.exit(1);
             }
         }

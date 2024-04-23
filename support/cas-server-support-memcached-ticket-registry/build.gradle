@@ -1,4 +1,11 @@
 description = "Apereo CAS Memcached Integration"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Ticket Registries",
+            title: "Memcached Ticket Registry"
+    ]
+}
 dependencies {
     implementation libraries.kryo
 
@@ -27,8 +34,9 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-services-api")
 
-    testImplementation project(":support:cas-server-support-oauth-core")
+
     testImplementation project(":support:cas-server-support-oauth")
     testImplementation project(":support:cas-server-support-oauth-core-api")
     testImplementation project(":support:cas-server-support-oauth-api")

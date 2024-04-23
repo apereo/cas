@@ -12,8 +12,8 @@ docker run --rm --name postgres-server --rm -e POSTGRES_PASSWORD=password -d -p 
 docker ps | grep "postgres-server"
 retVal=$?
 if [ $retVal == 0 ]; then
-    echo "Postgres docker image is running."
+    echo "Postgres docker container is running."
 else
-    echo "Postgres docker image failed to start."
+    echo "Postgres docker container failed to start."
     exit $retVal
 fi

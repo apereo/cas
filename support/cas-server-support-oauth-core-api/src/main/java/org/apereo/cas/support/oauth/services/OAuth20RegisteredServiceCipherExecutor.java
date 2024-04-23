@@ -53,12 +53,12 @@ public class OAuth20RegisteredServiceCipherExecutor extends BaseStringCipherExec
     }
 
     @Override
-    protected String getEncryptionKeySetting() {
+    public String getEncryptionKeySetting() {
         return "cas.authn.oauth.crypto.encryption.key";
     }
 
     @Override
-    protected String getSigningKeySetting() {
+    public String getSigningKeySetting() {
         return "cas.authn.oauth.crypto.signing.key";
     }
 

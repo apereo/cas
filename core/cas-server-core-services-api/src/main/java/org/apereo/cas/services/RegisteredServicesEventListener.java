@@ -1,35 +1,20 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.notifications.CommunicationsManager;
-import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
+import org.apereo.cas.util.spring.CasEventListener;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
-import java.util.Map;
-
 /**
- * This is {@link RegisteredServicesEventListener}.
+ * Interface for {@code DefaultRegisteredServicesEventListener} to allow spring {@code @Async} support to use JDK proxy.
  *
- * @author Misagh Moayyed
- * @since 5.1.0
+ * @author Hal Deadman
+ * @since 6.5.0
  */
-@RequiredArgsConstructor
-@Slf4j
-public class RegisteredServicesEventListener {
-    private final ServicesManager servicesManager;
-
-    private final CasConfigurationProperties casProperties;
-
-    private final CommunicationsManager communicationsManager;
+public interface RegisteredServicesEventListener extends CasEventListener {
 
     /**
      * Handle services manager refresh event.
@@ -38,9 +23,7 @@ public class RegisteredServicesEventListener {
      */
     @EventListener
     @Async
-    public void handleRefreshEvent(final CasRegisteredServicesRefreshEvent event) {
-        servicesManager.load();
-    }
+    void handleRefreshEvent(CasRegisteredServicesRefreshEvent event);
 
     /**
      * Handle environment change event.
@@ -49,10 +32,8 @@ public class RegisteredServicesEventListener {
      */
     @EventListener
     @Async
-    public void handleEnvironmentChangeEvent(final EnvironmentChangeEvent event) {
-        servicesManager.load();
-    }
-    
+    void handleEnvironmentChangeEvent(EnvironmentChangeEvent event);
+
     /**
      * Handle registered service expired event.
      *
@@ -60,36 +41,6 @@ public class RegisteredServicesEventListener {
      */
     @EventListener
     @Async
-    public void handleRegisteredServiceExpiredEvent(final CasRegisteredServiceExpiredEvent event) {
-        val registeredService = event.getRegisteredService();
-        val contacts = registeredService.getContacts();
-        val serviceRegistry = casProperties.getServiceRegistry();
-        val serviceName = StringUtils.defaultIfBlank(registeredService.getName(), registeredService.getServiceId());
-        if (contacts == null || contacts.isEmpty()) {
-            LOGGER.debug("No contacts are defined to be notified for policy changes to service [{}]", serviceName);
-            return;
-        }
+    void handleRegisteredServiceExpiredEvent(CasRegisteredServiceExpiredEvent event);
 
-        val logMessage = String.format("Sending notification to [{}] as service [{}] is %s from registry", event.isDeleted() ? "deleted" : "expired");
-        LOGGER.info(logMessage, contacts, serviceName);
-
-        communicationsManager.validate();
-        if (communicationsManager.isMailSenderDefined()) {
-            val mail = serviceRegistry.getMail();
-            val body = EmailMessageBodyBuilder.builder().properties(mail)
-                .parameters(Map.of("service", serviceName)).build().produce();
-            contacts
-                .stream()
-                .filter(c -> StringUtils.isNotBlank(c.getEmail()))
-                .forEach(c -> communicationsManager.email(mail, c.getEmail(), body));
-        }
-        if (communicationsManager.isSmsSenderDefined()) {
-            val sms = serviceRegistry.getSms();
-            val message = sms.getFormattedText(serviceName);
-            contacts
-                .stream()
-                .filter(c -> StringUtils.isNotBlank(c.getPhone()))
-                .forEach(c -> communicationsManager.sms(sms.getFrom(), c.getPhone(), message));
-        }
-    }
 }

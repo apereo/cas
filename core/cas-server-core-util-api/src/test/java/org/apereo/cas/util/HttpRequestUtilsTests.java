@@ -1,11 +1,11 @@
 package org.apereo.cas.util;
 
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -15,21 +15,34 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Utility")
-public class HttpRequestUtilsTests {
+class HttpRequestUtilsTests {
 
     @Test
-    public void verifyNoRequest() {
+    void verifyBadGeoLocation() throws Throwable {
+        val request = new MockHttpServletRequest();
+        request.setParameter("geolocation", "34,45,1,12345");
+        assertNotNull(HttpRequestUtils.getHttpServletRequestGeoLocation(request));
+
+        request.setParameter("geolocation", "34,4");
+        assertNotNull(HttpRequestUtils.getHttpServletRequestGeoLocation(request));
+
+        request.setParameter("geolocation", "34,4,,1");
+        assertNotNull(HttpRequestUtils.getHttpServletRequestGeoLocation(request));
+    }
+
+    @Test
+    void verifyNoRequest() throws Throwable {
         assertNull(HttpRequestUtils.getHttpServletRequestFromRequestAttributes());
     }
 
     @Test
-    public void verifyNoLoc() {
+    void verifyNoLoc() throws Throwable {
         val loc = HttpRequestUtils.getHttpServletRequestGeoLocation(new MockHttpServletRequest());
         assertNull(loc.getLongitude());
     }
 
     @Test
-    public void verifyHeader() {
+    void verifyHeader() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addHeader("h1", "v1");
         request.addHeader("h2", "v2");
@@ -37,7 +50,7 @@ public class HttpRequestUtilsTests {
     }
 
     @Test
-    public void verifyPing() {
+    void verifyPing() throws Throwable {
         assertNotNull(HttpRequestUtils.pingUrl("https://github.com"));
         assertEquals(HttpStatus.SERVICE_UNAVAILABLE, HttpRequestUtils.pingUrl("bad-endpoint"));
     }

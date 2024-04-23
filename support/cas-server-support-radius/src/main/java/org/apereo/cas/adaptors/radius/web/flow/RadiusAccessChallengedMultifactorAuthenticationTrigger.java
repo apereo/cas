@@ -21,7 +21,8 @@ import net.jradius.dictionary.Attr_State;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Optional;
 
@@ -43,8 +44,11 @@ public class RadiusAccessChallengedMultifactorAuthenticationTrigger implements M
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     @Override
-    public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication, final RegisteredService registeredService,
-                                                                   final HttpServletRequest request, final Service service) {
+    public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
+                                                                   final RegisteredService registeredService,
+                                                                   final HttpServletRequest request,
+                                                                   final HttpServletResponse response,
+                                                                   final Service service) {
         if (authentication == null) {
             LOGGER.debug("No authentication or service is available to determine event for principal");
             return Optional.empty();

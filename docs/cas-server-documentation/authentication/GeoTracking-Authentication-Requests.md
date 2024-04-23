@@ -12,22 +12,15 @@ Authentication requests can be mapped and translated to physical locations.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-geolocation" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-geolocation" %}
 
-## Google Maps
+## GeoLocation Providers
 
-Uses the [Google Maps Geocoding API](https://developers.google.com/maps/documentation/geocoding/start) to translate
-authentication requests into a geo-location.
+The following geolocation providers are supported by CAS:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-geolocation-googlemaps" %}
-
-{% include casproperties.html properties="cas.google-maps" %}
-
-## Maxmind
-
-Uses [Maxmind](https://www.maxmind.com/en/home) to translate
-authentication requests into a geo-location.
-
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-geolocation-maxmind" %}
-
-{% include casproperties.html properties="cas.maxmind" %}
+| Storage        | Description                                                      |
+|----------------|------------------------------------------------------------------|
+| Google Maps    | [See this guide](GeoTracking-Authentication-GoogleMaps.html).    |
+| Maxmind        | [See this guide](GeoTracking-Authentication-Maxmind.html).       |
+| IP GeoLocation | [See this guide](GeoTracking-Authentication-IPGeoLocation.html). |
+| Groovy         | [See this guide](GeoTracking-Authentication-Groovy.html).        |

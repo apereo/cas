@@ -20,11 +20,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("FileSystem")
-public class DefaultGitRepositoryRegisteredServiceLocatorTests {
+@Tag("Git")
+class DefaultGitRepositoryRegisteredServiceLocatorTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val strategy = new DefaultRegisteredServiceResourceNamingStrategy();
         val locator = new DefaultGitRepositoryRegisteredServiceLocator(strategy,
             FileUtils.getTempDirectory(), new GitServiceRegistryProperties().setRootDirectory("sample-root"));

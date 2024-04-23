@@ -1,0 +1,47 @@
+{
+  "dependencies": "duo",
+  "conditions": {
+    "env": "DUO_SECURITY_ADMIN_SKEY,DUO_SECURITY_ADMIN_IKEY,DUO_SECURITY_UNIVERSAL_PROMPT_SKEY,DUO_SECURITY_UNIVERSAL_PROMPT_IKEY,DUO_SECURITY_API_HOST",
+    "docker": "true"
+  },
+
+  "properties": [
+    "--logging.level.org.apereo.cas=info",
+    "--logging.level.org.springframework.webflow=warn",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+    
+    "--cas.authn.accept.users=duobypass::Mellon",
+
+    "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
+
+    "--cas.authn.mfa.groovy-script.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/GroovyMfa.groovy",
+
+    "--cas.authn.mfa.duo[0].account-status-enabled=false",
+    "--cas.authn.mfa.duo[0].name=RegularDuoSecurity",
+    "--cas.authn.mfa.duo[0].duo-admin-secret-key=${#environmentVars['DUO_SECURITY_ADMIN_SKEY']}",
+    "--cas.authn.mfa.duo[0].duo-admin-integration-key=${#environmentVars['DUO_SECURITY_ADMIN_IKEY']}",
+    "--cas.authn.mfa.duo[0].duo-secret-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_SKEY']}",
+    "--cas.authn.mfa.duo[0].duo-integration-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_IKEY']}",
+    "--cas.authn.mfa.duo[0].duo-api-host=${#environmentVars['DUO_SECURITY_API_HOST']}",
+    "--cas.authn.mfa.duo[0].id=mfa-duo",
+
+    "--cas.authn.mfa.duo[1].account-status-enabled=false",
+    "--cas.authn.mfa.duo[1].name=AlternativeDuoSecurity",
+    "--cas.authn.mfa.duo[1].duo-admin-secret-key=${#environmentVars['DUO_SECURITY_ADMIN_SKEY']}",
+    "--cas.authn.mfa.duo[1].duo-admin-integration-key=${#environmentVars['DUO_SECURITY_ADMIN_IKEY']}",
+    "--cas.authn.mfa.duo[1].duo-secret-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_SKEY']}",
+    "--cas.authn.mfa.duo[1].duo-integration-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_IKEY']}",
+    "--cas.authn.mfa.duo[1].duo-api-host=${#environmentVars['DUO_SECURITY_API_HOST']}",
+    "--cas.authn.mfa.duo[1].id=mfa-duo-alt",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=duoAdmin",
+    "--management.endpoints.enabled-by-default=true"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

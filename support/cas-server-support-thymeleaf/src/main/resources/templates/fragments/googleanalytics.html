@@ -1,0 +1,16 @@
+
+<script th:fragment="ga" th:inline="javascript" th:if="${not #strings.isEmpty(googleAnalyticsTrackingId)}">
+    /*<![CDATA[*/
+    let googleAnalyticsTrackingId = /*[[${googleAnalyticsTrackingId}]]*/;
+             
+    let script = document.createElement('script');
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${googleAnalyticsTrackingId}`;
+    document.head.appendChild(script);
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', googleAnalyticsTrackingId);
+    /*]]>*/
+</script>

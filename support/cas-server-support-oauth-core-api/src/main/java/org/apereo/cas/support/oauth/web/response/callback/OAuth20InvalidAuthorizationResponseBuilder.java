@@ -3,15 +3,14 @@ package org.apereo.cas.support.oauth.web.response.callback;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.jee.context.JEEContext;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,13 +26,18 @@ import java.util.Map;
 public class OAuth20InvalidAuthorizationResponseBuilder {
     private final ServicesManager servicesManager;
 
+    private final OAuth20RequestParameterResolver requestParameterResolver;
+
+    private final OAuth20ResponseModeFactory responseModeFactory;
+
+
     /**
      * Build string.
      *
-     * @param context  the context
+     * @param context the context
      * @return the view response
      */
-    public ModelAndView build(final JEEContext context) {
+    public ModelAndView build(final JEEContext context) throws Exception {
         val errorWithCallBack = (Boolean) context.getRequestAttribute(OAuth20Constants.ERROR_WITH_CALLBACK)
             .orElse(false);
 
@@ -83,16 +87,14 @@ public class OAuth20InvalidAuthorizationResponseBuilder {
      */
     public ModelAndView buildResponseModelAndView(final JEEContext context, final ServicesManager servicesManager,
                                                   final String clientId, final String redirectUrl,
-                                                  final Map<String, String> parameters) {
+                                                  final Map<String, String> parameters) throws Exception {
+        OAuth20Utils.validateRedirectUri(redirectUrl);
+
         val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
-        val responseType = OAuth20Utils.getResponseModeType(context);
-        if (OAuth20Utils.isResponseModeTypeFormPost(registeredService, responseType)) {
-            val model = new LinkedHashMap<String, Object>();
-            model.put("originalUrl", redirectUrl);
-            model.put("parameters", parameters);
-            return new ModelAndView(CasWebflowConstants.VIEW_ID_POST_RESPONSE, model);
-        }
-        return new ModelAndView(new RedirectView(redirectUrl), parameters);
+        val responseType = requestParameterResolver.resolveResponseModeType(context);
+
+        val builder = responseModeFactory.getBuilder(registeredService, responseType);
+        return builder.build(registeredService, redirectUrl, parameters);
     }
 
     /**

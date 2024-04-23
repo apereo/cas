@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,7 +22,7 @@ import java.io.Serializable;
 @Getter
 @EqualsAndHashCode
 @ToString
-@Builder
+@SuperBuilder
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class AcceptableUsagePolicyTerms implements Serializable {
     /**
@@ -29,6 +30,7 @@ public class AcceptableUsagePolicyTerms implements Serializable {
      */
     public static final String CODE = "screen.aup.policyterms";
 
+    @Serial
     private static final long serialVersionUID = -5583211907625747831L;
 
     private final String code;

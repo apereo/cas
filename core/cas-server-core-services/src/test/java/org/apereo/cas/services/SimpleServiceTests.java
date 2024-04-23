@@ -10,25 +10,25 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("Authentication")
-public class SimpleServiceTests {
+class SimpleServiceTests {
 
     @Test
-    public void verifyProperId() {
+    void verifyProperId() throws Throwable {
         assertEquals(RegisteredServiceTestUtils.CONST_TEST_URL, RegisteredServiceTestUtils.getService().getId(), "Ids are not equal.");
     }
 
     @Test
-    public void verifyEqualsWithNull() {
-        assertNotEquals(RegisteredServiceTestUtils.getService(), null, "Service matches null.");
+    void verifyEqualsWithNull() throws Throwable {
+        assertNotEquals(null, RegisteredServiceTestUtils.getService(), "Service matches null.");
     }
 
     @Test
-    public void verifyEqualsWithBadClass() {
-        assertNotEquals(RegisteredServiceTestUtils.getService(), new Object(), "Services matches String class.");
+    void verifyEqualsWithBadClass() throws Throwable {
+        assertNotEquals(new Object(), RegisteredServiceTestUtils.getService(), "Services matches String class.");
     }
 
     @Test
-    public void verifyEquals() {
+    void verifyEquals() throws Throwable {
         assertEquals(RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getService(), "Services are not equal.");
     }
 }

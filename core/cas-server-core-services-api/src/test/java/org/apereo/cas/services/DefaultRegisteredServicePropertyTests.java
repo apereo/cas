@@ -15,13 +15,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("RegisteredService")
-public class DefaultRegisteredServicePropertyTests {
+class DefaultRegisteredServicePropertyTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val prop = new DefaultRegisteredServiceProperty(List.of("p1", "p2"));
         prop.setValues(null);
         assertFalse(prop.contains("p2"));
-        assertNull(prop.getValue());
+        assertNull(prop.value());
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
@@ -7,6 +8,7 @@ import com.google.common.base.Predicates;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1OctetString;
@@ -17,9 +19,9 @@ import org.bouncycastle.asn1.ASN1TaggedObject;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.security.cert.CertificateParsingException;
-import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Credential to principal resolver that extracts Subject Alternative Name UPN extension
@@ -43,7 +45,6 @@ public class X509UPNExtractorUtils {
      */
     private static final int SAN_TYPE_OTHER = 0;
 
-
     /**
      * Get UPN String.
      *
@@ -52,24 +53,21 @@ public class X509UPNExtractorUtils {
      * @return UPN string or null
      */
     private String getUPNStringFromSequence(final ASN1Sequence seq) {
-        if (seq == null) {
-            return null;
-        }
-        val id = ASN1ObjectIdentifier.getInstance(seq.getObjectAt(0));
+        val id = Optional.ofNullable(seq).map(asn1Encodables -> ASN1ObjectIdentifier.getInstance(asn1Encodables.getObjectAt(0))).orElse(null);
         if (id != null && UPN_OBJECTID.equals(id.getId())) {
             val obj = (ASN1TaggedObject) seq.getObjectAt(1);
-            val primitiveObj = obj.getObject();
+            val primitiveObj = obj.getBaseObject();
 
             val func = FunctionUtils.doIf(Predicates.instanceOf(ASN1TaggedObject.class),
-                () -> ASN1TaggedObject.getInstance(primitiveObj).getObject(),
+                () -> ASN1TaggedObject.getInstance(primitiveObj).getBaseObject(),
                 () -> primitiveObj);
             val prim = func.apply(primitiveObj);
 
-            if (prim instanceof ASN1OctetString) {
-                return new String(((ASN1OctetString) prim).getOctets(), StandardCharsets.UTF_8);
+            if (prim instanceof final ASN1OctetString instance) {
+                return new String(instance.getOctets(), StandardCharsets.UTF_8);
             }
-            if (prim instanceof ASN1String) {
-                return ((ASN1String) prim).getString();
+            if (prim instanceof final ASN1String instance) {
+                return instance.getString();
             }
         }
         return null;
@@ -91,7 +89,7 @@ public class X509UPNExtractorUtils {
             LOGGER.error("Subject Alternative Name List does not contain at least two required elements. Returning null principal id...");
             return null;
         }
-        val itemType = (Integer) sanItem.get(0);
+        val itemType = (Integer) sanItem.getFirst();
         if (itemType == SAN_TYPE_OTHER) {
             val altName = (byte[]) sanItem.get(1);
             return getAltnameSequence(altName);
@@ -119,31 +117,28 @@ public class X509UPNExtractorUtils {
 
     /**
      * Return the first {@code X509UPNExtractorUtils.UPN_OBJECTID} found in the subject alternative names (SAN) extension field of the certificate.
-     * @param certificate X509 certificate
+     *
+     * @param subjectAltNames X509 certificate subject alt names
      * @return User principal name, or null if no SAN found matching UPN type.
-     * @throws CertificateParsingException if Java retrieval of subject alt names fails.
      */
-    public String extractUPNString(final X509Certificate certificate) throws CertificateParsingException {
-        val subjectAltNames = certificate.getSubjectAlternativeNames();
-        if (subjectAltNames != null) {
-            for (val sanItem : subjectAltNames) {
-                if (LOGGER.isTraceEnabled()) {
-                    if (sanItem.size() == 2) {
-                        val name = sanItem.get(1);
-                        LOGGER.trace("Found subject alt name of type [{}] with value [{}]",
-                            sanItem.get(0), name instanceof String ? name : name instanceof byte[] ? getAltnameSequence((byte[]) name) : name);
-                    } else {
-                        LOGGER.trace("SAN item of unexpected size found: [{}]", sanItem);
-                    }
-                }
-                val seq = getOtherNameTypeSAN(sanItem);
-                val upnString = getUPNStringFromSequence(seq);
-                if (upnString != null) {
-                    LOGGER.debug("Found user principal name in certificate: [{}]", upnString);
-                    return upnString;
+    public Optional<String> extractUPNString(final Collection<List<?>> subjectAltNames) {
+        for (val sanItem : subjectAltNames) {
+            if (LOGGER.isTraceEnabled()) {
+                if (sanItem.size() == 2) {
+                    val name = sanItem.get(1);
+                    val value = name instanceof String ? name : name instanceof byte[] ? getAltnameSequence((byte[]) name) : name;
+                    LOGGER.trace("Found subject alt name of type [{}] with value [{}]", sanItem.getFirst(), value);
+                } else {
+                    LOGGER.trace("SAN item of unexpected size found: [{}]", sanItem);
                 }
             }
+            val seq = getOtherNameTypeSAN(sanItem);
+            val upnString = getUPNStringFromSequence(seq);
+            if (StringUtils.isNotBlank(upnString)) {
+                LOGGER.debug("Found user principal name in certificate: [{}]", upnString);
+                return Optional.of(upnString);
+            }
         }
-        return null;
+        return Optional.empty();
     }
 }

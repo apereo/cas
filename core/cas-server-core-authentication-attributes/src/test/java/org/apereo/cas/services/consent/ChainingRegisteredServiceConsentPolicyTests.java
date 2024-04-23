@@ -1,14 +1,11 @@
 package org.apereo.cas.services.consent;
 
-import org.apereo.cas.util.model.TriStateBoolean;
-
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import java.util.List;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -18,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class ChainingRegisteredServiceConsentPolicyTests {
+class ChainingRegisteredServiceConsentPolicyTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val chain = new ChainingRegisteredServiceConsentPolicy();
         chain.addPolicies(List.of(new DefaultRegisteredServiceConsentPolicy(Set.of("cn"), Set.of("givenName"))));
         chain.addPolicy(new DefaultRegisteredServiceConsentPolicy(Set.of("mail"), Set.of("address")));
@@ -31,7 +28,7 @@ public class ChainingRegisteredServiceConsentPolicyTests {
     }
 
     @Test
-    public void verifyStatusEnabled() {
+    void verifyStatusEnabled() throws Throwable {
         val chain = new ChainingRegisteredServiceConsentPolicy();
         chain.addPolicies(List.of(
             new DefaultRegisteredServiceConsentPolicy().setStatus(TriStateBoolean.FALSE),
@@ -40,7 +37,7 @@ public class ChainingRegisteredServiceConsentPolicyTests {
     }
 
     @Test
-    public void verifyStatusDisabled() {
+    void verifyStatusDisabled() throws Throwable {
         val chain = new ChainingRegisteredServiceConsentPolicy();
         chain.addPolicies(List.of(
             new DefaultRegisteredServiceConsentPolicy().setStatus(TriStateBoolean.FALSE),
@@ -49,11 +46,22 @@ public class ChainingRegisteredServiceConsentPolicyTests {
     }
 
     @Test
-    public void verifyStatusUndefined() {
+    void verifyStatusUndefined() throws Throwable {
         val chain = new ChainingRegisteredServiceConsentPolicy();
         chain.addPolicies(List.of(
             new DefaultRegisteredServiceConsentPolicy(),
             new DefaultRegisteredServiceConsentPolicy()));
         assertTrue(chain.getStatus().isUndefined());
+    }
+
+    @Test
+    void verifyExcludedServices() throws Throwable {
+        val chain = new ChainingRegisteredServiceConsentPolicy();
+        chain.addPolicies(List.of(
+            new DefaultRegisteredServiceConsentPolicy().setStatus(TriStateBoolean.TRUE).setExcludedServices(Set.of("application1")),
+            new DefaultRegisteredServiceConsentPolicy().setExcludedServices(Set.of("application2"))));
+        assertTrue(chain.getStatus().isTrue());
+        assertEquals(2, chain.getExcludedServices().size());
+        assertTrue(chain.getExcludedServices().contains("application1"));
     }
 }

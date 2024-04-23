@@ -22,21 +22,21 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("MFA")
-public class ChainingMultifactorAuthenticationProviderSelectorTests {
+class ChainingMultifactorAuthenticationProviderSelectorTests {
 
     @Test
-    public void verifyMultipleProviders() {
-        val evaluator = mock(MultifactorAuthenticationFailureModeEvaluator.class);
-        val selector = new ChainingMultifactorAuthenticationProviderSelector(evaluator);
-
+    void verifyMultipleProviders() throws Throwable {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
+
+        val evaluator = mock(MultifactorAuthenticationFailureModeEvaluator.class);
+        val selector = new ChainingMultifactorAuthenticationProviderSelector(applicationContext, evaluator);
 
         val provider1 = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         val provider2 = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
 
         val result = selector.resolve(List.of(provider1, provider2),
             RegisteredServiceTestUtils.getRegisteredService(), RegisteredServiceTestUtils.getPrincipal());
-        assertTrue(result instanceof DefaultChainingMultifactorAuthenticationProvider);
+        assertInstanceOf(DefaultChainingMultifactorAuthenticationProvider.class, result);
     }
 }

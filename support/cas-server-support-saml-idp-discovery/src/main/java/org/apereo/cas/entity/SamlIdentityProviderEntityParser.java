@@ -69,13 +69,13 @@ public class SamlIdentityProviderEntityParser implements DisposableBean {
      * Import resource and provide boolean.
      *
      * @param resource the resource
-     * @return the boolean
+     * @return true/false
      */
     public boolean importResource(final Resource resource) {
         try {
             if (ResourceUtils.doesResourceExist(resource)) {
                 try (val reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
-                    final TypeReference<List<SamlIdentityProviderEntity>> ref = new TypeReference<>() {
+                    val ref = new TypeReference<List<SamlIdentityProviderEntity>>() {
                     };
                     identityProviders.addAll(MAPPER.readValue(JsonValue.readHjson(reader).toString(), ref));
                 }

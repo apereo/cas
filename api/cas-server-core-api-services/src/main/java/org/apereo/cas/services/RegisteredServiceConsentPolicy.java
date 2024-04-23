@@ -1,11 +1,9 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.util.model.TriStateBoolean;
-
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.core.Ordered;
-
 import java.io.Serializable;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -27,6 +25,17 @@ public interface RegisteredServiceConsentPolicy extends Serializable, Ordered {
      */
     default TriStateBoolean getStatus() {
         return TriStateBoolean.UNDEFINED;
+    }
+
+    /**
+     * Gets excluded services from this policy.
+     * Useful when the policy is applied to a service definition
+     * that is considered an aggregate of many other applications.
+     *
+     * @return the excluded services
+     */
+    default Set<String> getExcludedServices() {
+        return null;
     }
 
     /**

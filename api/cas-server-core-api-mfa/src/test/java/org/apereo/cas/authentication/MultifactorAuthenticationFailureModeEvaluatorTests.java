@@ -14,11 +14,11 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Simple")
-public class MultifactorAuthenticationFailureModeEvaluatorTests {
+@Tag("MFA")
+class MultifactorAuthenticationFailureModeEvaluatorTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val input = mock(MultifactorAuthenticationFailureModeEvaluator.class);
         when(input.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.LOWEST_PRECEDENCE, input.getOrder());

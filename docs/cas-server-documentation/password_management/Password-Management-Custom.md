@@ -14,7 +14,7 @@ In order to do this, you will need to design a configuration class that roughly 
 ```java
 package org.apereo.cas.pm;
 
-@Configuration("MyPasswordConfiguration")
+@AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class MyPasswordConfiguration {
 

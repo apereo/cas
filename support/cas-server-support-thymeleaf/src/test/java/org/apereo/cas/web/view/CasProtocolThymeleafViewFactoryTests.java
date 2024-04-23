@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-
+import org.thymeleaf.spring6.SpringTemplateEngine;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,10 +21,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class,
     ThymeleafAutoConfiguration.class
 })
 @Tag("Web")
-public class CasProtocolThymeleafViewFactoryTests {
+class CasProtocolThymeleafViewFactoryTests {
 
     @Autowired
     private SpringTemplateEngine springTemplateEngine;
@@ -36,10 +37,11 @@ public class CasProtocolThymeleafViewFactoryTests {
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val factory = new CasProtocolThymeleafViewFactory(springTemplateEngine, thymeleafProperties);
-        val view = factory.create(applicationContext, "casLoginView");
+        val view = (CasThymeleafView) factory.create(applicationContext, "login/casLoginView");
         assertNotNull(view);
         assertNotNull(view.toString());
+        assertNotNull(view.getLocale());
     }
 }

@@ -5,20 +5,21 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-
+    <meta name="_csrf" th:if="${_csrf}" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:if="${_csrf}" th:content="${_csrf.headerName}"/>
     <title>Service UI Fragment</title>
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
 </head>
 
 <body>
-<main role="main" class="container mt-3 mb-3">
+<main class="container mt-3 mb-3">
     <div th:fragment="webAuthnLogin">
 
         <script type="text/javascript" th:src="@{#{webjars.text-encoding.js}}"></script>
         <script type="text/javascript" th:src="@{#{webjars.text-encoding-indexes.js}}"></script>
         <script type="text/javascript" th:src="@{#{webjars.whatwg-fetch.js}}"></script>
         <script type="text/javascript" th:src="@{#{webjars.base64.js}}"></script>
-        
+
         <script type="text/javascript" th:inline="javascript">
             /*<![CDATA[*/
             var appId = /*[[${webauthnApplicationId}]]*/;
@@ -26,8 +27,8 @@
         </script>
 
         <script type="text/javascript" th:inline="javascript">
-            var authFailTitle = [[#{ screen.authentication.webauthn.authn.fail.title }]];
-            var authFailDesc = [[#{ screen.authentication.webauthn.authn.fail.desc }]];
+            let authFailTitle = [[#{ screen.authentication.webauthn.authn.fail.title }]];
+            let authFailDesc = [[#{ screen.authentication.webauthn.authn.fail.desc }]];
         </script>
 
         <script th:src="@{/js/webauthn/webauthn.js}"></script>
@@ -73,8 +74,8 @@
                 <h2 id="status" th:text="#{screen.authentication.webauthn.login.title}" />
             </div>
             <p th:text="#{screen.authentication.webauthn.login.desc}">Login</p>
-            
-            <div id="errorPanel" class="banner banner-danger alert-dismissible mb-4"
+
+            <div id="errorPanel" class="banner banner-danger alert alert-danger alert-dismissible mb-4"
                  th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
                 <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
                    th:utext="#{${message.text}}">
@@ -92,17 +93,17 @@
                 </div>
             </div>
             <div class="d-flex justify-content-center flex-column align-items-center">
-                <button class="mdc-button mdc-button--raised mr-2"
+                <button class="mdc-button mdc-button--raised btn btn-primary me-2"
                         name="authnButton" id="authnButton" accesskey="a" type="button">
-                    <i class="mdi mdi-fingerprint"></i>
+                    <i class="mdi mdi-fingerprint fas fa-fingerprint" aria-hidden="true"></i>
                     <span id="authnButtonText" class="mdc-button__label"
                           th:text="#{screen.welcome.button.login}">Login</span>
                 </button>
             </div>
         </div>
         <div>
-            <div class="w-100 mdc-data-table mx-auto my-4" id="divDeviceInfo" style="display: none">
-                <table id="deviceTable" class="mdc-data-table__table" style="white-space: unset">
+            <div class="w-100 mdc-data-table table-responsive mx-auto my-4" id="divDeviceInfo" style="display: none">
+                <table id="deviceTable" class="table table-striped" style="white-space: unset">
                     <thead>
                     <tr class="mdc-data-table__header-row">
                         <th class="w-50 mdc-data-table__header-cell" role="columnheader" scope="col">Attribute</th>
@@ -116,26 +117,29 @@
         </div>
 
         <form method="POST" id="webauthnLoginForm" class="fm-v clearfix" th:action="@{/login}">
-            <input type="hidden" name="_eventId" value="validateWebAuthn"/>
+            <input type="hidden" name="_eventId" value="validate"/>
             <input type="hidden" id="token" name="token"/>
             <input type="hidden" name="geolocation"/>
+            <input type="hidden" id="authnCsrfToken" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         </form>
 
+        <input type="hidden" id="loginCsrfToken" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
         <script type="text/javascript">
+            const csrfToken = $('#loginCsrfToken').val();
+
             let div = document.querySelector('#divDeviceInfo');
             new mdc.dataTable.MDCDataTable(div);
 
             var btn = document.getElementById('authnButton');
-            btn.addEventListener('click', function (event) {
+            btn.addEventListener('click', event => {
                 $("#errorPanel").hide();
-                var username = '[[${principal?.id}]]';
+                let username = '[[${principal?.id}]]';
                 if (username === '') {
                    username = $("#fm1 #username").val();
                 }
-                if (username !== '') {
-                    authenticate(username);
-                }
+                authenticate(username);
             }, false);
 
         </script>
@@ -145,5 +149,3 @@
 </body>
 
 </html>
-
-

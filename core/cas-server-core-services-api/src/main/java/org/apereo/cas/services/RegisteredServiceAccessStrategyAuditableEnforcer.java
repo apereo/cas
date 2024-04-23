@@ -6,10 +6,22 @@ import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.audit.BaseAuditableExecution;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.jooq.lambda.Unchecked;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is {@link RegisteredServiceAccessStrategyAuditableEnforcer}.
@@ -18,29 +30,34 @@ import org.apereo.inspektr.audit.annotation.Audit;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@RequiredArgsConstructor
 public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAuditableExecution {
-    @Override
-    @Audit(action = AuditableActions.SERVICE_ACCESS_ENFORCEMENT,
-        actionResolverName = AuditActionResolvers.SERVICE_ACCESS_ENFORCEMENT_ACTION_RESOLVER,
-        resourceResolverName = AuditResourceResolvers.SERVICE_ACCESS_ENFORCEMENT_RESOURCE_RESOLVER)
-    public AuditableExecutionResult execute(final AuditableContext context) {
+    
+    private final ConfigurableApplicationContext applicationContext;
+    
+    private static Optional<AuditableExecutionResult> byServiceTicketAndAuthnResultAndRegisteredService(final AuditableContext context) {
         val providedRegisteredService = context.getRegisteredService();
-        if (context.getServiceTicket().isPresent() && context.getAuthenticationResult().isPresent() && providedRegisteredService.isPresent()) {
+        if (context.getServiceTicket().isPresent() && context.getAuthenticationResult().isPresent()
+            && providedRegisteredService.isPresent()) {
             val result = AuditableExecutionResult.of(context);
             try {
                 val serviceTicket = context.getServiceTicket().orElseThrow();
-                val authResult = context.getAuthenticationResult().orElseThrow();
-                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(serviceTicket,
-                    authResult, providedRegisteredService.get());
-            } catch (final PrincipalException | UnauthorizedServiceException e) {
+                val authResult = context.getAuthenticationResult().orElseThrow().getAuthentication();
+                ensurePrincipalAccessIsAllowedForService(providedRegisteredService.get(), serviceTicket.getService(), authResult);
+            } catch (final Throwable e) {
                 result.setException(e);
             }
-            return result;
+            return Optional.of(result);
         }
+        return Optional.empty();
+    }
 
+    private static Optional<AuditableExecutionResult> byServiceAndRegisteredServiceAndTicketGrantingTicket(final AuditableContext context) {
         val providedService = context.getService();
+        val providedRegisteredService = context.getRegisteredService();
         val ticketGrantingTicket = context.getTicketGrantingTicket();
-        if (providedService.isPresent() && providedRegisteredService.isPresent() && ticketGrantingTicket.isPresent()) {
+        if (providedService.isPresent() && providedRegisteredService.isPresent()
+            && ticketGrantingTicket.isPresent()) {
             val registeredService = providedRegisteredService.get();
             val service = providedService.get();
             val result = AuditableExecutionResult.builder()
@@ -49,39 +66,46 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                 .ticketGrantingTicket(ticketGrantingTicket.get())
                 .build();
             try {
-                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
-                    registeredService,
-                    ticketGrantingTicket.get(),
-                    context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
-            } catch (final PrincipalException | UnauthorizedServiceException e) {
+                val authResult = ticketGrantingTicket.get().getRoot().getAuthentication();
+                ensurePrincipalAccessIsAllowedForService(registeredService, service, authResult);
+            } catch (final Throwable e) {
                 result.setException(e);
             }
-            return result;
+            return Optional.of(result);
         }
+        return Optional.empty();
+    }
 
-        val providedAuthn = context.getAuthentication();
-        if (providedService.isPresent() && providedRegisteredService.isPresent() && providedAuthn.isPresent()) {
+    protected static void ensurePrincipalAccessIsAllowedForService(final RegisteredService registeredService,
+                                                                   final Service service,
+                                                                   final Authentication authentication) throws Throwable {
+        val attributes = CollectionUtils.merge(authentication.getAttributes(), authentication.getPrincipal().getAttributes());
+        RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
+            registeredService, authentication.getPrincipal().getId(), (Map) attributes);
+    }
+
+    private static Optional<AuditableExecutionResult> byRegisteredService(final AuditableContext context) {
+        val providedRegisteredService = context.getRegisteredService();
+        if (providedRegisteredService.isPresent()) {
             val registeredService = providedRegisteredService.get();
-            val service = providedService.get();
-            val authentication = providedAuthn.get();
-
             val result = AuditableExecutionResult.builder()
                 .registeredService(registeredService)
-                .service(service)
-                .authentication(authentication)
+                .service(context.getService().orElse(null))
+                .authentication(context.getAuthentication().orElse(null))
                 .build();
-
             try {
-                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
-                    registeredService,
-                    authentication,
-                    context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
+                RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
             } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }
-            return result;
+            return Optional.of(result);
         }
+        return Optional.empty();
+    }
 
+    private static Optional<AuditableExecutionResult> byServiceAndRegisteredService(final AuditableContext context) {
+        val providedService = context.getService();
+        val providedRegisteredService = context.getRegisteredService();
         if (providedService.isPresent() && providedRegisteredService.isPresent()) {
             val registeredService = providedRegisteredService.get();
             val service = providedService.get();
@@ -95,24 +119,99 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             } catch (final PrincipalException | UnauthorizedServiceException e) {
                 result.setException(e);
             }
-            return result;
+            return Optional.of(result);
         }
+        return Optional.empty();
+    }
 
-        if (providedRegisteredService.isPresent()) {
+    /**
+     * By service and registered service and principal optional.
+     *
+     * @param context the context
+     * @return the optional
+     */
+    public static Optional<AuditableExecutionResult> byServiceAndRegisteredServiceAndPrincipal(final AuditableContext context) {
+        val providedService = context.getService();
+        val providedRegisteredService = context.getRegisteredService();
+        val providedPrincipal = context.getPrincipal();
+        if (providedService.isPresent() && providedRegisteredService.isPresent() && providedPrincipal.isPresent()) {
             val registeredService = providedRegisteredService.get();
+            val service = providedService.get();
+            val principal = providedPrincipal.get();
+
             val result = AuditableExecutionResult.builder()
                 .registeredService(registeredService)
+                .service(service)
                 .build();
+
             try {
-                RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
-            } catch (final PrincipalException | UnauthorizedServiceException e) {
+                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
+                    registeredService, principal.getId(), principal.getAttributes());
+            } catch (final Throwable e) {
                 result.setException(e);
             }
-            return result;
+            return Optional.of(result);
         }
-
-        val result = AuditableExecutionResult.builder().build();
-        result.setException(new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized"));
-        return result;
+        return Optional.empty();
     }
+
+    private static Optional<AuditableExecutionResult> byServiceAndRegisteredServiceAndAuthentication(final AuditableContext context) {
+        val providedService = context.getService();
+        val providedRegisteredService = context.getRegisteredService();
+        val providedAuthn = context.getAuthentication();
+        if (providedService.isPresent() && providedRegisteredService.isPresent() && providedAuthn.isPresent()) {
+            val registeredService = providedRegisteredService.get();
+            val service = providedService.get();
+            val authentication = providedAuthn.get();
+
+            val result = AuditableExecutionResult.builder()
+                .registeredService(registeredService)
+                .service(service)
+                .authentication(authentication)
+                .build();
+            try {
+                ensurePrincipalAccessIsAllowedForService(registeredService, service, authentication);
+            } catch (final Throwable e) {
+                result.setException(e);
+            }
+            return Optional.of(result);
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    @Audit(action = AuditableActions.SERVICE_ACCESS_ENFORCEMENT,
+        actionResolverName = AuditActionResolvers.SERVICE_ACCESS_ENFORCEMENT_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.SERVICE_ACCESS_ENFORCEMENT_RESOURCE_RESOLVER)
+    public AuditableExecutionResult execute(final AuditableContext context) {
+        return byExternalAccessStrategyEnforcers(context)
+            .or(() -> byServiceTicketAndAuthnResultAndRegisteredService(context))
+            .or(() -> byServiceAndRegisteredServiceAndTicketGrantingTicket(context))
+            .or(() -> byServiceAndRegisteredServiceAndPrincipal(context))
+            .or(() -> byServiceAndRegisteredServiceAndAuthentication(context))
+            .or(() -> byServiceAndRegisteredService(context))
+            .or(() -> byRegisteredService(context))
+            .orElseGet(() -> {
+                val result = AuditableExecutionResult.builder()
+                    .registeredService(context.getRegisteredService().orElse(null))
+                    .service(context.getService().orElse(null))
+                    .authentication(context.getAuthentication().orElse(null))
+                    .build();
+                result.setException(UnauthorizedServiceException.denied("Unauthorized"));
+                return result;
+            });
+    }
+
+    protected Optional<AuditableExecutionResult> byExternalAccessStrategyEnforcers(final AuditableContext context) {
+        val enforcers = applicationContext.getBeansOfType(RegisteredServiceAccessStrategyEnforcer.class).values();
+        return enforcers
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .map(Unchecked.function(enforcer -> enforcer.execute(context)))
+            .filter(Objects::nonNull)
+            .filter(AuditableExecutionResult::isExecutionFailure)
+            .findFirst();
+    }
+
 }

@@ -13,11 +13,11 @@ knows the OP's Issuer location through an out-of-band mechanism, it can skip thi
 
 Issuer discovery requires the following information to make a discovery request:
 
-| Parameter                     | Description
-|-------------------------------|---------------------------------------------------------------------------------------
-| `resource`                    | Required. Identifier for the target End-User that is the subject of the discovery request.
-| `host`                        | Server where a WebFinger service is hosted.
-| `rel`                         | URI identifying the type of service whose location is being requested:`http://openid.net/specs/connect/1.0/issuer`
+| Parameter  | Description                                                                                                         |
+|------------|---------------------------------------------------------------------------------------------------------------------|
+| `resource` | Required. Identifier for the target End-User that is the subject of the discovery request.                          |
+| `host`     | Server where a WebFinger service is hosted.                                                                         |
+| `rel`      | URI identifying the type of service whose location is being requested: `http://openid.net/specs/connect/1.0/issuer` |
 
 To start discovery of OpenID endpoints, the End-User supplies an Identifier to 
 the Relying Party. The RP applies normalization rules to the Identifier to
@@ -53,7 +53,7 @@ To determine the correct issuer, resources that are provided to
 the `webfinger` discovery endpoint using the `acct` URI scheme
 can be located and fetched using external user repositories via `email` or `username`.
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>The default repository implementation will
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>The default repository implementation will
 echo back the provided email or username, etc as it is <strong>ONLY</strong> relevant for demo/testing purposes.</p></div>
 
 The following user-info repository choices are available for configuration and production use.
@@ -65,14 +65,12 @@ using an external Groovy script whose outline would match the following:
 
 ```groovy
 def findByUsername(Object[] args) {
-    def username = args[0]
-    def logger = args[1]
+    def (username,logger) = args
     return [username: username]
 }
 
 def findByEmailAddress(Object[] args) {
-    def email = args[0]
-    def logger = args[1]
+    def (email,logger) = args
     return [email: email]
 }
 ```
@@ -82,7 +80,7 @@ key-value objects, representing user account details. An empty `Map`
 would indicate the absence of the user record, leading to a `404` 
 response status back to the relying party.
 
-{% include casproperties.html properties="cas.authn.oidc.webfinger.userInfo.groovy" %}
+{% include_cached casproperties.html properties="cas.authn.oidc.webfinger.user-info.groovy" %}
 
 ### REST UserInfo Repository
 
@@ -95,15 +93,15 @@ status code where the body should contain `Map` representing the
 user account information. All other responses will lead to a `404` 
 response status back to the relying party.
 
-{% include casproperties.html properties="cas.authn.oidc.webfinger.user-info.rest" %}
+{% include_cached casproperties.html properties="cas.authn.oidc.webfinger.user-info.rest" %}
 
 ### Custom UserInfo Repository
 
 It is possible to design and inject your own version of webfinger user repositories into CAS. First, you will need to design
-a `@Configuration` class to contain your own `OidcWebFingerUserInfoRepository` implementation:
+a `@AutoConfiguration` class to contain your own `OidcWebFingerUserInfoRepository` implementation:
 
 ```java
-@Configuration("customWebFingerUserInfoConfiguration")
+@AutoConfiguration
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CustomWebFingerUserInfoConfiguration {
 

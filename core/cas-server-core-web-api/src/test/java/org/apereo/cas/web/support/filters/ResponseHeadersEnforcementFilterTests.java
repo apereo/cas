@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support.filters;
 
+import org.apereo.cas.services.RegisteredService;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -9,7 +10,13 @@ import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-
+import org.springframework.webflow.conversation.NoSuchConversationException;
+import org.springframework.webflow.conversation.impl.SimpleConversationId;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.util.Optional;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -19,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Web")
-public class ResponseHeadersEnforcementFilterTests {
+class ResponseHeadersEnforcementFilterTests {
     private ResponseHeadersEnforcementFilter filter;
 
     private MockFilterConfig filterConfig;
@@ -28,33 +35,45 @@ public class ResponseHeadersEnforcementFilterTests {
     public void setup() {
         val servletContext = new MockServletContext();
         this.filterConfig = new MockFilterConfig(servletContext);
-        filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.THROW_ON_ERROR, "true");
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_CACHE_CONTROL, "true");
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY, "true");
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_STRICT_XFRAME_OPTIONS, "true");
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_XCONTENT_OPTIONS, "true");
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_ENABLE_XSS_PROTECTION, "true");
         filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_CONTENT_SECURITY_POLICY, "default-src https");
+        filterConfig.addInitParameter(ResponseHeadersEnforcementFilter.INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES, "css|js|png|txt|jpg|ico|jpeg|bmp|gif");
         this.filter = new ResponseHeadersEnforcementFilter();
     }
 
     @Test
-    public void verifyUnrecognizedParam() {
+    void verifyUnrecognizedParam() throws Throwable {
         filterConfig.addInitParameter("bad-param", "bad-value");
         assertThrows(RuntimeException.class, () -> filter.init(filterConfig));
     }
 
     @Test
-    public void verifyParam() {
+    void verifyMissingFlowConversation() {
+        val mockFilter = new ResponseHeadersEnforcementFilter() {
+            @Override
+            protected Optional<RegisteredService> prepareFilterBeforeExecution(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
+                throw new RuntimeException(new IllegalArgumentException(new NoSuchConversationException(new SimpleConversationId(UUID.randomUUID().toString()))));
+            }
+        };
+        val servletRequest = new MockHttpServletRequest();
+        val servletResponse = new MockHttpServletResponse();
+        assertThrows(NoSuchConversationException.class, () -> mockFilter.doFilter(servletRequest, servletResponse, new MockFilterChain()));
+        assertNotNull(servletRequest.getAttribute(RequestDispatcher.ERROR_EXCEPTION));
+    }
+
+    @Test
+    void verifyParam() throws Throwable {
         filter.init(filterConfig);
 
         val servletRequest = new MockHttpServletRequest();
         servletRequest.setSecure(true);
         val servletResponse = new MockHttpServletResponse();
         assertThrows(RuntimeException.class, () -> filter.doFilter(servletRequest, servletResponse, null));
-        assertDoesNotThrow(() -> {
-            filter.doFilter(servletRequest, servletResponse, new MockFilterChain());
-        });
+        assertDoesNotThrow(() -> filter.doFilter(servletRequest, servletResponse, new MockFilterChain()));
         filter.destroy();
         assertNotNull(servletResponse.getHeaderValue("Cache-Control"));
         assertNotNull(servletResponse.getHeaderValue("Pragma"));
@@ -64,5 +83,35 @@ public class ResponseHeadersEnforcementFilterTests {
         assertNotNull(servletResponse.getHeaderValue("X-Frame-Options"));
         assertNotNull(servletResponse.getHeaderValue("X-Content-Type-Options"));
         assertNotNull(servletResponse.getHeaderValue("Strict-Transport-Security"));
+    }
+
+    @Test
+    void verifyNoCacheParamJpeg() throws Throwable {
+        filter.init(filterConfig);
+
+        val servletRequest = new MockHttpServletRequest();
+        servletRequest.setSecure(true);
+        servletRequest.setRequestURI("test.jpeg");
+        val servletResponse = new MockHttpServletResponse();
+        assertThrows(RuntimeException.class, () -> filter.doFilter(servletRequest, servletResponse, null));
+        assertDoesNotThrow(() -> filter.doFilter(servletRequest, servletResponse, new MockFilterChain()));
+        filter.destroy();
+        assertNull(servletResponse.getHeaderValue("Cache-Control"));
+        assertNull(servletResponse.getHeaderValue("Pragma"));
+    }
+
+    @Test
+    void verifyNoCacheParamPng() throws Throwable {
+        filter.init(filterConfig);
+
+        val servletRequest = new MockHttpServletRequest();
+        servletRequest.setSecure(true);
+        servletRequest.setRequestURI("test.png");
+        val servletResponse = new MockHttpServletResponse();
+        assertThrows(RuntimeException.class, () -> filter.doFilter(servletRequest, servletResponse, null));
+        assertDoesNotThrow(() -> filter.doFilter(servletRequest, servletResponse, new MockFilterChain()));
+        filter.destroy();
+        assertNull(servletResponse.getHeaderValue("Cache-Control"));
+        assertNull(servletResponse.getHeaderValue("Pragma"));
     }
 }

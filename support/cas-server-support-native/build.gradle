@@ -1,0 +1,52 @@
+description = "Apereo CAS Server GraalVM Native Image Support"
+
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            facets: ["web"],
+            category: "Web Application",
+            title: "Graal VM Native Image Support",
+            aliases: ["graalvm"]
+    ]
+}
+
+dependencies {
+    compileOnly libraries.graalvmsdk
+    implementation libraries.graalvmpolyglot
+    
+    testImplementation libraries.graalvmsdk
+    
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-validation-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-webflow-api")
+
+    testImplementation project(":core:cas-server-core-logging")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
+    testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(":core:cas-server-core-services-registry")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-logout-api")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-cookie")
+    
+    testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-thymeleaf")
+    testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-validation")
+    
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+}

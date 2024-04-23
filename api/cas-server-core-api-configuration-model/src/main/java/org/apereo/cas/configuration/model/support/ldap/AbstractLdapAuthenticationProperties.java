@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link AbstractLdapAuthenticationProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("AbstractLdapAuthenticationProperties")
 public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapSearchProperties {
 
+    @Serial
     private static final long serialVersionUID = 3849857270054289852L;
 
     /**
@@ -29,9 +32,9 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
      * <li>{@code AD} - Users authenticate with {@code sAMAccountName}. </li>
      *
      * <li>{@code AUTHENTICATED} - Manager bind/search type of authentication.
-     * If {@code }principalAttributePassword}
+     * If {@code} principalAttributePassword}
      * is empty then a user simple bind is done to validate credentials. Otherwise the given
-     * attribute is compared with the given {@code rincipalAttributePassword} using
+     * attribute is compared with the given {@code principalAttributePassword} using
      * the {@code SHA} encrypted value of it.</li>
      *
      * <li>{@code ANONYMOUS}: Similar semantics as {@code AUTHENTICATED} except no {@code bindDn}
@@ -46,7 +49,7 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
      * 1) All users are under a single branch in the directory, {@code e.g. ou=Users,dc=example,dc=org.}
      * 2) The username provided on the CAS login form is part of the DN, e.g.
      * {@code uid=%s,ou=Users,dc=example,dc=org}.</li>
-     * 
+     *
      * </ul>
      */
     @RequiredProperty
@@ -88,6 +91,12 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
      * </ul>
      */
     private String derefAliases;
+
+    /**
+     * If this attribute is set, the value found in the first attribute
+     * value will be used in place of the DN.
+     */
+    private String resolveFromAttribute;
 
     /**
      * The enum Authentication types.

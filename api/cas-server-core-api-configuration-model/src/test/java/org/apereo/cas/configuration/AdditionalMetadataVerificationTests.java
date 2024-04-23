@@ -29,10 +29,22 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = AopAutoConfiguration.class)
 @Tag("CasConfiguration")
-public class AdditionalMetadataVerificationTests {
+class AdditionalMetadataVerificationTests {
 
     @Autowired
     private ResourceLoader resourceLoader;
+
+    private static Set<ConfigurationMetadataProperty> getProperties(final Resource jsonFile) throws IOException {
+        val mapper = new ObjectMapper().findAndRegisterModules();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
+        val jsonNodeRoot = mapper.readTree(jsonFile.getURL());
+        val propertiesNode = jsonNodeRoot.get("properties");
+        val values = new TypeReference<Set<ConfigurationMetadataProperty>>() {
+        };
+        val reader = mapper.readerFor(values);
+        return reader.readValue(propertiesNode);
+    }
 
     /**
      * Make sure the property names are canonical (not camel case) otherwise app won't start.
@@ -43,7 +55,7 @@ public class AdditionalMetadataVerificationTests {
      * @throws IOException if additional property file is missing
      */
     @Test
-    public void verifyMetaData() throws IOException {
+    void verifyMetaData() throws IOException {
         val resource = CasConfigurationProperties.class.getClassLoader().getResource("META-INF/additional-spring-configuration-metadata.json");
         assertNotNull(resource);
         val additionalMetadataJsonFile = resourceLoader.getResource(resource.toString());
@@ -63,17 +75,5 @@ public class AdditionalMetadataVerificationTests {
                 }
             }
         }
-    }
-
-    private static Set<ConfigurationMetadataProperty> getProperties(final Resource jsonFile) throws IOException {
-        val mapper = new ObjectMapper().findAndRegisterModules();
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
-        val jsonNodeRoot = mapper.readTree(jsonFile.getURL());
-        val propertiesNode = jsonNodeRoot.get("properties");
-        val values = new TypeReference<Set<ConfigurationMetadataProperty>>() {
-        };
-        val reader = mapper.readerFor(values);
-        return (Set<ConfigurationMetadataProperty>) reader.readValue(propertiesNode);
     }
 }

@@ -14,7 +14,7 @@ flexibility of producing SP metadata using any programming language or framework
 
 Support is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-metadata-rest" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-metadata-rest" %}
 
 Use the below snippet as an example to fetch metadata from REST endpoints:
 
@@ -29,7 +29,7 @@ Use the below snippet as an example to fetch metadata from REST endpoints:
 }
 ```
 
-<div class="alert alert-info"><strong>Metadata Location</strong><p>
+<div class="alert alert-info">:information_source: <strong>Metadata Location</strong><p>
 The metadata location in the registration record above needs to be specified as <code>rest://</code> to signal to 
 CAS that SAML metadata for registered service provider must be fetched from REST endpoints defined in CAS configuration.
 </p></div>
@@ -46,7 +46,7 @@ a successful `200 - OK` response status, CAS expects the body of the HTTP respon
 }
 ```
 
-{% include casproperties.html properties="cas.authn.saml-idp.metadata.rest" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.rest" %}
 
 ## Identity Provider Metadata
 
@@ -69,10 +69,10 @@ endpoint in the following structure as the request body:
 The URL endpoint, defined in CAS settings is expected to be available at a path that ends in `/idp`, which is added onto the URL endpoint by CAS automatically.
 The API is expected to produce a successful `200 - OK` response status on all operations outlined below:
 
-| Method               | Description
-|----------------------|----------------------------------------------------------------------------
-| `GET`                | The response is expected to produce a JSON document outlining keys and metadata as indicated above. An `appliesTo` parameter may be passed to indicate the document owner and applicability, where a value of `CAS` indicates the CAS server as the global owner of the metadata and keys.
-| `POST`               | Store the metadata and keys to finalize the metadata generation process. The request body contains the JSON document that outlines metadata and keys as indicated above.
+| Method | Description                                                                                                                                                                                                                                                                                |
+|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `GET`  | The response is expected to produce a JSON document outlining keys and metadata as indicated above. An `appliesTo` parameter may be passed to indicate the document owner and applicability, where a value of `CAS` indicates the CAS server as the global owner of the metadata and keys. |
+| `POST` | Store the metadata and keys to finalize the metadata generation process. The request body contains the JSON document that outlines metadata and keys as indicated above.                                                                                                                   |
 
 ## Per Service
 

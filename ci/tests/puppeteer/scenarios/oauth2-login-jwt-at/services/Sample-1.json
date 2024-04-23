@@ -1,0 +1,25 @@
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId" : "^http://localhost:9889/anything/app1.*",
+  "bypassApprovalPrompt": true,
+  "name" : "Sample",
+  "id" : 1,
+  "jwtAccessToken": true,
+  "properties" : {
+    "@class" : "java.util.HashMap",
+    "accessTokenAsJwtSigningKey" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "${#env['OAUTH_ACCESS_TOKEN_SIGNING_KEY']}" ] ]
+    },
+    "accessTokenAsJwtSigningEnabled" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "true" ] ]
+    },
+    "accessTokenAsJwtEncryptionEnabled" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "false" ] ]
+    }
+  }
+}

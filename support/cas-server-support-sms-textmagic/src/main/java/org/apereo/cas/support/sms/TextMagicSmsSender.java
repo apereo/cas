@@ -3,6 +3,7 @@ package org.apereo.cas.support.sms;
 import org.apereo.cas.configuration.model.support.sms.TextMagicProperties;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 
 import com.squareup.okhttp.OkHttpClient;
@@ -29,26 +30,22 @@ public class TextMagicSmsSender implements SmsSender {
     public TextMagicSmsSender(final TextMagicProperties properties,
                               final Optional<HttpClient> httpClient) {
         val client = new ApiClient();
-        if (StringUtils.isNotBlank(properties.getUsername())) {
-            client.setUsername(properties.getUsername());
-        }
-        if (StringUtils.isNotBlank(properties.getToken())) {
-            client.setAccessToken(properties.getToken());
-        }
+
+        FunctionUtils.doIfNotBlank(properties.getUsername(), __ -> client.setUsername(properties.getUsername()));
+
+        FunctionUtils.doIfNotBlank(properties.getToken(), __ -> client.setAccessToken(properties.getToken()));
         client.setDebugging(properties.isDebugging());
         client.setVerifyingSsl(properties.isVerifyingSsl());
 
-        if (StringUtils.isNotBlank(properties.getPassword())) {
-            client.setPassword(properties.getPassword());
-        }
+
+        FunctionUtils.doIfNotBlank(properties.getPassword(), __ -> client.setPassword(properties.getPassword()));
 
         client.setReadTimeout(properties.getReadTimeout());
         client.setConnectTimeout(properties.getConnectTimeout());
         client.setWriteTimeout(properties.getWriteTimeout());
 
-        if (StringUtils.isNotBlank(properties.getUserAgent())) {
-            client.setUserAgent(properties.getUserAgent());
-        }
+
+        FunctionUtils.doIfNotBlank(properties.getUserAgent(), __ -> client.setUserAgent(properties.getUserAgent()));
 
         if (StringUtils.isNotBlank(properties.getApiKey())) {
             client.setApiKey(properties.getApiKey());
@@ -57,7 +54,7 @@ public class TextMagicSmsSender implements SmsSender {
 
         httpClient.ifPresent(c -> {
             val okHttpClient = new OkHttpClient();
-            val httpClientFactory = c.getHttpClientFactory();
+            val httpClientFactory = c.httpClientFactory();
             okHttpClient.setSslSocketFactory(httpClientFactory.getSslContext().getSocketFactory());
             okHttpClient.setHostnameVerifier(httpClientFactory.getHostnameVerifier());
             okHttpClient.setConnectTimeout(httpClientFactory.getConnectionTimeout(), TimeUnit.SECONDS);

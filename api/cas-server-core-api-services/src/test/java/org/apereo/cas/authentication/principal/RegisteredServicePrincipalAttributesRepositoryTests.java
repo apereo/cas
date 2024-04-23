@@ -1,8 +1,13 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
+
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -14,11 +19,12 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class RegisteredServicePrincipalAttributesRepositoryTests {
+class RegisteredServicePrincipalAttributesRepositoryTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val policy = mock(RegisteredServicePrincipalAttributesRepository.class);
-        when(policy.getAttributeRepositoryIds()).thenCallRealMethod();
-        assertTrue(policy.getAttributeRepositoryIds().isEmpty());
+        doCallRealMethod().when(policy).update(any(), any(), any());
+        assertDoesNotThrow(() -> policy.update(UUID.randomUUID().toString(),
+            Map.of(), mock(RegisteredServiceAttributeReleasePolicyContext.class)));
     }
 }

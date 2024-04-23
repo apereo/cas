@@ -7,7 +7,7 @@
     </Appenders>
     <Loggers>
         <Logger name="org.apereo" level="error"  />
-        <Root level="off">
+        <Root level="warn">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

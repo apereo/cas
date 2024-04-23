@@ -1,0 +1,15 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "https://localhost:9859/anything/6",
+  "name": "Sample",
+  "id": 6,
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "authorizedToReleaseAuthenticationAttributes": false,
+    "attributeFilter" : {
+      "@class" : "org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilter",
+      "script" : "file:${#env['PWD']}/ci/tests/puppeteer/scenarios/${#env['SCENARIO']}/AttributeFilter.groovy"
+    },
+    "allowedAttributes" : [ "java.util.ArrayList", [ "accountId", "groupMembership6" ] ]
+  }
+}

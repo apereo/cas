@@ -7,7 +7,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This is {@link SamlIdPLogoutProperties}.
@@ -22,6 +25,7 @@ import java.io.Serializable;
 @JsonFilter("SamlIdPLogoutProperties")
 public class SamlIdPLogoutProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -4608824149569614549L;
 
     /**
@@ -55,4 +59,13 @@ public class SamlIdPLogoutProperties implements Serializable {
      * Whether SAML SLO is enabled and processed.
      */
     private boolean singleLogoutCallbacksDisabled;
+
+    /**
+     * The order in which the logout request binginds should be tried (if available at the SP level).
+     */
+    private List<String> logoutRequestBindings = Arrays.asList(
+        "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST",
+        "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
+        "urn:oasis:names:tc:SAML:2.0:bindings:SOAP"
+    );
 }

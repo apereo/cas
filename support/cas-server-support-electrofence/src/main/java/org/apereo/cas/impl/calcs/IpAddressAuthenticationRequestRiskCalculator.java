@@ -8,11 +8,11 @@ import org.apereo.cas.support.events.dao.CasEvent;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 
-import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
-import java.util.Collection;
+import java.util.List;
 
 /**
  * This is {@link IpAddressAuthenticationRequestRiskCalculator}.
@@ -23,17 +23,16 @@ import java.util.Collection;
 @Slf4j
 public class IpAddressAuthenticationRequestRiskCalculator extends BaseAuthenticationRequestRiskCalculator {
 
-
     public IpAddressAuthenticationRequestRiskCalculator(final CasEventRepository casEventRepository,
                                                         final CasConfigurationProperties casProperties) {
         super(casEventRepository, casProperties);
     }
 
     @Override
-    protected BigDecimal calculateScore(final HttpServletRequest request,
+    protected BigDecimal calculateScore(final ClientInfo clientInfo,
                                         final Authentication authentication,
                                         final RegisteredService service,
-                                        final Collection<? extends CasEvent> events) {
+                                        final List<? extends CasEvent> events) {
         val remoteAddr = ClientInfoHolder.getClientInfo().getClientIpAddress();
         LOGGER.debug("Filtering authentication events for ip address [{}]", remoteAddr);
         val count = events.stream().filter(e -> e.getClientIpAddress().equalsIgnoreCase(remoteAddr)).count();

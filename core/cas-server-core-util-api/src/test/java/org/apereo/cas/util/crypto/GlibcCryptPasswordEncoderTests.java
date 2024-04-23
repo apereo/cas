@@ -15,52 +15,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Slf4j
 @Tag("PasswordOps")
-public class GlibcCryptPasswordEncoderTests {
+class GlibcCryptPasswordEncoderTests {
 
     private static final String PASSWORD_CLEAR = "12345abcDEF!$";
-
-    @Test
-    public void sha512EncodingTest() {
-        assertTrue(testEncodingRoundtrip("SHA-512"));
-        assertTrue(testEncodingRoundtrip("6"));
-        assertTrue(testMatchWithDifferentSalt("SHA-512",
-            "$6$rounds=1000$df273de606d3609a$GAPcq.K4jO3KkfusCM7Zr8Cci4qf.jOsWj5hkGBpwRg515bKk93afAXHy/lg.2LPr8ZItHoR3AR5X3XOXndZI0"));
-    }
-
-    @Test
-    public void ha256EncodingTest() {
-        assertTrue(testEncodingRoundtrip("SHA-256"));
-        assertTrue(testEncodingRoundtrip("5"));
-        assertTrue(testMatchWithDifferentSalt("SHA-256", "$5$rounds=1000$e98244bb01b64f47$2qphrK8axtGjgmCJFYwaH7czw5iK9feLl7tKjyTlDy0"));
-    }
-
-    @Test
-    public void md5EncodingTest() {
-        assertTrue(testEncodingRoundtrip("MD5"));
-        assertTrue(testEncodingRoundtrip("1"));
-        assertTrue(testMatchWithDifferentSalt("MD5", "$1$c4676fd0$HOHZ2CYp45lZAAQyvF4C21"));
-    }
-
-    @Test
-    public void desUnixCryptEncodingTest() {
-        assertTrue(testEncodingRoundtrip("aB"));
-        assertTrue(testEncodingRoundtrip("42xyz"));
-        assertTrue(testMatchWithDifferentSalt("aB", "aB4fMcNOggJoQ"));
-    }
-
-    @Test
-    public void verifyBadInput() {
-        val encoder = new GlibcCryptPasswordEncoder(null, 0, null);
-        assertNull(encoder.encode(null));
-        assertNull(encoder.encode("password"));
-        assertFalse(encoder.matches("rawPassword", null));
-    }
-
-    @Test
-    public void verifyNoSalt() {
-        val encoder = new GlibcCryptPasswordEncoder("MD5", 10, "secret");
-        assertNotNull(encoder.encode("value"));
-    }
 
     private static boolean testEncodingRoundtrip(final String algorithm) {
         val encoder = new GlibcCryptPasswordEncoder(algorithm, 0, null);
@@ -79,6 +36,49 @@ public class GlibcCryptPasswordEncoderTests {
         val match = encoder.matches(PASSWORD_CLEAR, encodedPassword);
         LOGGER.debug("Does password [{}] match original password [{}]: [{}]", encodedPassword, PASSWORD_CLEAR, match);
         return match;
+    }
+
+    @Test
+    void sha512EncodingTest() {
+        assertTrue(testEncodingRoundtrip("SHA-512"));
+        assertTrue(testEncodingRoundtrip("6"));
+        assertTrue(testMatchWithDifferentSalt("SHA-512",
+            "$6$rounds=1000$df273de606d3609a$GAPcq.K4jO3KkfusCM7Zr8Cci4qf.jOsWj5hkGBpwRg515bKk93afAXHy/lg.2LPr8ZItHoR3AR5X3XOXndZI0"));
+    }
+
+    @Test
+    void ha256EncodingTest() {
+        assertTrue(testEncodingRoundtrip("SHA-256"));
+        assertTrue(testEncodingRoundtrip("5"));
+        assertTrue(testMatchWithDifferentSalt("SHA-256", "$5$rounds=1000$e98244bb01b64f47$2qphrK8axtGjgmCJFYwaH7czw5iK9feLl7tKjyTlDy0"));
+    }
+
+    @Test
+    void md5EncodingTest() {
+        assertTrue(testEncodingRoundtrip("MD5"));
+        assertTrue(testEncodingRoundtrip("1"));
+        assertTrue(testMatchWithDifferentSalt("MD5", "$1$c4676fd0$HOHZ2CYp45lZAAQyvF4C21"));
+    }
+
+    @Test
+    void desUnixCryptEncodingTest() {
+        assertTrue(testEncodingRoundtrip("aB"));
+        assertTrue(testEncodingRoundtrip("42xyz"));
+        assertTrue(testMatchWithDifferentSalt("aB", "aB4fMcNOggJoQ"));
+    }
+
+    @Test
+    void verifyBadInput() throws Throwable {
+        val encoder = new GlibcCryptPasswordEncoder(null, 0, null);
+        assertNull(encoder.encode(null));
+        assertNull(encoder.encode("password"));
+        assertFalse(encoder.matches("rawPassword", null));
+    }
+
+    @Test
+    void verifyNoSalt() throws Throwable {
+        val encoder = new GlibcCryptPasswordEncoder("MD5", 10, "secret");
+        assertNotNull(encoder.encode("value"));
     }
 
 }

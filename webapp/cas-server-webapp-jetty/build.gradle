@@ -1,4 +1,13 @@
-apply from: rootProject.file("gradle/webapp.gradle")
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            title: "Jetty",
+            facets: ["web"],
+            aliases: ["jetty"],
+            category: "Web Application"
+    ]
+}
+apply from: rootProject.file("gradle/war.gradle")
 description = "Apereo CAS Web Application via Jetty"
 
 dependencies {

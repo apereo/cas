@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.support.saml.BaseMongoDbSamlMetadataTests;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -29,11 +29,11 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.mongo.idp-metadata-collection=saml-idp-metadata"
 })
 @Tag("MongoDb")
-@EnabledIfPortOpen(port = 27017)
-public class MongoDbSamlIdPMetadataLocatorTests extends BaseMongoDbSamlMetadataTests {
+@EnabledIfListeningOnPort(port = 27017)
+class MongoDbSamlIdPMetadataLocatorTests extends BaseMongoDbSamlMetadataTests {
 
     @Test
-    public void verifySigningKeyWithoutService() {
+    void verifySigningKeyWithoutService() throws Throwable {
         val resource = samlIdPMetadataLocator.resolveSigningKey(Optional.empty());
         assertNotNull(resource);
     }

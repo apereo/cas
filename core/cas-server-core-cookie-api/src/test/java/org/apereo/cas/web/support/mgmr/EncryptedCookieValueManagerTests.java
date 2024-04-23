@@ -17,20 +17,20 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Simple")
-public class EncryptedCookieValueManagerTests {
+@Tag("Cookie")
+class EncryptedCookieValueManagerTests {
 
     @Test
-    public void verifyNoValue() {
-        val mgr = new EncryptedCookieValueManager(mock(CipherExecutor.class));
+    void verifyNoValue() throws Throwable {
+        val mgr = new EncryptedCookieValueManager(mock(CipherExecutor.class), DefaultCookieSameSitePolicy.INSTANCE);
         assertNull(mgr.obtainCookieValue("something", new MockHttpServletRequest()));
     }
 
     @Test
-    public void verifyEmptyValue() {
+    void verifyEmptyValue() throws Throwable {
         val cipher = mock(CipherExecutor.class);
         when(cipher.decode(anyString(), any())).thenReturn(StringUtils.EMPTY);
-        val mgr = new EncryptedCookieValueManager(cipher);
+        val mgr = new EncryptedCookieValueManager(cipher, DefaultCookieSameSitePolicy.INSTANCE);
         assertNull(mgr.obtainCookieValue("something", new MockHttpServletRequest()));
     }
 }

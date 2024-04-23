@@ -12,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("MFA")
-public class DenyAllYubiKeyAccountValidatorTests {
+@Tag("MFAProvider")
+class DenyAllYubiKeyAccountValidatorTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() throws Throwable {
         val v = new DenyAllYubiKeyAccountValidator();
         assertFalse(v.isValid("anything", "anything"));
     }

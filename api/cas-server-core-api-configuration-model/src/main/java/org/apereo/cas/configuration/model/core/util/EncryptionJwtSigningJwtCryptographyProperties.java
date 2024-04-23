@@ -1,13 +1,11 @@
 package org.apereo.cas.configuration.model.core.util;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -26,6 +24,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class EncryptionJwtSigningJwtCryptographyProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -3015641631298039059L;
 
     /**
@@ -48,7 +47,7 @@ public class EncryptionJwtSigningJwtCryptographyProperties implements Serializab
     /**
      * The signing/encryption algorithm to use.
      */
-    private String alg = CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM;
+    private String alg = EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM;
 
     /**
      * Control the cipher sequence of operations.

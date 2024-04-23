@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link WebAuthnRedisMultifactorProperties}.
  *
@@ -20,6 +22,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("WebAuthnRedisMultifactorProperties")
 public class WebAuthnRedisMultifactorProperties extends BaseRedisProperties {
+    @Serial
     private static final long serialVersionUID = -2261683393319585262L;
 }
 

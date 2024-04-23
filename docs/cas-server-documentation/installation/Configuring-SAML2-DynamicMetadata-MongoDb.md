@@ -13,16 +13,16 @@ copying metadata files across CAS nodes in a cluster, particularly where one nee
 bilateral SAML integrations. Metadata documents are stored in and fetched from a single pre-defined collection
 that is taught to CAS via settings.  The outline of the document is as follows:
 
-| Field                  | Description
-|------------------------|---------------------------------------------------
-| `id`                   | The identifier of the record.
-| `name`                 | Indexed field which describes and names the metadata briefly.
-| `value`                | The XML document representing the metadata for the service provider.
-| `signature`            | The contents of the signing certificate to validate metadata, if any.
+| Field       | Description                                                           |
+|-------------|-----------------------------------------------------------------------|
+| `id`        | The identifier of the record.                                         |
+| `name`      | Indexed field which describes and names the metadata briefly.         |
+| `value`     | The XML document representing the metadata for the service provider.  |
+| `signature` | The contents of the signing certificate to validate metadata, if any. |
 
 Support is enabled by including the following module in the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-metadata-mongo" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-saml-idp-metadata-mongo" %}
 
 SAML service definitions must then be designed as follows to allow CAS to fetch metadata documents from MongoDb instances:
 
@@ -37,12 +37,12 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 }
 ```
 
-<div class="alert alert-info"><strong>Metadata Location</strong><p>
+<div class="alert alert-info">:information_source: <strong>Metadata Location</strong><p>
 The metadata location in the registration record above needs to be specified as <code>mongodb://</code> to signal to CAS that 
 SAML metadata for registered service provider must be fetched from MongoDb data sources defined in CAS configuration. 
 </p></div>
 
-{% include casproperties.html properties="cas.authn.saml-idp.metadata.mongo" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.mongo" %}
 
 ## Identity Provider Metadata
 

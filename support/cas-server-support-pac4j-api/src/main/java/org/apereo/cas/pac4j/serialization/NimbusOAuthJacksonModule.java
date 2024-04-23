@@ -11,7 +11,7 @@ import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import com.nimbusds.oauth2.sdk.token.RefreshToken;
 import com.nimbusds.oauth2.sdk.token.Token;
 import net.minidev.json.JSONObject;
-
+import java.io.Serial;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,7 +21,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
+@SuppressWarnings("UnusedVariable")
 public class NimbusOAuthJacksonModule extends SimpleModule {
+    @Serial
     private static final long serialVersionUID = 4380897174293794761L;
 
     public NimbusOAuthJacksonModule() {
@@ -33,45 +35,45 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
         setMixInAnnotation(AccessTokenType.class, AccessTokenTypeMixin.class);
     }
 
-    private static class AccessTokenTypeMixin {
+    private static final class AccessTokenTypeMixin {
         @JsonCreator
         AccessTokenTypeMixin(
-            @JsonProperty("value")
-            final String value) {
+            @JsonProperty("value") final String value) {
         }
     }
 
-    private static class ScopeValueMixin extends Scope.Value {
+    private static final class ScopeValueMixin extends Scope.Value {
+        @Serial
         private static final long serialVersionUID = -5131994521473883314L;
 
         @JsonCreator
         ScopeValueMixin(
-            @JsonProperty("value")
-            final String value) {
+            @JsonProperty("value") final String value) {
             super(value);
         }
     }
 
-    private static class ScopeMixin extends Scope {
+    private static final class ScopeMixin extends Scope {
+        @Serial
         private static final long serialVersionUID = -5131994521473883314L;
 
         @JsonCreator
         ScopeMixin(
-            @JsonProperty("values")
-            final String... values) {
+            @JsonProperty("values") final String... values) {
             super(values);
         }
     }
 
-    private static class RefreshTokenMixin extends Token {
+    private static final class RefreshTokenMixin extends Token {
+        @Serial
         private static final long serialVersionUID = 867184690952714608L;
 
         @JsonCreator
         RefreshTokenMixin(
-            @JsonProperty("value")
-            final String value) {
+            @JsonProperty("value") final String value) {
         }
 
+        @Override
         @JsonIgnore
         public Set<String> getParameterNames() {
             return new HashSet<>();
@@ -84,17 +86,15 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
         }
     }
 
-    private static class BearerAccessTokenMixin extends BearerAccessToken {
+    private static final class BearerAccessTokenMixin extends BearerAccessToken {
+        @Serial
         private static final long serialVersionUID = -7042673498464860693L;
 
         @JsonCreator
         BearerAccessTokenMixin(
-            @JsonProperty("value")
-            final String value,
-            @JsonProperty("lifetime")
-            final long lifetime,
-            @JsonProperty("scope")
-            final Scope scope) {
+            @JsonProperty("value") final String value,
+            @JsonProperty("lifetime") final long lifetime,
+            @JsonProperty("scope") final Scope scope) {
             super(value, lifetime, scope);
         }
 
@@ -105,13 +105,13 @@ public class NimbusOAuthJacksonModule extends SimpleModule {
         }
     }
 
-    private static class CodeVerifierMixin extends CodeVerifier {
+    private static final class CodeVerifierMixin extends CodeVerifier {
+        @Serial
         private static final long serialVersionUID = -5587339765097722026L;
 
         @JsonCreator
         CodeVerifierMixin(
-            @JsonProperty("value")
-            final String value) {
+            @JsonProperty("value") final String value) {
             super(value);
         }
 

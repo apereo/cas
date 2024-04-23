@@ -1,20 +1,13 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
+
+const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true
-    });
-    const page = await browser.newPage();
-    await page.goto("https://localhost:8443/cas/login");
-    // await page.waitForTimeout(10000)
-
-    let recaptchaV2Section = await page.$('#recaptchaV2Section');
-    assert(await recaptchaV2Section.boundingBox() != null);
-
-    let grecaptcha = await page.$('#g-recaptcha');
-    assert(await grecaptcha.boundingBox() != null);
+    const browser = await cas.newBrowser(cas.browserOptions());
+    const page = await cas.newPage(browser);
+    await cas.gotoLogin(page);
+    // await cas.sleep(10000)
+    await cas.assertVisibility(page, "#recaptchaV2Section");
+    await cas.assertVisibility(page, "#g-recaptcha");
 
     await browser.close();
 })();

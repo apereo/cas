@@ -11,12 +11,17 @@ public interface AuditTrailConstants {
     /**
      * Postfix for audit events that succeed.
      */
-    String AUDIT_ACTION_POSTFIX_SUCCESS= "_SUCCESS";
+    String AUDIT_ACTION_POSTFIX_SUCCESS = "_SUCCESS";
 
     /**
      * Postfix for audit events that create.
      */
     String AUDIT_ACTION_POSTFIX_CREATED = "_CREATED";
+
+    /**
+     * Postfix for audit events that validate.
+     */
+    String AUDIT_ACTION_POSTFIX_VALIDATED = "_VALIDATED";
 
     /**
      * Postfix for audit events that fail.

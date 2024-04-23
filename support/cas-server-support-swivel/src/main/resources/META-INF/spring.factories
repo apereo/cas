@@ -1,4 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.config.SwivelAuthenticationEventExecutionPlanConfiguration,\
-org.apereo.cas.config.SwivelConfiguration,\
-org.apereo.cas.config.SwivelComponentSerializationConfiguration,\
-  org.apereo.cas.config.SwivelAuthenticationMultifactorProviderBypassConfiguration

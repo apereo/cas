@@ -17,14 +17,15 @@ import org.springframework.core.io.ClassPathResource;
  * @since 6.1.0
  */
 @Tag("Groovy")
-public class GroovyDelegatedClientUserProfileProvisionerTests {
+class GroovyDelegatedClientUserProfileProvisionerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val p = new GroovyDelegatedClientUserProfileProvisioner(new ClassPathResource("delegated-provisioner.groovy"));
         val commonProfile = new CommonProfile();
         commonProfile.setClientName("CasClient");
         commonProfile.setId("testuser");
         val client = new CasClient(new CasConfiguration("http://cas.example.org"));
-        p.execute(CoreAuthenticationTestUtils.getPrincipal(), commonProfile, client);
+        p.execute(CoreAuthenticationTestUtils.getPrincipal(), commonProfile, client,
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 }

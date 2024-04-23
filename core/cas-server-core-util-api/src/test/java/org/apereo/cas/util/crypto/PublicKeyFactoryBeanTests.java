@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("X509")
-public class PublicKeyFactoryBeanTests {
+class PublicKeyFactoryBeanTests {
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val factory = new PublicKeyFactoryBean(new ClassPathResource("publickey.pem"), RsaKeyUtil.RSA);
         factory.setSingleton(false);
         val object = factory.getObject();
@@ -26,7 +26,7 @@ public class PublicKeyFactoryBeanTests {
     }
 
     @Test
-    public void verifyFails() {
+    void verifyFails() throws Throwable {
         val factory = new PublicKeyFactoryBean(new ClassPathResource("badkey.pem"), RsaKeyUtil.RSA);
         factory.setSingleton(false);
         assertNull(factory.toCipher());

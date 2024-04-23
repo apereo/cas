@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link GoogleMapsProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @Setter
 public class GoogleMapsProperties extends BaseGeoLocationProperties {
 
+    @Serial
     private static final long serialVersionUID = 4661113818711911462L;
 
     /**

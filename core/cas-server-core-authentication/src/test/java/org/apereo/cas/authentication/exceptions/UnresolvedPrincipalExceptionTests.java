@@ -19,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Simple")
-public class UnresolvedPrincipalExceptionTests {
+class UnresolvedPrincipalExceptionTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertDoesNotThrow((ThrowingSupplier<UnresolvedPrincipalException>) UnresolvedPrincipalException::new);
         assertDoesNotThrow(() -> new UnresolvedPrincipalException(CoreAuthenticationTestUtils.getAuthentication()));
         assertDoesNotThrow(() -> new UnresolvedPrincipalException(new FailedLoginException()));

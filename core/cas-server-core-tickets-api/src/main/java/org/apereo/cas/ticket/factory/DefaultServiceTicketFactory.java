@@ -1,25 +1,28 @@
 package org.apereo.cas.ticket.factory;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
+import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
+import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import java.util.Map;
 
 /**
@@ -31,12 +34,13 @@ import java.util.Map;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class DefaultServiceTicketFactory implements ServiceTicketFactory {
-    private final ExpirationPolicyBuilder<ServiceTicket> serviceTicketExpirationPolicy;
+    private final ExpirationPolicyBuilder<ServiceTicket> expirationPolicyBuilder;
 
     private final Map<String, UniqueTicketIdGenerator> uniqueTicketIdGeneratorsForService;
 
-    private final boolean trackMostRecentSession;
+    private final TicketTrackingPolicy serviceTicketSessionTrackingPolicy;
 
     private final CipherExecutor<String, String> cipherExecutor;
 
@@ -45,10 +49,23 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     private final ServicesManager servicesManager;
 
     @Override
+    public <T extends Ticket> T create(final Service service, final Authentication authentication,
+                                       final boolean credentialsProvided, final Class<T> clazz) throws Throwable {
+        val expirationPolicyToUse = determineExpirationPolicyForService(service);
+        val ticketId = produceTicketIdentifier(service, null, credentialsProvided);
+        val result = new ServiceTicketImpl(ticketId, null, service, credentialsProvided, expirationPolicyToUse).setAuthentication(authentication);
+        if (!clazz.isAssignableFrom(result.getClass())) {
+            throw new ClassCastException("Result [%s] is of type %s when we were expecting %s".formatted(result, result.getClass(), clazz));
+        }
+        result.markTicketStateless();
+        return (T) result;
+    }
+
+    @Override
     public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket,
-        final Service service,
-        final boolean credentialProvided,
-        final Class<T> clazz) {
+                                       final Service service,
+                                       final boolean credentialProvided,
+                                       final Class<T> clazz) throws Throwable {
         val ticketId = produceTicketIdentifier(service, ticketGrantingTicket, credentialProvided);
         var result = FunctionUtils.doIf(cipherExecutor.isEnabled(), () -> {
             LOGGER.trace("Attempting to encode service ticket [{}]", ticketId);
@@ -64,57 +81,35 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
         return ServiceTicket.class;
     }
 
-    /**
-     * Produce ticket.
-     *
-     * @param <T>                  the type parameter
-     * @param ticketGrantingTicket the ticket granting ticket
-     * @param service              the service
-     * @param credentialProvided   the credential provided
-     * @param ticketId             the ticket id
-     * @param clazz                the clazz
-     * @return the ticket
-     */
     protected <T extends Ticket> T produceTicket(final TicketGrantingTicket ticketGrantingTicket,
-        final Service service,
-        final boolean credentialProvided,
-        final String ticketId,
-        final Class<T> clazz) {
+                                                 final Service service,
+                                                 final boolean credentialProvided,
+                                                 final String ticketId,
+                                                 final Class<T> clazz) {
         val expirationPolicyToUse = determineExpirationPolicyForService(service);
-
         val result = ticketGrantingTicket.grantServiceTicket(
             ticketId,
             service,
             expirationPolicyToUse,
             credentialProvided,
-            trackMostRecentSession);
+            serviceTicketSessionTrackingPolicy);
 
         if (!clazz.isAssignableFrom(result.getClass())) {
-            throw new ClassCastException("Result [" + result
-                + " is of type " + result.getClass()
-                + " when we were expecting " + clazz);
+            throw new ClassCastException("Result [%s] is of type %s when we were expecting %s".formatted(result, result.getClass(), clazz));
         }
         return (T) result;
     }
 
-    /**
-     * Produce ticket identifier.
-     *
-     * @param service              the service
-     * @param ticketGrantingTicket the ticket granting ticket
-     * @param credentialProvided   whether credentials where directly provided
-     * @return ticket id
-     */
     protected String produceTicketIdentifier(final Service service, final TicketGrantingTicket ticketGrantingTicket,
-        final boolean credentialProvided) {
+                                             final boolean credentialProvided) throws Throwable {
         val uniqueTicketIdGenKey = service.getClass().getName();
         var serviceTicketUniqueTicketIdGenerator = (UniqueTicketIdGenerator) null;
-        if (this.uniqueTicketIdGeneratorsForService != null && !this.uniqueTicketIdGeneratorsForService.isEmpty()) {
+        if (uniqueTicketIdGeneratorsForService != null && !uniqueTicketIdGeneratorsForService.isEmpty()) {
             LOGGER.debug("Looking up service ticket id generator for [{}]", uniqueTicketIdGenKey);
-            serviceTicketUniqueTicketIdGenerator = this.uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
+            serviceTicketUniqueTicketIdGenerator = uniqueTicketIdGeneratorsForService.get(uniqueTicketIdGenKey);
         }
         if (serviceTicketUniqueTicketIdGenerator == null) {
-            serviceTicketUniqueTicketIdGenerator = this.defaultServiceTicketIdGenerator;
+            serviceTicketUniqueTicketIdGenerator = defaultServiceTicketIdGenerator;
             LOGGER.debug("Service ticket id generator not found for [{}]. Using the default generator.", uniqueTicketIdGenKey);
         }
 
@@ -122,7 +117,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     }
 
     private ExpirationPolicy determineExpirationPolicyForService(final Service service) {
-        val registeredService = servicesManager.findServiceBy(service);
+        val registeredService = servicesManager.findServiceBy(service, CasModelRegisteredService.class);
         if (registeredService != null && registeredService.getServiceTicketExpirationPolicy() != null) {
             val policy = registeredService.getServiceTicketExpirationPolicy();
             val count = policy.getNumberOfUses();
@@ -132,6 +127,6 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
                     count, Beans.newDuration(ttl).getSeconds());
             }
         }
-        return this.serviceTicketExpirationPolicy.buildTicketExpirationPolicy();
+        return expirationPolicyBuilder.buildTicketExpirationPolicy();
     }
 }

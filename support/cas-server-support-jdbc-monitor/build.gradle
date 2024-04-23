@@ -1,4 +1,11 @@
 description = "Apereo CAS JDBC Monitor Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Monitoring",
+            title: "Apereo CAS JDBC Monitoring"
+    ]
+}
 dependencies {
 
     implementation project(":core:cas-server-core-monitor")

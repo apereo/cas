@@ -1,22 +1,23 @@
 package org.apereo.cas.authentication.adaptive.intel;
 
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.util.http.HttpExecutionRequest;
+import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
+import org.apache.hc.core5.http.HttpEntityContainer;
+import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -50,50 +51,47 @@ public class BlackDotIPAddressIntelligenceService extends BaseIPAddressIntellige
                 builder.append(properties.getEmailAddress());
             }
 
-            switch (properties.getMode().toUpperCase()) {
-                case "DYNA_LIST":
-                    builder.append("&flags=m");
-                    break;
-                case "DYNA_CHECK":
-                    builder.append("&flags=b");
-                    break;
-                default:
-                    builder.append("&flags=f");
-                    break;
-            }
+            val flags = switch (properties.getMode().toUpperCase(Locale.ENGLISH)) {
+                case "DYNA_LIST" -> "&flags=m";
+                case "DYNA_CHECK" -> "&flags=b";
+                default -> "&flags=f";
+            };
+            builder.append(flags);
             val url = builder.toString();
             LOGGER.debug("Sending IP check request to [{}]", url);
 
-            val exec = HttpUtils.HttpExecutionRequest.builder()
+            val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
                 .url(url)
                 .build();
             response = HttpUtils.execute(exec);
-            if (response.getStatusLine().getStatusCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
+            if (response.getCode() == HttpStatus.TOO_MANY_REQUESTS.value()) {
                 LOGGER.error("Exceeded the number of allowed queries");
                 return bannedResponse;
             }
-            val result = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-            LOGGER.debug("Received payload result after examining IP address [{}] as [{}]", clientIpAddress, result);
+            try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+                val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+                LOGGER.debug("Received payload result after examining IP address [{}] as [{}]", clientIpAddress, result);
 
-            val json = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
-            val status = json.getOrDefault("status", "error").toString();
-            if ("success".equalsIgnoreCase(status)) {
-                val rank = Double.parseDouble(json.getOrDefault("result", 1).toString());
-                if (rank == 1) {
-                    return bannedResponse;
+                val json = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
+                val status = json.getOrDefault("status", "error").toString();
+                if ("success".equalsIgnoreCase(status)) {
+                    val rank = Double.parseDouble(json.getOrDefault("result", 1).toString());
+                    if (rank == 1) {
+                        return bannedResponse;
+                    }
+                    if (rank == 0) {
+                        return IPAddressIntelligenceResponse.allowed();
+                    }
+                    return IPAddressIntelligenceResponse.builder()
+                            .score(rank)
+                            .status(IPAddressIntelligenceResponse.IPAddressIntelligenceStatus.RANKED)
+                            .build();
                 }
-                if (rank == 0) {
-                    return IPAddressIntelligenceResponse.allowed();
-                }
-                return IPAddressIntelligenceResponse.builder()
-                    .score(rank)
-                    .status(IPAddressIntelligenceResponse.IPAddressIntelligenceStatus.RANKED)
-                    .build();
+                val message = json.getOrDefault("message", "Invalid IP address").toString();
+                LOGGER.error(message);
+                return bannedResponse;
             }
-            val message = json.getOrDefault("message", "Invalid IP address").toString();
-            LOGGER.error(message);
-            return bannedResponse;
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {

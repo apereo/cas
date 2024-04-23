@@ -7,6 +7,8 @@ import com.hazelcast.config.DiscoveryStrategyConfig;
 import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.NetworkConfig;
 
+import java.util.Optional;
+
 import static org.mockito.Mockito.*;
 
 /**
@@ -17,9 +19,9 @@ import static org.mockito.Mockito.*;
  */
 public class MockDiscoveryStrategy implements HazelcastDiscoveryStrategy {
     @Override
-    public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster,
-        final JoinConfig joinConfig, final Config configuration,
-        final NetworkConfig networkConfig) {
-        return mock(DiscoveryStrategyConfig.class);
+    public Optional<DiscoveryStrategyConfig> get(final HazelcastClusterProperties cluster,
+                                                 final JoinConfig joinConfig, final Config configuration,
+                                                 final NetworkConfig networkConfig) {
+        return Optional.of(mock(DiscoveryStrategyConfig.class));
     }
 }

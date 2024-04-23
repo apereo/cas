@@ -1,24 +1,28 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
+
+const cas = require("../../cas.js");
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true,
-        defaultViewport: null,
-        args: ['--start-maximized']
-    });
-    const page = await browser.newPage();
-    await page.goto("https://localhost:8443/cas/login?authn_method=mfa-simple");
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
+    const browser = await cas.newBrowser(cas.browserOptions());
+    const page = await cas.newPage(browser);
+    await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-simple", "en");
+    await cas.loginWith(page);
+    await cas.sleep(1000);
+    await cas.assertVisibility(page, "#token");
+    await cas.attributeValue(page, "html", "lang", "en");
 
-    // await page.waitForTimeout(5000)
+    const code = await cas.extractFromEmail(browser);
 
-    let element = await page.$('#token');
-    assert(await element.boundingBox() != null);
+    await page.bringToFront();
+    await cas.attributeValue(page, "html", "lang", "en");
+    await cas.type(page, "#token", code);
+    await cas.submitForm(page, "#fm1");
+    await cas.sleep(3000);
+
+    await cas.submitForm(page, "#registerform");
+    await cas.sleep(3000);
+
+    await cas.assertInnerText(page, "#content div h2", "Log In Successful");
+    await cas.assertCookie(page);
 
     await browser.close();
 })();

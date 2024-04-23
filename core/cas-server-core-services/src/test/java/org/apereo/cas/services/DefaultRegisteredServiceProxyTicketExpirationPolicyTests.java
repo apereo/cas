@@ -1,15 +1,15 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,18 +20,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("RegisteredService")
-public class DefaultRegisteredServiceProxyTicketExpirationPolicyTests {
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "DefaultRegisteredServiceProxyTicketExpirationPolicyTests.json");
+class DefaultRegisteredServiceProxyTicketExpirationPolicyTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializationToJson() throws IOException {
+    void verifySerializationToJson() throws IOException {
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
         val p = new DefaultRegisteredServiceProxyTicketExpirationPolicy();
         p.setNumberOfUses(12);
         p.setTimeToLive("60");
-        MAPPER.writeValue(JSON_FILE, p);
-        val repositoryRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceProxyTicketExpirationPolicy.class);
+        MAPPER.writeValue(jsonFile, p);
+        val repositoryRead = MAPPER.readValue(jsonFile, DefaultRegisteredServiceProxyTicketExpirationPolicy.class);
         assertEquals(p, repositoryRead);
     }
 }

@@ -9,11 +9,11 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
+@Tag("SAMLServiceProvider")
 @TestPropertySource(properties = {
     "cas.saml-sp.bynder.metadata=classpath:/metadata/sp-metadata.xml",
     "cas.saml-sp.bynder.name-id-attribute=cn",
     "cas.saml-sp.bynder.name-id-format=transient"
 })
-public class CasSamlSPBynderConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPBynderConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

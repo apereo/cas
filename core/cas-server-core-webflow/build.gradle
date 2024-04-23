@@ -19,8 +19,11 @@ dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api-web")
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-cookie")
+
+
 
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-web")
@@ -34,6 +37,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-services-registry")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-monitor")
     testImplementation project(":core:cas-server-core")
 
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")

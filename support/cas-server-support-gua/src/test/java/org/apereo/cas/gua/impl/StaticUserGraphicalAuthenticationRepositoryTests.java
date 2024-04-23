@@ -16,16 +16,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Simple")
-public class StaticUserGraphicalAuthenticationRepositoryTests {
+class StaticUserGraphicalAuthenticationRepositoryTests {
 
     @Test
-    public void verifyImage() throws Exception {
+    void verifyImage() throws Throwable {
         val repo = new StaticUserGraphicalAuthenticationRepository(Map.of("casuser", new ClassPathResource("image.jpg")));
         assertFalse(repo.getGraphics("casuser").isEmpty());
     }
 
     @Test
-    public void verifyBadImage() throws Exception {
+    void verifyBadImage() throws Throwable {
         val repo = new StaticUserGraphicalAuthenticationRepository(Map.of("casuser", new ClassPathResource("missing.jpg")));
         assertTrue(repo.getGraphics("casuser").isEmpty());
     }

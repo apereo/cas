@@ -1,16 +1,15 @@
 package org.apereo.cas.shell.commands.util;
 
 import org.apereo.cas.shell.commands.BaseCasShellCommandTests;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.shell.Input;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.shell.InputProvider;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,35 +22,25 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@EnableAutoConfiguration
 @EnableScheduling
-@DirtiesContext
 @Tag("Ldap")
-@EnabledIfPortOpen(port = 10389)
-public class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests {
+@EnabledIfListeningOnPort(port = 10389)
+class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
-            + "--bindCredential_password_--searchFilter_cn=admin_--userPassword_password_--userAttributes_cn";
-        val result = shell.evaluate(new Input() {
-            @Override
-            public String rawText() {
-                return StringUtils.replace(cmd, "_", " ");
-            }
-
-            @Override
-            public List<String> words() {
-                return Arrays.asList(cmd.split("_"));
-            }
-        });
-        assertTrue((Boolean) result);
+                  + "--bindCredential_password_--searchFilter_cn=admin_--userPassword_password_--userAttributes_cn";
+        assertDoesNotThrow(() -> runShellCommand(getUnderscoreToSpaceInput(cmd)));
     }
 
     @Test
-    public void verifyFailsOperation() {
+    void verifyNoFilterOperation() throws Throwable {
         val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
-            + "--bindCredential_password_--searchFilter_badfilter_--userPassword_password_--userAttributes_cn";
+                  + "--bindCredential_password_--userPassword_password_--userAttributes_cn";
+        assertDoesNotThrow(() -> runShellCommand(getUnderscoreToSpaceInput(cmd)));
+    }
 
+    private static InputProvider getUnderscoreToSpaceInput(final String cmd) {
         val input = new Input() {
             @Override
             public String rawText() {
@@ -63,27 +52,34 @@ public class ValidateLdapConnectionCommandTests extends BaseCasShellCommandTests
                 return Arrays.asList(cmd.split("_"));
             }
         };
-        val result = shell.evaluate(input);
-        assertFalse((Boolean) result);
+        return () -> input;
     }
 
     @Test
-    public void verifyNoResult() {
+    void verifyFailsOperation() throws Throwable {
         val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
-            + "--bindCredential_password_--searchFilter_cn=123456_--userPassword_password_--userAttributes_cn";
+                  + "--bindCredential_password_--searchFilter_badfilter_--userPassword_password_--userAttributes_cn";
 
-        val input = new Input() {
-            @Override
-            public String rawText() {
-                return StringUtils.replace(cmd, "_", " ");
-            }
+        val input = getUnderscoreToSpaceInput(cmd);
+        assertDoesNotThrow(() -> runShellCommand(input));
+    }
 
-            @Override
-            public List<String> words() {
-                return Arrays.asList(cmd.split("_"));
-            }
-        };
-        val result = shell.evaluate(input);
-        assertFalse((Boolean) result);
+    @Test
+    void verifyBadUrlOperation() throws Throwable {
+        val cmd = "validate-ldap_--url_ldap://localhost:10399_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
+                  + "--bindCredential_password_--searchFilter_badfilter_--userPassword_password_--userAttributes_cn";
+
+        val input = getUnderscoreToSpaceInput(cmd);
+        assertDoesNotThrow(() -> runShellCommand(input));
+    }
+
+
+    @Test
+    void verifyNoResult() throws Throwable {
+        val cmd = "validate-ldap_--url_ldap://localhost:10389_--baseDn_dc=example,dc=org_--bindDn_cn=Directory Manager_"
+                  + "--bindCredential_password_--searchFilter_cn=123456_--userPassword_password_--userAttributes_cn";
+
+        val input = getUnderscoreToSpaceInput(cmd);
+        assertDoesNotThrow(() -> runShellCommand(input));
     }
 }

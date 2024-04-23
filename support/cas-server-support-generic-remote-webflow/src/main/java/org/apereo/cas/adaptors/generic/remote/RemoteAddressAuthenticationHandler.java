@@ -5,20 +5,19 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.model.support.generic.RemoteAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.LoggingUtils;
-
+import org.apereo.cas.util.function.FunctionUtils;
 import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import javax.security.auth.login.FailedLoginException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.security.GeneralSecurityException;
 
 /**
  * Checks if the remote address is in the range of allowed addresses.
@@ -44,11 +43,10 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
      */
     private InetAddress inetNetworkRange;
 
-    public RemoteAddressAuthenticationHandler(final String name,
-        final ServicesManager servicesManager,
-                                              final PrincipalFactory principalFactory,
-                                              final Integer order) {
-        super(name, servicesManager, principalFactory, order);
+    public RemoteAddressAuthenticationHandler(final RemoteAuthenticationProperties props,
+                                              final ServicesManager servicesManager,
+                                              final PrincipalFactory principalFactory) {
+        super(props.getName(), servicesManager, principalFactory, props.getOrder());
     }
 
     /**
@@ -82,29 +80,30 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
     }
 
     @Override
-    public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
-        val c = (RemoteAddressCredential) credential;
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential, final Service service) throws Throwable {
+        val addressCredential = (RemoteAuthenticationCredential) credential;
         if (this.inetNetmask != null && this.inetNetworkRange != null) {
             try {
-                val inetAddress = InetAddress.getByName(c.getRemoteAddress().trim());
+                val inetAddress = InetAddress.getByName(addressCredential.getRemoteAddress().trim());
                 if (containsAddress(this.inetNetworkRange, this.inetNetmask, inetAddress)) {
-                    return new DefaultAuthenticationHandlerExecutionResult(this, c, this.principalFactory.createPrincipal(c.getId()));
+                    return new DefaultAuthenticationHandlerExecutionResult(this, addressCredential,
+                        principalFactory.createPrincipal(addressCredential.getId()));
                 }
             } catch (final UnknownHostException e) {
-                LOGGER.debug("Unknown host [{}]", c.getRemoteAddress());
+                LOGGER.debug("Unknown host [{}]", addressCredential.getRemoteAddress());
             }
         }
-        throw new FailedLoginException(c.getRemoteAddress() + " not in allowed range.");
+        throw new FailedLoginException(addressCredential.getRemoteAddress() + " not in allowed range.");
     }
 
     @Override
     public boolean supports(final Credential credential) {
-        return credential instanceof RemoteAddressCredential;
+        return credential instanceof RemoteAuthenticationCredential;
     }
 
     @Override
     public boolean supports(final Class<? extends Credential> clazz) {
-        return RemoteAddressCredential.class.isAssignableFrom(clazz);
+        return RemoteAuthenticationCredential.class.isAssignableFrom(clazz);
     }
 
     /**
@@ -116,22 +115,16 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
         if (StringUtils.isNotBlank(ipAddressRange)) {
             val splitAddress = Splitter.on("/").splitToList(ipAddressRange);
             if (splitAddress.size() == 2) {
-                val network = splitAddress.get(0).trim();
+                val network = splitAddress.getFirst().trim();
                 val netmask = splitAddress.get(1).trim();
-
-                try {
+                FunctionUtils.doAndHandle(__ -> {
                     this.inetNetworkRange = InetAddress.getByName(network);
                     LOGGER.debug("InetAddress network: [{}]", this.inetNetworkRange.toString());
-                } catch (final UnknownHostException e) {
-                    LoggingUtils.error(LOGGER, e);
-                }
-
-                try {
+                });
+                FunctionUtils.doAndHandle(__ -> {
                     this.inetNetmask = InetAddress.getByName(netmask);
                     LOGGER.debug("InetAddress netmask: [{}]", this.inetNetmask.toString());
-                } catch (final UnknownHostException e) {
-                    LoggingUtils.error(LOGGER, e);
-                }
+                });
             }
         }
     }

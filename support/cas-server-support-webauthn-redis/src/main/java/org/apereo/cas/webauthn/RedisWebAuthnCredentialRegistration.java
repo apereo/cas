@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,6 +22,7 @@ import java.io.Serializable;
 @SuperBuilder
 @Accessors(chain = true)
 public class RedisWebAuthnCredentialRegistration implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1505204109111619367L;
 
     @JsonProperty

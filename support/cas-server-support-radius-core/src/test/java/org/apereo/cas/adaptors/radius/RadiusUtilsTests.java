@@ -20,9 +20,9 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Radius")
-public class RadiusUtilsTests {
+class RadiusUtilsTests {
     @Test
-    public void verifyActionPasses() throws Exception {
+    void verifyActionPasses() throws Throwable {
         val server = mock(RadiusServer.class);
         val attribute = new Attr_ClientId("client_id");
         val response = new CasRadiusResponse(100, 100, CollectionUtils.wrapList(attribute));
@@ -34,26 +34,29 @@ public class RadiusUtilsTests {
     }
 
     @Test
-    public void verifyActionFailsWithFailOver() throws Exception {
+    void verifyActionFailsWithFailOver() throws Throwable {
         val server = mock(RadiusServer.class);
         when(server.authenticate(anyString(), anyString())).thenReturn(null);
-        val result = RadiusUtils.authenticate("casuser", "Mellon", CollectionUtils.wrapList(server), true, false, Optional.empty());
+        val result = RadiusUtils.authenticate("casuser", "Mellon",
+            CollectionUtils.wrapList(server), true, false, Optional.empty());
         assertFalse(result.getKey());
     }
 
     @Test
-    public void verifyActionFails() throws Exception {
+    void verifyActionFails() throws Throwable {
         val server = mock(RadiusServer.class);
         when(server.authenticate(anyString(), anyString())).thenReturn(null);
         assertThrows(FailedLoginException.class,
-            () -> RadiusUtils.authenticate("casuser", "Mellon", CollectionUtils.wrapList(server), false, false, Optional.empty()));
+            () -> RadiusUtils.authenticate("casuser", "Mellon",
+                CollectionUtils.wrapList(server), false, false, Optional.empty()));
     }
 
     @Test
-    public void verifyActionFailsWithException() throws Exception {
+    void verifyActionFailsWithException() throws Throwable {
         val server = mock(RadiusServer.class);
         when(server.authenticate(anyString(), anyString())).thenThrow(FailedLoginException.class);
         assertThrows(FailedLoginException.class,
-            () -> RadiusUtils.authenticate("casuser", "Mellon", CollectionUtils.wrapList(server), false, false, Optional.empty()));
+            () -> RadiusUtils.authenticate("casuser", "Mellon",
+                CollectionUtils.wrapList(server), false, false, Optional.empty()));
     }
 }

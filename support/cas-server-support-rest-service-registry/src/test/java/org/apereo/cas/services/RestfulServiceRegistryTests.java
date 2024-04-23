@@ -1,27 +1,14 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
-import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreMultifactorAuthenticationConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CasCoreWebConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
-import org.apereo.cas.config.RestServiceRegistryConfiguration;
+import org.apereo.cas.config.CasRestServiceRegistryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import org.apereo.cas.web.config.CasCookieConfiguration;
-import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
-import org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.junit.jupiter.api.MethodOrderer;
@@ -29,13 +16,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -54,23 +38,12 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @SpringBootTest(classes = {
     RestfulServiceRegistryTests.RestfulServiceRegistryTestConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    RestServiceRegistryConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    RefreshAutoConfiguration.class,
-    CasCoreWebConfiguration.class,
-    CasCoreLogoutConfiguration.class,
-    CasCoreWebflowConfiguration.class,
-    CasCookieConfiguration.class,
-    CasCoreMultifactorAuthenticationConfiguration.class,
-    CasMultifactorAuthenticationWebflowConfiguration.class,
-    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    AbstractServiceRegistryTests.SharedTestConfiguration.class,
+    CasRestServiceRegistryAutoConfiguration.class,
+    CasCoreMultifactorAuthenticationAutoConfiguration.class,
+    CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
-    CasCoreAuthenticationPrincipalConfiguration.class,
-    CasCoreAuthenticationPolicyConfiguration.class,
-    CasCoreAuthenticationSupportConfiguration.class,
-    CasCoreAuthenticationHandlersConfiguration.class
+    CasCoreWebflowAutoConfiguration.class
 },
     properties = {
         "server.port=9303",
@@ -79,11 +52,10 @@ import org.springframework.web.bind.annotation.RestController;
     },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@EnableAutoConfiguration
 @Tag("RestfulApi")
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
+class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
@@ -91,9 +63,8 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
     @Qualifier("restfulServiceRegistry")
     private ServiceRegistry newServiceRegistry;
 
-    @TestConfiguration
-    @Lazy(false)
-    public static class RestfulServiceRegistryTestConfiguration {
+    @TestConfiguration(value = "RestfulServiceRegistryTestConfiguration", proxyBeanMethods = false)
+    static class RestfulServiceRegistryTestConfiguration {
 
         @Autowired
         private ConfigurableApplicationContext applicationContext;
@@ -117,16 +88,14 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
             }
 
             @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-            @SneakyThrows
-            public ResponseEntity save(@RequestBody final String service) {
+                        public ResponseEntity save(@RequestBody final String service) throws Exception {
                 val registeredService = MAPPER.readValue(service, RegisteredService.class);
                 serviceRegistry.save(registeredService);
                 return ResponseEntity.ok(MAPPER.writeValueAsString(registeredService));
             }
 
             @GetMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-            @SneakyThrows
-            public ResponseEntity findServiceById(@PathVariable(name = "id") final String id) {
+                        public ResponseEntity findServiceById(@PathVariable(name = "id") final String id) throws Exception {
                 if (NumberUtils.isParsable(id)) {
                     return ResponseEntity.ok(MAPPER.writeValueAsString(serviceRegistry.findServiceById(Long.parseLong(id))));
                 }
@@ -134,8 +103,7 @@ public class RestfulServiceRegistryTests extends AbstractServiceRegistryTests {
             }
 
             @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-            @SneakyThrows
-            public ResponseEntity load() {
+                        public ResponseEntity load() throws Exception {
                 return ResponseEntity.ok(MAPPER.writeValueAsString(serviceRegistry.load()));
             }
         }

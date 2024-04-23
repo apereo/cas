@@ -1,13 +1,13 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.webflow.context.servlet.FlowUrlHandler;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
-
+import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -15,14 +15,24 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.2.0
  */
 @Tag("Webflow")
-public class CasDefaultFlowUrlHandlerTests {
+class CasDefaultFlowUrlHandlerTests {
 
-    private final CasDefaultFlowUrlHandler urlHandler = new CasDefaultFlowUrlHandler();
+    private final FlowUrlHandler urlHandler = new CasDefaultFlowUrlHandler();
 
     private final MockHttpServletRequest request = new MockHttpServletRequest();
 
     @Test
-    public void verifyCreateFlowExecutionUrlWithSingleValuedAttributes() {
+    void verifyFlowExecutionKeyInRequestBody() throws Throwable {
+        setupRequest("/cas", "/app", "/foo");
+        request.setMethod("POST");
+        request.setContent("execution=continue".getBytes(StandardCharsets.UTF_8));
+        val executionKey = urlHandler.getFlowExecutionKey(request);
+        assertEquals("continue", executionKey);
+        assertEquals("continue", request.getAttribute(CasDefaultFlowUrlHandler.DEFAULT_FLOW_EXECUTION_KEY_PARAMETER));
+    }
+
+    @Test
+    void verifyCreateFlowExecutionUrlWithSingleValuedAttributes() throws Throwable {
         setupRequest("/cas", "/app", "/foo");
         request.setParameter("bar", "baz");
         request.setParameter("qux", "quux");
@@ -34,7 +44,16 @@ public class CasDefaultFlowUrlHandlerTests {
     }
 
     @Test
-    public void verifyCreateFlowExecutionUrlWithMultiValuedAttributes() {
+    void verifyFlowIdWithAnchorTag() throws Throwable {
+        setupRequest("/cas", "/app", "/foo#this-exists-here");
+        request.setParameter("bar", "baz");
+        request.setParameter("qux", "quux");
+        val flowId = urlHandler.getFlowId(request);
+        assertEquals("foo", flowId);
+    }
+
+    @Test
+    void verifyCreateFlowExecutionUrlWithMultiValuedAttributes() throws Throwable {
         setupRequest("/cas", "/app", "/foo");
         request.setParameter("bar", "baz1", "baz2");
         request.setParameter("qux", "quux");

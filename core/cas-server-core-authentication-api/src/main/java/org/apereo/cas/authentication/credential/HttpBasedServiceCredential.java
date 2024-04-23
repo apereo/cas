@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.credential;
 
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.CasModelRegisteredService;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -10,8 +11,9 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
 
+import java.io.Serial;
+import java.net.URI;
 import java.net.URL;
 
 /**
@@ -30,26 +32,18 @@ import java.net.URL;
 @EqualsAndHashCode(callSuper = true)
 public class HttpBasedServiceCredential extends AbstractCredential {
 
-    /**
-     * Unique Serializable ID.
-     */
+    @Serial
     private static final long serialVersionUID = 1492607216336354503L;
 
-    /**
-     * The callbackURL to check that identifies the application.
-     */
     private URL callbackUrl;
 
-    /**
-     * The registered service associated with this callback.
-     **/
-    private RegisteredService service;
+    private CasModelRegisteredService service;
 
     @JsonCreator
-    @SneakyThrows
-    public HttpBasedServiceCredential(@JsonProperty("callbackUrl") final String callbackUrl,
-                                      @JsonProperty("service") final RegisteredService service) {
-        this.callbackUrl = new URL(callbackUrl);
+    public HttpBasedServiceCredential(
+        @JsonProperty("callbackUrl") final String callbackUrl,
+        @JsonProperty("service") final CasModelRegisteredService service) {
+        this.callbackUrl = FunctionUtils.doUnchecked(() -> new URI(callbackUrl).toURL());
         this.service = service;
     }
 

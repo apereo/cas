@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 
+import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
 
@@ -14,23 +15,17 @@ import java.security.cert.X509Certificate;
  * @since 3.0.0
  */
 @ToString(callSuper = true)
+@Setter
 public class X509SerialNumberPrincipalResolver extends AbstractX509PrincipalResolver {
 
     private static final int DEFAULT_RADIX = 10;
 
-    private final int radix;
+    private int radix = DEFAULT_RADIX;
 
-    private final boolean zeroPadding;
+    private boolean zeroPadding;
 
     public X509SerialNumberPrincipalResolver(final PrincipalResolutionContext context) {
-        this(context, DEFAULT_RADIX, false);
-    }
-
-    public X509SerialNumberPrincipalResolver(final PrincipalResolutionContext context,
-                                             final int radix, final boolean zeroPadding) {
         super(context);
-        this.radix = radix;
-        this.zeroPadding = zeroPadding;
     }
 
     @Override

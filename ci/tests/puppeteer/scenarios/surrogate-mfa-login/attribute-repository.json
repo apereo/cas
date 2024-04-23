@@ -1,0 +1,8 @@
+{
+  "casuser": {
+    "firstName":["Apereo"],
+    "employeeNumber":["1234567"],
+    "lastName":["CAS"],
+    "email": ["cas@example.org"]
+  }
+}

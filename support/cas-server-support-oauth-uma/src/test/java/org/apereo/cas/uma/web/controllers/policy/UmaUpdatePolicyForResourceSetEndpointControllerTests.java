@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("UMA")
-public class UmaUpdatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpointControllerTests {
+class UmaUpdatePolicyForResourceSetEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body,
@@ -51,15 +51,15 @@ public class UmaUpdatePolicyForResourceSetEndpointControllerTests extends BaseUm
     }
 
     @Test
-    public void verifyNoAuth() {
-        var body = createUmaResourceRegistrationRequest().toJson();
+    void verifyNoAuth() throws Throwable {
+        val body = createUmaResourceRegistrationRequest().toJson();
         val response = umaUpdatePolicyForResourceSetEndpointController.updatePoliciesForResourceSet(1, 2, body,
             new MockHttpServletRequest(), new MockHttpServletResponse());
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    public void verifyMissingChannel() {
+    void verifyMissingChannel() throws Throwable {
         var results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body,
@@ -76,7 +76,7 @@ public class UmaUpdatePolicyForResourceSetEndpointControllerTests extends BaseUm
     }
 
     @Test
-    public void verifyMissingResource() {
+    void verifyMissingResource() throws Throwable {
         var results = authenticateUmaRequestWithProtectionScope();
         val body = createUmaPolicyRegistrationRequest(getCurrentProfile(results.getLeft(), results.getMiddle())).toJson();
         results = authenticateUmaRequestWithProtectionScope();

@@ -11,11 +11,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("Authentication")
-public class AuthenticationPolicyExecutionResultTests {
+@Tag("AuthenticationPolicy")
+class AuthenticationPolicyExecutionResultTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertTrue(AuthenticationPolicyExecutionResult.success(true).isSuccess());
         assertTrue(AuthenticationPolicyExecutionResult.success().isSuccess());
         assertFalse(AuthenticationPolicyExecutionResult.failure().isSuccess());

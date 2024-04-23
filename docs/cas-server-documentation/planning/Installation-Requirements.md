@@ -16,17 +16,18 @@ requirements.
 
 ## Java
 
-CAS at its heart is a Java-based web application. Prior to deployment, 
-you will need to have [JDK](https://openjdk.java.net/projects/jdk/11/) `11` installed.
+CAS at its heart is a Java-based web application. Prior to deployment, you will need to have [JDK](https://openjdk.java.net/projects/jdk/21/) `21` installed. The JDK requirement
+is global and applies to all CAS modules and features. The required Java version must be available both at compile-time when you build and package CAS and of course at runtime when
+you deploy the CAS web application.
 
-<div class="alert alert-danger"><strong>Oracle JDK License</strong><p>
-Oracle has updated the license terms on which Oracle JDK is offered. The new Oracle Technology Network License Agreement for Oracle Java SE is substantially different from the licenses under which previous versions of the JDK were offered. <b>Please review</b> the new terms carefully before downloading and using this product.</p></div>
-  
-The key part of the license is as follows:
+<div class="alert alert-info">:information_source: <strong>Release Policy</strong><p>
+Java platform requirements typically only change and require newer versions when CAS major releases are published.
+The requirements will universally remain the same for all other feature, minor, patch or maintenance releases.
+Furthermore, we cannot in good confidence ascertain that CAS would run correctly in newer JDK versions above the required baseline. YMMV.
+</p></div>
 
-> You may not: use the Programs for any data processing or any commercial, production, or internal business purposes other than developing, testing, prototyping, and demonstrating your Application.
-
-Do **NOT** download or use the Oracle JDK unless you intend to pay for it. **Use an OpenJDK build instead.**
+All compatible distributions such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicitly supported. Whatever Java distribution you use,
+please make sure you have reviewed the license agreement carefully before downloading and using the package.
 
 ## Servlet Containers
 
@@ -40,7 +41,7 @@ See [this guide](../installation/Configuring-Servlet-Container.html) for more in
 WAR overlays are [provided](../installation/WAR-Overlay-Installation.html) to allow for a straightforward and flexible 
 deployment solution. While it admittedly requires a high up-front cost in learning, it reaps numerous benefits in the long run. 
 
-<div class="alert alert-info"><strong>Do Less</strong><p>
+<div class="alert alert-info">:information_source: <strong>Do Less</strong><p>
 You <b>DO NOT</b> need to have Gradle installed prior to the installation. It is provided to you automatically.
 </p></div>
 
@@ -62,7 +63,8 @@ containing artifacts (jar files in most cases) that are downloaded and installed
 ## Hardware
 
 Anecdotal community evidence seems to suggest that CAS deployments would perform well on a dual-core 3.00Ghz 
-processor with 8GB of memory, at a minimum. Enough disk space (preferably SSD) is also needed to house CAS-generated logs, if logs are kept on the server itself.
+processor with 4GB of memory, at a minimum. Enough disk space (preferably SSD) is also 
+needed to house CAS-generated logs, if logs are kept on the server itself.
 
 Remember that the above requirements are *suggestions*. You may get by perfectly fine with more or less, 
 depending on your deployment and request volume. Start with the bare minimum and be prepared to adjust and strengthen capacity on demand if needed.

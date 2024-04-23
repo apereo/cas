@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{screen.logout.header}">CAS Logout</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag" />
+</head>
+
+<body>
+<main class="container mt-3 mb-3">
+    <div layout:fragment="content">
+
+
+        <div class="w-100 m-auto mdc-card card p-4">
+            <div id="logoutBody" class="card-body">
+                <h2 class="banner-heading">
+                    <i class="mdi mdi-logout fas fa-sign-out-alt" aria-hidden="true"></i>
+                    <span th:utext="#{screen.logout.header}">Logout successful</span>
+                </h2>
+
+                <p id="logoutMessage" class="banner-message" th:utext="#{screen.logout.success}">You have successfully logged out of the Central Authentication
+                    Service. You may <a href="login">log in</a> again.</p>
+                <p class="banner-message" th:utext="#{screen.logout.security}">For security reasons, exit your web browser.</p>
+
+                <div th:remove="tag" th:if="${enableProceed}">
+                    <p>Logout will continue in a few seconds. Please wait...</p>
+                    <form method="post" id="logoutform" th:action="@{/logout}">
+                        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                        <input type="hidden" name="_eventId" value="proceed"/>
+                    </form>
+                    <script type="text/javascript">
+                        setTimeout((() => $("#logoutform").submit()), 2000);
+                    </script>
+                </div>
+                <div th:remove="tag" th:unless="${enableProceed}">
+                    <script type="text/javascript">
+                        clearLocalStorage();
+                        clearSessionStorage();
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

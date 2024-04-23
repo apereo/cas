@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,6 +26,7 @@ import java.io.Serializable;
 @JsonFilter("PrincipalAttributeMultifactorAuthenticationProperties")
 public class PrincipalAttributeMultifactorAuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7426521468929733907L;
 
     /**
@@ -47,12 +50,33 @@ public class PrincipalAttributeMultifactorAuthenticationProperties implements Se
      * of assigning provider ids to attributes as values.</li>
      * </ul>
      * Needless to say, the attributes need to have been resolved for the principal prior to this step.
+     * Matching and comparison operations are case insensitive.
      */
+    @RegularExpressionCapable
     private String globalPrincipalAttributeNameTriggers;
 
     /**
-     * The regular expression that is cross matches against the principal attribute to determine
+     * The regular expression that is cross matched against the principal attribute to determine
      * if the account is qualified for multifactor authentication.
+     * Matching and comparison operations are case insensitive.
      */
+    @RegularExpressionCapable
     private String globalPrincipalAttributeValueRegex;
+
+    /**
+     * Force CAS to deny and block the authentication attempt
+     * altogether if attribute name/value configuration cannot produce a successful
+     * match to trigger multifactor authentication.
+     */
+    private boolean denyIfUnmatched;
+
+    /**
+     * Principal attribute triggers by default look for a positive match and the presence of a pattern in attribute values.
+     * If you are looking to reverse that behavior and trigger MFA when the attribute value
+     * does NOT match the given pattern, then set this flag to {@code true}.
+     * This option does not apply when a predicate trigger is used to decide on the provider,
+     * and is only relevant when {@link #globalPrincipalAttributeNameTriggers} and
+     * {@link #globalPrincipalAttributeValueRegex} are used.
+     */
+    private boolean reverseMatch;
 }

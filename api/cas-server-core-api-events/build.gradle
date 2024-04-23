@@ -1,6 +1,7 @@
 description = "Apereo CAS Core API Events"
 dependencies {
     api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-validation")
 }

@@ -1,5 +1,15 @@
 description = "Apereo CAS Apache Syncope Authentication Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "Apache Syncope Authentication"
+    ]
+}
 dependencies {
+    implementation libraries.apachecxfsearch
+
+    
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-services-api")
@@ -7,6 +17,12 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-webflow-api")
+    
+    implementation project(":support:cas-server-support-person-directory-core")
+    implementation project(":support:cas-server-support-actions-core")
+    
+    compileOnly project(":support:cas-server-support-account-mgmt-api")
 
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
@@ -14,15 +30,24 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
-
+    testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+    
     testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-cookie-api")
+
+    testImplementation project(":support:cas-server-support-account-mgmt-api")
+    testImplementation project(":support:cas-server-support-account-mgmt")
+    testImplementation project(":support:cas-server-support-person-directory")
 }

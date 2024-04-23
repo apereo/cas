@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link MongoDbAcceptableUsagePolicyProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("MongoDbAcceptableUsagePolicyProperties")
 public class MongoDbAcceptableUsagePolicyProperties extends SingleCollectionMongoDbProperties {
 
+    @Serial
     private static final long serialVersionUID = -1918436901491275547L;
 
     public MongoDbAcceptableUsagePolicyProperties() {

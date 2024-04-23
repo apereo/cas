@@ -1,16 +1,13 @@
 package org.apereo.cas.ws.idp.web;
 
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.ticket.SecurityTokenTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -19,14 +16,12 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
-import org.apache.http.client.utils.URIBuilder;
-import org.jasig.cas.client.util.CommonUtils;
+import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
@@ -40,51 +35,35 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-@SuppressWarnings("JavaUtilDate")
 public abstract class BaseWSFederationRequestController {
     private final WSFederationRequestConfigurationContext configContext;
 
-    /**
-     * Construct service url string.
-     *
-     * @param request      the request
-     * @param response     the response
-     * @param wsfedRequest the ws federation request
-     * @return the service url
-     */
-    protected String constructServiceUrl(final HttpServletRequest request, final HttpServletResponse response,
-                                         final WSFederationRequest wsfedRequest) {
-        try {
-            val builder = new URIBuilder(configContext.getCallbackService().getId());
+    protected String constructServiceUrl(final HttpServletRequest request,
+                                         final HttpServletResponse response,
+                                         final WSFederationRequest wsfedRequest) throws Exception {
+        val builder = new URIBuilder(configContext.getCallbackService().getId());
 
-            builder.addParameter(WSFederationConstants.WA, wsfedRequest.getWa());
-            builder.addParameter(WSFederationConstants.WREPLY, wsfedRequest.getWreply());
-            builder.addParameter(WSFederationConstants.WTREALM, wsfedRequest.getWtrealm());
+        builder.addParameter(WSFederationConstants.WA, wsfedRequest.wa());
+        builder.addParameter(WSFederationConstants.WREPLY, wsfedRequest.wreply());
+        builder.addParameter(WSFederationConstants.WTREALM, wsfedRequest.wtrealm());
 
-            if (StringUtils.isNotBlank(wsfedRequest.getWctx())) {
-                builder.addParameter(WSFederationConstants.WCTX, wsfedRequest.getWctx());
-            }
-            if (StringUtils.isNotBlank(wsfedRequest.getWfresh())) {
-                builder.addParameter(WSFederationConstants.WREFRESH, wsfedRequest.getWfresh());
-            }
-            if (StringUtils.isNotBlank(wsfedRequest.getWhr())) {
-                builder.addParameter(WSFederationConstants.WHR, wsfedRequest.getWhr());
-            }
-            if (StringUtils.isNotBlank(wsfedRequest.getWreq())) {
-                builder.addParameter(WSFederationConstants.WREQ, wsfedRequest.getWreq());
-            }
-
-            val url = builder.build();
-
-            LOGGER.trace("Built service callback url [{}]", url);
-            return CommonUtils.constructServiceUrl(request, response,
-                url.toString(), configContext.getCasProperties().getServer().getName(),
-                CasProtocolConstants.PARAMETER_SERVICE,
-                CasProtocolConstants.PARAMETER_TICKET, false);
-        } catch (final Exception e) {
-            throw new SamlException(e.getMessage(), e);
+        if (StringUtils.isNotBlank(wsfedRequest.wctx())) {
+            builder.addParameter(WSFederationConstants.WCTX, wsfedRequest.wctx());
         }
+        if (StringUtils.isNotBlank(wsfedRequest.wfresh())) {
+            builder.addParameter(WSFederationConstants.WREFRESH, wsfedRequest.wfresh());
+        }
+        if (StringUtils.isNotBlank(wsfedRequest.whr())) {
+            builder.addParameter(WSFederationConstants.WHR, wsfedRequest.whr());
+        }
+        if (StringUtils.isNotBlank(wsfedRequest.wreq())) {
+            builder.addParameter(WSFederationConstants.WREQ, wsfedRequest.wreq());
+        }
+        val url = builder.build().toASCIIString();
+        LOGGER.trace("Built service callback url [{}]", url);
+        return url;
     }
+
 
     /**
      * Gets security token from request.
@@ -107,7 +86,7 @@ public abstract class BaseWSFederationRequestController {
                         LOGGER.warn("Security token ticket [{}] is not found or has expired", sts);
                         return null;
                     }
-                    if (stt.getSecurityToken().isExpired()) {
+                    if (stt.getSecurityToken() == null || stt.getSecurityToken().isExpired()) {
                         LOGGER.warn("Security token linked to ticket [{}] has expired", sts);
                         return null;
                     }
@@ -119,19 +98,12 @@ public abstract class BaseWSFederationRequestController {
     }
 
 
-    /**
-     * Is authentication required?
-     *
-     * @param fedRequest the fed request
-     * @param request    the request
-     * @return true/false
-     */
     protected boolean shouldRenewAuthentication(final WSFederationRequest fedRequest,
                                                 final HttpServletRequest request) {
-        if (StringUtils.isBlank(fedRequest.getWfresh()) || !NumberUtils.isCreatable(fedRequest.getWfresh())) {
+        if (StringUtils.isBlank(fedRequest.wfresh()) || !NumberUtils.isCreatable(fedRequest.wfresh())) {
             return false;
         }
-        val ttl = Long.parseLong(fedRequest.getWfresh().trim());
+        val ttl = Long.parseLong(fedRequest.wfresh().trim());
         if (ttl == 0) {
             return false;
         }
@@ -152,36 +124,22 @@ public abstract class BaseWSFederationRequestController {
         return false;
     }
 
-    /**
-     * Gets ws federation registered service.
-     *
-     * @param targetService the target service
-     * @param fedRequest    the fed request
-     * @return the ws federation registered service
-     */
     protected WSFederationRegisteredService findAndValidateFederationRequestForRegisteredService(final Service targetService,
                                                                                                  final WSFederationRequest fedRequest) {
         val svc = getWsFederationRegisteredService(targetService);
-
-        val idp = configContext.getCasProperties().getAuthn().getWsfedIdp().getIdp();
-        if (StringUtils.isBlank(fedRequest.getWtrealm()) || !StringUtils.equals(fedRequest.getWtrealm(), svc.getRealm())) {
-            LOGGER.warn("Realm [{}] is not authorized for matching service [{}]", fedRequest.getWtrealm(), svc);
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        if (StringUtils.isBlank(fedRequest.wtrealm()) || !StringUtils.equals(fedRequest.wtrealm(), svc.getRealm())) {
+            LOGGER.warn("Realm [{}] is not authorized for matching service [{}]", fedRequest.wtrealm(), svc);
+            throw UnauthorizedServiceException.denied("Rejected: %s".formatted(svc.getRealm()));
         }
+        val idp = configContext.getCasProperties().getAuthn().getWsfedIdp().getIdp();
         if (!StringUtils.equals(idp.getRealm(), svc.getRealm())) {
-            LOGGER.warn("Realm [{}] is not authorized for the identity provider realm [{}]", fedRequest.getWtrealm(), idp.getRealm());
-            throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+            LOGGER.warn("Realm [{}] is not authorized for the identity provider realm [{}]", fedRequest.wtrealm(), idp.getRealm());
+            throw UnauthorizedServiceException.denied("Rejected: %s".formatted(svc.getRealm()));
         }
 
         return svc;
     }
 
-    /**
-     * Gets ws federation registered service.
-     *
-     * @param targetService the target service
-     * @return the ws federation registered service
-     */
     protected WSFederationRegisteredService getWsFederationRegisteredService(final Service targetService) {
         val svc = configContext.getServicesManager().findServiceBy(targetService, WSFederationRegisteredService.class);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(targetService, svc);

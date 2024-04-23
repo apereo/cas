@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
@@ -19,7 +19,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.ldap[0].principal-attribute-list=description,cn",
     "cas.authn.ldap[0].enhance-with-entry-resolver=false"
     })
-@EnabledIfPortOpen(port = 10389)
-@Tag("Ldap")
-public class DirectLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
+@EnabledIfListeningOnPort(port = 10389)
+@Tag("LdapAuthentication")
+class DirectLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
 }

@@ -1,26 +1,36 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.CasViewConstants;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.validation.ImmutableAssertion;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
-import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
-
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.lang.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link CasReleaseAttributesReportEndpoint}.
@@ -30,59 +40,72 @@ import java.util.Map;
  */
 @Endpoint(id = "releaseAttributes", enableByDefault = false)
 public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint {
-    private final ServicesManager servicesManager;
-    private final AuthenticationSystemSupport authenticationSystemSupport;
-    private final ServiceFactory<WebApplicationService> serviceFactory;
-    private final PrincipalFactory principalFactory;
+    private final ObjectProvider<ServicesManager> servicesManager;
+
+    private final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
+
+    private final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory;
+
+    private final ObjectProvider<PrincipalFactory> principalFactory;
+
+    private final ObjectProvider<PrincipalResolver> principalResolver;
+
+    private final ConfigurableApplicationContext applicationContext;
 
     public CasReleaseAttributesReportEndpoint(final CasConfigurationProperties casProperties,
-                                              final ServicesManager servicesManager,
-                                              final AuthenticationSystemSupport authenticationSystemSupport,
-                                              final ServiceFactory<WebApplicationService> serviceFactory,
-                                              final PrincipalFactory principalFactory) {
+                                              final ConfigurableApplicationContext applicationContext,
+                                              final ObjectProvider<ServicesManager> servicesManager,
+                                              final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
+                                              final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory,
+                                              final ObjectProvider<PrincipalFactory> principalFactory,
+                                              final ObjectProvider<PrincipalResolver> principalResolver) {
         super(casProperties);
+        this.applicationContext = applicationContext;
         this.servicesManager = servicesManager;
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.serviceFactory = serviceFactory;
         this.principalFactory = principalFactory;
+        this.principalResolver = principalResolver;
     }
 
-    /**
-     * Release principal attributes map.
-     *
-     * @param username the username
-     * @param password the password
-     * @param service  the service
-     * @return the map
-     */
-    @ReadOperation
-    public Map<String, Object> releasePrincipalAttributes(final String username,
-                                                          final String password,
-                                                          final String service) {
+    protected Map<String, Object> releasePrincipalAttributes(
+        final String username,
+        @Nullable final String password,
+        final String service) throws Throwable {
 
+        val selectedService = serviceFactory.getObject().createService(service);
+        val registeredService = NumberUtils.isCreatable(service)
+            ? servicesManager.getObject().findServiceBy(Long.parseLong(service))
+            : servicesManager.getObject().findServiceBy(selectedService);
+        RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
 
-        val selectedService = this.serviceFactory.createService(service);
-        val registeredService = this.servicesManager.findServiceBy(selectedService);
+        val authentication = buildAuthentication(username, password, selectedService);
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .applicationContext(applicationContext)
+            .service(selectedService)
+            .principal(authentication.getPrincipal())
+            .build();
 
-        val credential = new UsernamePasswordCredential(username, password);
-        val result = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(selectedService, credential);
-        val authentication = result.getAuthentication();
-
-        val principal = authentication.getPrincipal();
-        val attributesToRelease = registeredService.getAttributeReleasePolicy().getAttributes(principal, selectedService, registeredService);
+        val attributesToRelease = registeredService.getAttributeReleasePolicy().getAttributes(context);
         val builder = DefaultAuthenticationBuilder.of(
-                principal,
-                this.principalFactory,
-                attributesToRelease,
-                selectedService,
-                registeredService,
-                authentication);
+            applicationContext,
+            authentication.getPrincipal(),
+            principalFactory.getObject(),
+            attributesToRelease,
+            selectedService,
+            registeredService,
+            authentication);
 
         val finalAuthentication = builder.build();
-        val assertion = new DefaultAssertionBuilder(finalAuthentication)
-            .with(selectedService)
-            .with(CollectionUtils.wrap(finalAuthentication))
-            .build();
+        val assertion = DefaultAssertionBuilder
+            .builder()
+            .primaryAuthentication(finalAuthentication)
+            .service(selectedService)
+            .authentications(CollectionUtils.wrap(finalAuthentication))
+            .registeredService(registeredService)
+            .build()
+            .assemble();
 
         val resValidation = new LinkedHashMap<String, Object>();
         resValidation.put(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION, assertion);
@@ -92,21 +115,41 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
         return resValidation;
     }
 
+    private Authentication buildAuthentication(final String username, final String password,
+                                               final WebApplicationService selectedService) throws Throwable {
+        if (StringUtils.isNotBlank(password)) {
+            val credential = new UsernamePasswordCredential(username, password);
+            val result = authenticationSystemSupport.getObject().finalizeAuthenticationTransaction(selectedService, credential);
+            return result.getAuthentication();
+        }
+        val principal = principalResolver.getObject()
+            .resolve(new BasicIdentifiableCredential(username),
+                Optional.of(principalFactory.getObject().createPrincipal(username)),
+                Optional.empty(), Optional.of(selectedService));
+        return DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
+    }
+
     /**
      * Method that accepts a JSON body through a POST method to receive user credentials and only returns a
      * map of attributes released for the authenticated user.
      *
      * @param username - the username
-     * @param password - the password
-     * @param service - the service id
+     * @param password - the password; this may be optional.
+     * @param service  - the service id
      * @return - the map
+     * @throws Throwable the throwable
      */
     @WriteOperation
-    public Map<String, Object> releaseAttributes(final String username,
-                                                 final String password,
-                                                 final String service) {
+    @Operation(summary = "Get collection of released attributes for the user and application",
+        parameters = {
+            @Parameter(name = "username", required = true),
+            @Parameter(name = "password", required = false),
+            @Parameter(name = "service", required = true, description = "May be the service id or its numeric identifier")
+        })
+    public Map<String, Object> releaseAttributes(final String username, @Nullable final String password,
+                                                 final String service) throws Throwable {
         val map = releasePrincipalAttributes(username, password, service);
         val assertion = (ImmutableAssertion) map.get("assertion");
-        return Map.of("uid", username, "attributes", assertion.getPrimaryAuthentication().getPrincipal().getAttributes());
+        return Map.of("username", username, "attributes", assertion.getPrimaryAuthentication().getPrincipal().getAttributes());
     }
 }

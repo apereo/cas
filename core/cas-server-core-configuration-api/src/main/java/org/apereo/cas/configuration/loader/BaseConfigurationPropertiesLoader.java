@@ -27,6 +27,7 @@ public abstract class BaseConfigurationPropertiesLoader {
      * The Configuration cipher executor.
      */
     private final CipherExecutor<String, String> configurationCipherExecutor;
+
     /**
      * The Name.
      */
@@ -36,6 +37,13 @@ public abstract class BaseConfigurationPropertiesLoader {
      * The resource containing the configuration settings.
      */
     private final Resource resource;
+
+    /**
+     * Load property source.
+     *
+     * @return the property source
+     */
+    public abstract PropertySource load();
 
     /**
      * Decrypt properties map.
@@ -66,11 +74,4 @@ public abstract class BaseConfigurationPropertiesLoader {
     protected PropertySource finalizeProperties(final Properties props) {
         return new PropertiesPropertySource(getName(), props);
     }
-
-    /**
-     * Load property source.
-     *
-     * @return the property source
-     */
-    public abstract PropertySource load();
 }

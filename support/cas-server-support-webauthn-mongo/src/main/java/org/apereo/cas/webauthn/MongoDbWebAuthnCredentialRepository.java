@@ -2,15 +2,15 @@ package org.apereo.cas.webauthn;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.webauthn.storage.BaseWebAuthnCredentialRepository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yubico.data.CredentialRegistration;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Collation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -32,9 +32,9 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public class MongoDbWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepository {
-    private final MongoTemplate mongoTemplate;
+    private final MongoOperations mongoTemplate;
 
-    public MongoDbWebAuthnCredentialRepository(final MongoTemplate mongoTemplate,
+    public MongoDbWebAuthnCredentialRepository(final MongoOperations mongoTemplate,
                                                final CasConfigurationProperties properties,
                                                final CipherExecutor<String, String> cipherExecutor) {
         super(properties, cipherExecutor);
@@ -57,7 +57,7 @@ public class MongoDbWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
     }
 
     @Override
-    protected Stream<CredentialRegistration> load() {
+    public Stream<CredentialRegistration> stream() {
         val query = new Query().addCriteria(Criteria.where(MongoDbWebAuthnCredentialRegistration.FIELD_USERNAME).exists(true))
             .collation(Collation.of(Locale.ENGLISH).strength(Collation.ComparisonLevel.primary()));
         val records = mongoTemplate.find(query, MongoDbWebAuthnCredentialRegistration.class,
@@ -71,9 +71,9 @@ public class MongoDbWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
     }
 
     @Override
-    @SneakyThrows
     protected void update(final String username, final Collection<CredentialRegistration> givenRecords) {
-        val records = givenRecords.stream()
+        val records = givenRecords
+            .stream()
             .map(record -> {
                 if (record.getRegistrationTime() == null) {
                     return record.withRegistrationTime(Instant.now(Clock.systemUTC()));
@@ -89,7 +89,7 @@ public class MongoDbWebAuthnCredentialRepository extends BaseWebAuthnCredentialR
             LOGGER.debug("No records are provided for [{}] so entry will be removed", username);
             mongoTemplate.remove(query, MongoDbWebAuthnCredentialRegistration.class, collection);
         } else {
-            val jsonRecords = getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(records));
+            val jsonRecords = FunctionUtils.doUnchecked(() -> getCipherExecutor().encode(WebAuthnUtils.getObjectMapper().writeValueAsString(records)));
             val entry = MongoDbWebAuthnCredentialRegistration.builder()
                 .records(jsonRecords)
                 .username(username)

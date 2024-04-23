@@ -13,21 +13,21 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author leeyc0
  * @since 6.2.0
  */
-@Tag("JDBC")
+@Tag("Hibernate")
 @SuppressWarnings("JdkObsolete")
-public class JdbcServletContextListenerTests {
+class JdbcServletContextListenerTests {
 
     private final JdbcServletContextListener listener = new JdbcServletContextListener();
 
     @Test
-    public void verifyContextInitialized() {
+    void verifyContextInitialized() throws Throwable {
         listener.contextInitialized(null);
         assertFalse(DriverManager.getDrivers().hasMoreElements());
     }
 
     @Test
 
-    public void verifyContextDestroyed() throws Exception {
+    void verifyContextDestroyed() throws Throwable {
         /* registers all drivers */
         Class.forName("org.hsqldb.jdbc.JDBCDriver");
         Class.forName("org.postgresql.Driver");

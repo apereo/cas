@@ -2,7 +2,6 @@ package org.apereo.cas.support.wsfederation.authentication.principal;
 
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
 
 import lombok.val;
@@ -23,24 +22,24 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("WSFederation")
-public class WsFederationCredentialsToPrincipalResolverTests extends AbstractWsFederationTests {
+class WsFederationCredentialsToPrincipalResolverTests extends AbstractWsFederationTests {
     @Autowired
-    @Qualifier("casAuthenticationManager")
+    @Qualifier(AuthenticationManager.BEAN_NAME)
     private AuthenticationManager authenticationManager;
 
     @Test
-    public void verifyAuth() {
+    void verifyAuth() throws Throwable {
         val creds = getCredential();
-        val auth = authenticationManager.authenticate(new DefaultAuthenticationTransactionFactory().newTransaction(creds));
+        val auth = authenticationManager.authenticate(CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(creds));
         assertNotNull(auth);
     }
 
     @Test
-    public void verifyMultipleAttributes() {
+    void verifyMultipleAttributes() throws Throwable {
         val attributes = new HashMap<>(CoreAuthenticationTestUtils.getAttributeRepository().getBackingMap());
         attributes.put("upn", List.of("cas1", "cas2"));
         val creds = getCredential(attributes);
-        val auth = authenticationManager.authenticate(new DefaultAuthenticationTransactionFactory().newTransaction(creds));
+        val auth = authenticationManager.authenticate(CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(creds));
         assertNotNull(auth);
     }
 

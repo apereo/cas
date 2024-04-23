@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.expiration;
 
-import org.apereo.cas.ticket.TicketState;
+
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,6 +13,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 
@@ -31,9 +33,7 @@ import java.time.ZonedDateTime;
 @ToString(callSuper = true)
 public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
-    /**
-     * Serialization support.
-     */
+    @Serial
     private static final long serialVersionUID = 205979491183779408L;
 
     /**
@@ -51,7 +51,7 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
     }
 
     @Override
-    public boolean isExpired(final TicketState ticketState) {
+    public boolean isExpired(final TicketGrantingTicketAwareTicket ticketState) {
         LOGGER.trace("Checking validity of ticket [{}]", ticketState);
         val lastTimeUsed = ticketState.getLastTimeUsed();
         val currentTime = ZonedDateTime.now(getClock());
@@ -59,7 +59,6 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
         LOGGER.trace("Current time is [{}]. Ticket last used time is [{}]", currentTime, lastTimeUsed);
 
         val margin = Duration.between(lastTimeUsed, currentTime).toSeconds();
-
         LOGGER.trace("The duration in seconds between current time and last used time is [{}]", margin);
 
         if (ticketState.getCountOfUses() == 0 && margin < this.timeToKillInSeconds) {

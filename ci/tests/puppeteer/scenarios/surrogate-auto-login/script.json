@@ -1,0 +1,27 @@
+{
+  "dependencies": "surrogate-webflow",
+  "conditions": {
+    "docker": "true"
+  },
+
+  "properties": [
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.authn.surrogate.mail.html=false",
+    "--cas.authn.surrogate.mail.from=cas@example.com",
+    "--cas.authn.surrogate.mail.subject=Token",
+    "--cas.authn.surrogate.mail.text=${token}",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.authn.surrogate.simple.surrogates.casuser=user1,user2,user3"
+  ],
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
+}

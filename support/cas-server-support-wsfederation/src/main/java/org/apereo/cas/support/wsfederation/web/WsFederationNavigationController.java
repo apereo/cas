@@ -1,28 +1,22 @@
 package org.apereo.cas.support.wsfederation.web;
 
-import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.ArgumentExtractor;
-
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Collection;
 
 /**
@@ -33,7 +27,6 @@ import java.util.Collection;
  */
 @Controller("wsFederationNavigationController")
 @RequestMapping
-@Slf4j
 @RequiredArgsConstructor
 public class WsFederationNavigationController {
     /**
@@ -52,8 +45,6 @@ public class WsFederationNavigationController {
 
     private final Collection<WsFederationConfiguration> configurations;
 
-    private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     private final String casLoginEndpoint;
@@ -70,27 +61,20 @@ public class WsFederationNavigationController {
      * @return the view
      */
     @GetMapping(ENDPOINT_REDIRECT)
-    public View redirectToProvider(final HttpServletRequest request, final HttpServletResponse response) {
+    public View redirectToProvider(final HttpServletRequest request,
+                                   final HttpServletResponse response) {
         val wsfedId = request.getParameter(PARAMETER_NAME);
-        try {
-            val cfg = configurations.stream()
-                .filter(c -> c.getId().equals(wsfedId))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Could not locate WsFederation configuration for " + wsfedId));
-            val service = determineService(request);
-            val id = wsFederationHelper.getRelyingPartyIdentifier(service, cfg);
-            val url = cfg.getAuthorizationUrl(id, cfg.getId());
-            wsFederationCookieManager.store(request, response, cfg.getId(), service, cfg);
-            return new RedirectView(url);
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+        val cfg = configurations.stream().filter(configuration -> configuration.getId().equals(wsfedId)).findFirst()
+            .orElseThrow(() -> UnauthorizedServiceException.denied("Could not locate WsFederation configuration for %s".formatted(wsfedId)));
+        val service = determineService(request);
+        val id = wsFederationHelper.getRelyingPartyIdentifier(service, cfg);
+        val url = cfg.getAuthorizationUrl(id, cfg.getId());
+        wsFederationCookieManager.store(request, response, cfg.getId(), service, cfg);
+        return new RedirectView(url);
     }
 
-    private Service determineService(final HttpServletRequest request) {
-        val initialService = ObjectUtils.defaultIfNull(argumentExtractor.extractService(request),
+    protected Service determineService(final HttpServletRequest request) {
+        return ObjectUtils.defaultIfNull(argumentExtractor.extractService(request),
             webApplicationServiceFactory.createService(casLoginEndpoint));
-        return this.authenticationRequestServiceSelectionStrategies.resolveService(initialService);
     }
 }

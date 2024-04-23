@@ -1,7 +1,7 @@
 package org.apereo.cas.services.util;
 
-import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.BaseRegisteredService;
+import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.util.RandomUtils;
@@ -20,11 +20,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Tag("RegisteredService")
-public class RegisteredServiceNoOpCipherExecutorTests {
+@Tag("Cipher")
+class RegisteredServiceNoOpCipherExecutorTests {
+
+    private static BaseRegisteredService getService(final String keyLocation) {
+        val svc = new CasRegisteredService();
+        svc.setServiceId("Testing");
+        svc.setPublicKey(new RegisteredServicePublicKeyImpl(keyLocation, "RSA"));
+        return svc;
+    }
 
     @Test
-    public void verifyCipherUnableToEncodeForStringIsTooLong() {
+    void verifyCipherUnableToEncodeForStringIsTooLong() throws Throwable {
         val svc = getService("classpath:keys/RSA1024Public.key");
         val ticketId = RandomUtils.randomAlphanumeric(120);
         val cipher = RegisteredServiceCipherExecutor.noOp();
@@ -32,12 +39,5 @@ public class RegisteredServiceNoOpCipherExecutorTests {
         assertEquals(ticketId, cipher.encode(ticketId));
         assertFalse(cipher.supports(svc));
         assertFalse(cipher.isEnabled());
-    }
-
-    private static AbstractRegisteredService getService(final String keyLocation) {
-        val svc = new RegexRegisteredService();
-        svc.setServiceId("Testing");
-        svc.setPublicKey(new RegisteredServicePublicKeyImpl(keyLocation, "RSA"));
-        return svc;
     }
 }

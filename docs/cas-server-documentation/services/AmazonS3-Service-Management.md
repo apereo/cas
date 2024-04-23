@@ -14,11 +14,11 @@ as a JSON blob, similar to that of [JSON service registry](JSON-Service-Manageme
 
 Support is enabled by adding the following module into the overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-aws-s3-service-registry" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-aws-s3-service-registry" %}
 
 ## Configuration
 
-{% include casproperties.html properties="cas.service-registry.amazon-s3" %}
+{% include_cached casproperties.html properties="cas.service-registry.amazon-s3" %}
 
 ## Troubleshooting
 
@@ -27,8 +27,8 @@ To enable additional logging, configure the log4j configuration file to add the 
 ```xml
 ...
 <Logger name="com.amazonaws" level="debug" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 ...
 ```

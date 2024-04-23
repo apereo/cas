@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.x509;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -7,10 +8,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
  * This is {@link BaseAlternativePrincipalResolverProperties}.
+ *
  * @since 6.0.0
  */
 @RequiresModule(name = "cas-server-support-x509-webflow")
@@ -18,7 +21,8 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @JsonFilter("BaseAlternativePrincipalResolverProperties")
-public abstract class BaseAlternativePrincipalResolverProperties implements Serializable {
+public abstract class BaseAlternativePrincipalResolverProperties implements CasFeatureModule, Serializable {
+    @Serial
     private static final long serialVersionUID = 4770829035414038072L;
 
     /**
@@ -27,8 +31,8 @@ public abstract class BaseAlternativePrincipalResolverProperties implements Seri
      * for attributes in the certificate that are not common to all certificates.
      * (e.g. {@code SUBJECT_ALT_NAME}, {@code CN_EDIPI})
      * <p>
-     * This assumes you would rather get something like the subjectDn rather than null
-     * where null would allow falling through to another authentication mechanism.
+     * This assumes you would rather get something like the {@code subjectDn} rather than {@code null}
+     * where {@code null} would allow falling through to another authentication mechanism.
      * <p>
      * Currently supported values are: {@code subjectDn}, {@code sigAlgOid}, {@code subjectX500Principal}.
      */

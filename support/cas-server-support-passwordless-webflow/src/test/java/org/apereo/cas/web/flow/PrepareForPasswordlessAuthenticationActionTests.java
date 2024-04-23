@@ -1,23 +1,18 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
+import org.apereo.cas.services.DefaultRegisteredServicePasswordlessPolicy;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.execution.Action;
-import org.springframework.webflow.test.MockFlowExecutionContext;
-import org.springframework.webflow.test.MockFlowSession;
-import org.springframework.webflow.test.MockRequestContext;
-
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,28 +21,43 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("WebflowActions")
-public class PrepareForPasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
+@Tag("WebflowAuthenticationActions")
+class PrepareForPasswordlessAuthenticationActionTests extends BasePasswordlessAuthenticationActionTests {
     @Autowired
-    @Qualifier(CasWebflowConstants.ACTION_ID_INIT_LOGIN_ACTION)
-    private Action initializeLoginAction;
+    @Qualifier(CasWebflowConstants.ACTION_ID_PASSWORDLESS_PREPARE_LOGIN)
+    private Action prepareLoginAction;
+
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    private ServicesManager servicesManager;
 
     @Test
-    public void verifyAction() throws Exception {
-        val exec = new MockFlowExecutionContext(new MockFlowSession(new Flow(CasWebflowConfigurer.FLOW_ID_LOGIN)));
-        val context = new MockRequestContext(exec);
+    void verifyAction() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        context.setFlowExecutionContext(CasWebflowConfigurer.FLOW_ID_LOGIN);
 
-        val request = new MockHttpServletRequest();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
-        assertEquals(PasswordlessAuthenticationWebflowConfigurer.TRANSITION_ID_PASSWORDLESS_GET_USERID, initializeLoginAction.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_PASSWORDLESS_GET_USERID, prepareLoginAction.execute(context).getId());
+
         val account = PasswordlessUserAccount.builder()
             .email("email")
             .phone("phone")
             .username("casuser")
             .name("casuser")
             .build();
-        WebUtils.putPasswordlessAuthenticationAccount(context, account);
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
+        assertNull(prepareLoginAction.execute(context));
+    }
 
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, initializeLoginAction.execute(context).getId());
+    @Test
+    void verifyFlowSkipped() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        context.setFlowExecutionContext(CasWebflowConfigurer.FLOW_ID_LOGIN);
+
+        val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        service.setPasswordlessPolicy(new DefaultRegisteredServicePasswordlessPolicy().setEnabled(false));
+        servicesManager.save(service);
+        WebUtils.putRegisteredService(context, service);
+
+        assertEquals(CasWebflowConstants.TRANSITION_ID_PASSWORDLESS_SKIP, prepareLoginAction.execute(context).getId());
     }
 }

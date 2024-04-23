@@ -1,0 +1,25 @@
+{
+  "dependencies": "audit-jdbc,reports,events-configuration",
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.audit.slf4j.enabled=false",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.standalone.configuration-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config.yml",
+
+    "--cas.webflow.crypto.signing.key=Q4tQGAuJSmuJ5WA0zByB9P6hYr5dpTd2JJifyy6Tm_CJ35pkbdhFvcgG-3igDjA4CTjau6Z0yMft-dhVUbRnPQ",
+    "--cas.webflow.crypto.encryption.key=g-Rk2ZvexS6tdooIiDh0IQ",
+    
+    "--cas.audit.jdbc.user=sa",
+    "--cas.audit.jdbc.password=",
+    "--cas.audit.jdbc.driver-class=org.hsqldb.jdbcDriver",
+    "--cas.audit.jdbc.dialect=org.hibernate.dialect.HSQLDialect",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true"
+  ]
+}

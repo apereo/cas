@@ -1,0 +1,13 @@
+{
+  "@class" : "java.util.TreeMap",
+  "mail" : {
+    "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+    "key": "mail",
+    "singleValue": true
+  },
+  "cn" : {
+    "@class" : "org.apereo.cas.authentication.attribute.DefaultAttributeDefinition",
+    "key": "cn",
+    "singleValue": true
+  }
+}

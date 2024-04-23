@@ -10,20 +10,18 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.support.RegisteredServiceCorsConfigurationSource;
 import org.apereo.cas.web.support.ArgumentExtractor;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -35,7 +33,10 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Web")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@SpringBootTest(classes = RefreshAutoConfiguration.class, properties = {
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    WebMvcAutoConfiguration.class
+}, properties = {
     "cas.http-web-request.cors.allow-credentials=true",
     "cas.http-web-request.cors.allow-origins[0]=*",
     "cas.http-web-request.cors.allow-origin-patterns[0]=https://*.example.com",
@@ -44,13 +45,13 @@ import static org.mockito.Mockito.*;
     "cas.http-web-request.cors.max-age=1600",
     "cas.http-web-request.cors.exposed-headers[0]=*"
 })
-public class RegisteredServiceCorsConfigurationSourceTests {
+class RegisteredServiceCorsConfigurationSourceTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyDefault() {
+    void verifyDefault() throws Throwable {
         val servicesManager = mock(ServicesManager.class);
         val argumentExtractor = mock(ArgumentExtractor.class);
         val source = new RegisteredServiceCorsConfigurationSource(casProperties,
@@ -60,17 +61,17 @@ public class RegisteredServiceCorsConfigurationSourceTests {
         val config = source.getCorsConfiguration(request);
 
         val cors = casProperties.getHttpWebRequest().getCors();
-        assertEquals(cors.getMaxAge(), config.getMaxAge().intValue());
+        assertEquals(cors.getMaxAge(), config.getMaxAge());
         assertEquals(cors.getAllowHeaders(), config.getAllowedHeaders());
         assertEquals(cors.getAllowOrigins(), config.getAllowedOrigins());
         assertEquals(cors.getAllowOriginPatterns(), config.getAllowedOriginPatterns());
         assertEquals(cors.getAllowMethods(), config.getAllowedMethods());
         assertEquals(cors.getExposedHeaders(), config.getExposedHeaders());
-        assertTrue(config.getAllowCredentials().booleanValue());
+        assertTrue(config.getAllowCredentials());
     }
 
     @Test
-    public void verifyService() {
+    void verifyService() throws Throwable {
         val props = new LinkedHashMap<String, RegisteredServiceProperty>();
         props.put(RegisteredServiceProperty.RegisteredServiceProperties.CORS_ALLOW_CREDENTIALS.getPropertyName(),
             new DefaultRegisteredServiceProperty("false"));
@@ -81,7 +82,7 @@ public class RegisteredServiceCorsConfigurationSourceTests {
         props.put(RegisteredServiceProperty.RegisteredServiceProperties.CORS_ALLOWED_ORIGINS.getPropertyName(),
             new DefaultRegisteredServiceProperty(Set.of("12345")));
         props.put(RegisteredServiceProperty.RegisteredServiceProperties.CORS_ALLOWED_ORIGIN_PATTERNS.getPropertyName(),
-                new DefaultRegisteredServiceProperty(Set.of("12345")));
+            new DefaultRegisteredServiceProperty(Set.of("12345")));
         props.put(RegisteredServiceProperty.RegisteredServiceProperties.CORS_ALLOWED_METHODS.getPropertyName(),
             new DefaultRegisteredServiceProperty(Set.of("12345")));
         props.put(RegisteredServiceProperty.RegisteredServiceProperties.CORS_EXPOSED_HEADERS.getPropertyName(),

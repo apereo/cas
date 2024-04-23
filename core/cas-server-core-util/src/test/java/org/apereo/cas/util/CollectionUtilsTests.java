@@ -1,10 +1,14 @@
 package org.apereo.cas.util;
 
 import com.google.common.collect.Multimap;
+import lombok.val;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,9 +21,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Utility")
-public class CollectionUtilsTests {
+class CollectionUtilsTests {
     @Test
-    public void verifyToCol() {
+    void verifyCollectionAsInputMap() throws Throwable {
+        val value = new HashMap<String, List<Object>>();
+        value.put("Hello", CollectionUtils.wrapList("People", "World"));
+        val result = CollectionUtils.toCollection(value, ArrayList.class);
+        assertEquals(1, result.size());
+        assertSame(ImmutablePair.class, result.getFirst().getClass());
+    }
+
+    @Test
+    void verifyToCol() throws Throwable {
         assertThrows(IllegalArgumentException.class, () ->
             CollectionUtils.toCollection("item", List.class));
         assertNotNull(CollectionUtils.toCollection(List.of("one").iterator()));
@@ -27,7 +40,7 @@ public class CollectionUtilsTests {
     }
 
     @Test
-    public void verifyWrap() {
+    void verifyWrap() throws Throwable {
         assertNotNull(CollectionUtils.wrap((Map) null));
         assertNotNull(CollectionUtils.wrap((Multimap) null));
         assertNotNull(CollectionUtils.wrap(List.of()));
@@ -42,17 +55,17 @@ public class CollectionUtilsTests {
     }
 
     @Test
-    public void verifyWrappingItemsAsList() {
+    void verifyWrappingItemsAsList() throws Throwable {
         assertEquals(4, CollectionUtils.wrapList(1, 2, 3, 4).size());
     }
 
     @Test
-    public void verifyWrappingColItemsAsList() {
+    void verifyWrappingColItemsAsList() throws Throwable {
         assertEquals(10, CollectionUtils.wrapList(new Object[]{1, 2, 3, 4}, new Object[]{1, 2, 3, 4}, 5, 6).size());
     }
 
     @Test
-    public void verifyWrappingMapItemsAsList() {
+    void verifyWrappingMapItemsAsList() throws Throwable {
         assertEquals(2, CollectionUtils.wrapList(CollectionUtils.wrap("1", 2, "2", 2)).size());
     }
 }

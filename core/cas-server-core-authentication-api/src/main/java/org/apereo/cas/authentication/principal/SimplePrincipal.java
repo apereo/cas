@@ -13,10 +13,10 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import java.util.HashMap;
+import java.io.Serial;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TreeMap;
 
 /**
@@ -35,9 +35,7 @@ import java.util.TreeMap;
 @NoArgsConstructor
 public class SimplePrincipal implements Principal {
 
-    /**
-     * Serialization support.
-     */
+    @Serial
     private static final long serialVersionUID = -1255260750151385796L;
 
     /**
@@ -50,7 +48,7 @@ public class SimplePrincipal implements Principal {
      * Principal attributes.
      **/
     @JsonSetter(nulls = Nulls.AS_EMPTY)
-    private Map<String, List<Object>> attributes = new HashMap<>(0);
+    private Map<String, List<Object>> attributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     /**
      * Instantiates a new simple principal.
@@ -62,23 +60,14 @@ public class SimplePrincipal implements Principal {
     protected SimplePrincipal(@JsonProperty("id") final @NonNull String id,
                               @JsonProperty("attributes") final Map<String, List<Object>> attributes) {
         this.id = id;
-        this.attributes = Objects.requireNonNullElseGet(attributes, HashMap::new);
-    }
-
-    /**
-     * @return An immutable map of principal attributes
-     */
-    @Override
-    public Map<String, List<Object>> getAttributes() {
-        val attrs = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
-        attrs.putAll(this.attributes);
-        return attrs;
+        this.attributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        this.attributes.putAll(attributes);
     }
 
     @Override
     public int hashCode() {
         val builder = new HashCodeBuilder(83, 31);
-        builder.append(this.id.toLowerCase());
+        builder.append(id.toLowerCase(Locale.ENGLISH));
         return builder.toHashCode();
     }
 
@@ -90,10 +79,9 @@ public class SimplePrincipal implements Principal {
         if (obj == this) {
             return true;
         }
-        if (!(obj instanceof SimplePrincipal)) {
+        if (!(obj instanceof final SimplePrincipal rhs)) {
             return false;
         }
-        val rhs = (SimplePrincipal) obj;
-        return StringUtils.equalsIgnoreCase(this.id, rhs.getId());
+        return StringUtils.equalsIgnoreCase(id, rhs.getId());
     }
 }

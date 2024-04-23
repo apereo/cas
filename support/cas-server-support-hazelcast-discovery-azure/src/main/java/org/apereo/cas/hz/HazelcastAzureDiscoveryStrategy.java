@@ -12,6 +12,7 @@ import lombok.val;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 /**
  * This is {@link HazelcastAzureDiscoveryStrategy}.
@@ -21,8 +22,8 @@ import java.util.HashMap;
  */
 public class HazelcastAzureDiscoveryStrategy implements HazelcastDiscoveryStrategy {
     @Override
-    public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig,
-                                       final Config configuration, final NetworkConfig networkConfig) {
+    public Optional<DiscoveryStrategyConfig> get(final HazelcastClusterProperties cluster, final JoinConfig joinConfig,
+                                                 final Config configuration, final NetworkConfig networkConfig) {
         val azure = cluster.getDiscovery().getAzure();
         val properties = new HashMap<String, Comparable>();
         if (StringUtils.hasText(azure.getClientId())) {
@@ -43,6 +44,6 @@ public class HazelcastAzureDiscoveryStrategy implements HazelcastDiscoveryStrate
         if (StringUtils.hasText(azure.getTenantId())) {
             properties.put(HazelcastAzureDiscoveryProperties.AZURE_DISCOVERY_TENANT_ID, azure.getTenantId());
         }
-        return new DiscoveryStrategyConfig(new AzureDiscoveryStrategyFactory(), properties);
+        return Optional.of(new DiscoveryStrategyConfig(new AzureDiscoveryStrategyFactory(), properties));
     }
 }

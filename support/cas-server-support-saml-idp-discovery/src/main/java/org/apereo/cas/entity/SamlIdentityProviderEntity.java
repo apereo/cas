@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode(of = "entityID")
 public class SamlIdentityProviderEntity implements Serializable, Comparable<SamlIdentityProviderEntity> {
+    @Serial
     private static final long serialVersionUID = -8825733147579229506L;
 
     @JsonProperty("Descriptions")

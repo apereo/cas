@@ -3,7 +3,6 @@ package org.apereo.cas.services.resource;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -25,11 +24,10 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @Tag("RegisteredService")
-public class CreateResourceBasedRegisteredServiceWatcherTests {
+class CreateResourceBasedRegisteredServiceWatcherTests {
 
     @Test
-    @SneakyThrows
-    public void verifyOperationFoundCreated() {
+    void verifyOperationFoundCreated() throws Throwable {
         val result = new AtomicBoolean(false);
         val mockAppContext = mock(ConfigurableApplicationContext.class);
         doAnswer(args -> {
@@ -39,7 +37,7 @@ public class CreateResourceBasedRegisteredServiceWatcherTests {
         }).when(mockAppContext).publishEvent(any());
 
         val registry = new AbstractResourceBasedServiceRegistry(new ClassPathResource("services"),
-            List.of(new RegisteredServiceJsonSerializer()), mockAppContext,
+            List.of(new RegisteredServiceJsonSerializer(mockAppContext)), mockAppContext,
             new ArrayList<>()) {
             @Override
             protected String[] getExtensions() {

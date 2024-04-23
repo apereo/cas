@@ -2,6 +2,8 @@ package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.principal.Service;
 
+import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -21,7 +23,8 @@ public interface TransientSessionTicketFactory<T extends TransientSessionTicket>
      * @return the string
      */
     static String normalizeTicketId(final String id) {
-        return TransientSessionTicket.PREFIX + '-' + id;
+        val prefix = TransientSessionTicket.PREFIX + '-';
+        return StringUtils.prependIfMissingIgnoreCase(id, prefix);
     }
 
     /**
@@ -32,10 +35,10 @@ public interface TransientSessionTicketFactory<T extends TransientSessionTicket>
      * @return the expiration policy
      */
     static ExpirationPolicy buildExpirationPolicy(final ExpirationPolicyBuilder expirationPolicyBuilder,
-        final Map<String, Serializable> properties) {
+                                                  final Map<String, Serializable> properties) {
         var expirationPolicy = expirationPolicyBuilder.buildTicketExpirationPolicy();
         if (properties.containsKey(ExpirationPolicy.class.getName())) {
-            expirationPolicy = ExpirationPolicy.class.cast(properties.remove(ExpirationPolicy.class.getName()));
+            expirationPolicy = (ExpirationPolicy) properties.remove(ExpirationPolicy.class.getName());
         }
         return expirationPolicy;
     }
@@ -46,8 +49,9 @@ public interface TransientSessionTicketFactory<T extends TransientSessionTicket>
      * @param service    the service
      * @param properties the properties
      * @return the delegated authentication request ticket
+     * @throws Throwable the throwable
      */
-    T create(Service service, Map<String, Serializable> properties);
+    T create(Service service, Map<String, Serializable> properties) throws Throwable;
 
     /**
      * Create transient session ticket.
@@ -56,7 +60,7 @@ public interface TransientSessionTicketFactory<T extends TransientSessionTicket>
      * @param properties the properties
      * @return the transient session ticket
      */
-    default T create(String id, Map<String, Serializable> properties) {
+    default T create(final String id, final Map<String, Serializable> properties) {
         return create(id, null, properties);
     }
 
@@ -75,8 +79,9 @@ public interface TransientSessionTicketFactory<T extends TransientSessionTicket>
      *
      * @param service the service
      * @return the delegated authentication request ticket
+     * @throws Throwable the throwable
      */
-    default T create(final Service service) {
+    default T create(final Service service) throws Throwable {
         return create(service, new LinkedHashMap<>(0));
     }
 }

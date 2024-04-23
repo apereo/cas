@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serial;
+
 /**
  * This is {@link YubiKeyCredential}.
  *
@@ -20,6 +22,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class YubiKeyCredential extends OneTimeTokenCredential {
+    @Serial
     private static final long serialVersionUID = -7570600701132111037L;
 
     public YubiKeyCredential(final String token) {

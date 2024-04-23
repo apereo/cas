@@ -21,9 +21,9 @@ import java.util.Map;
 /**
  * This is {@link KafkaObjectFactory}.
  *
+ * @author Misagh Moayyed
  * @param <K> the type parameter
  * @param <V> the type parameter
- * @author Misagh Moayyed
  * @since 6.2.0
  */
 @RequiredArgsConstructor

@@ -2,13 +2,14 @@
   "@class": "org.apereo.cas.services.OidcRegisteredService",
   "clientId": "client",
   "clientSecret": "secret",
-  "serviceId": ".*",
+  "serviceId": "^http://localhost:9889/anything/app1.*",
   "name": "Sample",
   "id": 1,
   "description": "Sample Service",
   "evaluationOrder": 10000,
   "informationUrl": "https://github.com/apereo/cas",
   "privacyUrl": "https://github.com/apereo/cas",
-  "scopes" : [ "java.util.HashSet", [ "MyCustomScope" ] ],
+  "scopes" : [ "java.util.HashSet", [ "MyCustomScope", "openid", "profile" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
   "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ]
 }

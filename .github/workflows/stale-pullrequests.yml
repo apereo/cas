@@ -1,0 +1,22 @@
+name: 'Stale Pull Requests'
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+permissions:
+  issues: none
+  pull-requests: write
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        id: stale
+        with:
+          stale-pr-message: 'This pull request has been open and inactive. It will be closed shortly.'
+          days-before-stale: 7
+          days-before-close: 0
+          exempt-draft-pr: true
+          exempt-pr-labels: 'Pending: Work in Progress,WIP'
+      - name: Print outputs
+        run: echo ${{ join(steps.stale.outputs.*, ',') }}

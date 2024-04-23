@@ -17,7 +17,7 @@ public interface PrincipalResolutionExecutionPlanConfigurer extends Ordered {
      *
      * @param plan the plan
      */
-    void configurePrincipalResolutionExecutionPlan(PrincipalResolutionExecutionPlan plan);
+    void configurePrincipalResolutionExecutionPlan(PrincipalResolutionExecutionPlan plan) throws Exception;
 
     /**
      * Gets name.

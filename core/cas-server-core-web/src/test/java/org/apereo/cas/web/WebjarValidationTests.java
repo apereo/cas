@@ -21,10 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Web")
-public class WebjarValidationTests {
+class WebjarValidationTests {
 
     @Test
-    public void verifyValidation() throws IOException {
+    void verifyValidation() throws IOException {
         val compositePropertySource = new CompositePropertySource("webjars");
         compositePropertySource.addPropertySource(new PropertiesPropertySource("messages",
             PropertiesLoaderUtils.loadProperties(new ClassPathResource("cas_common_messages.properties"))));
@@ -32,7 +32,7 @@ public class WebjarValidationTests {
             PropertiesLoaderUtils.loadProperties(new FileSystemResource("../../gradle.properties"))));
         Arrays.stream(compositePropertySource.getPropertyNames())
             .filter(key -> key.startsWith("webjars."))
-            .map(key -> new ClassPathResource("META-INF/resources" + compositePropertySource.getProperty(key)))
+            .map(key -> new ClassPathResource("META-INF/resources%s".formatted(compositePropertySource.getProperty(key))))
             .forEach(resource -> assertTrue(resource.exists(), () -> "Webjar path bad: " + resource.getPath()));
     }
 

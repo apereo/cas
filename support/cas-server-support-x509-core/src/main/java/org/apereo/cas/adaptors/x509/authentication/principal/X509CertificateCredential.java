@@ -10,8 +10,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Setter;
+import lombok.ToString;
 import org.apache.commons.lang3.ObjectUtils;
 
+import java.io.Serial;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 
@@ -22,6 +24,7 @@ import java.util.Arrays;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@ToString(onlyExplicitlyIncluded = true)
 @JsonSerialize(using = X509CertificateCredentialJsonSerializer.class)
 @JsonDeserialize(using = X509CertificateCredentialJsonDeserializer.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -29,9 +32,7 @@ import java.util.Arrays;
 @Setter
 public class X509CertificateCredential extends AbstractCredential {
 
-    /**
-     * Unique Id for serialization.
-     */
+    @Serial
     private static final long serialVersionUID = 631753409512746474L;
 
     /**
@@ -44,11 +45,6 @@ public class X509CertificateCredential extends AbstractCredential {
      */
     private X509Certificate certificate;
 
-    /**
-     * Instantiates a new x509 certificate credential.
-     *
-     * @param certificates the certificates
-     */
     public X509CertificateCredential(final X509Certificate[] certificates) {
         this.certificates = Arrays.copyOf(certificates, certificates.length);
     }

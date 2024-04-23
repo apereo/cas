@@ -9,6 +9,7 @@ import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 
@@ -22,20 +23,14 @@ import java.util.Map;
  * @since 5.3.0
  */
 @RequiredArgsConstructor
+@Getter
 public class DefaultTransientSessionTicketFactory implements TransientSessionTicketFactory<TransientSessionTicket> {
     private final ExpirationPolicyBuilder<TransientSessionTicket> expirationPolicyBuilder;
 
     private final UniqueTicketIdGenerator ticketIdGenerator = new DefaultUniqueTicketIdGenerator();
 
-    /**
-     * Create delegated authentication request ticket.
-     *
-     * @param service    the service
-     * @param properties the properties
-     * @return the delegated authentication request ticket
-     */
     @Override
-    public TransientSessionTicket create(final Service service, final Map<String, Serializable> properties) {
+    public TransientSessionTicket create(final Service service, final Map<String, Serializable> properties) throws Throwable {
         val id = ticketIdGenerator.getNewTicketId(TransientSessionTicket.PREFIX);
         val expirationPolicy = TransientSessionTicketFactory.buildExpirationPolicy(this.expirationPolicyBuilder, properties);
         return new TransientSessionTicketImpl(id, expirationPolicy, service, properties);

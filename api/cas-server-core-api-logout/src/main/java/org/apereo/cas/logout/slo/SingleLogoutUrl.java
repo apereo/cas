@@ -2,12 +2,14 @@ package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
+import org.apereo.cas.services.WebBasedRegisteredService;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 @Getter
 @EqualsAndHashCode
 public class SingleLogoutUrl implements Serializable {
+    @Serial
     private static final long serialVersionUID = 6611608175787696823L;
 
     /**
@@ -46,14 +49,16 @@ public class SingleLogoutUrl implements Serializable {
     /**
      * Determine logout url assigned to a registered service.
      *
-     * @param registeredService the registered service
+     * @param service the registered service
      * @return the list
      */
-    public static List<SingleLogoutUrl> from(final RegisteredService registeredService) {
-        if (registeredService != null && StringUtils.hasText(registeredService.getLogoutUrl())) {
-            return Arrays.stream(StringUtils.commaDelimitedListToStringArray(registeredService.getLogoutUrl()))
-                .map(url -> new SingleLogoutUrl(url, registeredService.getLogoutType()))
-                .collect(Collectors.toList());
+    public static List<SingleLogoutUrl> from(final RegisteredService service) {
+        if (service instanceof final WebBasedRegisteredService registeredService) {
+            if (StringUtils.hasText(registeredService.getLogoutUrl())) {
+                return Arrays.stream(StringUtils.commaDelimitedListToStringArray(registeredService.getLogoutUrl()))
+                    .map(url -> new SingleLogoutUrl(url, registeredService.getLogoutType()))
+                    .collect(Collectors.toList());
+            }
         }
         return new ArrayList<>(0);
     }

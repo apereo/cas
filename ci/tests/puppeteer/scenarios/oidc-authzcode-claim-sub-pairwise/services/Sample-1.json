@@ -1,0 +1,21 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": "^https://localhost:9859/anything/sample",
+  "name": "Sample",
+  "id": 1,
+  "scopes" : [ "java.util.HashSet", [ "email", "profile" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "bypassApprovalPrompt": true,
+  "subjectType": "pairwise",
+  "sectorIdentifierUri": "https://localhost:9859",
+  "usernameAttributeProvider" : {
+    "@class" : "org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider",
+    "persistentIdGenerator" : {
+      "@class" : "org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator",
+      "salt" : "aGVsbG93b3JsZA=="
+    }
+  }
+}

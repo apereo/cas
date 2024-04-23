@@ -1,12 +1,10 @@
 package org.apereo.cas.web.flow.actions;
 
-import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -19,18 +17,14 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 public class MultifactorAuthenticationFailureAction extends AbstractMultifactorAuthenticationAction {
-    public MultifactorAuthenticationFailureAction(final ApplicationContext applicationContext) {
-        super(applicationContext);
-    }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val service = WebUtils.getRegisteredService(requestContext);
         val failureMode = provider.getFailureModeEvaluator().evaluate(service, provider);
-
         LOGGER.debug("Final failure mode has been determined to be [{}]", failureMode);
-
-        if (failureMode == BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.OPEN) {
+        if (failureMode.isAllowedToBypass()) {
+            LOGGER.debug("Failure mode [{}] is allowed to bypass multifactor authentication", failureMode);
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_BYPASS);
         }
 

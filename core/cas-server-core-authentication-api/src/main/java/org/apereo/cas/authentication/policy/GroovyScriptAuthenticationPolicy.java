@@ -7,22 +7,23 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
-
-import javax.persistence.Transient;
+import jakarta.persistence.Transient;
+import java.io.Serial;
 import java.io.Serializable;
 import java.security.GeneralSecurityException;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -38,59 +39,62 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @Setter
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Accessors(chain = true)
 public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
 
+    @Serial
     private static final long serialVersionUID = 6948477763790549040L;
 
-    private String script;
+    private final String script;
 
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
     private transient WatchableGroovyScriptResource executableScript;
 
-    public GroovyScriptAuthenticationPolicy(final String script) {
-        this.script = script;
-    }
-
     @Override
-    public AuthenticationPolicyExecutionResult isSatisfiedBy(final Authentication auth,
-                                                             final Set<AuthenticationHandler> authenticationHandlers,
-                                                             final ConfigurableApplicationContext applicationContext,
-                                                             final Optional<Serializable> assertion) throws Exception {
+    public AuthenticationPolicyExecutionResult isSatisfiedBy(
+        final Authentication authentication,
+        final Set<AuthenticationHandler> authenticationHandlers,
+        final ConfigurableApplicationContext applicationContext,
+        final Map<String, ? extends Serializable> context) throws Throwable {
+
         initializeWatchableScriptIfNeeded();
-        val ex = getScriptExecutionResult(auth);
+
+        val args = CollectionUtils.<String, Object>wrap(
+            "authentication", authentication,
+            "context", context,
+            "applicationContext", applicationContext,
+            "logger", LOGGER);
+        executableScript.setBinding(args);
+        val ex = executableScript.execute(args.values().toArray(), Optional.class);
         if (ex != null && ex.isPresent()) {
-            throw new GeneralSecurityException(ex.get());
+            val exception = (Exception) ex.get();
+            throw new GeneralSecurityException(exception);
         }
         return AuthenticationPolicyExecutionResult.success();
     }
 
     @Override
-    @SneakyThrows
     public boolean shouldResumeOnFailure(final Throwable failure) {
-        initializeWatchableScriptIfNeeded();
-        val args = CollectionUtils.wrap("failure", failure, "logger", LOGGER);
-        executableScript.setBinding(args);
-        return executableScript.execute("shouldResumeOnFailure", Boolean.class, args.values().toArray());
+        return Unchecked.supplier(() -> {
+            initializeWatchableScriptIfNeeded();
+            val args = CollectionUtils.wrap("failure", failure, "logger", LOGGER);
+            executableScript.setBinding(args);
+            return executableScript.execute("shouldResumeOnFailure", Boolean.class, args.values().toArray());
+        }).get();
     }
 
-    @SneakyThrows
-    private void initializeWatchableScriptIfNeeded() {
+    private void initializeWatchableScriptIfNeeded() throws Exception {
         if (this.executableScript == null) {
             val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(script);
             if (!matcherFile.find()) {
                 throw new IllegalArgumentException("Unable to locate groovy script file at " + script);
             }
-            val resource = ResourceUtils.getRawResourceFrom(matcherFile.group(2));
+            val resource = ResourceUtils.getRawResourceFrom(script);
             this.executableScript = new WatchableGroovyScriptResource(resource);
         }
     }
 
-    private Optional<Exception> getScriptExecutionResult(final Authentication auth) {
-        val args = CollectionUtils.wrap("principal", auth.getPrincipal(), "logger", LOGGER);
-        executableScript.setBinding(args);
-        return executableScript.execute(args.values().toArray(), Optional.class);
-    }
 }

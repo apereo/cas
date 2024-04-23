@@ -1,8 +1,7 @@
 package org.apereo.cas.services.consent;
 
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.services.RegisteredServiceConsentPolicy;
-import org.apereo.cas.util.model.TriStateBoolean;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -10,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
-
+import java.io.Serial;
 import java.util.Set;
 
 /**
@@ -28,6 +27,7 @@ import java.util.Set;
 @Accessors(chain = true)
 public class DefaultRegisteredServiceConsentPolicy implements RegisteredServiceConsentPolicy {
 
+    @Serial
     private static final long serialVersionUID = -2771506941879419063L;
 
     private TriStateBoolean status = TriStateBoolean.UNDEFINED;
@@ -37,6 +37,8 @@ public class DefaultRegisteredServiceConsentPolicy implements RegisteredServiceC
     private Set<String> includeOnlyAttributes;
 
     private int order;
+
+    private Set<String> excludedServices;
 
     public DefaultRegisteredServiceConsentPolicy(final Set<String> excludedAttributes,
                                                  final Set<String> includeOnlyAttributes) {

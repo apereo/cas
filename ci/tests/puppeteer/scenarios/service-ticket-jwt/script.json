@@ -1,0 +1,19 @@
+{
+  "dependencies": "token-tickets",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.authn.token.crypto.encryption.key=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/public.key",
+    "--cas.authn.token.crypto.signing-enabled=false",
+    "--cas.authn.token.crypto.encryption-enabled=true",
+    "--cas.authn.token.crypto.strategy-type=SIGN_AND_ENCRYPT"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

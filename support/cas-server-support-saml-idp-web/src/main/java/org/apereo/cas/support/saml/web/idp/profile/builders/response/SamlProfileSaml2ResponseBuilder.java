@@ -1,33 +1,44 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
-import org.apereo.cas.support.saml.SamlException;
+import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
-import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPSamlRegisteredServiceCriterion;
+import org.apereo.cas.support.saml.services.idp.metadata.MetadataEntityAttributeQuery;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponseArtifactEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponsePostEncoder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso.SamlResponsePostSimpleSignEncoder;
+import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
+import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.CookieUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
-import org.opensaml.messaging.context.MessageContext;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jooq.lambda.Unchecked;
 import org.opensaml.saml.common.SAMLVersion;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntityDescriptorCriterion;
 import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.saml.saml2.core.AttributeQuery;
+import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.EncryptedAssertion;
-import org.opensaml.saml.saml2.core.RequestAbstractType;
+import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Response;
+import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
  * This is {@link SamlProfileSaml2ResponseBuilder}.
@@ -37,110 +48,142 @@ import java.time.ZonedDateTime;
  */
 @Slf4j
 public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponseBuilder<Response> {
+    @Serial
     private static final long serialVersionUID = 1488837627964481272L;
-    
-    public SamlProfileSaml2ResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext samlResponseBuilderConfigurationContext) {
-        super(samlResponseBuilderConfigurationContext);
+
+    public SamlProfileSaml2ResponseBuilder(final SamlProfileSamlResponseBuilderConfigurationContext configurationContext) {
+        super(configurationContext);
     }
 
     @Override
-    public Response buildResponse(final Assertion assertion,
-                                  final Object casAssertion,
-                                  final RequestAbstractType authnRequest,
-                                  final SamlRegisteredService service,
-                                  final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                  final HttpServletRequest request,
-                                  final HttpServletResponse response,
-                                  final String binding,
-                                  final MessageContext messageContext) throws SamlException {
+    public Response buildResponse(final Optional<Assertion> assertion,
+                                  final SamlProfileBuilderContext context) throws Exception {
         val id = '_' + String.valueOf(RandomUtils.nextLong());
-        val samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), authnRequest.getID(), null);
+
+        val entityId = getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getCore().getEntityId();
+        val recipient = getInResponseTo(context.getSamlRequest(), entityId, context.getRegisteredService().isSkipGeneratingResponseInResponseTo());
+        val samlResponse = newResponse(id, ZonedDateTime.now(ZoneOffset.UTC), recipient, null);
         samlResponse.setVersion(SAMLVersion.VERSION_20);
 
-        val configContext = getSamlResponseBuilderConfigurationContext();
-        if (StringUtils.isBlank(service.getIssuerEntityId())) {
-            samlResponse.setIssuer(buildSamlResponseIssuer(configContext.getCasProperties()
-                .getAuthn().getSamlIdp().getCore().getEntityId()));
-        } else {
-            samlResponse.setIssuer(buildSamlResponseIssuer(service.getIssuerEntityId()));
-        }
+        val issuerId = FunctionUtils.doIf(StringUtils.isNotBlank(context.getRegisteredService().getIssuerEntityId()),
+                context.getRegisteredService()::getIssuerEntityId,
+                Unchecked.supplier(() -> {
+                    val criteriaSet = new CriteriaSet(
+                        new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME),
+                        new SamlIdPSamlRegisteredServiceCriterion(context.getRegisteredService()));
+                    LOGGER.trace("Resolving entity id from SAML2 IdP metadata to determine issuer for [{}]", context.getRegisteredService().getName());
+                    val entityDescriptor = Objects.requireNonNull(getConfigurationContext().getSamlIdPMetadataResolver().resolveSingle(criteriaSet));
+                    return entityDescriptor.getEntityID();
+                }))
+            .get();
 
-        val acs = SamlIdPUtils.determineEndpointForRequest(authnRequest, adaptor, binding);
+        samlResponse.setIssuer(buildSamlResponseIssuer(issuerId));
+        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(context.getSamlRequest(), context.getMessageContext()),
+            context.getAdaptor(), context.getBinding());
         val location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
         samlResponse.setDestination(location);
 
-        if (configContext.getCasProperties()
+        if (getConfigurationContext().getCasProperties()
             .getAuthn().getSamlIdp().getCore().isAttributeQueryProfileEnabled()) {
-            storeAttributeQueryTicketInRegistry(assertion, request, adaptor);
+            storeAttributeQueryTicketInRegistry(assertion, context);
         }
 
-        val finalAssertion = encryptAssertion(assertion, request, response, service, adaptor);
+        val customizers = configurationContext.getApplicationContext()
+            .getBeansOfType(SamlIdPResponseCustomizer.class).values();
+        val finalAssertion = encryptAssertion(assertion, context);
+        if (finalAssertion.isPresent()) {
+            val result = finalAssertion.get();
+            if (result instanceof final EncryptedAssertion encrypted) {
+                LOGGER.trace("Built assertion is encrypted, so the response will add it to the encrypted assertions collection");
+                samlResponse.getEncryptedAssertions().add(encrypted);
+            } else if (result instanceof final Assertion nonEncryptedAssertion) {
+                customizers.stream()
+                    .sorted(AnnotationAwareOrderComparator.INSTANCE)
+                    .forEach(customizer -> customizer.customizeAssertion(context, this, nonEncryptedAssertion));
 
-        if (finalAssertion instanceof EncryptedAssertion) {
-            LOGGER.trace("Built assertion is encrypted, so the response will add it to the encrypted assertions collection");
-            samlResponse.getEncryptedAssertions().add(EncryptedAssertion.class.cast(finalAssertion));
-        } else {
-            LOGGER.trace("Built assertion is not encrypted, so the response will add it to the assertions collection");
-            samlResponse.getAssertions().add(Assertion.class.cast(finalAssertion));
+                LOGGER.trace("Built assertion is not encrypted, so the response will add it to the assertions collection");
+                samlResponse.getAssertions().add(nonEncryptedAssertion);
+            }
         }
+        samlResponse.setStatus(determineResponseStatus(context));
+        customizers.stream()
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .forEach(customizer -> customizer.customizeResponse(context, this, samlResponse));
 
-        val status = newStatus(StatusCode.SUCCESS, null);
-        samlResponse.setStatus(status);
+        openSamlConfigBean.logObject(samlResponse);
 
-        SamlUtils.logSamlObject(this.openSamlConfigBean, samlResponse);
-
-        if (service.isSignResponses()) {
-            LOGGER.debug("SAML entity id [{}] indicates that SAML responses should be signed", adaptor.getEntityId());
-            val samlResponseSigned = configContext.getSamlObjectSigner()
-                .encode(samlResponse, service, adaptor, response, request, binding, authnRequest);
-            SamlUtils.logSamlObject(openSamlConfigBean, samlResponseSigned);
+        if (signSamlResponseFor(context)) {
+            LOGGER.debug("SAML entity id [{}] indicates that SAML responses should be signed", context.getAdaptor().getEntityId());
+            val samlResponseSigned = getConfigurationContext().getSamlObjectSigner().encode(samlResponse,
+                context.getRegisteredService(), context.getAdaptor(), context.getHttpResponse(), context.getHttpRequest(),
+                context.getBinding(), context.getSamlRequest(), context.getMessageContext());
+            openSamlConfigBean.logObject(samlResponseSigned);
             return samlResponseSigned;
         }
 
         return samlResponse;
     }
 
-    @Override
-    protected Response encode(final SamlRegisteredService service,
-                              final Response samlResponse,
-                              final HttpServletResponse httpResponse,
-                              final HttpServletRequest httpRequest,
-                              final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                              final String relayState,
-                              final String binding,
-                              final RequestAbstractType authnRequest,
-                              final Object assertion) throws SamlException {
-        LOGGER.trace("Constructing encoder based on binding [{}] for [{}]", binding, adaptor.getEntityId());
-        val configContext = getSamlResponseBuilderConfigurationContext();
-        if (binding.equalsIgnoreCase(SAMLConstants.SAML2_ARTIFACT_BINDING_URI)) {
-            val encoder = new SamlResponseArtifactEncoder(
-                configContext.getVelocityEngineFactory(),
-                adaptor, httpRequest, httpResponse,
-                configContext.getSamlArtifactMap());
-            return encoder.encode(authnRequest, samlResponse, relayState);
-        }
-
-        if (binding.equalsIgnoreCase(SAMLConstants.SAML2_POST_SIMPLE_SIGN_BINDING_URI)) {
-            val encoder = new SamlResponsePostSimpleSignEncoder(configContext.getVelocityEngineFactory(),
-                adaptor, httpResponse, httpRequest);
-            return encoder.encode(authnRequest, samlResponse, relayState);
-        }
-
-        val encoder = new SamlResponsePostEncoder(configContext.getVelocityEngineFactory(), adaptor, httpResponse, httpRequest);
-        return encoder.encode(authnRequest, samlResponse, relayState);
+    protected boolean signSamlResponseFor(final SamlProfileBuilderContext context) {
+        return context.getRegisteredService().getSignResponses().isTrue()
+            || SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().entityDescriptor(),
+            List.of(MetadataEntityAttributeQuery.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_SIGN_RESPONSES.getName(),
+                Attribute.URI_REFERENCE, List.of(Boolean.TRUE.toString()))));
     }
 
-    private void storeAttributeQueryTicketInRegistry(final Assertion assertion, final HttpServletRequest request,
-                                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) {
+    protected Status determineResponseStatus(final SamlProfileBuilderContext context) {
+        if (context.getAuthenticatedAssertion().isEmpty()) {
+            if (context.getSamlRequest() instanceof final AuthnRequest authnRequest && authnRequest.isPassive()) {
+                val message = """
+                    SAML2 authentication request from %s indicated a passive authentication request, \
+                    but CAS is unable to satisfy and support this requirement, likely because \
+                    no existing single sign-on session is available yet to build the SAML2 response.
+                    """.formatted(context.getAdaptor().getEntityId()).stripIndent().trim();
+                return newStatus(StatusCode.NO_PASSIVE, message);
+            }
+            return newStatus(StatusCode.AUTHN_FAILED, null);
+        }
+        return newStatus(StatusCode.SUCCESS, null);
+    }
 
-        val value = assertion.getSubject().getNameID().getValue();
-        val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
-            getSamlResponseBuilderConfigurationContext().getTicketGrantingTicketCookieGenerator(),
-            getSamlResponseBuilderConfigurationContext().getTicketRegistry(), request);
+    @Override
+    protected Response encode(final SamlProfileBuilderContext context,
+                              final Response samlResponse,
+                              final String relayState) throws Exception {
+        LOGGER.trace("Constructing encoder based on binding [{}] for [{}]", context.getBinding(), context.getAdaptor().getEntityId());
+        if (context.getBinding().equalsIgnoreCase(SAMLConstants.SAML2_ARTIFACT_BINDING_URI)) {
+            val encoder = new SamlResponseArtifactEncoder(
+                getConfigurationContext().getVelocityEngineFactory(),
+                context.getAdaptor(), context.getHttpRequest(), context.getHttpResponse(),
+                getConfigurationContext().getSamlArtifactMap());
+            return encoder.encode(context.getSamlRequest(), samlResponse, relayState, context.getMessageContext());
+        }
 
-        val ticket = getSamlResponseBuilderConfigurationContext().getSamlAttributeQueryTicketFactory().create(value,
-            assertion, adaptor.getEntityId(), ticketGrantingTicket);
-        getSamlResponseBuilderConfigurationContext().getTicketRegistry().addTicket(ticket);
+        if (context.getBinding().equalsIgnoreCase(SAMLConstants.SAML2_POST_SIMPLE_SIGN_BINDING_URI)) {
+            val encoder = new SamlResponsePostSimpleSignEncoder(getConfigurationContext().getVelocityEngineFactory(),
+                context.getAdaptor(), context.getHttpResponse(), context.getHttpRequest());
+            return encoder.encode(context.getSamlRequest(), samlResponse, relayState, context.getMessageContext());
+        }
 
+        val encoder = new SamlResponsePostEncoder(getConfigurationContext().getVelocityEngineFactory(), context.getAdaptor(), context.getHttpResponse(), context.getHttpRequest());
+        return encoder.encode(context.getSamlRequest(), samlResponse, relayState, context.getMessageContext());
+    }
+
+    private void storeAttributeQueryTicketInRegistry(final Optional<Assertion> assertion, final SamlProfileBuilderContext context)
+        throws Exception {
+        val existingQuery = context.getHttpRequest().getAttribute(AttributeQuery.class.getSimpleName());
+        if (existingQuery == null && assertion.isPresent()) {
+            val nameId = (String) context.getHttpRequest().getAttribute(NameID.class.getName());
+            val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
+                getConfigurationContext().getTicketGrantingTicketCookieGenerator(),
+                getConfigurationContext().getTicketRegistry(), context.getHttpRequest());
+
+            if (ticketGrantingTicket != null) {
+                val samlAttributeQueryTicketFactory = (SamlAttributeQueryTicketFactory) getConfigurationContext().getTicketFactory().get(SamlAttributeQueryTicket.class);
+                val ticket = samlAttributeQueryTicketFactory.create(nameId, assertion.get(), context.getAdaptor().getEntityId(), ticketGrantingTicket);
+                getConfigurationContext().getTicketRegistry().addTicket(ticket);
+                context.getHttpRequest().setAttribute(SamlAttributeQueryTicket.class.getName(), ticket);
+            }
+        }
     }
 }

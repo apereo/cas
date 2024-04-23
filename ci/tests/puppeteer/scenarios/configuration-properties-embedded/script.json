@@ -1,0 +1,26 @@
+{
+  "dependencies": "core,reports",
+
+  "server": "jetty",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    
+    "--cas.standalone.configuration-security.alg=PBEWithMD5AndTripleDES",
+    "--cas.standalone.configuration-security.iterations=1000",
+    "--cas.standalone.configuration-security.psw=x6Fcw2H&@RWHfi",
+
+    "--spring.security.user.name=casuser",
+    "--spring.profiles.active=embedded",
+
+    "--logging.level.org.apereo.cas=info",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=AUTHENTICATED",
+    
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+    
+    "--cas.standalone.configuration-directory=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config"
+  ],
+  "buildScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/include.gradle"
+}

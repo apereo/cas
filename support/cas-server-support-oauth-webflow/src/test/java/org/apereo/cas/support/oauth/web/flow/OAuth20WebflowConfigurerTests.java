@@ -20,14 +20,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Import(BaseOAuth20WebflowTests.SharedTestConfiguration.class)
-@Tag("OAuth")
-public class OAuth20WebflowConfigurerTests extends BaseWebflowConfigurerTests {
+@Tag("OAuthWeb")
+class OAuth20WebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier("oauth20LogoutWebflowConfigurer")
     private CasWebflowConfigurer oauth20LogoutWebflowConfigurer;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(oauth20LogoutWebflowConfigurer);
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);

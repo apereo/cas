@@ -1,0 +1,15 @@
+description = "Apereo CAS Tracing OpenTelemetry Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Tracing",
+            title: "Apereo CAS OpenTelemetry Tracing",
+            aliases: ["tracingotel"]
+    ]
+}
+dependencies {
+    implementation project(":support:cas-server-support-metrics")
+
+    implementation libraries.metrics
+    implementation libraries.tracingotel
+}

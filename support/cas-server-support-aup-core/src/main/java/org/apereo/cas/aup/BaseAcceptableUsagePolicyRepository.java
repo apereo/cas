@@ -1,8 +1,9 @@
 package org.apereo.cas.aup;
 
-import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
+import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -14,6 +15,9 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serial;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -25,6 +29,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableUsagePolicyRepository {
+    @Serial
     private static final long serialVersionUID = 1883808902502739L;
 
     /**
@@ -38,7 +43,7 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
     protected final AcceptableUsagePolicyProperties aupProperties;
 
     private static String getPolicyText(final RequestContext requestContext) {
-        val registeredService = WebUtils.getRegisteredService(requestContext);
+        val registeredService = (WebBasedRegisteredService) WebUtils.getRegisteredService(requestContext);
         if (registeredService != null && registeredService.getAcceptableUsagePolicy() != null
             && StringUtils.isNotBlank(registeredService.getAcceptableUsagePolicy().getText())) {
             return registeredService.getAcceptableUsagePolicy().getText();
@@ -47,26 +52,30 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
     }
 
     @Override
-    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext, final Credential credential) {
-        val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) throws Throwable {
+        val authentication = WebUtils.getAuthentication(requestContext);
+        if (authentication == null) {
+            throw new AuthenticationException("Unable to determine authentication from the request context");
+        }
+        val principal = authentication.getPrincipal();
 
         if (isUsagePolicyAcceptedBy(principal)) {
-            LOGGER.debug("Usage policy has been accepted by [{}]", principal.getId());
+            LOGGER.debug("Acceptable usage policy has been accepted by [{}]", principal.getId());
             return AcceptableUsagePolicyStatus.accepted(principal);
         }
 
-        LOGGER.warn("Usage policy has not been accepted by [{}]", principal.getId());
+        LOGGER.info("Acceptable usage policy has not been accepted by [{}]", principal.getId());
         return AcceptableUsagePolicyStatus.denied(principal);
     }
 
     @Override
-    public Optional<AcceptableUsagePolicyTerms> fetchPolicy(final RequestContext requestContext, final Credential credential) {
+    public Optional<AcceptableUsagePolicyTerms> fetchPolicy(final RequestContext requestContext) {
         val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
 
         val attributes = principal.getAttributes();
         LOGGER.debug("Principal attributes found for [{}] are [{}]", principal.getId(), attributes);
 
-        val code = getPolicyMessageBundleCode(requestContext);
+        val code = StringUtils.defaultString(getPolicyMessageBundleCode(requestContext));
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val appCtx = requestContext.getActiveFlow().getApplicationContext();
 
@@ -88,7 +97,7 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
      * @return the policy message bundle code
      */
     protected String getPolicyMessageBundleCode(final RequestContext requestContext) {
-        val registeredService = WebUtils.getRegisteredService(requestContext);
+        val registeredService = (WebBasedRegisteredService) WebUtils.getRegisteredService(requestContext);
         if (registeredService != null && registeredService.getAcceptableUsagePolicy() != null
             && StringUtils.isNotBlank(registeredService.getAcceptableUsagePolicy().getMessageCode())) {
             return registeredService.getAcceptableUsagePolicy().getMessageCode();
@@ -121,13 +130,29 @@ public abstract class BaseAcceptableUsagePolicyRepository implements AcceptableU
     protected boolean isUsagePolicyAcceptedBy(final Principal principal) {
         val attributes = principal.getAttributes();
         LOGGER.debug("Principal attributes found for [{}] are [{}]", principal.getId(), attributes);
+        return isUsagePolicyAcceptedBy(attributes);
+    }
 
+    /**
+     * Is usage policy accepted by.
+     *
+     * @param attributes the attributes
+     * @return true/false
+     */
+    protected boolean isUsagePolicyAcceptedBy(final Map<String, List<Object>> attributes) {
         val core = aupProperties.getCore();
+
         if (attributes != null && attributes.containsKey(core.getAupAttributeName())) {
             val value = CollectionUtils.toCollection(attributes.get(core.getAupAttributeName()));
             LOGGER.debug("Evaluating attribute value [{}] found for [{}]", value, core.getAupAttributeName());
             return value.stream().anyMatch(v -> v.toString().equalsIgnoreCase(getAcceptedAttributeValue()));
         }
+
+        if (core.isAupOmitIfAttributeMissing()) {
+            LOGGER.trace("Value for [{}] is missing.", core.getAupAttributeName());
+            return true;
+        }
+
         return false;
     }
 

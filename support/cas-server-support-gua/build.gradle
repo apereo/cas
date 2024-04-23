@@ -1,4 +1,11 @@
 description = "Apereo CAS Graphical User Authentication Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "Graphical User Authentication"
+    ]
+}
 dependencies {
     implementation libraries.ldaptive
     
@@ -17,6 +24,7 @@ dependencies {
     implementation project(":support:cas-server-support-ldap-core")
     implementation project(":support:cas-server-support-jpa-util")
     implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-actions-core")
     
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
@@ -34,6 +42,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-configuration")
 
+    testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")

@@ -5,6 +5,9 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
+
+import java.util.EnumSet;
 
 
 /**
@@ -14,19 +17,17 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
  * @since 5.2.0
  */
 public class OAuth20TokenResponseTypeAuthorizationRequestValidator extends OAuth20AuthorizationCodeResponseTypeAuthorizationRequestValidator {
-    public OAuth20TokenResponseTypeAuthorizationRequestValidator(final ServicesManager servicesManager,
-                                                                 final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                                                 final AuditableExecution registeredServiceAccessStrategyEnforcer) {
-        super(servicesManager, webApplicationServiceServiceFactory, registeredServiceAccessStrategyEnforcer);
+    public OAuth20TokenResponseTypeAuthorizationRequestValidator(
+        final ServicesManager servicesManager,
+        final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+        final AuditableExecution registeredServiceAccessStrategyEnforcer,
+        final OAuth20RequestParameterResolver requestParameterResolver) {
+        super(servicesManager, webApplicationServiceServiceFactory,
+            registeredServiceAccessStrategyEnforcer, requestParameterResolver);
     }
 
-    /**
-     * Gets response type.
-     *
-     * @return the response type
-     */
     @Override
-    public OAuth20ResponseTypes getResponseType() {
-        return OAuth20ResponseTypes.TOKEN;
+    public EnumSet<OAuth20ResponseTypes> getSupportedResponseTypes() {
+        return EnumSet.of(OAuth20ResponseTypes.TOKEN);
     }
 }

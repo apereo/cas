@@ -1,0 +1,52 @@
+{
+  "dependencies": "pac4j-webflow,reports",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    
+    "--management.endpoints.web.cors.allowed-headers=*",
+    "--management.endpoints.web.cors.allowed-methods=OPTIONS,GET,POST",
+    "--management.endpoints.web.cors.allowed-origin-patterns=http://localhost:9443",
+    "--management.endpoints.web.cors.exposed-headers=*",
+    "--management.endpoints.web.cors.allow-credentials=true",
+    "--cas.http-web-request.header.xframe-options=SAMEORIGIN",
+    
+    "--cas.http-client.allow-local-urls=true",
+    "--cas.http-client.host-name-verifier=none",
+
+    "--cas.authn.pac4j.saml[0].keystore-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].private-key-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].service-provider-entity-id=cas:apereo:pac4j:saml",
+    "--cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/sp-metadata.xml",
+    "--cas.authn.pac4j.saml[0].keystore-path=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/samlKeystore.jks",
+    "--cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=http://localhost:9443/simplesaml/saml2/idp/metadata.php",
+    "--cas.authn.pac4j.saml[0].destination-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
+    "--cas.authn.pac4j.saml[0].client-name=SAML2Client",
+    "--cas.authn.pac4j.saml[0].sign-service-provider-metadata=true",
+    "--cas.authn.pac4j.saml[0].principal-id-attribute=email",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.tgc.crypto.encryption.key=qsa6phT9WBaCU-3E_e1lYGAaeGONQn9WzTwzYhn22kQ",
+    "--cas.tgc.crypto.signing.key=bkw4lyYuldcs8-LW5XJMrA3F5Fnqd67S3vT0-pJP-wTK85t2I8tOZuUjg6ozpgzOA3uOoNchIW9bqTBv_NXxRg",
+
+    "--cas.webflow.crypto.signing.key=v43dwqO_GbGSVsFqgPFpVdwdMSEunMUzc4QSF13x18kInHPeRuvntleljO5Y5cKqDGAFe1vv10mM4tpyoKyBBA",
+    "--cas.webflow.crypto.encryption.key=2PikjfOKY6n8Bbux2cy-Hg",
+
+    "--cas.authn.pac4j.core.session-replication.cookie.crypto.encryption.key=d-YgjeElQfIZsUCuHlvEN2UyaQsy6q2GxOXP1UPCs7I",
+    "--cas.authn.pac4j.core.session-replication.cookie.crypto.signing.key=8_Zisbdbm_6eW1ZjkBUz17koElqlArO6805yAq85kCiVYI1RRJArLiFYLZRS00ZCoscwo8qjrgonvDIdbVbobA",
+    
+    "--logging.level.org.apereo.cas=warn",
+    "--logging.level.org.springframework.webflow=info",
+    "--logging.level.org.springframework.webflow.mvc.servlet=warn",
+
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
+}
+

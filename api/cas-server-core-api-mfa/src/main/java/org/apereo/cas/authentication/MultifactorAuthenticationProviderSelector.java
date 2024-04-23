@@ -17,14 +17,19 @@ import java.util.Collection;
 public interface MultifactorAuthenticationProviderSelector {
 
     /**
+     * Default implementation bean name.
+     */
+    String BEAN_NAME = "multifactorAuthenticationProviderSelector";
+
+    /**
      * Resolve multifactor authentication provider.
      *
      * @param providers the providers
      * @param service   the service
      * @param principal the principal
      * @return the multifactor authentication provider
+     * @throws Throwable the throwable
      */
     MultifactorAuthenticationProvider resolve(Collection<MultifactorAuthenticationProvider> providers,
-                                              RegisteredService service,
-                                              Principal principal);
+                                              RegisteredService service, Principal principal) throws Throwable;
 }

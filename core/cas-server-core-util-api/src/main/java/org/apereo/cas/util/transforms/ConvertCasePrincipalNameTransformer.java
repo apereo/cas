@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.val;
 
+import java.util.Locale;
+
 /**
  * A transformer that converts the form uid to either lowercase or
  * uppercase. The result is also trimmed. The transformer is also able
@@ -26,6 +28,6 @@ public class ConvertCasePrincipalNameTransformer implements PrincipalNameTransfo
     @Override
     public String transform(final String formUserId) {
         val result = formUserId.trim();
-        return this.toUpperCase ? result.toUpperCase() : result.toLowerCase();
+        return this.toUpperCase ? result.toUpperCase(Locale.ENGLISH) : result.toLowerCase(Locale.ENGLISH);
     }
 }

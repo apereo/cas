@@ -1,11 +1,13 @@
 package org.apereo.cas.configuration.model.support.kafka;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +22,8 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-public class KafkaSingleTopicProperties implements Serializable {
+public class KafkaSingleTopicProperties implements Serializable, CasFeatureModule {
+    @Serial
     private static final long serialVersionUID = -1844529231331941592L;
 
     /**

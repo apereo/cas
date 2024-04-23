@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link RestfulSmsProperties}.
  *
@@ -20,5 +22,30 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("RestfulSmsProperties")
 public class RestfulSmsProperties extends RestEndpointProperties {
+    @Serial
     private static final long serialVersionUID = -8102345678378393382L;
+
+    /**
+     * Indicate the style and formatting of the SMS request paramerters
+     * and how they should be included and sent via REST.
+     */
+    private RestfulSmsRequestStyles style = RestfulSmsRequestStyles.QUERY_PARAMETERS;
+
+    public RestfulSmsProperties() {
+        setMethod("POST");
+    }
+
+    public enum RestfulSmsRequestStyles {
+        /**
+         * This option will submit an SMS http request where
+         * the from, to, etc are passed as request query parameters.
+         * Only the message itself is included in the request body.
+         */
+        QUERY_PARAMETERS,
+        /**
+         * This option will pass all parameters in the body
+         * of the SMS http request as a JSON object.
+         */
+        REQUEST_BODY
+    }
 }

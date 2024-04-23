@@ -48,24 +48,24 @@ The current schema is as such:
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-soap-authentication" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-soap-authentication" %}
 
 ## Configuration
 
 
-{% include casproperties.html properties="cas.authn.soap" %}
+{% include_cached casproperties.html properties="cas.authn.soap" %}
 
 The `status` returned in the SOAP response as interpreted as one of the following values:
 
-| Code           | Result
-|----------------|---------------------------------------------
-| `200`          | Successful authentication.
-| `403`          | Produces a `AccountDisabledException`
-| `404`          | Produces a `AccountNotFoundException`
-| `423`          | Produces a `AccountLockedException`
-| `412`          | Produces a `AccountExpiredException`
-| `428`          | Produces a `AccountPasswordMustChangeException`
-| Other          | Produces a `FailedLoginException`
+| Code  | Result                                          |
+|-------|-------------------------------------------------|
+| `200` | Successful authentication.                      |
+| `403` | Produces a `AccountDisabledException`           |
+| `404` | Produces a `AccountNotFoundException`           |
+| `423` | Produces a `AccountLockedException`             |
+| `412` | Produces a `AccountExpiredException`            |
+| `428` | Produces a `AccountPasswordMustChangeException` |
+| Other | Produces a `FailedLoginException`               |
 
 ## Troubleshooting
 
@@ -74,16 +74,16 @@ To enable additional logging, configure the log4j configuration file to add the 
 ```xml
 ...
 <Logger name="org.springframework.ws" level="debug" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 <Logger name="org.apache.ws" level="debug" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 <Logger name="org.apache.wss4j" level="debug" additivity="false">
-    <AppenderRef ref="console"/>
-    <AppenderRef ref="file"/>
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
 </Logger>
 ...
 ```

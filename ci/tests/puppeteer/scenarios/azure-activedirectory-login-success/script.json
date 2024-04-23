@@ -1,0 +1,25 @@
+{
+  "dependencies": "azuread-authentication",
+  "conditions": {
+    "docker": "true",
+    "env": "AZURE_AD_CLIENT_ID,AZURE_AD_CLIENT_SECRET,AZURE_AD_USER_PASSWORD,AZURE_AD_TENANT,AZURE_AD_DOMAIN"
+  },
+  "properties": [
+    "--cas.server.name=http://localhost:8080",
+    "--cas.server.prefix=http://localhost:8080/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.authn.azure-active-directory.login-url=https://login.microsoftonline.com/common/",
+    "--cas.authn.azure-active-directory.client-id=${#environmentVariables['AZURE_AD_CLIENT_ID']}",
+    "--cas.authn.azure-active-directory.principal-transformation.suffix=@${#environmentVariables['AZURE_AD_DOMAIN']}",
+    "--cas.authn.azure-active-directory.tenant=${#environmentVariables['AZURE_AD_TENANT']}",
+
+    "--cas.authn.attribute-repository.azure-active-directory[0].client-id=${#environmentVariables['AZURE_AD_CLIENT_ID']}",
+    "--cas.authn.attribute-repository.azure-active-directory[0].client-secret=${#environmentVariables['AZURE_AD_CLIENT_SECRET']}",
+    "--cas.authn.attribute-repository.azure-active-directory[0].tenant=${#environmentVariables['AZURE_AD_TENANT']}",
+    "--cas.authn.attribute-repository.azure-active-directory[0].domain=${#environmentVariables['AZURE_AD_DOMAIN']}"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

@@ -14,10 +14,10 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("OIDC")
-public class OidcWebFingerUserInfoRepositoryTests {
+class OidcWebFingerUserInfoRepositoryTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val repo = mock(OidcWebFingerUserInfoRepository.class);
         when(repo.findByEmailAddress(anyString())).thenCallRealMethod();
         when(repo.findByUsername(anyString())).thenCallRealMethod();

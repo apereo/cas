@@ -1,6 +1,7 @@
 package org.apereo.cas.support.wsfederation.attributes;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -16,11 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Groovy")
-public class GroovyWsFederationAttributeMutatorTests {
+class GroovyWsFederationAttributeMutatorTests {
     @Test
-    public void verifyAction() {
-        val g = new GroovyWsFederationAttributeMutator(new ClassPathResource("GroovyWsFedMutator.groovy"));
-        val results = g.modifyAttributes(CoreAuthenticationTestUtils.getAttributes());
+    void verifyAction() throws Throwable {
+        val location = new ClassPathResource("GroovyWsFedMutator.groovy");
+        val attributeMutator = new GroovyWsFederationAttributeMutator(new WatchableGroovyScriptResource(location));
+        val results = attributeMutator.modifyAttributes(CoreAuthenticationTestUtils.getAttributes());
         assertEquals(1, results.size());
         assertTrue(results.containsKey("mail"));
     }

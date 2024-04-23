@@ -11,15 +11,15 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hjson.JsonValue;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.util.Objects;
 
 /**
  * This is {@link UmaCreatePolicyForResourceSetEndpointController}.
@@ -44,11 +44,14 @@ public class UmaCreatePolicyForResourceSetEndpointController extends BaseUmaEndp
      * @param response   the response
      * @return the policy for resource set
      */
-    @PostMapping(value = '/' + OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL,
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity createPolicyForResourceSet(@PathVariable(value = "resourceId") final long resourceId,
-        @RequestBody final String body, final HttpServletRequest request, final HttpServletResponse response) {
+    @PostMapping(OAuth20Constants.BASE_OAUTH20_URL + "/{resourceId}/" + OAuth20Constants.UMA_POLICY_URL)
+    public ResponseEntity createPolicyForResourceSet(
+        @PathVariable("resourceId")
+        final long resourceId,
+        @RequestBody
+        final String body,
+        final HttpServletRequest request,
+        final HttpServletResponse response) {
         try {
             val profileResult = getAuthenticatedProfile(request, response, OAuth20Constants.UMA_PROTECTION_SCOPE);
             val resourceSetResult = getUmaConfigurationContext().getUmaResourceSetRepository().getById(resourceId);
@@ -61,7 +64,7 @@ public class UmaCreatePolicyForResourceSetEndpointController extends BaseUmaEndp
 
             val umaRequest = MAPPER.readValue(JsonValue.readHjson(body).toString(), ResourceSetPolicy.class);
             resourceSet.getPolicies().add(umaRequest);
-            val saved = getUmaConfigurationContext().getUmaResourceSetRepository().save(resourceSet);
+            val saved = Objects.requireNonNull(getUmaConfigurationContext().getUmaResourceSetRepository().save(resourceSet));
 
             val model = CollectionUtils.wrap("entity", saved, "code", HttpStatus.CREATED);
             return new ResponseEntity(model, HttpStatus.OK);

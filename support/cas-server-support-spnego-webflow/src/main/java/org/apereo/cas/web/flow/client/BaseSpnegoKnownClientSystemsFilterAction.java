@@ -1,7 +1,7 @@
 package org.apereo.cas.web.flow.client;
 
 import org.apereo.cas.support.spnego.util.ReverseDNSRunnable;
-import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.AllArgsConstructor;
@@ -11,7 +11,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -33,7 +32,7 @@ import java.util.regex.Pattern;
 @Setter
 @Getter
 @AllArgsConstructor
-public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
+public class BaseSpnegoKnownClientSystemsFilterAction extends BaseCasWebflowAction {
 
     /**
      * Pattern of ip addresses to check.
@@ -52,16 +51,6 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     private long timeout;
 
     /**
-     * Instantiates a new Base.
-     *
-     * @param ipsToCheckPattern the ips to check pattern
-     */
-    public BaseSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern) {
-        setIpsToCheckPattern(RegexUtils.createPattern(ipsToCheckPattern));
-    }
-
-
-    /**
      * {@inheritDoc}
      * Gets the remote ip from the request, and invokes spnego if it isn't filtered.
      *
@@ -70,14 +59,14 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * {@link #no()} otherwise.
      */
     @Override
-    protected Event doExecute(final RequestContext context) {
+    protected Event doExecuteInternal(final RequestContext context) throws Exception {
         val remoteIp = getRemoteIp(context);
         LOGGER.debug("Current user IP [{}]", remoteIp);
         if (shouldDoSpnego(remoteIp)) {
             LOGGER.info("Spnego should be activated for [{}]", remoteIp);
             return yes();
         }
-        LOGGER.info("Spnego should is skipped for [{}]", remoteIp);
+        LOGGER.info("Spnego is skipped for [{}]", remoteIp);
         return no();
     }
 
@@ -86,8 +75,9 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      *
      * @param remoteIp the remote ip
      * @return true boolean
+     * @throws Exception the exception
      */
-    protected boolean shouldDoSpnego(final String remoteIp) {
+    protected boolean shouldDoSpnego(final String remoteIp) throws Exception {
         return ipPatternCanBeChecked(remoteIp) && ipPatternMatches(remoteIp);
     }
 
@@ -120,6 +110,28 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     }
 
     /**
+     * Convenience method to perform a reverse DNS lookup. Threads the request
+     * through a custom Runnable class in order to prevent inordinately long
+     * user waits while performing reverse lookup.
+     *
+     * @param remoteIp the remote ip
+     * @return the remote host name
+     */
+    protected String getRemoteHostName(final String remoteIp) {
+        val revDNS = new ReverseDNSRunnable(remoteIp);
+        val thread = Thread.ofVirtual().start(revDNS);
+        try {
+            thread.join(this.timeout);
+        } catch (final InterruptedException e) {
+            LOGGER.debug("Threaded lookup failed. Defaulting to IP [{}].", remoteIp, e);
+            Thread.currentThread().interrupt();
+        }
+        val remoteHostName = revDNS.getHostName();
+        LOGGER.debug("Found remote host name [{}].", remoteHostName);
+        return StringUtils.isNotBlank(remoteHostName) ? remoteHostName : remoteIp;
+    }
+
+    /**
      * Pulls the remote IP from the current HttpServletRequest, or grabs the value
      * for the specified alternative attribute (say, for proxied requests).  Falls
      * back to providing the "normal" remote address if no value can be retrieved
@@ -141,28 +153,5 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
             }
         }
         return userAddress;
-    }
-
-    /**
-     * Convenience method to perform a reverse DNS lookup. Threads the request
-     * through a custom Runnable class in order to prevent inordinately long
-     * user waits while performing reverse lookup.
-     *
-     * @param remoteIp the remote ip
-     * @return the remote host name
-     */
-    protected String getRemoteHostName(final String remoteIp) {
-        val revDNS = new ReverseDNSRunnable(remoteIp);
-        val t = new Thread(revDNS);
-        t.start();
-        try {
-            t.join(this.timeout);
-        } catch (final InterruptedException e) {
-            LOGGER.debug("Threaded lookup failed. Defaulting to IP [{}].", remoteIp, e);
-            Thread.currentThread().interrupt();
-        }
-        val remoteHostName = revDNS.getHostName();
-        LOGGER.debug("Found remote host name [{}].", remoteHostName);
-        return StringUtils.isNotBlank(remoteHostName) ? remoteHostName : remoteIp;
     }
 }

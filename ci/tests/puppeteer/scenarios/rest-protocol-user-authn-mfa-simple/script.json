@@ -1,0 +1,24 @@
+{
+  "dependencies": "rest,simple-mfa",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.authn.mfa.triggers.global.global-provider-id=mfa-simple",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+    
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+    
+    "--cas.service-registry.core.init-from-json=true"
+  ]
+}

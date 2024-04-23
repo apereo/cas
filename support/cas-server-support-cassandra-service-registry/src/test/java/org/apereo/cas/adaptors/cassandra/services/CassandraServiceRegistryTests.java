@@ -1,17 +1,14 @@
 package org.apereo.cas.adaptors.cassandra.services;
 
-import org.apereo.cas.config.CasCoreHttpConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsConfiguration;
-import org.apereo.cas.config.CasCoreServicesConfiguration;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
-import org.apereo.cas.config.CassandraServiceRegistryConfiguration;
+import org.apereo.cas.config.CassandraServiceRegistryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
+import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
-
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
@@ -20,9 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
+import org.springframework.test.context.TestContext;
+import org.springframework.test.context.TestExecutionListener;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,35 +31,42 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @SpringBootTest(classes = {
-    CassandraServiceRegistryConfiguration.class,
-    CasCoreServicesConfiguration.class,
-    CasCoreNotificationsConfiguration.class,
-    CasCoreUtilConfiguration.class,
-    CasCoreHttpConfiguration.class,
-    RefreshAutoConfiguration.class
+    CassandraServiceRegistryAutoConfiguration.class,
+    AbstractServiceRegistryTests.SharedTestConfiguration.class
 },
     properties = {
         "cas.service-registry.cassandra.local-dc=datacenter1",
-        "cas.service-registry.cassandra.keyspace=cas"
+        "cas.service-registry.cassandra.keyspace=cas",
+        "cas.service-registry.cassandra.ssl-protocols=TLSv1.2",
+        "cas.http-client.host-name-verifier=none"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @Tag("Cassandra")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@EnabledIfPortOpen(port = 9042)
+@EnabledIfListeningOnPort(port = 9042)
 @Getter
-public class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {
+@TestExecutionListeners({
+    DependencyInjectionTestExecutionListener.class,
+    CassandraServiceRegistryTests.DisposingTestExecutionListener.class
+})
+class CassandraServiceRegistryTests extends AbstractServiceRegistryTests {
     @Autowired
     @Qualifier("cassandraServiceRegistry")
     private ServiceRegistry newServiceRegistry;
 
     @Test
-    public void verifyFailOps() throws Exception {
-        assertNull(newServiceRegistry.save(null));
+    @Order(Integer.MAX_VALUE)
+    void verifyFailOps() throws Throwable {
+        assertNull(newServiceRegistry.save((RegisteredService) null));
         assertFalse(newServiceRegistry.delete(null));
-        if (newServiceRegistry instanceof DisposableBean) {
-            DisposableBean.class.cast(newServiceRegistry).destroy();
-        }
     }
 
+    static class DisposingTestExecutionListener implements TestExecutionListener {
+        @Override
+        public void afterTestClass(final TestContext testContext) throws Exception {
+            var registry = testContext.getApplicationContext().getBean("cassandraServiceRegistry", ServiceRegistry.class);
+            ((DisposableBean) registry).destroy();
+        }
+    }
 }

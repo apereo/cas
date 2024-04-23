@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @SuperBuilder
 @ToString
 public class AuthenticationPolicyExecutionResult implements Serializable {
+    @Serial
     private static final long serialVersionUID = -6607624825058147653L;
 
     private final boolean success;

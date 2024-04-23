@@ -23,14 +23,14 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @SpringBootTest(classes = BaseConsentRepositoryTests.SharedTestConfiguration.class)
-@Tag("Simple")
-public class DefaultConsentDecisionBuilderTests {
+@Tag("Consent")
+class DefaultConsentDecisionBuilderTests {
     @Autowired
-    @Qualifier("consentDecisionBuilder")
+    @Qualifier(ConsentDecisionBuilder.BEAN_NAME)
     private ConsentDecisionBuilder consentDecisionBuilder;
 
     @Test
-    public void verifyUnableToDecodeConsentDecision() {
+    void verifyUnableToDecodeConsentDecision() throws Throwable {
         val consentDecision = mock(ConsentDecision.class);
         when(consentDecision.getAttributes()).thenCallRealMethod();
         val builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
@@ -38,7 +38,7 @@ public class DefaultConsentDecisionBuilderTests {
     }
 
     @Test
-    public void verifyNewConsentDecision() {
+    void verifyNewConsentDecision() throws Throwable {
         val consentDecision = getConsentDecision();
         assertNotNull(consentDecision);
         assertEquals("casuser", consentDecision.getPrincipal());
@@ -46,7 +46,7 @@ public class DefaultConsentDecisionBuilderTests {
     }
 
     @Test
-    public void verifyBadDecision() {
+    void verifyBadDecision() throws Throwable {
         val consentDecision = new ConsentDecision();
         consentDecision.setPrincipal("casuser");
         consentDecision.setService(RegisteredServiceTestUtils.getService().getId());
@@ -57,7 +57,7 @@ public class DefaultConsentDecisionBuilderTests {
     }
 
     @Test
-    public void verifyAttributesRequireConsent() {
+    void verifyAttributesRequireConsent() throws Throwable {
         val consentDecision = getConsentDecision();
         assertTrue(consentDecisionBuilder.doesAttributeReleaseRequireConsent(consentDecision,
             CollectionUtils.wrap("attr2", List.of("value2"))));
@@ -66,7 +66,7 @@ public class DefaultConsentDecisionBuilderTests {
     }
 
     @Test
-    public void verifyAttributeValuesRequireConsent() {
+    void verifyAttributeValuesRequireConsent() throws Throwable {
         val consentDecision = getConsentDecision();
         consentDecision.setOptions(ConsentReminderOptions.ATTRIBUTE_VALUE);
         assertTrue(consentDecisionBuilder.doesAttributeReleaseRequireConsent(consentDecision,
@@ -74,11 +74,11 @@ public class DefaultConsentDecisionBuilderTests {
     }
 
     @Test
-    public void verifyAttributesAreRetrieved() {
+    void verifyAttributesAreRetrieved() throws Throwable {
         val consentDecision = getConsentDecision();
         val attrs = consentDecisionBuilder.getConsentableAttributesFrom(consentDecision);
         assertTrue(attrs.containsKey("attr1"));
-        assertEquals("value1", attrs.get("attr1").get(0));
+        assertEquals("value1", attrs.get("attr1").getFirst());
     }
 
     private ConsentDecision getConsentDecision() {

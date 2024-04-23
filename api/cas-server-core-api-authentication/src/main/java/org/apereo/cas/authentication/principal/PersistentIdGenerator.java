@@ -31,7 +31,7 @@ public interface PersistentIdGenerator extends Serializable {
      * @param service   the service for which the id may be generated.
      * @return the generated persistent id.
      */
-    default String generate(Principal principal, Service service) {
+    default String generate(final Principal principal, final Service service) {
         return generate(principal, Optional.ofNullable(service).map(Principal::getId).orElse(null));
     }
 

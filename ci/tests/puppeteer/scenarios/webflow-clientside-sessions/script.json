@@ -1,0 +1,22 @@
+{
+  "dependencies": "core",
+  "properties": [
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.webflow.crypto.signing.key=Q4tQGAuJSmuJ5WA0zByB9P6hYr5dpTd2JJifyy6Tm_CJ35pkbdhFvcgG-3igDjA4CTjau6Z0yMft-dhVUbRnPQ",
+    "--cas.webflow.crypto.encryption.key=g-Rk2ZvexS6tdooIiDh0IQ"
+  ],
+  "instances": 2,
+  "instance1": {
+    "properties": [
+      "--cas.host.name=cas-instance-8443"
+    ]
+  },
+  "instance2": {
+    "properties": [
+      "--cas.host.name=cas-instance-8444"
+    ]
+  }
+}

@@ -9,7 +9,9 @@ import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.impl.calcs.DateTimeAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.GeoLocationAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.IpAddressAuthenticationRequestRiskCalculator;
@@ -22,25 +24,29 @@ import org.apereo.cas.impl.plans.BaseAuthenticationRiskContingencyPlan;
 import org.apereo.cas.impl.plans.BlockAuthenticationContingencyPlan;
 import org.apereo.cas.impl.plans.MultifactorAuthenticationContingencyPlan;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link ElectronicFenceConfiguration}.
@@ -48,153 +54,230 @@ import java.util.HashSet;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("electronicFenceConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-@Slf4j
-public class ElectronicFenceConfiguration {
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Electrofence)
+@Configuration(value = "ElectronicFenceConfiguration", proxyBeanMethods = false)
+class ElectronicFenceConfiguration {
 
-    @Autowired
-    @Qualifier("geoLocationService")
-    private ObjectProvider<GeoLocationService> geoLocationService;
+    @Configuration(value = "ElectronicFenceMitigatorConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class ElectronicFenceMitigatorConfiguration {
 
-    @Autowired
-    @Qualifier("returnValueResourceResolver")
-    private ObjectProvider<AuditResourceResolver> returnValueResourceResolver;
-
-    @Autowired
-    @Qualifier("communicationsManager")
-    private ObjectProvider<CommunicationsManager> communicationsManager;
-
-    @Autowired
-    @Qualifier("casEventRepository")
-    private ObjectProvider<CasEventRepository> casEventRepository;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @ConditionalOnMissingBean(name = "authenticationRiskEmailNotifier")
-    @Bean
-    @RefreshScope
-    public AuthenticationRiskNotifier authenticationRiskEmailNotifier() {
-        return new AuthenticationRiskEmailNotifier(casProperties, communicationsManager.getObject());
-    }
-
-    @ConditionalOnMissingBean(name = "authenticationRiskSmsNotifier")
-    @Bean
-    @RefreshScope
-    public AuthenticationRiskNotifier authenticationRiskSmsNotifier() {
-        return new AuthenticationRiskSmsNotifier(casProperties, communicationsManager.getObject());
-    }
-
-    @ConditionalOnMissingBean(name = "blockAuthenticationContingencyPlan")
-    @Bean
-    @RefreshScope
-    public AuthenticationRiskContingencyPlan blockAuthenticationContingencyPlan() {
-        val b = new BlockAuthenticationContingencyPlan(casProperties, applicationContext);
-        configureContingencyPlan(b);
-        return b;
-    }
-
-    @ConditionalOnMissingBean(name = "multifactorAuthenticationContingencyPlan")
-    @Bean
-    @RefreshScope
-    public AuthenticationRiskContingencyPlan multifactorAuthenticationContingencyPlan() {
-        val b = new MultifactorAuthenticationContingencyPlan(casProperties, applicationContext);
-        configureContingencyPlan(b);
-        return b;
-    }
-
-    @ConditionalOnMissingBean(name = "authenticationRiskMitigator")
-    @Bean
-    @RefreshScope
-    public AuthenticationRiskMitigator authenticationRiskMitigator() {
-        if (casProperties.getAuthn().getAdaptive().getRisk().getResponse().isBlockAttempt()) {
-            return new DefaultAuthenticationRiskMitigator(blockAuthenticationContingencyPlan());
-        }
-        return new DefaultAuthenticationRiskMitigator(multifactorAuthenticationContingencyPlan());
-    }
-
-    @ConditionalOnMissingBean(name = "ipAddressAuthenticationRequestRiskCalculator")
-    @Bean
-    @RefreshScope
-    public AuthenticationRequestRiskCalculator ipAddressAuthenticationRequestRiskCalculator() {
-        return new IpAddressAuthenticationRequestRiskCalculator(casEventRepository.getObject(), casProperties);
-    }
-
-    @ConditionalOnMissingBean(name = "userAgentAuthenticationRequestRiskCalculator")
-    @Bean
-    @RefreshScope
-    public AuthenticationRequestRiskCalculator userAgentAuthenticationRequestRiskCalculator() {
-        return new UserAgentAuthenticationRequestRiskCalculator(casEventRepository.getObject(), casProperties);
-    }
-
-    @ConditionalOnMissingBean(name = "dateTimeAuthenticationRequestRiskCalculator")
-    @Bean
-    @RefreshScope
-    public AuthenticationRequestRiskCalculator dateTimeAuthenticationRequestRiskCalculator() {
-        return new DateTimeAuthenticationRequestRiskCalculator(casEventRepository.getObject(), casProperties);
-    }
-
-    @ConditionalOnMissingBean(name = "geoLocationAuthenticationRequestRiskCalculator")
-    @Bean
-    @RefreshScope
-    public AuthenticationRequestRiskCalculator geoLocationAuthenticationRequestRiskCalculator() {
-        return new GeoLocationAuthenticationRequestRiskCalculator(casEventRepository.getObject(),
-            casProperties, geoLocationService.getIfAvailable());
-    }
-
-    @ConditionalOnMissingBean(name = "authenticationRiskEvaluator")
-    @Bean
-    @RefreshScope
-    public AuthenticationRiskEvaluator authenticationRiskEvaluator() {
-        val risk = casProperties.getAuthn().getAdaptive().getRisk();
-        val calculators = new HashSet<AuthenticationRequestRiskCalculator>();
-
-        if (risk.getIp().isEnabled()) {
-            calculators.add(ipAddressAuthenticationRequestRiskCalculator());
-        }
-        if (risk.getAgent().isEnabled()) {
-            calculators.add(userAgentAuthenticationRequestRiskCalculator());
-        }
-        if (risk.getDateTime().isEnabled()) {
-            calculators.add(dateTimeAuthenticationRequestRiskCalculator());
-        }
-        if (risk.getGeoLocation().isEnabled()) {
-            calculators.add(geoLocationAuthenticationRequestRiskCalculator());
-        }
-
-        if (calculators.isEmpty()) {
-            LOGGER.warn("No risk calculators are defined to examine authentication requests");
-        }
-
-        return new DefaultAuthenticationRiskEvaluator(calculators);
-    }
-
-    private void configureContingencyPlan(final BaseAuthenticationRiskContingencyPlan b) {
-        val mail = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getMail();
-        if (StringUtils.isNotBlank(mail.getText()) && StringUtils.isNotBlank(mail.getFrom()) && StringUtils.isNotBlank(mail.getSubject())) {
-            b.getNotifiers().add(authenticationRiskEmailNotifier());
-        }
-
-        val sms = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getSms();
-        if (StringUtils.isNotBlank(sms.getText()) && StringUtils.isNotBlank(sms.getFrom())) {
-            b.getNotifiers().add(authenticationRiskSmsNotifier());
+        @ConditionalOnMissingBean(name = "authenticationRiskMitigator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationRiskMitigator authenticationRiskMitigator(
+            final CasConfigurationProperties casProperties,
+            @Qualifier("blockAuthenticationContingencyPlan")
+            final AuthenticationRiskContingencyPlan blockAuthenticationContingencyPlan,
+            @Qualifier("multifactorAuthenticationContingencyPlan")
+            final AuthenticationRiskContingencyPlan multifactorAuthenticationContingencyPlan) {
+            if (casProperties.getAuthn().getAdaptive().getRisk().getResponse().isBlockAttempt()) {
+                return new DefaultAuthenticationRiskMitigator(blockAuthenticationContingencyPlan);
+            }
+            return new DefaultAuthenticationRiskMitigator(multifactorAuthenticationContingencyPlan);
         }
     }
 
-    @Bean
-    @ConditionalOnMissingBean(name = "casElectrofenceAuditTrailRecordResolutionPlanConfigurer")
-    public AuditTrailRecordResolutionPlanConfigurer casElectrofenceAuditTrailRecordResolutionPlanConfigurer() {
-        return plan -> {
-            plan.registerAuditActionResolver(AuditActionResolvers.ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER,
-                new DefaultAuditActionResolver());
-            plan.registerAuditResourceResolver(AuditResourceResolvers.ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER,
-                returnValueResourceResolver.getObject());
-        };
+    @Configuration(value = "ElectronicFenceEvaluatorConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class ElectronicFenceEvaluatorConfiguration {
+        @ConditionalOnMissingBean(name = "authenticationRiskEvaluator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationRiskEvaluator authenticationRiskEvaluator(
+            @Qualifier(CasEventRepository.BEAN_NAME)
+            final CasEventRepository eventRepository,
+            final CasConfigurationProperties casProperties,
+            final List<AuthenticationRequestRiskCalculator> riskCalculators) {
+            val activeCalculators = new ArrayList<>(riskCalculators)
+                .stream()
+                .filter(BeanSupplier::isNotProxy)
+                .toList();
+            return new DefaultAuthenticationRiskEvaluator(activeCalculators, casProperties, eventRepository);
+        }
     }
 
+    @Configuration(value = "ElectronicFenceContingencyConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class ElectronicFenceContingencyConfiguration {
+
+        private static void configureContingencyPlan(final BaseAuthenticationRiskContingencyPlan plan,
+                                                     final CasConfigurationProperties casProperties,
+                                                     final AuthenticationRiskNotifier authenticationRiskEmailNotifier,
+                                                     final AuthenticationRiskNotifier authenticationRiskSmsNotifier) {
+            val response = casProperties.getAuthn().getAdaptive().getRisk().getResponse();
+            val mail = response.getMail();
+            if (mail.isDefined()) {
+                plan.getNotifiers().add(authenticationRiskEmailNotifier);
+            }
+            val sms = response.getSms();
+            if (sms.isDefined()) {
+                plan.getNotifiers().add(authenticationRiskSmsNotifier);
+            }
+        }
+
+        @ConditionalOnMissingBean(name = "blockAuthenticationContingencyPlan")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationRiskContingencyPlan blockAuthenticationContingencyPlan(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("authenticationRiskEmailNotifier")
+            final AuthenticationRiskNotifier authenticationRiskEmailNotifier,
+            @Qualifier("authenticationRiskSmsNotifier")
+            final AuthenticationRiskNotifier authenticationRiskSmsNotifier) {
+            val plan = new BlockAuthenticationContingencyPlan(casProperties, applicationContext);
+            configureContingencyPlan(plan, casProperties, authenticationRiskEmailNotifier, authenticationRiskSmsNotifier);
+            return plan;
+        }
+
+        @ConditionalOnMissingBean(name = "multifactorAuthenticationContingencyPlan")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationRiskContingencyPlan multifactorAuthenticationContingencyPlan(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("authenticationRiskEmailNotifier")
+            final AuthenticationRiskNotifier authenticationRiskEmailNotifier,
+            @Qualifier("authenticationRiskSmsNotifier")
+            final AuthenticationRiskNotifier authenticationRiskSmsNotifier) {
+            val plan = new MultifactorAuthenticationContingencyPlan(casProperties, applicationContext);
+            configureContingencyPlan(plan, casProperties, authenticationRiskEmailNotifier, authenticationRiskSmsNotifier);
+            return plan;
+        }
+    }
+
+    @Configuration(value = "ElectronicFenceNotifierConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class ElectronicFenceNotifierConfiguration {
+
+        @ConditionalOnMissingBean(name = "authenticationRiskEmailNotifier")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationRiskNotifier authenticationRiskEmailNotifier(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver principalResolver,
+            @Qualifier("cookieCipherExecutor")
+            final CipherExecutor cookieCipherExecutor,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CommunicationsManager.BEAN_NAME)
+            final CommunicationsManager communicationsManager) {
+            return new AuthenticationRiskEmailNotifier(casProperties, applicationContext, communicationsManager,
+                servicesManager, principalResolver, cookieCipherExecutor);
+        }
+
+        @ConditionalOnMissingBean(name = "authenticationRiskSmsNotifier")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationRiskNotifier authenticationRiskSmsNotifier(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver,
+            @Qualifier("cookieCipherExecutor")
+            final CipherExecutor cookieCipherExecutor,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CommunicationsManager.BEAN_NAME)
+            final CommunicationsManager communicationsManager) {
+            return new AuthenticationRiskSmsNotifier(casProperties, applicationContext, communicationsManager,
+                servicesManager, defaultPrincipalResolver, cookieCipherExecutor);
+        }
+
+    }
+
+    @Configuration(value = "ElectronicFenceCalculatorConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class ElectronicFenceCalculatorConfiguration {
+
+        @ConditionalOnMissingBean(name = "ipAddressAuthenticationRequestRiskCalculator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationRequestRiskCalculator ipAddressAuthenticationRequestRiskCalculator(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CasEventRepository.BEAN_NAME)
+            final CasEventRepository casEventRepository) throws Exception {
+            return BeanSupplier.of(AuthenticationRequestRiskCalculator.class)
+                .when(BeanCondition.on("cas.authn.adaptive.risk.ip.enabled").isTrue().given(applicationContext.getEnvironment()))
+                .supply(() -> new IpAddressAuthenticationRequestRiskCalculator(casEventRepository, casProperties))
+                .otherwiseProxy()
+                .get();
+        }
+
+        @ConditionalOnMissingBean(name = "userAgentAuthenticationRequestRiskCalculator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationRequestRiskCalculator userAgentAuthenticationRequestRiskCalculator(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CasEventRepository.BEAN_NAME)
+            final CasEventRepository casEventRepository) throws Exception {
+            return BeanSupplier.of(AuthenticationRequestRiskCalculator.class)
+                .when(BeanCondition.on("cas.authn.adaptive.risk.agent.enabled").isTrue().given(applicationContext.getEnvironment()))
+                .supply(() -> new UserAgentAuthenticationRequestRiskCalculator(casEventRepository, casProperties))
+                .otherwiseProxy()
+                .get();
+        }
+
+        @ConditionalOnMissingBean(name = "dateTimeAuthenticationRequestRiskCalculator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationRequestRiskCalculator dateTimeAuthenticationRequestRiskCalculator(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CasEventRepository.BEAN_NAME)
+            final CasEventRepository casEventRepository) throws Exception {
+            return BeanSupplier.of(AuthenticationRequestRiskCalculator.class)
+                .when(BeanCondition.on("cas.authn.adaptive.risk.date-time.enabled").isTrue().given(applicationContext.getEnvironment()))
+                .supply(() -> new DateTimeAuthenticationRequestRiskCalculator(casEventRepository, casProperties))
+                .otherwiseProxy()
+                .get();
+        }
+    }
+
+    @ConditionalOnBean(name = GeoLocationService.BEAN_NAME)
+    @Configuration(value = "ElectronicFenceGeoLocationConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class ElectronicFenceGeoLocationConfiguration {
+        @ConditionalOnMissingBean(name = "geoLocationAuthenticationRequestRiskCalculator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationRequestRiskCalculator geoLocationAuthenticationRequestRiskCalculator(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(GeoLocationService.BEAN_NAME)
+            final GeoLocationService geoLocationService,
+            @Qualifier(CasEventRepository.BEAN_NAME)
+            final CasEventRepository casEventRepository) throws Exception {
+            return BeanSupplier.of(AuthenticationRequestRiskCalculator.class)
+                .when(BeanCondition.on("cas.authn.adaptive.risk.geo-location.enabled").isTrue().given(applicationContext.getEnvironment()))
+                .supply(() -> new GeoLocationAuthenticationRequestRiskCalculator(casEventRepository, casProperties, geoLocationService))
+                .otherwiseProxy()
+                .get();
+        }
+    }
+
+    @Configuration(value = "ElectronicFenceAuditConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class ElectronicFenceAuditConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "casElectrofenceAuditTrailRecordResolutionPlanConfigurer")
+        public AuditTrailRecordResolutionPlanConfigurer casElectrofenceAuditTrailRecordResolutionPlanConfigurer(
+            @Qualifier("returnValueResourceResolver")
+            final AuditResourceResolver returnValueResourceResolver) {
+            return plan -> {
+                plan.registerAuditActionResolver(AuditActionResolvers.ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER,
+                    new DefaultAuditActionResolver());
+                plan.registerAuditResourceResolver(AuditResourceResolvers.ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER,
+                    returnValueResourceResolver);
+            };
+        }
+    }
 }

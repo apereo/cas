@@ -3,7 +3,8 @@ package org.apereo.cas.adaptors.radius.authentication;
 import org.apereo.cas.adaptors.radius.web.flow.BaseRadiusMultifactorAuthenticationTests;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -11,22 +12,19 @@ import net.jradius.dictionary.Attr_State;
 import net.jradius.packet.attribute.value.StringValue;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.mock.web.MockServletContext;
-import org.springframework.webflow.context.ExternalContextHolder;
-import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.execution.RequestContextHolder;
-import org.springframework.webflow.test.MockRequestContext;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import javax.security.auth.login.FailedLoginException;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RadiusTokenAuthenticationHandlerTests}.
@@ -41,34 +39,32 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.radius.client.inet-address=localhost"
     })
 @Tag("Radius")
-@EnabledIfPortOpen(port = 1812)
-public class RadiusTokenAuthenticationHandlerTests {
+@EnabledOnOs(OS.LINUX)
+class RadiusTokenAuthenticationHandlerTests {
 
     @Autowired
     @Qualifier("radiusTokenAuthenticationHandler")
     private AuthenticationHandler authenticationHandler;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
-    public void verifyOperation() throws Exception {
-        val c = new RadiusTokenCredential("Mellon");
+    void verifyOperation() throws Throwable {
+        val credential = new RadiusTokenCredential("Mellon");
 
-        assertTrue(authenticationHandler.supports(c));
-        assertTrue(authenticationHandler.supports(c.getClass()));
+        assertTrue(authenticationHandler.supports(credential));
+        assertTrue(authenticationHandler.supports(credential.getClass()));
 
-        val context = new MockRequestContext();
-        val request = new MockHttpServletRequest();
-        val response = new MockHttpServletResponse();
-        context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, response));
-        RequestContextHolder.setRequestContext(context);
-        ExternalContextHolder.setExternalContext(context.getExternalContext());
+        val context = MockRequestContext.create(applicationContext);
 
-        assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(c));
+        assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(credential, mock(Service.class)));
 
         val principal = CoreAuthenticationTestUtils.getPrincipal("casuser", 
             Map.of(Attr_State.NAME, List.of(new StringValue("value"))));
         val authn = CoreAuthenticationTestUtils.getAuthentication(principal);
         WebUtils.putAuthentication(authn, context);
-        val result = authenticationHandler.authenticate(c);
+        val result = authenticationHandler.authenticate(credential, mock(Service.class));
         assertNotNull(result);
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import jakarta.servlet.http.HttpServletRequest;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -20,27 +21,31 @@ import static org.mockito.Mockito.*;
  * @since 4.2
  */
 @Tag("Authentication")
-public class WebApplicationServiceFactoryTests {
+class WebApplicationServiceFactoryTests {
 
     @Test
-    public void verifyServiceAttributes() {
+    void verifyServiceAttributes() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter("p1", "v1");
         request.addParameter("p2", "v2");
+        request.addParameter(CasProtocolConstants.PARAMETER_PASSWORD, "m$hf74621");
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "https://example.org?p3=v3&p4=v4");
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(request);
         assertNotNull(service);
-        assertEquals(4, service.getAttributes().size());
+        assertEquals(7, service.getAttributes().size());
         assertTrue(service.getAttributes().containsKey("p1"));
         assertTrue(service.getAttributes().containsKey("p2"));
         assertTrue(service.getAttributes().containsKey("p3"));
         assertTrue(service.getAttributes().containsKey("p4"));
+        assertTrue(service.getAttributes().containsKey("%s.requestURL".formatted(HttpServletRequest.class.getName())));
+        assertTrue(service.getAttributes().containsKey("%s.localeName".formatted(HttpServletRequest.class.getName())));
+        assertFalse(service.getAttributes().containsKey(CasProtocolConstants.PARAMETER_PASSWORD));
     }
 
     @Test
-    public void verifyServiceCreationSuccessfullyById() {
+    void verifyServiceCreationSuccessfullyById() throws Throwable {
         val request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val factory = new WebApplicationServiceFactory();
@@ -49,7 +54,7 @@ public class WebApplicationServiceFactoryTests {
     }
 
     @Test
-    public void verifyServiceCreationSuccessfullyByService() {
+    void verifyServiceCreationSuccessfullyByService() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
         val factory = new WebApplicationServiceFactory();
@@ -59,7 +64,7 @@ public class WebApplicationServiceFactoryTests {
     }
 
     @Test
-    public void verifyServiceCreationSuccessfullyByTargetService() {
+    void verifyServiceCreationSuccessfullyByTargetService() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "test");
         val factory = new WebApplicationServiceFactory();
@@ -69,7 +74,7 @@ public class WebApplicationServiceFactoryTests {
     }
 
     @Test
-    public void verifyServiceCreationSuccessfullyByTargetServiceAndTicket() {
+    void verifyServiceCreationSuccessfullyByTargetServiceAndTicket() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "test");
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, "ticket");
@@ -81,7 +86,7 @@ public class WebApplicationServiceFactoryTests {
     }
 
     @Test
-    public void verifyServiceCreationNoService() {
+    void verifyServiceCreationNoService() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, "ticket");
         val factory = new WebApplicationServiceFactory();
@@ -91,21 +96,21 @@ public class WebApplicationServiceFactoryTests {
     }
 
     @Test
-    public void verifyServiceCreationNoRequest() {
+    void verifyServiceCreationNoRequest() throws Throwable {
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService("testservice");
         assertNotNull(service);
     }
 
     @Test
-    public void verifyServiceByClass() {
+    void verifyServiceByClass() throws Throwable {
         val factory = new WebApplicationServiceFactory();
         assertThrows(ClassCastException.class, () -> factory.createService("testservice", mock(Service.class).getClass()));
         assertNotNull(factory.createService("testservice", WebApplicationService.class));
     }
 
     @Test
-    public void verifyServiceByClassReq() {
+    void verifyServiceByClassReq() throws Throwable {
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "test");
         val factory = new WebApplicationServiceFactory();

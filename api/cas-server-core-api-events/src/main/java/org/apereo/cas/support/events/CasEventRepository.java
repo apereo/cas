@@ -3,7 +3,7 @@ package org.apereo.cas.support.events;
 import org.apereo.cas.support.events.dao.CasEvent;
 
 import java.time.ZonedDateTime;
-import java.util.Collection;
+import java.util.stream.Stream;
 
 /**
  * Defines DAO operations over an events repository.
@@ -12,6 +12,10 @@ import java.util.Collection;
  * @since 5.0.0
  */
 public interface CasEventRepository {
+    /**
+     * Bean name.
+     */
+    String BEAN_NAME = "casEventRepository";
 
     /**
      * Gets event repository filter.
@@ -23,18 +27,25 @@ public interface CasEventRepository {
     }
 
     /**
+     * Remove all.
+     */
+    void removeAll();
+
+    /**
      * Save.
      *
      * @param event the event
+     * @return the cas event
+     * @throws Throwable the throwable
      */
-    void save(CasEvent event);
+    CasEvent save(CasEvent event) throws Throwable;
 
     /**
      * Load collection.
      *
      * @return the collection
      */
-    Collection<? extends CasEvent> load();
+    Stream<? extends CasEvent> load();
 
     /**
      * Load collection of events created after the given date.
@@ -42,7 +53,7 @@ public interface CasEventRepository {
      * @param dateTime the date time
      * @return the collection
      */
-    Collection<? extends CasEvent> load(ZonedDateTime dateTime);
+    Stream<? extends CasEvent> load(ZonedDateTime dateTime);
 
     /**
      * Gets events of type for principal.
@@ -51,7 +62,7 @@ public interface CasEventRepository {
      * @param principal the principal
      * @return the events of type
      */
-    Collection<? extends CasEvent> getEventsOfTypeForPrincipal(String type, String principal);
+    Stream<? extends CasEvent> getEventsOfTypeForPrincipal(String type, String principal);
 
     /**
      * Gets events of type for principal after date.
@@ -61,7 +72,7 @@ public interface CasEventRepository {
      * @param dateTime  the date time
      * @return the events of type
      */
-    Collection<? extends CasEvent> getEventsOfTypeForPrincipal(String type, String principal, ZonedDateTime dateTime);
+    Stream<? extends CasEvent> getEventsOfTypeForPrincipal(String type, String principal, ZonedDateTime dateTime);
 
     /**
      * Gets events of type.
@@ -69,7 +80,7 @@ public interface CasEventRepository {
      * @param type the type
      * @return the events of type
      */
-    Collection<? extends CasEvent> getEventsOfType(String type);
+    Stream<? extends CasEvent> getEventsOfType(String type);
 
     /**
      * Gets events of type after date.
@@ -78,7 +89,7 @@ public interface CasEventRepository {
      * @param dateTime the date time
      * @return the events of type
      */
-    Collection<? extends CasEvent> getEventsOfType(String type, ZonedDateTime dateTime);
+    Stream<? extends CasEvent> getEventsOfType(String type, ZonedDateTime dateTime);
 
     /**
      * Gets events for principal.
@@ -86,7 +97,7 @@ public interface CasEventRepository {
      * @param id the id
      * @return the events for principal
      */
-    Collection<? extends CasEvent> getEventsForPrincipal(String id);
+    Stream<? extends CasEvent> getEventsForPrincipal(String id);
 
     /**
      * Gets events for principal after date.
@@ -95,5 +106,5 @@ public interface CasEventRepository {
      * @param dateTime the date time
      * @return the events for principal
      */
-    Collection<? extends CasEvent> getEventsForPrincipal(String id, ZonedDateTime dateTime);
+    Stream<? extends CasEvent> getEventsForPrincipal(String id, ZonedDateTime dateTime);
 }

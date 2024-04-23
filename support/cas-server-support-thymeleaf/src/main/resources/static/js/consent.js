@@ -1,17 +1,17 @@
-$(document).ready(function () {
+$(document).ready(() => {
     optionSelected();
     tabify(mdc);
 });
 
 
 function tabify(material) {
-    var elm = document.getElementById('consent-tabs');
-    var tabs = material.tabBar.MDCTabBar.attachTo(elm);
+    let elm = document.getElementById('consent-tabs');
+    let tabs = material.tabBar.MDCTabBar.attachTo(elm);
 
-    tabs.listen('MDCTabBar:activated', function (ev) {
-        var index = ev.detail.index;
+    tabs.listen('MDCTabBar:activated', ev => {
+        let index = ev.detail.index;
         $('.consent-tab').addClass('d-none');
-        $('#consent-tab-' + index).removeClass('d-none');
+        $(`#consent-tab-${index}`).removeClass('d-none');
     });
 
     tabs.foundation.adapter.activateTabAtIndex(0);

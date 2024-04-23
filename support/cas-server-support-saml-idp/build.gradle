@@ -1,10 +1,17 @@
 description = "Apereo CAS SAML Identity Provider Support"
 ext {
-    maxParallelForksForTests = 1
+
+    publishMetadata = true
+    projectMetadata = [
+            category: "SAML2 Protocol",
+            title: "SAML2 Identity Provider",
+            aliases: ["saml2"]
+    ]
 }
 dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api-monitor")
 
     implementation project(":core:cas-server-core-audit")
     implementation project(":core:cas-server-core-audit-api")
@@ -16,10 +23,12 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-authentication-mfa-api")
+    implementation project(":core:cas-server-core-authentication-throttle")
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-webflow-mfa")
+    implementation project(":core:cas-server-core-webflow-mfa-api")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
@@ -33,17 +42,22 @@ dependencies {
     implementation project(":support:cas-server-support-saml-idp-web")
     implementation project(":support:cas-server-support-saml-idp-ticket")
     implementation project(":support:cas-server-support-pac4j-api")
+    implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-actions-core")
 
-    compileOnlyApi  project(":support:cas-server-support-jpa-util")
-    compileOnlyApi  project(":support:cas-server-support-consent-api")
+    compileOnly project(":support:cas-server-support-jpa-util")
+    compileOnly project(":support:cas-server-support-consent-api")
+    compileOnly project(":support:cas-server-support-pac4j-webflow")
 
-    implementation libraries.casclient
+
     implementation libraries.pac4jcore
     implementation libraries.shibutiljavasupport
 
+    
     testImplementation libraries.pac4joidcoauth
     testImplementation libraries.pac4jsaml
+
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
@@ -61,7 +75,11 @@ dependencies {
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-consent-api")
     testImplementation project(":support:cas-server-support-saml")
-
+    testImplementation project(":support:cas-server-support-pac4j-webflow")
+    testImplementation project(":support:cas-server-support-consent-core")
+    testImplementation project(":support:cas-server-support-throttle")
+    
+    testImplementation project(":core:cas-server-core-monitor")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-validation")

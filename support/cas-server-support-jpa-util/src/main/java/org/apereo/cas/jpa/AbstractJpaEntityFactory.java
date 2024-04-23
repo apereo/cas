@@ -1,15 +1,16 @@
 package org.apereo.cas.jpa;
 
+import org.apereo.cas.util.function.FunctionUtils;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 
 /**
  * This is {@link AbstractJpaEntityFactory}.
  *
- * @param <T> the type parameter
  * @author Misagh Moayyed
+ * @param <T> the type parameter
  * @since 6.2.0
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,9 +30,17 @@ public abstract class AbstractJpaEntityFactory<T> {
      *
      * @return the document
      */
-    @SneakyThrows
     public T newInstance() {
-        return (T) getType().getDeclaredConstructor().newInstance();
+        return FunctionUtils.doUnchecked(() -> getType().getDeclaredConstructor().newInstance());
+    }
+
+    /**
+     * Is MS SQL Server ?.
+     *
+     * @return true/false
+     */
+    public boolean isMsSqlServer() {
+        return this.dialect.contains("SQLServer");
     }
 
     /**
@@ -39,7 +48,7 @@ public abstract class AbstractJpaEntityFactory<T> {
      *
      * @return true/false
      */
-    protected boolean isOracle() {
+    public boolean isOracle() {
         return this.dialect.contains("Oracle");
     }
 
@@ -48,7 +57,7 @@ public abstract class AbstractJpaEntityFactory<T> {
      *
      * @return true/false
      */
-    protected boolean isMySql() {
+    public boolean isMySql() {
         return this.dialect.contains("MySQL");
     }
 
@@ -57,7 +66,7 @@ public abstract class AbstractJpaEntityFactory<T> {
      *
      * @return true/false
      */
-    protected boolean isPostgres() {
+    public boolean isPostgres() {
         return this.dialect.contains("PostgreSQL");
     }
 
@@ -66,7 +75,7 @@ public abstract class AbstractJpaEntityFactory<T> {
      *
      * @return true/false
      */
-    protected boolean isMariaDb() {
+    public boolean isMariaDb() {
         return this.dialect.contains("MariaDB");
     }
 

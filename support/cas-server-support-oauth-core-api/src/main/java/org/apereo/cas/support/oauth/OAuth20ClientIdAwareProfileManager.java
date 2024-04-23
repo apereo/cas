@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth;
 
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -30,12 +31,19 @@ public class OAuth20ClientIdAwareProfileManager extends ProfileManager {
 
     private final ServicesManager servicesManager;
 
-    public OAuth20ClientIdAwareProfileManager(final WebContext context, final SessionStore sessionStore, final ServicesManager servicesManager) {
+    private final OAuth20RequestParameterResolver requestParameterResolver;
+
+    public OAuth20ClientIdAwareProfileManager(final WebContext context,
+                                              final SessionStore sessionStore,
+                                              final ServicesManager servicesManager,
+                                              final OAuth20RequestParameterResolver requestParameterResolver) {
         super(context, sessionStore);
         this.servicesManager = servicesManager;
+        this.requestParameterResolver = requestParameterResolver;
     }
 
     @Override
+    @SuppressWarnings("NonApiType")
     protected LinkedHashMap<String, UserProfile> retrieveAll(final boolean readFromSession) {
         val profiles = super.retrieveAll(readFromSession).entrySet();
         val clientId = getClientIdFromRequest();
@@ -43,7 +51,8 @@ public class OAuth20ClientIdAwareProfileManager extends ProfileManager {
             .stream()
             .filter(it -> {
                 val profile = it.getValue();
-                return StringUtils.equals((String) profile.getAttribute(SESSION_CLIENT_ID), clientId);
+                return StringUtils.isBlank(clientId)
+                       || StringUtils.equals((CharSequence) profile.getAttribute(SESSION_CLIENT_ID), clientId);
             })
             .collect(Collectors.toMap(
                 Map.Entry::getKey,
@@ -59,16 +68,19 @@ public class OAuth20ClientIdAwareProfileManager extends ProfileManager {
     @Override
     public void save(final boolean saveInSession, final UserProfile profile, final boolean multiProfile) {
         val clientId = getClientIdFromRequest();
-        profile.addAttribute(SESSION_CLIENT_ID, clientId);
+        if (StringUtils.isNotBlank(clientId)) {
+            profile.addAttribute(SESSION_CLIENT_ID, clientId);
+        }
         super.save(saveInSession, profile, multiProfile);
     }
 
     private String getClientIdFromRequest() {
-        var clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID)
+        var clientId = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.CLIENT_ID)
             .map(String::valueOf).orElse(StringUtils.EMPTY);
         if (StringUtils.isBlank(clientId)) {
-            val redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI)
+            val redirectUri = requestParameterResolver.resolveRequestParameter(context, OAuth20Constants.REDIRECT_URI)
                 .map(String::valueOf).orElse(StringUtils.EMPTY);
+            OAuth20Utils.validateRedirectUri(redirectUri);
             val svc = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, redirectUri);
             clientId = svc != null ? svc.getClientId() : StringUtils.EMPTY;
         }

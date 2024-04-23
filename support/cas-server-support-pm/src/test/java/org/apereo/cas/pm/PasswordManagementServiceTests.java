@@ -15,18 +15,20 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("PasswordOps")
-public class PasswordManagementServiceTests {
+class PasswordManagementServiceTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val service = new PasswordManagementService() {
         };
-        assertFalse(service.change(RegisteredServiceTestUtils.getHttpBasedServiceCredentials(), new PasswordChangeRequest()));
+        assertFalse(service.change(new PasswordChangeRequest()));
+        assertFalse(service.unlockAccount(RegisteredServiceTestUtils.getHttpBasedServiceCredentials()));
         assertNull(service.findEmail(PasswordManagementQuery.builder().email("user@example.org").build()));
         assertNull(service.findPhone(PasswordManagementQuery.builder().username("user").build()));
         assertNull(service.findUsername(PasswordManagementQuery.builder().email("user@example.org").build()));
         assertNull(service.createToken(PasswordManagementQuery.builder().username("user").build()));
         assertNull(service.parseToken("user"));
         assertNotNull(service.getSecurityQuestions(PasswordManagementQuery.builder().username("user").build()));
+        assertDoesNotThrow(() -> service.updateSecurityQuestions(PasswordManagementQuery.builder().username("user").build()));
     }
 
 }

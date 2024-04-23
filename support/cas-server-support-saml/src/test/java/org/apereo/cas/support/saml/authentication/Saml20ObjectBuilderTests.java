@@ -16,8 +16,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Jerome Leleu
  * @since 5.2.9
  */
-@Tag("SAML")
-public class Saml20ObjectBuilderTests extends AbstractOpenSamlTests {
+@Tag("SAMLResponse")
+class Saml20ObjectBuilderTests extends AbstractOpenSamlTests {
 
     private static final String BASE64_SAML_AUTHN_REQUEST = "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c2FtbDJwOkF1dG"
             + "huUmVxdWVzdCB4bWxuczpzYW1sMnA9InVybjpvYXNpczpuYW1lczp0YzpTQU1MOjIuMDpwcm90b2NvbCIgQXNzZXJ0aW9uQ29uc3VtZXJTZXJ2aWN"
@@ -35,7 +35,7 @@ public class Saml20ObjectBuilderTests extends AbstractOpenSamlTests {
             + "AllowCreate=\"true\"/></saml2p:AuthnRequest>";
 
     @Test
-    public void decodeNonInflatedSamlAuthnRequest() {
+    void decodeNonInflatedSamlAuthnRequest() {
         val builder = new NonInflatingSaml20ObjectBuilder(this.configBean);
         val decoded = builder.decodeSamlAuthnRequest(BASE64_SAML_AUTHN_REQUEST);
         assertEquals(SAML_AUTHN_REQUEST, decoded);

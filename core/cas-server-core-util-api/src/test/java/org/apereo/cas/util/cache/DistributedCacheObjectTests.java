@@ -21,17 +21,17 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Simple")
-public class DistributedCacheObjectTests {
+class DistributedCacheObjectTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerialization() throws Exception {
+    void verifySerialization() throws Throwable {
         val o = DistributedCacheObject.<String>builder()
             .value("objectValue")
             .publisherIdentifier(new PublisherIdentifier())
             .build();
-        val file = new File(FileUtils.getTempDirectoryPath(), UUID.randomUUID().toString() + ".json");
+        val file = new File(FileUtils.getTempDirectoryPath(), UUID.randomUUID() + ".json");
         MAPPER.writeValue(file, o);
         val readPolicy = MAPPER.readValue(file, DistributedCacheObject.class);
         assertEquals(o, readPolicy);
@@ -39,7 +39,7 @@ public class DistributedCacheObjectTests {
 
 
     @Test
-    public void verifyAction() {
+    void verifyAction() throws Throwable {
         val o = DistributedCacheObject.<String>builder()
             .value("objectValue")
             .publisherIdentifier(new PublisherIdentifier())
@@ -55,7 +55,7 @@ public class DistributedCacheObjectTests {
     }
 
     @Test
-    public void verifyNullValue() {
+    void verifyNullValue() throws Throwable {
         val o = DistributedCacheObject.<String>builder()
             .value("objectValue")
             .publisherIdentifier(new PublisherIdentifier())

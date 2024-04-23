@@ -1,10 +1,13 @@
 package org.apereo.cas.authentication.credential;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.CredentialMetaData;
+import org.apereo.cas.authentication.CredentialMetadata;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +16,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.validation.ValidationContext;
 
+import java.io.Serial;
+
 /**
  * Base class for CAS credentials that are safe for long-term storage.
  *
@@ -20,23 +25,38 @@ import org.springframework.binding.validation.ValidationContext;
  * @since 4.0.0
  */
 @ToString
+@Setter
+@Getter
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public abstract class AbstractCredential implements Credential, CredentialMetaData {
-
-    /**
-     * Serialization version marker.
-     */
+public abstract class AbstractCredential implements Credential {
+    @Serial
     private static final long serialVersionUID = 8196868021183513898L;
 
-    @JsonIgnore
+    private CredentialMetadata credentialMetadata;
+
+    /**
+     * Gets credential metadata. Will initialize if metadata is null.
+     * @return current credential metadata
+     */
     @Override
-    public Class<? extends Credential> getCredentialClass() {
-        return this.getClass();
+    public CredentialMetadata getCredentialMetadata() {
+        if (credentialMetadata == null) {
+            this.credentialMetadata = new BasicCredentialMetadata(this);
+        }
+        return this.credentialMetadata;
     }
 
     @JsonIgnore
     public boolean isValid() {
         return StringUtils.isNotBlank(getId());
+    }
+
+    @Override
+    public int hashCode() {
+        val builder = new HashCodeBuilder(11, 41);
+        builder.append(getClass().getName());
+        builder.append(getId());
+        return builder.toHashCode();
     }
 
     @Override
@@ -55,14 +75,6 @@ public abstract class AbstractCredential implements Credential, CredentialMetaDa
         return builder.isEquals();
     }
 
-    @Override
-    public int hashCode() {
-        val builder = new HashCodeBuilder(11, 41);
-        builder.append(getClass().getName());
-        builder.append(getId());
-        return builder.toHashCode();
-    }
-    
     /**
      * Validate.
      *

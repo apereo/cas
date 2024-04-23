@@ -4,18 +4,20 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 
-import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
@@ -25,7 +27,7 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Builder
+@SuperBuilder
 @Slf4j
 public class DelegatedClientIdentityProviderConfigurationFactory {
     /**
@@ -51,7 +53,7 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
     public Optional<DelegatedClientIdentityProviderConfiguration> resolve() {
         val name = client.getName();
         val matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
-        val type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
+        val type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase(Locale.ENGLISH);
         val uriBuilder = UriComponentsBuilder
             .fromUriString(ENDPOINT_URL_REDIRECT)
             .queryParam(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, name);
@@ -75,10 +77,21 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
         val redirectUrl = uriBuilder.build(queryParams).toString();
         LOGGER.debug("Final redirect url is [{}]", redirectUrl);
 
-        val autoRedirect = (Boolean) client.getCustomProperties()
-            .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT, Boolean.FALSE);
-        val p = new DelegatedClientIdentityProviderConfiguration(name, redirectUrl, type, getCssClass(client), autoRedirect);
-        return Optional.of(p);
+        val autoRedirect = (DelegationAutoRedirectTypes) client.getCustomProperties()
+            .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, DelegationAutoRedirectTypes.NONE);
+        val title = (String) client.getCustomProperties()
+            .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME, name);
+        val cssClass = (String) client.getCustomProperties()
+            .getOrDefault(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, StringUtils.EMPTY);
+        val providerConfig = DelegatedClientIdentityProviderConfiguration.builder()
+            .name(name)
+            .autoRedirectType(autoRedirect)
+            .redirectUrl(redirectUrl)
+            .type(type)
+            .title(title)
+            .cssClass(cssClass)
+            .build();
+        return Optional.of(providerConfig);
     }
 
     /**
@@ -87,7 +100,7 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
      * @param uriBuilder  the uri builder
      * @param queryParams the query params
      */
-    protected void checkForThemeParameter(final UriComponentsBuilder uriBuilder, final HashMap<String, String> queryParams) {
+    protected void checkForThemeParameter(final UriComponentsBuilder uriBuilder, final Map<String, String> queryParams) {
         webContext.getRequestParameter(casProperties.getTheme().getParamName()).ifPresent(themeParam -> {
             LOGGER.debug("Processing theme parameter [{}] with value [{}]",
                 casProperties.getTheme().getParamName(), themeParam);
@@ -102,7 +115,7 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
      * @param uriBuilder  the uri builder
      * @param queryParams the query params
      */
-    protected void checkForLocalParameter(final UriComponentsBuilder uriBuilder, final HashMap<String, String> queryParams) {
+    protected void checkForLocalParameter(final UriComponentsBuilder uriBuilder, final Map<String, String> queryParams) {
         val localProps = casProperties.getLocale();
         LOGGER.debug("Processing locale parameter [{}]", localProps.getParamName());
         webContext.getRequestParameter(localProps.getParamName()).ifPresent(localeParam -> {
@@ -119,28 +132,12 @@ public class DelegatedClientIdentityProviderConfigurationFactory {
      * @param uriBuilder  the uri builder
      * @param queryParams the query params
      */
-    protected void checkForMethodParameter(final UriComponentsBuilder uriBuilder, final HashMap<String, String> queryParams) {
+    protected void checkForMethodParameter(final UriComponentsBuilder uriBuilder, final Map<String, String> queryParams) {
         webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD).ifPresent(methodParam -> {
             LOGGER.debug("Processing method parameter [{}] with value [{}]",
                 CasProtocolConstants.PARAMETER_METHOD, methodParam);
             uriBuilder.queryParam(CasProtocolConstants.PARAMETER_METHOD, "{method}");
             queryParams.put("method", methodParam);
         });
-    }
-
-    /**
-     * Get a valid CSS class for the given provider name.
-     *
-     * @param client the client
-     * @return the css class
-     */
-    protected String getCssClass(final BaseClient client) {
-        val customProperties = client.getCustomProperties();
-        if (customProperties != null && customProperties.containsKey(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS)) {
-            val css = customProperties.get(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS).toString();
-            LOGGER.debug("Located custom CSS class [{}] for client [{}]", client, css);
-            return css;
-        }
-        return null;
     }
 }

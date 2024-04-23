@@ -1,6 +1,7 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.spring.DirectObjectProvider;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -18,25 +19,25 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Tickets")
-public class TicketRegistryHealthIndicatorTests {
+class TicketRegistryHealthIndicatorTests {
 
     @Test
-    public void verifyUnknown() {
+    void verifyUnknown() throws Throwable {
         val ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.sessionCount()).thenReturn(Long.valueOf(Integer.MIN_VALUE));
         when(ticketRegistry.serviceTicketCount()).thenReturn(Long.valueOf(Integer.MIN_VALUE));
 
-        val indicator = new TicketRegistryHealthIndicator(ticketRegistry, 1, 1);
+        val indicator = new TicketRegistryHealthIndicator(new DirectObjectProvider<>(ticketRegistry), 1, 1);
         assertEquals(Status.UNKNOWN, indicator.getHealth(true).getStatus());
     }
 
     @Test
-    public void verifyServiceTicketCount() {
+    void verifyServiceTicketCount() throws Throwable {
         val ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.sessionCount()).thenReturn(1L);
         when(ticketRegistry.serviceTicketCount()).thenReturn(10L);
 
-        val indicator = new TicketRegistryHealthIndicator(ticketRegistry, 1, 1);
+        val indicator = new TicketRegistryHealthIndicator(new DirectObjectProvider<>(ticketRegistry), 1, 1);
         val health = indicator.getHealth(true);
         assertEquals(Health.status("WARN").build().getStatus(), health.getStatus());
     }

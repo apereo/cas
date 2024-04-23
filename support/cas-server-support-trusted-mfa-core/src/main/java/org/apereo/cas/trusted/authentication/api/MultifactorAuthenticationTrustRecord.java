@@ -1,10 +1,13 @@
 package org.apereo.cas.trusted.authentication.api;
 
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,11 +15,12 @@ import lombok.ToString;
 import lombok.val;
 import org.springframework.data.annotation.Id;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -37,6 +41,11 @@ import java.util.Date;
 @EqualsAndHashCode
 public class MultifactorAuthenticationTrustRecord implements Comparable<MultifactorAuthenticationTrustRecord>, Serializable {
     private static final int YEARS_TO_KEEP_RECORD_AS_FOREVER = 100;
+
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
+    
+    @Serial
     private static final long serialVersionUID = -5263885151448276769L;
 
     @Id
@@ -69,6 +78,10 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     @Temporal(TemporalType.TIMESTAMP)
     private Date expirationDate;
 
+    @JsonProperty("multifactorAuthenticationProvider")
+    @Column(name = "multifactorAuthenticationProvider", nullable = true)
+    private String multifactorAuthenticationProvider;
+    
     public MultifactorAuthenticationTrustRecord() {
         this.id = System.currentTimeMillis();
     }
@@ -84,14 +97,14 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     public static MultifactorAuthenticationTrustRecord newInstance(final String principal,
                                                                    final String geography,
                                                                    final String fingerprint) {
-        val r = new MultifactorAuthenticationTrustRecord();
+        val record = new MultifactorAuthenticationTrustRecord();
         val now = ZonedDateTime.now(ZoneOffset.UTC);
-        r.setRecordDate(now.truncatedTo(ChronoUnit.SECONDS));
-        r.setPrincipal(principal);
-        r.setDeviceFingerprint(fingerprint);
-        r.setName(principal.concat("-").concat(now.toString()).concat("-").concat(geography));
-        r.neverExpire();
-        return r;
+        record.setRecordDate(now.truncatedTo(ChronoUnit.SECONDS));
+        record.setPrincipal(principal);
+        record.setDeviceFingerprint(fingerprint);
+        record.setName(principal.concat("-").concat(now.toString()).concat("-").concat(geography));
+        record.neverExpire();
+        return record;
     }
 
     /**
@@ -134,5 +147,15 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
         val expDate = getRecordDate().plusYears(YEARS_TO_KEEP_RECORD_AS_FOREVER).truncatedTo(ChronoUnit.SECONDS);
         val zonedExpDate = DateTimeUtils.dateOf(expDate);
         setExpirationDate(zonedExpDate);
+    }
+
+    /**
+     * Convert this record into JSON.
+     *
+     * @return the string
+     */
+    @JsonIgnore
+    public String toJson() {
+        return FunctionUtils.doUnchecked(() -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this));
     }
 }

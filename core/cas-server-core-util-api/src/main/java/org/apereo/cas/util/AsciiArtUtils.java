@@ -1,6 +1,5 @@
 package org.apereo.cas.util;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -18,12 +17,15 @@ import java.io.PrintStream;
  */
 @UtilityClass
 public class AsciiArtUtils {
-    private static final Marker ASCII_ART_LOGGER_MARKER = MarkerFactory.getMarker("AsciiArt");
+    /**
+     * Logger marker element responsible for logging ascii-art.
+     */
+    public static final Marker ASCII_ART_LOGGER_MARKER = MarkerFactory.getMarker("AsciiArt");
 
     private static final String ANSI_RESET = "\u001B[0m";
 
     private static final String ANSI_CYAN = "\u001B[36m";
-    
+
     /**
      * Print ascii art.
      *
@@ -31,7 +33,6 @@ public class AsciiArtUtils {
      * @param asciiArt   the ascii art
      * @param additional the additional
      */
-    @SneakyThrows
     public static void printAsciiArt(final PrintStream out, final String asciiArt, final String additional) {
         out.println(ANSI_CYAN);
         if (StringUtils.isNotBlank(additional)) {
@@ -49,15 +50,18 @@ public class AsciiArtUtils {
      * @param out        the out
      * @param additional the additional
      */
-    @SneakyThrows
     public static void printAsciiArtWarning(final Logger out, final String additional) {
-        val ascii = '\n'
-            + "  ____ _____ ___  ____  _ \n"
-            + " / ___|_   _/ _ \\|  _ \\| |\n"
-            + " \\___ \\ | || | | | |_) | |\n"
-            + "  ___) || || |_| |  __/|_|\n"
-            + " |____/ |_| \\___/|_|   (_)\n"
-            + "                          \n";
+        val ascii = """
+
+              _____ ______   ___   ____  __\s
+             / ___/|      T /   \\ |    \\|  T
+            (   \\_ |      |Y     Y|  o  )  |
+             \\__  Tl_j  l_j|  O  ||   _/|__j
+             /  \\ |  |  |  |     ||  |   __\s
+             \\    |  |  |  l     !|  |  |  T
+              \\___j  l__j   \\___/ l__j  l__j
+                                           \s
+                        """;
         out.warn(ASCII_ART_LOGGER_MARKER, ANSI_CYAN);
         out.warn(ASCII_ART_LOGGER_MARKER, "\n\n".concat(ascii).concat(additional));
         out.warn(ASCII_ART_LOGGER_MARKER, ANSI_RESET);
@@ -69,17 +73,20 @@ public class AsciiArtUtils {
      * @param out        the out
      * @param additional the additional
      */
-    @SneakyThrows
     public static void printAsciiArtReady(final Logger out, final String additional) {
-        val ascii = '\n'
-            + "  ____  _____    _    ______   __\n"
-            + " |  _ \\| ____|  / \\  |  _ \\ \\ / /\n"
-            + " | |_) |  _|   / _ \\ | | | \\ V / \n"
-            + " |  _ <| |___ / ___ \\| |_| || |  \n"
-            + " |_| \\_\\_____/_/   \\_\\____/ |_|  \n"
-            + "                                 \n";
+        val ascii = """
+             
+             ____     ___   ____  ___    __ __\s
+            |    \\   /  _] /    T|   \\  |  T  T
+            |  D  ) /  [_ Y  o  ||    \\ |  |  |
+            |    / Y    _]|     ||  D  Y|  ~  |
+            |    \\ |   [_ |  _  ||     |l___, |
+            |  .  Y|     T|  |  ||     ||     !
+            l__j\\_jl_____jl__j__jl_____jl____/\s
+                                              \s
+                        """;
         out.info(ASCII_ART_LOGGER_MARKER, ANSI_CYAN);
-        out.info(ASCII_ART_LOGGER_MARKER, "\n\n".concat(ascii).concat(additional));
+        out.info(ASCII_ART_LOGGER_MARKER, "\n\n".concat(ascii).concat(additional).concat("\n"));
         out.info(ASCII_ART_LOGGER_MARKER, ANSI_RESET);
     }
 

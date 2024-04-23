@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,10 +23,11 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @JsonFilter("UmaPermissionTicketProperties")
 public class UmaPermissionTicketProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 6624128522839644377L;
 
     /**
-     * Hard timeout to kill the access token and expire it.
+     * Hard timeout to kill the UMA permission token and expire it.
      */
     @DurationCapable
     private String maxTimeToLiveInSeconds = "PT3M";

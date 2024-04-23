@@ -1,13 +1,12 @@
 package org.apereo.cas.authentication.principal;
 
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,18 +24,19 @@ import java.util.Set;
  * @since 4.1
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@FunctionalInterface
 public interface RegisteredServicePrincipalAttributesRepository extends Serializable {
+    /**
+     * Logger instance.
+     */
     Logger LOGGER = LoggerFactory.getLogger(RegisteredServicePrincipalAttributesRepository.class);
 
     /**
      * Gets attributes for the given principal id.
      *
-     * @param principal         the principal whose attributes need to be retrieved.
-     * @param registeredService the registered service
+     * @param context the context
      * @return the attributes
      */
-    Map<String, List<Object>> getAttributes(Principal principal, RegisteredService registeredService);
+    Map<String, List<Object>> getAttributes(RegisteredServiceAttributeReleasePolicyContext context);
 
     /**
      * Gets attribute repository ids that should be used to
@@ -45,19 +45,17 @@ public interface RegisteredServicePrincipalAttributesRepository extends Serializ
      *
      * @return the attribute repository ids
      */
-    default Set<String> getAttributeRepositoryIds() {
-        return new HashSet<>(0);
-    }
+    Set<String> getAttributeRepositoryIds();
 
     /**
      * Add principal attributes into the underlying cache instance.
      *
-     * @param id                identifier used by the cache as key.
-     * @param attributes        attributes to cache
-     * @param registeredService the registered service
+     * @param id         identifier used by the cache as key.
+     * @param attributes attributes to cache
+     * @param context    the context
      * @since 4.2
      */
-    default void update(final String id, final Map<String, List<Object>> attributes, final RegisteredService registeredService) {
-        LOGGER.debug("Using [{}], no caching/update takes place for [{}] to add attributes.", id, getClass().getSimpleName());
+    default void update(final String id, final Map<String, List<Object>> attributes, final RegisteredServiceAttributeReleasePolicyContext context) {
+        LOGGER.debug("Using [{}], no caching/update takes place for [{}] to add attributes [{}]", id, getClass().getSimpleName(), attributes);
     }
 }

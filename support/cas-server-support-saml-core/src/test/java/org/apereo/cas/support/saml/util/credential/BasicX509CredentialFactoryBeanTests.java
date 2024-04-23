@@ -18,18 +18,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("SAML")
-public class BasicX509CredentialFactoryBeanTests {
+class BasicX509CredentialFactoryBeanTests {
 
     @Test
-    public void verifyNoCert() {
+    void verifyNoCert() throws Throwable {
         val factory = new BasicX509CredentialFactoryBean();
-        assertEquals(BasicX509Credential.class, factory.getObjectType());
+        assertSame(BasicX509Credential.class, factory.getObjectType());
         assertTrue(factory.isSingleton());
         assertThrows(BeanCreationException.class, factory::getObject);
     }
 
     @Test
-    public void verifyCred() throws Exception {
+    void verifyCred() throws Throwable {
         val factory = new BasicX509CredentialFactoryBean();
         factory.setEntityID("example.entityid");
         factory.setKeyNames(List.of("cas"));
@@ -40,7 +40,7 @@ public class BasicX509CredentialFactoryBeanTests {
     }
 
     @Test
-    public void verifyBadEntityKeys() {
+    void verifyBadEntityKeys() throws Throwable {
         val factory = new BasicX509CredentialFactoryBean();
         factory.setEntityResource(new ClassPathResource("keys/xyz.pem"));
         factory.setCertificateResources(List.of(new ClassPathResource("keys/cert.pem")));
@@ -48,7 +48,7 @@ public class BasicX509CredentialFactoryBeanTests {
     }
 
     @Test
-    public void verifyBadPrivateKeys() {
+    void verifyBadPrivateKeys() throws Throwable {
         val factory = new BasicX509CredentialFactoryBean();
         factory.setPrivateKeyResource(new ClassPathResource("keys/xyz.pem"));
         factory.setCertificateResources(List.of(new ClassPathResource("keys/cert.pem")));
@@ -56,7 +56,7 @@ public class BasicX509CredentialFactoryBeanTests {
     }
 
     @Test
-    public void verifyCredEntityWithBadCrl() {
+    void verifyCredEntityWithBadCrl() throws Throwable {
         val factory = new BasicX509CredentialFactoryBean();
         factory.setEntityID("example.entityid");
         factory.setKeyNames(List.of("cas"));

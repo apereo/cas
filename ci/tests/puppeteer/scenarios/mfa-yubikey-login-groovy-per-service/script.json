@@ -1,0 +1,17 @@
+{
+  "dependencies": "yubikey",
+
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.mfa.yubikey.crypto.enabled=false",
+    "--cas.authn.mfa.yubikey.client-id=18421",
+    "--cas.authn.mfa.yubikey.secret-key=aBIehjui12aK8x82oe5qzGeb0As=",
+
+    "--cas.authn.attribute-repository.stub.attributes.memberOf=student,faculty,staff,yubi-admins",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ]
+}

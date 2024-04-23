@@ -1,0 +1,4 @@
+cas:
+  custom:
+    properties:
+      source: yaml

@@ -5,7 +5,7 @@ import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 
 import org.springframework.http.ResponseEntity;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
@@ -31,6 +31,11 @@ public interface OAuth20UserProfileViewRenderer {
      * Attribute in the model that represents collection of attributes.
      */
     String MODEL_ATTRIBUTE_ATTRIBUTES = "attributes";
+    
+    /**
+     * Default bean name.
+     */
+    String BEAN_NAME = "oauthUserProfileViewRenderer";
 
     /**
      * Render.

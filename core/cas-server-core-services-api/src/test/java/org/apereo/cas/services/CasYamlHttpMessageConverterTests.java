@@ -19,16 +19,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("RegisteredService")
-public class CasYamlHttpMessageConverterTests {
-    private static AbstractRegisteredService getService() {
-        val svc = new RegexRegisteredService();
+class CasYamlHttpMessageConverterTests {
+    private static BaseRegisteredService getService() {
+        val svc = new CasRegisteredService();
         svc.setServiceId("Testing");
         svc.setName("Test");
         return svc;
     }
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val input = new CasYamlHttpMessageConverter();
         val outputMessage = new MockHttpOutputMessage();
         input.write(getService(), MediaType.APPLICATION_JSON, outputMessage);

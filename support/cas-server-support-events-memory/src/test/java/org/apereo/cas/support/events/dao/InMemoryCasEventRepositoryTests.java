@@ -1,13 +1,15 @@
 package org.apereo.cas.support.events.dao;
 
+import org.apereo.cas.config.CasEventsInMemoryRepositoryAutoConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
-import org.apereo.cas.support.events.config.CasEventsInMemoryRepositoryConfiguration;
-
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.parallel.ResourceAccessMode;
+import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
@@ -19,12 +21,14 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  */
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    CasEventsInMemoryRepositoryConfiguration.class
+    WebMvcAutoConfiguration.class,
+    CasEventsInMemoryRepositoryAutoConfiguration.class
 })
 @Getter
-@Tag("Simple")
-public class InMemoryCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
+@Tag("Events")
+@ResourceLock(value = "eventRepository", mode = ResourceAccessMode.READ_WRITE)
+class InMemoryCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
     @Autowired
-    @Qualifier("casEventRepository")
+    @Qualifier(CasEventRepository.BEAN_NAME)
     private CasEventRepository eventRepository;
 }

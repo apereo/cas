@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable;
 @JsonFilter("SubjectDnPrincipalResolverProperties")
 public class SubjectDnPrincipalResolverProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1833042842488884318L;
 
     /**

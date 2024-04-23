@@ -1,6 +1,6 @@
 package org.apereo.cas.jmx.services;
 
-import org.apereo.cas.jmx.BaseCasJmsTests;
+import org.apereo.cas.jmx.BaseCasJmxTests;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -16,16 +16,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = BaseCasJmsTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = BaseCasJmxTests.SharedTestConfiguration.class)
 @Tag("JMX")
-public class ServicesManagerManagedResourceTests {
+class ServicesManagerManagedResourceTests {
 
     @Autowired
     @Qualifier("servicesManagerManagedResource")
     private ServicesManagerManagedResource servicesManagerManagedResource;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(this.servicesManagerManagedResource);
         assertNotNull(this.servicesManagerManagedResource.getServices());
     }

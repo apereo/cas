@@ -53,7 +53,7 @@ public class MongoDbCacheStatistics implements CacheStatistics {
             val json = JsonValue.readJSON(statistics.toJson());
             val writer = new StringWriter();
             json.writeTo(writer, Stringify.FORMATTED);
-            builder.append(writer.toString());
+            builder.append(writer);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }

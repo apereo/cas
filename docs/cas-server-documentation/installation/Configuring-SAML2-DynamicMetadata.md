@@ -20,58 +20,20 @@ Note that the endpoint can accept a `service` parameter either by entity id or n
 is matched against the CAS service registry allowing the endpoint to calculate and combine any identity provider
 metadata overrides that may have been specified.
 
-{% include casproperties.html properties="cas.authn.saml-idp.metadata.core" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.core" %}
 
 You may use [this service](https://www.samltool.com/idp_metadata.php) to experiment with the metadata generation process
 and produce an example metadata for review and study.
 
-## Administrative Endpoints
-
-The following endpoints are provided by CAS:
- 
-| Endpoint                                 | Description
-|------------------------------------------|--------------------------------------------------------------------------------------
-| `samlIdPRegisteredServiceMetadataCache`  | Manage and control the cache that holds metadata instances for SAML service providers. Note the cache is specific to the JVM memory of the CAS server node and it's **NOT** distributed or replicated. A `GET` operation produces the cached copy of the metadata for a given service provider, using the `serviceId` and `entityId` parameters. The `serviceId` parameter may be the numeric identifier for the registered service or its name. In case the service definition represents a metadata aggregate such as InCommon, the `entityId` parameter may be used to pinpoint and filter the exact entity within the aggregate. A `DELETE` operation will delete invalidate the metadata cache. If no parameters are provided, the metadata cache will be entirely invalidated. A `serviceId` parameter will force CAS to only invalidate the cached metadata instance for that service provider. The `serviceId` parameter may be the numeric identifier for the registered service or its name.
-
-## Metadata Aggregates
-
-CAS services are fundamentally recognized and loaded by service identifiers taught to CAS typically via
-regular expressions. This allows for common groupings of applications and services by
-url patterns (i.e. "Everything that belongs to `example.org` is registered with CAS).
-With aggregated metadata, CAS essentially does double
-authorization checks because it will first attempt to find the entity id
-in its collection of resolved metadata components and then it looks to
-see if that entity id is authorized via the pattern that is assigned to
-that service definition. This means you can do one of several things:
-
-1. Open up the pattern to allow everything that is authorized in the metadata.
-2. Restrict the pattern to only a select few entity ids found in the
-   metadata. This is essentially the same thing as defining metadata criteria
-   to filter down the list of resolved relying parties and entity ids except that its done
-   after the fact once the metadata is fully loaded and parsed.
-3. You can also instruct CAS to filter metadata
-   entities by a defined criteria at resolution time when it reads the
-   metadata itself. This is essentially the same thing as forcing the pattern
-   to match entity ids, except that it's done while CAS is reading the
-   metadata and thus load times are improved.
-
-## Metadata Resolution
-
-Service provider metadata is fetched and loaded on demand for every service and then cached in a global cache for a
-configurable duration. Subsequent requests for service metadata will always consult the cache first and if missed,
-will resort to actually resolving the metadata by loading or contacting the configured resource.
-Each service provider definition that is registered with CAS may optionally also specifically an expiration period of
-metadata resolution to override the default global value.
- 
 ## Metadata Management
 
-Service provider or identity provider metadata can also be managed using the following strategies.
+Identity provider metadata can also be managed using the following strategies.
 
 ### File System
 
 SAML2 identity provider metadata by default is generated on disk. 
 
-{% include casproperties.html properties="cas.authn.saml-idp.metadata.file-system" %}
+{% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.file-system" %}
 
 #### Per Service
 
@@ -86,20 +48,19 @@ expected to be found at `/etc/cas/config/saml/metadata/SampleService-1000`.
             
 Service provider or identity provider metadata can also be managed using any one of the following strategies. 
 
-| Storage          | Description                                         
-|--------------------------------------------------------------------------------------------------
-| Metadata Query Protocol           | [See this guide](Configuring-SAML2-DynamicMetadata-MDQ.html).  
-| HTTP/HTTPS                        | [See this guide](Configuring-SAML2-DynamicMetadata-HTTP.html).  
-| REST                              | [See this guide](Configuring-SAML2-DynamicMetadata-REST.html).  
-| Git                               | [See this guide](Configuring-SAML2-DynamicMetadata-Git.html).  
-| MongoDb                           | [See this guide](Configuring-SAML2-DynamicMetadata-MongoDb.html).  
-| Redis                             | [See this guide](Configuring-SAML2-DynamicMetadata-Redis.html).  
-| JPA                               | [See this guide](Configuring-SAML2-DynamicMetadata-JPA.html).  
-| CouchDb                           | [See this guide](Configuring-SAML2-DynamicMetadata-CouchDb.html).  
-| Groovy                            | [See this guide](Configuring-SAML2-DynamicMetadata-Groovy.html).  
-| Amazon S3                         | [See this guide](Configuring-SAML2-DynamicMetadata-AmazonS3.html).
+| Storage                 | Description                                                        |
+|-------------------------|--------------------------------------------------------------------|
+| Metadata Query Protocol | [See this guide](Configuring-SAML2-DynamicMetadata-MDQ.html).      |
+| HTTP/HTTPS              | [See this guide](Configuring-SAML2-DynamicMetadata-HTTP.html).     |
+| REST                    | [See this guide](Configuring-SAML2-DynamicMetadata-REST.html).     |
+| Git                     | [See this guide](Configuring-SAML2-DynamicMetadata-Git.html).      |
+| MongoDb                 | [See this guide](Configuring-SAML2-DynamicMetadata-MongoDb.html).  |
+| Redis                   | [See this guide](Configuring-SAML2-DynamicMetadata-Redis.html).    |
+| JPA                     | [See this guide](Configuring-SAML2-DynamicMetadata-JPA.html).      |
+| Groovy                  | [See this guide](Configuring-SAML2-DynamicMetadata-Groovy.html).   |
+| Amazon S3               | [See this guide](Configuring-SAML2-DynamicMetadata-AmazonS3.html). |
 
-### SAML Services
+## SAML Services
 
 Please [see this guide](../services/SAML2-Service-Management.html) to learn more
 about how to configure SAML2 service providers.

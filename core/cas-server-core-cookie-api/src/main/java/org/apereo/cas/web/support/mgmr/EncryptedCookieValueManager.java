@@ -1,15 +1,19 @@
 package org.apereo.cas.web.support.mgmr;
 
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.web.cookie.CookieSameSitePolicy;
 import org.apereo.cas.web.cookie.CookieValueManager;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -21,11 +25,16 @@ import java.io.Serializable;
 @Slf4j
 @RequiredArgsConstructor
 public class EncryptedCookieValueManager implements CookieValueManager {
+    @Serial
     private static final long serialVersionUID = 6362136147071376270L;
+
     /**
      * The cipher exec that is responsible for encryption and signing of the cookie.
      */
-    private final transient CipherExecutor<Serializable, Serializable> cipherExecutor;
+    private final CipherExecutor<Serializable, Serializable> cipherExecutor;
+
+    @Getter
+    private final CookieSameSitePolicy cookieSameSitePolicy;
 
     @Override
     public final String buildCookieValue(final String givenCookieValue, final HttpServletRequest request) {

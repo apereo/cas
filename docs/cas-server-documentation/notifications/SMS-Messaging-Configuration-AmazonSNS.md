@@ -10,6 +10,6 @@ category: Notifications
 
 To learn more, [visit this site](https://docs.aws.amazon.com/sns).
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-sms-aws-sns" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-sms-aws-sns" %}
 
-{% include casproperties.html properties="cas.sms-provider.sns" %}
+{% include_cached casproperties.html properties="cas.sms-provider.sns" %}

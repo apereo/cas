@@ -22,14 +22,14 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Webflow")
-public class RankedMultifactorAuthenticationProviderSelectorTests extends BaseCasWebflowMultifactorAuthenticationTests {
+class RankedMultifactorAuthenticationProviderSelectorTests extends BaseCasWebflowMultifactorAuthenticationTests {
 
     @Autowired
-    @Qualifier("multifactorAuthenticationProviderSelector")
+    @Qualifier(MultifactorAuthenticationProviderSelector.BEAN_NAME)
     private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
 
     @Test
-    public void verifySelectionOfMfaProvider() {
+    void verifySelectionOfMfaProvider() throws Throwable {
         val dummy1 = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
         dummy1.setOrder(10);
         dummy1.setFailureMode(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.PHANTOM);

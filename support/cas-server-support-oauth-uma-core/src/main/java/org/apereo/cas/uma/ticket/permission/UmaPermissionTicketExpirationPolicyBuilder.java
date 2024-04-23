@@ -7,10 +7,9 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.val;
+
+import java.io.Serial;
 
 /**
  * This is {@link UmaPermissionTicketExpirationPolicyBuilder}.
@@ -18,25 +17,14 @@ import lombok.val;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RequiredArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-@ToString
-@Getter
-public class UmaPermissionTicketExpirationPolicyBuilder implements ExpirationPolicyBuilder<UmaPermissionTicket> {
+public record UmaPermissionTicketExpirationPolicyBuilder(CasConfigurationProperties casProperties) implements ExpirationPolicyBuilder<UmaPermissionTicket> {
+    @Serial
     private static final long serialVersionUID = -3897980180617072826L;
-    /**
-     * The Cas properties.
-     */
-    protected final CasConfigurationProperties casProperties;
 
     @Override
     public ExpirationPolicy buildTicketExpirationPolicy() {
         return toTicketExpirationPolicy();
-    }
-
-    @Override
-    public Class<UmaPermissionTicket> getTicketType() {
-        return UmaPermissionTicket.class;
     }
 
     /**

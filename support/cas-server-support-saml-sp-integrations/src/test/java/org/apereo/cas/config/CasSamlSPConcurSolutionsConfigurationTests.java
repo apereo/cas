@@ -9,11 +9,11 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
+@Tag("SAMLServiceProvider")
 @TestPropertySource(properties = {
     "cas.saml-sp.concur-solutions.metadata=classpath:/metadata/sp-metadata.xml",
     "cas.saml-sp.concur-solutions.name-id-attribute=cn",
     "cas.saml-sp.concur-solutions.name-id-format=transient"
 })
-public class CasSamlSPConcurSolutionsConfigurationTests extends BaseCasSamlSPConfigurationTests {
+class CasSamlSPConcurSolutionsConfigurationTests extends BaseCasSamlSPConfigurationTests {
 }

@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.proxy;
 
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.Ticket;
 
 /**
  * Abstraction for what needs to be done to handle proxies. Useful because the
@@ -20,10 +20,11 @@ public interface ProxyHandler {
      * Method to actually process the proxy request.
      *
      * @param credential            The credential of the item that will be proxying.
-     * @param proxyGrantingTicketId The ticketId for the PGT (which really is a TGT)
+     * @param proxyGrantingTicket The ticketId for the PGT (which really is a TGT)
      * @return the String value that needs to be passed to the CAS client.
+     * @throws Throwable the throwable
      */
-    String handle(Credential credential, TicketGrantingTicket proxyGrantingTicketId);
+    String handle(Credential credential, Ticket proxyGrantingTicket) throws Throwable;
 
     /**
      * Whether this handler can support the proxy request identified by the given credentials.

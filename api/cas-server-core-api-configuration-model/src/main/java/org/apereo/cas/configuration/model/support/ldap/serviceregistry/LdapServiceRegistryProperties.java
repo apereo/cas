@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link LdapServiceRegistryProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @JsonFilter("LdapServiceRegistryProperties")
 public class LdapServiceRegistryProperties extends AbstractLdapSearchProperties {
 
+    @Serial
     private static final long serialVersionUID = 2372867394066286022L;
 
     /**

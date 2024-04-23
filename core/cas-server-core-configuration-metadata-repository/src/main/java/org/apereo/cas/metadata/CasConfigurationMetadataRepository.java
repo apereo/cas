@@ -1,9 +1,9 @@
 package org.apereo.cas.metadata;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
@@ -42,29 +42,26 @@ public class CasConfigurationMetadataRepository {
      *
      * @param resource the resource
      */
-    @SneakyThrows
     public CasConfigurationMetadataRepository(final String resource) {
-        val resources = new PathMatchingResourcePatternResolver().getResources(resource);
         val builder = CasConfigurationMetadataRepositoryJsonBuilder.create();
-        Arrays.stream(resources).forEach(Unchecked.consumer(r -> {
-            try (val in = r.getInputStream()) {
-                builder.withJsonResource(in);
-            }
-        }));
+        FunctionUtils.doUnchecked(__ -> {
+            val resources = new PathMatchingResourcePatternResolver().getResources(resource);
+            Arrays.stream(resources).forEach(Unchecked.consumer(r -> {
+                try (val in = r.getInputStream()) {
+                    builder.withJsonResource(in);
+                }
+            }));
+        });
         repository = builder.build();
     }
 
-    /**
-     * Instantiates a new Cas configuration metadata repository.
-     *
-     * @param resource the resource
-     */
-    @SneakyThrows
     public CasConfigurationMetadataRepository(final Resource resource) {
         val builder = CasConfigurationMetadataRepositoryJsonBuilder.create();
-        try (val in = resource.getInputStream()) {
-            builder.withJsonResource(in);
-        }
+        FunctionUtils.doUnchecked(__ -> {
+            try (val in = resource.getInputStream()) {
+                builder.withJsonResource(in);
+            }
+        });
         repository = builder.build();
     }
 

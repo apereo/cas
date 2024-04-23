@@ -10,6 +10,7 @@ import lombok.experimental.Accessors;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -25,6 +26,7 @@ import java.io.Serializable;
 @JsonFilter("CasEmbeddedApacheTomcatRewriteValveProperties")
 public class CasEmbeddedApacheTomcatRewriteValveProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 9030094143985594411L;
 
     /**

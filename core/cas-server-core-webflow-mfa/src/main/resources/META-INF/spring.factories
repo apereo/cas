@@ -1,2 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.web.flow.config.CasMultifactorAuthenticationWebflowConfiguration
-

@@ -1,16 +1,16 @@
 package org.apereo.cas.uma.web.authn;
 
-import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.core.context.WebContext;
-import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
@@ -18,6 +18,7 @@ import org.pac4j.core.exception.CredentialsException;
 import org.pac4j.core.profile.CommonProfile;
 
 import java.util.LinkedHashMap;
+import java.util.Optional;
 
 /**
  * This is {@link BaseUmaTokenAuthenticator}.
@@ -28,15 +29,15 @@ import java.util.LinkedHashMap;
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Slf4j
 public abstract class BaseUmaTokenAuthenticator implements Authenticator {
-    private final CentralAuthenticationService centralAuthenticationService;
+    private final TicketRegistry ticketRegistry;
 
     private final JwtBuilder accessTokenJwtBuilder;
 
     @Override
-    public void validate(final Credentials creds, final WebContext webContext, final SessionStore sessionStore) {
+    public Optional<Credentials> validate(final CallContext callContext, final Credentials creds) {
         val credentials = (TokenCredentials) creds;
         val token = extractAccessTokenFrom(credentials.getToken().trim());
-        val at = this.centralAuthenticationService.getTicket(token, OAuth20AccessToken.class);
+        val at = ticketRegistry.getTicket(token, OAuth20AccessToken.class);
         if (!at.getScopes().contains(getRequiredScope())) {
             val err = String.format("Missing scope [%s]. Unable to authenticate access token %s", getRequiredScope(), token);
             throw new CredentialsException(err);
@@ -49,30 +50,18 @@ public abstract class BaseUmaTokenAuthenticator implements Authenticator {
         attributes.putAll(principal.getAttributes());
 
         profile.addAttributes(attributes);
-        profile.addPermissions(at.getScopes());
+        profile.addRoles(at.getScopes());
         profile.addAttribute(OAuth20AccessToken.class.getName(), at);
+        profile.addAttribute(OAuth20Constants.CLIENT_ID, at.getClientId());
 
         LOGGER.debug("Authenticated access token [{}]", profile);
         credentials.setUserProfile(profile);
+        return Optional.of(credentials);
     }
 
-    /**
-     * Extract access token from token.
-     *
-     * @param token the token
-     * @return the string
-     */
     protected String extractAccessTokenFrom(final String token) {
-        return OAuth20JwtAccessTokenEncoder.builder()
-            .accessTokenJwtBuilder(accessTokenJwtBuilder)
-            .build()
-            .decode(token);
+        return OAuth20JwtAccessTokenEncoder.toDecodableCipher(accessTokenJwtBuilder).decode(token);
     }
 
-    /**
-     * Gets required scope.
-     *
-     * @return the required scope
-     */
     protected abstract String getRequiredScope();
 }

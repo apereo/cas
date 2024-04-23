@@ -1,6 +1,10 @@
 {
   "dependencies": "gua",
+
   "properties": [
-    "--cas.authn.gua.simple.casuser=file:${PWD}/ci/tests/puppeteer/scenarios/gua-login/image.png"
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.gua.simple.casuser=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/image.png"
   ]
 }

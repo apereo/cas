@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("CAS")
-public class ChainingCasProtocolValidationSpecificationTests {
+class ChainingCasProtocolValidationSpecificationTests {
 
     private static Assertion getAssertion() {
         val assertion = mock(Assertion.class);
@@ -36,21 +36,21 @@ public class ChainingCasProtocolValidationSpecificationTests {
     }
 
     @Test
-    public void verifyOperationByAny() {
+    void verifyOperationByAny() throws Throwable {
         val servicesManager = mock(ServicesManager.class);
         val chain = new ChainingCasProtocolValidationSpecification(true);
-        chain.addSpecifications(new Cas20ProtocolValidationSpecification(servicesManager),
-            new Cas10ProtocolValidationSpecification(servicesManager));
+        chain.addSpecifications(new DefaultCasProtocolValidationSpecification(servicesManager, input -> true),
+            new DefaultCasProtocolValidationSpecification(servicesManager, input -> input.getChainedAuthentications().size() == 1));
         assertEquals(2, chain.size());
         chain.reset();
         assertTrue(chain.isSatisfiedBy(getAssertion(), new MockHttpServletRequest()));
     }
 
     @Test
-    public void verifyOperationByAll() {
+    void verifyOperationByAll() throws Throwable {
         val servicesManager = mock(ServicesManager.class);
         val chain = new ChainingCasProtocolValidationSpecification(false);
-        chain.addSpecifications(new Cas20ProtocolValidationSpecification(servicesManager));
+        chain.addSpecifications(new DefaultCasProtocolValidationSpecification(servicesManager, input -> true));
         chain.reset();
         assertTrue(chain.isSatisfiedBy(getAssertion(), new MockHttpServletRequest()));
     }

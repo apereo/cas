@@ -1,6 +1,0 @@
-description = "Apereo CAS Spring Boot Admin Client"
-dependencies {
-    implementation libraries.springbootadminclient
-    implementation project(":core:cas-server-core-webflow")
-    implementation project(":core:cas-server-core-web-api")
-}

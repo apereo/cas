@@ -2,8 +2,7 @@ package org.apereo.cas.oidc.claims;
 
 import org.apereo.cas.oidc.OidcConstants;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
+import java.io.Serial;
 import java.util.List;
 
 /**
@@ -18,16 +17,11 @@ public class OidcAddressScopeAttributeReleasePolicy extends BaseOidcScopeAttribu
      */
     public static final List<String> ALLOWED_CLAIMS = List.of("address");
 
+    @Serial
     private static final long serialVersionUID = 1532960981124784595L;
 
     public OidcAddressScopeAttributeReleasePolicy() {
         super(OidcConstants.StandardScopes.ADDRESS.getScope());
         setAllowedAttributes(ALLOWED_CLAIMS);
-    }
-
-    @JsonIgnore
-    @Override
-    public List<String> getAllowedAttributes() {
-        return super.getAllowedAttributes();
     }
 }

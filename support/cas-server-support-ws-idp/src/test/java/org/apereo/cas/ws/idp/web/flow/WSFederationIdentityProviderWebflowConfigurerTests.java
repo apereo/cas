@@ -1,20 +1,20 @@
 package org.apereo.cas.ws.idp.web.flow;
 
-import org.apereo.cas.config.CasWsSecurityTokenTicketCatalogConfiguration;
-import org.apereo.cas.config.CasWsSecurityTokenTicketComponentSerializationConfiguration;
-import org.apereo.cas.config.CoreWsSecurityIdentityProviderConfiguration;
-import org.apereo.cas.config.CoreWsSecurityIdentityProviderWebflowConfiguration;
-import org.apereo.cas.config.CoreWsSecuritySecurityTokenServiceConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
+import org.apereo.cas.config.CasWsSecurityIdentityProviderAutoConfiguration;
+import org.apereo.cas.config.CasWsSecuritySecurityTokenAutoConfiguration;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -24,12 +24,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Import({
-    CasWsSecurityTokenTicketCatalogConfiguration.class,
-    CasWsSecurityTokenTicketComponentSerializationConfiguration.class,
-    CoreWsSecuritySecurityTokenServiceConfiguration.class,
-    CoreWsSecurityIdentityProviderConfiguration.class,
-    CoreWsSecurityIdentityProviderWebflowConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+    CasCoreAutoConfiguration.class,
+    CasCoreSamlAutoConfiguration.class,
+    CasWsSecuritySecurityTokenAutoConfiguration.class,
+    CasWsSecurityIdentityProviderAutoConfiguration.class
 })
 @TestPropertySource(properties = {
     "cas.authn.wsfed-idp.idp.realm=urn:org:apereo:cas:ws:idp:realm-CAS",
@@ -51,11 +49,16 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.wsfed-idp.sts.realm.issuer=CAS"
 })
 @Tag("WebflowConfig")
-public class WSFederationIdentityProviderWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class WSFederationIdentityProviderWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+    @Autowired
+    @Qualifier("wsFederationProtocolEndpointConfigurer")
+    private CasWebSecurityConfigurer wsFederationProtocolEndpointConfigurer;
+    
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val flow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);
         assertNotNull(flow);
+        assertFalse(wsFederationProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
 }

@@ -1,0 +1,7 @@
+{
+  "dependencies": "rest",
+  "properties": [
+
+    "--cas.service-registry.core.init-from-json=true"
+  ]
+}

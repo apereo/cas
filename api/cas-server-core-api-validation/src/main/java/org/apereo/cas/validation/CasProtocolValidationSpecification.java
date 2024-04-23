@@ -2,7 +2,7 @@ package org.apereo.cas.validation;
 
 import org.springframework.core.Ordered;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * An interface to impose restrictions and requirements on validations (e.g.
@@ -32,5 +32,13 @@ public interface CasProtocolValidationSpecification extends Ordered {
     @Override
     default int getOrder() {
         return 0;
+    }
+
+    /**
+     * Sets renew.
+     *
+     * @param value the value
+     */
+    default void setRenew(final boolean value) {
     }
 }

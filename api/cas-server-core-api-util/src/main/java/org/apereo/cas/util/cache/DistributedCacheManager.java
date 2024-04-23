@@ -1,5 +1,6 @@
 package org.apereo.cas.util.cache;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
 
 import java.io.Closeable;
@@ -64,13 +65,20 @@ public interface DistributedCacheManager<K extends Serializable, V extends Seria
     }
 
     /**
+     * Clear.
+     */
+    default void clear() {
+    }
+
+    /**
      * Set item in the cache.
      *
-     * @param key        the key
-     * @param item       the item to store in the cache
-     * @param publish    the publish
+     * @param key     the key
+     * @param item    the item to store in the cache
+     * @param publish the publish
      * @return the distributed cache manager
      */
+    @CanIgnoreReturnValue
     default DistributedCacheManager<K, V, I> set(final K key, final V item,
                                                  final boolean publish) {
         return this;
@@ -79,11 +87,12 @@ public interface DistributedCacheManager<K extends Serializable, V extends Seria
     /**
      * update key/item from the cache and overwrite.
      *
-     * @param key        the key
-     * @param item       the item
-     * @param publish    the publish
+     * @param key     the key
+     * @param item    the item
+     * @param publish the publish
      * @return the distributed cache manager
      */
+    @CanIgnoreReturnValue
     default DistributedCacheManager<K, V, I> update(final K key, final V item,
                                                     final boolean publish) {
         return this;
@@ -92,11 +101,12 @@ public interface DistributedCacheManager<K extends Serializable, V extends Seria
     /**
      * Remove key/item from the cache.
      *
-     * @param key        the key
-     * @param item       the item
-     * @param publish    the publish
+     * @param key     the key
+     * @param item    the item
+     * @param publish the publish
      * @return the distributed cache manager
      */
+    @CanIgnoreReturnValue
     default DistributedCacheManager<K, V, I> remove(final K key, final V item, final boolean publish) {
         return this;
     }

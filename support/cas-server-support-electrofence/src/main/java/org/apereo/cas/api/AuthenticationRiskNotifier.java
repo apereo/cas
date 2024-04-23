@@ -2,6 +2,7 @@ package org.apereo.cas.api;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.inspektr.common.web.ClientInfo;
 
 /**
  * This is {@link AuthenticationRiskNotifier}.
@@ -33,7 +34,24 @@ public interface AuthenticationRiskNotifier extends Runnable {
     void setAuthenticationRiskScore(AuthenticationRiskScore score);
 
     /**
-     * Notify in the event that an authentication attempt is considered risky.
+     * Sets client info.
+     *
+     * @param request the request
      */
-    void publish();
+    void setClientInfo(ClientInfo request);
+
+    /**
+     * Notify in the event that an authentication attempt is considered risky.
+     *
+     * @throws Throwable the throwable
+     */
+    void publish() throws Throwable;
+
+    /**
+     * Build risk token.
+     *
+     * @return the string
+     * @throws Throwable the throwable
+     */
+    String createRiskToken() throws Throwable;
 }

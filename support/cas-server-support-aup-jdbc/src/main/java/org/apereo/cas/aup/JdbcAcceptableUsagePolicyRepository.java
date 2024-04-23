@@ -1,20 +1,22 @@
 package org.apereo.cas.aup;
 
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
+import org.apereo.cas.configuration.model.support.aup.JdbcAcceptableUsagePolicyProperties;
+import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.webflow.execution.RequestContext;
-
 import javax.sql.DataSource;
+import java.io.Serial;
 
 /**
  * This is {@link JdbcAcceptableUsagePolicyRepository}.
@@ -28,41 +30,65 @@ import javax.sql.DataSource;
  */
 @Slf4j
 public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePolicyRepository {
+    @Serial
     private static final long serialVersionUID = 1600024683199961892L;
 
-    private final transient JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
-    /**
-     * Instantiates a new Jdbc acceptable usage policy repository.
-     *
-     * @param ticketRegistrySupport the ticket registry support
-     * @param aupProperties         the aup properties
-     * @param dataSource            the data source
-     */
+    private final TransactionOperations transactionTemplate;
+
     public JdbcAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
                                                final AcceptableUsagePolicyProperties aupProperties,
-                                               final DataSource dataSource) {
+                                               final DataSource dataSource,
+                                               final TransactionOperations transactionTemplate) {
         super(ticketRegistrySupport, aupProperties);
         this.jdbcTemplate = new JdbcTemplate(dataSource);
+        this.transactionTemplate = transactionTemplate;
     }
 
     @Override
-    public boolean submit(final RequestContext requestContext, final Credential credential) {
+    public AcceptableUsagePolicyStatus verify(final RequestContext requestContext) throws Throwable {
+        var status = super.verify(requestContext);
+        if (status.isDenied()) {
+            val jdbc = aupProperties.getJdbc();
+            val aupColumnName = getAcceptableUsagePolicyColumnName(jdbc);
+            val sql = String.format(jdbc.getSqlSelect(), aupColumnName, jdbc.getTableName(), jdbc.getPrincipalIdColumn());
+            val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
+            val principalId = determinePrincipalId(principal);
+            LOGGER.debug("Executing search query [{}] for principal [{}]", sql, principalId);
+            return transactionTemplate.execute(action -> {
+                val acceptedFlag = jdbcTemplate.queryForObject(sql, String.class, principalId);
+                return new AcceptableUsagePolicyStatus(
+                    TriStateBoolean.fromBoolean(BooleanUtils.toBoolean(acceptedFlag)), status.getPrincipal());
+            });
+        }
+        return status;
+    }
+
+    @Override
+    public boolean submit(final RequestContext requestContext) {
         try {
             val jdbc = aupProperties.getJdbc();
-            var aupColumnName = aupProperties.getCore().getAupAttributeName();
-            if (StringUtils.isNotBlank(jdbc.getAupColumn())) {
-                aupColumnName = jdbc.getAupColumn();
-            }
+            val aupColumnName = getAcceptableUsagePolicyColumnName(jdbc);
             val sql = String.format(jdbc.getSqlUpdate(), jdbc.getTableName(), aupColumnName, jdbc.getPrincipalIdColumn());
             val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
             val principalId = determinePrincipalId(principal);
             LOGGER.debug("Executing update query [{}] for principal [{}]", sql, principalId);
-            return this.jdbcTemplate.update(sql, principalId) > 0;
+            return transactionTemplate.execute(action -> jdbcTemplate.update(sql, principalId) > 0);
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return false;
+    }
+
+    /**
+     * Gets acceptable usage policy column name.
+     *
+     * @param jdbc the jdbc
+     * @return the acceptable usage policy column name
+     */
+    protected String getAcceptableUsagePolicyColumnName(final JdbcAcceptableUsagePolicyProperties jdbc) {
+        return StringUtils.defaultIfBlank(jdbc.getAupColumn(), aupProperties.getCore().getAupAttributeName()).trim();
     }
 
     /**
@@ -87,11 +113,11 @@ public class JdbcAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
         }
         if (pIdAttributeValues.size() > 1) {
             LOGGER.warn("Principal attribute [{}] was found, but its value [{}] is multi-valued. "
-                + "Proceeding with the first element [{}]", pIdAttribName, pIdAttributeValue, principalId);
+                        + "Proceeding with the first element [{}]", pIdAttribName, pIdAttributeValue, principalId);
         }
         if (principalId.isEmpty()) {
             throw new IllegalStateException("Principal attribute [" + pIdAttribName + "] was found, but it is either empty"
-                + " or multi-valued with an empty element");
+                                            + " or multi-valued with an empty element");
         }
         return principalId;
     }

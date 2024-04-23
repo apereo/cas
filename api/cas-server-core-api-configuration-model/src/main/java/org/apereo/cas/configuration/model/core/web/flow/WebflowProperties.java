@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -24,6 +25,7 @@ import java.io.Serializable;
 @JsonFilter("WebflowProperties")
 public class WebflowProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 4949978905279568311L;
 
     /**
@@ -38,7 +40,7 @@ public class WebflowProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private WebflowAutoConfigurationProperties autoConfiguration = new WebflowAutoConfigurationProperties();
-    
+
     /**
      * Webflow session management settings.
      */

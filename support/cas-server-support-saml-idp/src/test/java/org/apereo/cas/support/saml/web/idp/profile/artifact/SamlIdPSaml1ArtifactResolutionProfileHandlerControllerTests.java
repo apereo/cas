@@ -8,7 +8,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 
 import lombok.val;
-import org.apache.http.HttpStatus;
+import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -22,6 +22,7 @@ import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.soap.common.SOAPObjectBuilder;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
+import org.opensaml.soap.soap11.FaultString;
 import org.opensaml.soap.soap11.Header;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,9 +40,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("SAML")
+@Tag("SAML2Web")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
+class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("saml1ArtifactResolutionController")
     private SamlIdPSaml1ArtifactResolutionProfileHandlerController controller;
@@ -62,7 +63,7 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends
 
     @Test
     @Order(1)
-    public void verifyOK() {
+    void verifyOK() throws Throwable {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
@@ -87,9 +88,10 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, envelope).toString();
         request.setContent(xml.getBytes(StandardCharsets.UTF_8));
 
-        val ticket = samlArtifactTicketFactory.create("https://cassp.example.org", CoreAuthenticationTestUtils.getAuthentication(),
-            new MockTicketGrantingTicket("casuser"), "https://cas.example.org", "https://cassp.example.org",
-            artifactResolve);
+        val ticket = samlArtifactTicketFactory.create("https://cassp.example.org",
+            CoreAuthenticationTestUtils.getAuthentication(),
+            new MockTicketGrantingTicket("casuser"), "https://cas.example.org",
+            "https://cassp.example.org", artifactResolve);
         ticketRegistry.addTicket(ticket);
         controller.handlePostRequest(response, request);
         assertEquals(HttpStatus.SC_OK, response.getStatus());
@@ -97,7 +99,7 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends
 
     @Test
     @Order(2)
-    public void verifyFault() {
+    void verifyFault() throws Throwable {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.setMethod("POST");
@@ -122,7 +124,8 @@ public class SamlIdPSaml1ArtifactResolutionProfileHandlerControllerTests extends
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, envelope).toString();
         request.setContent(xml.getBytes(StandardCharsets.UTF_8));
         controller.handlePostRequest(response, request);
-        assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, response.getStatus());
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
+        assertNotNull(request.getAttribute(FaultString.class.getSimpleName()));
     }
 
     private ArtifactResolve getArtifactResolve() {

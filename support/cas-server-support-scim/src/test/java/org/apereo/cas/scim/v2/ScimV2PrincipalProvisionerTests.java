@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,12 +22,14 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Tag("Attributes")
-public class ScimV2PrincipalProvisionerTests {
+@Tag("SCIM")
+class ScimV2PrincipalProvisionerTests {
     @Test
-    public void verifyScimServicePerApp() {
+    void verifyScimServicePerApp() throws Throwable {
         val provisioner = new ScimV2PrincipalProvisioner(new ScimProperties(),
-            new ScimV2PrincipalAttributeMapper());
+            new DefaultScimV2PrincipalAttributeMapper());
+        assertFalse(provisioner.provision(CoreAuthenticationTestUtils.getPrincipal(),
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
 
         val props = new LinkedHashMap<String, RegisteredServiceProperty>();
         props.put(RegisteredServiceProperty.RegisteredServiceProperties.SCIM_OAUTH_TOKEN.getPropertyName(),
@@ -40,6 +43,6 @@ public class ScimV2PrincipalProvisionerTests {
 
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getProperties()).thenReturn(props);
-        assertNotNull(provisioner.getScimService(registeredService));
+        assertNotNull(provisioner.getScimService(Optional.of(registeredService)));
     }
 }

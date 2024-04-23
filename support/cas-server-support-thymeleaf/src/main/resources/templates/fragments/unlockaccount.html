@@ -1,0 +1,91 @@
+<div th:fragment="unlock">
+    <style>
+        .captcha-area .captcha-img {
+            display: flex;
+            margin-right: 5px;
+            height: 65px;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            width: 345px;
+            user-select: none;
+            background: #000;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .captcha-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 5px;
+            opacity: 0.95;
+        }
+
+        .captcha-img .captcha {
+            position: absolute;
+            left: -10%;
+            top: 1%;
+            width: 100%;
+            color: black;
+            font-family: cursive !important;
+            font-style: italic !important;
+            font-size: 55px !important;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 10px;
+            transform-origin: top left;
+            transform: skew(30deg, 10deg);
+            text-shadow: 0px 0px 2px #b1b1b1;
+        }
+    </style>
+
+    <div class="banner banner-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+        <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
+           th:utext="${message.text}">Message Text</p>
+    </div>
+    <p/>
+
+    <div class="d-flex justify-content-center flex-md-row flex-column mdc-card-content flex-grow-1">
+        <section>
+            <div class="captcha-area">
+                <div class="captcha-img">
+                    <img id="captchaImage" th:src="@{/images/captcha.png}">
+                    <span id="captcha" class="captcha" />
+                </div>
+            </div>
+        </section>
+        <section>
+            <div>
+                <form id="fm1" method="post" th:action="@{/login}">
+                    <label class="mdc-text-field mdc-text-field--outlined">
+                        <input class="mdc-text-field__input"
+                               id="captchaValue"
+                               name="captchaValue"
+                               size="50"
+                               type="text"
+                               autocomplete="false"
+                               autocapitalize="none"
+                               spellcheck="false" required/>
+                        <span class="mdc-notched-outline">
+                            <span class="mdc-notched-outline__leading"></span>
+                            <span class="mdc-notched-outline__notch">
+                              <span class="mdc-floating-label" th:utext="#{screen.account.unlock.label}"></span>
+                            </span>
+                            <span class="mdc-notched-outline__trailing"></span>
+                        </span>
+                    </label>
+                    <p/>
+                    <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                    <input type="hidden" name="_eventId" value="submit"/>
+                    <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.pm.button.submit')}"/>
+                </form>
+            </div>
+        </section>
+
+        <script th:inline="javascript">
+            $("body").on("contextmenu", e => false);
+            $('.captcha').text(/*[[${captchaValue}]]*/);
+        </script>
+    </div>
+</div>

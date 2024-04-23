@@ -29,21 +29,21 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class
 })
 @Tag("MFA")
-public class DefaultChainingMultifactorAuthenticationProviderTests {
+class DefaultChainingMultifactorAuthenticationProviderTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val props = new MultifactorAuthenticationProviderBypassProperties();
         props.setHttpRequestHeaders("headerbypass");
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        provider.setBypassEvaluator(new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId()));
+        provider.setBypassEvaluator(new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(props, provider.getId(), applicationContext));
         val casProperties = new CasConfigurationProperties();
         casProperties.getAuthn().getMfa().getCore().setGlobalFailureMode(BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes.OPEN);
         val failureEvaluator = new DefaultMultifactorAuthenticationFailureModeEvaluator(casProperties);
-        val p = new DefaultChainingMultifactorAuthenticationProvider(failureEvaluator);
+        val p = new DefaultChainingMultifactorAuthenticationProvider(applicationContext, failureEvaluator);
         p.addMultifactorAuthenticationProviders(provider);
         assertNotNull(p.getBypassEvaluator());
         assertNotNull(p.getId());

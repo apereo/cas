@@ -1,4 +1,11 @@
 description = "Apereo CAS Token Authentication Webflow Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Authentication",
+            title: "JWT & Token Authentication"
+    ]
+}
 dependencies {
     api project(":api:cas-server-core-api-webflow")
 
@@ -15,6 +22,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-authentication-mfa")
 
+    implementation project(":support:cas-server-support-token-core")
     implementation project(":support:cas-server-support-token-core-api")
     implementation project(":support:cas-server-support-token-authentication")
 
@@ -36,6 +44,10 @@ dependencies {
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":core:cas-server-core-logging")
+
+    testImplementation project(":support:cas-server-support-reports")
+    testImplementation project(":support:cas-server-support-person-directory")
 
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
@@ -43,4 +55,7 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-audit", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-audit-api", configuration: "tests")
 }

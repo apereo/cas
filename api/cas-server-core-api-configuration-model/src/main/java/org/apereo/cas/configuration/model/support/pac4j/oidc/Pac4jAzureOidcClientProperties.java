@@ -1,11 +1,14 @@
 package org.apereo.cas.configuration.model.support.pac4j.oidc;
 
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+
+import java.io.Serial;
 
 /**
  * This is {@link Pac4jAzureOidcClientProperties}.
@@ -19,6 +22,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("Pac4jAzureOidcClientProperties")
 public class Pac4jAzureOidcClientProperties extends BasePac4jOidcClientProperties {
+    @Serial
     private static final long serialVersionUID = 1259382317533639638L;
 
     /**
@@ -37,5 +41,6 @@ public class Pac4jAzureOidcClientProperties extends BasePac4jOidcClientPropertie
      * specified tenant can login</li>
      * </ul>
      */
+    @ExpressionLanguageCapable
     private String tenant;
 }

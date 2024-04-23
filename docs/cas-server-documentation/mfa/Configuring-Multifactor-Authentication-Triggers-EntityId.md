@@ -9,7 +9,7 @@ category: Multifactor Authentication
 # Entity Id Request Parameter - Multifactor Authentication Triggers
 
 In situations where authentication is delegated to CAS, most commonly 
-via a [Shibboleth Identity Provider](https://www.shibboleth.net/products/),  the entity id may be passed as 
+via a Shibboleth Identity Provider, the entity id may be passed as 
 a request parameter to CAS to be treated as a CAS registered service.
 This allows one to activate multifactor authentication policies based on the entity id that is registered
 This allows one to [activate multifactor authentication policies](#Per Application) based on the entity id that is registered
@@ -21,7 +21,7 @@ from a Shibboleth identity provider, please [see this guide](../integration/Shib
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-shibboleth" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-shibboleth" %}
 
 The `entityId` parameter may be passed as such:
 

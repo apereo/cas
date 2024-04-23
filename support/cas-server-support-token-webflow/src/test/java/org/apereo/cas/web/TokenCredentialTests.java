@@ -1,6 +1,6 @@
 package org.apereo.cas.web;
 
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
+import org.apereo.cas.authentication.metadata.BasicCredentialMetadata;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.token.authentication.TokenCredential;
 
@@ -17,11 +17,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Authentication")
-public class TokenCredentialTests {
+class TokenCredentialTests {
     @Test
-    public void verifyTokenFromParameter() {
+    void verifyTokenFromParameter() throws Throwable {
         val credential = new TokenCredential("tokenid", RegisteredServiceTestUtils.getService());
-        val metadata = new BasicCredentialMetaData(credential);
+        val metadata = new BasicCredentialMetadata(credential);
         assertNotNull(metadata.getCredentialClass());
     }
 }

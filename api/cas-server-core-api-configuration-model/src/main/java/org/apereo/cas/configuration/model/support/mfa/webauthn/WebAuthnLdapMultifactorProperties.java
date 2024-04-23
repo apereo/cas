@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link WebAuthnLdapMultifactorProperties}.
  *
@@ -21,6 +23,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonFilter("WebAuthnLdapMultifactorProperties")
 public class WebAuthnLdapMultifactorProperties extends AbstractLdapSearchProperties {
+    @Serial
     private static final long serialVersionUID = -1161683393319585262L;
 
     /**

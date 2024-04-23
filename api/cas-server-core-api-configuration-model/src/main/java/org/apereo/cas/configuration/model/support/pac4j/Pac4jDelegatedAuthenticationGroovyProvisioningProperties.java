@@ -8,17 +8,20 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link Pac4jDelegatedAuthenticationGroovyProvisioningProperties}.
  *
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@RequiresModule(name = "cas-server-support-pac4j")
+@RequiresModule(name = "cas-server-support-pac4j-webflow")
 @Getter
 @Setter
 @Accessors(chain = true)
 @JsonFilter("Pac4jDelegatedAuthenticationGroovyProvisioningProperties")
 public class Pac4jDelegatedAuthenticationGroovyProvisioningProperties extends SpringResourceProperties {
+    @Serial
     private static final long serialVersionUID = 7179027843747126083L;
 }

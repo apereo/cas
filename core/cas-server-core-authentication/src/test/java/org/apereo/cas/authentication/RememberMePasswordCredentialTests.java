@@ -15,17 +15,17 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.2.1
  */
 @Tag("Authentication")
-public class RememberMePasswordCredentialTests {
+class RememberMePasswordCredentialTests {
 
     @Test
-    public void verifyGettersAndSetters() {
+    void verifyGettersAndSetters() throws Throwable {
         val c = new RememberMeUsernamePasswordCredential();
-        c.setPassword("password");
+        c.assignPassword("password");
         c.setUsername("username");
         c.setRememberMe(true);
 
         assertEquals("username", c.getUsername());
-        assertEquals("password", c.getPassword());
+        assertEquals("password", c.toPassword());
         assertTrue(c.isRememberMe());
     }
 }

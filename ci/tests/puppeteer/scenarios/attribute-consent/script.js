@@ -1,91 +1,83 @@
-const puppeteer = require('puppeteer');
-const assert = require('assert');
+
+const assert = require("assert");
+const cas = require("../../cas.js");
+const fs = require("fs");
+const path = require("path");
+const os = require("os");
 
 (async () => {
-    const browser = await puppeteer.launch({
-        ignoreHTTPSErrors: true,
-        headless: true
-    });
-    const page = await browser.newPage();
-    await page.goto("https://localhost:8443/cas/login?service=https://example.org");
+    const browser = await cas.newBrowser(cas.browserOptions());
+    const page = await cas.newPage(browser);
 
-    await page.type('#username', "casuser");
-    await page.type('#password', "Mellon");
-    await page.keyboard.press('Enter');
-    await page.waitForNavigation();
-    
-    var element = await page.$('#content h2');
-    var header = await page.evaluate(element => element.textContent, element);
-    console.log(header)
-    assert(header === "Attribute Consent")
+    await cas.gotoLogin(page);
+    await cas.loginWith(page);
 
-    element = await page.$('#appTitle');
-    header = await page.evaluate(element => element.textContent, element);
-    console.log(header)
-    assert(header === "The following attributes will be released to [https://example.org]:")
+    await cas.gotoLogin(page, "https://example.org");
+    await cas.assertTextContent(page, "#content h2", "Attribute Consent");
+    await cas.assertTextContent(page, "#appTitle", "The following attributes will be released to [https://example.org]:");
+    await cas.assertTextContent(page, "#first-name", "first-name");
+    await cas.assertTextContent(page, "#first-name-value", "[Apereo]");
+    await cas.assertTextContent(page, "#last-name", "last-name");
+    await cas.assertTextContent(page, "#last-name-value", "[CAS]");
+    await cas.assertTextContent(page, "#email", "email");
+    await cas.assertTextContent(page, "#email-value", "[casuser@example.org]");
 
-    element = await page.$('#first-name');
-    header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
-    assert(header === "first-name")
+    await cas.screenshot(page);
+    await cas.click(page, "#optionsButton");
+    await cas.sleep(2000);
 
-    element = await page.$('#first-name-value');
-    header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
-    assert(header === "[Apereo]")
+    await cas.screenshot(page);
+    let opt = await page.$("#optionAlways");
+    assert(opt !== null);
+    opt = await page.$("#optionAttributeName");
+    assert(opt !== null);
+    opt = await page.$("#optionAttributeValue");
+    assert(opt !== null);
+    await cas.assertTextContent(page, "#reminderTitle", "How often should I be reminded to consent again?");
 
-    element = await page.$('#last-name');
-    header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
-    assert(header === "last-name")
+    opt = await page.$("#reminder");
+    assert(opt !== null);
+    opt = await page.$("#reminderTimeUnit");
+    assert(opt !== null);
+    opt = await page.$("#cancel");
+    assert(opt !== null);
 
-    element = await page.$('#last-name-value');
-    header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
-    assert(header === "[CAS]")
+    const confirm = await page.$("#confirm");
+    assert(confirm !== null);
+    await cas.click(page, "#confirm");
+    await cas.waitForNavigation(page);
+    await cas.assertTicketParameter(page);
 
-    element = await page.$('#email');
-    header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
-    assert(header === "email")
+    const baseUrl = "https://localhost:8443/cas/actuator/attributeConsent";
+    const url = `${baseUrl}/casuser`;
+    await cas.log(`Trying ${url}`);
+    const response = await cas.goto(page, url);
+    await cas.log(`${response.status()} ${response.statusText()}`);
+    assert(response.ok());
 
-    element = await page.$('#email-value');
-    header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
-    assert(header === "[casuser@example.org]")
+    const template = path.join(__dirname, "consent-record.json");
+    const body = fs.readFileSync(template, "utf8");
+    await cas.log(`Import consent record:\n${body}`);
+    await cas.doRequest(`${baseUrl}/import`, "POST", {
+        "Accept": "application/json",
+        "Content-Length": body.length,
+        "Content-Type": "application/json"
+    }, 201, body);
 
-    await click(page,"#optionsButton");
-    await page.waitForTimeout(1000)
+    await cas.doGet(`${baseUrl}/export`,
+        async (res) => {
+            const tempDir = os.tmpdir();
+            const exported = path.join(tempDir, "consent.zip");
+            res.data.pipe(fs.createWriteStream(exported));
+            await cas.log(`Exported consent records are at ${exported}`);
+        },
+        async (error) => {
+            throw error;
+        }, {}, "stream");
 
-    var opt = await page.$('#optionAlways');
-    assert(await opt != null);
-    opt = await page.$('#optionAttributeName');
-    assert(await opt != null);
-    opt = await page.$('#optionAttributeValue');
-    assert(await opt != null);
-    
-    element = await page.$('#reminderTitle');
-    header = await page.evaluate(element => element.textContent.trim(), element);
-    console.log(header)
-    assert(header === "How often should I be reminded to consent again?")
-
-    opt = await page.$('#reminder');
-    assert(await opt != null);
-
-    opt = await page.$('#reminderTimeUnit');
-    assert(await opt != null);
-
-    opt = await page.$('#confirm');
-    assert(await opt != null);
-
-    opt = await page.$('#cancel');
-    assert(await opt != null);
+    await cas.doRequest(`${baseUrl}/casuser/1`, "DELETE");
+    await cas.doRequest(`${baseUrl}/casuser`, "DELETE");
 
     await browser.close();
 })();
 
-async function click(page, button) {
-    await page.evaluate((button) => {
-        document.querySelector(button).click();
-    }, button);
-}

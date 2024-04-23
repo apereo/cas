@@ -7,13 +7,11 @@ import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProper
 import org.apereo.cas.configuration.model.core.ticket.TransientSessionTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -28,6 +26,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class TicketProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 5586947805593202037L;
 
     /**
@@ -44,7 +43,10 @@ public class TicketProperties implements Serializable {
 
     /**
      * Properties and settings related to ticket encryption.
+     *
+     * @deprecated since 7.1.0.
      */
+    @Deprecated(since = "7.1.0")
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
@@ -72,9 +74,20 @@ public class TicketProperties implements Serializable {
     @NestedConfigurationProperty
     private TicketGrantingTicketProperties tgt = new TicketGrantingTicketProperties();
 
+    /**
+     * Indicates whether tickets issued and linked to a ticket-granting ticket
+     * may also be tracked, and then removed as part of logout ops. There are a number of tickets
+     * issued by CAS whose expiration policy is usually by default bound
+     * to the SSO expiration policy and the active TGT, yet such tickets may be
+     * allowed to live beyond the normal lifetime of a CAS SSO session
+     * with options to be renewed. Examples include OAuth access tokens, etc.
+     * Set this option to true if you want all linked tickets to be tracked and then removed.
+     */
+    private boolean trackDescendantTickets;
+
     public TicketProperties() {
         crypto.setEnabled(false);
-        crypto.getEncryption().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
-        crypto.getSigning().setKeySize(CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
+        crypto.getEncryption().setKeySize(EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+        crypto.getSigning().setKeySize(SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }
 }

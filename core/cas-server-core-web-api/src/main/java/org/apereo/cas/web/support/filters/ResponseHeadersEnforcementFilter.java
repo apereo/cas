@@ -1,18 +1,19 @@
 package org.apereo.cas.web.support.filters;
 
+import org.apereo.cas.services.RegisteredService;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -56,6 +57,11 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
     public static final String INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY = "enableStrictTransportSecurity";
 
     /**
+     * Control the header value CAS should use when injecting strict transport security headers into the response.
+     */
+    public static final String INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY_OPTIONS = "enableStrictTransportSecurityOptions";
+
+    /**
      * Enable STRICT_XFRAME_OPTIONS.
      */
     public static final String INIT_PARAM_ENABLE_STRICT_XFRAME_OPTIONS = "enableXFrameOptions";
@@ -80,10 +86,12 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
      */
     public static final String INIT_PARAM_CONTENT_SECURITY_POLICY = "contentSecurityPolicy";
 
-    private static final Pattern CACHE_CONTROL_STATIC_RESOURCES_PATTERN = 
-                    Pattern.compile("^.+\\.(css|js|png|txt|jpg|ico|jpeg|bmp|gif)$", Pattern.CASE_INSENSITIVE);
+    /**
+     * Static resources file extension values.
+     */
+    public static final String INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES = "cacheControlStaticResources";
 
-    private final Object lock = new Object();
+    private Pattern cacheControlStaticResourcesPattern;
 
     private boolean enableCacheControl;
 
@@ -108,19 +116,8 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
 
     private String xssProtection = "1; mode=block";
 
-    private String contentSecurityPolicy;
+    private String contentSecurityPolicy = "script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none';";
 
-    /**
-     * Examines the Filter init parameter names and throws ServletException if they contain an unrecognized
-     * init parameter name.
-     * <p>
-     * This is a stateless static method.
-     * <p>
-     * This method is an implementation detail and is not exposed API.
-     * This method is only non-private to allow JUnit testing.
-     *
-     * @param initParamNames init param names, in practice as read from the FilterConfig.
-     */
     private static void throwIfUnrecognizedParamName(final Enumeration initParamNames) {
         val recognizedParameterNames = new HashSet<String>();
         recognizedParameterNames.add(INIT_PARAM_ENABLE_CACHE_CONTROL);
@@ -131,23 +128,19 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         recognizedParameterNames.add(INIT_PARAM_CONTENT_SECURITY_POLICY);
         recognizedParameterNames.add(INIT_PARAM_ENABLE_XSS_PROTECTION);
         recognizedParameterNames.add(INIT_PARAM_XSS_PROTECTION);
-        recognizedParameterNames.add(THROW_ON_ERROR);
+        recognizedParameterNames.add(INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES);
+        recognizedParameterNames.add(INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY_OPTIONS);
 
         while (initParamNames.hasMoreElements()) {
             val initParamName = (String) initParamNames.nextElement();
             if (!recognizedParameterNames.contains(initParamName)) {
-                logException(new ServletException("Unrecognized init parameter [" + initParamName + ']'));
+                throwException(new ServletException("Unrecognized init parameter [" + initParamName + ']'));
             }
         }
     }
 
     @Override
     public void init(final FilterConfig filterConfig) {
-        val failSafeParam = filterConfig.getInitParameter(THROW_ON_ERROR);
-        if (null != failSafeParam) {
-            setThrowOnErrors(Boolean.parseBoolean(failSafeParam));
-        }
-
         val initParamNames = filterConfig.getInitParameterNames();
         throwIfUnrecognizedParamName(initParamNames);
 
@@ -156,7 +149,10 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         val stsEnabled = filterConfig.getInitParameter(INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY);
         val xframeOpts = filterConfig.getInitParameter(INIT_PARAM_ENABLE_STRICT_XFRAME_OPTIONS);
         val xssOpts = filterConfig.getInitParameter(INIT_PARAM_ENABLE_XSS_PROTECTION);
+        val cacheControlStaticResources = filterConfig.getInitParameter(INIT_PARAM_CACHE_CONTROL_STATIC_RESOURCES);
+        val hstsOptions = filterConfig.getInitParameter(INIT_PARAM_ENABLE_STRICT_TRANSPORT_SECURITY_OPTIONS);
 
+        this.cacheControlStaticResourcesPattern = Pattern.compile("^.+\\.(" + cacheControlStaticResources + ")$", Pattern.CASE_INSENSITIVE);
         this.enableCacheControl = Boolean.parseBoolean(cacheControl);
         this.enableXContentTypeOptions = Boolean.parseBoolean(contentTypeOpts);
         this.enableStrictTransportSecurity = Boolean.parseBoolean(stsEnabled);
@@ -167,64 +163,42 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         }
         this.enableXSSProtection = Boolean.parseBoolean(xssOpts);
         this.xssProtection = filterConfig.getInitParameter(INIT_PARAM_XSS_PROTECTION);
-        if (this.xssProtection == null || this.xssProtection.isEmpty()) {
+        if (StringUtils.isBlank(this.xssProtection)) {
             this.xssProtection = "1; mode=block";
         }
         this.contentSecurityPolicy = filterConfig.getInitParameter(INIT_PARAM_CONTENT_SECURITY_POLICY);
+        if (StringUtils.isNotBlank(hstsOptions)) {
+            this.strictTransportSecurityHeader = hstsOptions;
+        }
     }
 
     @Override
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
                          final FilterChain filterChain) throws IOException, ServletException {
-        try {
-            if (servletResponse instanceof HttpServletResponse) {
-                val httpServletResponse = (HttpServletResponse) servletResponse;
-                val httpServletRequest = (HttpServletRequest) servletRequest;
-
-                val result = prepareFilterBeforeExecution(httpServletResponse, httpServletRequest);
-
-                decideInsertCacheControlHeader(httpServletResponse, httpServletRequest, result);
-                decideInsertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest, result);
-                decideInsertXContentTypeOptionsHeader(httpServletResponse, httpServletRequest, result);
-                decideInsertXFrameOptionsHeader(httpServletResponse, httpServletRequest, result);
-                decideInsertXSSProtectionHeader(httpServletResponse, httpServletRequest, result);
-                decideInsertContentSecurityPolicyHeader(httpServletResponse, httpServletRequest, result);
-
+        if (servletResponse instanceof final HttpServletResponse response
+            && servletRequest instanceof final HttpServletRequest request) {
+            try {
+                val result = prepareFilterBeforeExecution(response, request);
+                decideInsertCacheControlHeader(response, request, result);
+                decideInsertStrictTransportSecurityHeader(response, request, result);
+                decideInsertXContentTypeOptionsHeader(response, request, result);
+                decideInsertXFrameOptionsHeader(response, request, result);
+                decideInsertXSSProtectionHeader(response, request, result);
+                decideInsertContentSecurityPolicyHeader(response, request, result);
+                filterChain.doFilter(servletRequest, servletResponse);
+            } catch (final Throwable e) {
+                throwException(e, response, request);
             }
-
-        } catch (final Exception e) {
-            logException(new ServletException(getClass().getSimpleName()
-                + " is blocking this request. Examine the cause in this stack trace to understand why.", e));
         }
-
-        filterChain.doFilter(servletRequest, servletResponse);
     }
 
-    @Override
-    public void destroy() {
-    }
-
-    /**
-     * Prepare filter before execution and provide optional.
-     *
-     * @param httpServletResponse the http servlet response
-     * @param httpServletRequest  the http servlet request
-     * @return the optional
-     */
-    protected Optional<Object> prepareFilterBeforeExecution(final HttpServletResponse httpServletResponse,
-                                                            final HttpServletRequest httpServletRequest) {
+    protected Optional<RegisteredService> prepareFilterBeforeExecution(final HttpServletResponse httpServletResponse,
+                                                                       final HttpServletRequest httpServletRequest) throws Throwable {
         return Optional.empty();
     }
 
-    /**
-     * Decide insert content security policy header.
-     *
-     * @param httpServletResponse the http servlet response
-     * @param httpServletRequest  the http servlet request
-     * @param result              the result
-     */
     protected void decideInsertContentSecurityPolicyHeader(final HttpServletResponse httpServletResponse,
-                                                           final HttpServletRequest httpServletRequest, final Optional<Object> result) {
+                                                           final HttpServletRequest httpServletRequest, final Optional<RegisteredService> result) {
         if (this.contentSecurityPolicy == null) {
             return;
         }
@@ -242,13 +216,6 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         this.insertContentSecurityPolicyHeader(httpServletResponse, httpServletRequest, this.contentSecurityPolicy);
     }
 
-    /**
-     * Insert content security policy header.
-     *
-     * @param httpServletResponse   the http servlet response
-     * @param httpServletRequest    the http servlet request
-     * @param contentSecurityPolicy the content security policy
-     */
     protected void insertContentSecurityPolicyHeader(final HttpServletResponse httpServletResponse,
                                                      final HttpServletRequest httpServletRequest,
                                                      final String contentSecurityPolicy) {
@@ -257,38 +224,19 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         LOGGER.trace("Adding Content-Security-Policy response header [{}] for [{}]", contentSecurityPolicy, uri);
     }
 
-    /**
-     * Decide insert xss protection header.
-     *
-     * @param httpServletResponse the http servlet response
-     * @param httpServletRequest  the http servlet request
-     * @param result              the result
-     */
     protected void decideInsertXSSProtectionHeader(final HttpServletResponse httpServletResponse,
-                                                   final HttpServletRequest httpServletRequest, final Optional<Object> result) {
+                                                   final HttpServletRequest httpServletRequest,
+                                                   final Optional<RegisteredService> result) {
         if (!this.enableXSSProtection) {
             return;
         }
         insertXSSProtectionHeader(httpServletResponse, httpServletRequest);
     }
 
-    /**
-     * Insert xss protection header.
-     *
-     * @param httpServletResponse the http servlet response
-     * @param httpServletRequest  the http servlet request
-     */
     protected void insertXSSProtectionHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
         insertXSSProtectionHeader(httpServletResponse, httpServletRequest, this.xssProtection);
     }
 
-    /**
-     * Insert xss protection header.
-     *
-     * @param httpServletResponse the http servlet response
-     * @param httpServletRequest  the http servlet request
-     * @param value               the value
-     */
     protected void insertXSSProtectionHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest,
                                              final String value) {
         val uri = httpServletRequest.getRequestURI();
@@ -296,40 +244,20 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         LOGGER.trace("Adding X-XSS Protection [{}] response headers for [{}]", value, uri);
     }
 
-    /**
-     * Decide insert x frame options header.
-     *
-     * @param httpServletResponse the http servlet response
-     * @param httpServletRequest  the http servlet request
-     * @param result              the result
-     */
     protected void decideInsertXFrameOptionsHeader(final HttpServletResponse httpServletResponse,
                                                    final HttpServletRequest httpServletRequest,
-                                                   final Optional<Object> result) {
+                                                   final Optional<RegisteredService> result) {
         if (!this.enableXFrameOptions) {
             return;
         }
         insertXFrameOptionsHeader(httpServletResponse, httpServletRequest);
     }
 
-    /**
-     * Insert x frame options header.
-     *
-     * @param httpServletResponse the http servlet response
-     * @param httpServletRequest  the http servlet request
-     */
     protected void insertXFrameOptionsHeader(final HttpServletResponse httpServletResponse,
                                              final HttpServletRequest httpServletRequest) {
         insertXFrameOptionsHeader(httpServletResponse, httpServletRequest, this.xframeOptions);
     }
 
-    /**
-     * Insert x frame options header.
-     *
-     * @param httpServletResponse the http servlet response
-     * @param httpServletRequest  the http servlet request
-     * @param value               the value
-     */
     protected void insertXFrameOptionsHeader(final HttpServletResponse httpServletResponse,
                                              final HttpServletRequest httpServletRequest,
                                              final String value) {
@@ -338,40 +266,20 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         LOGGER.trace("Adding X-Frame Options [{}] response headers for [{}]", value, uri);
     }
 
-    /**
-     * Decide insert x content type options header.
-     *
-     * @param httpServletResponse the http servlet response
-     * @param httpServletRequest  the http servlet request
-     * @param result              the result
-     */
     protected void decideInsertXContentTypeOptionsHeader(final HttpServletResponse httpServletResponse,
                                                          final HttpServletRequest httpServletRequest,
-                                                         final Optional<Object> result) {
+                                                         final Optional<RegisteredService> result) {
         if (!this.enableXContentTypeOptions) {
             return;
         }
         insertXContentTypeOptionsHeader(httpServletResponse, httpServletRequest);
     }
 
-    /**
-     * Insert x content type options header.
-     *
-     * @param httpServletResponse the http servlet response
-     * @param httpServletRequest  the http servlet request
-     */
     protected void insertXContentTypeOptionsHeader(final HttpServletResponse httpServletResponse,
                                                    final HttpServletRequest httpServletRequest) {
         insertXContentTypeOptionsHeader(httpServletResponse, httpServletRequest, this.xContentTypeOptionsHeader);
     }
 
-    /**
-     * Insert x content type options header.
-     *
-     * @param httpServletResponse the http servlet response
-     * @param httpServletRequest  the http servlet request
-     * @param value               the value
-     */
     protected void insertXContentTypeOptionsHeader(final HttpServletResponse httpServletResponse,
                                                    final HttpServletRequest httpServletRequest,
                                                    final String value) {
@@ -380,45 +288,25 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         LOGGER.trace("Adding X-Content Type response headers [{}] for [{}]", value, uri);
     }
 
-    /**
-     * Decide insert cache control header.
-     *
-     * @param httpServletResponse the http servlet response
-     * @param httpServletRequest  the http servlet request
-     * @param result              the result
-     */
     protected void decideInsertCacheControlHeader(final HttpServletResponse httpServletResponse,
                                                   final HttpServletRequest httpServletRequest,
-                                                  final Optional<Object> result) {
+                                                  final Optional<RegisteredService> result) {
         if (!this.enableCacheControl) {
             return;
         }
         insertCacheControlHeader(httpServletResponse, httpServletRequest);
     }
 
-    /**
-     * Insert cache control header.
-     *
-     * @param httpServletResponse the http servlet response
-     * @param httpServletRequest  the http servlet request
-     */
     protected void insertCacheControlHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
         insertCacheControlHeader(httpServletResponse, httpServletRequest, this.cacheControlHeader);
     }
 
-    /**
-     * Insert cache control header.
-     *
-     * @param httpServletResponse the http servlet response
-     * @param httpServletRequest  the http servlet request
-     * @param value               the value
-     */
     protected void insertCacheControlHeader(final HttpServletResponse httpServletResponse,
                                             final HttpServletRequest httpServletRequest,
                                             final String value) {
 
         val uri = httpServletRequest.getRequestURI();
-        if (!CACHE_CONTROL_STATIC_RESOURCES_PATTERN.matcher(uri).matches()) {
+        if (!cacheControlStaticResourcesPattern.matcher(uri).matches()) {
             httpServletResponse.addHeader("Cache-Control", value);
             httpServletResponse.addHeader("Pragma", "no-cache");
             httpServletResponse.addIntHeader("Expires", 0);
@@ -426,40 +314,20 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
         }
     }
 
-    /**
-     * Decide insert strict transport security header.
-     *
-     * @param httpServletResponse the http servlet response
-     * @param httpServletRequest  the http servlet request
-     * @param result              the result
-     */
     protected void decideInsertStrictTransportSecurityHeader(final HttpServletResponse httpServletResponse,
                                                              final HttpServletRequest httpServletRequest,
-                                                             final Optional<Object> result) {
+                                                             final Optional<RegisteredService> result) {
         if (!this.enableStrictTransportSecurity) {
             return;
         }
         insertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest);
     }
 
-    /**
-     * Insert strict transport security header.
-     *
-     * @param httpServletResponse the http servlet response
-     * @param httpServletRequest  the http servlet request
-     */
     protected void insertStrictTransportSecurityHeader(final HttpServletResponse httpServletResponse,
                                                        final HttpServletRequest httpServletRequest) {
         insertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest, this.strictTransportSecurityHeader);
     }
 
-    /**
-     * Insert strict transport security header.
-     *
-     * @param httpServletResponse           the http servlet response
-     * @param httpServletRequest            the http servlet request
-     * @param strictTransportSecurityHeader the strict transport security header
-     */
     protected void insertStrictTransportSecurityHeader(final HttpServletResponse httpServletResponse,
                                                        final HttpServletRequest httpServletRequest,
                                                        final String strictTransportSecurityHeader) {

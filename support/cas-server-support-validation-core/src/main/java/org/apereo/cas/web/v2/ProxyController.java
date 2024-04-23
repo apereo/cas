@@ -4,6 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.CollectionUtils;
@@ -20,8 +21,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
@@ -60,24 +61,26 @@ public class ProxyController extends AbstractDelegateController {
 
     private final ApplicationContext context;
 
+    private final CasConfigurationProperties properties;
+
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {
         val proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET);
         val targetService = getTargetService(request);
-        return targetService != null && StringUtils.hasText(proxyGrantingTicket);
+        return properties.getSso().isProxyAuthnEnabled() && targetService != null && StringUtils.hasText(proxyGrantingTicket);
     }
 
     @Override
     @GetMapping(path = CasProtocolConstants.ENDPOINT_PROXY)
-    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
+    public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET);
         val targetService = getTargetService(request);
         if (!StringUtils.hasText(proxyGrantingTicket) || targetService == null) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_REQUEST_PROXY, null, request);
         }
         try {
-            val proxyTicket = this.centralAuthenticationService.grantProxyTicket(proxyGrantingTicket, targetService);
-            val model = CollectionUtils.wrap(CasProtocolConstants.PARAMETER_TICKET, proxyTicket);
+            val proxyTicket = centralAuthenticationService.grantProxyTicket(proxyGrantingTicket, targetService);
+            val model = CollectionUtils.wrap(CasProtocolConstants.PARAMETER_TICKET, proxyTicket.getId());
             return new ModelAndView(this.successView, (Map) model);
         } catch (final AbstractTicketException e) {
             return generateErrorView(e.getCode(), new Object[]{proxyGrantingTicket}, request);
@@ -86,24 +89,10 @@ public class ProxyController extends AbstractDelegateController {
         }
     }
 
-    /**
-     * Gets the target service from the request.
-     *
-     * @param request the request
-     * @return the target service
-     */
     private Service getTargetService(final HttpServletRequest request) {
         return this.webApplicationServiceFactory.createService(request);
     }
 
-    /**
-     * Generate error view stuffing the code and description
-     * of the error into the model. View name is set to {@link #failureView}.
-     *
-     * @param code the code
-     * @param args the msg args
-     * @return the model and view
-     */
     private ModelAndView generateErrorView(final String code, final Object[] args, final HttpServletRequest request) {
         val modelAndView = new ModelAndView(this.failureView);
         modelAndView.addObject("code", StringEscapeUtils.escapeHtml4(code));

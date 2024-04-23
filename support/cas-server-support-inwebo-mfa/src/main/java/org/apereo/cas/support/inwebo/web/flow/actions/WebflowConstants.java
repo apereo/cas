@@ -16,9 +16,13 @@ public interface WebflowConstants {
      */
     String PUSH = "push";
     /**
-     * The browser transition.
+     * The Virtual Authenticator transition.
      */
-    String BROWSER = "browser";
+    String VA = "va";
+    /**
+     * The mAccessWeb transition.
+     */
+    String MA = "ma";
     /**
      * The select transition.
      */
@@ -28,6 +32,15 @@ public interface WebflowConstants {
      * The mustEnroll action.
      */
     String MUST_ENROLL = "mustEnroll";
+
+    /**
+     * The browser authentication activation status.
+     */
+    long BROWSER_AUTHENTICATION_STATUS = 4L;
+    /**
+     * The push and browser authentication activation status.
+     */
+    long PUSH_AND_BROWSER_AUTHENTICATION_STATUS = 5L;
 
     /**
      * The inweboSessionId flow scope parameter.
@@ -42,13 +55,13 @@ public interface WebflowConstants {
      */
     String SITE_DESCRIPTION = "siteDescription";
     /**
-     * The inweboErrorMessage flow scope parameter.
-     */
-    String INWEBO_ERROR_MESSAGE = "inweboErrorMessage";
-    /**
      * The login flow scope parameter.
      */
     String LOGIN = "login";
+    /**
+     * The browser authenticator flow scope parameter.
+     */
+    String BROWSER_AUTHENTICATOR = "browserAuthenticator";
     /**
      * The otp request parameter.
      */

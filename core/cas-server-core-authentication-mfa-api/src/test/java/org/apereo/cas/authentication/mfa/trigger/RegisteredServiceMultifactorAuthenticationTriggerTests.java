@@ -20,65 +20,66 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("MFA")
-public class RegisteredServiceMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
+@Tag("MFATrigger")
+class RegisteredServiceMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
-    public void verifyOperationByNoPolicy() {
+    void verifyOperationByNoPolicy() throws Throwable {
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServiceMultifactorAuthenticationTrigger(props,
             (providers, service, principal) -> providers.iterator().next(), applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
     }
 
     @Test
-    public void verifyBadInput() {
+    void verifyBadInput() throws Throwable {
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServiceMultifactorAuthenticationTrigger(props,
             (providers, service, principal) -> providers.iterator().next(), applicationContext);
         assertNotNull(trigger.getCasProperties());
         assertNotNull(trigger.getMultifactorAuthenticationProviderSelector());
-        val result = trigger.isActivated(null, null, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(null, null,
+            this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
     }
-    
+
     @Test
-    public void verifyOperationByPolicyForPrincipal() {
+    void verifyOperationByPolicyForPrincipal() throws Throwable {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getMultifactorAuthenticationProviders()).thenReturn(Set.of("mfa-dummy"));
         when(policy.getPrincipalAttributeNameTrigger()).thenReturn("email");
         when(policy.getPrincipalAttributeValueToMatch()).thenReturn("@example.org");
-        when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServiceMultifactorAuthenticationTrigger(props,
             (providers, service, principal) -> providers.iterator().next(), applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
     }
 
     @Test
-    public void verifyOperationByProvider() {
+    void verifyOperationByProvider() throws Throwable {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getMultifactorAuthenticationProviders()).thenReturn(Set.of(TestMultifactorAuthenticationProvider.ID));
-        when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
 
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServiceMultifactorAuthenticationTrigger(props,
             (providers, service, principal) -> providers.iterator().next(), applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
     }
 
     @Test
-    public void verifyOperationByNoKnownProvider() {
+    void verifyOperationByNoKnownProvider() throws Throwable {
         val policy = mock(RegisteredServiceMultifactorPolicy.class);
         when(policy.getMultifactorAuthenticationProviders()).thenReturn(Set.of("unknown"));
-        when(this.registeredService.getMultifactorPolicy()).thenReturn(policy);
+        when(this.registeredService.getMultifactorAuthenticationPolicy()).thenReturn(policy);
 
         val props = new CasConfigurationProperties();
         val trigger = new RegisteredServiceMultifactorAuthenticationTrigger(props,
             (providers, service, principal) -> providers.iterator().next(), applicationContext);
-        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, mock(Service.class));
+        val result = trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isEmpty());
     }
 }

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 
 import lombok.Getter;
 
+import java.io.Serial;
 import java.util.List;
 
 /**
@@ -19,6 +20,7 @@ public abstract class AbstractTicketValidationException extends AbstractTicketEx
      */
     protected static final String CODE = "INVALID_TICKET";
 
+    @Serial
     private static final long serialVersionUID = 3257004341537093175L;
 
     private final Service service;
@@ -39,13 +41,13 @@ public abstract class AbstractTicketValidationException extends AbstractTicketEx
     }
 
     protected AbstractTicketValidationException(final String code, final String msg,
-                                             final List<Object> args, final Service service) {
+                                                final List<Object> args, final Service service) {
         super(code, msg, args);
         this.service = service;
     }
 
     protected AbstractTicketValidationException(final String code, final Throwable throwable,
-                                             final List<Object> args, final Service service) {
+                                                final List<Object> args, final Service service) {
         super(code, throwable, args);
         this.service = service;
     }

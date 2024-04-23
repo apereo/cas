@@ -1,0 +1,27 @@
+{
+  "dependencies": "hazelcast-ticket-registry,pm-webflow",
+  "conditions": {
+    "docker": "true"
+  },
+
+  "properties": [
+
+    "--cas.authn.pm.core.enabled=true",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=https://localhost:8443/cas",
+    
+    "--cas.authn.pm.reset.mail.from=cas@apereo.org",
+    "--cas.authn.pm.reset.mail.text=${url}",
+    "--cas.authn.pm.reset.mail.subject=Reset your password",
+    "--cas.authn.pm.reset.mail.attribute-name=mail",
+    "--cas.authn.pm.reset.number-of-uses=2",
+    "--cas.authn.pm.reset.security-questions-enabled=false",
+
+    "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
+  ],
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
+}

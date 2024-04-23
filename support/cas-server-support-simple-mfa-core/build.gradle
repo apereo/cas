@@ -2,10 +2,13 @@ description = "Apereo CAS Simple Multifactor Authentication Core Support"
 dependencies {
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-util")
+
+    compileOnly project(":support:cas-server-support-surrogate-api")
     
     implementation project(":support:cas-server-support-otp-mfa")
     implementation project(":support:cas-server-support-trusted-mfa-core")
     implementation project(":support:cas-server-support-otp-mfa-core")
+    implementation project(":support:cas-server-support-bucket4j-core")
 
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")
@@ -15,11 +18,13 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-webflow-mfa")
     implementation project(":core:cas-server-core-notifications")
+    implementation project(":core:cas-server-core-notifications-api")
     implementation project(":core:cas-server-core-webflow-mfa-api")
     implementation project(":core:cas-server-core-web-api")
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")
+    compileOnly project(":core:cas-server-core-rest-api")
 
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-configuration")

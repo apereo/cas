@@ -5,6 +5,7 @@ import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicyPermission;
 import org.apereo.cas.uma.web.controllers.BaseUmaEndpointControllerTests;
+import org.apereo.cas.util.RandomUtils;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -24,9 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("UMA")
-public class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpointControllerTests {
+class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpointControllerTests {
     @Test
-    public void verifyPermTicketNoPolicy() {
+    void verifyPermTicketNoPolicy() throws Throwable {
         val permissionTicket = getPermissionTicketWith(List.of("read", "write"));
 
         var results = authenticateUmaRequestWithAuthorizationScope();
@@ -46,7 +47,7 @@ public class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpo
     }
 
     @Test
-    public void verifyAuthorizationOperation() {
+    void verifyAuthorizationOperation() throws Throwable {
         val permissionTicket = getPermissionTicketWith(List.of("read", "write"));
 
         var results = authenticateUmaRequestWithAuthorizationScope();
@@ -65,7 +66,7 @@ public class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpo
     }
 
     @Test
-    public void verifyMismatchedClaims() {
+    void verifyMismatchedClaims() throws Throwable {
         val permissionTicket = getPermissionTicketWith(List.of("delete", "open"));
         val results = authenticateUmaRequestWithAuthorizationScope();
 
@@ -88,7 +89,7 @@ public class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpo
     }
 
     @Test
-    public void verifyMissingGrant() {
+    void verifyMissingGrant() throws Throwable {
         var results = authenticateUmaRequestWithAuthorizationScope();
         var authzRequest = new UmaAuthorizationRequest().toJson();
         var response = umaAuthorizationRequestEndpointController.handleAuthorizationRequest(authzRequest,
@@ -124,10 +125,10 @@ public class UmaAuthorizationRequestEndpointControllerTests extends BaseUmaEndpo
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
-    private String getPermissionTicketWith(final List<String> scopes) {
+    private String getPermissionTicketWith(final List<String> scopes) throws Throwable {
         var results = authenticateUmaRequestWithProtectionScope();
 
-        var body = createUmaResourceRegistrationRequest(1000, scopes).toJson();
+        var body = createUmaResourceRegistrationRequest(RandomUtils.nextInt(), scopes).toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
         assertEquals(HttpStatus.OK, response.getStatusCode());
 

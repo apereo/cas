@@ -14,11 +14,11 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Authentication")
-public class AuthenticationPolicyTests {
+@Tag("AuthenticationPolicy")
+class AuthenticationPolicyTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val policy = mock(AuthenticationPolicy.class);
         when(policy.getOrder()).thenCallRealMethod();
         when(policy.shouldResumeOnFailure(any())).thenCallRealMethod();

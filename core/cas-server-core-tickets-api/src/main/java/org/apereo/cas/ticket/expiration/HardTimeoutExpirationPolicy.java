@@ -1,6 +1,8 @@
 package org.apereo.cas.ticket.expiration;
 
-import org.apereo.cas.ticket.TicketState;
+
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -10,8 +12,10 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -27,36 +31,33 @@ import java.time.temporal.ChronoUnit;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Builder
+@Slf4j
 public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
-    /**
-     * Serialization support.
-     */
+    @Serial
     private static final long serialVersionUID = 6728077010285422290L;
 
-    /**
-     * The time to kill in seconds.
-     */
     private long timeToKillInSeconds;
 
-    /**
-     * Instantiates a new hard timeout expiration policy.
-     *
-     * @param timeToKillInSeconds the time to kill in seconds
-     */
     @JsonCreator
     public HardTimeoutExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
     }
 
     @Override
-    public boolean isExpired(final TicketState ticketState) {
+    public boolean isExpired(final TicketGrantingTicketAwareTicket ticketState) {
         if (ticketState == null) {
             return true;
         }
-        val expiringTime = ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-        val expired = expiringTime.isBefore(ZonedDateTime.now(getClock()));
-        return expired || super.isExpired(ticketState);
+        val expiringTime = toMaximumExpirationTime(ticketState);
+        val now = ZonedDateTime.now(getClock());
+        val expired = expiringTime.isBefore(now);
+        val result = expired || super.isExpired(ticketState);
+        if (result) {
+            LOGGER.trace("Ticket [{}] is expired because its expiration time [{}] is before [{}] or its parent ticket, if any, has expired",
+                ticketState.getId(), expiringTime, now);
+        }
+        return result;
     }
 
     @Override
@@ -70,4 +71,10 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
         return 0L;
     }
 
+    @JsonIgnore
+    @Override
+    public ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
+        val creationTime = ticketState.getCreationTime();
+        return creationTime.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+    }
 }

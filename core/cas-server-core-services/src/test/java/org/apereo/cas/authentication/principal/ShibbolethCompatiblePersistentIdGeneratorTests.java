@@ -1,16 +1,16 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 
@@ -22,15 +22,13 @@ import static org.mockito.Mockito.*;
  * @since 3.1
  */
 @Tag("RegisteredService")
-public class ShibbolethCompatiblePersistentIdGeneratorTests {
-
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "shibbolethCompatiblePersistentIdGenerator.json");
+class ShibbolethCompatiblePersistentIdGeneratorTests {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifyGenerator() {
+    void verifyGenerator() throws Throwable {
         val generator = new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
         assertNotNull(generator.toString());
         val p = mock(Principal.class);
@@ -40,13 +38,13 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
     }
 
     @Test
-    public void verifyGeneratorByPrincipal() {
+    void verifyGeneratorByPrincipal() throws Throwable {
         val attrs = (Map) Map.of("uid", List.of("testuser"));
         val generator = new ShibbolethCompatiblePersistentIdGenerator();
         generator.setAttribute("uid");
         assertNotNull(generator.toString());
         assertNotNull(generator.determinePrincipalIdFromAttributes("uid", attrs));
-        
+
         val p = mock(Principal.class);
         when(p.getAttributes()).thenReturn(attrs);
         when(p.getId()).thenReturn("testuser");
@@ -55,7 +53,7 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
     }
 
     @Test
-    public void realTestOfGeneratorThatVerifiesValueReturned() {
+    void realTestOfGeneratorThatVerifiesValueReturned() {
         val generator = new ShibbolethCompatiblePersistentIdGenerator("thisisasalt");
 
         val p = mock(Principal.class);
@@ -68,10 +66,11 @@ public class ShibbolethCompatiblePersistentIdGeneratorTests {
     }
 
     @Test
-    public void verifyJson() throws IOException {
+    void verifyJson() throws IOException {
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
         val generatorWritten = new ShibbolethCompatiblePersistentIdGenerator("scottssalt");
-        MAPPER.writeValue(JSON_FILE, generatorWritten);
-        val credentialRead = MAPPER.readValue(JSON_FILE, ShibbolethCompatiblePersistentIdGenerator.class);
+        MAPPER.writeValue(jsonFile, generatorWritten);
+        val credentialRead = MAPPER.readValue(jsonFile, ShibbolethCompatiblePersistentIdGenerator.class);
         assertEquals(generatorWritten, credentialRead);
     }
 }

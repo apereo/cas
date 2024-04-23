@@ -9,14 +9,19 @@ import java.net.InetAddress;
  * @since 5.0.0
  */
 public interface GeoLocationService {
+    /**
+     * Bean name.
+     */
+    String BEAN_NAME = "geoLocationService";
 
     /**
      * Find a geo location based on an address.
      *
      * @param address the address
      * @return the geo location
+     * @throws Throwable the throwable
      */
-    GeoLocationResponse locate(InetAddress address);
+    GeoLocationResponse locate(InetAddress address) throws Throwable;
 
     /**
      * Find a geo location based on an address.
@@ -32,8 +37,9 @@ public interface GeoLocationService {
      * @param latitude  the latitude
      * @param longitude the longitude
      * @return the geo location
+     * @throws Throwable the throwable
      */
-    GeoLocationResponse locate(Double latitude, Double longitude);
+    GeoLocationResponse locate(Double latitude, Double longitude) throws Throwable;
 
     /**
      * Locate geo location response.
@@ -41,14 +47,16 @@ public interface GeoLocationService {
      * @param ip      the ip
      * @param request the request
      * @return the geo location response
+     * @throws Throwable the throwable
      */
-    GeoLocationResponse locate(String ip, GeoLocationRequest request);
+    GeoLocationResponse locate(String ip, GeoLocationRequest request) throws Throwable;
 
     /**
      * Locate geo location response.
      *
      * @param request the request
      * @return the geo location response
+     * @throws Throwable the throwable
      */
-    GeoLocationResponse locate(GeoLocationRequest request);
+    GeoLocationResponse locate(GeoLocationRequest request) throws Throwable;
 }

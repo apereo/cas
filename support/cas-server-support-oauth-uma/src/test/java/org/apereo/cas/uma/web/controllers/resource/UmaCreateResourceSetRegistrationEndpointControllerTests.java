@@ -20,10 +20,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("UMA")
-public class UmaCreateResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
+class UmaCreateResourceSetRegistrationEndpointControllerTests extends BaseUmaEndpointControllerTests {
 
     @Test
-    public void verifyFailsNoAuth() throws Exception {
+    void verifyFailsNoAuth() throws Throwable {
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body,
             new MockHttpServletRequest(), new MockHttpServletResponse());
@@ -31,7 +31,7 @@ public class UmaCreateResourceSetRegistrationEndpointControllerTests extends Bas
     }
 
     @Test
-    public void verifyBadInput() {
+    void verifyBadInput() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body ="###";
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());
@@ -39,7 +39,7 @@ public class UmaCreateResourceSetRegistrationEndpointControllerTests extends Bas
     }
 
     @Test
-    public void verifyRegistrationOperation() {
+    void verifyRegistrationOperation() throws Throwable {
         val results = authenticateUmaRequestWithProtectionScope();
         var body = createUmaResourceRegistrationRequest().toJson();
         var response = umaCreateResourceSetRegistrationEndpointController.registerResourceSet(body, results.getLeft(), results.getMiddle());

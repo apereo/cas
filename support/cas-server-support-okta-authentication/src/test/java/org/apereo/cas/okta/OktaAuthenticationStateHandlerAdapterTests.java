@@ -1,5 +1,6 @@
 package org.apereo.cas.okta;
 
+import org.apereo.cas.authentication.AuthenticationPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.PasswordPolicyContext;
@@ -26,20 +27,23 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Authentication")
-public class OktaAuthenticationStateHandlerAdapterTests {
+@Tag("AuthenticationHandler")
+class OktaAuthenticationStateHandlerAdapterTests {
     @Test
-    public void handleSuccessWithoutToken() {
+    void handleSuccessWithoutToken() {
         val adapter = new OktaAuthenticationStateHandlerAdapter(
             new DefaultPasswordPolicyHandlingStrategy<>(), new PasswordPolicyContext());
         val response = mock(AuthenticationResponse.class);
         when(response.getSessionToken()).thenReturn(null);
         adapter.handleSuccess(response);
+        assertNotNull(adapter.getFailureException());
+        assertNotNull(adapter.getPasswordPolicyHandlingStrategy());
+        assertNotNull(adapter.getPasswordPolicyConfiguration());
         assertThrows(FailedLoginException.class, adapter::throwExceptionIfNecessary);
     }
 
     @Test
-    public void handleSuccess() {
+    void handleSuccess() {
         val adapter = new OktaAuthenticationStateHandlerAdapter(
             new DefaultPasswordPolicyHandlingStrategy<>(), new PasswordPolicyContext());
         val response = mock(AuthenticationResponse.class);
@@ -57,7 +61,7 @@ public class OktaAuthenticationStateHandlerAdapterTests {
     }
 
     @Test
-    public void handlePasswordWarning() {
+    void handlePasswordWarning() {
         val adapter = new OktaAuthenticationStateHandlerAdapter(
             new DefaultPasswordPolicyHandlingStrategy<>(), new PasswordPolicyContext());
         val response = mock(AuthenticationResponse.class);
@@ -68,7 +72,21 @@ public class OktaAuthenticationStateHandlerAdapterTests {
     }
 
     @Test
-    public void verifyLockout() {
+    void handleUnknownPasswordPolicy() throws Throwable {
+        val strategy = mock(AuthenticationPasswordPolicyHandlingStrategy.class);
+        when(strategy.supports(any())).thenReturn(Boolean.TRUE);
+        when(strategy.handle(any(), any())).thenThrow(new RuntimeException());
+        val adapter = new OktaAuthenticationStateHandlerAdapter(
+            strategy, new PasswordPolicyContext());
+        val response = mock(AuthenticationResponse.class);
+        when(response.getSessionToken()).thenReturn("token");
+        adapter.handlePasswordWarning(response);
+        assertThrows(AccountNotFoundException.class, adapter::throwExceptionIfNecessary);
+        assertTrue(adapter.getWarnings().isEmpty());
+    }
+
+    @Test
+    void verifyLockout() throws Throwable {
         val adapter = new OktaAuthenticationStateHandlerAdapter(
             new DefaultPasswordPolicyHandlingStrategy<>(), new PasswordPolicyContext());
         val response = mock(AuthenticationResponse.class);
@@ -78,7 +96,7 @@ public class OktaAuthenticationStateHandlerAdapterTests {
     }
 
     @Test
-    public void verifyUnknown() {
+    void verifyUnknown() throws Throwable {
         val adapter = new OktaAuthenticationStateHandlerAdapter(
             new DefaultPasswordPolicyHandlingStrategy<>(), new PasswordPolicyContext());
         val response = mock(AuthenticationResponse.class);
@@ -88,7 +106,7 @@ public class OktaAuthenticationStateHandlerAdapterTests {
     }
 
     @Test
-    public void handleUnauthenticated() {
+    void handleUnauthenticated() {
         val adapter = new OktaAuthenticationStateHandlerAdapter(
             new DefaultPasswordPolicyHandlingStrategy<>(), new PasswordPolicyContext());
         val response = mock(AuthenticationResponse.class);
@@ -98,7 +116,7 @@ public class OktaAuthenticationStateHandlerAdapterTests {
     }
 
     @Test
-    public void handlePasswordExpired() {
+    void handlePasswordExpired() {
         val adapter = new OktaAuthenticationStateHandlerAdapter(
             new DefaultPasswordPolicyHandlingStrategy<>(), new PasswordPolicyContext());
         val response = mock(AuthenticationResponse.class);
@@ -108,7 +126,7 @@ public class OktaAuthenticationStateHandlerAdapterTests {
     }
 
     @Test
-    public void handlePasswordReset() {
+    void handlePasswordReset() {
         val adapter = new OktaAuthenticationStateHandlerAdapter(
             new DefaultPasswordPolicyHandlingStrategy<>(), new PasswordPolicyContext());
         val response = mock(AuthenticationResponse.class);

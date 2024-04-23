@@ -1,11 +1,10 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.ldaptive.BindConnectionInitializer;
@@ -34,12 +33,11 @@ import java.nio.charset.StandardCharsets;
         "cas.authn.mfa.gauth.crypto.enabled=true"
     })
 @EnableScheduling
-@Tag("Ldap")
-@EnabledIfPortOpen(port = 10389)
-public class LdapGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests {
+@Tag("LdapRepository")
+@EnabledIfListeningOnPort(port = 10389)
+class LdapGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests {
     @Override
-    @SneakyThrows
-    protected String getUsernameUnderTest() {
+    protected String getUsernameUnderTest() throws Exception {
         val uid = super.getUsernameUnderTest();
 
         @Cleanup

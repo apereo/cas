@@ -15,21 +15,21 @@ public interface Response extends Serializable {
      *
      * @return the attributes
      */
-    Map<String, String> getAttributes();
+    Map<String, String> attributes();
 
     /**
      * Gets response type.
      *
      * @return the response type
      */
-    ResponseType getResponseType();
+    ResponseType responseType();
 
     /**
      * Gets url.
      *
      * @return the url
      */
-    String getUrl();
+    String url();
 
     /**
      * An enumeration of different response types.

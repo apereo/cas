@@ -1,11 +1,14 @@
 package org.apereo.cas.util.cipher;
 
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
+import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.crypto.PropertyBoundCipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-
+import org.apereo.cas.util.jwt.JsonWebTokenEncryptor;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,10 +19,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.jose4j.json.JsonUtil;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.PublicJsonWebKey;
-
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.LinkedHashMap;
 
 /**
  * The {@link BaseStringCipherExecutor} is the default
@@ -33,40 +36,34 @@ import java.security.Key;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Setter
 @Getter
-public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Serializable, String> {
+public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Serializable, String>
+    implements PropertyBoundCipherExecutor<Serializable, String> {
     private CipherOperationsStrategyType strategyType = CipherOperationsStrategyType.ENCRYPT_AND_SIGN;
 
     private String encryptionAlgorithm = KeyManagementAlgorithmIdentifiers.DIRECT;
 
-    private String contentEncryptionAlgorithmIdentifier;
-
-    private Key secretKeyEncryptionKey;
+    private Key encryptionKey;
 
     private boolean encryptionEnabled = true;
 
     private boolean signingEnabled = true;
 
-    private int encryptionKeySize = CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE;
+    private int encryptionKeySize = EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE;
 
-    private int signingKeySize = CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE;
+    private int signingKeySize = SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE;
 
-    /**
-     * Instantiates a new cipher.
-     * <p>Note that in order to customize the encryption algorithms,
-     * you will need to download and install the JCE Unlimited Strength Jurisdiction
-     * Policy File into your Java installation.</p>
-     *
-     * @param secretKeyEncryption the secret key encryption; must be represented as a octet sequence JSON Web Key (JWK)
-     * @param secretKeySigning    the secret key signing; must be represented as a octet sequence JSON Web Key (JWK)
-     * @param encryptionEnabled   the enable encryption
-     * @param signingEnabled      the signing enabled
-     * @param signingKeySize      the signing key size
-     * @param encryptionKeySize   the encryption key size
-     */
+    private String secretKeyEncryption;
+
+    private String secretKeySigning;
+
+    private String contentEncryptionAlgorithmIdentifier;
+
+    private boolean initialized;
+
     protected BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
                                        final boolean encryptionEnabled, final boolean signingEnabled,
                                        final int signingKeySize, final int encryptionKeySize) {
-        this(secretKeyEncryption, secretKeySigning, CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM,
+        this(secretKeyEncryption, secretKeySigning, EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM,
             encryptionEnabled, signingEnabled, signingKeySize, encryptionKeySize);
     }
 
@@ -74,20 +71,20 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
                                        final boolean encryptionEnabled,
                                        final int signingKeySize,
                                        final int encryptionKeySize) {
-        this(secretKeyEncryption, secretKeySigning, encryptionEnabled, true, signingKeySize, encryptionKeySize);
+        this(secretKeyEncryption, secretKeySigning, encryptionEnabled,
+            true, signingKeySize, encryptionKeySize);
     }
 
     protected BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
                                        final String contentEncryptionAlgorithmIdentifier,
-                                       final int signingKeySize,
-                                       final int encryptionKeySize) {
-        this(secretKeyEncryption, secretKeySigning, contentEncryptionAlgorithmIdentifier, true, true, signingKeySize, encryptionKeySize);
+                                       final int signingKeySize, final int encryptionKeySize) {
+        this(secretKeyEncryption, secretKeySigning, contentEncryptionAlgorithmIdentifier,
+            true, true, signingKeySize, encryptionKeySize);
     }
 
     protected BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
-                                       final int signingKeySize,
-                                       final int encryptionKeySize) {
-        this(secretKeyEncryption, secretKeySigning, CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM,
+                                       final int signingKeySize, final int encryptionKeySize) {
+        this(secretKeyEncryption, secretKeySigning, EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM,
             true, true, signingKeySize, encryptionKeySize);
     }
 
@@ -99,39 +96,83 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
                                        final boolean signingEnabled,
                                        final int signingKeyLength,
                                        final int encryptionKeyLength) {
-
+        this.secretKeyEncryption = secretKeyEncryption;
+        this.secretKeySigning = secretKeySigning;
         this.signingEnabled = signingEnabled || StringUtils.isNotBlank(secretKeySigning);
-        this.encryptionEnabled = this.signingEnabled && (encryptionEnabled || StringUtils.isNotBlank(secretKeyEncryption));
-        this.signingKeySize = signingKeyLength <= 0 ? CipherExecutor.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE : signingKeyLength;
-        this.encryptionKeySize = encryptionKeyLength <= 0 ? CipherExecutor.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE : encryptionKeyLength;
-
-        if (this.encryptionEnabled) {
-            configureEncryptionParameters(secretKeyEncryption, contentEncryptionAlgorithmIdentifier);
-        } else {
-            LOGGER.info("Encryption is not enabled for [{}]. The cipher [{}] will only attempt to produce signed objects",
-                getName(), getClass().getSimpleName());
-        }
-        if (this.signingEnabled) {
-            configureSigningParameters(secretKeySigning);
-        } else {
-            LOGGER.info("Signing is not enabled for [{}]. The cipher [{}] will attempt to produce plain objects", getName(), getClass().getSimpleName());
-        }
+        this.encryptionEnabled = encryptionEnabled || StringUtils.isNotBlank(secretKeyEncryption);
+        this.signingKeySize = signingKeyLength <= 0
+            ? SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE : signingKeyLength;
+        this.encryptionKeySize = encryptionKeyLength <= 0
+            ? EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE : encryptionKeyLength;
+        this.contentEncryptionAlgorithmIdentifier = contentEncryptionAlgorithmIdentifier;
+        initialize();
     }
 
     @Override
     public String encode(final Serializable value, final Object[] parameters) {
         if (strategyType == CipherOperationsStrategyType.ENCRYPT_AND_SIGN) {
-            return encryptAndSign(value);
+            return encryptAndSign(value, getEncryptionKey(), getSigningKey());
         }
-        return signAndEncrypt(value);
+        return signAndEncrypt(value, getEncryptionKey(), getSigningKey());
     }
 
     @Override
     public String decode(final Serializable value, final Object[] parameters) {
+        return decode(value, parameters, getEncryptionKey(), getSigningKey());
+    }
+
+    protected String decode(final Serializable value, final Object[] parameters,
+                            final Key encKey, final Key signingKey) {
         if (strategyType == CipherOperationsStrategyType.ENCRYPT_AND_SIGN) {
-            return verifyAndDecrypt(value);
+            return verifyAndDecrypt(value, encKey, signingKey);
         }
-        return decryptAndVerify(value);
+        return decryptAndVerify(value, encKey, signingKey);
+    }
+
+    protected void initialize() {
+        if (!initialized) {
+            if (this.encryptionEnabled) {
+                configureEncryptionParameters(secretKeyEncryption, contentEncryptionAlgorithmIdentifier);
+            } else {
+                LOGGER.debug("Encryption is not enabled for [{}]. The cipher [{}] will only attempt to produce signed objects",
+                    getName(), getClass().getSimpleName());
+            }
+            if (this.signingEnabled) {
+                configureSigningParameters(secretKeySigning);
+            } else {
+                LOGGER.info("Signing is not enabled for [{}]. The cipher [{}] will attempt to produce plain objects", getName(), getClass().getSimpleName());
+            }
+            this.initialized = true;
+        }
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return super.isEnabled() || isEncryptionPossible(this.encryptionKey);
+    }
+
+    protected void configureEncryptionKeyFromPublicKeyResource(final String secretKeyToUse) {
+        val object = extractPublicKeyFromResource(secretKeyToUse);
+        LOGGER.debug("Located encryption key resource [{}]", secretKeyToUse);
+        setEncryptionKey(object);
+        setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
+    }
+
+    protected boolean isEncryptionPossible(final Key key) {
+        return this.encryptionEnabled && key != null;
+    }
+
+
+    protected String encryptValueAsJwt(final Key encryptionKey, final Serializable value) {
+        val headers = new LinkedHashMap<>(getCommonHeaders());
+        headers.putAll(getEncryptionOpHeaders());
+        return JsonWebTokenEncryptor.builder()
+            .key(encryptionKey)
+            .algorithm(encryptionAlgorithm)
+            .encryptionMethod(contentEncryptionAlgorithmIdentifier)
+            .headers(headers)
+            .build()
+            .encrypt(value);
     }
 
     private void configureSigningParameters(final String secretKeySigning) {
@@ -139,11 +180,14 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         if (StringUtils.isBlank(signingKeyToUse)) {
             LOGGER.warn("Secret key for signing is not defined for [{}]. CAS will attempt to auto-generate the signing key", getName());
             signingKeyToUse = EncodingUtils.generateJsonWebKey(this.signingKeySize);
-            LOGGER.warn("Generated signing key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings under setting [{}].",
-                signingKeyToUse, this.signingKeySize, getName(), getSigningKeySetting());
+            val prop = String.format("%s=%s", getSigningKeySetting(), signingKeyToUse);
+            //CHECKSTYLE:OFF
+            LOGGER.warn("Generated signing key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings:\n\n\t{}\n\n",
+                signingKeyToUse, this.signingKeySize, getName(), prop);
+            //CHECKSTYLE:ON
         } else {
             try {
-                val jwk = PublicJsonWebKey.class.cast(EncodingUtils.newJsonWebKey(signingKeyToUse));
+                val jwk = (PublicJsonWebKey) EncodingUtils.newJsonWebKey(signingKeyToUse);
                 LOGGER.trace("Parsed signing key as a JSON web key for [{}] with kid [{}]", getName(), jwk.getKeyId());
                 if (jwk.getPrivateKey() == null) {
                     val msg = "Provided signing key as a JSON web key does not carry a private key";
@@ -164,13 +208,16 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         if (StringUtils.isBlank(secretKeyToUse)) {
             LOGGER.warn("Secret key for encryption is not defined for [{}]; CAS will attempt to auto-generate the encryption key", getName());
             secretKeyToUse = EncodingUtils.generateJsonWebKey(this.encryptionKeySize);
-            LOGGER.warn("Generated encryption key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings under setting [{}].",
-                secretKeyToUse, this.encryptionKeySize, getName(), getEncryptionKeySetting());
+            val prop = String.format("%s=%s", getEncryptionKeySetting(), secretKeyToUse);
+            //CHECKSTYLE:OFF
+            LOGGER.warn("Generated encryption key [{}] of size [{}] for [{}]. The generated key MUST be added to CAS settings:\n\n\t{}\n\n",
+                secretKeyToUse, this.encryptionKeySize, getName(), prop);
+            //CHECKSTYLE:ON
         } else {
             try {
                 val results = JsonUtil.parseJson(secretKeyToUse);
                 LOGGER.trace("Parsed encryption key as a JSON web key for [{}] as [{}]", getName(), results);
-                setSecretKeyEncryptionKey(EncodingUtils.generateJsonWebKey(results));
+                setEncryptionKey(EncodingUtils.generateJsonWebKey(results));
             } catch (final Exception e) {
                 LOGGER.trace("Unable to recognize encryption key [{}] as a JSON web key: [{}].", getEncryptionKeySetting(), e.getMessage());
                 LOGGER.debug("Using pre-defined encryption key to use for [{}]", getEncryptionKeySetting());
@@ -183,12 +230,12 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {
-            if (this.secretKeyEncryptionKey == null) {
+            if (this.encryptionKey == null) {
                 LOGGER.trace("Creating encryption key instance based on provided secret key");
-                setSecretKeyEncryptionKey(EncodingUtils.generateJsonWebKey(secretKeyToUse));
+                setEncryptionKey(EncodingUtils.generateJsonWebKey(secretKeyToUse));
             }
             if (StringUtils.isBlank(contentEncryptionAlgorithmIdentifier)) {
-                setContentEncryptionAlgorithmIdentifier(CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
+                setContentEncryptionAlgorithmIdentifier(EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
             } else {
                 setContentEncryptionAlgorithmIdentifier(contentEncryptionAlgorithmIdentifier);
             }
@@ -197,71 +244,69 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         }
     }
 
-    private String decryptAndVerify(final Serializable value) {
+    private String decryptAndVerify(final Serializable value, final Key encryptionKey, final Key signingKey) {
         var encodedObj = value.toString();
-        if (isEncryptionPossible()) {
+        if (isEncryptionPossible(encryptionKey)) {
             LOGGER.trace("Attempting to decrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
-            encodedObj = EncodingUtils.decryptJwtValue(this.secretKeyEncryptionKey, encodedObj);
+            encodedObj = EncodingUtils.decryptJwtValue(encryptionKey, encodedObj);
         }
         val currentValue = encodedObj.getBytes(StandardCharsets.UTF_8);
         val encoded = FunctionUtils.doIf(this.signingEnabled, () -> {
             LOGGER.trace("Attempting to verify signature based on signing key defined by [{}]", getSigningKeySetting());
-            return verifySignature(currentValue);
+            return verifySignature(currentValue, signingKey);
         }, () -> currentValue).get();
         return new String(encoded, StandardCharsets.UTF_8);
     }
 
-    private String verifyAndDecrypt(final Serializable value) {
+    private String verifyAndDecrypt(final Serializable value, final Key encryptionKey, final Key signingKey) {
         val currentValue = value.toString().getBytes(StandardCharsets.UTF_8);
         val encoded = FunctionUtils.doIf(this.signingEnabled, () -> {
             LOGGER.trace("Attempting to verify signature based on signing key defined by [{}]", getSigningKeySetting());
-            return verifySignature(currentValue);
+            return verifySignature(currentValue, signingKey);
         }, () -> currentValue).get();
 
         if (encoded != null && encoded.length > 0) {
             val encodedObj = new String(encoded, StandardCharsets.UTF_8);
 
-            if (isEncryptionPossible()) {
+            if (isEncryptionPossible(encryptionKey)) {
                 LOGGER.trace("Attempting to decrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
-                return EncodingUtils.decryptJwtValue(this.secretKeyEncryptionKey, encodedObj);
+                return EncodingUtils.decryptJwtValue(encryptionKey, encodedObj);
             }
             return encodedObj;
         }
         return null;
     }
 
-    private String encryptAndSign(final Serializable value) {
-        val encoded = FunctionUtils.doIf(isEncryptionPossible(),
+    private String encryptAndSign(final Serializable value, final Key encryptionKey, final Key signingKey) {
+        val encoded = FunctionUtils.doIf(isEncryptionPossible(encryptionKey),
             () -> {
                 LOGGER.trace("Attempting to encrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
-                return EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value,
-                    this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier, getCustomHeaders());
+                return encryptValueAsJwt(encryptionKey, value);
             },
             value::toString).get();
 
         if (this.signingEnabled) {
             LOGGER.trace("Attempting to sign value based on signing key defined by [{}]", getSigningKeySetting());
-            val signed = sign(encoded.getBytes(StandardCharsets.UTF_8));
+            val signed = sign(encoded.getBytes(StandardCharsets.UTF_8), signingKey);
             return new String(signed, StandardCharsets.UTF_8);
         }
         return encoded;
     }
 
-    private String signAndEncrypt(final Serializable value) {
+    private String signAndEncrypt(final Serializable value, final Key encryptionKey, final Key signingKey) {
         val encoded = FunctionUtils.doIf(this.signingEnabled,
             () -> {
                 LOGGER.trace("Attempting to sign value based on signing key defined by [{}]", getSigningKeySetting());
-                val signed = sign(value.toString().getBytes(StandardCharsets.UTF_8));
+                val signed = sign(value.toString().getBytes(StandardCharsets.UTF_8), signingKey);
                 return new String(signed, StandardCharsets.UTF_8);
             },
             value::toString
         ).get();
-        
-        return FunctionUtils.doIf(isEncryptionPossible(),
+
+        return FunctionUtils.doIf(isEncryptionPossible(encryptionKey),
             () -> {
                 LOGGER.trace("Attempting to encrypt value based on encryption key defined by [{}]", getEncryptionKeySetting());
-                return EncodingUtils.encryptValueAsJwt(this.secretKeyEncryptionKey, value,
-                    this.encryptionAlgorithm, this.contentEncryptionAlgorithmIdentifier, getCustomHeaders());
+                return encryptValueAsJwt(encryptionKey, encoded);
             },
             () -> encoded).get();
     }
@@ -278,44 +323,5 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
          * Sign the value first, and then encrypt.
          */
         SIGN_AND_ENCRYPT
-    }
-
-    /**
-     * Configure encryption key from public key resource.
-     *
-     * @param secretKeyToUse the secret key to use
-     */
-    protected void configureEncryptionKeyFromPublicKeyResource(final String secretKeyToUse) {
-        val object = extractPublicKeyFromResource(secretKeyToUse);
-        LOGGER.debug("Located encryption key resource [{}]", secretKeyToUse);
-        setSecretKeyEncryptionKey(object);
-        setEncryptionAlgorithm(KeyManagementAlgorithmIdentifiers.RSA_OAEP_256);
-    }
-
-    /**
-     * Is encryption possible?
-     *
-     * @return true/false
-     */
-    protected boolean isEncryptionPossible() {
-        return this.encryptionEnabled && this.secretKeyEncryptionKey != null;
-    }
-
-    /**
-     * Gets encryption key setting.
-     *
-     * @return the encryption key setting
-     */
-    protected String getEncryptionKeySetting() {
-        return "N/A";
-    }
-
-    /**
-     * Gets signing key setting.
-     *
-     * @return the signing key setting
-     */
-    protected String getSigningKeySetting() {
-        return "N/A";
     }
 }

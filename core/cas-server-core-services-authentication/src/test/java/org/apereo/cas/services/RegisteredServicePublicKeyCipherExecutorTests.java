@@ -17,11 +17,20 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Tag("RegisteredService")
-public class RegisteredServicePublicKeyCipherExecutorTests {
+@Tag("Cipher")
+class RegisteredServicePublicKeyCipherExecutorTests {
+
+    private static BaseRegisteredService getService(final String keyLocation) {
+        val svc = new CasRegisteredService();
+        svc.setServiceId("Testing");
+        if (StringUtils.isNotBlank(keyLocation)) {
+            svc.setPublicKey(new RegisteredServicePublicKeyImpl(keyLocation, "RSA"));
+        }
+        return svc;
+    }
 
     @Test
-    public void verifyCipherUnableToEncodeForStringIsTooLong() {
+    void verifyCipherUnableToEncodeForStringIsTooLong() throws Throwable {
         val svc = getService("classpath:keys/RSA1024Public.key");
         val ticketId = RandomUtils.randomAlphanumeric(120);
         val e = new RegisteredServicePublicKeyCipherExecutor();
@@ -29,7 +38,7 @@ public class RegisteredServicePublicKeyCipherExecutorTests {
     }
 
     @Test
-    public void verifyCipherAbleToEncode() {
+    void verifyCipherAbleToEncode() throws Throwable {
         val svc = getService("classpath:keys/RSA4096Public.key");
         val ticketId = RandomUtils.randomAlphanumeric(120);
         val e = new RegisteredServicePublicKeyCipherExecutor();
@@ -38,19 +47,10 @@ public class RegisteredServicePublicKeyCipherExecutorTests {
     }
 
     @Test
-    public void verifyCipherNoKey() {
+    void verifyCipherNoKey() throws Throwable {
         val svc = getService(StringUtils.EMPTY);
         val ticketId = RandomUtils.randomAlphanumeric(120);
         val e = new RegisteredServicePublicKeyCipherExecutor();
         assertNull(e.encode(ticketId, Optional.of(svc)));
-    }
-
-    private static AbstractRegisteredService getService(final String keyLocation) {
-        val svc = new RegexRegisteredService();
-        svc.setServiceId("Testing");
-        if (StringUtils.isNotBlank(keyLocation)) {
-            svc.setPublicKey(new RegisteredServicePublicKeyImpl(keyLocation, "RSA"));
-        }
-        return svc;
     }
 }

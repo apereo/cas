@@ -5,17 +5,16 @@ import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderAbsentException;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.Event;
-
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * This is {@link MultifactorAuthenticationContingencyPlan}.
@@ -27,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 public class MultifactorAuthenticationContingencyPlan extends BaseAuthenticationRiskContingencyPlan {
 
     public MultifactorAuthenticationContingencyPlan(final CasConfigurationProperties casProperties,
-        final ApplicationContext applicationContext) {
+                                                    final ApplicationContext applicationContext) {
         super(casProperties, applicationContext);
     }
 
@@ -41,15 +40,15 @@ public class MultifactorAuthenticationContingencyPlan extends BaseAuthentication
 
             val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
             if (providerMap.isEmpty()) {
-                LOGGER.warn("No multifactor authentication providers are available in the application context");
-                throw new AuthenticationException();
+                LOGGER.warn("No multifactor authentication providers are available in the application context. Authentication is blocked");
+                throw new AuthenticationException(new RiskyAuthenticationException());
             }
-            
+
             if (providerMap.size() == 1) {
                 id = providerMap.values().iterator().next().getId();
             } else {
                 LOGGER.warn("No multifactor authentication providers are specified to handle risk-based authentication");
-                throw new AuthenticationException();
+                throw new AuthenticationException(new MultifactorAuthenticationProviderAbsentException());
             }
         }
 
@@ -58,7 +57,7 @@ public class MultifactorAuthenticationContingencyPlan extends BaseAuthentication
             .addAttribute(attributeName, Boolean.TRUE)
             .build();
         LOGGER.debug("Updated authentication to remember risk-based authn via [{}]", attributeName);
-        authentication.update(newAuthn);
+        authentication.updateAttributes(newAuthn);
         return new AuthenticationRiskContingencyResponse(new Event(this, id));
     }
 }

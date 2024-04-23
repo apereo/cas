@@ -1,0 +1,26 @@
+{
+  "dependencies": "events-mongo",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.events.core.track-geolocation=true",
+
+    "--cas.events.mongo.user-id=root",
+    "--cas.events.mongo.password=secret",
+    "--cas.events.mongo.host=localhost",
+    "--cas.events.mongo.port=27017",
+    "--cas.events.mongo.authentication-database-name=admin",
+    "--cas.events.mongo.database-name=events",
+    "--cas.events.mongo.drop-collection=true",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=events",
+    "--management.endpoints.enabled-by-default=true"
+  ],
+  "jvmArgs": "-Djava.net.preferIPv4Addresses=true",
+  "initScript": "${PWD}/ci/tests/mongodb/run-mongodb-server.sh"
+}
+

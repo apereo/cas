@@ -1,0 +1,18 @@
+{
+  "dependencies": "core",
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--spring.thymeleaf.cache=false",
+
+    "--cas.view.rest.basic-auth-username=restapi",
+    "--cas.view.rest.basic-auth-password=YdCP05HvuhOH^*Z",
+    "--cas.view.rest.url=http://localhost:5432/login.html",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=health",
+    "--management.endpoints.enabled-by-default=true"
+  ]
+}
+

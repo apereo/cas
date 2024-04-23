@@ -1,7 +1,5 @@
 package org.apereo.cas.adaptors.radius;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.jradius.packet.attribute.RadiusAttribute;
 
 import java.util.List;
@@ -15,23 +13,6 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-@Getter
-@RequiredArgsConstructor
-public class CasRadiusResponse {
-
-    /**
-     * The code.
-     */
-    private final int code;
-
-    /**
-     * The identifier.
-     */
-    private final int identifier;
-
-    /**
-     * The attributes.
-     */
-    private final List<RadiusAttribute> attributes;
+public record CasRadiusResponse(int code, int identifier, List<RadiusAttribute> attributes) {
 
 }

@@ -1,0 +1,24 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/cas.*",
+  "id": 1,
+  "name": "Sample",
+  "singleSignOnParticipationPolicy": {
+    "@class": "org.apereo.cas.services.ChainingRegisteredServiceSingleSignOnParticipationPolicy",
+    "policies": [ "java.util.ArrayList", [
+        {
+          "@class":"org.apereo.cas.services.AttributeBasedRegisteredServiceSingleSignOnParticipationPolicy",
+          "attributes":{
+            "@class": "java.util.HashMap",
+            "cn": [ "java.util.ArrayList", ["\\d/\\d/\\d"] ]
+          },
+          "requireAllAttributes": false
+        },
+        {
+          "@class":"org.apereo.cas.services.GroovyRegisteredServiceSingleSignOnParticipationPolicy",
+          "groovyScript" : "groovy { authentication.principal.id == 'casuser' }"
+        }
+      ]
+    ]
+  }
+}

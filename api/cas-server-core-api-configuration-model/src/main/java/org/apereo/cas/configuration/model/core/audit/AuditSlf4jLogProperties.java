@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -20,6 +21,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 public class AuditSlf4jLogProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 4227475246873515918L;
 
     /**
@@ -34,6 +36,25 @@ public class AuditSlf4jLogProperties implements Serializable {
      * Character to separate audit fields if single-line audits are used.
      */
     private String singlelineSeparator = "|";
+    
+    /**
+     * Control and define fields that can be accepted by the audit log.
+     * Accepted values are:
+     * <ul>
+     *     <li>{@code who}</li>
+     *     <li>{@code what}</li>
+     *     <li>{@code action}</li>
+     *     <li>{@code application}</li>
+     *     <li>{@code when}</li>
+     *     <li>{@code user_agent}</li>
+     *     <li>{@code client_ip}</li>
+     *     <li>{@code server_ip}</li>
+     *     <li>{@code geo_location}</li>
+     *     <li>{@code headers}</li>
+     * </ul>
+     */
+    private String auditableFields = "who,what,when,action,client_ip,server_ip,geo_location";
+
 
     /**
      * Decide whether Slf4j audits should be enabled.

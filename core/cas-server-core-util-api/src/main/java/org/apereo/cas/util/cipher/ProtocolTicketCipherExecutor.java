@@ -1,6 +1,8 @@
 package org.apereo.cas.util.cipher;
 
 
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
+
 /**
  * This is {@link ProtocolTicketCipherExecutor}.
  *
@@ -10,7 +12,7 @@ package org.apereo.cas.util.cipher;
 public class ProtocolTicketCipherExecutor extends BaseStringCipherExecutor {
 
     public ProtocolTicketCipherExecutor() {
-        super(null, null, DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, 0, 0);
+        super(null, null, EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, 0, 0);
     }
 
     public ProtocolTicketCipherExecutor(final String secretKeyEncryption,
@@ -25,7 +27,7 @@ public class ProtocolTicketCipherExecutor extends BaseStringCipherExecutor {
     public ProtocolTicketCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
                                         final int signingKeySize,
                                         final int encryptionKeySize) {
-        super(secretKeyEncryption, secretKeySigning, DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, signingKeySize, encryptionKeySize);
+        super(secretKeyEncryption, secretKeySigning, EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, signingKeySize, encryptionKeySize);
     }
 
     @Override
@@ -34,12 +36,12 @@ public class ProtocolTicketCipherExecutor extends BaseStringCipherExecutor {
     }
 
     @Override
-    protected String getEncryptionKeySetting() {
+    public String getEncryptionKeySetting() {
         return "cas.ticket.crypto.encryption.key";
     }
 
     @Override
-    protected String getSigningKeySetting() {
+    public String getSigningKeySetting() {
         return "cas.ticket.crypto.signing.key";
     }
 }

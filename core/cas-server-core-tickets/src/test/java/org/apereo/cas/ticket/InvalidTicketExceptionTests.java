@@ -13,16 +13,23 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("Tickets")
-public class InvalidTicketExceptionTests {
+class InvalidTicketExceptionTests {
 
     @Test
-    public void verifyCodeNoThrowable() {
+    void verifyCodeOnlyMessageNotNull() throws Throwable {
+        val t = new InvalidTicketException("ST-InvalidTicketId");
+        assertEquals("INVALID_TICKET", t.getCode());
+        assertNotNull(t.getMessage());
+    }
+
+    @Test
+    void verifyCodeNoThrowable() throws Throwable {
         val t = new InvalidTicketException(new IllegalArgumentException("FailsOp"), "InvalidTicket");
         assertEquals("INVALID_TICKET", t.getCode());
     }
 
     @Test
-    public void verifyCodeWithCause() {
+    void verifyCodeWithCause() throws Throwable {
         val cause = new InvalidCookieException("forbidden");
         val t = new InvalidTicketException(cause, "InvalidTicketId");
         assertEquals(cause.getCode(), t.getCode());

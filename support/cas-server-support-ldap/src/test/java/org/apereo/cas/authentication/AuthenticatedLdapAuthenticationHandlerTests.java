@@ -1,18 +1,18 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
-
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.jooq.lambda.Unchecked;
-import org.jooq.lambda.UncheckedException;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-
 import javax.security.auth.login.AccountNotFoundException;
-
+import javax.security.auth.login.LoginException;
 import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link LdapAuthenticationHandler}.
@@ -30,20 +30,43 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.ldap[0].bind-credential=password",
     "cas.authn.ldap[0].collect-dn-attribute=true",
     "cas.authn.ldap[0].principal-attribute-list=description,cn"
-    })
-@EnabledIfPortOpen(port = 10389)
-@Tag("Ldap")
-public class AuthenticatedLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
-    @Test
-    public void verifyAuthenticateNotFound() {
-        assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
-            () -> this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("notfound", "badpassword")))));
+})
+@EnabledIfListeningOnPort(port = 10389)
+@Tag("LdapAuthentication")
+class AuthenticatedLdapAuthenticationHandlerTests {
+    @Nested
+    class WithoutCustomPrincipalId extends BaseLdapAuthenticationHandlerTests {
+        @Test
+        void verifyAuthenticateNotFound() throws Throwable {
+            assertThrowsWithRootCause(RuntimeException.class, AccountNotFoundException.class,
+                () -> ldapAuthenticationHandlers.toList()
+                    .forEach(Unchecked.consumer(h -> h.authenticate(
+                        new UsernamePasswordCredential("notfound", "badpassword"), mock(Service.class)))));
+        }
+
+        @Test
+        void verifyAuthenticateFailureNotFound() throws Throwable {
+            assertNotEquals(0, ldapAuthenticationHandlers.size());
+            assertThrowsWithRootCause(RuntimeException.class, AccountNotFoundException.class,
+                () -> ldapAuthenticationHandlers.toList().forEach(
+                    Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("bad", "bad"), mock(Service.class)))));
+        }
     }
 
-    @Test
-    public void verifyAuthenticateFailureNotFound() {
-        assertNotEquals(handler.size(), 0);
-        assertThrowsWithRootCause(UncheckedException.class, AccountNotFoundException.class,
-            () -> this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("bad", "bad")))));
+    @TestPropertySource(properties = "cas.authn.ldap[0].principal-attribute-id=unknown")
+    @Nested
+    class WithUnknownCustomPrincipalId extends BaseLdapAuthenticationHandlerTests {
+    }
+
+    @TestPropertySource(properties = {
+        "cas.authn.ldap[0].principal-attribute-id=unknown",
+        "cas.authn.ldap[0].allow-missing-principal-attribute-value=false"
+    })
+    @Nested
+    class WithUnknownCustomPrincipalIdFailing extends BaseLdapAuthenticationHandlerTests {
+        @Override
+        void verifyAuthenticateSuccess() throws Throwable {
+            assertThrows(LoginException.class, super::verifyAuthenticateSuccess);
+        }
     }
 }

@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.sso;
 
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.encoder.BaseHttpServletAwareSamlObjectEncoder;
 
 import lombok.val;
@@ -15,9 +15,8 @@ import org.opensaml.saml.saml2.binding.encoding.impl.HTTPArtifactEncoder;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Response;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
 
 /**
@@ -30,7 +29,7 @@ public class SamlResponseArtifactEncoder extends BaseHttpServletAwareSamlObjectE
     private final SAMLArtifactMap samlArtifactMap;
 
     public SamlResponseArtifactEncoder(final VelocityEngine velocityEngineFactory,
-                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                       final SamlRegisteredServiceMetadataAdaptor adaptor,
                                        final HttpServletRequest httpRequest,
                                        final HttpServletResponse httpResponse,
                                        final SAMLArtifactMap samlArtifactMap) {
@@ -42,14 +41,15 @@ public class SamlResponseArtifactEncoder extends BaseHttpServletAwareSamlObjectE
     protected void finalizeEncode(final RequestAbstractType authnRequest,
                                   final BaseSAML2MessageEncoder e,
                                   final Response samlResponse,
-                                  final String relayState) throws Exception {
+                                  final String relayState,
+                                  final MessageContext messageContext) {
         val encoder = (HTTPArtifactEncoder) e;
         encoder.setArtifactMap(this.samlArtifactMap);
 
-        val ctx = getEncoderMessageContext(authnRequest, samlResponse, relayState);
+        val ctx = getEncoderMessageContext(authnRequest, samlResponse, relayState, messageContext);
         prepareArtifactContext(samlResponse, ctx);
         encoder.setMessageContext(ctx);
-        super.finalizeEncode(authnRequest, encoder, samlResponse, relayState);
+        super.finalizeEncode(authnRequest, encoder, samlResponse, relayState, messageContext);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class SamlResponseArtifactEncoder extends BaseHttpServletAwareSamlObjectE
     }
 
     private void prepareArtifactContext(final Response samlResponse, final MessageContext ctx) {
-        val art = ctx.getSubcontext(SAMLArtifactContext.class, true);
+        val art = ctx.ensureSubcontext(SAMLArtifactContext.class);
         Objects.requireNonNull(art).setArtifactType(SAML2ArtifactType0004.TYPE_CODE);
         art.setSourceEntityId(samlResponse.getIssuer().getValue());
         val svc = adaptor.getAssertionConsumerServiceForArtifactBinding();

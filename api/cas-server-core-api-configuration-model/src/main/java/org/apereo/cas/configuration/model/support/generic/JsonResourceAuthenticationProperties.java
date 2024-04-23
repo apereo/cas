@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.generic;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
+import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
@@ -10,6 +11,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serial;
 
 /**
  * This is {@link JsonResourceAuthenticationProperties}.
@@ -23,6 +26,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @Accessors(chain = true)
 public class JsonResourceAuthenticationProperties extends SpringResourceProperties {
 
+    @Serial
     private static final long serialVersionUID = 1079027841236526083L;
 
     /**
@@ -47,4 +51,10 @@ public class JsonResourceAuthenticationProperties extends SpringResourceProperti
      * Authentication handler name used to verify credentials in the file.
      */
     private String name;
+
+    /**
+     * Define the scope and state of this authentication handler
+     * and the lifecycle in which it can be invoked or activated.
+     */
+    private AuthenticationHandlerStates state = AuthenticationHandlerStates.ACTIVE;
 }

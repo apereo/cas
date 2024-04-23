@@ -1,15 +1,15 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.HashSet;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,14 +19,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("MFA")
-public class DefaultRegisteredServiceMultifactorPolicyTests {
+class DefaultRegisteredServiceMultifactorPolicyTests {
 
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultRegisteredServiceMultifactorPolicy.json");
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     @Test
-    public void verifySerializeADefaultRegisteredServiceMultifactorPolicyToJson() throws IOException {
+    void verifySerializeADefaultRegisteredServiceMultifactorPolicyToJson() throws IOException {
         val policyWritten = new DefaultRegisteredServiceMultifactorPolicy();
         policyWritten.setPrincipalAttributeNameTrigger("trigger");
         policyWritten.setPrincipalAttributeValueToMatch("attribute");
@@ -34,10 +33,9 @@ public class DefaultRegisteredServiceMultifactorPolicyTests {
         providers.add("providerOne");
         policyWritten.setMultifactorAuthenticationProviders(providers);
 
-        MAPPER.writeValue(JSON_FILE, policyWritten);
-
-        val policyRead = MAPPER.readValue(JSON_FILE, DefaultRegisteredServiceMultifactorPolicy.class);
-
+        val jsonFile = Files.createTempFile(RandomUtils.randomAlphabetic(8), ".json").toFile();
+        MAPPER.writeValue(jsonFile, policyWritten);
+        val policyRead = MAPPER.readValue(jsonFile, DefaultRegisteredServiceMultifactorPolicy.class);
         assertEquals(policyWritten, policyRead);
     }
 }

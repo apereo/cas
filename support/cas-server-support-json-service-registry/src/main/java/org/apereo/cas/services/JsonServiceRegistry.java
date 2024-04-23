@@ -14,7 +14,7 @@ import org.springframework.core.io.Resource;
 import java.util.Collection;
 
 /**
- * Implementation of {@code ServiceRegistry} that reads services definition from JSON
+ * Implementation of {@link ServiceRegistry} that reads services definition from JSON
  * configuration file at the Spring Application Context initialization time. JSON files are
  * expected to be found inside a directory location and this registry will recursively look through
  * the directory structure to find relevant JSON files. Files are expected to have the
@@ -33,13 +33,14 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
      */
     private static final String FILE_EXTENSION = "json";
 
-    public JsonServiceRegistry(final Resource configDirectory, final WatcherService serviceRegistryConfigWatcher,
+    public JsonServiceRegistry(final Resource configDirectory,
+                               final WatcherService serviceRegistryConfigWatcher,
                                final ConfigurableApplicationContext applicationContext,
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
                                final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
         super(configDirectory,
-            CollectionUtils.wrapList(new RegisteredServiceJsonSerializer()),
+            CollectionUtils.wrapList(new RegisteredServiceJsonSerializer(applicationContext)),
             applicationContext, registeredServiceReplicationStrategy, resourceNamingStrategy,
             serviceRegistryListeners, serviceRegistryConfigWatcher);
     }

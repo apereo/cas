@@ -1,0 +1,21 @@
+{
+  "dependencies": "oauth-webflow,oauth-uma",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.attribute-repository.stub.attributes.first_name=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.last_name=User",
+
+    "--cas.authn.oauth.uma.core.issuer=https://localhost:8443/cas",
+    "--cas.authn.oauth.uma.requesting-party-token.jwks-file.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/uma-keystore.jwks",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}
+

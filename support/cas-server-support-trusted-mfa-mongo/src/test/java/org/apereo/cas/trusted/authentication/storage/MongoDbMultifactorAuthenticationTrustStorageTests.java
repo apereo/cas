@@ -1,10 +1,9 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import org.apereo.cas.config.CasMongoDbMultifactorAuthenticationTrustAutoConfiguration;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-import org.apereo.cas.trusted.config.MongoDbMultifactorAuthenticationTrustConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
-
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,11 +11,9 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -25,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("MongoDb")
-@Import(MongoDbMultifactorAuthenticationTrustConfiguration.class)
+@Tag("MongoDbMFA")
+@Import(CasMongoDbMultifactorAuthenticationTrustAutoConfiguration.class)
 @TestPropertySource(
     properties = {
         "cas.authn.mfa.trusted.mongo.database-name=mfa-trusted",
@@ -37,12 +34,12 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.trusted.mongo.authentication-database-name=admin",
         "cas.authn.mfa.trusted.mongo.drop-collection=true"
     })
-@EnabledIfPortOpen(port = 27017)
+@EnabledIfListeningOnPort(port = 27017)
 @Getter
-public class MongoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
+class MongoDbMultifactorAuthenticationTrustStorageTests extends AbstractMultifactorAuthenticationTrustStorageTests {
 
     @Test
-    public void verifySetAnExpireByKey() {
+    void verifySetAnExpireByKey() throws Throwable {
         var record = MultifactorAuthenticationTrustRecord.newInstance("casuser", "geography", "fingerprint");
         record = getMfaTrustEngine().save(record);
         assertNotNull(getMfaTrustEngine().get(record.getId()));
@@ -54,7 +51,7 @@ public class MongoDbMultifactorAuthenticationTrustStorageTests extends AbstractM
     }
 
     @Test
-    public void verifyExpireByDate() {
+    void verifyExpireByDate() throws Throwable {
         val r = MultifactorAuthenticationTrustRecord.newInstance("castest", "geography", "fingerprint");
         val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
         r.setRecordDate(now.minusDays(2));

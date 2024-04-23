@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
-
 import lombok.NoArgsConstructor;
 
 /**
@@ -26,12 +25,12 @@ public class OAuth20JwtAccessTokenCipherExecutor extends JwtTicketCipherExecutor
     }
 
     @Override
-    protected String getEncryptionKeySetting() {
+    public String getEncryptionKeySetting() {
         return "cas.authn.oauth.access-token.crypto.encryption.key";
     }
 
     @Override
-    protected String getSigningKeySetting() {
+    public String getSigningKeySetting() {
         return "cas.authn.oauth.access-token.crypto.signing.key";
     }
 
@@ -39,4 +38,6 @@ public class OAuth20JwtAccessTokenCipherExecutor extends JwtTicketCipherExecutor
     public String getName() {
         return "OAuth JWT Access Tokens";
     }
+
+
 }

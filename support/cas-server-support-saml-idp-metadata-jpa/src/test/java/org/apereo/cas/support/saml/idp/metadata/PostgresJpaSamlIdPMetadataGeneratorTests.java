@@ -1,6 +1,6 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.junit.jupiter.api.Tag;
 import org.springframework.test.context.TestPropertySource;
@@ -12,14 +12,14 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.0.0
  */
 @TestPropertySource(properties = {
-    "cas.jdbc.show-sql=true",
+    "cas.jdbc.show-sql=false",
     "cas.authn.saml-idp.metadata.jpa.user=postgres",
     "cas.authn.saml-idp.metadata.jpa.password=password",
     "cas.authn.saml-idp.metadata.jpa.driver-class=org.postgresql.Driver",
     "cas.authn.saml-idp.metadata.jpa.url=jdbc:postgresql://localhost:5432/saml",
-    "cas.authn.saml-idp.metadata.jpa.dialect=org.hibernate.dialect.PostgreSQL95Dialect"
+    "cas.authn.saml-idp.metadata.jpa.dialect=org.hibernate.dialect.PostgreSQLDialect"
 })
-@EnabledIfPortOpen(port = 5432)
+@EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
-public class PostgresJpaSamlIdPMetadataGeneratorTests extends JpaSamlIdPMetadataGeneratorTests {
+class PostgresJpaSamlIdPMetadataGeneratorTests extends JpaSamlIdPMetadataGeneratorTests {
 }

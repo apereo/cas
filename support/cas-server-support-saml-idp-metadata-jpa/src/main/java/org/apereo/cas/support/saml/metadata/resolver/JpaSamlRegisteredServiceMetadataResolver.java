@@ -1,5 +1,8 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -11,13 +14,15 @@ import org.apereo.cas.util.LoggingUtils;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import net.shibboleth.shared.resolver.CriteriaSet;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -28,7 +33,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@EnableTransactionManagement(proxyTargetClass = true)
+@EnableTransactionManagement(proxyTargetClass = false)
 @Transactional(transactionManager = "transactionManagerSamlMetadata")
 @Slf4j
 @ToString
@@ -37,13 +42,16 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
 
     private static final String SELECT_QUERY = String.format("SELECT r from %s r ", SamlMetadataDocument.class.getSimpleName());
 
-    @PersistenceContext(unitName = "samlMetadataEntityManagerFactory")
-    private transient EntityManager entityManager;
+    @PersistenceContext(unitName = "jpaSamlMetadataContext")
+    private EntityManager entityManager;
 
     public JpaSamlRegisteredServiceMetadataResolver(final SamlIdPProperties samlIdPProperties, final OpenSamlConfigBean configBean) {
         super(samlIdPProperties, configBean);
     }
 
+    @Audit(action = AuditableActions.SAML2_METADATA_RESOLUTION,
+        actionResolverName = AuditActionResolvers.SAML2_METADATA_RESOLUTION_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.SAML2_METADATA_RESOLUTION_RESOURCE_RESOLVER)
     @Override
     public Collection<? extends MetadataResolver> resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
         val documents = this.entityManager.createQuery(SELECT_QUERY, SamlMetadataDocument.class).getResultList();
@@ -73,11 +81,7 @@ public class JpaSamlRegisteredServiceMetadataResolver extends BaseSamlRegistered
     public boolean isAvailable(final SamlRegisteredService service) {
         if (supports(service)) {
             val ds = JpaBeans.newDataSource(samlIdPProperties.getMetadata().getJpa());
-            try (val con = ds.getConnection()) {
-                return con.isValid(DATA_SOURCE_VALIDITY_TIMEOUT_SECONDS);
-            } catch (final Exception e) {
-                LoggingUtils.error(LOGGER, e);
-            }
+            return JpaBeans.isValidDataSourceConnection(ds, DATA_SOURCE_VALIDITY_TIMEOUT_SECONDS);
         }
         return false;
     }

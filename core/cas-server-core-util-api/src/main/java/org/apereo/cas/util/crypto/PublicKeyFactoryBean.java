@@ -9,7 +9,9 @@ import org.bouncycastle.util.io.pem.PemReader;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
+import jakarta.annotation.Nonnull;
 import javax.crypto.Cipher;
+
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
@@ -58,6 +60,7 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
         return PublicKey.class;
     }
 
+    @Nonnull
     @Override
     protected PublicKey createInstance() throws Exception {
         var key = readPemPublicKey();
@@ -68,12 +71,7 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
         return key;
     }
 
-    /**
-     * Read pem public key.
-     *
-     * @return the public key
-     * @throws Exception the exception
-     */
+
     protected PublicKey readPemPublicKey() throws Exception {
         try (val reader = new PemReader(new InputStreamReader(this.resource.getInputStream(), StandardCharsets.UTF_8))) {
             val pemObject = reader.readPemObject();

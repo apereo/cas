@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -29,7 +30,7 @@ public class RelaxedPropertyNames implements Iterable<String> {
 
     public RelaxedPropertyNames(final String name) {
         this.name = StringUtils.defaultString(name);
-        initialize(RelaxedPropertyNames.this.name, this.values);
+        initialize(this.name, this.values);
     }
 
     /**
@@ -40,17 +41,13 @@ public class RelaxedPropertyNames implements Iterable<String> {
      */
     public static RelaxedPropertyNames forCamelCase(final String name) {
         val result = new StringBuilder();
-        for (var c : name.toCharArray()) {
-            result.append(Character.isUpperCase(c) && result.length() > 0
-                && result.charAt(result.length() - 1) != '-'
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            result.append(Character.isUpperCase(c) && !result.isEmpty()
+                          && result.charAt(result.length() - 1) != '-'
                 ? "-" + Character.toLowerCase(c) : c);
         }
         return new RelaxedPropertyNames(result.toString());
-    }
-
-    @Override
-    public Iterator<String> iterator() {
-        return this.values.iterator();
     }
 
     private static void initialize(final String name, final Set<String> values) {
@@ -58,7 +55,7 @@ public class RelaxedPropertyNames implements Iterable<String> {
             return;
         }
         for (val variation : Variation.values()) {
-            for (val manipulation : Manipulation.values()) {
+            for (val manipulation : NameManipulations.values()) {
                 var result = name;
                 result = manipulation.apply(result);
                 result = variation.apply(result);
@@ -66,6 +63,11 @@ public class RelaxedPropertyNames implements Iterable<String> {
                 initialize(result, values);
             }
         }
+    }
+
+    @Override
+    public Iterator<String> iterator() {
+        return this.values.iterator();
     }
 
     /**
@@ -84,7 +86,7 @@ public class RelaxedPropertyNames implements Iterable<String> {
         LOWERCASE {
             @Override
             public String apply(final String value) {
-                return value.isEmpty() ? value : value.toLowerCase();
+                return value.isEmpty() ? value : value.toLowerCase(Locale.ENGLISH);
             }
 
         },
@@ -92,7 +94,7 @@ public class RelaxedPropertyNames implements Iterable<String> {
         UPPERCASE {
             @Override
             public String apply(final String value) {
-                return value.isEmpty() ? value : value.toUpperCase();
+                return value.isEmpty() ? value : value.toUpperCase(Locale.ENGLISH);
             }
 
         };
@@ -104,8 +106,11 @@ public class RelaxedPropertyNames implements Iterable<String> {
     /**
      * Name manipulations.
      */
-    enum Manipulation {
+    public enum NameManipulations {
 
+        /**
+         * Do nothing and return the value.
+         */
         NONE {
             @Override
             public String apply(final String value) {
@@ -114,30 +119,41 @@ public class RelaxedPropertyNames implements Iterable<String> {
 
         },
 
+        /**
+         * Convert hyphens into underscores.
+         */
         HYPHEN_TO_UNDERSCORE {
             @Override
             public String apply(final String value) {
-                return value.indexOf('-') != -1 ? value.replace('-', '_') : value;
+                return value.indexOf('-') == -1 ? value : value.replace('-', '_');
             }
 
         },
-
+        /**
+         * Convert underscores into periods.
+         */
         UNDERSCORE_TO_PERIOD {
             @Override
             public String apply(final String value) {
-                return value.indexOf('_') != -1 ? value.replace('_', '.') : value;
+                return value.indexOf('_') == -1 ? value : value.replace('_', '.');
             }
 
         },
 
+        /**
+         * Convert periods into underscores.
+         */
         PERIOD_TO_UNDERSCORE {
             @Override
             public String apply(final String value) {
-                return value.indexOf('.') != -1 ? value.replace('.', '_') : value;
+                return value.indexOf('.') == -1 ? value : value.replace('.', '_');
             }
 
         },
 
+        /**
+         * Convert camel case to underscore.
+         */
         CAMELCASE_TO_UNDERSCORE {
             @Override
             public String apply(final String value) {
@@ -159,6 +175,9 @@ public class RelaxedPropertyNames implements Iterable<String> {
 
         },
 
+        /**
+         * Convert camelcase into hyphens.
+         */
         CAMELCASE_TO_HYPHEN {
             @Override
             public String apply(final String value) {
@@ -180,6 +199,9 @@ public class RelaxedPropertyNames implements Iterable<String> {
 
         },
 
+        /**
+         * Convert separate words into camel case.
+         */
         SEPARATED_TO_CAMELCASE {
             @Override
             public String apply(final String value) {
@@ -187,16 +209,40 @@ public class RelaxedPropertyNames implements Iterable<String> {
             }
         },
 
+        /**
+         * Convert separate words into camel case.
+         */
         CASE_INSENSITIVE_SEPARATED_TO_CAMELCASE {
             @Override
             public String apply(final String value) {
                 return separatedToCamelCase(value, true);
             }
+        },
+
+        /**
+         * Convert underscore into title case.
+         */
+        CAMELCASE_TO_UNDERSCORE_TITLE_CASE {
+            @Override
+            public String apply(final String value) {
+                if (value.isEmpty()) {
+                    return value;
+                }
+                var matcher = CAMEL_CASE_PATTERN.matcher(value);
+                if (!matcher.find()) {
+                    return value;
+                }
+                matcher = matcher.reset();
+                var result = new StringBuilder();
+                while (matcher.find()) {
+                    matcher.appendReplacement(result, matcher.group(1) + '_' + StringUtils.capitalize(matcher.group(2)));
+                }
+                matcher.appendTail(result);
+                return result.toString();
+            }
         };
 
-        private static final char[] SUFFIXES = new char[]{'_', '-', '.'};
-
-        public abstract String apply(String value);
+        private static final char[] SUFFIXES = {'_', '-', '.'};
 
         private static String separatedToCamelCase(final String value, final boolean caseInsensitive) {
             if (value.isEmpty()) {
@@ -204,8 +250,8 @@ public class RelaxedPropertyNames implements Iterable<String> {
             }
             var builder = new StringBuilder();
             for (final var field : Splitter.on(SEPARATED_TO_CAMEL_CASE_PATTERN).split(value)) {
-                final var fieldCased = caseInsensitive ? field.toLowerCase() : field;
-                builder.append(builder.length() == 0 ? field : StringUtils.capitalize(fieldCased));
+                var fieldCased = caseInsensitive ? field.toLowerCase(Locale.ENGLISH) : field;
+                builder.append(builder.isEmpty() ? field : StringUtils.capitalize(fieldCased));
             }
             var lastChar = value.charAt(value.length() - 1);
             for (final var suffix : SUFFIXES) {
@@ -216,6 +262,14 @@ public class RelaxedPropertyNames implements Iterable<String> {
             }
             return builder.toString();
         }
+
+        /**
+         * Apply string.
+         *
+         * @param value the value
+         * @return the string
+         */
+        public abstract String apply(String value);
     }
 
 }

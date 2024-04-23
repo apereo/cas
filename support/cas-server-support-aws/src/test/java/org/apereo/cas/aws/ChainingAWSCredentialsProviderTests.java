@@ -18,20 +18,20 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("AmazonWebServices")
-public class ChainingAWSCredentialsProviderTests {
+class ChainingAWSCredentialsProviderTests {
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
         System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");
     }
 
     @Test
-    public void verifyInstance() throws Exception {
+    void verifyInstance() throws Throwable {
         val path = File.createTempFile("props", ".txt").getCanonicalPath();
         val p = (AwsCredentialsProviderChain) ChainingAWSCredentialsProvider.getInstance("accesskey", "secretKey",
             "profilePath", path);
         val credentials = p.resolveCredentials();
         assertNotNull(credentials);
-        assertTrue(credentials instanceof AwsBasicCredentials);
+        assertInstanceOf(AwsBasicCredentials.class, credentials);
         assertNotNull(ChainingAWSCredentialsProvider.getInstance());
     }
 }

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration shutdownHook="disable" packages="org.apereo.cas.logging">
+
+    <Appenders>
+        <Console name="PatternConsole" target="SYSTEM_OUT">
+            <PatternLayout pattern="%highlight{%d %p [%c] - &lt;%m&gt;%n}" />
+        </Console>
+
+        <Console name="Console" target="SYSTEM_OUT">
+            <JsonLayout locationInfo="false"
+                        includeStacktrace="true"
+                        objectMessageAsJsonObject="false"
+                        compact="false"
+                        properties="false"
+                        eventEol="true"
+                        includeTimeMillis="false">
+                <KeyValuePair key="time" value="$${event:timestamp:-}"/>
+                <KeyValuePair key="timestampSeconds" value="$${ctx:timestampSeconds:-}"/>
+                <KeyValuePair key="timestampNanos" value="$${ctx:timestampNanos:-}"/>
+                <KeyValuePair key="severity" value="$${ctx:severity:-}"/>
+                <KeyValuePair key="labels" value="$${ctx:labels:-}"/>
+                <KeyValuePair key="httpRequest" value="$${ctx:httpRequest:-}"/>
+
+                <KeyValuePair key="logging.googleapis.com/sourceLocation" value="$${ctx:sourceLocation:-}"/>
+                <KeyValuePair key="logging.googleapis.com/spanId" value="$${ctx:spanId:-}"/>
+                <KeyValuePair key="logging.googleapis.com/trace" value="$${ctx:traceId:-}"/>
+
+                <KeyValuePair key="kubernetes.podId" value="$${k8s:podId:-}"/>
+                <KeyValuePair key="kubernetes.podIp" value="$${k8s:podIp:-}"/>
+                <KeyValuePair key="kubernetes.podName" value="$${k8s:podName:-}"/>
+                <KeyValuePair key="kubernetes.podName" value="$${k8s:podName:-}"/>
+                <KeyValuePair key="kubernetes.clusterName" value="$${k8s:clusterName:-}"/>
+                <KeyValuePair key="kubernetes.containerId" value="$${k8s:containerId:-}"/>
+                <KeyValuePair key="kubernetes.containerId" value="$${k8s:containerId:-}"/>
+                <KeyValuePair key="kubernetes.containerName" value="$${k8s:containerName:-}"/>
+                <KeyValuePair key="kubernetes.imageId" value="$${k8s:imageId:-}"/>
+                <KeyValuePair key="kubernetes.imageName" value="$${k8s:imageName:-}"/>
+                <KeyValuePair key="kubernetes.masterUrl" value="$${k8s:masterUrl:-}"/>
+                <KeyValuePair key="kubernetes.host" value="$${k8s:host:-}"/>
+                <KeyValuePair key="kubernetes.namespaceId" value="$${k8s:namespaceId:-}"/>
+                <KeyValuePair key="kubernetes.namespaceName" value="$${k8s:namespaceName:-}"/>
+                <KeyValuePair key="kubernetes.labels.app" value="$${k8s:labels.app:-}"/>
+
+                <KeyValuePair key="spring.application.name" value="$${spring:spring.application.name:-}"/>
+                <KeyValuePair key="spring.profiles.active" value="$${spring:profiles.active:-}"/>
+
+                <KeyValuePair key="docker.containerId" value="$${docker:containerId:-}"/>
+                <KeyValuePair key="docker.containerName" value="$${docker:containerName:-}"/>
+                <KeyValuePair key="docker.imageName" value="$${docker:imageName:-}"/>
+            </JsonLayout>
+        </Console>
+        <GoogleCloudAppender name="GoogleCloudAppender" projectId="5fdd7897-4c01-483c-93c1-d00dc28112c0">
+            <AppenderRef ref="Console"/>
+        </GoogleCloudAppender>
+        <GoogleCloudAppender name="GoogleCloudAppenderFlat" projectId="1fdd7897-4c01-483c-93c1-d00dc28112c0" flattenMessage="true">
+            <AppenderRef ref="Console"/>
+        </GoogleCloudAppender>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="org.apereo.cas.logging" includeLocation="true" level="INFO" additivity="false">
+            <AppenderRef ref="GoogleCloudAppender"/>
+            <AppenderRef ref="GoogleCloudAppenderFlat"/>
+        </Logger>
+
+        <Root level="WARN" includeLocation="true">
+            <AppenderRef ref="PatternConsole" />
+        </Root>
+    </Loggers>
+
+</Configuration>

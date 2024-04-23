@@ -1,2 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.pm.config.PasswordManagementWebflowConfiguration,\
-  org.apereo.cas.pm.config.PasswordManagementForgotUsernameConfiguration

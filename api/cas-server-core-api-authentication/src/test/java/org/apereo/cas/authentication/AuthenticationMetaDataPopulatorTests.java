@@ -14,11 +14,11 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("Authentication")
-public class AuthenticationMetaDataPopulatorTests {
+@Tag("AuthenticationMetadata")
+class AuthenticationMetaDataPopulatorTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val policy = mock(AuthenticationMetaDataPopulator.class);
         when(policy.getOrder()).thenCallRealMethod();
         assertEquals(Ordered.HIGHEST_PRECEDENCE, policy.getOrder());

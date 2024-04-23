@@ -13,9 +13,9 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
-public class ServiceMatchingStrategyTests {
+class ServiceMatchingStrategyTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertTrue(ServiceMatchingStrategy.alwaysMatches()
             .matches(mock(Service.class), mock(Service.class)));
         assertFalse(ServiceMatchingStrategy.neverMatches()

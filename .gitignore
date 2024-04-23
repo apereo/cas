@@ -9,6 +9,7 @@ test-output/
 bin/
 *.ignore
 *.ipr
+*.iprof
 *.war
 **/gh-pages/
 *.iml
@@ -21,6 +22,7 @@ bin/
 .DS_Store
 production/
 .idea
+.java-version
 overlays/
 pom.xml.versionsBackup
 build.xml
@@ -43,11 +45,15 @@ classes/
 out
 ajcore.*
 reports
+apache-jmeter-*
 
 *.asc
 /.nb-gradle/
+docs-latest/
+docs-includes/
 **/.sts4-cache/**
 **/work/**
+**/conformance-suite/**
 etc/loadtests/loadtests/**
 etc/loadtests/locustfiles/**
 etc/loadtests/__pycache__/**
@@ -55,5 +61,18 @@ webapp/resources/static/js/*-bundle.js
 **/k/
 **/dist/
 **/.sts4-cache/*
+ci/tests/puppeteer/package-*.json
 ci/tests/puppeteer/overlay
-ci/tests/puppeteer/package*.json
+ci/tests/puppeteer/scenarios/**/screenshot*.png
+ci/tests/puppeteer/screenshots/**/*.png
+ci/tests/puppeteer/**/screenshot*.png
+ci/tests/puppeteer/**/*.jwks
+ci/tests/puppeteer/chromium/user-data-dir
+ci/tests/puppeteer/scenarios/pac4j-delegated-login-saml2-shibidp/shibcasauthn
+ci/tests/puppeteer/scenarios/pac4j-delegated-login-saml2-shibidp/saml-md
+ci/tests/puppeteer/scenarios/wsfed-idp-login/wsfed-sp/
+ci/tests/perf/saml/md/*
+ci/tests/cassandra/security/**
+ci/tests/k3d/install.sh
+ci/tests/k3d/get_helm.sh
+support/cas-server-support-palantir/src/main/resources/static/assets

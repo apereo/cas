@@ -1,6 +1,6 @@
 package org.apereo.cas.web.flow.services;
 
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.WebBasedRegisteredService;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.util.StringUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,12 +31,13 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
 
     private static final int DEFAULT_IMAGE_SIZE = 32;
 
+    @Serial
     private static final long serialVersionUID = -2416684486715358748L;
 
     /**
      * the registered service.
      **/
-    protected final RegisteredService registeredService;
+    protected final WebBasedRegisteredService registeredService;
 
     /**
      * Gets description.
@@ -84,7 +86,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
     public String getInformationURL() {
         val items = getInformationURLs();
         if (items.isEmpty()) {
-            return this.registeredService.getInformationUrl();
+            return registeredService.getInformationUrl();
         }
         return StringUtils.collectionToDelimitedString(items, ".");
     }
@@ -191,6 +193,7 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
     @ToString
     public static class Logo implements Serializable {
 
+        @Serial
         private static final long serialVersionUID = -1434231982864628179L;
 
         private String url;

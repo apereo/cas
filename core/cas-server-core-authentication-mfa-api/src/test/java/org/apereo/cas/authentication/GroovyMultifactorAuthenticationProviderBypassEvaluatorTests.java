@@ -3,15 +3,17 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.bypass.GroovyMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.RegisteredService;
-
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
-
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -21,27 +23,28 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("Groovy")
-public class GroovyMultifactorAuthenticationProviderBypassEvaluatorTests {
-    @Test
-    public void verifyAction() {
-        assertTrue(runGroovyBypassFor(getAuthentication("casuser")));
-        assertFalse(runGroovyBypassFor(getAuthentication("anotheruser")));
-        assertTrue(runGroovyBypassFor(mock(Authentication.class)));
-    }
-
+@Tag("GroovyAuthentication")
+class GroovyMultifactorAuthenticationProviderBypassEvaluatorTests {
     private static boolean runGroovyBypassFor(final Authentication authentication) {
+        val applicationContext = new StaticApplicationContext();
+        applicationContext.refresh();
+
         val request = new MockHttpServletRequest();
         val properties = new MultifactorAuthenticationProviderBypassProperties();
         properties.getGroovy().setLocation(new ClassPathResource("GroovyBypass.groovy"));
         val provider = new TestMultifactorAuthenticationProvider();
-        val groovy = new GroovyMultifactorAuthenticationProviderBypassEvaluator(properties, provider.getId());
+        val groovy = new GroovyMultifactorAuthenticationProviderBypassEvaluator(properties, provider.getId(), applicationContext);
 
         val registeredService = mock(RegisteredService.class);
         when(registeredService.getName()).thenReturn("Service");
         when(registeredService.getServiceId()).thenReturn("http://app.org");
         when(registeredService.getId()).thenReturn(1000L);
-        return groovy.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request);
+
+        ApplicationContextProvider.holdApplicationContext(applicationContext);
+        ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext,
+            MultifactorAuthenticationPrincipalResolver.identical(), UUID.randomUUID().toString());
+
+        return groovy.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, provider, request, mock(Service.class));
     }
 
     private static Authentication getAuthentication(final String username) {
@@ -50,5 +53,12 @@ public class GroovyMultifactorAuthenticationProviderBypassEvaluatorTests {
         when(principal.getId()).thenReturn(username);
         when(authentication.getPrincipal()).thenReturn(principal);
         return authentication;
+    }
+
+    @Test
+    void verifyAction() throws Throwable {
+        assertTrue(runGroovyBypassFor(getAuthentication("casuser")));
+        assertFalse(runGroovyBypassFor(getAuthentication("anotheruser")));
+        assertTrue(runGroovyBypassFor(mock(Authentication.class)));
     }
 }

@@ -13,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("Groovy")
-public class GroovyPrincipalNameTransformerTests {
+@Tag("GroovyAuthentication")
+class GroovyPrincipalNameTransformerTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val chain = new ChainingPrincipalNameTransformer();
         chain.addTransformer(new GroovyPrincipalNameTransformer(new ClassPathResource("GroovyTransformer.groovy")));
         chain.addTransformer(new ConvertCasePrincipalNameTransformer(true));

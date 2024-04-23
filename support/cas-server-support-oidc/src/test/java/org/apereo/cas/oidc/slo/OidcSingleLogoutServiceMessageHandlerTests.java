@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.slo;
 
-import org.apereo.cas.logout.SingleLogoutExecutionRequest;
+import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.logout.slo.SingleLogoutServiceMessageHandler;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
@@ -8,7 +9,6 @@ import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,34 +25,34 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("OIDC")
-public class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTests {
-
-    private static final String LOGOUT_URL = "https://mocky.io/post";
-
+class OidcSingleLogoutServiceMessageHandlerTests extends AbstractOidcTests {
+    private static final String LOGOUT_URL_OK = "https://mocky.io/post";
+    private static final String LOGOUT_URL_BAD = "https://unknown-1234-unknown.xyz";
     @Autowired
     @Qualifier("oidcSingleLogoutServiceMessageHandler")
     private SingleLogoutServiceMessageHandler oidcSingleLogoutServiceMessageHandler;
 
     @Test
-    public void verifyCreateLogoutRequestsFrontChannel() {
-        verifyCreateLogoutRequests(RegisteredServiceLogoutType.FRONT_CHANNEL);
+    void verifyCreateLogoutRequestsFrontChannel() throws Throwable {
+        verifyCreateLogoutRequests(RegisteredServiceLogoutType.FRONT_CHANNEL, LOGOUT_URL_OK);
     }
 
     @Test
-    public void verifyCreateLogoutRequestsBackChannel() {
-        verifyCreateLogoutRequests(RegisteredServiceLogoutType.BACK_CHANNEL);
+    void verifyCreateLogoutRequestsBackChannel() throws Throwable {
+        verifyCreateLogoutRequests(RegisteredServiceLogoutType.BACK_CHANNEL, LOGOUT_URL_OK);
     }
 
-    @BeforeEach
-    public void setup() {
-        this.servicesManager.deleteAll();
+    @Test
+    void verifyUnknownRequestsBackChannel() throws Throwable {
+        verifyCreateLogoutRequests(RegisteredServiceLogoutType.BACK_CHANNEL, LOGOUT_URL_BAD);
     }
-
-    private void verifyCreateLogoutRequests(final RegisteredServiceLogoutType type) {
-        val registeredService = getOidcRegisteredService("clientid", LOGOUT_URL + ".*");
+    
+    private void verifyCreateLogoutRequests(final RegisteredServiceLogoutType type, final String logoutUrl) {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), logoutUrl + ".*");
         registeredService.setLogoutType(type);
-        registeredService.setLogoutUrl(LOGOUT_URL);
-        val service = RegisteredServiceTestUtils.getService(LOGOUT_URL + "?client_id=" + registeredService.getClientId());
+        registeredService.setLogoutUrl(logoutUrl);
+        val service = RegisteredServiceTestUtils.getService(logoutUrl + "?client_id=" + registeredService.getClientId());
+        service.getAttributes().remove(CasProtocolConstants.PARAMETER_SERVICE);
         servicesManager.save(registeredService);
 
         val executionRequest = SingleLogoutExecutionRequest.builder()

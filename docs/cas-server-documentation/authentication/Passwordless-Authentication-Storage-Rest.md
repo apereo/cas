@@ -21,8 +21,9 @@ would produce a response body similar to the following:
   "multifactorAuthenticationEligible": "FALSE",  
   "delegatedAuthenticationEligible": "FALSE",  
   "requestPassword": false,
+  "allowedDelegatedClients" : [ "java.util.ArrayList", [ "ClientName1" ] ],
   "attributes":{ "lastName" : ["...", "..."] }
 }
 ```
 
-{% include casproperties.html properties="cas.authn.passwordless.accounts.rest" %}
+{% include_cached casproperties.html properties="cas.authn.passwordless.accounts.rest" %}

@@ -11,6 +11,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
+
 /**
  * This is {@link AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria}.
  *
@@ -25,6 +27,7 @@ import lombok.experimental.Accessors;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Accessors(chain = true)
 public class AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria implements RegisteredServiceAuthenticationPolicyCriteria {
+    @Serial
     private static final long serialVersionUID = -2905826778096374574L;
 
     private boolean tryAll;

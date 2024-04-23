@@ -18,25 +18,18 @@ public class RestfulSamlIdPMetadataCipherExecutor extends BaseStringCipherExecut
         super(secretKeyEncryption, secretKeySigning, alg, signingKeySize, encryptionKeySize);
     }
 
-    public RestfulSamlIdPMetadataCipherExecutor(final String secretKeyEncryption,
-                                                final String secretKeySigning,
-                                                final int signingKeySize,
-                                                final int encryptionKeySize) {
-        super(secretKeyEncryption, secretKeySigning, signingKeySize, encryptionKeySize);
-    }
-
     @Override
     public String getName() {
         return "Restful Saml IdP Metadata";
     }
 
     @Override
-    protected String getEncryptionKeySetting() {
+    public String getEncryptionKeySetting() {
         return "cas.authn.saml-idp.metadata.rest.crypto.encryption.key";
     }
 
     @Override
-    protected String getSigningKeySetting() {
+    public String getSigningKeySetting() {
         return "cas.authn.saml-idp.metadata.rest.crypto.signing.key";
     }
 }

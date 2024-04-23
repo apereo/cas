@@ -1,12 +1,17 @@
 package org.apereo.cas.audit.spi.resource;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationTransaction;
+import org.apereo.cas.authentication.RegisteredServiceAwareAuthenticationTransaction;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 import org.apereo.cas.util.AopUtils;
 import org.apereo.cas.util.CollectionUtils;
-
-import lombok.Setter;
+import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.function.FunctionUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apereo.inspektr.audit.AuditTrailManager;
+import org.apereo.inspektr.audit.AuditTrailManager.AuditFormats;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
 
@@ -16,28 +21,10 @@ import org.aspectj.lang.JoinPoint;
  * @author Scott Battaglia
  * @since 3.1.2
  */
-@Setter
+@RequiredArgsConstructor
 public class CredentialsAsFirstParameterResourceResolver implements AuditResourceResolver {
-    private AuditTrailManager.AuditFormats auditFormat = AuditTrailManager.AuditFormats.DEFAULT;
-
-    /**
-     * Turn the arguments into a list.
-     *
-     * @param args the args
-     * @return the string[]
-     */
-    private String[] toResources(final Object[] args) {
-        val object = args[0];
-        if (object instanceof AuthenticationTransaction) {
-            val transaction = AuthenticationTransaction.class.cast(object);
-            return new String[]{toResourceString(transaction.getCredentials())};
-        }
-        return new String[]{toResourceString(CollectionUtils.wrap(object))};
-    }
-
-    private String toResourceString(final Object credential) {
-        return auditFormat.serialize(credential);
-    }
+    protected final AuthenticationServiceSelectionPlan serviceSelectionStrategy;
+    protected final AuditEngineProperties properties;
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object retval) {
@@ -47,5 +34,36 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Exception exception) {
         return toResources(AopUtils.unWrapJoinPoint(joinPoint).getArgs());
+    }
+
+    private String[] toResources(final Object[] args) {
+        val object = args[0];
+        if (object instanceof final AuthenticationTransaction transaction) {
+            return new String[]{tranactionToResourceString(transaction)};
+        }
+        return new String[]{toResourceString(CollectionUtils.wrap(object))};
+    }
+
+    protected String tranactionToResourceString(final AuthenticationTransaction transaction) {
+        val payload = CollectionUtils.wrap("credential", transaction.getCredentials());
+        if (transaction instanceof final RegisteredServiceAwareAuthenticationTransaction rsat) {
+            FunctionUtils.doIfNotNull(rsat.getRegisteredService(), registeredService -> {
+                payload.put("registeredServiceId", registeredService.getServiceId());
+                payload.put("registeredServiceName", registeredService.getName());
+                payload.put("service", getServiceId(transaction.getService()));
+            });
+        }
+        val auditFormat = AuditFormats.valueOf(properties.getAuditFormat().name());
+        return auditFormat.serialize(payload);
+    }
+
+    protected String toResourceString(final Object credential) {
+        val auditFormat = AuditFormats.valueOf(properties.getAuditFormat().name());
+        return auditFormat.serialize(credential);
+    }
+
+    private String getServiceId(final Service service) {
+        val serviceId = FunctionUtils.doUnchecked(() -> serviceSelectionStrategy.resolveService(service).getId());
+        return DigestUtils.abbreviate(serviceId, properties.getAbbreviationLength());
     }
 }

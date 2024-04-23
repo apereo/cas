@@ -3,9 +3,8 @@ package org.apereo.cas.trusted.authentication.storage;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
-import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
+import org.apereo.cas.util.http.HttpUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpEntity;
@@ -13,7 +12,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
-
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
@@ -94,16 +92,13 @@ public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
 
     private String getEndpointUrl(final String path) {
         val endpoint = getTrustedDevicesMultifactorProperties().getRest().getUrl();
-        return (!endpoint.endsWith("/") ? endpoint.concat("/") : endpoint).concat(StringUtils.defaultString(path));
+        return StringUtils.appendIfMissing(endpoint, "/").concat(StringUtils.defaultString(path));
     }
 
     @Override
     protected MultifactorAuthenticationTrustRecord saveInternal(final MultifactorAuthenticationTrustRecord record) {
         val entity = getHttpEntity(record);
         val response = restTemplate.exchange(getEndpointUrl(null), HttpMethod.POST, entity, Object.class);
-        if (response.getStatusCode() == HttpStatus.OK) {
-            return record;
-        }
-        return null;
+        return response.getStatusCode() == HttpStatus.OK ? record : null;
     }
 }

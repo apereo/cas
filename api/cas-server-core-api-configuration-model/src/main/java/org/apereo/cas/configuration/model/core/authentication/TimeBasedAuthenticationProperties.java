@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.List;
 @JsonFilter("TimeBasedAuthenticationProperties")
 public class TimeBasedAuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 3826749727400569308L;
 
     /**

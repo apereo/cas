@@ -15,9 +15,9 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Utility")
-public class CertUtilsTests {
+class CertUtilsTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val source = mock(InputStreamSource.class);
         when(source.getInputStream()).thenThrow(new RuntimeException());
         assertThrows(IllegalArgumentException.class, () -> CertUtils.readCertificate(source));

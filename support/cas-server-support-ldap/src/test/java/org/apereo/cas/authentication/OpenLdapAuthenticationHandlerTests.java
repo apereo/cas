@@ -2,19 +2,15 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
-
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
-import lombok.SneakyThrows;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
-
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -33,17 +29,17 @@ import java.util.UUID;
     "cas.authn.ldap[0].search-filter=cn={user}",
     "cas.authn.ldap[0].bind-dn=cn=admin,dc=example,dc=org",
     "cas.authn.ldap[0].bind-credential=P@ssw0rd",
+    "cas.authn.ldap[0].hostname-verifier=ANY",
     "cas.authn.ldap[0].principal-attribute-list=sn,cn,homePostalAddress:homePostalAddress;"
 })
-@DirtiesContext
-@Tag("Ldap")
-@EnabledIfPortOpen(port = 11389)
-public class OpenLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
+@Tag("LdapAuthentication")
+@EnabledIfListeningOnPort(port = 11389)
+class OpenLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHandlerTests {
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     protected String getLdif(final String user) {
-        val baseDn = casProperties.getAuthn().getLdap().get(0).getBaseDn();
+        val baseDn = casProperties.getAuthn().getLdap().getFirst().getBaseDn();
         return String.format("dn: cn=%s,%s%n"
             + "objectClass: top%n"
             + "objectClass: person%n"
@@ -63,8 +59,7 @@ public class OpenLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHa
     }
 
     @Override
-    @SneakyThrows
-    String getUsername() {
+    String getUsername() throws Exception {
         val bindInit = new BindConnectionInitializer("cn=admin,dc=example,dc=org", new Credential("P@ssw0rd"));
         @Cleanup
         val connection = new LDAPConnection("localhost", 11389,
@@ -76,5 +71,4 @@ public class OpenLdapAuthenticationHandlerTests extends BaseLdapAuthenticationHa
         LdapIntegrationTestsOperations.populateEntries(connection, rs, "ou=people,dc=example,dc=org", bindInit);
         return uid;
     }
-
 }

@@ -1,10 +1,8 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
-
-import org.apereo.services.persondir.support.merger.IAttributeMerger;
+import org.apereo.cas.authentication.principal.merger.AttributeMerger;
 import org.springframework.core.Ordered;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -20,13 +18,18 @@ import java.util.Map;
 public interface PrincipalElectionStrategy extends Serializable, Ordered {
 
     /**
+     * Default implementation bean name.
+     */
+    String BEAN_NAME = "principalElectionStrategy";
+
+    /**
      * Elect the principal.
      *
      * @param authentications     the authentications
      * @param principalAttributes the principal attributes
      * @return the principal
      */
-    Principal nominate(Collection<Authentication> authentications, Map<String, List<Object>> principalAttributes);
+    Principal nominate(Collection<Authentication> authentications, Map<String, List<Object>> principalAttributes) throws Throwable;
 
     /**
      * Nominate principal.
@@ -35,7 +38,7 @@ public interface PrincipalElectionStrategy extends Serializable, Ordered {
      * @param attributes the attributes
      * @return the principal
      */
-    Principal nominate(List<Principal> principals, Map<String, List<Object>> attributes);
+    Principal nominate(List<Principal> principals, Map<String, List<Object>> attributes) throws Throwable;
 
     @Override
     default int getOrder() {
@@ -47,5 +50,5 @@ public interface PrincipalElectionStrategy extends Serializable, Ordered {
      *
      * @return the attribute merger
      */
-    IAttributeMerger getAttributeMerger();
+    AttributeMerger getAttributeMerger();
 }

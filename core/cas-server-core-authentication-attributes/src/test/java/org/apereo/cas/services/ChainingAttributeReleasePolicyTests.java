@@ -1,24 +1,24 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.authentication.principal.ChainingPrincipalAttributesRepository;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.annotation.DirtiesContext;
-
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,17 +30,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Attributes")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    CasCoreUtilConfiguration.class
+    WebMvcAutoConfiguration.class,
+    CasCoreUtilAutoConfiguration.class
 })
-@DirtiesContext
-public class ChainingAttributeReleasePolicyTests {
+class ChainingAttributeReleasePolicyTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("scriptResourceCacheManager")
     private ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> scriptResourceCacheManager;
-
 
     private ChainingAttributeReleasePolicy chain;
 
@@ -52,12 +51,19 @@ public class ChainingAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyOperationWithReplaceAndOrder() {
+    void verifyOperationWithReplaceAndOrder() throws Throwable {
         configureChainingReleasePolicy(10, 1);
+        val service = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
+
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
-        val results = chain.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
-            CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getRegisteredService());
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(service)
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
+            .build();
+        val results = chain.getAttributes(releasePolicyContext);
         assertTrue(results.containsKey("givenName"));
         val values = CollectionUtils.toCollection(results.get("givenName"));
         assertEquals(1, values.size());
@@ -65,23 +71,41 @@ public class ChainingAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyOperationWithReplace() {
+    void verifyOperationWithReplace() throws Throwable {
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.REPLACE);
-        val results = chain.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
-            CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getRegisteredService());
+        val service = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(service)
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
+            .build();
+        val results = chain.getAttributes(releasePolicyContext);
         assertTrue(results.containsKey("givenName"));
         val values = CollectionUtils.toCollection(results.get("givenName"));
         assertEquals(1, values.size());
         assertEquals("CasUserPolicy2", values.iterator().next().toString());
+
+        val repository = chain.getPrincipalAttributesRepository();
+        assertInstanceOf(ChainingPrincipalAttributesRepository.class, repository);
+        assertNotNull(repository.getAttributes(releasePolicyContext));
+        assertDoesNotThrow(() -> repository.update(releasePolicyContext.getPrincipal().getId(),
+            releasePolicyContext.getPrincipal().getAttributes(), releasePolicyContext));
     }
 
     @Test
-    public void verifyOperationWithAdd() {
+    void verifyOperationWithAdd() throws Throwable {
+        val service = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.ADD);
-        val results = chain.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
-            CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getRegisteredService());
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(service)
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
+            .build();
+        val results = chain.getAttributes(releasePolicyContext);
         assertTrue(results.containsKey("givenName"));
         val values = CollectionUtils.toCollection(results.get("givenName"));
         assertEquals(1, values.size());
@@ -89,11 +113,17 @@ public class ChainingAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyOperationWithMultivalued() {
+    void verifyOperationWithMultivalued() throws Throwable {
+        val service = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
-        val results = chain.getAttributes(CoreAuthenticationTestUtils.getPrincipal(),
-            CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getRegisteredService());
+        val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(registeredService)
+            .service(service)
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
+            .build();
+        val results = chain.getAttributes(releasePolicyContext);
         assertTrue(results.containsKey("givenName"));
         val values = CollectionUtils.toCollection(results.get("givenName"));
         assertEquals(2, values.size());
@@ -102,11 +132,15 @@ public class ChainingAttributeReleasePolicyTests {
     }
 
     @Test
-    public void verifyConsentableAttrs() {
+    void verifyConsentableAttrs() throws Throwable {
+        val context = RegisteredServiceAttributeReleasePolicyContext.builder()
+            .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
+            .service(CoreAuthenticationTestUtils.getService())
+            .principal(CoreAuthenticationTestUtils.getPrincipal())
+            .applicationContext(applicationContext)
+            .build();
         chain.setMergingPolicy(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
-        val results = chain.getConsentableAttributes(CoreAuthenticationTestUtils.getPrincipal(),
-            CoreAuthenticationTestUtils.getService(),
-            CoreAuthenticationTestUtils.getRegisteredService());
+        val results = chain.getConsentableAttributes(context);
         assertTrue(results.containsKey("givenName"));
         val values = CollectionUtils.toCollection(results.get("givenName"));
         assertEquals(2, values.size());

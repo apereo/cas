@@ -13,10 +13,20 @@ to the Apereo CAS repository on [Docker Hub](https://hub.docker.com/r/apereo/cas
 Images can be pulled down via the following command:
 
 ```bash
-docker pull apereo/cas:v[A.B.C]
+docker pull apereo/cas
 ```
 
 ...where `[A.B.C]` represents the image tag that is mapped to the CAS server version.
+        
+Then:
+
+```bash
+docker run --rm \
+  -e SERVER_SSL_ENABLED=false -e SERVER_PORT=8080 \
+  -p 8080:8080 --name casserver apereo/cas
+```
+
+CAS should be running on http://localhost:8080/cas.
 
 ## Overview
 
@@ -28,7 +38,11 @@ would not require a separate step to download and configure choices.
 The docker images that are hosted on Docker Hub are *mostly* meant to be used
 as quickstarts and demos. You may also be able to use them as
 base images to add your customizations into the image. The image
-is built out of an existing [CAS overlay](WAR-Overlay-Installation.html).
+is built out of an existing [CAS WAR Overlay](WAR-Overlay-Installation.html).
+
+When you generate a CAS WAR Overlay project using the [CAS Initializr](WAR-Overlay-Initializr.html)., 
+please refer to the instructions provided in the `README.md`
+file to review options for building CAS Docker images.
   
 ## Kubernetes & Helm
 

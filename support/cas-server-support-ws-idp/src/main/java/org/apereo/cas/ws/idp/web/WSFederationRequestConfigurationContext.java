@@ -7,18 +7,18 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.SecurityTokenTicketFactory;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.validation.TicketValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.jasig.cas.client.validation.TicketValidator;
+import lombok.experimental.SuperBuilder;
 
 /**
  * This is {@link WSFederationRequestConfigurationContext}.
@@ -29,7 +29,7 @@ import org.jasig.cas.client.validation.TicketValidator;
 @ToString
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 public class WSFederationRequestConfigurationContext {
     private final ServicesManager servicesManager;
 
@@ -43,7 +43,7 @@ public class WSFederationRequestConfigurationContext {
 
     private final HttpClient httpClient;
 
-    private final SecurityTokenTicketFactory securityTokenTicketFactory;
+    private final TicketFactory ticketFactory;
 
     private final TicketRegistry ticketRegistry;
 

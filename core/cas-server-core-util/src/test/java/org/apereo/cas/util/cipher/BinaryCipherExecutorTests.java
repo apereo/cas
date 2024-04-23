@@ -4,6 +4,7 @@ import org.apereo.cas.util.crypto.DecryptionException;
 
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jooq.lambda.UncheckedException;
 import org.jose4j.lang.JoseException;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 
-import static org.apereo.cas.util.junit.Assertions.assertThrowsWithRootCause;
+import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -20,12 +21,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Tag("Simple")
-public class BinaryCipherExecutorTests {
+@Tag("Cipher")
+class BinaryCipherExecutorTests {
     private static final String TEST_VALUE = "ThisIsATestValueThatIsGoingToBeEncodedAndDecodedAgainAndAgain";
 
     @Test
-    public void checkEncodingDecoding() {
+    void checkEncodingDecoding() {
         val cc = new TestBinaryCipherExecutor("MTIzNDU2Nzg5MDEyMzQ1Ng==",
             "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w",
             512,
@@ -36,15 +37,17 @@ public class BinaryCipherExecutorTests {
     }
 
     @Test
-    public void checkEncodingDecodingBadKeys() {
+    void checkEncodingDecodingBadKeys() {
         val cc = new TestBinaryCipherExecutor("0000", "1234", 512, 16) {
         };
-        assertThrows(InvalidAlgorithmParameterException.class,
+        assertThrowsWithRootCause(DecryptionException.class, JoseException.class,
+            () -> cc.decode(TEST_VALUE.getBytes(StandardCharsets.UTF_8)));
+        assertThrowsWithRootCause(UncheckedException.class, InvalidAlgorithmParameterException.class,
             () -> cc.encode(TEST_VALUE.getBytes(StandardCharsets.UTF_8), ArrayUtils.EMPTY_OBJECT_ARRAY));
     }
 
     @Test
-    public void checkDecoderWithRootCause() {
+    void checkDecoderWithRootCause() {
         val cc = new TestBinaryCipherExecutor("0000", "1234", 512, 16) {
         };
         assertThrowsWithRootCause(DecryptionException.class, JoseException.class,
@@ -52,7 +55,7 @@ public class BinaryCipherExecutorTests {
     }
 
     @Test
-    public void checkLegacyKeys() {
+    void checkLegacyKeys() {
         val cc = new TestBinaryCipherExecutor("1234567890123456",
             "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w",
             512,
@@ -68,12 +71,12 @@ public class BinaryCipherExecutorTests {
         }
 
         @Override
-        protected String getEncryptionKeySetting() {
+        public String getEncryptionKeySetting() {
             return "undefined";
         }
 
         @Override
-        protected String getSigningKeySetting() {
+        public String getSigningKeySetting() {
             return "undefined";
         }
     }

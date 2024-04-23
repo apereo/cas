@@ -3,11 +3,10 @@ package org.apereo.cas.authentication.principal;
 import org.apereo.cas.util.EncodingUtils;
 
 import com.google.common.base.Splitter;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
+import java.io.Serial;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -20,9 +19,7 @@ import java.util.stream.Collectors;
  * @since 3.1
  */
 @Slf4j
-@Getter
-@RequiredArgsConstructor
-public class DefaultResponse implements Response {
+public record DefaultResponse(ResponseType responseType, String url, Map<String, String> attributes) implements Response {
 
     /**
      * Pattern to detect unprintable ASCII characters.
@@ -31,13 +28,8 @@ public class DefaultResponse implements Response {
 
     private static final int RESPONSE_INITIAL_CAPACITY = 200;
 
+    @Serial
     private static final long serialVersionUID = -8251042088720603062L;
-
-    private final ResponseType responseType;
-
-    private final String url;
-
-    private final Map<String, String> attributes;
 
     /**
      * Gets the post response.
@@ -73,7 +65,7 @@ public class DefaultResponse implements Response {
         val sanitizedUrl = sanitizeUrl(url);
         LOGGER.trace("Sanitized URL for redirect response is [{}]", sanitizedUrl);
         val fragmentSplit = Splitter.on("#").splitToList(sanitizedUrl);
-        builder.append(fragmentSplit.get(0));
+        builder.append(fragmentSplit.getFirst());
         val params = parameters.entrySet()
             .stream()
             .filter(entry -> entry.getValue() != null)
@@ -81,7 +73,7 @@ public class DefaultResponse implements Response {
             .collect(Collectors.joining("&"));
 
         if (!params.isEmpty()) {
-            builder.append(fragmentSplit.get(0).contains("?") ? "&" : "?");
+            builder.append(fragmentSplit.getFirst().contains("?") ? "&" : "?");
             builder.append(params);
         }
         if (fragmentSplit.size() > 1) {

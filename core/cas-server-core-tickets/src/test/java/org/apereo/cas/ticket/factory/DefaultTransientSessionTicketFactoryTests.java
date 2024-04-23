@@ -26,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "cas.ticket.tst.time-to-kill-in-seconds=20")
 @Tag("Tickets")
-public class DefaultTransientSessionTicketFactoryTests extends BaseTicketFactoryTests {
+class DefaultTransientSessionTicketFactoryTests extends BaseTicketFactoryTests {
     @Test
-    public void verifyExpirationPolicy() {
+    void verifyExpirationPolicy() throws Throwable {
         val factory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getService("example"), new HashMap<>(0));
         assertNotNull(ticket);
@@ -36,7 +36,7 @@ public class DefaultTransientSessionTicketFactoryTests extends BaseTicketFactory
     }
 
     @Test
-    public void verifyById() {
+    void verifyById() throws Throwable {
         val factory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
         val ticket = factory.create(UUID.randomUUID().toString(), Map.of());
         assertNotNull(ticket);
@@ -44,7 +44,7 @@ public class DefaultTransientSessionTicketFactoryTests extends BaseTicketFactory
     }
 
     @Test
-    public void verifyByServiceById() {
+    void verifyByServiceById() throws Throwable {
         val factory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
         val ticket = factory.create(UUID.randomUUID().toString(),
             RegisteredServiceTestUtils.getService("example"), Map.of("key", "value"));
@@ -53,7 +53,7 @@ public class DefaultTransientSessionTicketFactoryTests extends BaseTicketFactory
     }
 
     @Test
-    public void verifyCustomExpirationPolicy() {
+    void verifyCustomExpirationPolicy() throws Throwable {
         val factory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getService("example"),
             CollectionUtils.wrap(ExpirationPolicy.class.getName(),

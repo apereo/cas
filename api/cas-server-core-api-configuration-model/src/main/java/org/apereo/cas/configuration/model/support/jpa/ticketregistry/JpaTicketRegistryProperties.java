@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.jpa.ticketregistry;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -11,7 +12,9 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
-import javax.persistence.LockModeType;
+import jakarta.persistence.LockModeType;
+
+import java.io.Serial;
 
 /**
  * Common properties for jpa ticket reg.
@@ -31,6 +34,7 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
      */
     public static final String DEFAULT_LOCK_TIMEOUT = "PT1H";
 
+    @Serial
     private static final long serialVersionUID = -8053839523783801072L;
 
     /**
@@ -50,7 +54,14 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
      * Crypto settings for the registry.
      */
     @NestedConfigurationProperty
-    private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
+    private EncryptionRandomizedSigningJwtCryptographyProperties crypto =
+        new EncryptionRandomizedSigningJwtCryptographyProperties();
+
+    /**
+     * Whether managing tickets via JPA is enabled.
+     */
+    @RequiredProperty
+    private boolean enabled = true;
 
     public JpaTicketRegistryProperties() {
         super.setUrl("jdbc:hsqldb:mem:cas-ticket-registry");

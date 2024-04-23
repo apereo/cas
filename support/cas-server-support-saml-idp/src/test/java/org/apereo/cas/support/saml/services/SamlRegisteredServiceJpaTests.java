@@ -1,22 +1,19 @@
 package org.apereo.cas.support.saml.services;
 
-import org.apereo.cas.config.CasHibernateJpaConfiguration;
-import org.apereo.cas.config.JpaServiceRegistryConfiguration;
+import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
+import org.apereo.cas.config.CasJpaServiceRegistryAutoConfiguration;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-
 import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,12 +23,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.0.0
  */
 @Import({
-    CasHibernateJpaConfiguration.class,
-    JpaServiceRegistryConfiguration.class
+    CasHibernateJpaAutoConfiguration.class,
+    CasJpaServiceRegistryAutoConfiguration.class
 })
-@Tag("SAML")
-@TestPropertySource(properties = "cas.service-registry.jpa.ddl-auto=create-drop")
-public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests {
+@Tag("SAML2")
+@TestPropertySource(properties = {
+    "cas.service-registry.jpa.ddl-auto=create-drop",
+    "cas.service-registry.jpa.url=jdbc:hsqldb:mem:cas-services-${#randomString6}"
+})
+class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests {
 
     @BeforeEach
     public void before() {
@@ -39,9 +39,7 @@ public class SamlRegisteredServiceJpaTests extends BaseSamlIdPConfigurationTests
     }
 
     @Test
-    public void verifySavingSamlService() {
-        assertTrue(servicesManager.load().isEmpty());
-        
+    void verifySavingSamlService() throws Throwable {
         var service = new SamlRegisteredService();
         service.setName("SAML");
         service.setServiceId("http://mmoayyed.example.net");

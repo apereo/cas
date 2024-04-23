@@ -13,11 +13,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @Tag("Utility")
-public class SystemUtilsTests {
+class SystemUtilsTests {
 
     @Test
-    public void verifyOperation() {
-        System.setProperty("CAS_UPDATE_CHECK_ENABLED", "true");
+    void verifyOperation() throws Throwable {
         val info = SystemUtils.getSystemInfo();
         assertNotNull(info);
         assertFalse(info.isEmpty());

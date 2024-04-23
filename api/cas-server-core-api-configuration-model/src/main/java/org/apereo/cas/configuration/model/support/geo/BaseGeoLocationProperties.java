@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -17,13 +18,8 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@RequiresModule(name = "cas-server-support-geolocation-googlemaps")
+@RequiresModule(name = "cas-server-support-geolocation")
 public abstract class BaseGeoLocationProperties implements Serializable {
+    @Serial
     private static final long serialVersionUID = 4548572400079087989L;
-
-    /**
-     * The access key for ip-stack used to look up ip addresses
-     * for geo locations. See <a href="http://ipstack.com">this link</a> for more info.
-     */
-    private String ipStackApiAccessKey;
 }

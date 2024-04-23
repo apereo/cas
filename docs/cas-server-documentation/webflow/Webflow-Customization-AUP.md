@@ -17,17 +17,19 @@ and/or acceptance of the policy would be handled via an external storage mechani
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-aup-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-aup-webflow" %}
 
-Customize the policy by modifying the `src/main/resources/templates/casAcceptableUsagePolicyView.html`. See [this guide](../ux/User-Interface-Customization.html) to learn more about user interface customizations. Note that the view here should have full access to the resolved principal and attributes, if you wish to dynamically alter the page to present different text, etc.
+Customize the policy by modifying the `casAcceptableUsagePolicyView.html`. See [this guide](../ux/User-Interface-Customization.html) to 
+learn more about user interface customizations. Note that the view here should have full access to the 
+resolved principal and attributes, if you wish to dynamically alter the page to present different text, etc.
 
-<div class="alert alert-info"><strong>Webflow Sequence</strong><p>Remember that acceptable usage policy executes
+<div class="alert alert-info">:information_source: <strong>Webflow Sequence</strong><p>Remember that acceptable usage policy executes
 after a successful authentication event where CAS has already established the authentication principal, since the 
 policy record is strongly tied to the identified user record. Implementing this feature before the authentication event
 would require rather heavy modifications to the CAS webflow as well as alternative means of storing and remembering decisions
 such as cookies or browser storage, etc.</p></div>
 
-{% include casproperties.html properties="cas.acceptable-usage-policy.core."%}
+{% include_cached casproperties.html properties="cas.acceptable-usage-policy.core." %}
 
 ## Per Service 
 
@@ -35,12 +37,11 @@ Acceptable usage policy can be disabled and skipped on a per-service basis:
 
 ```json
 {
-  "@class": "org.apereo.cas.services.RegexRegisteredService",
+  "@class": "org.apereo.cas.services.CasRegisteredService",
   "serviceId": "https://app.example.org",
   "name": "Example",
   "id": 1,
-  "acceptableUsagePolicy":
-  {
+  "acceptableUsagePolicy": {
     "@class": "org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy",
     "enabled": true,
     "messageCode": "example.code",
@@ -51,11 +52,11 @@ Acceptable usage policy can be disabled and skipped on a per-service basis:
 
 The policy assigned to each service includes the following features:
 
-| Field              | Description
-|--------------------|----------------------------------------------------------------------------------------------------------
-| `enabled`          | Control whether policy is active/inactive for this service. Default is `true`.
-| `messageCode`      | The policy language code that is linked to the CAS language bundles which carries the actual policy text.
-| `text`             | The policy text that should be displayed for this application.
+| Field         | Description                                                                                               |
+|---------------|-----------------------------------------------------------------------------------------------------------|
+| `enabled`     | Control whether policy is active/inactive for this service. Default is `true`.                            |
+| `messageCode` | The policy language code that is linked to the CAS language bundles which carries the actual policy text. |
+| `text`        | The policy text that should be displayed for this application.                                            |
 
 ## Storage Mechanism
 
@@ -67,18 +68,16 @@ The attribute must be resolved using the [CAS attribute resolution strategy](../
 If the attribute contains a value of `false`, CAS will attempt to
 ask for policy acceptance. Upon accepting the policy, the result will be stored back into storage.
 
-| Storage          | Description                                         
-|------------------------------------------------------------------------------------
-| Default     | [See this guide](Webflow-Customization-AUP-Default.html).
-| Groovy     | [See this guide](Webflow-Customization-AUP-Groovy.html).
-| LDAP     | [See this guide](Webflow-Customization-AUP-LDAP.html).
-| MongoDb     | [See this guide](Webflow-Customization-AUP-MongoDb.html).
-| Redis     | [See this guide](Webflow-Customization-AUP-Redis.html).
-| CouchDb     | [See this guide](Webflow-Customization-AUP-CouchDb.html).
-| Couchbase     | [See this guide](Webflow-Customization-AUP-Couchbase.html).
-| JDBC     | [See this guide](Webflow-Customization-AUP-JDBC.html).
-| REST     | [See this guide](Webflow-Customization-AUP-REST.html).
-| Custom     | [See this guide](Webflow-Customization-AUP-Custom.html).
+| Storage       | Description                                                 |
+|---------------|-------------------------------------------------------------|
+| Default       | [See this guide](Webflow-Customization-AUP-Default.html).   |
+| Groovy        | [See this guide](Webflow-Customization-AUP-Groovy.html).    |
+| LDAP          | [See this guide](Webflow-Customization-AUP-LDAP.html).      |
+| MongoDb       | [See this guide](Webflow-Customization-AUP-MongoDb.html).   |
+| Redis         | [See this guide](Webflow-Customization-AUP-Redis.html).     |
+| JDBC          | [See this guide](Webflow-Customization-AUP-JDBC.html).      |
+| REST          | [See this guide](Webflow-Customization-AUP-REST.html).      |
+| Custom        | [See this guide](Webflow-Customization-AUP-Custom.html).    |
 
 ## Policy Terms
 

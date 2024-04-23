@@ -1,11 +1,11 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -16,7 +16,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.3.0
  */
 @RequiredArgsConstructor
-public class X509TomcatServletFactoryInitialAction extends AbstractAction {
+public class X509TomcatServletFactoryInitialAction extends BaseCasWebflowAction {
 
     /**
      * Attribute to indicate the x509 login endpoint.
@@ -26,7 +26,7 @@ public class X509TomcatServletFactoryInitialAction extends AbstractAction {
     private final CasConfigurationProperties casProperties;
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val webflow = casProperties.getAuthn().getX509().getWebflow();
         val endpoint = UriComponentsBuilder
             .fromUriString(casProperties.getServer().getLoginUrl())

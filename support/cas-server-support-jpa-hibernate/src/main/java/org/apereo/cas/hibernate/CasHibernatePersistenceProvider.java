@@ -12,8 +12,8 @@ import org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl;
 import org.hibernate.jpa.boot.internal.PersistenceUnitInfoDescriptor;
 import org.springframework.orm.jpa.persistenceunit.SmartPersistenceUnitInfo;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.spi.PersistenceUnitInfo;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.spi.PersistenceUnitInfo;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -38,15 +38,15 @@ public class CasHibernatePersistenceProvider extends HibernatePersistenceProvide
         }
         LOGGER.trace("Filtered entity classes for entity manager are [{}]", filtered);
         val mergedClassesAndPackages = new HashSet<String>(filtered);
-        if (info instanceof SmartPersistenceUnitInfo) {
-            mergedClassesAndPackages.addAll(((SmartPersistenceUnitInfo) info).getManagedPackages());
+        if (info instanceof final SmartPersistenceUnitInfo sinfo) {
+            mergedClassesAndPackages.addAll(sinfo.getManagedPackages());
         }
         val persistenceUnit = new CasPersistenceUnitInfoDescriptor(info, new ArrayList<>(mergedClassesAndPackages));
         return new EntityManagerFactoryBuilderImpl(persistenceUnit, properties).build();
     }
 
     @Getter
-    private static class CasPersistenceUnitInfoDescriptor extends PersistenceUnitInfoDescriptor {
+    private static final class CasPersistenceUnitInfoDescriptor extends PersistenceUnitInfoDescriptor {
         private final List<String> managedClassNames;
 
         CasPersistenceUnitInfoDescriptor(final PersistenceUnitInfo info, final List<String> mergedClassesAndPackages) {

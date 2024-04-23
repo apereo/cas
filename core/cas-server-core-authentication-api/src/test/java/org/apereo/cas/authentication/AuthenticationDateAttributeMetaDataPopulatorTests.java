@@ -7,7 +7,10 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.stream.IntStream;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link AuthenticationDateAttributeMetaDataPopulatorTests}.
@@ -15,17 +18,31 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Authentication")
-public class AuthenticationDateAttributeMetaDataPopulatorTests {
+@Tag("AuthenticationMetadata")
+class AuthenticationDateAttributeMetaDataPopulatorTests {
     private final AuthenticationDateAttributeMetaDataPopulator populator =
         new AuthenticationDateAttributeMetaDataPopulator();
 
     @Test
-    public void verifyPopulator() {
+    void verifyPopulator() throws Throwable {
         val credentials = new UsernamePasswordCredential();
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, new DefaultAuthenticationTransactionFactory().newTransaction(credentials));
+        populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
         val auth = builder.build();
         assertNotNull(auth.getAttributes().get(AuthenticationManager.AUTHENTICATION_DATE_ATTRIBUTE));
+        assertFalse(populator.supports(null));
+        assertFalse(populator.supports(mock(MultifactorAuthenticationCredential.class)));
+    }
+
+    @Test
+    void verifyPopulatorMultipleTimes() throws Throwable {
+        val credentials = new UsernamePasswordCredential();
+        val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        IntStream.range(1, 5)
+            .forEach(i -> populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials)));
+        val auth = builder.build();
+        val result = auth.getAttributes().get(AuthenticationManager.AUTHENTICATION_DATE_ATTRIBUTE);
+        assertNotNull(result);
+        assertEquals(1, result.size());
     }
 }

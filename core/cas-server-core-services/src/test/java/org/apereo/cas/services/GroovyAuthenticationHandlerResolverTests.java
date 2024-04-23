@@ -22,10 +22,10 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Groovy")
-public class GroovyAuthenticationHandlerResolverTests {
+@Tag("GroovyAuthentication")
+class GroovyAuthenticationHandlerResolverTests {
     @Test
-    public void verifyAction() {
+    void verifyAction() throws Throwable {
         val resolver = new GroovyAuthenticationHandlerResolver(
             new ClassPathResource("GroovyAuthenticationHandlerResolver.groovy"),
             mock(ServicesManager.class));

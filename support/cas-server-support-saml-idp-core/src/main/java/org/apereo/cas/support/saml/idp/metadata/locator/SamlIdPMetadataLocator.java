@@ -1,10 +1,9 @@
 package org.apereo.cas.support.saml.idp.metadata.locator;
 
+import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
-
 import org.springframework.core.io.Resource;
-
 import java.util.Optional;
 
 /**
@@ -19,16 +18,18 @@ public interface SamlIdPMetadataLocator {
      *
      * @param registeredService the registered service
      * @return the signing cert file
+     * @throws Throwable the throwable
      */
-    Resource resolveSigningCertificate(Optional<SamlRegisteredService> registeredService);
+    Resource resolveSigningCertificate(Optional<SamlRegisteredService> registeredService) throws Throwable;
 
     /**
      * Gets signing key file.
      *
      * @param registeredService the registered service
      * @return the signing key file
+     * @throws Throwable the throwable
      */
-    Resource resolveSigningKey(Optional<SamlRegisteredService> registeredService);
+    Resource resolveSigningKey(Optional<SamlRegisteredService> registeredService) throws Throwable;
 
     /**
      * Gets idp metadata file.
@@ -36,7 +37,7 @@ public interface SamlIdPMetadataLocator {
      * @param registeredService the registered service
      * @return the metadata file
      */
-    Resource resolveMetadata(Optional<SamlRegisteredService> registeredService);
+    Resource resolveMetadata(Optional<SamlRegisteredService> registeredService) throws Throwable;
 
     /**
      * Gets encryption cert file.
@@ -44,7 +45,7 @@ public interface SamlIdPMetadataLocator {
      * @param registeredService the registered service
      * @return the encryption cert file
      */
-    Resource getEncryptionCertificate(Optional<SamlRegisteredService> registeredService);
+    Resource getEncryptionCertificate(Optional<SamlRegisteredService> registeredService) throws Throwable;
 
     /**
      * Gets encryption key file.
@@ -52,12 +53,13 @@ public interface SamlIdPMetadataLocator {
      * @param registeredService the registered service
      * @return the encryption key file
      */
-    Resource resolveEncryptionKey(Optional<SamlRegisteredService> registeredService);
+    Resource resolveEncryptionKey(Optional<SamlRegisteredService> registeredService) throws Throwable;
 
     /**
      * Initialize.
      */
-    default void initialize() {}
+    default void initialize() {
+    }
 
     /**
      * Metadata exists?
@@ -65,7 +67,7 @@ public interface SamlIdPMetadataLocator {
      * @param registeredService the registered service
      * @return true/false
      */
-    boolean exists(Optional<SamlRegisteredService> registeredService);
+    boolean exists(Optional<SamlRegisteredService> registeredService) throws Throwable;
 
     /**
      * Fetch metadata document.
@@ -79,10 +81,19 @@ public interface SamlIdPMetadataLocator {
      * Should generate metadata for service?
      *
      * @param registeredService the registered service
-     * @return the boolean
+     * @return true/false
      */
     default boolean shouldGenerateMetadataFor(final Optional<SamlRegisteredService> registeredService) {
         return registeredService.isEmpty();
     }
 
+    /**
+     * Gets applies to for.
+     *
+     * @param result the result
+     * @return the applies to for
+     */
+    default String getAppliesToFor(final Optional<SamlRegisteredService> result) {
+        return SamlIdPUtils.getSamlIdPMetadataOwner(result);
+    }
 }

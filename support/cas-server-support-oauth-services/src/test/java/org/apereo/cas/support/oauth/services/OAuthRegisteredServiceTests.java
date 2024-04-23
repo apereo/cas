@@ -7,18 +7,16 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.WatcherService;
-
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
-
 import java.io.File;
 import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,15 +24,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1
  */
 @Tag("OAuth")
-public class OAuthRegisteredServiceTests {
-
+class OAuthRegisteredServiceTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthRegisteredService.json");
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
-    private final ServiceRegistry dao;
+    private ServiceRegistry dao;
 
-    public OAuthRegisteredServiceTests() throws Exception {
+    @BeforeEach
+    void setup() throws Exception {
         val appCtx = new StaticApplicationContext();
         appCtx.refresh();
         this.dao = new JsonServiceRegistry(RESOURCE, WatcherService.noOp(),
@@ -49,26 +47,26 @@ public class OAuthRegisteredServiceTests {
     }
 
     @Test
-    public void checkSaveMethod() {
-        val r = new OAuthRegisteredService();
-        r.setName("checkSaveMethod");
-        r.setServiceId("testId");
-        r.setTheme("theme");
-        r.setDescription("description");
-        r.setClientId("clientid");
-        r.setServiceId("secret");
-        r.setBypassApprovalPrompt(true);
-        val r2 = this.dao.save(r);
-        assertTrue(r2 instanceof OAuthRegisteredService);
+    void checkSaveMethod() {
+        val registeredService = new OAuthRegisteredService();
+        registeredService.setName("checkSaveMethod");
+        registeredService.setServiceId("testId");
+        registeredService.setTheme("theme");
+        registeredService.setDescription("description");
+        registeredService.setClientId("clientid");
+        registeredService.setServiceId("secret");
+        registeredService.setBypassApprovalPrompt(true);
+        val r2 = this.dao.save(registeredService);
+        assertInstanceOf(OAuthRegisteredService.class, r2);
         this.dao.load();
         val r3 = this.dao.findServiceById(r2.getId());
-        assertTrue(r3 instanceof OAuthRegisteredService);
-        assertEquals(r, r2);
+        assertInstanceOf(OAuthRegisteredService.class, r3);
+        assertEquals(registeredService, r2);
         assertEquals(r2, r3);
     }
 
     @Test
-    public void verifySerializeAOAuthRegisteredServiceToJson() {
+    void verifySerializeOAuthRegisteredServiceToJson() throws Throwable {
         val serviceWritten = new OAuthRegisteredService();
         serviceWritten.setName("checkSaveMethod");
         serviceWritten.setServiceId("testId");
@@ -79,8 +77,11 @@ public class OAuthRegisteredServiceTests {
         serviceWritten.setBypassApprovalPrompt(true);
         serviceWritten.setSupportedGrantTypes(CollectionUtils.wrapHashSet("something"));
         serviceWritten.setSupportedResponseTypes(CollectionUtils.wrapHashSet("something"));
+        serviceWritten.setTokenExchangePolicy(new DefaultRegisteredServiceOAuthTokenExchangePolicy());
 
-        val serializer = new RegisteredServiceJsonSerializer();
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val serializer = new RegisteredServiceJsonSerializer(appCtx);
         serializer.to(JSON_FILE, serviceWritten);
         val serviceRead = serializer.from(JSON_FILE);
         assertEquals(serviceWritten, serviceRead);

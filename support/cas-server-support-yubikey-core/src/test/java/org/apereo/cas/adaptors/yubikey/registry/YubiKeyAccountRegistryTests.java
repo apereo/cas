@@ -20,11 +20,11 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("MFA")
-public class YubiKeyAccountRegistryTests {
+@Tag("MFAProvider")
+class YubiKeyAccountRegistryTests {
 
     @Test
-    public void verifyAuthz() {
+    void verifyAuthz() throws Throwable {
         val registry = mock(BaseYubiKeyAccountRegistry.class);
         when(registry.isYubiKeyRegisteredFor(anyString(), anyString())).thenCallRealMethod();
         when(registry.isYubiKeyRegisteredFor(anyString())).thenCallRealMethod();
@@ -35,7 +35,7 @@ public class YubiKeyAccountRegistryTests {
     }
 
     @Test
-    public void verifyAcct() {
+    void verifyAcct() throws Throwable {
         val registry = mock(BaseYubiKeyAccountRegistry.class);
         when(registry.getAccount(anyString())).thenCallRealMethod();
         when(registry.getAccountInternal(anyString())).thenThrow(new RuntimeException());
@@ -43,7 +43,7 @@ public class YubiKeyAccountRegistryTests {
     }
 
     @Test
-    public void verifyInvalidAcct() {
+    void verifyInvalidAcct() throws Throwable {
         val registeredDevice = YubiKeyRegisteredDevice.builder()
             .id(System.currentTimeMillis())
             .name("first-device")

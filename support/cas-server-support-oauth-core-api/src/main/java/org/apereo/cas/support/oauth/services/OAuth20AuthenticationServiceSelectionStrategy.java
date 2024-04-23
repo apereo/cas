@@ -8,18 +8,21 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.apereo.cas.util.HttpRequestUtils;
+import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
-
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.Getter;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URIBuilder;
-
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.apache.hc.core5.net.URIBuilder;
+import org.jooq.lambda.Unchecked;
+import org.pac4j.jee.context.JEEContext;
+import java.io.Serial;
 import java.util.Optional;
 
 /**
@@ -31,15 +34,20 @@ import java.util.Optional;
 @Slf4j
 @Getter
 public class OAuth20AuthenticationServiceSelectionStrategy extends BaseAuthenticationServiceSelectionStrategy {
+    @Serial
     private static final long serialVersionUID = 8517547235465666978L;
 
     private final String callbackUrl;
 
+    private final OAuth20RequestParameterResolver requestParameterResolver;
+
     public OAuth20AuthenticationServiceSelectionStrategy(final ServicesManager servicesManager,
-        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-        final String callbackUrl) {
+                                                         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+                                                         final String callbackUrl,
+                                                         final OAuth20RequestParameterResolver requestParameterResolver) {
         super(servicesManager, webApplicationServiceFactory);
         this.callbackUrl = callbackUrl;
+        this.requestParameterResolver = requestParameterResolver;
     }
 
     @Override
@@ -47,6 +55,9 @@ public class OAuth20AuthenticationServiceSelectionStrategy extends BaseAuthentic
         val clientId = resolveClientIdFromService(service);
 
         if (clientId.isPresent()) {
+            service.getAttributes().computeIfAbsent(OAuth20Constants.CLIENT_ID,
+                __ -> CollectionUtils.wrapList(clientId.get().getValue()));
+
             val redirectUri = resolveRedirectUri(service);
             if (redirectUri.isPresent()) {
                 return createService(redirectUri.get().getValue(), service);
@@ -58,7 +69,8 @@ public class OAuth20AuthenticationServiceSelectionStrategy extends BaseAuthentic
                 if (OAuth20Utils.isGrantType(grantValue, OAuth20GrantTypes.CLIENT_CREDENTIALS)) {
                     LOGGER.debug("Located grant type [{}]; checking for service headers", grantValue);
                     val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-                    id = OAuth20Utils.getServiceRequestHeaderIfAny(request);
+                    val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
+                    id = OAuth20Utils.getServiceRequestHeaderIfAny(new JEEContext(request, response));
                 }
                 if (StringUtils.isBlank(id)) {
                     id = clientId.get().getValue();
@@ -80,34 +92,44 @@ public class OAuth20AuthenticationServiceSelectionStrategy extends BaseAuthentic
         return res;
     }
 
-    private static Optional<NameValuePair> resolveClientIdFromService(final Service service) {
+    private Optional<NameValuePair> resolveRedirectUri(final Service service) {
+        return getRequestParameter(service, OAuth20Constants.REDIRECT_URI);
+    }
+
+    private Optional<NameValuePair> resolveGrantType(final Service service) {
+        return getRequestParameter(service, OAuth20Constants.GRANT_TYPE);
+    }
+
+    private Optional<NameValuePair> resolveClientIdFromService(final Service service) {
+        return getRequestParameter(service, OAuth20Constants.CLIENT_ID);
+    }
+
+    private Optional<NameValuePair> getRequestParameter(final Service service, final String name) {
         try {
-            val builder = new URIBuilder(service.getId());
-            return builder.getQueryParams()
-                .stream()
-                .filter(p -> p.getName().equals(OAuth20Constants.CLIENT_ID))
-                .findFirst();
+            val value = getJwtRequestParameter(service, name)
+                .or(Unchecked.supplier(() -> {
+                    val builder = new URIBuilder(service.getId());
+                    return builder.getQueryParams()
+                        .stream()
+                        .filter(p -> p.getName().equals(name))
+                        .map(NameValuePair::getValue)
+                        .findFirst();
+                }));
+            return value.map(v -> new BasicNameValuePair(name, v));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
         return Optional.empty();
     }
 
-    @SneakyThrows
-    private static Optional<NameValuePair> resolveRedirectUri(final Service service) {
-        val builder = new URIBuilder(service.getId());
-        return builder.getQueryParams()
-            .stream()
-            .filter(p -> p.getName().equals(OAuth20Constants.REDIRECT_URI))
-            .findFirst();
-    }
-
-    @SneakyThrows
-    private static Optional<NameValuePair> resolveGrantType(final Service service) {
-        val builder = new URIBuilder(service.getId());
-        return builder.getQueryParams()
-            .stream()
-            .filter(p -> p.getName().equals(OAuth20Constants.GRANT_TYPE))
-            .findFirst();
+    private Optional<String> getJwtRequestParameter(final Service service,
+                                                    final String paramName) throws Exception {
+        if (service.getAttributes().containsKey(OAuth20Constants.REQUEST)) {
+            val jwtRequest = (String) service.getAttributes().get(OAuth20Constants.REQUEST).getFirst();
+            val registeredService = getServicesManager().findServiceBy(service);
+            val paramValue = requestParameterResolver.resolveJwtRequestParameter(jwtRequest, registeredService, paramName, String.class);
+            return Optional.of(paramValue);
+        }
+        return Optional.empty();
     }
 }

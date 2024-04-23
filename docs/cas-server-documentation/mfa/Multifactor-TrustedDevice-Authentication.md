@@ -31,19 +31,17 @@ This can be optionally disabled and applied only to a selected set of providers.
 
 Support is provided via the following module:
 
-{% include casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-trusted-mfa" %}
 
-## Administrative Endpoints
+## Actuator Endpoints
 
 The following endpoints are provided by CAS:
- 
-| Endpoint                 | Description
-|--------------------------|------------------------------------------------
-| `multifactorTrustedDevices`   | Expose devices currently [registered and trusted](Multifactor-TrustedDevice-Authentication.html) by the CAS multifactor authentication engine. A `GET` operation produces a list of all trusted devices. Specifying a username in the URL as the placeholder/selector will fetch devices registered for that user (i.e. `multifactorTrustedDevices/{username}`). A `DELETE` operation with a device key  id will attempt to remove the trusted device (i.e. `multifactorTrustedDevices/{id}`).
+
+{% include_cached actuators.html endpoints="multifactorTrustedDevices" %}
 
 ## Settings
 
-{% include casproperties.html properties="cas.authn.mfa.trusted.core,cas.authn.mfa.trusted.crypto" %}
+{% include_cached casproperties.html properties="cas.authn.mfa.trusted" includes=".core,.crypto" %}
 
 ## Authentication Context
 
@@ -61,32 +59,17 @@ Please see [this guide](Multifactor-TrustedDevice-Authentication-Bypass.html).
 
 ## Storage
 
-User decisions must be remembered and processed later on subsequent 
-requests. A background *cleaner* process is also automatically scheduled to 
-scan the chosen repository/database/registry periodically and remove expired records based on configured threshold parameters.
-
-<div class="alert alert-warning"><strong>Cleaner Usage</strong><p>In a clustered CAS deployment, it is best to keep 
-the cleaner running on one designated CAS 
-node only and turn it off on all others via CAS settings. Keeping the cleaner running on all 
-nodes may likely lead to severe performance and locking issues.</p></div>
-
-{% include casproperties.html properties="cas.authn.mfa.trusted.cleaner" %}
-
-### Default
-
 If you do nothing, by default records are kept inside the runtime memory and cached for a configurable amount of time.
-This is most useful if you have a very small deployment with a small user base or if you wish to demo the functionality.
-
-### Others
+This is most useful if you have a very small deployment with a small user base or if you wish to demo the functionality. A background 
+*cleaner* process is also [automatically scheduled](Multifactor-TrustedDevice-Authentication-Cleaner.html) to clean up expired records.
 
 Device registrations can also be managed using any one of the following strategies.
 
-| Storage          | Description                                         
-|--------------------------------------------------------------------------------------------------
-| JSON     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-JSON.html).  
-| JDBC     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-JDBC.html).  
-| CouchDb     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-CouchDb.html).  
-| MongoDb     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-MongoDb.html).  
-| DynamoDb     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-DynamoDb.html).  
-| Redis     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-Redis.html).  
-| REST     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-Rest.html).  
+| Storage     | Description                                                                       |
+|-------------|-----------------------------------------------------------------------------------|
+| JSON        | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-JSON.html).     |
+| JDBC        | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-JDBC.html).     |
+| MongoDb     | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-MongoDb.html).  |
+| DynamoDb    | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-DynamoDb.html). |
+| Redis       | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-Redis.html).    |
+| REST        | [See this guide](Multifactor-TrustedDevice-Authentication-Storage-Rest.html).     |

@@ -1,9 +1,10 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.SpringResourceProperties;
-import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.mfa.gauth.GoogleAuthenticatorMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.simple.CasSimpleMultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
-import org.apereo.cas.configuration.model.support.mfa.u2f.U2FMultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.mfa.yubikey.YubiKeyMultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -14,6 +15,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,7 @@ import java.util.List;
 @JsonFilter("MultifactorAuthenticationProperties")
 public class MultifactorAuthenticationProperties implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 7416521468929733907L;
 
     /**
@@ -51,12 +54,6 @@ public class MultifactorAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SpringResourceProperties groovyScript = new SpringResourceProperties();
-
-    /**
-     * Activate and configure a multifactor authentication provider via U2F FIDO.
-     */
-    @NestedConfigurationProperty
-    private U2FMultifactorAuthenticationProperties u2f = new U2FMultifactorAuthenticationProperties();
 
     /**
      * Activate and configure a multifactor authentication with the capability to trust and remember devices.
@@ -86,7 +83,7 @@ public class MultifactorAuthenticationProperties implements Serializable {
      * Activate and configure a multifactor authentication provider via Google Authenticator.
      */
     @NestedConfigurationProperty
-    private GoogleAuthenticatorMultifactorAuthenticationProperties gauth = new GoogleAuthenticatorMultifactorAuthenticationProperties();
+    private GoogleAuthenticatorMultifactorProperties gauth = new GoogleAuthenticatorMultifactorProperties();
 
     /**
      * Activate and configure a multifactor authentication provider via CAS itself.
@@ -98,24 +95,6 @@ public class MultifactorAuthenticationProperties implements Serializable {
      * Activate and configure a multifactor authentication provider via Duo Security.
      */
     private List<DuoSecurityMultifactorAuthenticationProperties> duo = new ArrayList<>(0);
-
-    /**
-     * Activate and configure a multifactor authentication provider via Authy.
-     */
-    @NestedConfigurationProperty
-    private AuthyMultifactorAuthenticationProperties authy = new AuthyMultifactorAuthenticationProperties();
-
-    /**
-     * Activate and configure a multifactor authentication provider via Swivel.
-     */
-    @NestedConfigurationProperty
-    private SwivelMultifactorAuthenticationProperties swivel = new SwivelMultifactorAuthenticationProperties();
-
-    /**
-     * Activate and configure a multifactor authentication provider via Acceptto.
-     */
-    @NestedConfigurationProperty
-    private AccepttoMultifactorAuthenticationProperties acceptto = new AccepttoMultifactorAuthenticationProperties();
 
     /**
      * Activate and configure a multifactor authentication provider via Inwebo.

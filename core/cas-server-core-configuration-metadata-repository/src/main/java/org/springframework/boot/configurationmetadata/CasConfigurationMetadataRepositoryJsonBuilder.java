@@ -1,5 +1,6 @@
 package org.springframework.boot.configurationmetadata;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -19,71 +20,14 @@ import java.util.Objects;
  * @since 6.0.0
  */
 public class CasConfigurationMetadataRepositoryJsonBuilder {
-    private Charset defaultCharset = StandardCharsets.UTF_8;
-
     private final JsonReader reader = new JsonReader();
 
     private final List<SimpleConfigurationMetadataRepository> repositories = new ArrayList<>(0);
 
+    private Charset defaultCharset = StandardCharsets.UTF_8;
+
     CasConfigurationMetadataRepositoryJsonBuilder(final Charset defaultCharset) {
         this.defaultCharset = defaultCharset;
-    }
-
-    /**
-     * Add the content of a {@link ConfigurationMetadataRepository} defined by the
-     * specified {@link InputStream} json document using the default charset. If this
-     * metadata repository holds items that were loaded previously, these are ignored.
-     * <p>
-     * Leaves the stream open when done.
-     *
-     * @param inputStream the source input stream
-     * @return this builder
-     */
-    public CasConfigurationMetadataRepositoryJsonBuilder withJsonResource(final InputStream inputStream) {
-        return withJsonResource(inputStream, this.defaultCharset);
-    }
-
-    /**
-     * Add the content of a {@link ConfigurationMetadataRepository} defined by the
-     * specified {@link InputStream} json document using the specified {@link Charset}. If
-     * this metadata repository holds items that were loaded previously, these are
-     * ignored.
-     * <p>
-     * Leaves the stream open when done.
-     *
-     * @param inputStream the source input stream
-     * @param charset     the charset of the input
-     * @return this builder
-     */
-    public CasConfigurationMetadataRepositoryJsonBuilder withJsonResource(final InputStream inputStream, final Charset charset) {
-        if (inputStream == null) {
-            throw new IllegalArgumentException("InputStream must not be null.");
-        }
-        this.repositories.add(add(inputStream, charset));
-        return this;
-    }
-
-    /**
-     * Build a {@link ConfigurationMetadataRepository} with the current state of this
-     * builder.
-     *
-     * @return this builder
-     */
-    public ConfigurationMetadataRepository build() {
-        val result = new SimpleConfigurationMetadataRepository();
-        for (val repository : this.repositories) {
-            result.include(repository);
-        }
-        return result;
-    }
-
-    private SimpleConfigurationMetadataRepository add(final InputStream in, final Charset charset) {
-        try {
-            val metadata = this.reader.read(in, charset);
-            return create(metadata);
-        } catch (final Exception ex) {
-            throw new IllegalStateException("Failed to read configuration metadata", ex);
-        }
     }
 
     private static void addValueHints(final ConfigurationMetadataProperty property, final ConfigurationMetadataHint hint) {
@@ -171,5 +115,62 @@ public class CasConfigurationMetadataRepositoryJsonBuilder {
      */
     public static CasConfigurationMetadataRepositoryJsonBuilder create(final Charset defaultCharset) {
         return new CasConfigurationMetadataRepositoryJsonBuilder(defaultCharset);
+    }
+
+    /**
+     * Add the content of a {@link ConfigurationMetadataRepository} defined by the
+     * specified {@link InputStream} json document using the default charset. If this
+     * metadata repository holds items that were loaded previously, these are ignored.
+     * <p>
+     * Leaves the stream open when done.
+     *
+     * @param inputStream the source input stream
+     * @return this builder
+     */
+    @CanIgnoreReturnValue
+    public CasConfigurationMetadataRepositoryJsonBuilder withJsonResource(final InputStream inputStream) {
+        return withJsonResource(inputStream, this.defaultCharset);
+    }
+
+    /**
+     * Add the content of a {@link ConfigurationMetadataRepository} defined by the
+     * specified {@link InputStream} json document using the specified {@link Charset}. If
+     * this metadata repository holds items that were loaded previously, these are
+     * ignored.
+     * <p>
+     * Leaves the stream open when done.
+     *
+     * @param inputStream the source input stream
+     * @param charset     the charset of the input
+     * @return this builder
+     */
+    @CanIgnoreReturnValue
+    public CasConfigurationMetadataRepositoryJsonBuilder withJsonResource(final InputStream inputStream, final Charset charset) {
+        Objects.requireNonNull(inputStream, "InputStream must not be null.");
+        this.repositories.add(add(inputStream, charset));
+        return this;
+    }
+
+    /**
+     * Build a {@link ConfigurationMetadataRepository} with the current state of this
+     * builder.
+     *
+     * @return this builder
+     */
+    public ConfigurationMetadataRepository build() {
+        val result = new SimpleConfigurationMetadataRepository();
+        for (val repository : this.repositories) {
+            result.include(repository);
+        }
+        return result;
+    }
+
+    private SimpleConfigurationMetadataRepository add(final InputStream in, final Charset charset) {
+        try {
+            val metadata = this.reader.read(in, charset);
+            return create(metadata);
+        } catch (final Exception ex) {
+            throw new IllegalStateException("Failed to read configuration metadata", ex);
+        }
     }
 }

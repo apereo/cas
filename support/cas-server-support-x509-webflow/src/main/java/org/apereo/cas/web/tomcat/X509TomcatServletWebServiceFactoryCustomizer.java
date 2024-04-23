@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.catalina.connector.Connector;
 import org.apache.coyote.http11.AbstractHttp11JsseProtocol;
+import org.apache.tomcat.util.net.SSLHostConfig;
+import org.apache.tomcat.util.net.SSLHostConfigCertificate;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
@@ -33,9 +35,8 @@ public class X509TomcatServletWebServiceFactoryCustomizer extends ServletWebServ
     @Override
     public void customize(final ConfigurableServletWebServerFactory factory) {
         val webflow = casProperties.getAuthn().getX509().getWebflow();
-        if (factory instanceof TomcatServletWebServerFactory && webflow.getPort() > 0) {
+        if (factory instanceof final TomcatServletWebServerFactory tomcat && webflow.getPort() > 0) {
 
-            val tomcat = (TomcatServletWebServerFactory) factory;
             LOGGER.debug("Creating X509 configuration for the tomcat container...");
             val connector = new Connector("HTTP/1.1");
             connector.setPort(webflow.getPort());
@@ -44,12 +45,21 @@ public class X509TomcatServletWebServiceFactoryCustomizer extends ServletWebServ
             connector.setAllowTrace(true);
             val protocol = (AbstractHttp11JsseProtocol) connector.getProtocolHandler();
             protocol.setSSLEnabled(true);
-            protocol.setSslProtocol("TLS");
-            protocol.setClientAuth(webflow.getClientAuth());
-            protocol.setKeystoreFile(serverProperties.getSsl().getKeyStore());
-            protocol.setKeystorePass(serverProperties.getSsl().getKeyStorePassword());
-            protocol.setTruststoreFile(serverProperties.getSsl().getTrustStore());
-            protocol.setTruststorePass(serverProperties.getSsl().getTrustStorePassword());
+
+            val sslHostConfig = new SSLHostConfig();
+            sslHostConfig.setSslProtocol("TLS");
+            sslHostConfig.setHostName(protocol.getDefaultSSLHostConfigName());
+            sslHostConfig.setCertificateVerification(webflow.getClientAuth());
+            val certificate = new SSLHostConfigCertificate(sslHostConfig, SSLHostConfigCertificate.Type.UNDEFINED);
+
+            certificate.setCertificateKeystoreFile(serverProperties.getSsl().getKeyStore());
+            certificate.setCertificateKeyPassword(serverProperties.getSsl().getKeyStorePassword());
+            
+            sslHostConfig.setTruststoreFile(serverProperties.getSsl().getTrustStore());
+            sslHostConfig.setTruststorePassword(serverProperties.getSsl().getTrustStorePassword());
+
+            sslHostConfig.addCertificate(certificate);
+            protocol.addSslHostConfig(sslHostConfig);
             tomcat.addAdditionalTomcatConnectors(connector);
         }
     }

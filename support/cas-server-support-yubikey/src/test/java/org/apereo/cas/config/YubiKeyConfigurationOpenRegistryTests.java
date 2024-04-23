@@ -26,14 +26,14 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As=",
         "cas.authn.mfa.yubikey.json-file="
     })
-@Tag("MFA")
-public class YubiKeyConfigurationOpenRegistryTests {
+@Tag("MFAProvider")
+class YubiKeyConfigurationOpenRegistryTests {
     @Autowired
     @Qualifier("yubiKeyAccountRegistry")
     private YubiKeyAccountRegistry yubiKeyAccountRegistry;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val id = UUID.randomUUID().toString();
         assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor(id));
     }

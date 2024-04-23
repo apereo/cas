@@ -1,0 +1,13 @@
+{
+  "@class" : "java.util.HashMap",
+  ".+@heroku.+" : {
+    "@class" : "org.apereo.cas.pac4j.discovery.DelegatedAuthenticationDynamicDiscoveryProvider",
+    "clientName" : "CasClient",
+    "order": 0
+  },
+  ".+@example.+" : {
+    "@class" : "org.apereo.cas.pac4j.discovery.DelegatedAuthenticationDynamicDiscoveryProvider",
+    "clientName" : "OktaOidcClient",
+    "order": 1
+  }
+}

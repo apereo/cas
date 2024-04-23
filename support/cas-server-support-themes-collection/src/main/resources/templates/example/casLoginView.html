@@ -2,11 +2,8 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title th:text="#{cas.login.pagetitle}">CAS Login View</title>
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
-
 </head>
 
 <body class="login mdc-typography">
@@ -15,8 +12,8 @@
     <div class="d-flex justify-content-center flex-md-row flex-column mdc-card mdc-card-content w-lg-50">
         <section id="loginForm"
                  class="login-section login-form"
-                 th:if="${@casThymeleafLoginFormDirector.isLoginFormViewable(#vars)}">
-            <div th:replace="fragments/loginform :: loginform">
+                 th:if="${@casThymeleafTemplatesDirector.isLoginFormViewable(#vars)}">
+            <div th:replace="~{fragments/loginform :: loginform}">
                 <a href="fragments/loginform.html">Login Form goes here</a>
             </div>
         </section>

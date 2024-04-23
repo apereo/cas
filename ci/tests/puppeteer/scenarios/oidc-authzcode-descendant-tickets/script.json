@@ -1,0 +1,43 @@
+{
+  "dependencies": "oidc,jpa-ticket-registry",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.ticket.track-descendant-tickets=true",
+
+    "--cas.authn.oauth.code.time-to-kill-in-seconds=60",
+    "--cas.authn.oauth.code.number-of-uses=10",
+
+    "--cas.authn.oauth.code.remove-related-access-tokens=true",
+    "--cas.authn.oauth.core.user-profile-view-type=FLAT",
+    "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
+    "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
+
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
+    "--cas.ticket.registry.core.enable-locking=true",
+
+    "--spring.datasource.url=jdbc:postgresql://localhost:5432/tickets",
+    "--spring.datasource.username=postgres",
+    "--spring.datasource.password=password",
+    "--spring.datasource.driver-class-name=org.postgresql.Driver",
+
+    "--spring.integration.jdbc.initialize-schema=always",
+    "--spring.sql.init.platform=postgresql",
+
+    "--cas.ticket.registry.jpa.driver-class=org.postgresql.Driver",
+    "--cas.ticket.registry.jpa.ddl-auto=create-drop",
+    "--cas.ticket.registry.jpa.dialect=org.hibernate.dialect.PostgreSQLDialect",
+    "--cas.ticket.registry.jpa.user=postgres",
+    "--cas.ticket.registry.jpa.password=password",
+    "--cas.ticket.registry.jpa.url=jdbc:postgresql://localhost:5432/tickets"
+  ],
+  "initScript": "${PWD}/ci/tests/postgres/run-postgres-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}
+

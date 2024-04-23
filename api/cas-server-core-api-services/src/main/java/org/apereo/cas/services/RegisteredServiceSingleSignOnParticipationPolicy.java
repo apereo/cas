@@ -1,12 +1,10 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.ticket.TicketState;
-import org.apereo.cas.util.model.TriStateBoolean;
-
+import org.apereo.cas.configuration.support.TriStateBoolean;
+import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.core.Ordered;
-
 import java.io.Serializable;
 
 /**
@@ -34,7 +32,7 @@ public interface RegisteredServiceSingleSignOnParticipationPolicy extends Serial
      * @return true /false
      */
     @JsonIgnore
-    boolean shouldParticipateInSso(RegisteredService registeredService, TicketState ticketState);
+    boolean shouldParticipateInSso(RegisteredService registeredService, AuthenticationAwareTicket ticketState);
 
     @Override
     default int getOrder() {
@@ -48,7 +46,7 @@ public interface RegisteredServiceSingleSignOnParticipationPolicy extends Serial
      *
      * @return true/false
      */
-    default TriStateBoolean isCreateCookieOnRenewedAuthentication() {
+    default TriStateBoolean getCreateCookieOnRenewedAuthentication() {
         return TriStateBoolean.UNDEFINED;
     }
 }

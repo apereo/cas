@@ -19,18 +19,19 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("WebflowMfaActions")
-public class InweboPushAuthenticateActionTests extends BaseActionTests {
+class InweboPushAuthenticateActionTests extends BaseInweboActionTests {
 
     private InweboPushAuthenticateAction action;
 
+    @Override
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         super.setUp();
 
         action = new InweboPushAuthenticateAction(service);
     }
 
-    private InweboPushAuthenticateResponse pushAuthenticateResponse(final InweboResult result) {
+    private static InweboPushAuthenticateResponse pushAuthenticateResponse(final InweboResult result) {
         val response = new InweboPushAuthenticateResponse();
         response.setResult(result);
         if (result == InweboResult.OK) {
@@ -40,19 +41,19 @@ public class InweboPushAuthenticateActionTests extends BaseActionTests {
     }
 
     @Test
-    public void verifyPushAuthenticateOk() {
+    void verifyPushAuthenticateOk() throws Throwable {
         when(service.pushAuthenticate(LOGIN)).thenReturn(pushAuthenticateResponse(InweboResult.OK));
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
         assertEquals(SESSION_ID, requestContext.getFlowScope().get(WebflowConstants.INWEBO_SESSION_ID));
     }
 
     @Test
-    public void verifyPushAuthenticateFailed() {
+    void verifyPushAuthenticateFailed() throws Throwable {
         when(service.pushAuthenticate(LOGIN)).thenReturn(pushAuthenticateResponse(InweboResult.TIMEOUT));
 
-        val event = action.doExecute(requestContext);
+        val event = action.execute(requestContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         assertFalse(requestContext.getFlowScope().contains(WebflowConstants.INWEBO_SESSION_ID));
     }

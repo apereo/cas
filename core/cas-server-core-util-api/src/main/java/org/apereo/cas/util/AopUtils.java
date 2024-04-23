@@ -3,7 +3,6 @@ package org.apereo.cas.util;
 import lombok.experimental.UtilityClass;
 import org.aspectj.lang.JoinPoint;
 
-
 /**
  * Utility class to assist with AOP operations.
  *

@@ -1,28 +1,26 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.subject;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
-import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
-import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.InetAddressUtils;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.jasig.cas.client.validation.Assertion;
-import org.opensaml.messaging.context.MessageContext;
+import org.apache.commons.lang3.tuple.Pair;
+import org.opensaml.saml.common.SAMLObject;
+import org.opensaml.saml.saml2.core.EncryptedID;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.NameIDType;
-import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.core.Subject;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 
@@ -34,18 +32,20 @@ import java.time.ZonedDateTime;
  */
 @Slf4j
 public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<Subject> {
+    @Serial
     private static final long serialVersionUID = 4782621942035583007L;
 
-    private final transient SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder;
+    private final SamlProfileObjectBuilder<SAMLObject> ssoPostProfileSamlNameIdBuilder;
 
     private final CasConfigurationProperties casProperties;
 
     private final transient SamlIdPObjectEncrypter samlObjectEncrypter;
 
-    public SamlProfileSamlSubjectBuilder(final OpenSamlConfigBean configBean,
-                                         final SamlProfileObjectBuilder<NameID> ssoPostProfileSamlNameIdBuilder,
-                                         final CasConfigurationProperties casProperties,
-                                         final SamlIdPObjectEncrypter samlObjectEncrypter) {
+    public SamlProfileSamlSubjectBuilder(
+        final OpenSamlConfigBean configBean,
+        final SamlProfileObjectBuilder<SAMLObject> ssoPostProfileSamlNameIdBuilder,
+        final CasConfigurationProperties casProperties,
+        final SamlIdPObjectEncrypter samlObjectEncrypter) {
         super(configBean);
         this.ssoPostProfileSamlNameIdBuilder = ssoPostProfileSamlNameIdBuilder;
         this.samlObjectEncrypter = samlObjectEncrypter;
@@ -53,83 +53,62 @@ public class SamlProfileSamlSubjectBuilder extends AbstractSaml20ObjectBuilder i
     }
 
     @Override
-    public Subject build(final RequestAbstractType authnRequest,
-                         final HttpServletRequest request,
-                         final HttpServletResponse response,
-                         final Object assertion,
-                         final SamlRegisteredService service,
-                         final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                         final String binding,
-                         final MessageContext messageContext) throws SamlException {
-        return buildSubject(request, response, authnRequest, assertion, service, adaptor, binding, messageContext);
+    public Subject build(final SamlProfileBuilderContext context) throws Exception {
+        return buildSubject(context);
     }
 
-    private Subject buildSubject(final HttpServletRequest request,
-                                 final HttpServletResponse response,
-                                 final RequestAbstractType authnRequest,
-                                 final Object casAssertion,
-                                 final SamlRegisteredService service,
-                                 final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                 final String binding,
-                                 final MessageContext messageContext) throws SamlException {
-
-        val assertion = Assertion.class.cast(casAssertion);
-        val validFromDate = DateTimeUtils.zonedDateTimeOf(assertion.getValidFromDate());
-        LOGGER.trace("Locating the assertion consumer service url for binding [{}]", binding);
-        val acs = SamlIdPUtils.determineEndpointForRequest(authnRequest, adaptor, binding);
+    private Subject buildSubject(final SamlProfileBuilderContext context) throws Exception {
+        val validFromDate = ZonedDateTime.now(ZoneOffset.UTC);
+        LOGGER.trace("Locating the assertion consumer service url for binding [{}]", context.getBinding());
+        val acs = SamlIdPUtils.determineEndpointForRequest(Pair.of(context.getSamlRequest(), context.getMessageContext()),
+            context.getAdaptor(), context.getBinding());
         val location = StringUtils.isBlank(acs.getResponseLocation()) ? acs.getLocation() : acs.getResponseLocation();
-        if (StringUtils.isBlank(location)) {
-            LOGGER.warn("Subject recipient is not defined from either authentication request or metadata for [{}]", adaptor.getEntityId());
-        }
+        val subjectNameId = getNameIdForService(context);
 
-        val subjectNameId = getNameIdForService(request, response, authnRequest, service, adaptor, binding, assertion, messageContext);
-        val subjectConfNameId = service.isSkipGeneratingSubjectConfirmationNameId()
+        val registeredService = context.getRegisteredService();
+        val subjectConfNameId = registeredService.isSkipGeneratingSubjectConfirmationNameId()
             ? null
-            : getNameIdForService(request, response, authnRequest, service, adaptor, binding, assertion, messageContext);
+            : getNameIdForService(context);
 
-        val notOnOrAfter = service.isSkipGeneratingSubjectConfirmationNotOnOrAfter()
+        val notOnOrAfterDateTime = validFromDate.plusSeconds(registeredService.getSkewAllowance() != 0
+            ? registeredService.getSkewAllowance()
+            : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds());
+        val notOnOrAfter = registeredService.isSkipGeneratingSubjectConfirmationNotOnOrAfter()
             ? null
-            : validFromDate.plusSeconds(service.getSkewAllowance() > 0
-                ? service.getSkewAllowance()
-                : casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance());
+            : notOnOrAfterDateTime;
+        LOGGER.trace("Subject confirmation notOnOrAfter for service [{}] is [{}]", registeredService.getServiceId(), notOnOrAfter);
 
-        val subject = newSubject(subjectNameId, subjectConfNameId,
-            service.isSkipGeneratingSubjectConfirmationRecipient() ? null : location,
+        val finalSubjectNameId = encryptNameIdIfNecessary(subjectNameId, context);
+        val finalSubjectConfigNameId = encryptNameIdIfNecessary(subjectConfNameId, context);
+
+        val entityId = casProperties.getAuthn().getSamlIdp().getCore().getEntityId();
+        val subjectConfirmation = newSubjectConfirmation(
+            registeredService.isSkipGeneratingSubjectConfirmationRecipient() ? null : location,
             notOnOrAfter,
-            service.isSkipGeneratingSubjectConfirmationInResponseTo() ? null : authnRequest.getID(),
-            service.isSkipGeneratingSubjectConfirmationNotBefore() ? null : ZonedDateTime.now(ZoneOffset.UTC));
-
-        if (subjectNameId != null && NameIDType.ENCRYPTED.equalsIgnoreCase(subjectNameId.getFormat())) {
-            subject.setNameID(null);
-            subject.getSubjectConfirmations().forEach(c -> c.setNameID(null));
-
-            val encryptedId = samlObjectEncrypter.encode(subjectNameId, service, adaptor);
-            if (encryptedId != null) {
-                subject.setEncryptedID(encryptedId);
-            } else {
-                LOGGER.debug("Unable to encrypt subject Name ID for [{}]", adaptor.getEntityId());
-            }
-            if (subjectConfNameId != null) {
-                val encryptedConfId = samlObjectEncrypter.encode(subjectConfNameId, service, adaptor);
-                if (encryptedConfId != null) {
-                    subject.getSubjectConfirmations().forEach(c -> c.setEncryptedID(encryptedConfId));
-                } else {
-                    LOGGER.debug("Unable to encrypt subject confirmation Name ID for [{}]", adaptor.getEntityId());
-                }
-            }
-        }
-
+            getInResponseTo(context.getSamlRequest(), entityId, registeredService.isSkipGeneratingSubjectConfirmationInResponseTo()),
+            registeredService.isSkipGeneratingSubjectConfirmationNotBefore() ? null : ZonedDateTime.now(ZoneOffset.UTC),
+            registeredService.isSkipGeneratingSubjectConfirmationAddress() ? null : InetAddressUtils.getByName(location));
+        
+        val subject = newSubject(finalSubjectNameId, finalSubjectConfigNameId, subjectConfirmation);
         LOGGER.debug("Created SAML subject [{}]", subject);
         return subject;
     }
 
-    private NameID getNameIdForService(final HttpServletRequest request, final HttpServletResponse response, final RequestAbstractType authnRequest,
-                                       final SamlRegisteredService service, final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                       final String binding, final Assertion assertion, final MessageContext messageContext) {
-        if (service.isSkipGeneratingAssertionNameId()) {
-            LOGGER.warn("Assertion will skip assigning/generating a nameId based on service [{}]", service);
+    private SAMLObject getNameIdForService(final SamlProfileBuilderContext context) throws Exception {
+        if (context.getRegisteredService().isSkipGeneratingAssertionNameId()) {
+            LOGGER.warn("Assertion will skip assigning/generating a nameId based on service [{}]", context.getRegisteredService());
             return null;
         }
-        return this.ssoPostProfileSamlNameIdBuilder.build(authnRequest, request, response, assertion, service, adaptor, binding, messageContext);
+        return ssoPostProfileSamlNameIdBuilder.build(context);
+    }
+
+    private SAMLObject encryptNameIdIfNecessary(final SAMLObject subjectNameId,
+                                                final SamlProfileBuilderContext context) {
+        if (!(subjectNameId instanceof EncryptedID)
+            && subjectNameId instanceof NameID
+            && NameIDType.ENCRYPTED.equalsIgnoreCase(((NameIDType) subjectNameId).getFormat())) {
+            return samlObjectEncrypter.encode((NameID) subjectNameId, context.getRegisteredService(), context.getAdaptor());
+        }
+        return subjectNameId;
     }
 }

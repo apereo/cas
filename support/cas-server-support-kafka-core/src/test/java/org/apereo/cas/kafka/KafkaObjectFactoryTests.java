@@ -1,6 +1,6 @@
 package org.apereo.cas.kafka;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -16,10 +16,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Kafka")
-@EnabledIfPortOpen(port = 9092)
-public class KafkaObjectFactoryTests {
+@EnabledIfListeningOnPort(port = 9092)
+class KafkaObjectFactoryTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val factory = new KafkaObjectFactory("localhost:9092");
         assertNotNull(factory.getKafkaAdmin());
         assertNotNull(factory.getKafkaTemplate(new StringSerializer(), new StringSerializer()));

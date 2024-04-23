@@ -1,6 +1,6 @@
 package org.apereo.cas.pm.jdbc;
 
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -13,19 +13,19 @@ import org.springframework.test.context.TestPropertySource;
  * @since 6.1.0
  */
 @TestPropertySource(properties = {
-    "cas.jdbc.show-sql=true",
+    "cas.jdbc.show-sql=false",
     "cas.authn.pm.jdbc.user=root",
     "cas.authn.pm.jdbc.password=password",
     "cas.authn.pm.jdbc.driver-class=com.mysql.cj.jdbc.Driver",
     "cas.authn.pm.jdbc.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
-    "cas.authn.pm.jdbc.dialect=org.hibernate.dialect.MySQL57InnoDBDialect"
+    "cas.authn.pm.jdbc.dialect=org.hibernate.dialect.MySQLDialect"
 })
-@EnabledIfPortOpen(port = 3306)
+@EnabledIfListeningOnPort(port = 3306)
 @Tag("MySQL")
-public class MySQLJdbcPasswordHistoryServiceTests extends JdbcPasswordHistoryServiceTests {
+class MySQLJdbcPasswordHistoryServiceTests extends JdbcPasswordHistoryServiceTests {
 
     @BeforeEach
-    public void initialize() {
+    public void initialize() throws Throwable {
         passwordHistoryService.removeAll();
     }
 }

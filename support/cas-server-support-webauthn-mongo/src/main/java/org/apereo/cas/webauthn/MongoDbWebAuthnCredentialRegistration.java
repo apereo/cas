@@ -9,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -34,6 +35,7 @@ public class MongoDbWebAuthnCredentialRegistration implements Serializable {
      */
     public static final String FIELD_RECORDS = "records";
 
+    @Serial
     private static final long serialVersionUID = 1505204109111619367L;
 
     @Id

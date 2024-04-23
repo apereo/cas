@@ -6,7 +6,7 @@ category: Installation
 {% include variables.html %}
 
 
-# WAR Overlay Installation
+# Installation
 
 CAS installation is a fundamentally source-oriented process, and we recommend a WAR overlay (1) 
 project to organize customizations such as component configuration and UI design.
@@ -50,51 +50,24 @@ CAS by adding third-party components that implement CAS APIs as Java source file
 The process of working with an overlay can be summarized in the following steps:
 
 - Start with and build the provided basic vanilla build/deployment.
-- Identify the artifacts from the produced build that need changes. These artifacts are generally produced by the build in the `build` directory for Gradle. Use the gradle `explodeWar` task.
+- Identify the artifacts from the produced build that need changes. These artifacts are generally produced by the build in the `build` directory for Gradle.
 - Copy the identified artifacts from the identified above directories over to the `src/main/resources` directory.
 1. Create the `src/main/resources` directories, if they don't already exist.
-2. Copied paths and file names **MUST EXACTLY MATCH** their build counterparts, or the change won't take effect. See the table below to understand how to map folders and files from the build to `src`.
+2. Copied paths and file names **MUST EXACTLY MATCH** their build counterparts, or the change won't take effect.
 - After changes, rebuild and repeat the process as many times as possible.
 - Double check your changes inside the built binary artifact to make sure the overlay process is working.
 
-<div class="alert alert-warning"><strong>Be Exact</strong><p>Do NOT copy everything produced by 
+<div class="alert alert-warning">:warning: <strong>Be Exact</strong><p>Do NOT copy everything produced by 
 the build. Attempt to keep changes and customizations to a 
 minimum and only grab what you actually need. Make sure the deployment environment 
 is kept clean and precise, or you incur the risk of terrible upgrade issues and painful headaches.</p></div>
 
-## CAS WAR Overlays
+## CAS Overlay Initializr
 
-CAS WAR overlay projects described below are provided for reference and study.
-
-### CAS Overlay Initializr
-
-Apereo CAS Initializr is a relatively new addition to the Apereo CAS ecosystem that allows you 
+Apereo CAS Initializr is a service provided by the Apereo CAS project that allows you 
 as the deployer to generate CAS WAR Overlay projects on the fly with just what you need to start quickly.
 
 To learn more about the initializr, please [review this guide](WAR-Overlay-Initializr.html).
-
-### CAS Overlay Template
-                 
-The CAS WAR overlay template project can be bootstrapped via the [CAS Initializr](WAR-Overlay-Initializr.html).
-
-<div class="alert alert-info"><strong>Review Branch!</strong><p>The below repositories point you towards their <code>master</code> branch.
-You should always make sure the branch you are on matches the version of CAS you wish to configure and deploy. The <code>master</code>
-branch typically points to the latest stable release of the CAS server. Check the build configuration and if inappropriate,
-use <code>git branch -a</code> to see available branches, and then <code>git checkout [branch-name]</code> to switch if necessary.</p></div>
-
-| Project                                       | Build Directory                               | Source Directory
-|-----------------------------------------------|-----------------------------------------------|-----------------------
-| [CAS Initializr](WAR-Overlay-Initializr.html) | `cas/build/cas-resources`     | `src/main/resources`
-
-To construct the overlay project, you need to copy directories and 
-files *that you need to customize* in the build directory over to the source directory.
-
-The WAR overlay also provides additional tasks to explode the binary artifact first before re-assembling it again.
-You may need to do that step manually yourself to learn what files/directories need to be copied over to the source directory.
-
-Note: Do **NOT** ever make changes in the above-noted build directory. The changeset will be cleaned out and 
-set back to defaults every time you do a build. Put overlaid components inside the source directory
-and/or other instructed locations to avoid surprises.
 
 ## Dockerized Deployment
 
@@ -104,49 +77,11 @@ See [this guide](Docker-Installation.html) for more info.
 
 CAS can be deployed to a number of servlet containers. See [this guide](Configuring-Servlet-Container.html) for more info.
 
-## Custom and Third-Party Source
-
-It is common to customize or extend the functionality of CAS by developing Java components that implement CAS APIs or
-to include third-party source by dependency references. Including third-party source is trivial; include
-the relevant dependency in the overlay `build.gradle` file. 
-
-<div class="alert alert-warning"><strong>Stop Coding</strong><p>
-Overlaying or modifying CAS internal components and classes, <i>unless ABSOLUTELY required</i>, should be a last resort and is generally 
-considered a misguided malpractice. Where possible, avoid making custom changes to carry the maintenance burden solely on your own. 
-Avoid carrying . You will risk the stability and security of your deployment. If the enhancement 
-case is attractive or modest, contribute back to the project. Stop writing code, or write it where it belongs.
-</p></div>
-
-In order to include custom Java source, it should 
-be included under a `src/main/java` directory in the overlay project source tree.
-
-    ├── src
-    │   ├── main
-    │   │   ├── java
-    │   │   │   └── edu
-    │   │   │       └── sso
-    │   │   │           └── middleware
-    │   │   │               └── cas
-    │   │   │                   ├── audit
-    │   │   │                   │   ├── CompactSlf4jAuditTrailManager.java
-    │   │   │                   ├── authentication
-    │   │   │                   │   └── principal
-    │   │   │                   │       └── UsernamePasswordCredentialsToPrincipalResolver.java
-    │   │   │                   ├── services
-    │   │   │                   │   └── JsonServiceRegistryDao.java
-    │   │   │                   ├── util
-    │   │   │                   │   └── X509Helper.java
-    │   │   │                   └── web
-    │   │   │                       ├── HelpController.java
-    │   │   │                       ├── flow
-    │   │   │                       │   ├── AbstractForgottenCredentialAction.java
-    │   │   │                       └── util
-    │   │   │                           ├── ProtocolParameterAuthority.java
-
 ## Dependency Management
 
 Each release of CAS provides a curated list of dependencies it supports. In practice, you do not need to provide a version for any of
-these dependencies in your build configuration as the CAS distribution is managing that for you. When you upgrade CAS itself, these dependencies will be upgraded as well in a consistent way.
+these dependencies in your build configuration as the CAS distribution is managing that for you. When you 
+upgrade CAS itself, these dependencies will be upgraded as well in a consistent way.
 
 The curated list of dependencies contains a refined list of third party libraries. The list is 
 available as a standard Bills of Materials (BOM). Not everyone likes inheriting from the BOM.

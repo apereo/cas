@@ -5,7 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.List;
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Ldap")
+@Tag("LdapAuthentication")
 @SpringBootTest(classes = AbstractGraphicalAuthenticationTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.gua.ldap.base-dn=dc=example,dc=org",
@@ -41,9 +42,9 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.gua.ldap.bind-dn=cn=Directory Manager",
         "cas.authn.gua.ldap.bind-credential=password"
     })
-@EnabledIfPortOpen(port = 10389)
+@EnabledIfListeningOnPort(port = 10389)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class LdapUserGraphicalAuthenticationRepositoryTests {
+class LdapUserGraphicalAuthenticationRepositoryTests {
 
     @Autowired
     @Qualifier("userGraphicalAuthenticationRepository")
@@ -53,7 +54,7 @@ public class LdapUserGraphicalAuthenticationRepositoryTests {
     private CasConfigurationProperties casProperties;
 
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         val ldap = casProperties.getAuthn().getGua().getLdap();
         val factory = LdapUtils.newLdaptiveConnectionFactory(ldap);
         val cn = createLdapEntry(factory);
@@ -63,7 +64,7 @@ public class LdapUserGraphicalAuthenticationRepositoryTests {
 
     private static String createLdapEntry(final ConnectionFactory factory) throws Exception {
         val photo = IOUtils.toByteArray(new ClassPathResource("image.jpg").getInputStream());
-        val cn = RandomUtils.randomAlphabetic(6).toLowerCase();
+        val cn = RandomUtils.randomAlphabetic(6).toLowerCase(Locale.ENGLISH);
         val request = AddRequest.builder()
             .attributes(List.of(
                 new LdapAttribute("objectclass", "top", "person", "inetOrgPerson"),

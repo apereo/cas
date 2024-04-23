@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.services.RegisteredService;
+
 import org.springframework.core.Ordered;
 
 import java.io.Serializable;
@@ -71,24 +72,4 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
      * @return the FailureMode
      */
     BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes getFailureMode();
-
-    /**
-     * Creates a unique mark that identifies this provider instance.
-     *
-     * @return - the mark
-     */
-    default String createUniqueId() {
-        return getId().concat(String.valueOf(hashCode()));
-    }
-
-    /**
-     * Validates that the passed mark was created by this provider.
-     *
-     * @param id - the id to validate
-     * @return - true if the mark was created by this provider
-     */
-    default boolean validateId(final String id) {
-        return id != null && createUniqueId().equals(id);
-    }
-
 }

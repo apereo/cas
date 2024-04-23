@@ -20,7 +20,7 @@ import java.util.Collection;
  * the directory structure to find relevant YAML files. Files are expected to have the
  * {@link #getExtensions()} extension. An example of the YAML file is included here:
  * &lt;pre&gt;
- * --- !&lt;org.apereo.cas.services.RegexRegisteredService&gt;
+ * --- !&lt;org.apereo.cas.services.CasRegisteredService&gt;
  * serviceId: "testId"
  * name: "YAML"
  * id: 1000
@@ -41,7 +41,7 @@ public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
     /**
      * File extension of registered service YAML files.
      */
-    private static final String[] FILE_EXTENSIONS = new String[]{"yml", "yaml"};
+    private static final String[] FILE_EXTENSIONS = {"yml", "yaml"};
 
     public YamlServiceRegistry(final Resource configDirectory,
                                final WatcherService serviceRegistryConfigWatcher,
@@ -50,7 +50,7 @@ public class YamlServiceRegistry extends AbstractResourceBasedServiceRegistry {
                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
                                final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
         super(configDirectory,
-            CollectionUtils.wrapList(new RegisteredServiceYamlSerializer()),
+            CollectionUtils.wrapList(new RegisteredServiceYamlSerializer(applicationContext)),
             applicationContext, registeredServiceReplicationStrategy,
             resourceNamingStrategy, serviceRegistryListeners, serviceRegistryConfigWatcher);
     }

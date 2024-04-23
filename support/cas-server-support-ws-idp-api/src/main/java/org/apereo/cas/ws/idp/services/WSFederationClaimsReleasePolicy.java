@@ -1,25 +1,25 @@
 package org.apereo.cas.ws.idp.services;
 
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.ws.idp.WSFederationClaims;
-
-import com.google.common.collect.Maps;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
+import java.io.Serial;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -33,38 +33,39 @@ import java.util.TreeMap;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
-    private static final int MAP_SIZE = 8;
-
+    @Serial
     private static final long serialVersionUID = -2814928645221579489L;
 
-    private Map<String, String> allowedAttributes = new LinkedHashMap<>(MAP_SIZE);
-
-    public WSFederationClaimsReleasePolicy() {
-        setAllowedAttributes(new LinkedHashMap<>(MAP_SIZE));
-    }
+    private Map<String, String> allowedAttributes = new LinkedHashMap<>();
 
     public WSFederationClaimsReleasePolicy(final Map<String, String> allowedAttributes) {
         setAllowedAttributes(allowedAttributes);
     }
 
     @Override
-    public Map<String, List<Object>> getAttributesInternal(final Principal principal, final Map<String, List<Object>> attrs,
-                                                           final RegisteredService registeredService, final Service selectedService) {
+    public Map<String, List<Object>> getAttributesInternal(final RegisteredServiceAttributeReleasePolicyContext context,
+                                                           final Map<String, List<Object>> attrs) {
         val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
-        val attributesToRelease = Maps.<String, List<Object>>newHashMapWithExpectedSize(resolvedAttributes.size());
+        val attributesToRelease = new HashMap<String, List<Object>>(resolvedAttributes.size());
 
         getAllowedAttributes()
             .entrySet()
             .stream()
-            .filter(entry -> WSFederationClaims.contains(entry.getKey().toUpperCase()))
+            .filter(entry -> WSFederationClaims.contains(entry.getKey().toUpperCase(Locale.ENGLISH)))
             .forEach(entry -> {
                 val claimName = entry.getKey();
                 val attributeValue = resolvedAttributes.get(entry.getValue());
-                val claim = WSFederationClaims.valueOf(claimName.toUpperCase());
-                LOGGER.trace("Evaluating claim [{}] mapped to attribute value [{}]", claim.getUri(), attributeValue);
-                mapSingleAttributeDefinition(claim.getUri(), entry.getValue(), attributeValue, resolvedAttributes, attributesToRelease);
+                val claim = WSFederationClaims.valueOf(claimName.toUpperCase(Locale.ENGLISH));
+                if (resolvedAttributes.containsKey(claim.getUri())) {
+                    attributesToRelease.put(claim.getUri(), resolvedAttributes.get(claim.getUri()));
+                } else {
+                    LOGGER.trace("Evaluating claim [{}] mapped to attribute value [{}]", claim.getUri(), attributeValue);
+                    mapSingleAttributeDefinition(claim.getUri(), entry.getValue(),
+                        attributeValue, resolvedAttributes, attributesToRelease);
+                }
             });
         return attributesToRelease;
     }
@@ -110,12 +111,13 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                                                                     final Map<String, List<Object>> attributesToRelease,
                                                                     final String file) {
 
-        ApplicationContextProvider.getScriptResourceCacheManager().ifPresentOrElse(cacheMgr -> {
-            val script = cacheMgr.resolveScriptableResource(file, attributeName, file);
-            if (script != null) {
-                fetchAttributeValueFromScript(script, attributeName, resolvedAttributes, attributesToRelease);
-            }
-        },
+        ApplicationContextProvider.getScriptResourceCacheManager().ifPresentOrElse(
+            cacheMgr -> {
+                val script = cacheMgr.resolveScriptableResource(file, attributeName, file);
+                if (script != null) {
+                    fetchAttributeValueFromScript(script, attributeName, resolvedAttributes, attributesToRelease);
+                }
+            },
             () -> {
                 throw new RuntimeException("No groovy script cache manager is available to execute attribute mappings");
             });
@@ -126,10 +128,11 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                                                                 final Map<String, List<Object>> attributesToRelease,
                                                                 final String inlineGroovy) {
         ApplicationContextProvider.getScriptResourceCacheManager()
-            .ifPresentOrElse(cacheMgr -> {
-                val script = cacheMgr.resolveScriptableResource(inlineGroovy, attributeName, inlineGroovy);
-                fetchAttributeValueFromScript(script, attributeName, resolvedAttributes, attributesToRelease);
-            },
+            .ifPresentOrElse(
+                cacheMgr -> {
+                    val script = cacheMgr.resolveScriptableResource(inlineGroovy, attributeName, inlineGroovy);
+                    fetchAttributeValueFromScript(script, attributeName, resolvedAttributes, attributesToRelease);
+                },
                 () -> {
                     throw new RuntimeException("No groovy script cache manager is available to execute attribute mappings");
                 });
@@ -139,19 +142,21 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                                                       final String attributeName,
                                                       final Map<String, List<Object>> resolvedAttributes,
                                                       final Map<String, List<Object>> attributesToRelease) {
-        val args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
-        script.setBinding(args);
-        val result = script.execute(args.values().toArray(), Object.class);
-        if (result != null) {
-            LOGGER.debug("Mapped attribute [{}] to [{}] from script", attributeName, result);
-            attributesToRelease.put(attributeName, CollectionUtils.wrapList(result));
-        } else {
-            LOGGER.warn("Groovy-scripted attribute returned no value for [{}]", attributeName);
-        }
+        FunctionUtils.doUnchecked(__ -> {
+            val args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
+            script.setBinding(args);
+            val result = script.execute(args.values().toArray(), Object.class);
+            if (result != null) {
+                LOGGER.debug("Mapped attribute [{}] to [{}] from script", attributeName, result);
+                attributesToRelease.put(attributeName, CollectionUtils.wrapList(result));
+            } else {
+                LOGGER.warn("Groovy-scripted attribute returned no value for [{}]", attributeName);
+            }
+        });
     }
 
     @Override
-    public List<String> determineRequestedAttributeDefinitions() {
+    public List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
         return new ArrayList<>(getAllowedAttributes().keySet());
     }
 }

@@ -13,6 +13,7 @@ import org.apache.logging.log4j.message.Message;
 
 /**
  * Deny any messages without an exception (for stack trace). Neutral on messages with stack trace to allow other filters.
+ *
  * @author Hal Deadman
  * @since 6.3
  */
@@ -21,6 +22,16 @@ public class ExceptionOnlyFilter extends AbstractFilter {
 
     protected ExceptionOnlyFilter() {
         super(Result.ACCEPT, Result.DENY);
+    }
+
+    /**
+     * New builder.
+     *
+     * @return the builder
+     */
+    @PluginBuilderFactory
+    public static Builder newBuilder() {
+        return new Builder();
     }
 
     @Override
@@ -50,16 +61,6 @@ public class ExceptionOnlyFilter extends AbstractFilter {
             return getOnMatch();
         }
         return getOnMismatch();
-    }
-
-    /**
-     * New builder.
-     *
-     * @return the builder
-     */
-    @PluginBuilderFactory
-    public static Builder newBuilder() {
-        return new Builder();
     }
 
     public static class Builder extends AbstractFilterBuilder<ExceptionOnlyFilter.Builder> implements org.apache.logging.log4j.core.util.Builder<ExceptionOnlyFilter> {

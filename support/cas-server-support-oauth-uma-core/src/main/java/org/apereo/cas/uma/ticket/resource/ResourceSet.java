@@ -1,22 +1,25 @@
 package org.apereo.cas.uma.ticket.resource;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Type;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.data.annotation.Id;
 import org.springframework.http.HttpStatus;
 
-import javax.persistence.Column;
-import javax.persistence.Lob;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
+import jakarta.persistence.Column;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * This is {@link ResourceSet}.
@@ -30,6 +33,7 @@ import java.util.HashSet;
 @NoArgsConstructor
 @MappedSuperclass
 public class ResourceSet implements Serializable {
+    @Serial
     private static final long serialVersionUID = -5529923878827427102L;
 
     @Id
@@ -45,9 +49,9 @@ public class ResourceSet implements Serializable {
     @Column
     private String type;
 
-    @Lob
-    @Column(length = Integer.MAX_VALUE)
-    private HashSet<String> scopes = new HashSet<>(0);
+    @Column(columnDefinition = "json")
+    @Type(JsonType.class)
+    private Set<String> scopes = new HashSet<>(0);
 
     @Column
     private String iconUri;
@@ -57,10 +61,10 @@ public class ResourceSet implements Serializable {
 
     @Column
     private String clientId;
-
-    @Lob
-    @Column(length = Integer.MAX_VALUE)
-    private HashSet<ResourceSetPolicy> policies = new HashSet<>(0);
+    
+    @Column(columnDefinition = "json")
+    @Type(JsonType.class)
+    private Set<ResourceSetPolicy> policies = new HashSet<>(0);
 
     /**
      * Validate.

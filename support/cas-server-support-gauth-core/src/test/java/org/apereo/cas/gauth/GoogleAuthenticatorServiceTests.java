@@ -16,11 +16,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("MFA")
-public class GoogleAuthenticatorServiceTests {
+@Tag("MFAProvider")
+class GoogleAuthenticatorServiceTests {
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val bldr = new GoogleAuthenticatorConfig.GoogleAuthenticatorConfigBuilder();
         val authenticator = new GoogleAuthenticator(bldr.build());
         authenticator.setCredentialRepository(new DummyCredentialRepository());

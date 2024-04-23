@@ -1,11 +1,11 @@
 package org.apereo.cas.configuration.support;
 
+import org.apereo.cas.configuration.features.CasFeatureModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -15,18 +15,20 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("CasConfiguration")
-public class CasFeatureModuleTests {
+class CasFeatureModuleTests {
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         val clazz = new CasFeatureModuleUnderTest();
         assertTrue(clazz.isDefined());
         clazz.setEnabled(false);
         assertFalse(clazz.isDefined());
+        assertFalse(CasFeatureModule.baseline().isEmpty());
     }
 
     @Getter
     @Setter
-    private static class CasFeatureModuleUnderTest implements CasFeatureModule {
+    @SuppressWarnings("UnusedMethod")
+    private static final class CasFeatureModuleUnderTest implements CasFeatureModule {
         @RequiredProperty
         private final String name = "value";
 

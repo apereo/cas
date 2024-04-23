@@ -14,6 +14,10 @@ import java.util.Map;
  * @since 5.2.0
  */
 public interface ConsentDecisionBuilder extends Serializable {
+    /**
+     * Default Bean name.
+     */
+    String BEAN_NAME = "consentDecisionBuilder";
 
     /**
      * Update consent decision.

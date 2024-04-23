@@ -10,8 +10,8 @@
 </head>
 
 <body>
-<main role="main" class="container mt-3 mb-3">
-    <div layout:fragment="content" class="banner banner-message mdc-card p-4 m-auto w-lg-66">
+<main class="container mt-3 mb-3">
+    <div layout:fragment="content" class="banner banner-message mdc-card card p-4 m-auto w-lg-66">
         <h2 th:utext="#{cas.inwebo.checkresult.heading}">Waiting for the notification to be approved...</h2>
         <p th:utext="#{cas.inwebo.checkresult.message}">Please validate it on your phone/desktop.</p>
 
@@ -19,11 +19,8 @@
             <input type="hidden" name="_eventId" value="success" />
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
         </form>
-        <script type="text/javascript" th:inline="javascript">
-        /*<![CDATA[*/
-            setTimeout(function () {
-                $('#pendingCheckResultForm').submit();
-            }, 2500);
+        <script type="text/javascript">
+            setTimeout(() => $('#pendingCheckResultForm').submit(), 2500);
         </script>
     </div>
 </main>

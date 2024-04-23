@@ -1,8 +1,7 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.config.CasConsentMongoDbConfiguration;
-import org.apereo.cas.util.junit.EnabledIfPortOpen;
-
+import org.apereo.cas.config.CasConsentMongoDbAutoConfiguration;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since 5.3.0
  */
 @SpringBootTest(classes = {
-    CasConsentMongoDbConfiguration.class,
+    CasConsentMongoDbAutoConfiguration.class,
     BaseConsentRepositoryTests.SharedTestConfiguration.class
 },
     properties = {
@@ -30,10 +29,10 @@ import org.springframework.boot.test.context.SpringBootTest;
     })
 @Tag("MongoDb")
 @Getter
-@EnabledIfPortOpen(port = 27017)
-public class MongoDbConsentRepositoryTests extends BaseConsentRepositoryTests {
+@EnabledIfListeningOnPort(port = 27017)
+class MongoDbConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired
-    @Qualifier("consentRepository")
+    @Qualifier(ConsentRepository.BEAN_NAME)
     protected ConsentRepository repository;
 }

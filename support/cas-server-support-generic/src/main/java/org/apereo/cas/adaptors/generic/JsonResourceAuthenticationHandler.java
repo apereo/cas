@@ -31,7 +31,6 @@ import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.io.Serializable;
-import java.security.GeneralSecurityException;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -48,6 +47,7 @@ import java.util.Map;
  */
 @Slf4j
 public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
+
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true)
         .failOnUnknownProperties(true)
@@ -57,7 +57,8 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
 
     private final Resource resource;
 
-    public JsonResourceAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public JsonResourceAuthenticationHandler(
+        final String name, final ServicesManager servicesManager,
         final PrincipalFactory principalFactory,
         final Integer order, final Resource resource) {
         super(name, servicesManager, principalFactory, order);
@@ -65,71 +66,70 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-        final String originalPassword)
-        throws GeneralSecurityException, PreventedException {
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredential credential, final String originalPassword) throws Throwable {
+
         val map = readAccountsFromResource();
         val username = credential.getUsername();
-        val password = credential.getPassword();
+        LOGGER.debug("Attempting to authenticate [{}]", username);
         if (!map.containsKey(username)) {
+            LOGGER.debug("Unable to locate user account for [{}]", username);
             throw new AccountNotFoundException();
         }
 
         val account = map.get(username);
-        if (matches(password, account.getPassword())) {
-            switch (account.getStatus()) {
-                case DISABLED:
-                    throw new AccountDisabledException();
-                case EXPIRED:
-                    throw new AccountExpiredException();
-                case LOCKED:
-                    throw new AccountLockedException();
-                case MUST_CHANGE_PASSWORD:
-                    throw new AccountPasswordMustChangeException();
-                case OK:
-                default:
-                    LOGGER.debug("Account status is OK");
-            }
-
-            val clientInfo = ClientInfoHolder.getClientInfo();
-            if (clientInfo != null && StringUtils.isNotBlank(account.getLocation())
-                && !RegexUtils.find(account.getLocation(), clientInfo.getClientIpAddress())) {
-                throw new InvalidLoginLocationException("Unable to login from this location");
-            }
-
-            if (StringUtils.isNotBlank(account.getAvailability())) {
-                val range = Splitter.on("~").splitToList(account.getAvailability());
-                val startDate = DateTimeUtils.convertToZonedDateTime(range.get(0));
-                val endDate = DateTimeUtils.convertToZonedDateTime(range.get(1));
-                val now = ZonedDateTime.now(Clock.systemUTC());
-                if (now.isBefore(startDate) || now.isAfter(endDate)) {
-                    throw new InvalidLoginTimeException("Unable to login at this time");
-                }
-            }
-
-            val warnings = new ArrayList<MessageDescriptor>();
-            if (account.getExpirationDate() != null) {
-                val now = LocalDate.now(ZoneOffset.UTC);
-                if (now.isEqual(account.getExpirationDate()) || now.isAfter(account.getExpirationDate())) {
-                    throw new AccountExpiredException();
-                }
-                if (getPasswordPolicyConfiguration() != null) {
-                    val warningPeriod = account.getExpirationDate()
-                        .minusDays(getPasswordPolicyConfiguration().getPasswordWarningNumberOfDays());
-                    if (now.isAfter(warningPeriod) || now.isEqual(warningPeriod)) {
-                        val daysRemaining = ChronoUnit.DAYS.between(now, account.getExpirationDate());
-                        warnings.add(new DefaultMessageDescriptor(
-                            "password.expiration.loginsRemaining",
-                            "You have {0} logins remaining before you MUST change your password.",
-                            new Serializable[]{daysRemaining}));
-                    }
-                }
-            }
-            val principal = this.principalFactory.createPrincipal(username, account.getAttributes());
-            return createHandlerResult(credential, principal, warnings);
+        if (!matches(originalPassword, account.getPassword())) {
+            LOGGER.warn("Account password on file does not match the provided password for [{}]", username);
+            throw new FailedLoginException();
         }
 
-        throw new FailedLoginException();
+        LOGGER.debug("Located account [{}]", account);
+        switch (account.getStatus()) {
+            case DISABLED -> throw new AccountDisabledException();
+            case EXPIRED -> throw new AccountExpiredException();
+            case LOCKED -> throw new AccountLockedException();
+            case MUST_CHANGE_PASSWORD -> throw new AccountPasswordMustChangeException();
+            case OK -> LOGGER.debug("Account status is OK");
+        }
+
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        if (clientInfo != null && StringUtils.isNotBlank(account.getLocation())
+            && !RegexUtils.find(account.getLocation(), clientInfo.getClientIpAddress())) {
+            throw new InvalidLoginLocationException("Unable to login from this location");
+        }
+
+        if (StringUtils.isNotBlank(account.getAvailability())) {
+            val range = Splitter.on("~").splitToList(account.getAvailability());
+            val startDate = DateTimeUtils.convertToZonedDateTime(range.getFirst());
+            val endDate = DateTimeUtils.convertToZonedDateTime(range.get(1));
+            val now = ZonedDateTime.now(Clock.systemUTC());
+            if (now.isBefore(startDate) || now.isAfter(endDate)) {
+                throw new InvalidLoginTimeException("Unable to login at this time");
+            }
+        }
+
+        val warnings = new ArrayList<MessageDescriptor>();
+        if (account.getExpirationDate() != null) {
+            val now = LocalDate.now(ZoneOffset.UTC);
+            if (now.isEqual(account.getExpirationDate()) || now.isAfter(account.getExpirationDate())) {
+                throw new AccountExpiredException();
+            }
+            if (getPasswordPolicyConfiguration() != null) {
+                val warningPeriod = account.getExpirationDate()
+                    .minusDays(getPasswordPolicyConfiguration().getPasswordWarningNumberOfDays());
+                if (now.isAfter(warningPeriod) || now.isEqual(warningPeriod)) {
+                    val daysRemaining = ChronoUnit.DAYS.between(now, account.getExpirationDate());
+                    warnings.add(new DefaultMessageDescriptor(
+                        "password.expiration.loginsRemaining",
+                        "You have {0} logins remaining before you MUST change your password.",
+                        new Serializable[]{daysRemaining}));
+                }
+            }
+        }
+
+        account.getWarnings().forEach(warning -> warnings.add(new DefaultMessageDescriptor(warning, warning, new Serializable[]{username})));
+        val principal = principalFactory.createPrincipal(username, account.getAttributes());
+        return createHandlerResult(credential, principal, warnings);
     }
 
     private Map<String, CasUserAccount> readAccountsFromResource() throws PreventedException {

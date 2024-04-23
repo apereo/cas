@@ -4,23 +4,26 @@ import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
-import org.apereo.cas.authentication.metadata.BasicCredentialMetaData;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
 
 import com.google.common.base.Splitter;
 import jcifs.spnego.Authentication;
-import lombok.Synchronized;
+import jcifs.spnego.AuthenticationException;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.security.auth.login.FailedLoginException;
-import java.security.GeneralSecurityException;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 /**
@@ -37,33 +40,52 @@ import java.util.regex.Pattern;
 @Slf4j
 public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    private final List<Authentication> authentications;
+    private final BlockingQueue<List<Authentication>> authenticationsPool;
 
     private final boolean principalWithDomainName;
 
     private final boolean ntlmAllowed;
 
-    public JcifsSpnegoAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                            final PrincipalFactory principalFactory, final List<Authentication> authentications,
-                                            final boolean principalWithDomainName, final boolean ntlmAllowed,
-                                            final Integer order) {
-        super(name, servicesManager, principalFactory, order);
-        this.authentications = authentications;
-        this.principalWithDomainName = principalWithDomainName;
-        this.ntlmAllowed = ntlmAllowed;
+    private final long poolTimeoutInMilliseconds;
+
+    public JcifsSpnegoAuthenticationHandler(final SpnegoProperties spnegoProperties, final ServicesManager servicesManager,
+                                            final PrincipalFactory principalFactory, final BlockingQueue<List<Authentication>> authenticationsPool) {
+        super(spnegoProperties.getName(), servicesManager, principalFactory, spnegoProperties.getOrder());
+        this.authenticationsPool = authenticationsPool;
+        this.principalWithDomainName = spnegoProperties.isPrincipalWithDomainName();
+        this.ntlmAllowed = spnegoProperties.isNtlmAllowed();
+        this.poolTimeoutInMilliseconds = Beans.newDuration(spnegoProperties.getPoolTimeout()).toMillis();
     }
 
     @Override
-    @Synchronized
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential, final Service service) throws Throwable {
         val spnegoCredential = (SpnegoCredential) credential;
         if (!this.ntlmAllowed && spnegoCredential.isNtlm()) {
             throw new FailedLoginException("NTLM not allowed");
         }
 
+        try {
+            LOGGER.debug("Waiting for connection to validate SPNEGO Token");
+            val authentications = authenticationsPool.poll(this.poolTimeoutInMilliseconds, TimeUnit.MILLISECONDS);
+            if (authentications != null) {
+                try {
+                    return doInternalAuthentication(authentications, spnegoCredential, service);
+                } finally {
+                    authenticationsPool.add(authentications);
+                    LOGGER.debug("Returned connection to pool");
+                }
+            }
+            throw new FailedLoginException("Cannot get connection from pool to validate SPNEGO Token");
+        } catch (final InterruptedException e) {
+            throw new FailedLoginException("Thread interrupted while waiting for connection to validate SPNEGO Token");
+        }
+    }
+
+    protected AuthenticationHandlerExecutionResult doInternalAuthentication(final List<Authentication> authentications,
+                             final SpnegoCredential spnegoCredential, final Service service) throws Throwable {
         var principal = (java.security.Principal) null;
         var nextToken = (byte[]) null;
-        val it = this.authentications.iterator();
+        val it = authentications.iterator();
         while (nextToken == null && it.hasNext()) {
             try {
                 val authentication = it.next();
@@ -74,7 +96,7 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
                 LOGGER.debug("Authenticated SPNEGO principal [{}]. Retrieving the next token for authentication...",
                     Optional.ofNullable(principal).map(java.security.Principal::getName).orElse(null));
                 nextToken = authentication.getNextToken();
-            } catch (final jcifs.spnego.AuthenticationException e) {
+            } catch (final AuthenticationException e) {
                 LOGGER.debug("Processing SPNEGO authentication failed with exception", e);
                 throw new FailedLoginException(e.getMessage());
             }
@@ -99,7 +121,7 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
         if (!success) {
             throw new FailedLoginException("Principal is null, the processing of the SPNEGO Token failed");
         }
-        return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential), spnegoCredential.getPrincipal());
+        return new DefaultAuthenticationHandlerExecutionResult(this, spnegoCredential, spnegoCredential.getPrincipal());
     }
 
     @Override
@@ -120,7 +142,7 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
      * @param isNtlm the is ntlm
      * @return the simple principal
      */
-    protected Principal getPrincipal(final String name, final boolean isNtlm) {
+    protected Principal getPrincipal(final String name, final boolean isNtlm) throws Throwable {
         if (this.principalWithDomainName) {
             return this.principalFactory.createPrincipal(name);
         }
@@ -134,6 +156,6 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
             return this.principalFactory.createPrincipal(name);
         }
         val splitList = Splitter.on("@").splitToList(name);
-        return this.principalFactory.createPrincipal(splitList.get(0));
+        return this.principalFactory.createPrincipal(splitList.getFirst());
     }
 }

@@ -1,15 +1,15 @@
 // CHECKSTYLE:OFF
 package org.apereo.cas.support.inwebo.service.soap.generated;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * The generated SOAP class.
- * 
+ *
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
+ *
  * @author Jerome LELEU
  * @since 6.4.0
  */
@@ -45,12 +45,18 @@ import javax.xml.bind.annotation.XmlType;
 public class LoginSearch {
 
     protected long userid;
+
     protected long serviceid;
+
     @XmlElement(required = true)
     protected String loginname;
+
     protected long exactmatch;
+
     protected long offset;
+
     protected long nmax;
+
     protected long sort;
 
     /**
@@ -67,7 +73,7 @@ public class LoginSearch {
      *
      * @param value the user id
      */
-    public void setUserid(long value) {
+    public void setUserid(final long value) {
         this.userid = value;
     }
 
@@ -85,17 +91,15 @@ public class LoginSearch {
      *
      * @param value the service id
      */
-    public void setServiceid(long value) {
+    public void setServiceid(final long value) {
         this.serviceid = value;
     }
 
     /**
      * Obtient la valeur de la propriété loginname.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     * {@link String }
      */
     public String getLoginname() {
         return loginname;
@@ -103,13 +107,11 @@ public class LoginSearch {
 
     /**
      * Définit la valeur de la propriété loginname.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
-    public void setLoginname(String value) {
+    public void setLoginname(final String value) {
         this.loginname = value;
     }
 
@@ -127,7 +129,7 @@ public class LoginSearch {
      *
      * @param value the exact match
      */
-    public void setExactmatch(long value) {
+    public void setExactmatch(final long value) {
         this.exactmatch = value;
     }
 
@@ -145,7 +147,7 @@ public class LoginSearch {
      *
      * @param value the offset
      */
-    public void setOffset(long value) {
+    public void setOffset(final long value) {
         this.offset = value;
     }
 
@@ -163,7 +165,7 @@ public class LoginSearch {
      *
      * @param value the max
      */
-    public void setNmax(long value) {
+    public void setNmax(final long value) {
         this.nmax = value;
     }
 
@@ -181,7 +183,7 @@ public class LoginSearch {
      *
      * @param value the sort
      */
-    public void setSort(long value) {
+    public void setSort(final long value) {
         this.sort = value;
     }
 

@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,13 +38,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Authentication")
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class,
     properties = "cas.authn.qr.json.location=file:${java.io.tmpdir}/cas-qr-devices.json")
-public class DefaultQRAuthenticationTokenValidatorServiceTests {
+class DefaultQRAuthenticationTokenValidatorServiceTests {
     @Autowired
-    @Qualifier("tokenTicketJwtBuilder")
+    @Qualifier(JwtBuilder.TICKET_JWT_BUILDER_BEAN_NAME)
     private JwtBuilder jwtBuilder;
 
     @Autowired
-    @Qualifier("ticketRegistry")
+    @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry ticketRegistry;
 
     @Autowired
@@ -63,11 +64,12 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    public void verifyUnknownTicket() {
+    void verifyUnknownTicket() throws Throwable {
         val payload = JwtBuilder.JwtRequest.builder()
             .subject("casuser")
             .jwtId("unknown-id")
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
+            .issuer(casProperties.getServer().getPrefix())
             .build();
         val jwt = jwtBuilder.build(payload);
         val request = QRAuthenticationTokenValidationRequest.builder()
@@ -80,14 +82,15 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    public void verifyExpiredJwt() {
+    void verifyExpiredJwt() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
         val payload = JwtBuilder.JwtRequest.builder()
             .subject("casuser")
             .jwtId(tgt.getId())
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
+            .issuer(casProperties.getServer().getPrefix())
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).minusDays(1)))
             .build();
         val jwt = jwtBuilder.build(payload);
@@ -101,14 +104,15 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    public void verifyBadSubject() {
+    void verifyBadSubject() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
         val payload = JwtBuilder.JwtRequest.builder()
             .subject("unknown")
             .jwtId(tgt.getId())
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
+            .issuer(casProperties.getServer().getPrefix())
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .build();
         val jwt = jwtBuilder.build(payload);
@@ -122,7 +126,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    public void verifyBadIssuer() {
+    void verifyBadIssuer() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
@@ -130,7 +134,8 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
             .subject(tgt.getAuthentication().getPrincipal().getId())
             .jwtId(tgt.getId())
             .issuer("unknown")
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
+            .issuer(casProperties.getServer().getPrefix())
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .build();
         val jwt = jwtBuilder.build(payload);
@@ -144,7 +149,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    public void verifyUnauhzDevice() {
+    void verifyUnauhzDevice() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
         val deviceId = UUID.randomUUID().toString();
@@ -152,7 +157,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
             .subject(tgt.getAuthentication().getPrincipal().getId())
             .jwtId(tgt.getId())
             .issuer(casProperties.getServer().getPrefix())
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .attributes(Map.of(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID, List.of(deviceId)))
             .build();
@@ -168,7 +173,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    public void verifySuccess() {
+    void verifySuccess() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
@@ -179,7 +184,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
             .subject(tgt.getAuthentication().getPrincipal().getId())
             .jwtId(tgt.getId())
             .issuer(casProperties.getServer().getPrefix())
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .attributes(Map.of(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID, List.of(deviceId)))
             .build();
@@ -195,7 +200,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
     }
 
     @Test
-    public void verifyBadDeviceId() {
+    void verifyBadDeviceId() throws Throwable {
         val tgt = new MockTicketGrantingTicket("casuser");
         ticketRegistry.addTicket(tgt);
 
@@ -206,7 +211,7 @@ public class DefaultQRAuthenticationTokenValidatorServiceTests {
             .subject(tgt.getAuthentication().getPrincipal().getId())
             .jwtId(tgt.getId())
             .issuer(casProperties.getServer().getPrefix())
-            .serviceAudience("https://example.com/normal/")
+            .serviceAudience(Set.of("https://example.com/normal/"))
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .attributes(Map.of(QRAuthenticationConstants.QR_AUTHENTICATION_DEVICE_ID, List.of("mismatch")))
             .build();

@@ -2,14 +2,12 @@ package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.git.GitRepository;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
-import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGeneratorConfigurationContext;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 
 import lombok.Getter;
 import lombok.val;
-import org.springframework.beans.factory.InitializingBean;
 
 import java.util.Optional;
 
@@ -20,7 +18,7 @@ import java.util.Optional;
  * @since 6.3.0
  */
 @Getter
-public class GitSamlIdPMetadataGenerator extends FileSystemSamlIdPMetadataGenerator implements InitializingBean {
+public class GitSamlIdPMetadataGenerator extends FileSystemSamlIdPMetadataGenerator {
     private final GitRepository gitRepository;
 
     public GitSamlIdPMetadataGenerator(final SamlIdPMetadataGeneratorConfigurationContext context,
@@ -31,8 +29,8 @@ public class GitSamlIdPMetadataGenerator extends FileSystemSamlIdPMetadataGenera
 
     @Override
     protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
-                                                               final Optional<SamlRegisteredService> registeredService) {
-        val appliesTo = SamlIdPMetadataGenerator.getAppliesToFor(registeredService);
+                                                               final Optional<SamlRegisteredService> registeredService) throws Throwable {
+        val appliesTo = getAppliesToFor(registeredService);
         doc.setAppliesTo(appliesTo);
         gitRepository.commitAll("Generated metadata for " + appliesTo);
 

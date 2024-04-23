@@ -1,7 +1,6 @@
 package org.apereo.cas.support.rest.resources;
 
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.rest.BadRestRequestException;
@@ -16,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,18 +26,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 /**
- * {@link RestController} implementation of CAS' REST API.
- * <p>
- * This class implements main CAS RESTful resource for vending/deleting TGTs and vending STs:
- * </p>
+ * CAS RESTful resource for vending STs.
+ *
  * <ul>
- * <li>{@code POST /v1/tickets}</li>
  * <li>{@code POST /v1/tickets/{TGT-id}}</li>
- * <li>{@code GET /v1/tickets/{TGT-id}}</li>
- * <li>{@code DELETE /v1/tickets/{TGT-id}}</li>
  * </ul>
  *
  * @author Dmitriy Kopylenko
@@ -67,48 +63,55 @@ public class ServiceTicketResource {
      * @param tgtId              ticket granting ticket id URI path param
      * @return {@link ResponseEntity} representing RESTful response
      */
-    @PostMapping(value = RestProtocolConstants.ENDPOINT_TICKETS + "/{tgtId:.+}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<String> createServiceTicket(final HttpServletRequest httpServletRequest,
-                                                      @RequestBody(required = false) final MultiValueMap<String, String> requestBody,
-                                                      @PathVariable("tgtId") final String tgtId) {
+    @PostMapping(value = RestProtocolConstants.ENDPOINT_TICKETS + "/{tgtId:.+}",
+        consumes = {
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.TEXT_HTML_VALUE,
+            MediaType.TEXT_PLAIN_VALUE
+        },
+        produces = {
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.TEXT_HTML_VALUE,
+            MediaType.TEXT_PLAIN_VALUE
+        })
+    public ResponseEntity<String> createServiceTicket(
+        final HttpServletRequest httpServletRequest,
+        @RequestBody(required = false)
+        final MultiValueMap<String, String> requestBody,
+        @PathVariable("tgtId")
+        final String tgtId) {
         try {
-            val authn = this.ticketRegistrySupport.getAuthenticationFrom(tgtId);
-            AuthenticationCredentialsThreadLocalBinder.bindCurrent(authn);
+            val authn = ticketRegistrySupport.getAuthenticationFrom(StringEscapeUtils.escapeHtml4(tgtId));
             if (authn == null) {
                 throw new InvalidTicketException(tgtId);
             }
-            val service = this.argumentExtractor.extractService(httpServletRequest);
-            if (service == null) {
-                throw new IllegalArgumentException("Target service/application is unspecified or unrecognized in the request");
-            }
+            val service = Objects.requireNonNull(argumentExtractor.extractService(httpServletRequest),
+                "Target service/application is unspecified or unrecognized in the request");
             if (BooleanUtils.toBoolean(httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_RENEW))) {
-                val credential = this.credentialFactory.fromRequest(httpServletRequest, requestBody);
+                val credential = credentialFactory.fromRequest(httpServletRequest, requestBody);
                 if (credential == null || credential.isEmpty()) {
                     throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
                 }
-                val authenticationResult =
-                    authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
-
-                return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
+                val authenticationResult = authenticationSystemSupport.finalizeAuthenticationTransaction(service, credential);
+                return serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
             }
             val builder = authenticationSystemSupport.getAuthenticationResultBuilderFactory().newBuilder();
             val authenticationResult = builder
                 .collect(authn)
-                .build(this.authenticationSystemSupport.getPrincipalElectionStrategy(), service);
-            return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
-
+                .build(authenticationSystemSupport.getPrincipalElectionStrategy(), service);
+            return serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
         } catch (final InvalidTicketException e) {
-            return new ResponseEntity<>(tgtId + " could not be found or is considered invalid", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(tgtId) + " could not be found or is considered invalid", HttpStatus.NOT_FOUND);
         } catch (final AuthenticationException e) {
             return RestResourceUtils.createResponseEntityForAuthnFailure(e, httpServletRequest, applicationContext);
         } catch (final BadRestRequestException e) {
             LoggingUtils.error(LOGGER, e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (final Exception e) {
+            return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } finally {
-            AuthenticationCredentialsThreadLocalBinder.clear();
+            return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

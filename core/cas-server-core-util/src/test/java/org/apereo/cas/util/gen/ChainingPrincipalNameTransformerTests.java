@@ -18,15 +18,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Authentication")
-public class ChainingPrincipalNameTransformerTests {
+class ChainingPrincipalNameTransformerTests {
     @Test
-    public void verifyChain() {
+    void verifyChain() throws Throwable {
         val t = new ChainingPrincipalNameTransformer();
         t.addTransformer(new RegexPrincipalNameTransformer("(.+)@example.org"));
         t.addTransformer(new PrefixSuffixPrincipalNameTransformer("prefix-", "-suffix"));
         t.addTransformer(new ConvertCasePrincipalNameTransformer(true));
         val uid = t.transform("casuser@example.org");
-        assertEquals(uid, "PREFIX-CASUSER-SUFFIX");
+        assertEquals("PREFIX-CASUSER-SUFFIX", uid);
     }
 
 }

@@ -2,13 +2,11 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.BaseAcceptableUsagePolicyRepositoryTests;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -17,18 +15,18 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("Simple")
+@Tag("CasConfiguration")
 @SpringBootTest(classes = {
-    CasAcceptableUsagePolicyRestConfiguration.class,
+    CasAcceptableUsagePolicyRestAutoConfiguration.class,
     BaseAcceptableUsagePolicyRepositoryTests.SharedTestConfiguration.class
 })
-public class CasAcceptableUsagePolicyRestConfigurationTests {
+class CasAcceptableUsagePolicyRestConfigurationTests {
     @Autowired
-    @Qualifier("acceptableUsagePolicyRepository")
+    @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
     private AcceptableUsagePolicyRepository acceptableUsagePolicyRepository;
 
     @Test
-    public void verifyOperation() {
+    void verifyOperation() throws Throwable {
         assertNotNull(acceptableUsagePolicyRepository);
     }
 }

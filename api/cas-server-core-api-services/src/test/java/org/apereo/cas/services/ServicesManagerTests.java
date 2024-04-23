@@ -4,6 +4,8 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serial;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -14,9 +16,9 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("RegisteredService")
-public class ServicesManagerTests {
+class ServicesManagerTests {
     @Test
-    public void verifyFindById() {
+    void verifyFindById() throws Throwable {
         val component = mock(ServicesManager.class);
         val service = mock(RegisteredService.class);
         when(component.findServiceBy(anyLong())).thenReturn(service);
@@ -25,7 +27,7 @@ public class ServicesManagerTests {
     }
 
     @Test
-    public void verifyFindByName() {
+    void verifyFindByName() throws Throwable {
         val component = mock(ServicesManager.class);
 
         when(component.findServiceByName(anyString())).thenReturn(null);
@@ -39,6 +41,7 @@ public class ServicesManagerTests {
 
 
     private abstract static class BaseMockRegisteredService implements RegisteredService {
+        @Serial
         private static final long serialVersionUID = 5470970585502265482L;
     }
 }

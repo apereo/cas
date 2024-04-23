@@ -1,52 +1,52 @@
 package org.apereo.cas.support.oauth.util;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.services.query.RegisteredServiceQuery;
+import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.ticket.OAuth20Token;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.oauth2.sdk.client.RedirectURIValidator;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.hjson.JsonValue;
-import org.pac4j.core.context.JEEContext;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.context.session.SessionStore;
-import org.pac4j.core.credentials.UsernamePasswordCredentials;
-import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
+import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.Serializable;
+import jakarta.servlet.http.HttpServletResponse;
+import java.net.URI;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -70,11 +70,39 @@ public class OAuth20Utils {
      * @return json -backed view.
      */
     public static ModelAndView writeError(final HttpServletResponse response, final String error) {
-        val model = CollectionUtils.wrap(OAuth20Constants.ERROR, error);
-        val mv = new ModelAndView(new MappingJackson2JsonView(MAPPER), (Map) model);
+        return writeError(response, error, null);
+    }
+
+    /**
+     * Write error model and view.
+     *
+     * @param response    the response
+     * @param error       the error
+     * @param description the description
+     * @return the model and view
+     */
+    public static ModelAndView writeError(final HttpServletResponse response,
+                                          final String error, final String description) {
+        val model = getErrorResponseBody(error, description);
+        val mv = new ModelAndView(new MappingJackson2JsonView(MAPPER), model);
         mv.setStatus(HttpStatus.BAD_REQUEST);
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         return mv;
+    }
+
+    /**
+     * Gets error response body.
+     *
+     * @param error       the error
+     * @param description the description
+     * @return the error response body
+     */
+    public static Map<String, Object> getErrorResponseBody(final String error, final String description) {
+        val model = CollectionUtils.<String, Object>wrap(OAuth20Constants.ERROR, error);
+        if (StringUtils.isNotBlank(description)) {
+            model.put(OAuth20Constants.ERROR_DESCRIPTION, description);
+        }
+        return model;
     }
 
     /**
@@ -86,10 +114,12 @@ public class OAuth20Utils {
      */
     public static OAuthRegisteredService getRegisteredOAuthServiceByClientId(final ServicesManager servicesManager,
                                                                              final String clientId) {
-        if (StringUtils.isBlank(clientId)) {
-            return null;
-        }
-        return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.getClientId().equalsIgnoreCase(clientId));
+        return FunctionUtils.doIfNotBlank(clientId,
+            () -> {
+                val query = RegisteredServiceQuery.of(OAuthRegisteredService.class, "clientId", clientId).withIncludeAssignableTypes(true);
+                return servicesManager.findServicesBy(query).findFirst().map(OAuthRegisteredService.class::cast).orElse(null);
+            },
+            () -> null);
     }
 
     /**
@@ -101,67 +131,20 @@ public class OAuth20Utils {
      */
     public static OAuthRegisteredService getRegisteredOAuthServiceByRedirectUri(final ServicesManager servicesManager,
                                                                                 final String redirectUri) {
-        if (StringUtils.isBlank(redirectUri)) {
-            return null;
-        }
-        return getRegisteredOAuthServiceByPredicate(servicesManager, s -> s.matches(redirectUri));
+        validateRedirectUri(redirectUri);
+        return FunctionUtils.doIfNotBlank(redirectUri,
+            () -> getRegisteredOAuthServiceByPredicate(servicesManager, service -> service.matches(redirectUri)),
+            () -> null);
     }
 
     private static OAuthRegisteredService getRegisteredOAuthServiceByPredicate(final ServicesManager servicesManager,
                                                                                final Predicate<OAuthRegisteredService> predicate) {
-        val services = servicesManager.getAllServices();
-        return services.stream()
-            .filter(OAuthRegisteredService.class::isInstance)
-            .map(OAuthRegisteredService.class::cast)
+        val services = servicesManager.getAllServicesOfType(OAuthRegisteredService.class);
+        return services
+            .stream()
             .filter(predicate)
             .findFirst()
             .orElse(null);
-    }
-
-    /**
-     * Gets attributes.
-     *
-     * @param attributes the attributes
-     * @param context    the context
-     * @return the attributes
-     */
-    public static Map<String, Object> getRequestParameters(final Collection<String> attributes, final HttpServletRequest context) {
-        return attributes
-            .stream()
-            .filter(a -> StringUtils.isNotBlank(context.getParameter(a)))
-            .map(m -> {
-                val values = context.getParameterValues(m);
-                val valuesSet = new LinkedHashSet<>(values.length);
-                if (values.length > 0) {
-                    Arrays.stream(values).forEach(v -> valuesSet.addAll(Arrays.stream(v.split(" ")).collect(Collectors.toSet())));
-                }
-                return Pair.of(m, valuesSet);
-            })
-            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
-    }
-
-    /**
-     * Gets requested scopes.
-     *
-     * @param context the context
-     * @return the requested scopes
-     */
-    public static Collection<String> getRequestedScopes(final JEEContext context) {
-        return getRequestedScopes(context.getNativeRequest());
-    }
-
-    /**
-     * Gets requested scopes.
-     *
-     * @param context the context
-     * @return the requested scopes
-     */
-    public static Collection<String> getRequestedScopes(final HttpServletRequest context) {
-        val map = getRequestParameters(CollectionUtils.wrap(OAuth20Constants.SCOPE), context);
-        if (map == null || map.isEmpty()) {
-            return new ArrayList<>(0);
-        }
-        return (Collection<String>) map.get(OAuth20Constants.SCOPE);
     }
 
     /**
@@ -170,7 +153,18 @@ public class OAuth20Utils {
      * @return the model and view
      */
     public static ModelAndView produceUnauthorizedErrorView() {
-        return produceErrorView(new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY));
+        return produceUnauthorizedErrorView(HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
+     * Produce unauthorized error view.
+     *
+     * @param status the status
+     * @return the model and view
+     */
+    public static ModelAndView produceUnauthorizedErrorView(final HttpStatus status) {
+        val ex = UnauthorizedServiceException.denied("Rejected: %s".formatted(status));
+        return produceErrorView(ex, status);
     }
 
     /**
@@ -180,7 +174,21 @@ public class OAuth20Utils {
      * @return the model and view
      */
     public static ModelAndView produceErrorView(final Exception e) {
-        return new ModelAndView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, CollectionUtils.wrap("rootCauseException", e));
+        return produceErrorView(e, HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
+     * Produce error view.
+     *
+     * @param e      the exception
+     * @param status the status
+     * @return the model and view
+     */
+    public static ModelAndView produceErrorView(final Exception e, final HttpStatus status) {
+        val mv = new ModelAndView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR,
+            CollectionUtils.wrap(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, e));
+        mv.setStatus(status);
+        return mv;
     }
 
     /**
@@ -199,55 +207,8 @@ public class OAuth20Utils {
      * @param value the map
      * @return the string
      */
-    @SneakyThrows
     public static String toJson(final Object value) {
-        return MAPPER.writeValueAsString(value);
-    }
-
-    /**
-     * Is response mode type form post?
-     *
-     * @param registeredService the registered service
-     * @param responseType      the response type
-     * @return true/false
-     */
-    public static boolean isResponseModeTypeFormPost(final OAuthRegisteredService registeredService, final OAuth20ResponseModeTypes responseType) {
-        return responseType == OAuth20ResponseModeTypes.FORM_POST
-            || (registeredService != null && StringUtils.equalsIgnoreCase("post", registeredService.getResponseType()));
-    }
-
-    /**
-     * Gets response type.
-     *
-     * @param context the context
-     * @return the response type
-     */
-    public static OAuth20ResponseTypes getResponseType(final JEEContext context) {
-        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val type = Arrays.stream(OAuth20ResponseTypes.values())
-            .filter(t -> t.getType().equalsIgnoreCase(responseType))
-            .findFirst()
-            .orElse(OAuth20ResponseTypes.CODE);
-        LOGGER.debug("OAuth response type is [{}]", type);
-        return type;
-    }
-
-    /**
-     * Gets response mode type.
-     *
-     * @param context the context
-     * @return the response type
-     */
-    public static OAuth20ResponseModeTypes getResponseModeType(final JEEContext context) {
-        val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_MODE)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val type = Arrays.stream(OAuth20ResponseModeTypes.values())
-            .filter(t -> t.getType().equalsIgnoreCase(responseType))
-            .findFirst()
-            .orElse(OAuth20ResponseModeTypes.NONE);
-        LOGGER.debug("OAuth response type is [{}]", type);
-        return type;
+        return FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(value));
     }
 
     /**
@@ -258,7 +219,7 @@ public class OAuth20Utils {
      * @return whether the grant type is the expected one
      */
     public static boolean isGrantType(final String type, final OAuth20GrantTypes expectedType) {
-        return expectedType.name().equalsIgnoreCase(type);
+        return expectedType.getType().equalsIgnoreCase(type);
     }
 
     /**
@@ -284,101 +245,15 @@ public class OAuth20Utils {
     }
 
     /**
-     * Is authorized response type for service?
-     *
-     * @param context           the context
-     * @param registeredService the registered service
-     * @return true/false
-     */
-    public static boolean isAuthorizedResponseTypeForService(final JEEContext context, final OAuthRegisteredService registeredService) {
-        if (registeredService.getSupportedResponseTypes() != null && !registeredService.getSupportedResponseTypes().isEmpty()) {
-            val responseType = context.getRequestParameter(OAuth20Constants.RESPONSE_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY);
-            if (registeredService.getSupportedResponseTypes().stream().anyMatch(s -> s.equalsIgnoreCase(responseType))) {
-                return true;
-            }
-            LOGGER.warn("Response type not authorized for service: [{}] not listed in supported response types: [{}]",
-                responseType, registeredService.getSupportedResponseTypes());
-            return false;
-        }
-
-        LOGGER.warn("Registered service [{}] does not define any authorized/supported response types. "
-            + "It is STRONGLY recommended that you authorize and assign response types to the service definition. "
-            + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
-        return true;
-    }
-
-    /**
-     * Is authorized grant type for service?
-     *
-     * @param grantType         the grant type
-     * @param registeredService the registered service
-     * @return true/false
-     */
-    public static boolean isAuthorizedGrantTypeForService(final String grantType,
-                                                          final OAuthRegisteredService registeredService) {
-        if (registeredService.getSupportedGrantTypes() != null && !registeredService.getSupportedGrantTypes().isEmpty()) {
-            LOGGER.debug("Checking grant type [{}] against supported grant types [{}]", grantType, registeredService.getSupportedGrantTypes());
-            return registeredService.getSupportedGrantTypes().stream().anyMatch(s -> s.equalsIgnoreCase(grantType));
-        }
-
-        LOGGER.warn("Registered service [{}] does not define any authorized/supported grant types. "
-            + "It is STRONGLY recommended that you authorize and assign grant types to the service definition. "
-            + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
-        return true;
-    }
-
-    /**
-     * Is authorized grant type for service?
-     *
-     * @param context           the context
-     * @param registeredService the registered service
-     * @return true/false
-     */
-    public static boolean isAuthorizedGrantTypeForService(final JEEContext context, final OAuthRegisteredService registeredService) {
-        return isAuthorizedGrantTypeForService(
-            context.getRequestParameter(OAuth20Constants.GRANT_TYPE).map(String::valueOf).orElse(StringUtils.EMPTY),
-            registeredService);
-    }
-
-    /**
-     * Parse request scopes set.
-     *
-     * @param context the context
-     * @return the set
-     */
-    public static Set<String> parseRequestScopes(final JEEContext context) {
-        return parseRequestScopes(context.getNativeRequest());
-    }
-
-    /**
-     * Parse request scopes set.
-     *
-     * @param context the context
-     * @return the set
-     */
-    public static Set<String> parseRequestScopes(final HttpServletRequest context) {
-        val parameterValues = context.getParameter(OAuth20Constants.SCOPE);
-        if (StringUtils.isBlank(parameterValues)) {
-            return new HashSet<>(0);
-        }
-        return CollectionUtils.wrapSet(parameterValues.split(" "));
-    }
-
-    /**
      * Gets service request header if any.
      *
      * @param context the context
      * @return the service request header if any
      */
-    public static String getServiceRequestHeaderIfAny(final HttpServletRequest context) {
-        if (context == null) {
-            return null;
-        }
-        var id = context.getHeader(CasProtocolConstants.PARAMETER_SERVICE);
-        if (StringUtils.isBlank(id)) {
-            id = context.getHeader("X-".concat(CasProtocolConstants.PARAMETER_SERVICE));
-        }
-        return id;
+    public static String getServiceRequestHeaderIfAny(final WebContext context) {
+        return context.getRequestHeader(CasProtocolConstants.PARAMETER_SERVICE)
+            .or(() -> context.getRequestHeader("X-".concat(CasProtocolConstants.PARAMETER_SERVICE)))
+            .orElse(StringUtils.EMPTY);
     }
 
     /**
@@ -388,41 +263,20 @@ public class OAuth20Utils {
      * @param redirectUri       the callback url
      * @return whether the callback url is valid
      */
-    public static boolean checkCallbackValid(final @NonNull RegisteredService registeredService, final String redirectUri) {
-        val registeredServiceId = registeredService.getServiceId();
-        if (!redirectUri.matches(registeredServiceId)) {
+    public static boolean checkCallbackValid(final @NonNull RegisteredService registeredService,
+                                             final String redirectUri) {
+        val matchingStrategy = Optional.of(registeredService).map(RegisteredService::getMatchingStrategy).orElse(null);
+        validateRedirectUri(redirectUri);
+        if (matchingStrategy == null || !matchingStrategy.matches(registeredService, redirectUri)) {
             LOGGER.error("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
-                    + "Service is considered unauthorized. Verify the service definition in the registry is correct "
-                    + "and does in fact match the client [{}]",
-                OAuth20Constants.REDIRECT_URI, redirectUri, registeredServiceId, redirectUri);
+                         + "Service is considered unauthorized. Verify the service matching strategy used in the service "
+                         + "definition is correct and does in fact match the client [{}]",
+                OAuth20Constants.REDIRECT_URI, redirectUri, registeredService.getServiceId(), redirectUri);
             return false;
         }
         return true;
     }
 
-    /**
-     * Check the client secret.
-     *
-     * @param registeredService the registered service
-     * @param clientSecret      the client secret
-     * @param cipherExecutor    the cipher executor
-     * @return whether the secret is valid
-     */
-    public static boolean checkClientSecret(final OAuthRegisteredService registeredService, final String clientSecret,
-                                            final CipherExecutor<Serializable, String> cipherExecutor) {
-        LOGGER.debug("Found: [{}] in secret check", registeredService);
-        var definedSecret = registeredService.getClientSecret();
-        if (StringUtils.isBlank(definedSecret)) {
-            LOGGER.debug("The client secret is not defined for the registered service [{}]", registeredService.getName());
-            return true;
-        }
-        definedSecret = cipherExecutor.decode(definedSecret, new Object[]{registeredService});
-        if (!StringUtils.equals(definedSecret, clientSecret)) {
-            LOGGER.error("Wrong client secret for service: [{}]", registeredService.getServiceId());
-            return false;
-        }
-        return true;
-    }
 
     /**
      * Check the response type against expected response types.
@@ -450,24 +304,9 @@ public class OAuth20Utils {
         val attrs = new HashMap<>(profile.getAttributes());
         if (attrs.containsKey(OAuth20Constants.CLIENT_ID)) {
             val attribute = attrs.get(OAuth20Constants.CLIENT_ID);
-            return CollectionUtils.toCollection(attribute, ArrayList.class).get(0).toString();
+            return CollectionUtils.toCollection(attribute, ArrayList.class).getFirst().toString();
         }
         return null;
-    }
-
-    /**
-     * Parse request claims map.
-     *
-     * @param context the context
-     * @return the map
-     * @throws Exception the exception
-     */
-    public static Map<String, Map<String, Object>> parseRequestClaims(final JEEContext context) throws Exception {
-        val claims = context.getRequestParameter(OAuth20Constants.CLAIMS).map(String::valueOf).orElse(StringUtils.EMPTY);
-        if (StringUtils.isBlank(claims)) {
-            return new HashMap<>(0);
-        }
-        return MAPPER.readValue(JsonValue.readHjson(claims).toString(), Map.class);
     }
 
     /**
@@ -477,40 +316,21 @@ public class OAuth20Utils {
      * @return the set
      */
     public static Set<String> parseUserInfoRequestClaims(final OAuth20Token token) {
-        return token.getClaims().getOrDefault("userinfo", new HashMap<>(0)).keySet();
+        return token != null ? token.getClaims().getOrDefault("userinfo", new HashMap<>(0)).keySet() : new HashSet<>();
     }
 
-    /**
-     * Parse user info request claims set.
-     *
-     * @param context the context
-     * @return the set
-     * @throws Exception the exception
-     */
-    public static Set<String> parseUserInfoRequestClaims(final JEEContext context) throws Exception {
-        val requestedClaims = parseRequestClaims(context);
-        return requestedClaims.getOrDefault("userinfo", new HashMap<>(0)).keySet();
-    }
 
     /**
-     * Gets client id and client secret.
+     * Gets authenticated user profile.
      *
-     * @param webContext   the web context
+     * @param context      the context
      * @param sessionStore the session store
-     * @return the client id and client secret
+     * @return the authenticated user profile
      */
-    public static Pair<String, String> getClientIdAndClientSecret(final WebContext webContext, final SessionStore sessionStore) {
-        val extractor = new BasicAuthExtractor();
-        val upcResult = extractor.extract(webContext, sessionStore);
-        if (upcResult.isPresent()) {
-            val upc = (UsernamePasswordCredentials) upcResult.get();
-            return Pair.of(upc.getUsername(), upc.getPassword());
-        }
-        val clientId = webContext.getRequestParameter(OAuth20Constants.CLIENT_ID)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        val clientSecret = webContext.getRequestParameter(OAuth20Constants.CLIENT_SECRET)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        return Pair.of(clientId, clientSecret);
+    public UserProfile getAuthenticatedUserProfile(final WebContext context, final SessionStore sessionStore) {
+        val manager = new ProfileManager(context, sessionStore);
+        val profile = manager.getProfile();
+        return profile.orElseThrow(() -> new IllegalArgumentException("Unable to determine the user profile from the context"));
     }
 
     /**
@@ -521,5 +341,88 @@ public class OAuth20Utils {
      */
     public boolean doesServiceNeedAuthentication(final OAuthRegisteredService registeredService) {
         return StringUtils.isNotBlank(registeredService.getClientSecret());
+    }
+
+    /**
+     * Validate redirect uri.
+     *
+     * @param redirectUri the redirect uri
+     */
+    public void validateRedirectUri(final String redirectUri) {
+        if (StringUtils.isNotBlank(redirectUri)) {
+            RedirectURIValidator.ensureLegal(URI.create(redirectUri));
+        }
+    }
+
+    /**
+     * Is access token request?.
+     *
+     * @param webContext the web context
+     * @return true or false
+     */
+    public static boolean isAccessTokenRequest(final WebContext webContext) {
+        return (Boolean) webContext.getRequestAttribute(OAuth20Constants.REQUEST_ATTRIBUTE_ACCESS_TOKEN_REQUEST).orElse(false);
+    }
+
+    /**
+     * Is token authentication method supported for service.
+     *
+     * @param callContext          the call context
+     * @param registeredService    the registered service
+     * @param authenticationMethod the authentication method
+     * @return true/false
+     */
+    public static boolean isTokenAuthenticationMethodSupportedFor(final CallContext callContext,
+                                                                  final OAuthRegisteredService registeredService,
+                                                                  final OAuth20ClientAuthenticationMethods... authenticationMethod) {
+        return !OAuth20Utils.isAccessTokenRequest(callContext.webContext())
+            || StringUtils.isBlank(registeredService.getTokenEndpointAuthenticationMethod())
+            || Arrays.stream(authenticationMethod).anyMatch(method -> StringUtils.equalsIgnoreCase(registeredService.getTokenEndpointAuthenticationMethod(), method.getType()));
+    }
+
+    /**
+     * Find stateless ticket validation result.
+     *
+     * @param manager the manager
+     * @return the ticket validation result
+     */
+    public static Boolean isStatelessAuthentication(final ProfileManager manager) {
+        return manager
+            .getProfile()
+            .stream()
+            .map(OAuth20Utils::isStatelessAuthentication)
+            .findFirst()
+            .orElse(Boolean.FALSE);
+    }
+
+    /**
+     * Find stateless ticket validation result.
+     * @param profile the profile
+     * @return the ticket validation result
+     */
+    public static Boolean isStatelessAuthentication(final UserProfile profile) {
+        val validationResult = (Boolean) profile.getAttribute("stateless");
+        val principal = profile.getAttribute(Principal.class.getName());
+        return validationResult != null && validationResult && principal != null;
+    }
+
+    /**
+     * Gets access token timeout (in seconds).
+     *
+     * @param accessTokenResult the access token result
+     * @return the access token timeout
+     */
+    public static Long getAccessTokenTimeout(final OAuth20TokenGeneratedResult accessTokenResult) {
+        return accessTokenResult
+            .getAccessToken()
+            .map(token -> {
+                if (token.isStateless()) {
+                    val duration = Duration.between(ZonedDateTime.now(Clock.systemUTC()),
+                        token.getExpirationPolicy().toMaximumExpirationTime(token));
+                    return duration.getSeconds();
+                }
+                return ((OAuth20AccessToken) token).getExpiresIn();
+            })
+            .orElse(0L);
     }
 }
