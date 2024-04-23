@@ -30,7 +30,6 @@ public class SurrogatePrincipal implements Principal {
     public SurrogatePrincipal(Principal primary, Principal surrogate) {
         this.primary = primary;
         this.surrogate = new ImpersonatedPrincipal(surrogate);
-//        this.surrogate = surrogate;
     }
 
     @Override

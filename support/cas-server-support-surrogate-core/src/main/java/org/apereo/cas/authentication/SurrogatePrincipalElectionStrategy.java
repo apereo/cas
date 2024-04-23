@@ -31,14 +31,7 @@ public class SurrogatePrincipalElectionStrategy extends DefaultPrincipalElection
             return principal.getAttributes();
         }
         return super.getPrincipalAttributesForPrincipal(principal, principalAttributes);
-//        return principal.getAttributes();
     }
-    /*
-    if (principal instanceof ImpersonatedPrincipal) {
-            return principal.getAttributes();
-        }
-        return super.getPrincipalAttributesForPrincipal(principal, principalAttributes);
-     */
 
     @Override
     protected Principal getPrincipalFromAuthentication(final Collection<Authentication> authentications) {
