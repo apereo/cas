@@ -58,7 +58,7 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
     public Principal nominate(final Collection<Authentication> authentications,
                               final Map<String, List<Object>> principalAttributes) throws Throwable {
         val principal = getPrincipalFromAuthentication(authentications);
-        val attributes = getPrincipalAttributesForPrincipal(principal, principalAttributes);
+        val attributes = getPrincipalAttributesForPrincipal(authentications, principal, principalAttributes);
         val finalPrincipal = principalFactory.createPrincipal(principal.getId(), attributes);
         LOGGER.debug("Nominated [{}] as the primary principal", finalPrincipal);
         return finalPrincipal;
@@ -84,7 +84,8 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
         return finalPrincipal;
     }
 
-    protected Map<String, List<Object>> getPrincipalAttributesForPrincipal(final Principal principal, final Map<String, List<Object>> principalAttributes) {
+    protected Map<String, List<Object>> getPrincipalAttributesForPrincipal(final Collection<Authentication> authentications,
+                                                                           final Principal principal, final Map<String, List<Object>> principalAttributes) {
         return principalAttributes;
     }
 
