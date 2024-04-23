@@ -1,11 +1,10 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.ImpersonatedPrincipal;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 import java.io.Serial;
@@ -21,14 +20,18 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ToString
 @Getter
-@NoArgsConstructor(force = true)
-@RequiredArgsConstructor
 public class SurrogatePrincipal implements Principal {
     @Serial
     private static final long serialVersionUID = 5672386093026290631L;
 
     private final Principal primary;
     private final Principal surrogate;
+
+    public SurrogatePrincipal(Principal primary, Principal surrogate) {
+        this.primary = primary;
+        this.surrogate = new ImpersonatedPrincipal(surrogate);
+//        this.surrogate = surrogate;
+    }
 
     @Override
     public String getId() {
