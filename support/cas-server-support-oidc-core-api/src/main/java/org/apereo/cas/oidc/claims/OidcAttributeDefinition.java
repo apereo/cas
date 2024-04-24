@@ -1,7 +1,6 @@
 package org.apereo.cas.oidc.claims;
 
 import org.apereo.cas.authentication.attribute.DefaultAttributeDefinition;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -11,7 +10,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import java.io.Serial;
-import java.util.List;
 
 /**
  * This is {@link OidcAttributeDefinition}.
