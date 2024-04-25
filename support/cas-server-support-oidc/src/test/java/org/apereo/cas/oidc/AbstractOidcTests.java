@@ -94,6 +94,8 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration;
@@ -126,6 +128,8 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = AbstractOidcTests.SharedTestConfiguration.class,
     properties = {
+        "spring.threads.virtual.enabled=true",
+        
         "spring.main.allow-bean-definition-overriding=true",
         "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",
 
@@ -323,6 +327,10 @@ public abstract class AbstractOidcTests {
     @Qualifier("accessTokenExpirationPolicy")
     protected ExpirationPolicyBuilder accessTokenExpirationPolicy;
 
+    @Autowired
+    @Qualifier("webflowCipherExecutor")
+    protected CipherExecutor webflowCipherExecutor;
+
     protected static OidcRegisteredService getOidcRegisteredService() {
         return getOidcRegisteredService(true, true);
     }
@@ -510,7 +518,9 @@ public abstract class AbstractOidcTests {
         EndpointAutoConfiguration.class,
         WebClientAutoConfiguration.class,
         ServletWebServerFactoryAutoConfiguration.class,
-        DispatcherServletAutoConfiguration.class
+        DispatcherServletAutoConfiguration.class,
+        IntegrationAutoConfiguration.class,
+        MailSenderAutoConfiguration.class
     })
     @SpringBootConfiguration
     @Import({

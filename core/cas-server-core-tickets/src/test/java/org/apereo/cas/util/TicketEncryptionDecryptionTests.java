@@ -67,15 +67,5 @@ class TicketEncryptionDecryptionTests {
         TestBinaryCipherExecutor(final String encKey, final String signingKey, final int sKey, final int eKey) {
             super(encKey, signingKey, sKey, eKey, "Test");
         }
-
-        @Override
-        public String getEncryptionKeySetting() {
-            return "undefined";
-        }
-
-        @Override
-        public String getSigningKeySetting() {
-            return "undefined";
-        }
     }
 }

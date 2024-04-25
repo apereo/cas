@@ -2,13 +2,13 @@ package org.apereo.cas.oidc.web.controllers.ciba;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.ticket.OidcCibaRequest;
 import org.apereo.cas.services.OidcBackchannelTokenDeliveryModes;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
@@ -19,6 +19,8 @@ import org.pac4j.core.profile.CommonProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.MediaType;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.nio.charset.StandardCharsets;
@@ -37,11 +39,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 7.1.0
  */
 @Tag("OIDC")
+@TestPropertySource(properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000",
+
+    "cas.authn.oidc.ciba.verification.delay=PT1S",
+    "cas.authn.oidc.ciba.verification.mail.html=false",
+    "cas.authn.oidc.ciba.verification.mail.from=cas@apereo.org",
+    "cas.authn.oidc.ciba.verification.mail.subject=CIBA Token",
+    "cas.authn.oidc.ciba.verification.mail.text=URL is ${verificationUrl}"
+})
+@EnabledIfListeningOnPort(port = 25000)
 public class OidcCibaControllerTests extends AbstractOidcTests {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
-    
+
     @Autowired
     @Qualifier("oidcCibaController")
     protected OidcCibaController oidcCibaController;
@@ -171,13 +184,14 @@ public class OidcCibaControllerTests extends AbstractOidcTests {
         registeredService.setBackchannelTokenDeliveryMode(OidcBackchannelTokenDeliveryModes.PUSH.getMode());
         registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.CIBA.getType()));
         servicesManager.save(registeredService);
-        val response = mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
+        var response = mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
                 .secure(true)
                 .header("Authorization", "Basic " + EncodingUtils.encodeBase64("%s:%s".formatted(registeredService.getClientId(),
                     registeredService.getClientSecret()).getBytes(StandardCharsets.UTF_8)))
                 .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
                 .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.CIBA.name())
                 .queryParam(OidcConstants.CLIENT_NOTIFICATION_TOKEN, UUID.randomUUID().toString())
+                .queryParam(OidcConstants.BINDING_MESSAGE, UUID.randomUUID().toString())
                 .queryParam(OidcConstants.LOGIN_HINT, UUID.randomUUID().toString())
             )
             .andExpect(status().isOk())
@@ -186,8 +200,27 @@ public class OidcCibaControllerTests extends AbstractOidcTests {
             .getContentAsString();
 
         val authRequestId = MAPPER.readValue(response, Map.class).get(OidcConstants.AUTH_REQ_ID).toString();
-        val cibaRequest = ticketRegistry.getTicket(authRequestId, OidcCibaRequest.class);
-        assertNotNull(cibaRequest);
+        assertNotNull(authRequestId);
+        Thread.sleep(3000);
+
+        val verifyUrl = "/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL + '/' + registeredService.getClientId() + '/' + authRequestId;
+        val result = mvc.perform(get(verifyUrl).secure(true))
+            .andExpect(status().isOk())
+            .andReturn();
+        assertNotNull(result.getModelAndView());
+        assertEquals(OidcConstants.CIBA_VERIFICATION_VIEW, result.getModelAndView().getViewName());
+        assertTrue(result.getModelAndView().getModel().containsKey("registeredService"));
+        assertTrue(result.getModelAndView().getModel().containsKey("cibaRequest"));
+        assertTrue(result.getModelAndView().getModel().containsKey("bindingMessage"));
+
+        val csrfToken = (CsrfToken) result.getRequest().getAttribute("_csrf");
+        mvc.perform(post(verifyUrl)
+                .secure(true)
+                .header(csrfToken.getHeaderName(), csrfToken.getToken())
+                .queryParam(csrfToken.getParameterName(), csrfToken.getToken())
+                .cookie(result.getResponse().getCookies())
+            )
+            .andExpect(status().isOk());
     }
 
     @Test

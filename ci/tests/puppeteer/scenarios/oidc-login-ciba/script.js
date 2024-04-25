@@ -30,5 +30,11 @@ const assert = require("assert");
             throw `CIBA operation failed: ${error}`;
         });
     await cas.log(`CIBA request id is ${authRequestId}`);
+
+    const browser = await cas.newBrowser(cas.browserOptions());
+    const page = await cas.newPage(browser);
+    const verificationUrl = await cas.extractFromEmail(browser);
+    await cas.goto(page, verificationUrl);
+    await browser.close();
 })();
 

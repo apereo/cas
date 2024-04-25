@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -13,7 +14,7 @@ import java.io.Serializable;
  * This is {@link OidcCibaProperties}.
  *
  * @author Misagh Moayyed
- * @since 6.6.0
+ * @since 7.1.0
  */
 @RequiresModule(name = "cas-server-support-oidc")
 @Getter
@@ -30,4 +31,11 @@ public class OidcCibaProperties implements Serializable {
      */
     @DurationCapable
     private String maxTimeToLiveInSeconds = "PT5M";
+    
+    /**
+     * Control CIBA notification settings
+     * to authenticate the user via email, etc.
+     */
+    @NestedConfigurationProperty
+    private OidcCibaVerificationProperties verification = new OidcCibaVerificationProperties();
 }

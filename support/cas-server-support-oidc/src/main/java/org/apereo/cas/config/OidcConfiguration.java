@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.assurance.AssuranceVerificationJsonSource;
@@ -157,6 +158,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.web.servlet.HandlerInterceptor;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -783,7 +785,13 @@ class OidcConfiguration {
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             final List<OAuth20IntrospectionResponseGenerator> oauthIntrospectionResponseGenerator,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-            final PrincipalResolver principalResolver) {
+            final PrincipalResolver principalResolver,
+            @Qualifier("taskScheduler")
+            final TaskScheduler taskScheduler,
+            @Qualifier(CommunicationsManager.BEAN_NAME)
+            final CommunicationsManager communicationManager,
+            @Qualifier("webflowCipherExecutor")
+            final CipherExecutor webflowCipherExecutor) {
 
             val sortedIdClaimCollectors = new ArrayList<>(oidcIdTokenClaimCollectors);
             AnnotationAwareOrderComparator.sortIfNecessary(sortedIdClaimCollectors);
@@ -840,6 +848,9 @@ class OidcConfiguration {
                 .clientSecretValidator(oauth20ClientSecretValidator)
                 .attributeDefinitionStore(attributeDefinitionStore)
                 .principalResolver(principalResolver)
+                .taskScheduler(taskScheduler)
+                .communicationsManager(communicationManager)
+                .webflowCipherExecutor(webflowCipherExecutor)
                 .build();
         }
     }

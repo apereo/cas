@@ -204,6 +204,12 @@ public interface OidcConstants {
      * The confirm/consent view.
      */
     String CONFIRM_VIEW = "oidcConfirmView";
+
+    /**
+     * The CIBA verification view.
+     */
+    String CIBA_VERIFICATION_VIEW = "oidcCibaVerificationView";
+    
     /**
      * Rel value for webfinger protocol.
      */

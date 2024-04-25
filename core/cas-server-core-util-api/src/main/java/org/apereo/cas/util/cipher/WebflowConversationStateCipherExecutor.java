@@ -1,6 +1,8 @@
 package org.apereo.cas.util.cipher;
 
 
+import lombok.NoArgsConstructor;
+
 /**
  * This is {@link WebflowConversationStateCipherExecutor}, that reads webflow keys
  * from CAS configuration and presents a cipher.
@@ -8,18 +10,9 @@ package org.apereo.cas.util.cipher;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@NoArgsConstructor
 public class WebflowConversationStateCipherExecutor extends BaseBinaryCipherExecutor {
 
-    /**
-     * Instantiates a new webflow cipher executor.
-     *
-     * @param secretKeyEncryption the secret key encryption
-     * @param secretKeySigning    the secret key signing
-     * @param secretKeyAlg        the secret key alg
-     * @param signingKeySize      the signing key size
-     * @param encryptionKeySize   the encryption key size
-     * @param cipherName          the cipher name
-     */
     public WebflowConversationStateCipherExecutor(final String secretKeyEncryption, final String secretKeySigning,
                                                   final String secretKeyAlg, final int signingKeySize,
                                                   final int encryptionKeySize, final String cipherName) {

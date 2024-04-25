@@ -20,6 +20,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.replication.CookieSessionReplicationProperties;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
+import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.pac4j.TicketRegistrySessionStore;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
@@ -195,6 +196,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.scheduling.TaskScheduler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -273,41 +275,76 @@ class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20ConfigurationContext oauth20ConfigurationContext(
-            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME) final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
-            @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME) final OAuth20ClientSecretValidator oauth20ClientSecretValidator,
-            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME) final OAuth20RequestParameterResolver oauthRequestParameterResolver,
-            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
-            @Qualifier("accessTokenJwtBuilder") final JwtBuilder accessTokenJwtBuilder,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME) final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER) final CasCookieBuilder ticketGrantingTicketCookieGenerator,
-            @Qualifier(OAuth20UserProfileDataCreator.BEAN_NAME) final OAuth20UserProfileDataCreator oauth2UserProfileDataCreator,
-            @Qualifier("oauthDistributedSessionCookieGenerator") final CasCookieBuilder oauthDistributedSessionCookieGenerator,
-            @Qualifier(OAuth20UserProfileViewRenderer.BEAN_NAME) final OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer,
-            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY) final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            @Qualifier(TicketFactory.BEAN_NAME) final TicketFactory ticketFactory,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier(AttributeDefinitionStore.BEAN_NAME) final AttributeDefinitionStore attributeDefinitionStore,
+            @Qualifier(CommunicationsManager.BEAN_NAME)
+            final CommunicationsManager communicationManager,
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
+            @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
+            final OAuth20ClientSecretValidator oauth20ClientSecretValidator,
+            @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
+            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier("accessTokenJwtBuilder")
+            final JwtBuilder accessTokenJwtBuilder,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier(OAuth20UserProfileDataCreator.BEAN_NAME)
+            final OAuth20UserProfileDataCreator oauth2UserProfileDataCreator,
+            @Qualifier("oauthDistributedSessionCookieGenerator")
+            final CasCookieBuilder oauthDistributedSessionCookieGenerator,
+            @Qualifier(OAuth20UserProfileViewRenderer.BEAN_NAME)
+            final OAuth20UserProfileViewRenderer oauthUserProfileViewRenderer,
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(AttributeDefinitionStore.BEAN_NAME)
+            final AttributeDefinitionStore attributeDefinitionStore,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("oauthDistributedSessionStore") final SessionStore oauthDistributedSessionStore,
-            @Qualifier("oauthRegisteredServiceCipherExecutor") final CipherExecutor oauthRegisteredServiceCipherExecutor,
-            @Qualifier("oauthPrincipalFactory") final PrincipalFactory oauthPrincipalFactory,
-            @Qualifier("callbackAuthorizeViewResolver") final OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver,
-            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME) final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
-            @Qualifier("oauthSecConfig") final Config oauthSecConfig,
+            @Qualifier("oauthDistributedSessionStore")
+            final SessionStore oauthDistributedSessionStore,
+            @Qualifier("oauthRegisteredServiceCipherExecutor")
+            final CipherExecutor oauthRegisteredServiceCipherExecutor,
+            @Qualifier("oauthPrincipalFactory")
+            final PrincipalFactory oauthPrincipalFactory,
+            @Qualifier("callbackAuthorizeViewResolver")
+            final OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver,
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
+            final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
+            @Qualifier("oauthSecConfig")
+            final Config oauthSecConfig,
             final ObjectProvider<List<OAuth20TokenRequestValidator>> oauthTokenRequestValidators,
-            @Qualifier("deviceTokenExpirationPolicy") final ExpirationPolicyBuilder deviceTokenExpirationPolicy,
-            @Qualifier("oauthInvalidAuthorizationBuilder") final OAuth20InvalidAuthorizationResponseBuilder oauthInvalidAuthorizationBuilder,
-            @Qualifier("consentApprovalViewResolver") final ConsentApprovalViewResolver consentApprovalViewResolver,
-            @Qualifier("accessTokenResponseGenerator") final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator,
-            @Qualifier("oauthCasAuthenticationBuilder") final OAuth20CasAuthenticationBuilder oauthCasAuthenticationBuilder,
-            @Qualifier(ArgumentExtractor.BEAN_NAME) final ArgumentExtractor argumentExtractor,
+            @Qualifier("deviceTokenExpirationPolicy")
+            final ExpirationPolicyBuilder deviceTokenExpirationPolicy,
+            @Qualifier("oauthInvalidAuthorizationBuilder")
+            final OAuth20InvalidAuthorizationResponseBuilder oauthInvalidAuthorizationBuilder,
+            @Qualifier("consentApprovalViewResolver")
+            final ConsentApprovalViewResolver consentApprovalViewResolver,
+            @Qualifier("accessTokenResponseGenerator")
+            final OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator,
+            @Qualifier("oauthCasAuthenticationBuilder")
+            final OAuth20CasAuthenticationBuilder oauthCasAuthenticationBuilder,
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
+            final ArgumentExtractor argumentExtractor,
             final ObjectProvider<List<OAuth20AuthorizationResponseBuilder>> oauthAuthorizationResponseBuilders,
             final ObjectProvider<List<OAuth20AuthorizationRequestValidator>> oauthAuthorizationRequestValidators,
-            @Qualifier("oauthTokenGenerator") final OAuth20TokenGenerator oauthTokenGenerator,
+            @Qualifier("oauthTokenGenerator")
+            final OAuth20TokenGenerator oauthTokenGenerator,
             final List<OAuth20IntrospectionResponseGenerator> oauthIntrospectionResponseGenerator,
-            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver defaultPrincipalResolver) {
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver,
+            @Qualifier("taskScheduler")
+            final TaskScheduler taskScheduler,
+            @Qualifier("webflowCipherExecutor")
+            final CipherExecutor webflowCipherExecutor) {
             return OAuth20ConfigurationContext.builder()
                 .argumentExtractor(argumentExtractor)
                 .requestParameterResolver(oauthRequestParameterResolver)
@@ -344,6 +381,9 @@ class CasOAuth20Configuration {
                 .attributeDefinitionStore(attributeDefinitionStore)
                 .introspectionResponseGenerator(oauthIntrospectionResponseGenerator)
                 .principalResolver(defaultPrincipalResolver)
+                .taskScheduler(taskScheduler)
+                .communicationsManager(communicationManager)
+                .webflowCipherExecutor(webflowCipherExecutor)
                 .build();
         }
     }

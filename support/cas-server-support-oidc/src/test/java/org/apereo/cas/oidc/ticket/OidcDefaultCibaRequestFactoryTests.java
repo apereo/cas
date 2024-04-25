@@ -7,6 +7,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import java.util.Set;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,12 +22,19 @@ public class OidcDefaultCibaRequestFactoryTests extends AbstractOidcTests {
     void verifyOperation() throws Throwable {
         val cibaRequestContext = CibaRequestContext.builder()
             .scope(Set.of(OidcConstants.StandardScopes.OPENID.getScope()))
+            .clientId(UUID.randomUUID().toString())
+            .clientNotificationToken(UUID.randomUUID().toString())
+            .bindingMessage(UUID.randomUUID().toString())
             .build();
         val factory = (OidcCibaRequestFactory) defaultTicketFactory.get(OidcCibaRequest.class);
         val ticket = factory.create(cibaRequestContext);
         assertNotNull(ticket);
         assertTrue(ticket.getId().startsWith(OidcCibaRequest.PREFIX));
         assertSame(OidcCibaRequest.class, factory.getTicketType());
+        assertEquals(ticket.getClientId(), cibaRequestContext.getClientId());
+        val authentication = ticket.getAuthentication();
+        assertEquals(authentication.getAttributes().get(OidcConstants.CLIENT_NOTIFICATION_TOKEN).getFirst(), cibaRequestContext.getClientNotificationToken());
+        assertEquals(authentication.getAttributes().get(OidcConstants.BINDING_MESSAGE).getFirst(), cibaRequestContext.getBindingMessage());
     }
 
     @Test
