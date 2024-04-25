@@ -4,6 +4,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -51,6 +52,7 @@ import org.apereo.cas.uma.web.controllers.resource.UmaFindResourceSetRegistratio
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpointController;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
@@ -75,6 +77,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.HttpHeaders;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import jakarta.annotation.Nonnull;
@@ -169,10 +172,18 @@ public class CasOAuthUmaAutoConfiguration {
             final ResourceSetRepository umaResourceSetRepository,
             final CasConfigurationProperties casProperties,
             final List<OAuth20IntrospectionResponseGenerator> oauthIntrospectionResponseGenerator,
-            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver defaultPrincipalResolver) {
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver,
+            @Qualifier("taskScheduler")
+            final TaskScheduler taskScheduler,
+            @Qualifier(CommunicationsManager.BEAN_NAME)
+            final CommunicationsManager communicationManager,
+            @Qualifier("webflowCipherExecutor")
+            final CipherExecutor webflowCipherExecutor) {
 
             return UmaConfigurationContext
                 .builder()
+                .communicationsManager(communicationManager)
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .applicationContext(applicationContext)
                 .accessTokenGenerator(oauthTokenGenerator)
@@ -189,6 +200,8 @@ public class CasOAuthUmaAutoConfiguration {
                 .ticketFactory(ticketFactory)
                 .introspectionResponseGenerator(oauthIntrospectionResponseGenerator)
                 .principalResolver(defaultPrincipalResolver)
+                .taskScheduler(taskScheduler)
+                .webflowCipherExecutor(webflowCipherExecutor)
                 .build();
         }
     }
