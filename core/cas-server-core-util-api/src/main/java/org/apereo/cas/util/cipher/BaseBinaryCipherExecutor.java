@@ -107,7 +107,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     }
 
     @Override
-    public PropertyBoundCipherExecutor<byte[], ?> withSigningDisabled() {
+    public PropertyBoundCipherExecutor<byte[], byte[]> withSigningDisabled() {
         val cipher = new BaseBinaryCipherExecutor() {
         };
         cipher.setCipherName(getCipherName());
