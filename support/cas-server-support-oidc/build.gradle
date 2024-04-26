@@ -52,10 +52,10 @@ dependencies {
     implementation libraries.pac4jcas
     implementation libraries.springsecurityconfig
     implementation libraries.springsecurityweb
-    
+
     api libraries.jose4j
     api libraries.nimbus
-    
+
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core")
@@ -64,6 +64,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-web")
