@@ -43,6 +43,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -191,7 +193,9 @@ public abstract class BaseOAuth20AuthenticatorTests {
         CasCoreCookieAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
-        CasOAuth20AutoConfiguration.class
+        CasOAuth20AutoConfiguration.class,
+        IntegrationAutoConfiguration.class,
+        MailSenderAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

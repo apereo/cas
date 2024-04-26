@@ -18,6 +18,12 @@ communication from the Client to CAS without redirect through the user's browser
 
 Please study [the specification](https://openid.net/specs/openid-client-initiated-backchannel-authentication-core-1_0.html) to learn more.
 
+<div class="alert alert-info"><strong>:information_source: Under Construction</strong><p>
+Greetings, intrepid explorer of cutting-edge features! You've stumbled upon our latest and greatest creation, but fair warning – 
+it's still basking in the glow of the experimental stage. Everyone is counting on your courageous spirit to dive in, test it out, and share your thoughts.
+Rest assured, it will get better over time. Pardon our digital dust, and enjoy the ride!
+</p></div>
+
 ## Configuration
 
 {% include_cached casproperties.html properties="cas.authn.oidc.ciba" %}

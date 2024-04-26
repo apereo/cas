@@ -31,7 +31,7 @@ env:
   JDK_CURRENT: 21
   JDK_DISTRIBUTION: "corretto"
   NODE_CURRENT: '21.7.3'
-  MAX_ATTEMPTS: 2
+  MAX_ATTEMPTS: 3
   RETRY_MINUTES: 8
   SCENARIO_REGEX: ".*"
 
@@ -84,7 +84,7 @@ jobs:
   puppeteer-scenarios:
     needs: [initialize]
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     outputs:
       scenarios255: ${{ steps.get-scenarios255.outputs.scenarios255 }}
       scenarios511: ${{ steps.get-scenarios511.outputs.scenarios511 }}
@@ -98,11 +98,19 @@ jobs:
           cache: 'gradle'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
-      - id: print-scenarios
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios | jq
+      - name: Print Scenarios
+        uses: nick-fields/retry@v3
+        with:
+          max_attempts: ${{ env.MAX_ATTEMPTS }}
+          retry_on: error
+          timeout_minutes: ${{ env.RETRY_MINUTES }}
+          shell: bash
+          command: ./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios | jq
       - id: get-scenarios255
+        name: Get Scenarios 0-255
         run: echo "scenarios255=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=0 -PpuppeteerScenariosTo=255)" >> $GITHUB_OUTPUT
       - id: get-scenarios511
+        name: Get Scenarios 255-511
         run: echo "scenarios511=$(./gradlew --build-cache --configure-on-demand --no-daemon -q puppeteerScenarios -PpuppeteerScenariosFrom=255 -PpuppeteerScenariosTo=511)" >> $GITHUB_OUTPUT
 
   ##########################################################################
