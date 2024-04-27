@@ -3,6 +3,7 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
+import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -340,13 +341,15 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
         val policyData = new LinkedHashMap<String, Object>();
 
         val expirationPolicy = tgt.getExpirationPolicy();
-        policyData.put("timeToIdle", expirationPolicy.getTimeToIdle());
+        if (expirationPolicy instanceof final IdleExpirationPolicy iep) {
+            policyData.put("timeToIdle", iep.getTimeToIdle());
+            Optional.ofNullable(iep.getIdleExpirationTime(tgt)).ifPresent(dt -> policyData.put("idleExpirationTime", dt));
+        }
         policyData.put("timeToLive", expirationPolicy.getTimeToLive());
         policyData.put("clock", expirationPolicy.getClock().toString());
         policyData.put("name", expirationPolicy.getName());
 
         Optional.ofNullable(expirationPolicy.toMaximumExpirationTime(tgt)).ifPresent(dt -> policyData.put("maxExpirationTime", dt));
-        Optional.ofNullable(expirationPolicy.getIdleExpirationTime(tgt)).ifPresent(dt -> policyData.put("idleExpirationTime", dt));
 
         sso.put(SsoSessionAttributeKeys.EXPIRATION_POLICY.getAttributeKey(), policyData);
         sso.put(SsoSessionAttributeKeys.REMEMBER_ME.getAttributeKey(),

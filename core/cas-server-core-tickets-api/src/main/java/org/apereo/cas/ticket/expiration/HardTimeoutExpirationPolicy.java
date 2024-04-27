@@ -64,13 +64,7 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     public Long getTimeToLive() {
         return this.timeToKillInSeconds;
     }
-
-    @JsonIgnore
-    @Override
-    public Long getTimeToIdle() {
-        return 0L;
-    }
-
+    
     @JsonIgnore
     @Override
     public ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
