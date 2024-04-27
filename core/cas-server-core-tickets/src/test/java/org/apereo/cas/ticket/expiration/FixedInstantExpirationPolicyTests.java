@@ -37,7 +37,6 @@ public class FixedInstantExpirationPolicyTests {
         val readPolicy = MAPPER.readValue(JSON_FILE, FixedInstantExpirationPolicy.class);
         assertEquals(expirationPolicy, readPolicy);
         
-        assertEquals(0, expirationPolicy.getTimeToIdle());
         assertNotEquals(0, expirationPolicy.getTimeToLive());
 
         val ticketGrantingTicket = new MockTicketGrantingTicket("casuser");

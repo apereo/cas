@@ -42,22 +42,10 @@ public class AlwaysExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
     public Long getTimeToLive() {
         return 0L;
     }
-
-    @JsonIgnore
-    @Override
-    public Long getTimeToIdle() {
-        return 0L;
-    }
-
+    
     @JsonIgnore
     @Override
     public ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
-        return ZonedDateTime.now(getClock());
-    }
-
-    @JsonIgnore
-    @Override
-    public ZonedDateTime getIdleExpirationTime(final Ticket ticketState) {
         return ZonedDateTime.now(getClock());
     }
 }
