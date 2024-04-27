@@ -13,7 +13,7 @@
 
 ## Introduction
 
-Welcome to the home of the [Central Authentication Service project](https://www.apereo.org/projects/cas), more commonly referred to as CAS. CAS is an
+Welcome to the home of the [Central Authentication Service project][apereocas], more commonly referred to as CAS. CAS is an
 enterprise multilingual single sign-on solution for the web and attempts to be a comprehensive platform for your authentication and authorization needs.
 
 CAS is an open and well-documented authentication protocol. The primary implementation of the protocol is an open-source Java server
@@ -75,8 +75,8 @@ The following features are supported by the CAS project:
 * Password management and password policy enforcement.
 * Deployment options using Apache Tomcat, Jetty, Undertow, packaged and running as Docker containers.
 
-The foundations of CAS are built upon: [Spring Boot](https://projects.spring.io/spring-boot) and
-[Spring Cloud](https://projects.spring.io/spring-cloud/).
+The foundations of CAS are built upon: [Spring Boot][springboot] and
+[Spring Cloud][springcloud].
 
 ## Development [![Revved up by Develocity](https://img.shields.io/badge/Revved%20up%20by-Develocity-06A0CE?logo=Gradle&labelColor=02303A)][devlocity] [![codecov](https://codecov.io/gh/apereo/cas/branch/master/graph/badge.svg?style=for-the-badge)][cascodecov]
 
@@ -110,3 +110,6 @@ If you (or your employer) benefit from this project, please consider becoming a 
 [casbuildprocess]: https://apereo.github.io/cas/development/developer/Build-Process.html
 [githubcontributors]: https://github.com/apereo/cas/graphs/contributors
 [casjavadocs]: https://www.javadoc.io/doc/org.apereo.cas/cas-server-core
+[apereocas]: https://www.apereo.org/projects/cas
+[springboot]: https://projects.spring.io/spring-boot/
+[springcloud]: https://projects.spring.io/spring-cloud/
