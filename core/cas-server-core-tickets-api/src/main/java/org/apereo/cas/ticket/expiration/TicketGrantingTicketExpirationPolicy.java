@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.expiration;
 
 
+import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
@@ -33,7 +34,7 @@ import java.time.temporal.ChronoUnit;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Builder
-public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationPolicy {
+public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationPolicy implements IdleExpirationPolicy {
 
     @Serial
     private static final long serialVersionUID = 7670537200691354820L;

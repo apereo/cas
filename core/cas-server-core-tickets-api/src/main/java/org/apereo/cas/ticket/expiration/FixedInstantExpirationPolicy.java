@@ -56,13 +56,7 @@ public class FixedInstantExpirationPolicy extends AbstractCasExpirationPolicy {
         val currentTime = ZonedDateTime.now(getClock()).toInstant();
         return Duration.between(currentTime, expirationInstant).toSeconds();
     }
-
-    @JsonIgnore
-    @Override
-    public Long getTimeToIdle() {
-        return 0L;
-    }
-
+    
     @JsonIgnore
     @Override
     public ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {

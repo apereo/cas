@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketFactory;
@@ -81,7 +82,9 @@ public class DefaultCasServerProfileRegistrar implements CasServerProfileRegistr
                     val expirationPolicy = ticket.getExpirationPolicyBuilder().buildTicketExpirationPolicy();
                     details.put("name", expirationPolicy.getName());
                     details.put("timeToLive", expirationPolicy.getTimeToLive());
-                    details.put("timeToIdle", expirationPolicy.getTimeToIdle());
+                    if (expirationPolicy instanceof final IdleExpirationPolicy iep) {
+                        details.put("timeToIdle", iep.getTimeToIdle());
+                    }
                     return details;
                 }));
     }

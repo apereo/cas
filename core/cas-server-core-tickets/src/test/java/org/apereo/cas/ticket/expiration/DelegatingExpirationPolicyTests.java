@@ -44,7 +44,6 @@ class DelegatingExpirationPolicyTests {
         assertTrue(policy.isExpired(ticketState));
         assertEquals(0, (long) policy.getTimeToLive(ticketState));
         assertEquals(0, (long) policy.getTimeToLive());
-        assertEquals(0, (long) policy.getTimeToIdle());
 
         ticketState = mock(TicketGrantingTicketAwareTicket.class);
         when(ticketState.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication("expired"));
