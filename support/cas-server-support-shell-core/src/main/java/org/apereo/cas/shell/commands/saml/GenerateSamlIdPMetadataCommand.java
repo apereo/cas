@@ -78,8 +78,10 @@ public class GenerateSamlIdPMetadataCommand {
             help = "Comma separated list of other subject alternative names for the certificate (besides entityId)",
             defaultValue = StringUtils.EMPTY) final String subjectAltNames) throws Throwable {
 
-        val locator = new FileSystemSamlIdPMetadataLocator(new File(metadataLocation),
-            Caffeine.newBuilder().initialCapacity(1).maximumSize(1).build());
+        val locator = new FileSystemSamlIdPMetadataLocator(CipherExecutor.noOpOfStringToString(),
+            new File(metadataLocation),
+            Caffeine.newBuilder().initialCapacity(1).maximumSize(1).build(),
+            applicationContext);
         val writer = new DefaultSamlIdPCertificateAndKeyWriter(entityId);
         if (StringUtils.isNotBlank(subjectAltNames)) {
             writer.setUriSubjectAltNames(Arrays.asList(StringUtils.split(subjectAltNames, ",")));

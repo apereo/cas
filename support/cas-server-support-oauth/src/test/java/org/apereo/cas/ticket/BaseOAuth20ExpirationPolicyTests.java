@@ -1,17 +1,7 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
-import org.apereo.cas.config.CasCoreAutoConfiguration;
-import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
-import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
-import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
-import org.apereo.cas.config.CasCoreWebAutoConfiguration;
-import org.apereo.cas.config.CasOAuth20AutoConfiguration;
-import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -34,9 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import static org.mockito.Mockito.*;
@@ -47,21 +35,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    CasCoreServicesAutoConfiguration.class,
-    CasCoreAutoConfiguration.class,
-    CasCoreCookieAutoConfiguration.class,
-    CasCoreTicketsAutoConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class,
-    CasPersonDirectoryTestConfiguration.class,
-    CasCoreAuthenticationAutoConfiguration.class,
-    CasCoreLogoutAutoConfiguration.class,
-    CasOAuth20AutoConfiguration.class
-})
+@SpringBootTest(classes = AbstractOAuth20Tests.SharedTestConfiguration.class)
 public abstract class BaseOAuth20ExpirationPolicyTests {
     protected static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();

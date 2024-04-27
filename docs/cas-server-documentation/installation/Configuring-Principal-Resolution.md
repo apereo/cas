@@ -20,7 +20,7 @@ by principal resolution is [discussed here](../integration/Attribute-Resolution.
 ## Configuration
 
 CAS uses the Person Directory library to provide a flexible principal resolution services against a number of data
-sources. The key to configuring `PersonDirectoryPrincipalResolver` is the definition of an `IPersonAttributeDao` object.
+sources. The key to configuring `PersonDirectoryPrincipalResolver` is the definition of an `PersonAttributeDao` object.
 
 {% include_cached casproperties.html properties="cas.person-directory" %}
 

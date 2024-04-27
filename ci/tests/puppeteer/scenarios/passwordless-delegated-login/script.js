@@ -12,15 +12,15 @@ async function startAuthFlow(page, username) {
     assert(pswd === null);
     await cas.type(page, "#username", username);
     await cas.pressEnter(page);
-    await cas.sleep(7000);
+    await cas.sleep(9000);
     await cas.screenshot(page);
     await cas.logPage(page);
     const url = await page.url();
     assert(url.startsWith("https://localhost:8444"));
     await cas.sleep(1000);
     await cas.loginWith(page);
-    await cas.sleep(7000);
-    await cas.log(`Page url: ${await page.url()}`);
+    await cas.sleep(9000);
+    await cas.logPage(page);
     await cas.assertCookie(page);
     await cas.assertInnerTextStartsWith(page, "#content div p", "You, casuser, have successfully logged in");
 

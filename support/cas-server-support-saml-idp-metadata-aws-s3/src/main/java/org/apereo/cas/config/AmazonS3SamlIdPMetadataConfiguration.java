@@ -105,7 +105,7 @@ class AmazonS3SamlIdPMetadataConfiguration {
                 val idp = casProperties.getAuthn().getSamlIdp();
                 return new AmazonS3SamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor,
                     samlIdPMetadataCache, idp.getMetadata().getAmazonS3().getIdpMetadataBucketName(),
-                    amazonS3Client);
+                    amazonS3Client, applicationContext);
             })
             .otherwiseProxy()
             .get();

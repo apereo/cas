@@ -2,6 +2,8 @@ package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.http.HttpUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.HttpHeaders.*;
 
@@ -72,8 +75,16 @@ class OAuth20UsernamePasswordAuthenticatorTests extends BaseOAuth20Authenticator
     void verifyAcceptedCredentialsWithServiceDisabled() throws Throwable {
         val credentials = new UsernamePasswordCredentials("casuser", "casuser");
         val request = new MockHttpServletRequest();
-        request.addParameter(OAuth20Constants.CLIENT_ID, "client");
-        service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(false, false));
+
+        val disabledService = new OAuthRegisteredService();
+        disabledService.setName("OAuth");
+        disabledService.setId(RandomUtils.nextLong());
+        disabledService.setServiceId("https://www.example.org");
+        disabledService.setClientSecret(UUID.randomUUID().toString());
+        disabledService.setClientId(UUID.randomUUID().toString());
+        disabledService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(false, false));
+        servicesManager.save(disabledService);
+        request.addParameter(OAuth20Constants.CLIENT_ID, disabledService.getClientId());
         val ctx = new JEEContext(request, new MockHttpServletResponse());
         assertThrows(CredentialsException.class,
             () -> authenticator.validate(new CallContext(ctx, new JEESessionStore()), credentials));

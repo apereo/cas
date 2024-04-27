@@ -4,6 +4,7 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.audit.annotation.Audits;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.apereo.inspektr.common.spi.AuditActionDateProvider;
 import org.apereo.inspektr.common.spi.ClientInfoResolver;
 import org.apereo.inspektr.common.spi.DefaultClientInfoResolver;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
@@ -15,8 +16,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.util.Assert;
-import java.time.Clock;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -33,18 +32,17 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuditTrailManagementAspect {
 
-    private final String applicationCode;
     private final PrincipalResolver defaultAuditPrincipalResolver;
     private final List<AuditTrailManager> auditTrailManagers;
     private final Map<String, AuditActionResolver> auditActionResolvers;
     private final Map<String, AuditResourceResolver> auditResourceResolvers;
     private final Map<String, PrincipalResolver> auditPrincipalResolvers;
     private final AuditTrailManager.AuditFormats auditFormat;
+    private final AuditActionDateProvider auditActionDateProvider;
 
     private ClientInfoResolver clientInfoResolver = new DefaultClientInfoResolver();
     private boolean failOnAuditFailures = true;
     private boolean enabled = true;
-
 
     /**
      * Handle audit trail.
@@ -97,7 +95,7 @@ public class AuditTrailManagementAspect {
             throw t;
         } finally {
             for (var i = 0; i < audits.value().length; i++) {
-                executeAuditCode(currentPrincipal, auditableResources[i], joinPoint, retVal, actions[i], audits.value()[i]);
+                executeAuditCode(currentPrincipal, auditableResources[i], joinPoint, retVal, actions[i]);
             }
         }
     }
@@ -140,7 +138,7 @@ public class AuditTrailManagementAspect {
             action = auditActionResolver.resolveFrom(joinPoint, e, audit);
             throw t;
         } finally {
-            executeAuditCode(currentPrincipal, auditResource, joinPoint, retVal, action, audit);
+            executeAuditCode(currentPrincipal, auditResource, joinPoint, retVal, action);
         }
     }
 
@@ -174,26 +172,20 @@ public class AuditTrailManagementAspect {
     }
 
     private void executeAuditCode(final String currentPrincipal, final String[] auditableResources,
-                                  final ProceedingJoinPoint joinPoint, final Object retVal,
-                                  final String action, final Audit audit) {
-        val appCode = (audit.applicationCode() != null && !audit.applicationCode().isEmpty())
-            ? audit.applicationCode()
-            : this.applicationCode;
+                                  final ProceedingJoinPoint joinPoint, final Object retVal, final String action) {
         val clientInfo = clientInfoResolver.resolveFrom(joinPoint, retVal);
-        val actionDate = LocalDateTime.now(Clock.systemUTC());
+        val actionDate = auditActionDateProvider.get();
         val runtimeInfo = new AspectJAuditPointRuntimeInfo(joinPoint);
 
         Assert.notNull(currentPrincipal, "'principal' cannot be null.\n" + getDiagnosticInfo(runtimeInfo));
         Assert.notNull(action, "'actionPerformed' cannot be null.\n" + getDiagnosticInfo(runtimeInfo));
-        Assert.notNull(appCode, "'applicationCode' cannot be null.\n" + getDiagnosticInfo(runtimeInfo));
         Assert.notNull(actionDate, "'whenActionPerformed' cannot be null.\n" + getDiagnosticInfo(runtimeInfo));
         Assert.notNull(clientInfo.getClientIpAddress(), "'clientIpAddress' cannot be null.\n" + getDiagnosticInfo(runtimeInfo));
         Assert.notNull(clientInfo.getServerIpAddress(), "'serverIpAddress' cannot be null.\n" + getDiagnosticInfo(runtimeInfo));
 
         for (val auditableResource : auditableResources) {
             Assert.notNull(auditableResource, "'resourceOperatedUpon' cannot be null.\n" + getDiagnosticInfo(runtimeInfo));
-            val auditContext = new AuditActionContext(currentPrincipal, auditableResource, action,
-                appCode, actionDate, clientInfo);
+            val auditContext = new AuditActionContext(currentPrincipal, auditableResource, action, "CAS", actionDate, clientInfo);
 
             try {
                 for (val manager : auditTrailManagers) {

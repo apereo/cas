@@ -6,7 +6,9 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
+import org.apereo.cas.authentication.attribute.StubPersonAttributeDao;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
@@ -27,8 +29,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -118,7 +118,7 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
     public static class AttributeRepositoryTestConfiguration {
         @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
         @Bean
-        public IPersonAttributeDao attributeRepository() {
+        public PersonAttributeDao attributeRepository() {
             val attrs = CollectionUtils.wrap(
                 "uid", CollectionUtils.wrap("uid"),
                 "mail", CollectionUtils.wrap("cas@apereo.org"),
@@ -130,7 +130,7 @@ public abstract class BaseCasWebflowMultifactorAuthenticationTests {
         @Bean
         @ConditionalOnMissingBean(name = AttributeRepositoryResolver.BEAN_NAME)
         public AttributeRepositoryResolver attributeRepositoryResolver() {
-            return query -> Set.of(IPersonAttributeDao.WILDCARD);
+            return query -> Set.of(PersonAttributeDao.WILDCARD);
         }
     }
 }

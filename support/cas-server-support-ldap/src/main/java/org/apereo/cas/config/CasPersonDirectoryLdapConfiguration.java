@@ -1,8 +1,10 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
+import org.apereo.cas.persondir.LdaptivePersonAttributeDao;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapConnectionFactory;
@@ -16,8 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.ldap.LdaptivePersonAttributeDao;
 import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.SearchResultHandler;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -58,13 +58,13 @@ class CasPersonDirectoryLdapConfiguration {
         @ConditionalOnMissingBean(name = "ldapAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public BeanContainer<IPersonAttributeDao> ldapAttributeRepositories(
+        public BeanContainer<PersonAttributeDao> ldapAttributeRepositories(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(BeanContainer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
-                    val list = new ArrayList<IPersonAttributeDao>();
+                    val list = new ArrayList<PersonAttributeDao>();
                     val attrs = casProperties.getAuthn().getAttributeRepository();
                     attrs.getLdap()
                         .stream()
@@ -144,13 +144,13 @@ class CasPersonDirectoryLdapConfiguration {
         public PersonDirectoryAttributeRepositoryPlanConfigurer ldapPersonDirectoryAttributeRepositoryPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("ldapAttributeRepositories")
-            final BeanContainer<IPersonAttributeDao> ldapAttributeRepositories) {
+            final BeanContainer<PersonAttributeDao> ldapAttributeRepositories) {
             return BeanSupplier.of(PersonDirectoryAttributeRepositoryPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> {
                     val results = ldapAttributeRepositories.toList()
                         .stream()
-                        .filter(IPersonAttributeDao::isEnabled)
+                        .filter(PersonAttributeDao::isEnabled)
                         .collect(Collectors.toList());
                     plan.registerAttributeRepositories(results);
                 })

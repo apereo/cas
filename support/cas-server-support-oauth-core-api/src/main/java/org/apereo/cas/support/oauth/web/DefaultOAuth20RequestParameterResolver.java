@@ -34,6 +34,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -135,6 +136,11 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
     }
 
     @Override
+    public Set<String> resolveRequestParameters(final WebContext context, final String name) {
+        return resolveRequestParameters(List.of(name), context).getOrDefault(name, Set.of());
+    }
+
+    @Override
     public Optional<String> resolveRequestParameter(final WebContext context,
                                                     final String name) {
         return resolveRequestParameter(context, name, String.class);
@@ -158,6 +164,15 @@ public class DefaultOAuth20RequestParameterResolver implements OAuth20RequestPar
                         return Optional.of(clazz.cast(CollectionUtils.wrapArrayList(values)));
                     }
                     val singleValue = EncodingUtils.urlDecode(values[0]);
+                    if (Long.class.isAssignableFrom(clazz)){
+                        return Optional.ofNullable(singleValue).map(Long::parseLong).map(clazz::cast);
+                    }
+                    if (Integer.class.isAssignableFrom(clazz)){
+                        return Optional.ofNullable(singleValue).map(Integer::parseInt).map(clazz::cast);
+                    }
+                    if (Double.class.isAssignableFrom(clazz)){
+                        return Optional.ofNullable(singleValue).map(Double::parseDouble).map(clazz::cast);
+                    }
                     return Optional.ofNullable(singleValue).map(clazz::cast);
                 }
                 return Optional.empty();

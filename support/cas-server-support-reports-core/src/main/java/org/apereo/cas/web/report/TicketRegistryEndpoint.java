@@ -4,14 +4,15 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryQueryCriteria;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,17 +25,18 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@RestControllerEndpoint(id = "ticketRegistry", enableByDefault = false)
+@Endpoint(id = "ticketRegistry", enableByDefault = false)
 @Slf4j
 @Getter
-public class TicketRegistryEndpoint extends BaseCasActuatorEndpoint {
+public class TicketRegistryEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<TicketRegistry> ticketRegistryProvider;
     private final ObjectProvider<TicketRegistrySupport> ticketRegistrySupportProvider;
 
     public TicketRegistryEndpoint(final CasConfigurationProperties casProperties,
+                                  final ConfigurableApplicationContext applicationContext,
                                   final ObjectProvider<TicketRegistry> ticketRegistryProvider,
                                   final ObjectProvider<TicketRegistrySupport> ticketRegistrySupportProvider) {
-        super(casProperties);
+        super(casProperties, applicationContext);
         this.ticketRegistryProvider = ticketRegistryProvider;
         this.ticketRegistrySupportProvider = ticketRegistrySupportProvider;
     }

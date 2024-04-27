@@ -105,7 +105,12 @@ public class RegisteredServiceAccessStrategyUtils {
                     "Service [{}] is not allowed to use SSO. The ticket-granting ticket [{}] is not proxied and it's been used at least once. "
                         + "The authentication request must provide credentials before access can be granted", ticketGrantingTicket.getId(), service.getId());
             }
-            throw new UnauthorizedSsoServiceException();
+            if (ticketGrantingTicket.getCountOfUses() == 0 && credentialsProvided) {
+                LOGGER.debug("The ticket-granting ticket [{}] has never been used before and "
+                    + "the authentication request has supplied credentials to access service [{}]", ticketGrantingTicket.getId(), service.getId());
+            } else {
+                throw new UnauthorizedSsoServiceException();
+            }
         }
         LOGGER.debug("Current authentication via ticket [{}] allows service [{}] to participate in the existing SSO session",
             ticketGrantingTicket.getId(), service.getId());

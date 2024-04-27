@@ -3,11 +3,13 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
+import org.apereo.cas.authentication.attribute.StubPersonAttributeDao;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
@@ -30,8 +32,6 @@ import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -109,7 +109,7 @@ public abstract class BaseCasCoreTests {
             @Bean
             public PrincipalResolutionExecutionPlanConfigurer testPrincipalResolutionPlanConfigurer(
                 @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-                final IPersonAttributeDao attributeRepository) {
+                final PersonAttributeDao attributeRepository) {
                 return plan -> {
                     val resolver = new EchoingPrincipalResolver() {
                         @Override
@@ -123,7 +123,7 @@ public abstract class BaseCasCoreTests {
                         }
 
                         @Override
-                        public IPersonAttributeDao getAttributeRepository() {
+                        public PersonAttributeDao getAttributeRepository() {
                             return attributeRepository;
                         }
                     };
@@ -136,7 +136,7 @@ public abstract class BaseCasCoreTests {
         public static class AttributeRepositoryTestConfiguration {
             @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
             @Bean
-            public IPersonAttributeDao attributeRepository() {
+            public PersonAttributeDao attributeRepository() {
                 val attrs = CollectionUtils.wrap(
                     "binaryAttribute", CollectionUtils.wrap("binaryAttributeValue".getBytes(StandardCharsets.UTF_8)),
                     "uid", CollectionUtils.wrap("uid"),
@@ -149,7 +149,7 @@ public abstract class BaseCasCoreTests {
             @Bean
             @ConditionalOnMissingBean(name = AttributeRepositoryResolver.BEAN_NAME)
             public AttributeRepositoryResolver attributeRepositoryResolver() {
-                return query -> Set.of(IPersonAttributeDao.WILDCARD);
+                return query -> Set.of(PersonAttributeDao.WILDCARD);
             }
         }
     }

@@ -2,17 +2,16 @@ package org.apereo.cas.grouper;
 
 import org.apereo.cas.BaseGrouperConfigurationTests;
 import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetcher;
+import org.apereo.cas.authentication.attribute.SimpleUsernameAttributeProvider;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
+import org.apereo.cas.persondir.GrouperPersonAttributeDao;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
-
 import edu.internet2.middleware.grouperClient.api.GcGetGroups;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResults;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.GrouperPersonAttributeDao;
-import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
 import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -20,9 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -44,7 +41,7 @@ import static org.mockito.Mockito.*;
 class GrouperPersonAttributeDaoTests {
     @Autowired
     @Qualifier("aggregatingAttributeRepository")
-    private IPersonAttributeDao aggregatingAttributeRepository;
+    private PersonAttributeDao aggregatingAttributeRepository;
 
     @Test
     void verifyOperation() throws Throwable {

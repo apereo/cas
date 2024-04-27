@@ -393,7 +393,7 @@ public class LoginQueryResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the caid property.
+     * This is why there is not a {@code set} method for the caid property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -408,7 +408,7 @@ public class LoginQueryResult {
      */
     public List<Long> getCaid() {
         if (caid == null) {
-            caid = new ArrayList<Long>();
+            caid = new ArrayList<>();
         }
         return this.caid;
     }
@@ -420,7 +420,7 @@ public class LoginQueryResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the castate property.
+     * This is why there is not a {@code set} method for the castate property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -435,7 +435,7 @@ public class LoginQueryResult {
      */
     public List<Long> getCastate() {
         if (castate == null) {
-            castate = new ArrayList<Long>();
+            castate = new ArrayList<>();
         }
         return this.castate;
     }
@@ -447,7 +447,7 @@ public class LoginQueryResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the caname property.
+     * This is why there is not a {@code set} method for the caname property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -462,7 +462,7 @@ public class LoginQueryResult {
      */
     public List<String> getCaname() {
         if (caname == null) {
-            caname = new ArrayList<String>();
+            caname = new ArrayList<>();
         }
         return this.caname;
     }
@@ -474,7 +474,7 @@ public class LoginQueryResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the cault property.
+     * This is why there is not a {@code set} method for the cault property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -489,7 +489,7 @@ public class LoginQueryResult {
      */
     public List<Long> getCault() {
         if (cault == null) {
-            cault = new ArrayList<Long>();
+            cault = new ArrayList<>();
         }
         return this.cault;
     }
@@ -501,7 +501,7 @@ public class LoginQueryResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the caalias property.
+     * This is why there is not a {@code set} method for the caalias property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -516,7 +516,7 @@ public class LoginQueryResult {
      */
     public List<String> getCaalias() {
         if (caalias == null) {
-            caalias = new ArrayList<String>();
+            caalias = new ArrayList<>();
         }
         return this.caalias;
     }
@@ -542,7 +542,7 @@ public class LoginQueryResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the maid property.
+     * This is why there is not a {@code set} method for the maid property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -557,7 +557,7 @@ public class LoginQueryResult {
      */
     public List<Long> getMaid() {
         if (maid == null) {
-            maid = new ArrayList<Long>();
+            maid = new ArrayList<>();
         }
         return this.maid;
     }
@@ -569,7 +569,7 @@ public class LoginQueryResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the mastate property.
+     * This is why there is not a {@code set} method for the mastate property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -584,7 +584,7 @@ public class LoginQueryResult {
      */
     public List<Long> getMastate() {
         if (mastate == null) {
-            mastate = new ArrayList<Long>();
+            mastate = new ArrayList<>();
         }
         return this.mastate;
     }
@@ -596,7 +596,7 @@ public class LoginQueryResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the maname property.
+     * This is why there is not a {@code set} method for the maname property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -611,7 +611,7 @@ public class LoginQueryResult {
      */
     public List<String> getManame() {
         if (maname == null) {
-            maname = new ArrayList<String>();
+            maname = new ArrayList<>();
         }
         return this.maname;
     }
@@ -623,7 +623,7 @@ public class LoginQueryResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the maalias property.
+     * This is why there is not a {@code set} method for the maalias property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -638,7 +638,7 @@ public class LoginQueryResult {
      */
     public List<String> getMaalias() {
         if (maalias == null) {
-            maalias = new ArrayList<String>();
+            maalias = new ArrayList<>();
         }
         return this.maalias;
     }
@@ -650,7 +650,7 @@ public class LoginQueryResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the mapushenabled property.
+     * This is why there is not a {@code set} method for the mapushenabled property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -665,7 +665,7 @@ public class LoginQueryResult {
      */
     public List<Long> getMapushenabled() {
         if (mapushenabled == null) {
-            mapushenabled = new ArrayList<Long>();
+            mapushenabled = new ArrayList<>();
         }
         return this.mapushenabled;
     }
@@ -691,7 +691,7 @@ public class LoginQueryResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the macid property.
+     * This is why there is not a {@code set} method for the macid property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -706,7 +706,7 @@ public class LoginQueryResult {
      */
     public List<Long> getMacid() {
         if (macid == null) {
-            macid = new ArrayList<Long>();
+            macid = new ArrayList<>();
         }
         return this.macid;
     }
@@ -718,7 +718,7 @@ public class LoginQueryResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the macstate property.
+     * This is why there is not a {@code set} method for the macstate property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -733,7 +733,7 @@ public class LoginQueryResult {
      */
     public List<Long> getMacstate() {
         if (macstate == null) {
-            macstate = new ArrayList<Long>();
+            macstate = new ArrayList<>();
         }
         return this.macstate;
     }
@@ -745,7 +745,7 @@ public class LoginQueryResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the macname property.
+     * This is why there is not a {@code set} method for the macname property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -760,7 +760,7 @@ public class LoginQueryResult {
      */
     public List<String> getMacname() {
         if (macname == null) {
-            macname = new ArrayList<String>();
+            macname = new ArrayList<>();
         }
         return this.macname;
     }
@@ -772,7 +772,7 @@ public class LoginQueryResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the macalias property.
+     * This is why there is not a {@code set} method for the macalias property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -787,7 +787,7 @@ public class LoginQueryResult {
      */
     public List<String> getMacalias() {
         if (macalias == null) {
-            macalias = new ArrayList<String>();
+            macalias = new ArrayList<>();
         }
         return this.macalias;
     }
@@ -799,7 +799,7 @@ public class LoginQueryResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the macpushenabled property.
+     * This is why there is not a {@code set} method for the macpushenabled property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -814,7 +814,7 @@ public class LoginQueryResult {
      */
     public List<Long> getMacpushenabled() {
         if (macpushenabled == null) {
-            macpushenabled = new ArrayList<Long>();
+            macpushenabled = new ArrayList<>();
         }
         return this.macpushenabled;
     }
@@ -840,7 +840,7 @@ public class LoginQueryResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the vaid property.
+     * This is why there is not a {@code set} method for the vaid property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -855,7 +855,7 @@ public class LoginQueryResult {
      */
     public List<Long> getVaid() {
         if (vaid == null) {
-            vaid = new ArrayList<Long>();
+            vaid = new ArrayList<>();
         }
         return this.vaid;
     }
@@ -867,7 +867,7 @@ public class LoginQueryResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the vastate property.
+     * This is why there is not a {@code set} method for the vastate property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -882,7 +882,7 @@ public class LoginQueryResult {
      */
     public List<Long> getVastate() {
         if (vastate == null) {
-            vastate = new ArrayList<Long>();
+            vastate = new ArrayList<>();
         }
         return this.vastate;
     }
@@ -894,7 +894,7 @@ public class LoginQueryResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the vaname property.
+     * This is why there is not a {@code set} method for the vaname property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -909,7 +909,7 @@ public class LoginQueryResult {
      */
     public List<String> getVaname() {
         if (vaname == null) {
-            vaname = new ArrayList<String>();
+            vaname = new ArrayList<>();
         }
         return this.vaname;
     }
@@ -921,7 +921,7 @@ public class LoginQueryResult {
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the vaalias property.
+     * This is why there is not a {@code set} method for the vaalias property.
      *
      * <p>
      * For example, to add a new item, do as follows:
@@ -936,7 +936,7 @@ public class LoginQueryResult {
      */
     public List<String> getVaalias() {
         if (vaalias == null) {
-            vaalias = new ArrayList<String>();
+            vaalias = new ArrayList<>();
         }
         return this.vaalias;
     }

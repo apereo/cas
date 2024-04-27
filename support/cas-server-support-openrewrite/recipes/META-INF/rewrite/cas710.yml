@@ -25,15 +25,15 @@ recipeList:
       filePattern: 'gradle.properties'
   - org.openrewrite.gradle.AddProperty:
       key: springBootVersion
-      value: 3.3.0-M2
+      value: 3.3.0-RC1
       overwrite: true
       filePattern: 'gradle.properties'
   - org.openrewrite.gradle.UpdateGradleWrapper:
-      version: 8.7-rc-2
+      version: 8.8-rc-1
       addIfMissing: true
   - org.openrewrite.gradle.AddProperty:
       key: tomcatVersion
-      value: 10.1.19
+      value: 10.1.23
       overwrite: false
       filePattern: 'gradle.properties'
   - org.openrewrite.gradle.AddProperty:

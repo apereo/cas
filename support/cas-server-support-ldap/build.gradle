@@ -19,7 +19,7 @@ dependencies {
         implementation libraries.ldaptive
         implementation libraries.springsecurityconfig
         implementation libraries.springsecurityweb
-        implementation libraries.persondirectory
+
         
         testImplementation project(":core:cas-server-core-services")
         testImplementation project(":core:cas-server-core-tickets")

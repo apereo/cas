@@ -2,6 +2,7 @@ package org.apereo.cas.redis;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
@@ -19,7 +20,6 @@ import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -68,7 +68,7 @@ class RedisPersonAttributeDaoTests {
 
     @Autowired
     @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-    private IPersonAttributeDao attributeRepository;
+    private PersonAttributeDao attributeRepository;
 
     @Autowired
     private CasConfigurationProperties casProperties;

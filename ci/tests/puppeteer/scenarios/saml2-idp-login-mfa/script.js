@@ -9,6 +9,7 @@ const assert = require("assert");
 
     await cas.log("Establishing SSO session...");
     await cas.gotoLogin(page);
+    await cas.sleep(1000);
     await cas.loginWith(page);
     await cas.sleep(1000);
     await cas.goto(page, "http://localhost:9443/simplesaml/module.php/core/authenticate.php?as=default-sp");
@@ -19,7 +20,7 @@ const assert = require("assert");
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
-    await cas.sleep(7000);
+    await cas.sleep(9000);
     await cas.screenshot(page);
     await cas.assertInnerTextContains(page, "#content p", "status page of SimpleSAMLphp");
     await cas.assertVisibility(page, "#table_with_attributes");

@@ -111,6 +111,12 @@ public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifac
     @ExpressionLanguageCapable
     private String duoAdminSecretKey;
 
+    /**
+     * When set to true, authentication metadata and profile attributes (if any) are collected
+     * from Duo Security and collected as CAS attributes.
+     */
+    private boolean collectDuoAttributes = true;
+    
     public DuoSecurityMultifactorAuthenticationProperties() {
         setId(DEFAULT_IDENTIFIER);
     }

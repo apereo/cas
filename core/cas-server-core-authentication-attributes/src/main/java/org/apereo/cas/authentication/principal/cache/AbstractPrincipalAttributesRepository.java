@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.attribute.PrincipalAttributeRepositoryFetch
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
@@ -19,7 +20,6 @@ import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
 
 import java.io.Serial;
 import java.util.ArrayList;
@@ -109,7 +109,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
 
     protected Map<String, List<Object>> retrievePersonAttributesFromAttributeRepository(
         final RegisteredServiceAttributeReleasePolicyContext context) {
-        val repository = context.getApplicationContext().getBean(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY, IPersonAttributeDao.class);
+        val repository = context.getApplicationContext().getBean(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY, PersonAttributeDao.class);
         return PrincipalAttributeRepositoryFetcher.builder()
             .attributeRepository(repository)
             .principalId(context.getPrincipal().getId())

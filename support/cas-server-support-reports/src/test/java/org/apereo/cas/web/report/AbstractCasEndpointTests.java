@@ -42,6 +42,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -62,6 +63,9 @@ public abstract class AbstractCasEndpointTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
+
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
 
     @Autowired
     @Qualifier(AuthenticationEventExecutionPlan.DEFAULT_BEAN_NAME)

@@ -47,7 +47,6 @@ class OAuth20ClientIdClientSecretAuthenticatorTests {
 
     @Nested
     class AttributeMappingTests extends BaseOAuth20AuthenticatorTests {
-        @Test
         @RetryingTest(2)
         void verifyAuthenticationWithAttributesMapping() throws Throwable {
             val credentials = new UsernamePasswordCredentials(serviceWithAttributesMapping.getClientId(), "secret");

@@ -9,6 +9,8 @@ import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.ticket.OidcCibaRequest;
+import org.apereo.cas.oidc.ticket.OidcDefaultCibaRequest;
 import org.apereo.cas.oidc.ticket.OidcDefaultPushedAuthorizationRequest;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequest;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -44,8 +46,9 @@ class OidcComponentSerializationConfiguration {
     public TicketSerializationExecutionPlanConfigurer oidcTicketSerializationExecutionPlanConfigurer() {
         return plan -> {
             plan.registerTicketSerializer(new OidcPushedAuthorizationRequestSerializer());
-            plan.registerTicketSerializer(OidcPushedAuthorizationRequest.class.getName(),
-                new OidcPushedAuthorizationRequestSerializer());
+            plan.registerTicketSerializer(new OidcCibaRequestSerializer());
+            plan.registerTicketSerializer(OidcPushedAuthorizationRequest.class.getName(), new OidcPushedAuthorizationRequestSerializer());
+            plan.registerTicketSerializer(OidcCibaRequest.class.getName(), new OidcCibaRequestSerializer());
         };
     }
 
@@ -80,6 +83,21 @@ class OidcComponentSerializationConfiguration {
         @Override
         public Class<OidcDefaultPushedAuthorizationRequest> getTypeToSerialize() {
             return OidcDefaultPushedAuthorizationRequest.class;
+        }
+    }
+
+    private static final class OidcCibaRequestSerializer extends
+        AbstractJacksonBackedStringSerializer<OidcDefaultCibaRequest> {
+        @Serial
+        private static final long serialVersionUID = -1298623586274810263L;
+
+        OidcCibaRequestSerializer() {
+            super(MINIMAL_PRETTY_PRINTER);
+        }
+
+        @Override
+        public Class<OidcDefaultCibaRequest> getTypeToSerialize() {
+            return OidcDefaultCibaRequest.class;
         }
     }
 }

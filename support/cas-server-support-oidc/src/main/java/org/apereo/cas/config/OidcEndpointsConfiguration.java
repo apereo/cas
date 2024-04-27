@@ -17,6 +17,7 @@ import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapter;
 import org.apereo.cas.oidc.web.OidcLocaleChangeInterceptor;
 import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointController;
 import org.apereo.cas.oidc.web.controllers.authorize.OidcPushedAuthorizeEndpointController;
+import org.apereo.cas.oidc.web.controllers.ciba.OidcCibaController;
 import org.apereo.cas.oidc.web.controllers.discovery.OidcWellKnownEndpointController;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcClientConfigurationEndpointController;
 import org.apereo.cas.oidc.web.controllers.dynareg.OidcDynamicClientRegistrationEndpointController;
@@ -42,6 +43,7 @@ import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.SecurityLogicInterceptor;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.ArgumentExtractor;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -61,6 +63,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -207,9 +214,22 @@ class OidcEndpointsConfiguration {
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = "oidcCsrfTokenRepository")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CsrfTokenRepository oidcCsrfTokenRepository() {
+            val repository = new CookieCsrfTokenRepository();
+            repository.setHeaderName("X-CSRF-TOKEN");
+            return repository;
+        }
+
+        @Bean
         @ConditionalOnMissingBean(name = "oidcProtocolEndpointConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CasWebSecurityConfigurer<Void> oidcProtocolEndpointConfigurer(
+        @CanIgnoreReturnValue
+        @SuppressWarnings("UnnecessaryMethodReference")
+        public CasWebSecurityConfigurer<HttpSecurity> oidcProtocolEndpointConfigurer(
+            @Qualifier("oidcCsrfTokenRepository")
+            final CsrfTokenRepository oidcCsrfTokenRepository,
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService,
             final CasConfigurationProperties casProperties) {
@@ -218,6 +238,19 @@ class OidcEndpointsConfiguration {
                 @Override
                 public List<String> getIgnoredEndpoints() {
                     return List.of(baseEndpoint);
+                }
+
+                @Override
+                public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
+                    http.csrf(customizer -> {
+                        val pattern = new AntPathRequestMatcher("/**/" + OidcConstants.CIBA_URL + "/{clientId}/{cibaRequestId}", HttpMethod.POST.name());
+                        customizer.requireCsrfProtectionMatcher(pattern).csrfTokenRepository(oidcCsrfTokenRepository);
+                    });
+                    http.authorizeHttpRequests(customizer -> {
+                        val authEndpoints = new AntPathRequestMatcher("/**/" + OidcConstants.CIBA_URL + "/**");
+                        customizer.requestMatchers(authEndpoints).anonymous();
+                    });
+                    return this;
                 }
             };
         }
@@ -245,6 +278,15 @@ class OidcEndpointsConfiguration {
                                     final CasProtocolViewFactory casProtocolViewFactory) {
             return casProtocolViewFactory.create(applicationContext, "protocol/oidc/confirm");
         }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcCibaVerificationView")
+        public View oidcCibaVerificationView(final ConfigurableApplicationContext applicationContext,
+                                            @Qualifier(CasProtocolViewFactory.BEAN_NAME_THYMELEAF_VIEW_FACTORY)
+                                            final CasProtocolViewFactory casProtocolViewFactory) {
+            return casProtocolViewFactory.create(applicationContext, "protocol/oidc/cibaVerification");
+        }
     }
 
     @Configuration(value = "OidcControllerEndpointsConfiguration", proxyBeanMethods = false)
@@ -261,6 +303,15 @@ class OidcEndpointsConfiguration {
             @Qualifier("oidcWebFingerDiscoveryService")
             final OidcWebFingerDiscoveryService oidcWebFingerDiscoveryService) {
             return new OidcWellKnownEndpointController(oidcConfigurationContext, oidcWebFingerDiscoveryService);
+        }
+
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcCibaController")
+        @Bean
+        public OidcCibaController oidcCibaController(
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final OidcConfigurationContext oidcConfigurationContext) {
+            return new OidcCibaController(oidcConfigurationContext);
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -374,10 +425,11 @@ class OidcEndpointsConfiguration {
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OidcJwksRotationEndpoint jwksRotationEndpoint(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("oidcJsonWebKeystoreRotationService")
             final ObjectProvider<OidcJsonWebKeystoreRotationService> oidcJsonWebKeystoreRotationService) {
-            return new OidcJwksRotationEndpoint(casProperties, oidcJsonWebKeystoreRotationService);
+            return new OidcJwksRotationEndpoint(casProperties, applicationContext, oidcJsonWebKeystoreRotationService);
         }
     }
 

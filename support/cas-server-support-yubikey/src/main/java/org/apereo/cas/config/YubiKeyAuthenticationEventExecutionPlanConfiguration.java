@@ -44,6 +44,7 @@ import org.springframework.boot.actuate.autoconfigure.endpoint.condition.Conditi
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -203,9 +204,10 @@ class YubiKeyAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public YubiKeyAccountRegistryEndpoint yubiKeyAccountRegistryEndpoint(
         final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("yubiKeyAccountRegistry")
         final ObjectProvider<YubiKeyAccountRegistry> yubiKeyAccountRegistry) {
-        return new YubiKeyAccountRegistryEndpoint(casProperties, yubiKeyAccountRegistry);
+        return new YubiKeyAccountRegistryEndpoint(casProperties, applicationContext, yubiKeyAccountRegistry);
     }
 
     @ConditionalOnMissingBean(name = "yubikeyMultifactorAuthenticationProvider")

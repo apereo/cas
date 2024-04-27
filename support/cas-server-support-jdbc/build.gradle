@@ -7,7 +7,7 @@ ext {
     ]
 }
 dependencies {
-    implementation libraries.persondirectory
+
 
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")

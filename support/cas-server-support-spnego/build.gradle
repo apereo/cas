@@ -9,7 +9,7 @@ dependencies {
 
     implementation files("./lib/jcifs-ext.jar")
     implementation libraries.jcifs
-    implementation libraries.persondirectory
+
 
     testImplementation project(path: ":support:cas-server-support-ldap-core", configuration: "tests")
 

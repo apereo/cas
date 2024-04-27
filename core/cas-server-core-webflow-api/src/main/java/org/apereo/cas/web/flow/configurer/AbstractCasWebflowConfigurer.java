@@ -539,7 +539,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         val field = ReflectionUtils.findField(state.getTransitionSet().getClass(), "transitions");
         ReflectionUtils.makeAccessible(field);
         val transitions = (List<Transition>) ReflectionUtils.getField(field, state.getTransitionSet());
-        Objects.requireNonNull(transitions).add(0, transition);
+        Objects.requireNonNull(transitions).addFirst(transition);
         LOGGER.trace("Added transition [{}] to the state [{}]", transition.getId(), state.getId());
         return transition;
     }

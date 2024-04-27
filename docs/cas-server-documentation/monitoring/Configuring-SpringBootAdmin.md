@@ -40,7 +40,7 @@ communication between the CAS server and the Spring Boot Admin server, [please s
 
 {% include_cached casproperties.html thirdPartyStartsWith="spring.boot.admin.client" %}
 
-[bootadmindocs]: https://codecentric.github.io/spring-boot-admin/current/
+[bootadmindocs]: https://github.com/codecentric/spring-boot-admin
          
 ## Security
 

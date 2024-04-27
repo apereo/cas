@@ -9,7 +9,6 @@ import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowConfigurer;
 import lombok.val;
 import org.springframework.binding.mapping.impl.DefaultMapping;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
@@ -31,7 +30,7 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
                                                        final ConfigurableApplicationContext applicationContext,
                                                        final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
-        setOrder(Ordered.LOWEST_PRECEDENCE);
+        setOrder(casProperties.getAuthn().getPasswordless().getWebflow().getOrder());
     }
 
     @Override

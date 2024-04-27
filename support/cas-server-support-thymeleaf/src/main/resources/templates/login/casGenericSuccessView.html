@@ -133,6 +133,8 @@
                                 </thead>
                                 <tbody class="mdc-data-table__content">
 
+                                <script type="text/javascript">let activeServiceId = null;</script>
+                                
                                 <tr th:each="service : ${authorizedServices}" class="mdc-data-table__row">
                                     <td class="mdc-data-table__cell">
                                         <i class="mdi mdi-web fas fa-globe" th:unless="${service.logo}" aria-hidden="true"></i>
@@ -143,10 +145,10 @@
 
                                         <script th:inline="javascript">
                                             /*<![CDATA[*/
-                                            let serviceId = /*[[${service.serviceId}]]*/;
-                                            if (isValidURL(serviceId)) {
+                                            activeServiceId = /*[[${service.serviceId}]]*/;
+                                            if (isValidURL(activeServiceId)) {
                                                 let id = /*[[${'service' + service.id}]]*/;
-                                                $(`a#${id}`).attr("href", serviceId);
+                                                $(`a#${id}`).attr("href", activeServiceId);
                                             }
                                             /*]]>*/
                                         </script>

@@ -13,6 +13,12 @@ import org.apereo.cas.authentication.policy.NotPreventedAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RequiredAttributesAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RequiredAuthenticationHandlerAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RestfulAuthenticationPolicy;
+import org.apereo.cas.authentication.principal.merger.AttributeMerger;
+import org.apereo.cas.authentication.principal.merger.MultivaluedAttributeMerger;
+import org.apereo.cas.authentication.principal.merger.NoncollidingAttributeAdder;
+import org.apereo.cas.authentication.principal.merger.ReplacingAttributeAdder;
+import org.apereo.cas.authentication.principal.merger.ReturnChangesAttributeMerger;
+import org.apereo.cas.authentication.principal.merger.ReturnOriginalAttributeMerger;
 import org.apereo.cas.authentication.support.password.DefaultPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.GroovyPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.RejectResultCodePasswordPolicyHandlingStrategy;
@@ -36,12 +42,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apereo.services.persondir.support.merger.IAttributeMerger;
-import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
-import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
-import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
-import org.apereo.services.persondir.support.merger.ReturnChangesAdditiveAttributeMerger;
-import org.apereo.services.persondir.support.merger.ReturnOriginalAdditiveAttributeMerger;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
 import java.nio.charset.StandardCharsets;
@@ -87,7 +87,7 @@ public class CoreAuthenticationUtils {
      * @param mergingPolicy the merging policy
      * @return the attribute merger
      */
-    public static IAttributeMerger getAttributeMerger(final PrincipalAttributesCoreProperties.MergingStrategyTypes mergingPolicy) {
+    public static AttributeMerger getAttributeMerger(final PrincipalAttributesCoreProperties.MergingStrategyTypes mergingPolicy) {
         switch (mergingPolicy) {
             case MULTIVALUED -> {
                 val merger = new MultivaluedAttributeMerger();
@@ -98,10 +98,10 @@ public class CoreAuthenticationUtils {
                 return new NoncollidingAttributeAdder();
             }
             case SOURCE -> {
-                return new ReturnOriginalAdditiveAttributeMerger();
+                return new ReturnOriginalAttributeMerger();
             }
             case DESTINATION -> {
-                return new ReturnChangesAdditiveAttributeMerger();
+                return new ReturnChangesAttributeMerger();
             }
             default -> {
                 return new ReplacingAttributeAdder();
@@ -155,7 +155,7 @@ public class CoreAuthenticationUtils {
      */
     public static Map<String, List<Object>> mergeAttributes(final Map<String, List<Object>> currentAttributes,
                                                             final Map<String, List<Object>> attributesToMerge,
-                                                            final IAttributeMerger merger) {
+                                                            final AttributeMerger merger) {
         val toModify = currentAttributes.entrySet()
             .stream()
             .map(entry -> Pair.of(entry.getKey(), CollectionUtils.toCollection(entry.getValue(), ArrayList.class)))

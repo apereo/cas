@@ -1,6 +1,6 @@
 package org.apereo.cas.persondir;
 
-import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.springframework.core.Ordered;
 
 /**
@@ -17,12 +17,12 @@ public interface PersonDirectoryAttributeRepositoryCustomizer extends Ordered {
      * @param repository the repository
      * @return true/false
      */
-    boolean supports(IPersonAttributeDao repository);
+    boolean supports(PersonAttributeDao repository);
 
     /**
      * Customize.
      *
      * @param repository the repository
      */
-    void customize(IPersonAttributeDao repository);
+    void customize(PersonAttributeDao repository);
 }

@@ -4,12 +4,14 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
+import org.apereo.cas.authentication.attribute.MergingPersonAttributeDaoImpl;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +19,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,7 +69,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
                     LOGGER.debug("Resolved principal [{}]", resolvedPrincipal);
                     principals.add(resolvedPrincipal);
                 } else {
-                    LOGGER.warn("Unable to resolve principal via [{}]", resolver.getName());
+                    LOGGER.debug("Unable to resolve principal via [{}]", resolver.getName());
                 }
             });
         if (principals.isEmpty()) {
@@ -104,7 +104,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
     }
 
     @Override
-    public IPersonAttributeDao getAttributeRepository() {
+    public PersonAttributeDao getAttributeRepository() {
         val dao = new MergingPersonAttributeDaoImpl();
         dao.setPersonAttributeDaos(this.chain.stream().map(PrincipalResolver::getAttributeRepository).collect(Collectors.toList()));
         return dao;

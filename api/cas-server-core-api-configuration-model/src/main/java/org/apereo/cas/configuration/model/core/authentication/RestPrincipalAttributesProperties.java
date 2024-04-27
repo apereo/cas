@@ -32,13 +32,7 @@ public class RestPrincipalAttributesProperties extends RestEndpointProperties {
      * merging strategies.
      */
     private int order;
-
-    /**
-     * Whether attribute repository should consider the underlying
-     * attribute names in a case-insensitive manner.
-     */
-    private boolean caseInsensitive;
-
+    
     /**
      * A value can be assigned to this field to uniquely identify this resolver.
      */

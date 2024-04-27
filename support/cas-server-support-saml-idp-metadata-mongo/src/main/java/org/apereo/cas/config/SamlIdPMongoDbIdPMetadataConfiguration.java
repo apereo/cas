@@ -124,6 +124,7 @@ class SamlIdPMongoDbIdPMetadataConfiguration {
                 val idp = casProperties.getAuthn().getSamlIdp();
                 return new MongoDbSamlIdPMetadataLocator(samlIdPMetadataGeneratorCipherExecutor,
                     samlIdPMetadataCache, mongoDbSamlIdPMetadataTemplate,
+                    applicationContext,
                     idp.getMetadata().getMongo().getIdpMetadataCollection());
             })
             .otherwiseProxy()

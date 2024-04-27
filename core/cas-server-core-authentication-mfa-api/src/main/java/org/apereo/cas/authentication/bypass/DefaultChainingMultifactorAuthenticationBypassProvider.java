@@ -10,6 +10,7 @@ import org.apereo.cas.services.RegisteredService;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -29,6 +30,7 @@ import java.util.Optional;
  */
 @Getter
 @RequiredArgsConstructor
+@ToString(of = "multifactorAuthenticationProviderBypassEvaluators")
 public class DefaultChainingMultifactorAuthenticationBypassProvider implements ChainingMultifactorAuthenticationProviderBypassEvaluator {
     @Serial
     private static final long serialVersionUID = 2397239625822397286L;

@@ -39,8 +39,8 @@ async function authenticateWithRestApi(username, status = 200) {
     await cas.assertInnerTextStartsWith(page, "#loginErrorsPanel p", "Authentication attempt has failed");
     await browser.close();
 
-    let restResult = await authenticateWithRestApi("casweb");
+    const restResult = await authenticateWithRestApi("casweb");
     assert(restResult.authentication.principal.id === "casweb");
 
-    restResult = await authenticateWithRestApi("casrest", 401);
+    await authenticateWithRestApi("casrest", 401);
 })();

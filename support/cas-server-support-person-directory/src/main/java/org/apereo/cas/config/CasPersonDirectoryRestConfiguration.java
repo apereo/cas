@@ -1,9 +1,12 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.attribute.SimpleUsernameAttributeProvider;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
+import org.apereo.cas.persondir.RestfulPersonAttributeDao;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -13,9 +16,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.RestfulPersonAttributeDao;
-import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -50,19 +50,18 @@ class CasPersonDirectoryRestConfiguration {
         @ConditionalOnMissingBean(name = "restfulAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public BeanContainer<IPersonAttributeDao> restfulAttributeRepositories(
+        public BeanContainer<PersonAttributeDao> restfulAttributeRepositories(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(BeanContainer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
-                    val list = new ArrayList<IPersonAttributeDao>();
+                    val list = new ArrayList<PersonAttributeDao>();
                     casProperties.getAuthn().getAttributeRepository().getRest()
                         .stream()
                         .filter(rest -> StringUtils.isNotBlank(rest.getUrl()))
                         .forEach(rest -> {
                             val dao = new RestfulPersonAttributeDao();
-                            dao.setCaseInsensitiveUsername(rest.isCaseInsensitive());
                             dao.setOrder(rest.getOrder());
                             FunctionUtils.doIfNotNull(rest.getId(), id -> dao.setId(id));
                             dao.setUrl(rest.getUrl());
@@ -103,13 +102,13 @@ class CasPersonDirectoryRestConfiguration {
         public PersonDirectoryAttributeRepositoryPlanConfigurer restfulPersonDirectoryAttributeRepositoryPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("restfulAttributeRepositories")
-            final BeanContainer<IPersonAttributeDao> restfulAttributeRepositories) {
+            final BeanContainer<PersonAttributeDao> restfulAttributeRepositories) {
             return BeanSupplier.of(PersonDirectoryAttributeRepositoryPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> {
                     val results = restfulAttributeRepositories.toList()
                         .stream()
-                        .filter(IPersonAttributeDao::isEnabled)
+                        .filter(PersonAttributeDao::isEnabled)
                         .collect(Collectors.toList());
                     plan.registerAttributeRepositories(results);
                 })

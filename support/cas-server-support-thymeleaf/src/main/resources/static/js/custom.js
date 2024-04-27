@@ -1,0 +1,5 @@
+/*
+  This JS file is meant to be customized by deployments
+  and is intentionally left empty. Anything that is added
+  here should be able override the default Javascript in the application.
+ */

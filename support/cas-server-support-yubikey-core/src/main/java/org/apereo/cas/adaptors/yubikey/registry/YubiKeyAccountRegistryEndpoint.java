@@ -4,11 +4,8 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CompressionUtils;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
-
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +13,8 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -28,7 +26,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -41,17 +38,15 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RestControllerEndpoint(id = "yubikeyAccountRepository", enableByDefault = false)
+@Endpoint(id = "yubikeyAccountRepository", enableByDefault = false)
 @Slf4j
-public class YubiKeyAccountRegistryEndpoint extends BaseCasActuatorEndpoint {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).build().toObjectMapper();
-
+public class YubiKeyAccountRegistryEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<YubiKeyAccountRegistry> registry;
 
     public YubiKeyAccountRegistryEndpoint(final CasConfigurationProperties casProperties,
+                                          final ConfigurableApplicationContext applicationContext,
                                           final ObjectProvider<YubiKeyAccountRegistry> registry) {
-        super(casProperties);
+        super(casProperties, applicationContext);
         this.registry = registry;
     }
 

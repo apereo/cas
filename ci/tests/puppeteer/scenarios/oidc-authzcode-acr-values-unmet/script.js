@@ -15,7 +15,7 @@ const assert = require("assert");
     await cas.sleep(1000);
     await cas.loginWith(page);
     await cas.sleep(2000);
-    await cas.log(`Page URL: ${await page.url()}`);
+    await cas.logPage(page);
     assert(await page.url() === "https://apereo.github.io/?error=unmet_authentication_requirements");
     await browser.close();
 })();

@@ -75,6 +75,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.integration.transaction.PseudoTransactionManager;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -260,6 +261,7 @@ class CasCoreTicketsConfiguration {
             final CasConfigurationProperties casProperties,
             final List<TicketCatalogConfigurer> configurers) {
             val plan = new DefaultTicketCatalog();
+            AnnotationAwareOrderComparator.sortIfNecessary(configurers);
             configurers.forEach(Unchecked.consumer(cfg -> {
                 LOGGER.trace("Configuring ticket metadata registration plan [{}]", cfg.getName());
                 cfg.configureTicketCatalog(plan, casProperties);

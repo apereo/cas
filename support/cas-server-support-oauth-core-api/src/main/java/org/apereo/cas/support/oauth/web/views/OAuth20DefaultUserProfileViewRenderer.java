@@ -1,16 +1,23 @@
 package org.apereo.cas.support.oauth.web.views;
 
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.attribute.AttributeDefinition;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.configuration.model.support.oauth.OAuthCoreProperties;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.util.CollectionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jose4j.jwt.JwtClaims;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -27,6 +34,8 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
 
     private final OAuthProperties oauthProperties;
 
+    private final AttributeDefinitionStore attributeDefinitionStore;
+    
     @Override
     public ResponseEntity render(final Map<String, Object> model,
                                  final OAuth20AccessToken accessToken,
@@ -38,7 +47,8 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
     protected ResponseEntity renderProfileForModel(final Map<String, Object> userProfile,
                                                    final OAuth20AccessToken accessToken,
                                                    final HttpServletResponse response) {
-        return new ResponseEntity<>(userProfile, HttpStatus.OK);
+        val claims = convertUserProfileIntoClaims(userProfile);
+        return new ResponseEntity<>(claims.getClaimsMap(), HttpStatus.OK);
     }
 
     protected Map<String, Object> getRenderedUserProfile(final Map<String, Object> model,
@@ -71,5 +81,32 @@ public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfile
             .forEach(attributeName -> flattened.put(attributeName, model.get(attributeName)));
         LOGGER.trace("Flattened user profile attributes with the final model as [{}]", model);
         return flattened;
+    }
+
+
+    protected JwtClaims convertUserProfileIntoClaims(final Map<String, Object> userProfile) {
+        val claims = new JwtClaims();
+        userProfile
+            .entrySet()
+            .stream()
+            .filter(entry -> !entry.getKey().startsWith(CentralAuthenticationService.NAMESPACE))
+            .forEach(entry -> {
+                if (OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES.equals(entry.getKey())) {
+                    val attributes = (Map<String, Object>) entry.getValue();
+                    val newAttributes = new HashMap<String, Object>();
+                    attributes.forEach((attrName, attrValue) -> newAttributes.put(attrName, determineAttributeValue(attrName, attrValue)));
+                    claims.setClaim(entry.getKey(), newAttributes);
+                } else {
+                    claims.setClaim(entry.getKey(), determineAttributeValue(entry.getKey(), entry.getValue()));
+                }
+            });
+        return claims;
+    }
+
+    protected Object determineAttributeValue(final String name, final Object attrValue) {
+        val values = CollectionUtils.toCollection(attrValue, ArrayList.class);
+        val result = attributeDefinitionStore.locateAttributeDefinition(name, AttributeDefinition.class);
+        return result.map(defn -> defn.toAttributeValue(values))
+            .orElseGet(() -> values.size() == 1 ? values.getFirst() : values);
     }
 }

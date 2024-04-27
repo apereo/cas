@@ -33,18 +33,16 @@ public class MultifactorAuthenticationTrustUtils {
     /**
      * Track trusted multifactor authentication attribute.
      *
-     * @param authn         the authn
-     * @param attributeName the attribute name
+     * @param authentication the authentication
+     * @param attributeName  the attribute name
      */
-    public static void trackTrustedMultifactorAuthenticationAttribute(
-        final Authentication authn,
-        final String attributeName) {
+    public static void trackTrustedMultifactorAuthenticationAttribute(final Authentication authentication, final String attributeName) {
 
-        val newAuthn = DefaultAuthenticationBuilder.newInstance(authn)
+        val newAuthn = DefaultAuthenticationBuilder.newInstance(authentication)
             .addAttribute(attributeName, Boolean.TRUE)
             .build();
         LOGGER.debug("Updated authentication session to remember trusted multifactor record via [{}]", attributeName);
-        authn.updateAttributes(newAuthn);
+        authentication.updateAttributes(newAuthn);
     }
 
     /**

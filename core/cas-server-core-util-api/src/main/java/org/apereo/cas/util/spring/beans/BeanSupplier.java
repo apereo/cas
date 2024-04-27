@@ -43,7 +43,7 @@ public interface BeanSupplier<T> extends Supplier<T> {
      * @return the bean supplier
      */
     static <T> BeanSupplier<T> of(final Class<T> clazz) {
-        return new DefaultBeanSupplier<T>(clazz);
+        return new DefaultBeanSupplier<>(clazz);
     }
 
     /**

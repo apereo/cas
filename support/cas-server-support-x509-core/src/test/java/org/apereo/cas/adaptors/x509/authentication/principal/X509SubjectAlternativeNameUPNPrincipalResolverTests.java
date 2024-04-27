@@ -5,12 +5,12 @@ import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -115,7 +115,7 @@ class X509SubjectAlternativeNameUPNPrincipalResolverTests {
             .resolveAttributes(true)
             .applicationContext(applicationContext)
             .attributeRepositoryResolver(attributeRepositoryResolver)
-            .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
+            .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(PersonAttributeDao.WILDCARD))
             .build();
         val resolver = new X509SubjectAlternativeNameUPNPrincipalResolver(context);
         resolver.setAlternatePrincipalAttribute(alternatePrincipalAttribute);
@@ -151,7 +151,7 @@ class X509SubjectAlternativeNameUPNPrincipalResolverTests {
             .useCurrentPrincipalId(false)
             .resolveAttributes(true)
             .applicationContext(applicationContext)
-            .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(IPersonAttributeDao.WILDCARD))
+            .activeAttributeRepositoryIdentifiers(CollectionUtils.wrapSet(PersonAttributeDao.WILDCARD))
             .build();
         val resolver = new X509SubjectAlternativeNameUPNPrincipalResolver(context);
         resolver.setX509AttributeExtractor(new DefaultX509AttributeExtractor());

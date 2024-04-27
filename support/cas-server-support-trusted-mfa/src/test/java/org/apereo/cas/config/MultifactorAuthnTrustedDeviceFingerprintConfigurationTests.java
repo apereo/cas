@@ -1,7 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
-import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintComponentManager;
+import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintExtractor;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
 
 import org.junit.jupiter.api.Tag;
@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.trusted.device-fingerprint.client-ip.enabled=true",
         "cas.authn.mfa.trusted.device-fingerprint.geolocation.enabled=true",
         "cas.authn.mfa.trusted.device-fingerprint.user-agent.enabled=true",
+        "cas.authn.mfa.trusted.device-fingerprint.browser.enabled=true",
 
         "cas.authn.mfa.trusted.device-fingerprint.cookie.enabled=true",
         "cas.authn.mfa.trusted.device-fingerprint.cookie.crypto.enabled=false",
@@ -38,22 +39,21 @@ class MultifactorAuthnTrustedDeviceFingerprintConfigurationTests {
 
     @Autowired
     @Qualifier("deviceFingerprintClientIpComponentExtractor")
-    private DeviceFingerprintComponentManager deviceFingerprintClientIpComponentExtractor;
+    private DeviceFingerprintExtractor deviceFingerprintClientIpComponentExtractor;
 
     @Autowired
     @Qualifier("deviceFingerprintGeoLocationComponentExtractor")
-    private DeviceFingerprintComponentManager deviceFingerprintGeoLocationComponentExtractor;
+    private DeviceFingerprintExtractor deviceFingerprintGeoLocationComponentExtractor;
 
     @Autowired
     @Qualifier("deviceFingerprintUserAgentComponentExtractor")
-    private DeviceFingerprintComponentManager deviceFingerprintUserAgentComponentExtractor;
+    private DeviceFingerprintExtractor deviceFingerprintUserAgentComponentExtractor;
 
     @Test
     void verifyOperation() throws Throwable {
         assertNotNull(deviceFingerprintClientIpComponentExtractor);
         assertNotNull(deviceFingerprintGeoLocationComponentExtractor);
         assertNotNull(deviceFingerprintUserAgentComponentExtractor);
-
-        assertEquals(4, deviceFingerprintStrategy.deviceFingerprintComponentManagers().size());
+        assertEquals(5, deviceFingerprintStrategy.getDeviceFingerprintExtractors().size());
     }
 }

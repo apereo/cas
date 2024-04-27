@@ -44,16 +44,24 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSig
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.val;
+import net.shibboleth.shared.resolver.CriteriaSet;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.velocity.app.VelocityEngine;
+import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
+import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
+import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
+import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
+import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.AuthnContext;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -61,9 +69,17 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Issuer;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.core.Subject;
+import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.Organization;
 import org.opensaml.saml.saml2.metadata.OrganizationName;
+import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.session.SessionStore;
+import org.pac4j.jee.context.JEEContext;
+import org.pac4j.jee.context.session.JEESessionStore;
+import org.pac4j.saml.client.SAML2Client;
+import org.pac4j.saml.config.SAML2Configuration;
+import org.pac4j.saml.context.SAML2MessageContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -82,14 +98,19 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This is {@link BaseSamlIdPConfigurationTests}.
@@ -290,6 +311,55 @@ public abstract class BaseSamlIdPConfigurationTests {
             samlRegisteredService, samlRegisteredService.getServiceId()).get();
         return samlIdPObjectSigner.encode(authnRequest, samlRegisteredService,
             adaptor, response, request, SAMLConstants.SAML2_POST_BINDING_URI, authnRequest, new MessageContext());
+    }
+
+
+    protected SAML2MessageContext buildSamlMessageContext() throws Exception {
+        val idpMetadata = new File("src/test/resources/metadata/idp-metadata.xml").getCanonicalPath();
+        val keystorePath = new File(FileUtils.getTempDirectory(), "keystore").getCanonicalPath();
+        val spMetadataPath = new File(FileUtils.getTempDirectory(), "sp-metadata.xml").getCanonicalPath();
+
+        val saml2Configuration = new SAML2Configuration(keystorePath,
+            "changeit", "changeit", idpMetadata);
+        saml2Configuration.setServiceProviderEntityId("cas:example:sp");
+        saml2Configuration.setServiceProviderMetadataPath(spMetadataPath);
+        saml2Configuration.init();
+
+        val saml2Client = new SAML2Client(saml2Configuration);
+        saml2Client.setCallbackUrl("http://callback.example.org");
+        saml2Client.init();
+
+        val httpRequest = new MockHttpServletRequest();
+        httpRequest.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+
+        val response = new MockHttpServletResponse();
+        val ctx = new JEEContext(httpRequest, response);
+
+        var saml2MessageContext = new SAML2MessageContext(new CallContext(ctx, new JEESessionStore()));
+        saml2MessageContext.setSaml2Configuration(saml2Configuration);
+
+        val peer = saml2MessageContext.getMessageContext().ensureSubcontext(SAMLPeerEntityContext.class);
+        assertNotNull(peer);
+        peer.setEntityId("https://cas.example.org/idp");
+        val md = peer.ensureSubcontext(SAMLMetadataContext.class);
+        assertNotNull(md);
+        val idpResolver = SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver, true);
+        md.setRoleDescriptor(idpResolver.resolveSingle(new CriteriaSet(
+            new EntityIdCriterion(Objects.requireNonNull(peer.getEntityId())),
+            new EntityRoleCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME))));
+        val self = saml2MessageContext.getMessageContext().ensureSubcontext(SAMLSelfEntityContext.class);
+        assertNotNull(self);
+        self.setEntityId(saml2Configuration.getServiceProviderEntityId());
+        val sp = self.ensureSubcontext(SAMLMetadataContext.class);
+        assertNotNull(sp);
+        val spRes = new InMemoryResourceMetadataResolver(new File(spMetadataPath), openSamlConfigBean);
+        spRes.setId(getClass().getSimpleName());
+        spRes.initialize();
+        val spResolver = SamlIdPUtils.getRoleDescriptorResolver(spRes, true);
+        sp.setRoleDescriptor(spResolver.resolveSingle(new CriteriaSet(
+            new EntityIdCriterion(Objects.requireNonNull(self.getEntityId())),
+            new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME))));
+        return saml2MessageContext;
     }
 
     @TestConfiguration(value = "SamlIdPMetadataTestConfiguration", proxyBeanMethods = false)

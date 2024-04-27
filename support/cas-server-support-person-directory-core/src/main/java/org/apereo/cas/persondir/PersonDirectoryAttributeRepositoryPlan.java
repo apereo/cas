@@ -1,7 +1,6 @@
 package org.apereo.cas.persondir;
 
-import org.apereo.services.persondir.IPersonAttributeDao;
-
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
@@ -20,7 +19,7 @@ public interface PersonDirectoryAttributeRepositoryPlan {
      *
      * @param repository the repository
      */
-    void registerAttributeRepository(IPersonAttributeDao repository);
+    void registerAttributeRepository(PersonAttributeDao repository);
 
     /**
      * Find attribute repositories and return the stream.
@@ -28,7 +27,7 @@ public interface PersonDirectoryAttributeRepositoryPlan {
      * @param filter the filter
      * @return the stream
      */
-    default Stream<IPersonAttributeDao> findAttributeRepositories(final Predicate<IPersonAttributeDao> filter) {
+    default Stream<PersonAttributeDao> findAttributeRepositories(final Predicate<PersonAttributeDao> filter) {
         return getAttributeRepositories().stream().filter(filter);
     }
 
@@ -37,7 +36,7 @@ public interface PersonDirectoryAttributeRepositoryPlan {
      *
      * @param repository the repository
      */
-    default void registerAttributeRepositories(final IPersonAttributeDao... repository) {
+    default void registerAttributeRepositories(final PersonAttributeDao... repository) {
         Arrays.stream(repository).forEach(this::registerAttributeRepository);
     }
 
@@ -46,7 +45,7 @@ public interface PersonDirectoryAttributeRepositoryPlan {
      *
      * @param repository the repository
      */
-    default void registerAttributeRepositories(final List<IPersonAttributeDao> repository) {
+    default void registerAttributeRepositories(final List<PersonAttributeDao> repository) {
         repository.forEach(this::registerAttributeRepository);
     }
 
@@ -64,5 +63,5 @@ public interface PersonDirectoryAttributeRepositoryPlan {
      *
      * @return the attribute repositories
      */
-    List<IPersonAttributeDao> getAttributeRepositories();
+    List<PersonAttributeDao> getAttributeRepositories();
 }

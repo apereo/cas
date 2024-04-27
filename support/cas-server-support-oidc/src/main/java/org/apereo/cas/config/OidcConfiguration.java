@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.assurance.AssuranceVerificationJsonSource;
@@ -53,6 +54,9 @@ import org.apereo.cas.oidc.scopes.DefaultOidcAttributeReleasePolicyFactory;
 import org.apereo.cas.oidc.scopes.OidcAttributeReleasePolicyFactory;
 import org.apereo.cas.oidc.services.OidcServiceRegistryListener;
 import org.apereo.cas.oidc.services.OidcServicesManagerRegisteredServiceLocator;
+import org.apereo.cas.oidc.ticket.OidcCibaRequestExpirationPolicyBuilder;
+import org.apereo.cas.oidc.ticket.OidcCibaRequestFactory;
+import org.apereo.cas.oidc.ticket.OidcDefaultCibaRequestFactory;
 import org.apereo.cas.oidc.ticket.OidcDefaultPushedAuthorizationRequestFactory;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestExpirationPolicyBuilder;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestFactory;
@@ -154,6 +158,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.web.servlet.HandlerInterceptor;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -780,7 +785,13 @@ class OidcConfiguration {
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             final List<OAuth20IntrospectionResponseGenerator> oauthIntrospectionResponseGenerator,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-            final PrincipalResolver principalResolver) {
+            final PrincipalResolver principalResolver,
+            @Qualifier("taskScheduler")
+            final TaskScheduler taskScheduler,
+            @Qualifier(CommunicationsManager.BEAN_NAME)
+            final CommunicationsManager communicationManager,
+            @Qualifier("webflowCipherExecutor")
+            final CipherExecutor webflowCipherExecutor) {
 
             val sortedIdClaimCollectors = new ArrayList<>(oidcIdTokenClaimCollectors);
             AnnotationAwareOrderComparator.sortIfNecessary(sortedIdClaimCollectors);
@@ -837,6 +848,9 @@ class OidcConfiguration {
                 .clientSecretValidator(oauth20ClientSecretValidator)
                 .attributeDefinitionStore(attributeDefinitionStore)
                 .principalResolver(principalResolver)
+                .taskScheduler(taskScheduler)
+                .communicationsManager(communicationManager)
+                .webflowCipherExecutor(webflowCipherExecutor)
                 .build();
         }
     }
@@ -1044,6 +1058,42 @@ class OidcConfiguration {
             final OidcPushedAuthorizationRequestFactory oidcPushedAuthorizationRequestFactory) {
             return () -> oidcPushedAuthorizationRequestFactory;
         }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "cibaRequestExpirationPolicy")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ExpirationPolicyBuilder cibaRequestExpirationPolicy(final CasConfigurationProperties casProperties) {
+            return new OidcCibaRequestExpirationPolicyBuilder(casProperties);
+        }
+        
+        @ConditionalOnMissingBean(name = "oidcCibaRequestFactory")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public OidcCibaRequestFactory oidcCibaRequestFactory(
+            @Qualifier("cibaRequestExpirationPolicy")
+            final ExpirationPolicyBuilder cibaRequestExpirationPolicy,
+            @Qualifier("cibaRequestIdGenerator")
+            final UniqueTicketIdGenerator cibaRequestIdGenerator) {
+            return new OidcDefaultCibaRequestFactory(cibaRequestIdGenerator, cibaRequestExpirationPolicy);
+        }
+
+        @ConditionalOnMissingBean(name = "cibaRequestIdGenerator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public UniqueTicketIdGenerator cibaRequestIdGenerator() {
+            return new DefaultUniqueTicketIdGenerator();
+        }
+
+
+        @ConditionalOnMissingBean(name = "oidcCibaRequestFactoryConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public TicketFactoryExecutionPlanConfigurer oidcCibaRequestFactoryConfigurer(
+            @Qualifier("oidcCibaRequestFactory")
+            final OidcCibaRequestFactory oidcCibaRequestFactory) {
+            return () -> oidcCibaRequestFactory;
+        }
+
     }
 
     @Configuration(value = "OidcResponseModesConfiguration", proxyBeanMethods = false)

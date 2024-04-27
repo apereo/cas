@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
  * @since 7.1.0
  */
 @RequiredArgsConstructor
+@SuppressWarnings("EnumOrdinal")
 public class OAuth20CodeCompactor implements TicketCompactor<OAuth20Code> {
     private final ObjectProvider<TicketFactory> ticketFactory;
     private final ServiceFactory serviceFactory;

@@ -96,10 +96,7 @@ function createTag {
   previousTagCommit=$(git rev-list -n 1 "$previousTag")
   currentCommit=$(git log -1 --format="%H")
   echo "Parsing the commit log between ${previousTagCommit} and ${currentCommit}..."
-  contributors=$(git shortlog -sen "${previousTagCommit}".."${currentCommit}")
-  currentBranch=$(git branch --show-current)
-  releaseTemplate=$(sed -e "s/{contributors}/${contributors}/g" -e "s/{branch}/${currentBranch}/g" -e "s/{release}/${releaseVersion}/g" "$PWD/release.template")
-  echo "$releaseTemplate"
+  git shortlog -sen "${previousTagCommit}".."${currentCommit}"
 }
 
 function finished {

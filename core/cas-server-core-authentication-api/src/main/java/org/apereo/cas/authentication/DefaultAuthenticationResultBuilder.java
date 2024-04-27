@@ -2,13 +2,13 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.merger.AttributeMerger;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.services.persondir.support.merger.IAttributeMerger;
 
 import java.io.Serial;
 import java.time.ZoneOffset;
@@ -112,13 +112,13 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
     }
 
     protected void mergeAuthenticationAttributes(final Map<String, List<Object>> authenticationAttributes,
-                                                 final IAttributeMerger merger, final Authentication authn) {
+                                                 final AttributeMerger merger, final Authentication authn) {
         authenticationAttributes.putAll(CoreAuthenticationUtils.mergeAttributes(authenticationAttributes, authn.getAttributes(), merger));
         LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result", authenticationAttributes);
     }
 
     protected void mergePrincipalAttributes(final Map<String, List<Object>> principalAttributes,
-                                            final IAttributeMerger merger,
+                                            final AttributeMerger merger,
                                             final Authentication authn) {
         val authenticatedPrincipal = authn.getPrincipal();
         LOGGER.debug("Evaluating authentication principal [{}] for inclusion in result", authenticatedPrincipal);

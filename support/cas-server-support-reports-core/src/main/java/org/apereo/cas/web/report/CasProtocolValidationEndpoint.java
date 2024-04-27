@@ -6,21 +6,22 @@ import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.v1.LegacyValidateController;
 import org.apereo.cas.web.v2.ServiceValidateController;
 import org.apereo.cas.web.v3.V3ServiceValidateController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,10 +35,15 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@RequiredArgsConstructor
-@RestControllerEndpoint(id = "casValidate", enableByDefault = false)
-public class CasProtocolValidationEndpoint {
+@Endpoint(id = "casValidate", enableByDefault = false)
+public class CasProtocolValidationEndpoint extends BaseCasRestActuatorEndpoint {
     private final ServiceValidateConfigurationContext configurationContext;
+
+    public CasProtocolValidationEndpoint(final CasConfigurationProperties casProperties,
+                                         final ServiceValidateConfigurationContext configurationContext) {
+        super(casProperties, configurationContext.getApplicationContext());
+        this.configurationContext = configurationContext;
+    }
 
     /**
      * Validate.
@@ -47,14 +53,14 @@ public class CasProtocolValidationEndpoint {
      * @throws Throwable the throwable
      */
     @PostMapping(value = "/validate",
-                 produces = {MediaType.TEXT_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
-                 consumes = {MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+        produces = {MediaType.TEXT_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+        consumes = {MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     @Operation(summary = "Produce a ticket validation response based on CAS Protocol v1",
-               parameters = {
-                   @Parameter(name = "username", required = true),
-                   @Parameter(name = "password", required = false),
-                   @Parameter(name = "service", required = true)
-               })
+        parameters = {
+            @Parameter(name = "username", required = true),
+            @Parameter(name = "password", required = false),
+            @Parameter(name = "service", required = true)
+        })
     public void validate(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         renderValidationView(request, response, LegacyValidateController.class);
     }
@@ -67,14 +73,14 @@ public class CasProtocolValidationEndpoint {
      * @throws Throwable the throwable
      */
     @PostMapping(value = "/serviceValidate",
-                 produces = {MediaType.TEXT_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
-                 consumes = {MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+        produces = {MediaType.TEXT_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+        consumes = {MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     @Operation(summary = "Produce a ticket validation response based on CAS Protocol v2",
-               parameters = {
-                   @Parameter(name = "username", required = true),
-                   @Parameter(name = "password", required = false),
-                   @Parameter(name = "service", required = true)
-               })
+        parameters = {
+            @Parameter(name = "username", required = true),
+            @Parameter(name = "password", required = false),
+            @Parameter(name = "service", required = true)
+        })
     public void serviceValidate(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         renderValidationView(request, response, ServiceValidateController.class);
     }
@@ -87,14 +93,14 @@ public class CasProtocolValidationEndpoint {
      * @throws Throwable the throwable
      */
     @PostMapping(value = "/p3/serviceValidate",
-                 produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
-                 consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+        produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+        consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     @Operation(summary = "Produce a ticket validation response based on CAS Protocol v3",
-               parameters = {
-                   @Parameter(name = "username", required = true),
-                   @Parameter(name = "password", required = false),
-                   @Parameter(name = "service", required = true)
-               })
+        parameters = {
+            @Parameter(name = "username", required = true),
+            @Parameter(name = "password", required = false),
+            @Parameter(name = "service", required = true)
+        })
     public void p3ServiceValidate(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         renderValidationView(request, response, V3ServiceValidateController.class);
     }

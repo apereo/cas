@@ -100,6 +100,7 @@ public class OAuth20UsernamePasswordAuthenticator implements Authenticator {
             val profile = new CommonProfile();
 
             profile.setId(principal.getId());
+            profile.addAttribute(OAuth20Constants.CLIENT_ID, clientId);
             profile.addAttributes((Map) principal.getAttributes());
 
             val authentication = authenticationResult.getAuthentication();

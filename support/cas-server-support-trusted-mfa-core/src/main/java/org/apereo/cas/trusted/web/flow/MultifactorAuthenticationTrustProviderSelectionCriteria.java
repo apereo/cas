@@ -48,7 +48,7 @@ public class MultifactorAuthenticationTrustProviderSelectionCriteria implements 
         LOGGER.trace("Retrieving trusted authentication records for [{}]", principal);
         val results = mfaTrustEngine.get(principal);
         
-        val fingerprint = deviceFingerprintStrategy.determineFingerprintComponent(principal, request, response);
+        val fingerprint = deviceFingerprintStrategy.determineFingerprint(authentication, request, response);
         LOGGER.trace("Checking trusted authentication records for [{}] that matches [{}]", principal, fingerprint);
 
         val trustedDevices = results.stream().filter(entry -> entry.getDeviceFingerprint().equals(fingerprint)).toList();

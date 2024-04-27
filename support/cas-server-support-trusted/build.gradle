@@ -1,6 +1,6 @@
 description = "Apereo CAS Trusted User Support"
 dependencies {
-    implementation libraries.persondirectory
+
 
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-web-api")
