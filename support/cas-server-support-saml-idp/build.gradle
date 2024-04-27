@@ -53,7 +53,7 @@ dependencies {
 
     implementation libraries.pac4jcore
     implementation libraries.shibutiljavasupport
-    implementation libraries.persondirectory
+
     
     testImplementation libraries.pac4joidcoauth
     testImplementation libraries.pac4jsaml

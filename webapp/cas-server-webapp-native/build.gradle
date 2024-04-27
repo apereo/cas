@@ -22,7 +22,6 @@ ext {
 
 configurations {
     configureEach {
-        exclude(group: "org.apache.groovy", module: "groovy-templates")
         /*
             Log4j does not support Graal VM and leads to com.oracle.svm.core.jdk.UnsupportedFeatureError:
             Defining hidden classes at runtime is not supported. We use logback instead.
@@ -92,9 +91,11 @@ dependencies {
                 project.name.matches(pattern)
             }
 
-            ansi.green("Including CAS module(s): ${projectsToAdd} in native web application")
-            projectsToAdd.each {
-                implementation it
+            if (!projectsToAdd.isEmpty()) {
+                ansi.green("Including CAS module(s): ${projectsToAdd} in native web application")
+                projectsToAdd.each {
+                    implementation it
+                }
             }
         }
     }
@@ -137,6 +138,7 @@ graalvmNative {
             buildArgs.add('-J-Xmx12G')
             buildArgs.add('-J-Xms4G')
             buildArgs.add('--native-image-info')
+            buildArgs.add('--strict-image-heap')
 
             buildArgs.add('-march=native')
 //            buildArgs.add('--pgo-instrument')
@@ -149,10 +151,14 @@ graalvmNative {
 
             buildArgs.add('--initialize-at-build-time=java.beans')
             buildArgs.add('--initialize-at-build-time=com.sun.beans')
+            buildArgs.add('--initialize-at-build-time=com.sun.xml.stream.buffer.sax')
             buildArgs.add('--initialize-at-build-time=groovyjarjarantlr4.v4.runtime')
             buildArgs.add('--initialize-at-build-time=org.codehaus.groovy')
             buildArgs.add('--initialize-at-build-time=org.apache.groovy')
             buildArgs.add('--initialize-at-build-time=groovy.lang')
+            buildArgs.add('--initialize-at-build-time=groovyjarjarasm.asm.Type')
+            buildArgs.add('--initialize-at-build-time=groovyjarjarasm.asm.Handle')
+            buildArgs.add('--initialize-at-build-time=org.apache.xerces.jaxp.datatype')
 
             buildArgs.add('--initialize-at-run-time=com.sun.xml.ws')
             buildArgs.add('--initialize-at-run-time=groovy.grape.GrapeIvy')

@@ -8,11 +8,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CompressionUtils;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.serialization.StringSerializer;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -21,7 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ContentDisposition;
@@ -34,7 +31,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -51,19 +47,14 @@ import java.util.zip.ZipInputStream;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RestControllerEndpoint(id = "registeredServices", enableByDefault = false)
+@Endpoint(id = "registeredServices", enableByDefault = false)
 @Slf4j
-public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).build().toObjectMapper();
-
+public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<ServicesManager> servicesManager;
 
     private final ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory;
 
     private final ObjectProvider<List<? extends StringSerializer<RegisteredService>>> registeredServiceSerializers;
-
-    private final ObjectProvider<ConfigurableApplicationContext> applicationContext;
 
     public RegisteredServicesEndpoint(
         final CasConfigurationProperties casProperties,
@@ -71,11 +62,10 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
         final ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
         final ObjectProvider<List<? extends StringSerializer<RegisteredService>>> registeredServiceSerializers,
         final ObjectProvider<ConfigurableApplicationContext> applicationContext) {
-        super(casProperties);
+        super(casProperties, applicationContext.getObject());
         this.servicesManager = servicesManager;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
         this.registeredServiceSerializers = registeredServiceSerializers;
-        this.applicationContext = applicationContext;
     }
 
     /**
@@ -209,7 +199,7 @@ public class RegisteredServicesEndpoint extends BaseCasActuatorEndpoint {
     @ResponseBody
     @Operation(summary = "Export registered services as a zip file")
     public ResponseEntity<Resource> export() {
-        val serializer = new RegisteredServiceJsonSerializer(applicationContext.getObject());
+        val serializer = new RegisteredServiceJsonSerializer(applicationContext);
         val resource = CompressionUtils.toZipFile(servicesManager.getObject().stream(),
             Unchecked.function(entry -> {
                 val service = (RegisteredService) entry;

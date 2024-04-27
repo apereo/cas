@@ -9,7 +9,7 @@ ext {
 }
 dependencies {
     implementation libraries.redis
-    implementation libraries.persondirectory
+
 
     api project(":api:cas-server-core-api-util")
     

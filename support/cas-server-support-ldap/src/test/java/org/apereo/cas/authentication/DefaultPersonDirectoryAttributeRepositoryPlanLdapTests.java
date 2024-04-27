@@ -4,7 +4,6 @@ import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
 import lombok.val;
@@ -16,10 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
-
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-
+import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -60,7 +58,10 @@ class DefaultPersonDirectoryAttributeRepositoryPlanLdapTests {
     @Test
     void verifyOperation() throws Throwable {
         val creds = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword(CN, "Mellon");
-        val principal = personDirectoryPrincipalResolver.resolve(creds);
+        val principal = personDirectoryPrincipalResolver.resolve(creds,
+            Optional.of(CoreAuthenticationTestUtils.getPrincipal()),
+            Optional.of(new AcceptUsersAuthenticationHandler("handler")),
+            Optional.of(CoreAuthenticationTestUtils.getService()));
         assertNotNull(principal);
         val attributes = principal.getAttributes();
         assertTrue(attributes.containsKey("cn"));

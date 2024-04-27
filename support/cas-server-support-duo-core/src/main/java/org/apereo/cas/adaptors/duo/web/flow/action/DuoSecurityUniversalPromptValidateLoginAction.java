@@ -136,8 +136,10 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
         val webContext = toWebContext(requestContext);
         val registeredService = (RegisteredService) sessionStorage.getSessionAttributes(webContext).get(RegisteredService.class.getSimpleName());
         WebUtils.putRegisteredService(requestContext, registeredService);
+        LOGGER.debug("Restored registered service [{}] into webflow context", registeredService);
         val service = (Service) sessionStorage.getSessionAttributes(webContext).get(Service.class.getSimpleName());
         WebUtils.putServiceIntoFlowScope(requestContext, service);
+        LOGGER.debug("Restored service [{}] into webflow context", service);
     }
 
     protected void populateContextWithCredential(final RequestContext requestContext,

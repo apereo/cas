@@ -10,15 +10,12 @@ import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPProfileSingleLogoutMessageCreator;
 import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.springframework.test.context.TestPropertySource;
-
 import java.net.URI;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,9 +25,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.0.0
  */
 @Tag("SAMLLogout")
-@TestPropertySource(properties =
-    "cas.authn.saml-idp.algs.override-signature-canonicalization-algorithm=http://www.w3.org/2001/10/xml-exc-c14n#"
-)
+@TestPropertySource(properties = {
+    "cas.authn.saml-idp.algs.override-signature-canonicalization-algorithm=http://www.w3.org/2001/10/xml-exc-c14n#",
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata414"
+})
 class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigurationTests {
 
     @Test
@@ -112,7 +110,7 @@ class SamlIdPProfileSingleLogoutMessageCreatorTests extends BaseSamlIdPConfigura
         val result = creator.create(logoutRequest);
         assertNotNull(result);
     }
-    
+
     @Test
     void verifySignByFingerprintOperation() throws Throwable {
         val creator = new SamlIdPProfileSingleLogoutMessageCreator(openSamlConfigBean, servicesManager,

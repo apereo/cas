@@ -64,7 +64,7 @@ class JwtTicketGrantingTicketResourceEntityResponseFactoryTests extends BaseTick
         assertEquals(claims.getSubject(), tgt.getAuthentication().getPrincipal().getId());
         assertEquals(2, claims.getStringArrayClaim("customParameter").length);
         assertNull(claims.getStringClaim(TokenConstants.PARAMETER_NAME_TOKEN));
-        assertNull(claims.getStringClaim(RestHttpRequestCredentialFactory.PARAMETER_USERNAME));
+        assertNotNull(claims.getStringClaim(RestHttpRequestCredentialFactory.PARAMETER_USERNAME));
         assertNull(claims.getStringClaim(RestHttpRequestCredentialFactory.PARAMETER_PASSWORD));
         assertEquals(2, claims.getStringArrayClaim("customParameter").length);
     }

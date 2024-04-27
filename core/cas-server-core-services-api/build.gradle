@@ -14,7 +14,7 @@ dependencies {
     implementation project(":core:cas-server-core-tickets-api")
 
     implementation libraries.bouncycastle
-    implementation libraries.persondirectory
+
     
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-notifications", configuration: "tests")

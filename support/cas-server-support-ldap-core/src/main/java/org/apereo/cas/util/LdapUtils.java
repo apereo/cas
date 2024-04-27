@@ -19,6 +19,7 @@ import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationPropert
 import org.apereo.cas.configuration.model.support.ldap.LdapPasswordPolicyProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.persondir.ActiveDirectoryLdapEntryHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
@@ -33,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.services.persondir.support.ldap.ActiveDirectoryLdapEntryHandler;
 import org.jooq.lambda.Unchecked;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.BindConnectionInitializer;

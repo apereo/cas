@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -23,7 +24,6 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -136,7 +136,7 @@ public class CasRedisAuthenticationAutoConfiguration {
     @ConditionalOnMissingBean(name = "redisPersonAttributeDaos")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public BeanContainer<IPersonAttributeDao> redisPersonAttributeDaos(
+    public BeanContainer<PersonAttributeDao> redisPersonAttributeDaos(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
@@ -168,10 +168,10 @@ public class CasRedisAuthenticationAutoConfiguration {
     public PersonDirectoryAttributeRepositoryPlanConfigurer redisAttributeRepositoryPlanConfigurer(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("redisPersonAttributeDaos")
-        final BeanContainer<IPersonAttributeDao> redisPersonAttributeDaos) {
+        final BeanContainer<PersonAttributeDao> redisPersonAttributeDaos) {
         return BeanSupplier.of(PersonDirectoryAttributeRepositoryPlanConfigurer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> plan -> redisPersonAttributeDaos.toList().stream().filter(IPersonAttributeDao::isEnabled).forEach(plan::registerAttributeRepository))
+            .supply(() -> plan -> redisPersonAttributeDaos.toList().stream().filter(PersonAttributeDao::isEnabled).forEach(plan::registerAttributeRepository))
             .otherwiseProxy()
             .get();
     }

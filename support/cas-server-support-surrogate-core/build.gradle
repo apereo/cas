@@ -1,6 +1,6 @@
 description = "Apereo CAS Surrogate Authentication Core"
 dependencies {
-    implementation libraries.persondirectory
+
 
     implementation project(":support:cas-server-support-surrogate-api")
     implementation project(":support:cas-server-support-person-directory-core")

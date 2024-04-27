@@ -2,7 +2,10 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -25,12 +28,23 @@ import java.util.stream.Collectors;
  * @since 4.3
  */
 @Slf4j
-public record DefaultMultifactorAuthenticationContextValidator(String authenticationContextAttribute, String mfaTrustedAuthnAttributeName, ConfigurableApplicationContext applicationContext)
-    implements MultifactorAuthenticationContextValidator {
+@RequiredArgsConstructor
+@Getter
+public class DefaultMultifactorAuthenticationContextValidator implements MultifactorAuthenticationContextValidator {
+
+    private final String authenticationContextAttribute;
+
+    private final String mfaTrustedAuthnAttributeName;
+
+    private final ConfigurableApplicationContext applicationContext;
 
     private static Optional<MultifactorAuthenticationProvider> locateRequestedProvider(
         final Collection<MultifactorAuthenticationProvider> providersArray, final String requestedProvider) {
-        return providersArray.stream().filter(provider -> provider.getId().equals(requestedProvider)).findFirst();
+        return providersArray
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .filter(provider -> StringUtils.equalsIgnoreCase(provider.getId(), requestedProvider))
+            .findFirst();
     }
 
     /**
@@ -57,7 +71,7 @@ public record DefaultMultifactorAuthenticationContextValidator(String authentica
             LOGGER.debug("Requested authentication provider cannot be recognized.");
             return MultifactorAuthenticationContextValidationResult.builder().success(false).provider(requestedProvider).build();
         }
-        
+
         val authnContextAttributes = org.springframework.util.StringUtils.commaDelimitedListToSet(authenticationContextAttribute);
         val attributes = authentication.getAttributes();
         for (val authnContextAttribute : authnContextAttributes) {
@@ -65,15 +79,18 @@ public record DefaultMultifactorAuthenticationContextValidator(String authentica
             val contexts = CollectionUtils.toCollection(ctxAttr);
 
             LOGGER.debug("Requested context is [{}] and available contexts are [{}]", requestedContext, contexts);
-            if (contexts.stream().anyMatch(ctx -> ctx.toString().equals(requestedContext))) {
+            if (contexts.stream().anyMatch(ctx -> StringUtils.equalsIgnoreCase(ctx.toString(), requestedContext))) {
                 LOGGER.debug("Requested authentication context [{}] is satisfied", requestedContext);
                 return MultifactorAuthenticationContextValidationResult.builder()
                     .success(true).provider(requestedProvider).build();
             }
             if (StringUtils.isNotBlank(this.mfaTrustedAuthnAttributeName) && attributes.containsKey(this.mfaTrustedAuthnAttributeName)) {
                 LOGGER.debug("Requested authentication context [{}] is satisfied since device is already trusted", requestedContext);
-                return MultifactorAuthenticationContextValidationResult.builder()
-                    .success(true).provider(requestedProvider).build();
+                return MultifactorAuthenticationContextValidationResult
+                    .builder()
+                    .success(true)
+                    .provider(requestedProvider)
+                    .build();
             }
             val provider = requestedProvider.get();
             val satisfiedProviders = getSatisfiedAuthenticationProviders(authentication, providerMap.values());
@@ -97,7 +114,7 @@ public record DefaultMultifactorAuthenticationContextValidator(String authentica
         return MultifactorAuthenticationContextValidationResult.builder().success(false).provider(requestedProvider).build();
     }
 
-    private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(
+    protected Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(
         final Authentication authentication,
         final Collection<MultifactorAuthenticationProvider> providers) {
         val contexts = CollectionUtils.toCollection(authentication.getAttributes().get(this.authenticationContextAttribute));
@@ -105,15 +122,15 @@ public record DefaultMultifactorAuthenticationContextValidator(String authentica
 
         return providers
             .stream()
-            .map(p -> {
-                if (p instanceof final ChainingMultifactorAuthenticationProvider chain) {
+            .map(provider -> {
+                if (provider instanceof final ChainingMultifactorAuthenticationProvider chain) {
                     return chain.getMultifactorAuthenticationProviders();
                 }
-                return List.of(p);
+                return List.of(provider);
             })
             .flatMap(Collection::stream)
             .sorted(Comparator.comparing(MultifactorAuthenticationProvider::getOrder))
-            .filter(p -> contexts.contains(p.getId()))
+            .filter(provider -> contexts.contains(provider.getId()))
             .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 }

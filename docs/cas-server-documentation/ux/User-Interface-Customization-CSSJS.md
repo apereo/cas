@@ -12,12 +12,18 @@ The default styles are all contained in one single file located in `src/main/res
 location is set in `cas-theme-default.properties`. CAS by default uses [Material.io](https://material.io/) library 
 and design specification as a base for its user experience.
 
-If you would like to create your own `css/custom.css file`, for example, you will need to update `cas.standard.css.file` key in that file.
+If you would like to create your own `css/my.css file`, for example, you will need to update `cas.standard.css.file` key in that file.
 
 ```bash
 cas.standard.css.file=/css/cas.css
 cas.standard.js.file=/js/cas.js
 ```
+   
+Please note that,
+
+- Multiple CSS or Javascript files can be defined and separated by a comma.
+- The order of the files is important. The files are loaded in the order they are defined.
+- CAS will always load a `/css/custom.css` and `/js/custom.js` by default to allow for overrides and customizations.
 
 ## Responsive Design
 
@@ -29,10 +35,10 @@ same `cas.css` file. They follow the Twitter Bootstrap breakpoints and grid.
 
 If you need to add some JavaScript, feel free to append `src/main/resources/static/js/cas.js`.
 
-You can also create your own `custom.js` file, for example, and call it from within `scripts.html` like so:
+You can also create your own custom javascript file, for example, and call it from within `scripts.html` like so:
 
 ```html
-<script type="text/javascript" src="/js/custom.js"></script>
+<script type="text/javascript" src="/js/my.js"></script>
 ```
 
 If you are developing themes per service, each theme also has the ability 

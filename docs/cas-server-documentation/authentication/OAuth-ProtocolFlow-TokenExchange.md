@@ -100,6 +100,11 @@ as the current actor to whom authority has been delegated to act on behalf of a 
 }
 ```
 
+Delegation semantics are typically expressed in a token by including information about both the primary subject of 
+the token as well as the actor to whom that subject has delegated some of its rights. Typically, in the request, 
+the `subject_token` represents the identity of the party on behalf of whom the token is being requested while the 
+`actor_token` represents the identity of the party to whom the access rights of the issued token are being delegated.
+
 {% endtab %}
 
 {% endtabs %}
@@ -120,3 +125,15 @@ The following combinations of token types are supported for delegation operation
 |-------------------------------------------------|-------------------------------------------------|----------------------------------------------|
 | `urn:ietf:params:oauth:token-type:access_token` | `urn:ietf:params:oauth:token-type:access_token` | Exchange an access token for another.        |
 | `urn:ietf:params:oauth:token-type:access_token` | `urn:ietf:params:oauth:token-type:jwt`          | Exchange an access token for another as JWT. |
+   
+## Delegation vs. Impersonation
+
+When principal `A` impersonates principal `B`, `A` is given all the rights that `B` has within some defined rights context and 
+is indistinguishable from `B` in that context. Thus, when principal `A` impersonates principal `B`, then insofar as any 
+entity receiving such a token is concerned, they are actually dealing with `B`. It is true that some members of the 
+identity system might have awareness that impersonation is going on, but it is not a requirement. For all intents 
+and purposes, when `A` is impersonating B, `A` is `B` within the context of the rights authorized by the token. 
+
+With delegation semantics, principal `A` still has its own identity separate from `B`, and it is explicitly understood that while `B` 
+may have delegated some of its rights to `A`, any actions taken are being taken by `A` representing `B`. 
+In a sense, `A` is an agent for `B`.

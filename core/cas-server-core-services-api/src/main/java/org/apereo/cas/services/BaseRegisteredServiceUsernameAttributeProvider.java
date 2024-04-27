@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.authentication.attribute.CaseCanonicalizationMode;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 
@@ -13,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.services.persondir.util.CaseCanonicalizationMode;
+
 
 import jakarta.persistence.PostLoad;
 

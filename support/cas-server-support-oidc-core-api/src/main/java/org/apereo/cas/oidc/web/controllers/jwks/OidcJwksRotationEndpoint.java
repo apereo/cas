@@ -2,13 +2,13 @@ package org.apereo.cas.oidc.web.controllers.jwks;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
-
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKey;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +20,14 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@RestControllerEndpoint(id = "oidcJwks", enableByDefault = false)
-public class OidcJwksRotationEndpoint extends BaseCasActuatorEndpoint {
+@Endpoint(id = "oidcJwks", enableByDefault = false)
+public class OidcJwksRotationEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<OidcJsonWebKeystoreRotationService> rotationService;
 
     public OidcJwksRotationEndpoint(final CasConfigurationProperties casProperties,
+                                    final ConfigurableApplicationContext applicationContext,
                                     final ObjectProvider<OidcJsonWebKeystoreRotationService> rotationService) {
-        super(casProperties);
+        super(casProperties, applicationContext);
         this.rotationService = rotationService;
     }
 

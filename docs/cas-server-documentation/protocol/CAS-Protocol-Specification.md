@@ -170,7 +170,7 @@ MUST be handled by `/login`.
     credentials as if neither parameter was specified. This parameter is not
     compatible with the `renew` parameter. Behavior is undefined if both are
     set. It is RECOMMENDED that when the `gateway` parameter is set its value be
-    "true".
+    `true`.
 
 -   `method` [OPTIONAL, CAS 3.0] - The `method` to be used when sending responses.
     While native HTTP redirects (`GET`) may be utilized as the default method,

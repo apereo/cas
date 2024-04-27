@@ -12,6 +12,40 @@ import org.apache.commons.text.WordUtils;
 public interface OidcConstants {
 
     /**
+     * User code parameter in CIBA requests.
+     */
+    String USER_CODE = "user_code";
+
+    /**
+     * ACR values specified in CIBA requests.
+     */
+    String ACR_VALUES = "acr_values";
+    /**
+     * Binding message specified in CIBA requests.
+     */
+    String BINDING_MESSAGE = "binding_message";
+    /**
+     * Client notification token specified in CIBA requests.
+     */
+    String CLIENT_NOTIFICATION_TOKEN = "client_notification_token";
+    /**
+     * Id token hint specified in CIBA requests.
+     */
+    String ID_TOKEN_HINT = "id_token_hint";
+    /**
+     * Login hint specified in CIBA requests.
+     */
+    String LOGIN_HINT = "login_hint";
+    /**
+     * Login hint token specified in CIBA requests.
+     */
+    String LOGIN_HINT_TOKEN = "login_hint_token";
+    /**
+     * Requested expiry specified in CIBA requests.
+     */
+    String REQUESTED_EXPIRY = "requested_expiry";
+    
+    /**
      * ACR passed in the id token.
      */
     String ACR = "acr";
@@ -19,6 +53,11 @@ public interface OidcConstants {
      * Authentication method reference passed in the id token.
      */
     String AMR = "amr";
+    /**
+     * Audience claim.
+     */
+    String AUD = "aud";
+
     /**
      * The Authorization Server MUST NOT display any authentication or consent user interface pages.
      */
@@ -31,12 +70,6 @@ public interface OidcConstants {
      * The Authorization Server SHOULD prompt the End-User consent.
      */
     String PROMPT_CONSENT = "consent";
-
-    /**
-     * Hint to the Authorization Server about the login identifier
-     * the End-User might use to log in (if necessary).
-     */
-    String LOGIN_HINT = "login_hint";
 
     /**
      * Request URI parameter used in PAR requests.
@@ -81,6 +114,11 @@ public interface OidcConstants {
     String MAX_AGE = "max_age";
 
     /**
+     * The authentication request id in CIBA.
+     */
+    String AUTH_REQ_ID = "auth_req_id";
+
+    /**
      * The {@code ui_locales} parameter.
      * End-User's preferred languages and scripts for the user interface, represented
      * as a space-separated list of language tag values, ordered by preference.
@@ -101,6 +139,10 @@ public interface OidcConstants {
      * Oidc authorize url path segment url.
      */
     String AUTHORIZE_URL = "oidcAuthorize";
+    /**
+     * CIBA backchannel authn endpoint.
+     */
+    String CIBA_URL = "oidcCiba";
 
     /**
      * Oidc access token url path segment url.
@@ -162,6 +204,12 @@ public interface OidcConstants {
      * The confirm/consent view.
      */
     String CONFIRM_VIEW = "oidcConfirmView";
+
+    /**
+     * The CIBA verification view.
+     */
+    String CIBA_VERIFICATION_VIEW = "oidcCibaVerificationView";
+    
     /**
      * Rel value for webfinger protocol.
      */

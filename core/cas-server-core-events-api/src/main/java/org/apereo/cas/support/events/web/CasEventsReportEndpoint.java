@@ -3,26 +3,21 @@ package org.apereo.cas.support.events.web;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
-import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
-import org.springframework.context.ApplicationContext;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
@@ -35,18 +30,13 @@ import java.util.zip.ZipInputStream;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RestControllerEndpoint(id = "events", enableByDefault = false)
-public class CasEventsReportEndpoint extends BaseCasActuatorEndpoint {
-    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
-        .defaultTypingEnabled(true).build().toObjectMapper();
-    
-    private final ApplicationContext applicationContext;
-
+@Endpoint(id = "events", enableByDefault = false)
+public class CasEventsReportEndpoint extends BaseCasRestActuatorEndpoint {
     public CasEventsReportEndpoint(final CasConfigurationProperties casProperties,
-                                   final ApplicationContext applicationContext) {
-        super(casProperties);
-        this.applicationContext = applicationContext;
+                                   final ConfigurableApplicationContext applicationContext) {
+        super(casProperties, applicationContext);
     }
+
 
     /**
      * Delete all events response entity.

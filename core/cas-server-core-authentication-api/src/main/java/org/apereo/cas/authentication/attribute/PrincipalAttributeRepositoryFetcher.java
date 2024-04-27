@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.attribute;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Builder;
@@ -9,7 +10,6 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -29,7 +29,7 @@ import java.util.Set;
 public class PrincipalAttributeRepositoryFetcher {
     private final CasReentrantLock lock = new CasReentrantLock();
 
-    private final IPersonAttributeDao attributeRepository;
+    private final PersonAttributeDao attributeRepository;
 
     private final String principalId;
 
@@ -88,7 +88,7 @@ public class PrincipalAttributeRepositoryFetcher {
      */
     @CanIgnoreReturnValue
     public PrincipalAttributeRepositoryFetcher fromAllAttributeRepositories() {
-        activeAttributeRepositoryIdentifiers.add(IPersonAttributeDao.WILDCARD);
+        activeAttributeRepositoryIdentifiers.add(PersonAttributeDao.WILDCARD);
         return this;
     }
 }

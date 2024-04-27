@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
+import org.apereo.cas.authentication.Authentication;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -19,19 +20,19 @@ public interface DeviceFingerprintStrategy {
     /**
      * Determine a unique browser/device fingerprint for the provided request.
      *
-     * @param principal The principal uid we are generating a fingerprint for.
+     * @param authentication authentication attempt for which we are generating a fingerprint.
      * @param request   the request
      * @param response  the response
      * @return The generated fingerprint
      */
-    String determineFingerprintComponent(String principal,
-                                         HttpServletRequest request,
-                                         HttpServletResponse response);
+    String determineFingerprint(Authentication authentication,
+                                HttpServletRequest request,
+                                HttpServletResponse response);
 
     /**
      * Gets device fingerprint component extractors.
      *
      * @return the device fingerprint component extractors
      */
-    List<DeviceFingerprintComponentManager> deviceFingerprintComponentManagers();
+    List<DeviceFingerprintExtractor> getDeviceFingerprintExtractors();
 }

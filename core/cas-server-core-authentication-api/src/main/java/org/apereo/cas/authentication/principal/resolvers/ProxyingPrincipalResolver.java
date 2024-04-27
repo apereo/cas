@@ -6,12 +6,9 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
-
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
-
 import java.util.Optional;
 
 /**
@@ -35,10 +32,5 @@ public class ProxyingPrincipalResolver implements PrincipalResolver {
     @Override
     public boolean supports(final Credential credential) {
         return credential.getId() != null;
-    }
-
-    @Override
-    public IPersonAttributeDao getAttributeRepository() {
-        return null;
     }
 }

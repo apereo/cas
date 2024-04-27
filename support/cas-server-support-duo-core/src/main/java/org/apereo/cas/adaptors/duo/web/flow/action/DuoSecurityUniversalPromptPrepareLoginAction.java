@@ -58,6 +58,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
             .orElseThrow(() -> new RuntimeException("Unable to locate Duo Security client for provider id " + duoSecurityIdentifier));
         val state = client.generateState();
         val service = WebUtils.getService(requestContext);
+        LOGGER.debug("Generated Duo Security state [{}] for service [{}]", state, service);
 
         val properties = new LinkedHashMap<String, Object>();
         properties.put("duoProviderId", duoSecurityIdentifier);
@@ -87,6 +88,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val context = new JEEContext(request, response);
+        LOGGER.debug("Storing Duo Security session attributes [{}] into session", properties);
         val sessionStorage = duoUniversalPromptSessionStore
             .withSessionAttributes(context, properties)
             .getTrackableSession(context)

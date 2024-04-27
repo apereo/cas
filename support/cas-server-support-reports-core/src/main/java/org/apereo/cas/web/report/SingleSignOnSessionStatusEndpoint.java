@@ -1,21 +1,21 @@
 package org.apereo.cas.web.report;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 
@@ -25,13 +25,21 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@RestControllerEndpoint(id = "sso", enableByDefault = false)
-@RequiredArgsConstructor
-public class SingleSignOnSessionStatusEndpoint {
+@Endpoint(id = "sso", enableByDefault = false)
+public class SingleSignOnSessionStatusEndpoint extends BaseCasRestActuatorEndpoint {
 
     private final ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGeneratorProvider;
 
     private final ObjectProvider<TicketRegistrySupport> ticketRegistrySupportProvider;
+
+    public SingleSignOnSessionStatusEndpoint(final CasConfigurationProperties casProperties,
+                                             final ConfigurableApplicationContext applicationContext,
+                                             final ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGeneratorProvider,
+                                             final ObjectProvider<TicketRegistrySupport> ticketRegistrySupportProvider) {
+        super(casProperties, applicationContext);
+        this.ticketGrantingTicketCookieGeneratorProvider = ticketGrantingTicketCookieGeneratorProvider;
+        this.ticketRegistrySupportProvider = ticketRegistrySupportProvider;
+    }
 
     /**
      * Sso status response entity.
@@ -46,8 +54,7 @@ public class SingleSignOnSessionStatusEndpoint {
         @Parameter(name = "request", required = false)
     })
     public ResponseEntity<Map<?, ?>> ssoStatus(
-        @RequestParam(name = "tgc", required = false, defaultValue = StringUtils.EMPTY)
-        final String tgc,
+        @RequestParam(name = "tgc", required = false, defaultValue = StringUtils.EMPTY) final String tgc,
         final HttpServletRequest request) {
 
         val ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGeneratorProvider.getObject();

@@ -31,7 +31,8 @@ Identity provider metadata can also be managed using the following strategies.
 
 ### File System
 
-SAML2 identity provider metadata by default is generated on disk. 
+SAML2 identity provider metadata by default is generated on disk. The contents of the generated or found artifacts such as signing and/or encryption keys may be encrypted 
+via CAS configuration security [outlined here](../configuration/Configuration-Properties-Security-CAS.html).
 
 {% include_cached casproperties.html properties="cas.authn.saml-idp.metadata.file-system" %}
 

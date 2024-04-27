@@ -13,7 +13,7 @@ env:
   GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
   JDK_CURRENT: 21
   JDK_LATEST: 21
-  JDK_DISTRIBUTION: "corretto"
+  JDK_DISTRIBUTION: "oracle"
 
 ##########################################################################
 
@@ -52,7 +52,6 @@ jobs:
   ##########################################################################
 
   build:
-    if: ${{ (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
     needs: [initialize]
     continue-on-error: false
     strategy:
@@ -82,7 +81,6 @@ jobs:
   ##########################################################################
 
   build-latest-jdk:
-    if: ${{ (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
     runs-on: ubuntu-latest
     needs: [initialize]
     continue-on-error: false
@@ -103,7 +101,6 @@ jobs:
   ##########################################################################
 
   build-graalvm:
-    if: ${{ (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
     runs-on: ubuntu-latest
     needs: [initialize]
     continue-on-error: false
@@ -112,7 +109,7 @@ jobs:
       - uses: graalvm/setup-graalvm@v1
         with:
           distribution: 'graalvm'
-          java-version: ${{ env.JDK_CURRENT }}
+          java-version: ${{ env.JDK_LATEST }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'gradle'
           set-java-home: 'true'
@@ -127,5 +124,5 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Build with Gradle
-        timeout-minutes: 90
+        timeout-minutes: 20
         run: chmod +x ./ci/tests/native/build.sh && ./ci/tests/native/build.sh

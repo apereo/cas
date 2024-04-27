@@ -1,5 +1,6 @@
 package org.apereo.cas.util.crypto;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.io.Serializable;
 import java.security.Key;
 
@@ -79,5 +80,15 @@ public interface CipherExecutor<I, O> extends EncodableCipher<I, O>, DecodableCi
      */
     default Key getSigningKey() {
         return null;
+    }
+
+    /**
+     * With signing disabled.
+     *
+     * @return the property bound cipher executor
+     */
+    @CanIgnoreReturnValue
+    default CipherExecutor<I, ?> withSigningDisabled() {
+        return this;
     }
 }

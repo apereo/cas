@@ -80,11 +80,12 @@ public class CasRedisTicketRegistryAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public RedisTicketRegistryCacheEndpoint redisTicketRegistryCacheEndpoint(
             final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final ObjectProvider<TicketRegistry> ticketRegistry,
             @Qualifier("redisTicketRegistryCache")
             final ObjectProvider<Cache<String, Ticket>> redisTicketRegistryCache) {
-            return new RedisTicketRegistryCacheEndpoint(casProperties, ticketRegistry, redisTicketRegistryCache);
+            return new RedisTicketRegistryCacheEndpoint(casProperties, applicationContext, ticketRegistry, redisTicketRegistryCache);
         }
 
         @Bean
@@ -261,7 +262,7 @@ public class CasRedisTicketRegistryAutoConfiguration {
         private static final BeanCondition CONDITION_LOCKING =
             BeanCondition.on("cas.ticket.registry.core.enable-locking").isTrue().evenIfMissing();
 
-        @Bean(destroyMethod = "destroy")
+        @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public LockRegistry casTicketRegistryRedisLockRegistry(
             final ConfigurableApplicationContext applicationContext,

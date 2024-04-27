@@ -7,16 +7,15 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.springframework.context.ConfigurableApplicationContext;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListBucketsRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
@@ -35,8 +34,9 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
 
     public AmazonS3SamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor,
                                           final Cache<String, SamlIdPMetadataDocument> metadataCache,
-                                          final String bucketName, final S3Client s3Client) {
-        super(metadataCipherExecutor, metadataCache);
+                                          final String bucketName, final S3Client s3Client,
+                                          final ConfigurableApplicationContext applicationContext) {
+        super(metadataCipherExecutor, metadataCache, applicationContext);
         this.bucketName = SpringExpressionLanguageValueResolver.getInstance().resolve(bucketName);
         this.s3Client = s3Client;
     }

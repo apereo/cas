@@ -110,6 +110,8 @@ class CasWebAppConfiguration {
                 @Nonnull final InterceptorRegistry registry) {
                 registry.addInterceptor(new RefreshableHandlerInterceptor(localeChangeInterceptor)).addPathPatterns("/**");
             }
+
+   
         };
     }
 

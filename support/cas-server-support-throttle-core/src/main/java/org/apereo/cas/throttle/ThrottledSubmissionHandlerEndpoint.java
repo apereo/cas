@@ -1,13 +1,14 @@
 package org.apereo.cas.throttle;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,14 +24,15 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@RestControllerEndpoint(id = "throttles", enableByDefault = false)
-public class ThrottledSubmissionHandlerEndpoint extends BaseCasActuatorEndpoint {
+@Endpoint(id = "throttles", enableByDefault = false)
+public class ThrottledSubmissionHandlerEndpoint extends BaseCasRestActuatorEndpoint {
 
     private final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan;
 
     public ThrottledSubmissionHandlerEndpoint(final CasConfigurationProperties casProperties,
+                                              final ConfigurableApplicationContext applicationContext,
                                               final ObjectProvider<AuthenticationThrottlingExecutionPlan> executionPlan) {
-        super(casProperties);
+        super(casProperties, applicationContext);
         this.authenticationThrottlingExecutionPlan = executionPlan;
     }
 

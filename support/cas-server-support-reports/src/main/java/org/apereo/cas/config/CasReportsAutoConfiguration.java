@@ -115,13 +115,15 @@ public class CasReportsAutoConfiguration {
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasProtocolValidationEndpoint casProtocolValidationEndpoint(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("casValidationConfigurationContext")
             final ServiceValidateConfigurationContext casValidationConfigurationContext,
             @Qualifier("proxy20Handler")
             final ProxyHandler proxy20Handler,
             @Qualifier("v3ServiceValidateControllerValidationSpecification")
             final CasProtocolValidationSpecification v3ServiceValidateControllerValidationSpecification) {
-            return new CasProtocolValidationEndpoint(casValidationConfigurationContext
+            return new CasProtocolValidationEndpoint(casProperties, casValidationConfigurationContext
                 .withValidationSpecifications(CollectionUtils.wrapSet(v3ServiceValidateControllerValidationSpecification))
                 .withProxyHandler(proxy20Handler));
         }
@@ -134,12 +136,13 @@ public class CasReportsAutoConfiguration {
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final ObjectProvider<TicketRegistry> ticketRegistry,
             @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME)
             final ObjectProvider<SingleLogoutRequestExecutor> defaultSingleLogoutRequestExecutor,
             final CasConfigurationProperties casProperties) {
-            return new SingleSignOnSessionsEndpoint(ticketRegistry,
+            return new SingleSignOnSessionsEndpoint(ticketRegistry, applicationContext,
                 casProperties, defaultSingleLogoutRequestExecutor);
         }
 
@@ -147,11 +150,14 @@ public class CasReportsAutoConfiguration {
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SingleSignOnSessionStatusEndpoint singleSignOnSessionStatusEndpoint(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
             final ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final ObjectProvider<TicketRegistrySupport> ticketRegistrySupport) {
-            return new SingleSignOnSessionStatusEndpoint(ticketGrantingTicketCookieGenerator, ticketRegistrySupport);
+            return new SingleSignOnSessionStatusEndpoint(casProperties, applicationContext,
+                ticketGrantingTicketCookieGenerator, ticketRegistrySupport);
         }
     }
 
@@ -187,9 +193,11 @@ public class CasReportsAutoConfiguration {
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public ConfigurationJasyptCipherEndpoint casConfigurationCipherEndpoint(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("casConfigurationCipherExecutor")
             final CipherExecutor<String, String> casConfigurationCipherExecutor) {
-            return new ConfigurationJasyptCipherEndpoint(casConfigurationCipherExecutor);
+            return new ConfigurationJasyptCipherEndpoint(casProperties, applicationContext, casConfigurationCipherExecutor);
         }
 
 
@@ -257,6 +265,7 @@ public class CasReportsAutoConfiguration {
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public RegisteredServiceAccessEndpoint registeredServiceAccessEndpoint(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ObjectProvider<ArgumentExtractor> argumentExtractor,
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
@@ -272,8 +281,7 @@ public class CasReportsAutoConfiguration {
             final ObjectProvider<PrincipalResolver> defaultPrincipalResolver,
             @Qualifier(PrincipalFactory.BEAN_NAME)
             final ObjectProvider<PrincipalFactory> principalFactory) {
-
-            return new RegisteredServiceAccessEndpoint(casProperties, servicesManager,
+            return new RegisteredServiceAccessEndpoint(casProperties, applicationContext, servicesManager,
                 authenticationServiceSelectionPlan, argumentExtractor, registeredServiceAccessStrategyEnforcer,
                 authenticationSystemSupport, defaultPrincipalResolver, principalFactory);
         }
@@ -324,12 +332,14 @@ public class CasReportsAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnAvailableEndpoint
         public TicketRegistryEndpoint ticketRegistryEndpoint(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final ObjectProvider<TicketRegistrySupport> ticketRegistrySupport,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final ObjectProvider<TicketRegistry> ticketRegistry) {
-            return new TicketRegistryEndpoint(casProperties, ticketRegistry, ticketRegistrySupport);
+            return new TicketRegistryEndpoint(casProperties, applicationContext,
+                ticketRegistry, ticketRegistrySupport);
         }
 
         @Bean

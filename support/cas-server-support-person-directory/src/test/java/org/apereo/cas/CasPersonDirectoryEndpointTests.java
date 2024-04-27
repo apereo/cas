@@ -1,14 +1,15 @@
 package org.apereo.cas;
 
+import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 import org.apereo.cas.web.report.CasPersonDirectoryEndpoint;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributeDaoFilter;
-import org.apereo.services.persondir.IPersonAttributes;
-import org.apereo.services.persondir.support.AttributeNamedPersonImpl;
+import lombok.ToString;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(CasPersonDirectoryEndpointTests.CasPersonDirectoryTestConfiguration.class)
 @Tag("ActuatorEndpoint")
 public class CasPersonDirectoryEndpointTests extends AbstractCasEndpointTests {
-    private static IPersonAttributes PERSON = new AttributeNamedPersonImpl(Map.of("phone", List.of("123456789")));
+    private static PersonAttributes PERSON = new SimplePersonAttributes("casuser", Map.of("phone", List.of("123456789")));
 
     @Autowired
     @Qualifier("casPersonDirectoryEndpoint")
@@ -44,7 +45,7 @@ public class CasPersonDirectoryEndpointTests extends AbstractCasEndpointTests {
         var person = personDirectoryEndpoint.showCachedAttributesFor("casuser");
         assertNotNull(person);
         assertEquals("123456789", person.getAttributeValue("phone"));
-        PERSON = new AttributeNamedPersonImpl(Map.of("phone", List.of("99887766")));
+        PERSON = new SimplePersonAttributes("casuser", Map.of("phone", List.of("99887766")));
         personDirectoryEndpoint.removeCachedAttributesFor("casuser");
         person = personDirectoryEndpoint.showCachedAttributesFor("casuser");
         assertEquals("99887766", person.getAttributeValue("phone"));
@@ -59,35 +60,39 @@ public class CasPersonDirectoryEndpointTests extends AbstractCasEndpointTests {
     }
 
     @RequiredArgsConstructor
-    private static final class MockPersonAttributeDao implements IPersonAttributeDao {
+    @EqualsAndHashCode
+    @ToString
+    private static final class MockPersonAttributeDao implements PersonAttributeDao {
         @Override
-        public IPersonAttributes getPerson(final String s, final Set<IPersonAttributes> set, final IPersonAttributeDaoFilter iPersonAttributeDaoFilter) {
+        public PersonAttributes getPerson(final String s, final Set<PersonAttributes> set,
+                                          final PersonAttributeDaoFilter filter) {
             return PERSON;
         }
 
         @Override
-        public Set<IPersonAttributes> getPeople(final Map<String, Object> map, final IPersonAttributeDaoFilter iPersonAttributeDaoFilter, final Set<IPersonAttributes> set) {
+        public Set<PersonAttributes> getPeople(final Map<String, Object> map, final PersonAttributeDaoFilter filter,
+                                               final Set<PersonAttributes> set) {
             return Set.of(PERSON);
         }
 
         @Override
-        public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query, final IPersonAttributeDaoFilter filter,
-                                                                         final Set<IPersonAttributes> resultPeople) {
+        public Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query, final PersonAttributeDaoFilter filter,
+                                                                         final Set<PersonAttributes> resultPeople) {
             return Set.of(PERSON);
         }
 
         @Override
-        public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query, final IPersonAttributeDaoFilter filter) {
+        public Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query, final PersonAttributeDaoFilter filter) {
             return Set.of(PERSON);
         }
 
         @Override
-        public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query) {
+        public Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query) {
             return Set.of(PERSON);
         }
 
         @Override
-        public Set<IPersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query, final Set<IPersonAttributes> resultPeople) {
+        public Set<PersonAttributes> getPeopleWithMultivaluedAttributes(final Map<String, List<Object>> query, final Set<PersonAttributes> resultPeople) {
             return Set.of(PERSON);
         }
 
@@ -95,20 +100,10 @@ public class CasPersonDirectoryEndpointTests extends AbstractCasEndpointTests {
         public Map<String, Object> getTags() {
             return Map.of();
         }
-
+        
         @Override
-        public int compareTo(@Nonnull final IPersonAttributeDao o) {
+        public int compareTo(@Nonnull final PersonAttributeDao o) {
             return 0;
-        }
-
-        @Override
-        public boolean equals(final Object o) {
-            return o instanceof final MockPersonAttributeDao dao && compareTo(dao) == 0;
-        }
-
-        @Override
-        public int hashCode() {
-            return new HashCodeBuilder(17, 37).append(getId()).toHashCode();
         }
     }
 }

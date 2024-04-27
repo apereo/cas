@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
+import org.apereo.cas.authentication.attribute.CaseCanonicalizationMode;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
@@ -18,7 +19,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.services.persondir.util.CaseCanonicalizationMode;
+
 import jakarta.persistence.PostLoad;
 import java.io.Serial;
 import java.util.ArrayList;

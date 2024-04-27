@@ -1,9 +1,11 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.surrogate.BaseSurrogateAuthenticationServiceTests;
 import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.val;
@@ -34,11 +36,17 @@ class MultifactorAuthenticationPrincipalResolverTests {
     @Qualifier("surrogateMultifactorAuthenticationPrincipalResolver")
     private MultifactorAuthenticationPrincipalResolver surrogateMultifactorAuthenticationPrincipalResolver;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+    private AttributeRepositoryResolver attributeRepositoryResolver;
+
+
     @Test
     void verifyOperation() throws Throwable {
-        val surrogatePrincipalBuilder = new DefaultSurrogateAuthenticationPrincipalBuilder(
-            PrincipalFactoryUtils.newPrincipalFactory(), CoreAuthenticationTestUtils.getAttributeRepository(),
-            new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class)));
+        val surrogatePrincipalBuilder = getBuilder();
         val primary = CoreAuthenticationTestUtils.getPrincipal();
         val principal = surrogatePrincipalBuilder.buildSurrogatePrincipal("surrogate", primary);
         assertEquals(0, surrogateMultifactorAuthenticationPrincipalResolver.getOrder());
@@ -57,5 +65,15 @@ class MultifactorAuthenticationPrincipalResolverTests {
         when(principal.getAttributes()).thenReturn(Map.of());
         assertTrue(resolver.supports(principal));
         assertEquals(principal, resolver.resolve(principal));
+    }
+
+    private SurrogateAuthenticationPrincipalBuilder getBuilder() {
+        val surrogateAuthenticationService = new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class));
+        return new DefaultSurrogateAuthenticationPrincipalBuilder(
+            PrincipalFactoryUtils.newPrincipalFactory(),
+            CoreAuthenticationTestUtils.getAttributeRepository(),
+            surrogateAuthenticationService,
+            attributeRepositoryResolver,
+            casProperties);
     }
 }

@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.ProxyingPrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
@@ -29,7 +30,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -212,7 +212,7 @@ class CasCoreAuthenticationHandlersConfiguration {
             final ServicesManager servicesManager,
             final CasConfigurationProperties casProperties,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-            final ObjectProvider<IPersonAttributeDao> attributeRepository,
+            final ObjectProvider<PersonAttributeDao> attributeRepository,
             @Qualifier("jaasPrincipalFactory")
             final PrincipalFactory jaasPrincipalFactory,
             @Qualifier(AttributeRepositoryResolver.BEAN_NAME)

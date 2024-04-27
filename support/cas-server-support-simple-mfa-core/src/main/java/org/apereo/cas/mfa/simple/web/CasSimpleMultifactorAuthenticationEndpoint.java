@@ -13,14 +13,14 @@ import org.apereo.cas.mfa.simple.ticket.CasSimpleMultifactorAuthenticationTicket
 import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import com.google.common.base.Splitter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,14 +35,11 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @since 7.0.0
  */
 @Slf4j
-@RestControllerEndpoint(id = "mfaSimple", enableByDefault = false)
-public class CasSimpleMultifactorAuthenticationEndpoint extends BaseCasActuatorEndpoint {
-    private final ConfigurableApplicationContext applicationContext;
-
+@Endpoint(id = "mfaSimple", enableByDefault = false)
+public class CasSimpleMultifactorAuthenticationEndpoint extends BaseCasRestActuatorEndpoint {
     public CasSimpleMultifactorAuthenticationEndpoint(final CasConfigurationProperties casProperties,
                                                       final ConfigurableApplicationContext applicationContext) {
-        super(casProperties);
-        this.applicationContext = applicationContext;
+        super(casProperties, applicationContext);
     }
 
     /**

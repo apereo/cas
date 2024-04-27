@@ -89,6 +89,7 @@ BUILD_SPAWN="background"
 QUIT_QUIETLY="false"
 DISABLE_LINTER="false"
 
+
 while (( "$#" )); do
   case "$1" in
   --nbr)
@@ -218,7 +219,7 @@ while (( "$#" )); do
     export HEADLESS="true"
     shift 1;
     ;;
-  --nolint|--no-lint|--nol)
+  --nolint|--no-lint|--nol|--nl)
     DISABLE_LINTER="true"
     shift 1;
     ;;
@@ -351,13 +352,15 @@ else
 fi
 
 if [[ "${DISABLE_LINTER}" == "false" ]]; then
-  printgreen "Running ESLint on scenario [${scenarioName}]..."
-  npx eslint "${scriptPath}"
+  printgreen "Running ESLint on scenario [${scenarioName}] from ${PUPPETEER_DIR}..."
+  pushd "$PUPPETEER_DIR" || exit 1
+  npx eslint "./scenarios/${SCENARIO}/script.js"
   if [ $? -ne 0 ]; then
     printred "Found linting errors; unable to run the scenario [${scenarioName}]"
     printred "Please run: npx eslint --fix ${scriptPath}"
     exit 1
   fi
+  popd || exit 1
 fi
 
 if [[ "${RERUN}" != "true" ]]; then
@@ -750,7 +753,11 @@ if [[ "${DRYRUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" 
 
   if [[ "${NATIVE_RUN}" == "false" ]]; then
 
-    max_retries=3
+    max_retries=1
+    if [[ "$CI" == "true" ]]; then
+      max_retries=3
+    fi
+
     retry_count=0
     while [ $retry_count -lt $max_retries ]; do
         echo -e "**************************************************************************"

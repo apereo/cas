@@ -45,6 +45,7 @@ import org.springframework.boot.actuate.autoconfigure.endpoint.condition.Conditi
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -197,6 +198,7 @@ class SamlConfiguration {
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlValidateEndpoint samlValidateEndpoint(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("samlResponseBuilder")
             final ObjectProvider<SamlResponseBuilder> samlResponseBuilder,
@@ -214,7 +216,7 @@ class SamlConfiguration {
             final ObjectProvider<PrincipalResolver> defaultPrincipalResolver,
             @Qualifier(PrincipalFactory.BEAN_NAME)
             final ObjectProvider<PrincipalFactory> principalFactory) {
-            return new SamlValidateEndpoint(casProperties, servicesManager,
+            return new SamlValidateEndpoint(casProperties, applicationContext, servicesManager,
                 authenticationSystemSupport, webApplicationServiceFactory, principalFactory,
                 samlResponseBuilder, openSamlConfigBean, registeredServiceAccessStrategyEnforcer,
                 defaultPrincipalResolver);

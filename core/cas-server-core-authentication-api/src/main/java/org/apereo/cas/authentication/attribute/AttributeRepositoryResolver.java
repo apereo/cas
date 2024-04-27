@@ -3,11 +3,14 @@ package org.apereo.cas.authentication.attribute;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
+import org.apereo.cas.services.RegisteredService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import java.util.Set;
 
 /**
@@ -35,11 +38,14 @@ public interface AttributeRepositoryResolver {
     @With
     @AllArgsConstructor
     @Getter
+    @NoArgsConstructor(force = true)
+    @RequiredArgsConstructor
     class AttributeRepositoryQuery {
-        private final AuthenticationHandler authenticationHandler;
+        private AuthenticationHandler authenticationHandler;
         private final Principal principal;
-        private final Service service;
+        private Service service;
         private final Set<String> activeRepositoryIds;
+        private RegisteredService registeredService;
     }
 
     /**
@@ -48,6 +54,6 @@ public interface AttributeRepositoryResolver {
      * @return the attribute repository resolver
      */
     static AttributeRepositoryResolver allAttributeRepositories() {
-        return query -> Set.of(IPersonAttributeDao.WILDCARD);
+        return query -> Set.of(PersonAttributeDao.WILDCARD);
     }
 }

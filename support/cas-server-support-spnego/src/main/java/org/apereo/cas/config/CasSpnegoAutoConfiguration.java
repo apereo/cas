@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -22,7 +23,6 @@ import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import jcifs.spnego.Authentication;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -125,7 +125,7 @@ public class CasSpnegoAutoConfiguration {
         @Qualifier("spnegoPrincipalFactory")
         final PrincipalFactory spnegoPrincipalFactory,
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        final IPersonAttributeDao attributeRepository,
+        final PersonAttributeDao attributeRepository,
         final CasConfigurationProperties casProperties,
         @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
         final AttributeRepositoryResolver attributeRepositoryResolver) {

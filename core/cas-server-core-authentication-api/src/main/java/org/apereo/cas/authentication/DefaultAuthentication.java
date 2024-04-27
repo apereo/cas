@@ -83,14 +83,21 @@ public class DefaultAuthentication implements Authentication {
 
     @Override
     public void updateAttributes(final Authentication authentication) {
-        attributes.putAll(authentication.getAttributes());
         authenticationDate = authentication.getAuthenticationDate();
-        principal.getAttributes().putAll(authentication.getPrincipal().getAttributes());
+
+        val finalAuthnAttributes = CoreAuthenticationUtils.mergeAttributes(attributes, authentication.getAttributes());
+        attributes.clear();
+        attributes.putAll(finalAuthnAttributes);
+
+        val finalPrincipalAttributes = CoreAuthenticationUtils.mergeAttributes(principal.getAttributes(), authentication.getPrincipal().getAttributes());
+        principal.getAttributes().clear();
+        principal.getAttributes().putAll(finalPrincipalAttributes);
     }
 
     @Override
     public void replaceAttributes(final Authentication authentication) {
         attributes.clear();
+        principal.getAttributes().clear();
         updateAttributes(authentication);
     }
 

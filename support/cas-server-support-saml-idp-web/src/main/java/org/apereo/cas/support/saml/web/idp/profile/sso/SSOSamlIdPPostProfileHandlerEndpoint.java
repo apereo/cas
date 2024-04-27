@@ -26,7 +26,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.AllArgsConstructor;
@@ -60,7 +60,8 @@ import org.opensaml.saml.saml2.core.impl.AuthnRequestBuilder;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.opensaml.saml.saml2.metadata.SingleSignOnService;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -87,8 +88,8 @@ import java.util.UUID;
  * @since 6.1.0
  */
 @Slf4j
-@RestControllerEndpoint(id = "samlPostProfileResponse", enableByDefault = false)
-public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoint {
+@Endpoint(id = "samlPostProfileResponse", enableByDefault = false)
+public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEndpoint {
 
     private final ServicesManager servicesManager;
 
@@ -109,6 +110,7 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
     private final MetadataResolver samlIdPMetadataResolver;
 
     public SSOSamlIdPPostProfileHandlerEndpoint(final CasConfigurationProperties casProperties,
+                                                final ConfigurableApplicationContext applicationContext,
                                                 final ServicesManager servicesManager,
                                                 final AuthenticationSystemSupport authenticationSystemSupport,
                                                 final ServiceFactory<WebApplicationService> serviceFactory,
@@ -118,7 +120,7 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
                                                 final AbstractSaml20ObjectBuilder saml20ObjectBuilder,
                                                 final PrincipalResolver principalResolver,
                                                 final MetadataResolver samlIdPMetadataResolver) {
-        super(casProperties);
+        super(casProperties, applicationContext);
         this.servicesManager = servicesManager;
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.serviceFactory = serviceFactory;

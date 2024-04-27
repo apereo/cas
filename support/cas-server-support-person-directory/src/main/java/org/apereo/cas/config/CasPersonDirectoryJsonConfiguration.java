@@ -1,8 +1,10 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.authentication.AttributeRepositoryStates;
+import org.apereo.cas.persondir.JsonPersonAttributeDao;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -13,8 +15,6 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.JsonBackedComplexStubPersonAttributeDao;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -45,19 +45,19 @@ class CasPersonDirectoryJsonConfiguration {
         @ConditionalOnMissingBean(name = "jsonAttributeRepositories")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public BeanContainer<IPersonAttributeDao> jsonAttributeRepositories(
+        public BeanContainer<PersonAttributeDao> jsonAttributeRepositories(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(BeanContainer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
-                    val list = new ArrayList<IPersonAttributeDao>();
+                    val list = new ArrayList<PersonAttributeDao>();
                     casProperties.getAuthn().getAttributeRepository().getJson()
                         .stream()
                         .filter(json -> ResourceUtils.doesResourceExist(json.getLocation()))
                         .forEach(Unchecked.consumer(json -> {
                             val r = json.getLocation();
-                            val dao = new JsonBackedComplexStubPersonAttributeDao(r);
+                            val dao = new JsonPersonAttributeDao(r);
                             if (ResourceUtils.isFile(r)) {
                                 val watcherService = new FileWatcherService(r.getFile(), Unchecked.consumer(file -> {
                                     Thread.sleep(100);
@@ -91,13 +91,13 @@ class CasPersonDirectoryJsonConfiguration {
         public PersonDirectoryAttributeRepositoryPlanConfigurer jsonPersonDirectoryAttributeRepositoryPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("jsonAttributeRepositories")
-            final BeanContainer<IPersonAttributeDao> jsonAttributeRepositories) {
+            final BeanContainer<PersonAttributeDao> jsonAttributeRepositories) {
             return BeanSupplier.of(PersonDirectoryAttributeRepositoryPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> {
                     val results = jsonAttributeRepositories.toList()
                         .stream()
-                        .filter(IPersonAttributeDao::isEnabled)
+                        .filter(PersonAttributeDao::isEnabled)
                         .collect(Collectors.toList());
                     plan.registerAttributeRepositories(results);
                 })

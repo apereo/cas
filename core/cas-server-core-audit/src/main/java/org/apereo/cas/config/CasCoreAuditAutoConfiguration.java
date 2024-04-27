@@ -44,6 +44,7 @@ import org.apereo.inspektr.audit.spi.support.ObjectCreationAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.ShortenedReturnValueAsStringAuditResourceResolver;
 import org.apereo.inspektr.audit.support.GroovyAuditTrailManager;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
+import org.apereo.inspektr.common.spi.AuditActionDateProvider;
 import org.apereo.inspektr.common.spi.ClientInfoResolver;
 import org.apereo.inspektr.common.spi.DefaultClientInfoResolver;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
@@ -215,6 +216,13 @@ public class CasCoreAuditAutoConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasCoreAuditActionsConfiguration {
         @Bean
+        @ConditionalOnMissingBean(name = "defaultAuditActionDateProvider")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuditActionDateProvider defaultAuditActionDateProvider() {
+            return AuditActionDateProvider.utc();
+        }
+
+        @Bean
         @ConditionalOnMissingBean(name = "defaultAuditActionResolver")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditActionResolver defaultAuditActionResolver() {
@@ -297,6 +305,8 @@ public class CasCoreAuditAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "auditTrailManagementAspect")
         public AuditTrailManagementAspect auditTrailManagementAspect(
+            @Qualifier("defaultAuditActionDateProvider")
+            final AuditActionDateProvider defaultAuditActionDateProvider,
             @Qualifier("casAuditClientInfoResolver")
             final ClientInfoResolver casAuditClientInfoResolver,
             @Qualifier("auditTrailRecordResolutionPlan")
@@ -310,13 +320,13 @@ public class CasCoreAuditAutoConfiguration {
             val audit = casProperties.getAudit().getEngine();
             val auditFormat = AuditTrailManager.AuditFormats.valueOf(audit.getAuditFormat().name());
             val aspect = new AuditTrailManagementAspect(
-                audit.getAppCode(),
                 auditablePrincipalResolver,
                 CollectionUtils.wrapList(filterAndDelegateAuditTrailManager),
                 auditTrailRecordResolutionPlan.getAuditActionResolvers(),
                 auditTrailRecordResolutionPlan.getAuditResourceResolvers(),
                 auditTrailRecordResolutionPlan.getAuditPrincipalResolvers(),
-                auditFormat);
+                auditFormat,
+                defaultAuditActionDateProvider);
             aspect.setFailOnAuditFailures(!audit.isIgnoreAuditFailures());
             aspect.setEnabled(casProperties.getAudit().getEngine().isEnabled());
             aspect.setClientInfoResolver(casAuditClientInfoResolver);

@@ -9,8 +9,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
-
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -25,17 +24,16 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
@@ -58,8 +56,8 @@ import java.util.stream.Stream;
 @Slf4j
 @ToString
 @Getter
-@RestControllerEndpoint(id = "ssoSessions", enableByDefault = false)
-public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
+@Endpoint(id = "ssoSessions", enableByDefault = false)
+public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
     private static final ISOStandardDateFormat DATE_FORMAT = new ISOStandardDateFormat();
 
     private static final String STATUS = "status";
@@ -77,9 +75,10 @@ public class SingleSignOnSessionsEndpoint extends BaseCasActuatorEndpoint {
 
     public SingleSignOnSessionsEndpoint(
         final ObjectProvider<TicketRegistry> ticketRegistry,
+        final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         final ObjectProvider<SingleLogoutRequestExecutor> singleLogoutRequestExecutor) {
-        super(casProperties);
+        super(casProperties, applicationContext);
         this.ticketRegistryProvider = ticketRegistry;
         this.singleLogoutRequestExecutor = singleLogoutRequestExecutor;
     }

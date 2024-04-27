@@ -1,7 +1,9 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
+import org.apereo.cas.authentication.attribute.StubPersonAttributeDao;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
@@ -17,8 +19,6 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +27,7 @@ import org.springframework.boot.actuate.autoconfigure.observation.ObservationAut
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -88,6 +89,7 @@ public abstract class BaseWebflowConfigurerTests {
         MailSenderAutoConfiguration.class,
         MailSenderValidatorAutoConfiguration.class,
         ObservationAutoConfiguration.class,
+        IntegrationAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration
@@ -113,7 +115,7 @@ public abstract class BaseWebflowConfigurerTests {
         public static class AttributeRepositoryTestConfiguration {
             @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
             @Bean
-            public IPersonAttributeDao attributeRepository() {
+            public PersonAttributeDao attributeRepository() {
                 val attrs = CollectionUtils.wrap(
                     "uid", CollectionUtils.wrap("uid"),
                     "mail", CollectionUtils.wrap("cas@apereo.org"),
@@ -124,7 +126,7 @@ public abstract class BaseWebflowConfigurerTests {
 
             @Bean
             public AttributeRepositoryResolver attributeRepositoryResolver() {
-                return query -> Set.of(IPersonAttributeDao.WILDCARD);
+                return query -> Set.of(PersonAttributeDao.WILDCARD);
             }
         }
     }

@@ -3,9 +3,9 @@ package org.apereo.cas.azure.ad.authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.azure.ad.BaseAzureActiveDirectoryTests;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -115,7 +115,7 @@ class AzureActiveDirectoryAuthenticationTests {
     class AttributeResolutionTests extends BaseAzureActiveDirectoryTests {
         @Autowired
         @Qualifier("microsoftAzureActiveDirectoryAttributeRepositories")
-        protected List<IPersonAttributeDao> microsoftAzureActiveDirectoryAttributeRepositories;
+        protected List<PersonAttributeDao> microsoftAzureActiveDirectoryAttributeRepositories;
 
         @Test
         void verifyOperation() throws Throwable {

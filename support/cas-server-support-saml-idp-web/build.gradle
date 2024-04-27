@@ -32,7 +32,7 @@ dependencies {
     implementation libraries.shibutiljavasupport
     implementation libraries.springsecurityweb
     implementation libraries.pac4jcore
-    implementation libraries.persondirectory
+
     
     compileOnly libraries.pac4jsaml
 

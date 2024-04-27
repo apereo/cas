@@ -133,7 +133,7 @@ TypeAheadControl.prototype.draw = function (b) {
     this.textBox.setAttribute("role", "combobox");
     this.textBox.setAttribute("aria-controls", "IdPSelectDropDown");
     this.textBox.setAttribute("aria-owns", "IdPSelectDropDown");
-    this.dropDown.onmouseover = function (c) {
+    this.dropDown.onmouseover = c => {
         if (!c) {
             c = window.event
         }
@@ -146,27 +146,27 @@ TypeAheadControl.prototype.draw = function (b) {
         }
         a.select(d)
     };
-    this.dropDown.onmousedown = function (c) {
-        if (-1 != a.dropDown.current) {
+    this.dropDown.onmousedown = c => {
+        if (-1 !== a.dropDown.current) {
             a.textBox.value = a.results[a.dropDown.current][0]
         }
     };
-    this.textBox.onkeyup = function (c) {
+    this.textBox.onkeyup = c => {
         if (!c) {
             c = window.event
         }
         a.handleKeyUp(c)
     };
-    this.textBox.onkeydown = function (c) {
+    this.textBox.onkeydown = c => {
         if (!c) {
             c = window.event
         }
         a.handleKeyDown(c)
     };
-    this.textBox.onblur = function () {
+    this.textBox.onblur = () => {
         a.hideDrop()
     };
-    this.textBox.onfocus = function () {
+    this.textBox.onfocus = () => {
         a.handleChange()
     };
     if (null == b || b) {
@@ -433,7 +433,7 @@ function IdPSelectUI() {
     var Y = "";
     var aA = [];
     var aG = "entityID";
-    this.draw = function (aP) {
+    this.draw = aP => {
         aJ = document.getElementById(aP.insertAtDiv);
         if (!m(aP)) {
             return
@@ -460,14 +460,12 @@ function IdPSelectUI() {
         }
         aK();
         u(aP.hiddenIdPs);
-        r.sort(function (aR, aQ) {
-            return aE(aR).localeCompare(aE(aQ))
-        });
+        r.sort((aR, aQ) => aE(aR).localeCompare(aE(aQ)));
         var aN = ac();
         aJ.appendChild(aN);
         ar.draw(aP.setFocusTextBox)
     };
-    var m = function (aT) {
+    var m = aT => {
         var aN;
         D = aT.preferredIdP;
         ag = aT.maxPreferredIdPs;
@@ -633,7 +631,7 @@ function IdPSelectUI() {
          * This section is customized and specific to Apereo CAS.
          */
         if (aN != null && aT.myEntityID !== null) {
-            aN.forEach(function(el) {
+            aN.forEach(el => {
                 if (!aT.myEntityID.includes(el)) {
                     O(A("fatal.wrongEntityId") + '"' + aN + '" != "' + aT.myEntityID + '"');
                     return false
@@ -688,7 +686,7 @@ function IdPSelectUI() {
         }
         return true
     };
-    var aK = function () {
+    var aK = () => {
         var aO = [];
         var aN;
         for (aN = 0; aN < r.length;) {
@@ -701,7 +699,7 @@ function IdPSelectUI() {
             }
         }
     };
-    var u = function (aO) {
+    var u = aO => {
         if (null == aO || 0 == aO.length) {
             return
         }
@@ -716,7 +714,7 @@ function IdPSelectUI() {
             }
         }
     };
-    var ao = function (aN) {
+    var ao = aN => {
         if (null === aN) {
             return false
         }
@@ -731,7 +729,7 @@ function IdPSelectUI() {
         }
         return false
     };
-    var e = function (aM, aN) {
+    var e = (aM, aN) => {
         if (null == aM) {
             return true
         }
@@ -743,7 +741,7 @@ function IdPSelectUI() {
         }
         return false
     };
-    var aI = function () {
+    var aI = () => {
         if (null == navigator) {
             return false
         }
@@ -753,13 +751,13 @@ function IdPSelectUI() {
         }
         return (aM == "Microsoft Internet Explorer")
     };
-    var q = function (aN, aO) {
+    var q = (aN, aO) => {
         var aM = document.createElement("a");
         aM.href = aO;
         aN.appendChild(aM);
         aM.click()
     };
-    var f = function (aP) {
+    var f = aP => {
         var aO = null;
         try {
             aO = new XMLHttpRequest()
@@ -802,7 +800,7 @@ function IdPSelectUI() {
         }
         return true
     };
-    var ad = function (aM) {
+    var ad = aM => {
         for (var aN = 0; aN < r.length; aN++) {
             if (z(r[aN]) == aM) {
                 return r[aN]
@@ -810,8 +808,8 @@ function IdPSelectUI() {
         }
         return null
     };
-    var H = function (aT, aN) {
-        var aS = function (aW) {
+    var H = (aT, aN) => {
+        var aS = aW => {
             var aU = null;
             var aV;
             if (null == aT.Logos) {
@@ -875,7 +873,7 @@ function IdPSelectUI() {
         aO.setAttribute("height", aR);
         return aO
     };
-    var ac = function () {
+    var ac = () => {
         var aN = ap("IdPSelector");
         var aM;
         aM = aC(aN);
@@ -886,7 +884,7 @@ function IdPSelectUI() {
         }
         return aN
     };
-    var M = function (aO, aV, aN) {
+    var M = (aO, aV, aN) => {
         var aM = ap(undefined, "PreferredIdPButton");
         var aU = document.createElement("a");
         var aT = aG + "=" + encodeURIComponent(z(aO));
@@ -898,7 +896,7 @@ function IdPSelectUI() {
             aT = "&" + aT
         }
         aU.href = aP + aT;
-        aU.onclick = function () {
+        aU.onclick = () => {
             aH(z(aO))
         };
         if (null != aR) {
@@ -917,13 +915,13 @@ function IdPSelectUI() {
         aM.appendChild(aU);
         return aM
     };
-    var aF = function (aM, aP) {
+    var aF = (aM, aP) => {
         var aO = ap(undefined, "TextDiv");
         var aN = document.createTextNode(A(aP));
         aO.appendChild(aN);
         aM.appendChild(aO)
     };
-    var a = function (aM, aO) {
+    var a = (aM, aO) => {
         if (null === aO || 0 === aO.length || "-" == aO.value) {
             return
         }
@@ -936,7 +934,7 @@ function IdPSelectUI() {
             aN++
         }
     };
-    var aC = function (aR) {
+    var aC = aR => {
         var aQ = L();
         if (0 === aQ.length) {
             return false
@@ -963,7 +961,7 @@ function IdPSelectUI() {
         aR.appendChild(aP);
         return true
     };
-    var ai = function () {
+    var ai = () => {
         var aN = document.createElement("form");
         U.appendChild(aN);
         aN.action = Y;
@@ -979,7 +977,7 @@ function IdPSelectUI() {
         }
         return aN
     };
-    var o = function (aT, aN) {
+    var o = (aT, aN) => {
         U = ap("IdPEntryTile");
         if (c) {
             U.style.display = "none"
@@ -1005,7 +1003,7 @@ function IdPSelectUI() {
         var aP = v("Select");
         aP.disabled = true;
         aR.appendChild(aP);
-        aR.onsubmit = function () {
+        aR.onsubmit = () => {
             if (null === aS.value || 0 === aS.value.length || "-" == aS.value) {
                 return false
             }
@@ -1018,7 +1016,7 @@ function IdPSelectUI() {
         aM.appendChild(document.createTextNode(A("idpList.showList")));
         aM.href = "#";
         am(aM, "DropDownToggle");
-        aM.onclick = function () {
+        aM.onclick = () => {
             U.style.display = "none";
             a(az, aS.value);
             j.style.display = "";
@@ -1029,7 +1027,7 @@ function IdPSelectUI() {
         x(U);
         aT.appendChild(U)
     };
-    var X = function (aM, aP) {
+    var X = (aM, aP) => {
         j = ap("IdPListTile");
         if (!c) {
             j.style.display = "none"
@@ -1057,7 +1055,7 @@ function IdPSelectUI() {
         var aN = ai();
         aN.appendChild(aT);
         aN.appendChild(az);
-        aN.onsubmit = function () {
+        aN.onsubmit = () => {
             if (az.selectedIndex < 1) {
                 return false
             }
@@ -1072,7 +1070,7 @@ function IdPSelectUI() {
         aS.appendChild(document.createTextNode(A("idpList.showSearch")));
         aS.href = "#";
         am(aS, "DropDownToggle");
-        aS.onclick = function () {
+        aS.onclick = () => {
             U.style.display = "";
             j.style.display = "none";
             return false
@@ -1081,7 +1079,7 @@ function IdPSelectUI() {
         x(j);
         aM.appendChild(j)
     };
-    var C = function (aP) {
+    var C = aP => {
         var aN = "IdPSelectAutoDisp";
         autoDispatchTile = ap(undefined, "autoDispatchArea");
         autoDispatchTile.appendChild(document.createTextNode(A("autoFollow.message")));
@@ -1089,7 +1087,7 @@ function IdPSelectUI() {
         aM.setAttribute("type", "radio");
         aM.setAttribute("checked", "checked");
         aM.setAttribute("name", aN);
-        aM.onclick = function () {
+        aM.onclick = () => {
             E(0)
         };
         div = ap(undefined, "autoDispatchTile");
@@ -1113,21 +1111,21 @@ function IdPSelectUI() {
         }
         aP.appendChild(autoDispatchTile)
     };
-    var v = function (aN) {
+    var v = aN => {
         var aM = document.createElement("input");
         aM.setAttribute("type", "submit");
         aM.value = A("submitButton.label");
         l(aM, aN + "Button");
         return aM
     };
-    var x = function (aN) {
+    var x = aN => {
         var aM = document.createElement("a");
         aM.href = R;
         aM.appendChild(document.createTextNode(A("helpText")));
         am(aM, "HelpButton");
         aN.appendChild(aM)
     };
-    var ap = function (aO, aM) {
+    var ap = (aO, aM) => {
         var aN = document.createElement("div");
         if (undefined !== aO) {
             l(aN, aO)
@@ -1137,7 +1135,7 @@ function IdPSelectUI() {
         }
         return aN
     };
-    var p = function (aN, aO) {
+    var p = (aN, aO) => {
         var aM = document.createElement("option");
         aM.value = aN;
         if (aO.length > au) {
@@ -1146,20 +1144,18 @@ function IdPSelectUI() {
         aM.appendChild(document.createTextNode(aO));
         return aM
     };
-    var l = function (aN, aM) {
+    var l = (aN, aM) => {
         aN.id = aL + aM
     };
-    var am = function (aN, aM) {
+    var am = (aN, aM) => {
         aN.setAttribute("class", aj + aM)
     };
-    var aD = function (aM) {
-        return document.getElementById(aL + aM)
-    };
-    var aH = function (aM) {
+    var aD = aM => document.getElementById(aL + aM);
+    var aH = aM => {
         J(aM);
         at(P)
     };
-    var A = function (aM) {
+    var A = aM => {
         var aN = aa[aM];
         if (!aN) {
             aN = d[aM]
@@ -1169,10 +1165,8 @@ function IdPSelectUI() {
         }
         return aN
     };
-    var z = function (aM) {
-        return aM.entityID
-    };
-    var ak = function (aO) {
+    var z = aM => aM.entityID;
+    var ak = aO => {
         var aM;
         if (null == aO.Logos) {
             return null
@@ -1187,7 +1181,7 @@ function IdPSelectUI() {
         }
         return null
     };
-    var aE = function (aN) {
+    var aE = aN => {
         var aM = ay(aN.DisplayNames);
         if (null !== aM) {
             return aM
@@ -1195,14 +1189,14 @@ function IdPSelectUI() {
         s("No Name entry in any language for " + z(aN));
         return z(aN)
     };
-    var I = function (aN) {
+    var I = aN => {
         if (aq || null == aN.Keywords) {
             return null
         }
         var aM = ay(aN.Keywords);
         return aM
     };
-    var ay = function (aM) {
+    var ay = aM => {
         var aN;
         for (aN in aM) {
             if (aM[aN].lang == S) {
@@ -1228,7 +1222,7 @@ function IdPSelectUI() {
         }
         return null
     };
-    var L = function () {
+    var L = () => {
         var aQ = [];
         var aP = 0;
         var aO;
@@ -1254,7 +1248,7 @@ function IdPSelectUI() {
         }
         return aQ
     };
-    var J = function (aM) {
+    var J = aM => {
         var aN = [];
         while (0 !== P.length) {
             var aO = P.pop();
@@ -1266,7 +1260,7 @@ function IdPSelectUI() {
         P = aN;
         return
     };
-    var E = function (aO) {
+    var E = aO => {
         var aM;
         if (aO > 0) {
             var aN = new Date();
@@ -1277,7 +1271,7 @@ function IdPSelectUI() {
         }
         document.cookie = Q + "=1;path=/;expires=" + aM.toUTCString()
     };
-    var i = function (aO) {
+    var i = aO => {
         var aQ, aN;
         var aR;
         aR = document.cookie.split(";");
@@ -1291,7 +1285,7 @@ function IdPSelectUI() {
         }
         return null
     };
-    var b = function () {
+    var b = () => {
         var aM = [];
         var aN;
         var aO = i("_saml_idp");
@@ -1311,7 +1305,7 @@ function IdPSelectUI() {
         }
         return aM
     };
-    var at = function (aR) {
+    var at = aR => {
         var aO = [];
         var aQ = aR.length;
         if (af) {
@@ -1333,7 +1327,7 @@ function IdPSelectUI() {
         }
         document.cookie = "_saml_idp=" + aO.join("%20") + "; path = /" + ((aM === null) ? "" : "; expires=" + aM.toUTCString())
     };
-    var w = function (aV) {
+    var w = aV => {
         var aM = "", aQ, aO, aN, aU, aT, aS, aR;
         for (var aP = 0; aP < aV.length;) {
             aQ = aV.charCodeAt(aP++);
@@ -1354,7 +1348,7 @@ function IdPSelectUI() {
         }
         return aM
     };
-    var av = function (aP) {
+    var av = aP => {
         var aN = "", aW, aU, aS, aV, aT, aR, aQ;
         var aO = 0;
         var aM = /[^A-Za-z0-9\+\/\=]/g;
@@ -1379,7 +1373,7 @@ function IdPSelectUI() {
         } while (aO < aP.length);
         return aN
     };
-    var ae = function (aN) {
+    var ae = aN => {
         if (aJ) {
             var aM = document.createTextNode(aN);
             aJ.appendChild(aM)
@@ -1389,7 +1383,7 @@ function IdPSelectUI() {
             $('#errorDiv').append(aN);
         }
     };
-    var O = function (aM) {
+    var O = aM => {
         $('#errorDiv').show('true');
         $('#errorDiv').empty();
         $('#errorDiv').append(aM);
@@ -1397,7 +1391,7 @@ function IdPSelectUI() {
             ae(aM)
         }
     };
-    var s = function () {
+    var s = () => {
     }
 }
 

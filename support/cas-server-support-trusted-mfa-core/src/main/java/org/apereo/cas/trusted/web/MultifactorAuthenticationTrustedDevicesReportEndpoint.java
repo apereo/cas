@@ -6,7 +6,7 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,7 +17,8 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -44,8 +45,8 @@ import java.util.Set;
  * @since 5.3.0
  */
 @Slf4j
-@RestControllerEndpoint(id = "multifactorTrustedDevices", enableByDefault = false)
-public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseCasActuatorEndpoint {
+@Endpoint(id = "multifactorTrustedDevices", enableByDefault = false)
+public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseCasRestActuatorEndpoint {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
@@ -53,8 +54,9 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
 
     public MultifactorAuthenticationTrustedDevicesReportEndpoint(
         final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext,
         final ObjectProvider<MultifactorAuthenticationTrustStorage> mfaTrustEngine) {
-        super(casProperties);
+        super(casProperties, applicationContext);
         this.mfaTrustEngine = mfaTrustEngine;
     }
 

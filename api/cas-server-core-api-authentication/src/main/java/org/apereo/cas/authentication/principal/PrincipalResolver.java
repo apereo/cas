@@ -2,10 +2,8 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
-
-import org.apereo.services.persondir.IPersonAttributeDao;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.springframework.core.Ordered;
-
 import java.util.Optional;
 
 /**
@@ -93,7 +91,9 @@ public interface PrincipalResolver extends Ordered {
      * @return the attribute repository or null.
      * @since 5.1
      */
-    IPersonAttributeDao getAttributeRepository();
+    default PersonAttributeDao getAttributeRepository() {
+        return null;
+    }
 
     /**
      * Gets a unique name for this principal resolver.

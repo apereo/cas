@@ -387,7 +387,7 @@ public class RequestParameterPolicyEnforcementFilter extends AbstractSecurityFil
                 checkOnlyPostParameters(httpServletRequest.getMethod(), parameterMap, this.onlyPostParameters);
             }
         } catch (final Exception e) {
-            throwException(new ServletException(getClass().getSimpleName() + " is blocking this request.", e));
+            throwException(new ServletException("This request is blocked: %s".formatted(e.getMessage()), e));
         }
 
         chain.doFilter(request, response);

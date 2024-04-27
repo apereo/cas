@@ -2,6 +2,7 @@ package org.apereo.cas.persondir;
 
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
@@ -9,7 +10,6 @@ import org.apereo.cas.services.ServicesManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.util.StringUtils;
 import java.util.HashSet;
 import java.util.Objects;
@@ -31,8 +31,7 @@ public class DefaultAttributeRepositoryResolver implements AttributeRepositoryRe
     @Override
     public Set<String> resolve(final AttributeRepositoryQuery query) {
         val repositoryIds = new HashSet<String>();
-        Optional.ofNullable(query.getService())
-            .map(servicesManager::findServiceBy)
+        determineRegisteredService(query)
             .map(RegisteredService::getAttributeReleasePolicy)
             .map(RegisteredServiceAttributeReleasePolicy::getPrincipalAttributesRepository)
             .map(RegisteredServicePrincipalAttributesRepository::getAttributeRepositoryIds)
@@ -49,8 +48,13 @@ public class DefaultAttributeRepositoryResolver implements AttributeRepositoryRe
                 });
 
         if (repositoryIds.isEmpty()) {
-            repositoryIds.add(IPersonAttributeDao.WILDCARD);
+            repositoryIds.add(PersonAttributeDao.WILDCARD);
         }
         return repositoryIds;
+    }
+
+    protected Optional<RegisteredService> determineRegisteredService(final AttributeRepositoryQuery query) {
+        val result = Optional.ofNullable(query.getService()).map(servicesManager::findServiceBy).orElseGet(query::getRegisteredService);
+        return Optional.ofNullable(result);
     }
 }

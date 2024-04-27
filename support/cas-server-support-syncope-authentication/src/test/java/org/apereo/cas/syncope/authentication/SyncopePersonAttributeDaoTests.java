@@ -1,12 +1,12 @@
 package org.apereo.cas.syncope.authentication;
 
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilter;
 import org.apereo.cas.syncope.BaseSyncopeTests;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.IPersonAttributeDaoFilter;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -44,14 +44,14 @@ class SyncopePersonAttributeDaoTests {
     class SyncopeCoreServerTests extends BaseSyncopeTests {
         @Autowired
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        private IPersonAttributeDao attributeRepository;
+        private PersonAttributeDao attributeRepository;
 
         @Test
         void verifyUserIsFound() throws Throwable {
             var found = attributeRepository.getPeople(Map.of("username", List.of("syncopecas")));
             assertFalse(found.iterator().next().getAttributes().isEmpty());
             var people = attributeRepository.getPeople(Map.of("username", List.of("syncopecas")),
-                IPersonAttributeDaoFilter.alwaysChoose());
+                PersonAttributeDaoFilter.alwaysChoose());
             assertFalse(people.iterator().next().getAttributes().isEmpty());
         }
 
@@ -80,11 +80,11 @@ class SyncopePersonAttributeDaoTests {
     class MockSyncopePersonTests extends BaseSyncopeTests {
         @Autowired
         @Qualifier("syncopePersonAttributeDaos")
-        private BeanContainer<IPersonAttributeDao> syncopePersonAttributeDaos;
+        private BeanContainer<PersonAttributeDao> syncopePersonAttributeDaos;
 
         @Autowired
         @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        private IPersonAttributeDao attributeRepository;
+        private PersonAttributeDao attributeRepository;
 
         @Test
         void verifyUserIsFound() throws Throwable {
@@ -96,7 +96,7 @@ class SyncopePersonAttributeDaoTests {
 
                 val first = syncopePersonAttributeDaos.first();
                 val people = first.getPeople(Map.of("username", List.of("casuser")),
-                    IPersonAttributeDaoFilter.alwaysChoose());
+                    PersonAttributeDaoFilter.alwaysChoose());
                 assertFalse(people.iterator().next().getAttributes().isEmpty());
             }
         }
@@ -107,7 +107,7 @@ class SyncopePersonAttributeDaoTests {
             result.putArray("result");
             try (val webserver = startMockSever(result, HttpStatus.OK, 8095)) {
                 val people = attributeRepository.getPeopleWithMultivaluedAttributes(
-                    Map.of("anotherProp", List.of("casuser")), IPersonAttributeDaoFilter.alwaysChoose());
+                    Map.of("anotherProp", List.of("casuser")), PersonAttributeDaoFilter.alwaysChoose());
                 assertTrue(people.isEmpty());
             }
         }
@@ -116,9 +116,9 @@ class SyncopePersonAttributeDaoTests {
         void verifySyncopeDown() throws Throwable {
             val result = MAPPER.createObjectNode();
             result.putArray("result").add(user());
-            try (val webserver = startMockSever(result, HttpStatus.INTERNAL_SERVER_ERROR, 8095)) {
+            try (val __ = startMockSever(result, HttpStatus.INTERNAL_SERVER_ERROR, 8095)) {
                 val first = syncopePersonAttributeDaos.first();
-                val results = first.getPeople(Map.of("username", List.of("casuser")), IPersonAttributeDaoFilter.alwaysChoose());
+                val results = first.getPeople(Map.of("username", List.of("casuser")), PersonAttributeDaoFilter.alwaysChoose());
                 assertTrue(results.iterator().next().getAttributes().isEmpty());
             }
         }

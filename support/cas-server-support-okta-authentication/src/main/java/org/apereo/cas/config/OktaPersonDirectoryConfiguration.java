@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.attribute.SimpleUsernameAttributeProvider;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.okta.OktaConfigurationFactory;
@@ -11,11 +13,8 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import com.okta.sdk.client.Client;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.SimpleUsernameAttributeProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -56,7 +55,7 @@ class OktaPersonDirectoryConfiguration {
     @ConditionalOnMissingBean(name = "oktaPersonAttributeDaos")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public BeanContainer<IPersonAttributeDao> oktaPersonAttributeDaos(
+    public BeanContainer<PersonAttributeDao> oktaPersonAttributeDaos(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("oktaPersonDirectoryClient")
         final Client oktaPersonDirectoryClient,
@@ -81,7 +80,7 @@ class OktaPersonDirectoryConfiguration {
     public PersonDirectoryAttributeRepositoryPlanConfigurer oktaAttributeRepositoryPlanConfigurer(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("oktaPersonAttributeDaos")
-        final BeanContainer<IPersonAttributeDao> oktaPersonAttributeDaos) {
+        final BeanContainer<PersonAttributeDao> oktaPersonAttributeDaos) {
         return BeanSupplier.of(PersonDirectoryAttributeRepositoryPlanConfigurer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> plan -> oktaPersonAttributeDaos.toList().forEach(plan::registerAttributeRepository))

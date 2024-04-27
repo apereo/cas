@@ -4,7 +4,9 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
+import org.apereo.cas.authentication.attribute.StubPersonAttributeDao;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
@@ -18,8 +20,6 @@ import org.apereo.cas.util.spring.beans.BeanContainer;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apereo.services.persondir.IPersonAttributeDao;
-import org.apereo.services.persondir.support.StubPersonAttributeDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -98,7 +98,7 @@ class JaasAuthenticationHandlersConfigurationTests {
 
         @Bean
         @ConditionalOnMissingBean(name = PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-        public IPersonAttributeDao attributeRepository() {
+        public PersonAttributeDao attributeRepository() {
             return new StubPersonAttributeDao();
         }
 
@@ -117,7 +117,7 @@ class JaasAuthenticationHandlersConfigurationTests {
         @Bean
         @ConditionalOnMissingBean(name = AttributeRepositoryResolver.BEAN_NAME)
         public AttributeRepositoryResolver attributeRepositoryResolver() {
-            return query -> Set.of(IPersonAttributeDao.WILDCARD);
+            return query -> Set.of(PersonAttributeDao.WILDCARD);
         }
     }
 }

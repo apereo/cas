@@ -46,9 +46,9 @@ async function verifyNormalFlows(page) {
             assert(result.id === "casuser");
             assert(result.client_id === "client");
             assert(result.service === redirectUri);
-            assert(result.email[0] === "casuser@apereo.org");
-            assert(result.organization[0] === "apereo");
-            assert(result.username[0] === "casuser");
+            assert(result.email === "casuser@apereo.org");
+            assert(result.organization === "apereo");
+            assert(result.username === "casuser");
         }, (error) => {
             throw error;
         });

@@ -19,13 +19,14 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.authentication.SamlResponseBuilder;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,8 +45,8 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@RestControllerEndpoint(id = "samlValidate", enableByDefault = false)
-public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
+@Endpoint(id = "samlValidate", enableByDefault = false)
+public class SamlValidateEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<ServicesManager> servicesManager;
 
     private final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
@@ -63,6 +64,7 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
     private final ObjectProvider<PrincipalResolver> principalResolver;
 
     public SamlValidateEndpoint(final CasConfigurationProperties casProperties,
+                                final ConfigurableApplicationContext applicationContext,
                                 final ObjectProvider<ServicesManager> servicesManager,
                                 final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
                                 final ObjectProvider<ServiceFactory<WebApplicationService>> serviceFactory,
@@ -71,7 +73,7 @@ public class SamlValidateEndpoint extends BaseCasActuatorEndpoint {
                                 final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean,
                                 final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
                                 final ObjectProvider<PrincipalResolver> principalResolver) {
-        super(casProperties);
+        super(casProperties, applicationContext);
         this.servicesManager = servicesManager;
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.serviceFactory = serviceFactory;

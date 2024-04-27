@@ -47,7 +47,5 @@ public class DefaultEmailSender implements EmailSender {
         return EmailCommunicationResult.builder().success(true)
             .to(recipients).body(emailRequest.getBody()).build();
     }
-
-
-
+    
 }

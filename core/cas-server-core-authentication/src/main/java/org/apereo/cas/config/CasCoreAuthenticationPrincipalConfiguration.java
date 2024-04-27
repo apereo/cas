@@ -17,6 +17,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolutionExecutionPlanC
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.merger.AttributeMerger;
 import org.apereo.cas.authentication.principal.resolvers.ChainingPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.EchoingPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -25,7 +26,6 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -87,7 +87,7 @@ class CasCoreAuthenticationPrincipalConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalElectionStrategy principalElectionStrategy(
             final List<PrincipalElectionStrategyConfigurer> configurers,
-            @Qualifier("principalElectionAttributeMerger") final IAttributeMerger attributeMerger) {
+            @Qualifier("principalElectionAttributeMerger") final AttributeMerger attributeMerger) {
             LOGGER.trace("Building principal election strategies from [{}]", configurers);
             val chain = new ChainingPrincipalElectionStrategy();
             chain.setAttributeMerger(attributeMerger);
@@ -103,7 +103,7 @@ class CasCoreAuthenticationPrincipalConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "principalElectionAttributeMerger")
-        public IAttributeMerger principalElectionAttributeMerger(final CasConfigurationProperties casProperties) {
+        public AttributeMerger principalElectionAttributeMerger(final CasConfigurationProperties casProperties) {
             return CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
         }
 
@@ -120,7 +120,7 @@ class CasCoreAuthenticationPrincipalConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalElectionStrategyConfigurer defaultPrincipalElectionStrategyConfigurer(
             @Qualifier(PrincipalElectionStrategyConflictResolver.BEAN_NAME) final PrincipalElectionStrategyConflictResolver defaultPrincipalElectionStrategyConflictResolver,
-            @Qualifier("principalElectionAttributeMerger") final IAttributeMerger attributeMerger,
+            @Qualifier("principalElectionAttributeMerger") final AttributeMerger attributeMerger,
             final CasConfigurationProperties casProperties,
             @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory) {
             return chain -> {

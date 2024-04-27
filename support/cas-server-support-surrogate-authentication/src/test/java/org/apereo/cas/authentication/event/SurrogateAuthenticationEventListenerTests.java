@@ -104,7 +104,7 @@ class SurrogateAuthenticationEventListenerTests {
     }
 
     @TestConfiguration(value = "SurrogateAuthenticationEventListenerTestConfiguration", proxyBeanMethods = false)
-        static class SurrogateAuthenticationEventListenerTestConfiguration {
+    static class SurrogateAuthenticationEventListenerTestConfiguration {
 
         @Bean
         public SmsSender smsSender() {

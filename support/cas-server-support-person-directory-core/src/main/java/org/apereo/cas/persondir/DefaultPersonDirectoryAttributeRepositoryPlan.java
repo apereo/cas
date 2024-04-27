@@ -1,16 +1,14 @@
 package org.apereo.cas.persondir;
 
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.jooq.lambda.Unchecked;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.DisposableBean;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -25,12 +23,12 @@ import java.util.List;
 @Getter
 @RequiredArgsConstructor
 public class DefaultPersonDirectoryAttributeRepositoryPlan implements PersonDirectoryAttributeRepositoryPlan, DisposableBean {
-    private final List<IPersonAttributeDao> attributeRepositories = new ArrayList<>(0);
+    private final List<PersonAttributeDao> attributeRepositories = new ArrayList<>(0);
 
     private final List<PersonDirectoryAttributeRepositoryCustomizer> attributeRepositoryCustomizers;
 
     @Override
-    public void registerAttributeRepository(final IPersonAttributeDao repository) {
+    public void registerAttributeRepository(final PersonAttributeDao repository) {
         if (BeanSupplier.isNotProxy(repository)) {
             if (LOGGER.isTraceEnabled()) {
                 val name = AopUtils.isAopProxy(repository)

@@ -1,0 +1,16 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": "https://localhost:9859/anything/cas",
+  "name": "Sample",
+  "description": "This application is registered with CAS for CIBA requests",
+  "id": 1,
+  "scopes" : [ "java.util.HashSet", [ "profile", "email", "openid" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "urn:openid:params:grant-type:ciba" ] ],
+  "backchannelTokenDeliveryMode": "push",
+  "backchannelClientNotificationEndpoint": "https://localhost:9859/anything/cibapush",
+  "backchannelUserCodeParameterSupported": true,
+  "informationUrl": "https://github.com/apereo/cas",
+  "privacyUrl": "https://github.com/apereo/cas"
+}

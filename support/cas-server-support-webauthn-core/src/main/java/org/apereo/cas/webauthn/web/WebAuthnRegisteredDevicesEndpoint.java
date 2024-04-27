@@ -3,10 +3,9 @@ package org.apereo.cas.webauthn.web;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import org.apereo.cas.webauthn.WebAuthnUtils;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.data.ByteArray;
@@ -17,7 +16,8 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -43,14 +42,15 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@RestControllerEndpoint(id = "webAuthnDevices", enableByDefault = false)
+@Endpoint(id = "webAuthnDevices", enableByDefault = false)
 @Slf4j
-public class WebAuthnRegisteredDevicesEndpoint extends BaseCasActuatorEndpoint {
+public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<WebAuthnCredentialRepository> registrationStorage;
 
     public WebAuthnRegisteredDevicesEndpoint(final CasConfigurationProperties casProperties,
+                                             final ConfigurableApplicationContext applicationContext,
                                              final ObjectProvider<WebAuthnCredentialRepository> registrationStorage) {
-        super(casProperties);
+        super(casProperties, applicationContext);
         this.registrationStorage = registrationStorage;
     }
 

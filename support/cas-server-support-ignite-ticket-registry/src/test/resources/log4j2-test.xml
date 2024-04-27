@@ -9,8 +9,8 @@
         <Logger name="org.apache.xml.security" level="off" />
         <Logger name="org.apereo" level="error"  />
         <Logger name="org.apache.ignite" level="error" />
-        <Logger name="org.springframework" level="warn" />
-        <Root level="warn">
+        <Logger name="org.springframework.boot" level="info" />
+        <Root level="info">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

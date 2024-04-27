@@ -493,7 +493,7 @@ done
 
 if [[ -n "$coverageTask" ]]; then
   task=""
-  printf "${GREEN}Running code coverage task [${coverageTask}]will disable all other task executions. Make sure all test tasks that generate code coverage data have already executed.${ENDCOLOR}\n"
+  printf "${GREEN}Running code coverage task [${coverageTask}] will disable all other task executions. Make sure all test tasks that generate code coverage data have already executed.${ENDCOLOR}\n"
 fi
 
 if [[ -z "$task" ]] && [[ -z "$coverageTask" ]]; then

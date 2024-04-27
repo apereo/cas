@@ -4,8 +4,6 @@ const assert = require("assert");
 
 async function fetchRefreshToken(page, clientId, redirectUrl) {
     const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=openid%20offline_access&prompt=login&redirect_uri=${redirectUrl}&nonce=3d3a7457f9ad3&state=1735fd6c43c14`;
-
-    await cas.log(`Navigating to ${url}`);
     await cas.goto(page, url);
     await cas.sleep(1000);
     await cas.loginWith(page);
@@ -15,7 +13,9 @@ async function fetchRefreshToken(page, clientId, redirectUrl) {
         await cas.click(page, "#allow");
         await cas.waitForNavigation(page);
     }
-
+    await cas.screenshot(page);
+    await cas.sleep(1000);
+    await cas.logPage(page);
     const code = await cas.assertParameter(page, "code");
     await cas.log(`OAuth code ${code}`);
 
@@ -108,7 +108,7 @@ async function exchangeToken(refreshToken, clientId, successHandler, errorHandle
             throw `Operation should not fail but instead produced: ${error}`;
         });
 
-    await cas.log("Let's wait 5 seconds for the TGT to expire, RTs should be still alive");
+    await cas.log("Let's wait for the TGT to expire, RTs should be still alive");
     await cas.sleep(5000);
 
     await exchangeToken(refreshToken1, "client",

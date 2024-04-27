@@ -26,7 +26,7 @@ collateral tasks such as monitoring, notifications and acts as a configuration p
   
 ## Indexing & Search
 
-For better performance, it's best for the Redis server deployment to turn up and enable [RediSearch](https://redis.io/docs/stack/search/).
+For better performance, it's best for the Redis server deployment to turn up and enable [RediSearch](https://github.com/RediSearch/RediSearch).
 RediSearch is a Redis module that enables querying, secondary indexing, and full-text search for Redis. These features allow CAS
 to build particular indexes for ticket documents for faster querying and search operations. In certain cases, this would
 significantly improve the performance of *lookup* operations.

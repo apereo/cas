@@ -32,7 +32,7 @@
 
         <div class="form-wrapper">
 
-            <form method="post" id="fm1" th:object="${credential}" action="login">
+            <form method="post" id="fm1" th:object="${credential}" action="login" onsubmit="loginFormSubmission();">
                 <div id="login-form-controls" th:unless="${loginFormViewable or loginFormEnabled}">
                     <div id="loginErrorsPanel" class="alert alert-danger banner banner-danger banner-dismissible"
                          th:if="${#fields.hasErrors('*')}">
@@ -300,6 +300,7 @@
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                         <input type="hidden" name="_eventId" value="submit"/>
                         <input type="hidden" name="geolocation"/>
+                        <input type="hidden" name="deviceFingerprint"/>
 
                         <p th:if="${#strings.equalsIgnoreCase(httpRequestMethod, 'POST')}">
                             <span th:each="entry : ${httpRequestInitialPostParameters}" th:remove="tag">
@@ -308,6 +309,12 @@
                                 </span>
                             </span>
                         </p>
+
+                        <script type="text/javascript">
+                            let client = new ClientJS();
+                            let fingerprint = client.getFingerprint();
+                            $('[name="deviceFingerprint"]').val(fingerprint);
+                        </script>
                     </section>
 
                     <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')}"/>
