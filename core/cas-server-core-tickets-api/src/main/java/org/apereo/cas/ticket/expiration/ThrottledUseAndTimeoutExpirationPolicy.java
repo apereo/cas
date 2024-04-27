@@ -1,9 +1,12 @@
 package org.apereo.cas.ticket.expiration;
 
 
+import org.apereo.cas.ticket.IdleExpirationPolicy;
+import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -16,6 +19,7 @@ import lombok.val;
 import java.io.Serial;
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Implementation of an expiration policy that adds the concept of saying that a
@@ -31,14 +35,11 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
+public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy implements IdleExpirationPolicy {
 
     @Serial
     private static final long serialVersionUID = 205979491183779408L;
 
-    /**
-     * The time to kill in seconds.
-     */
     private long timeToKillInSeconds;
 
     private long timeInBetweenUsesInSeconds;
@@ -89,5 +90,12 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
     @Override
     public Long getTimeToIdle() {
         return this.timeInBetweenUsesInSeconds;
+    }
+
+    @JsonIgnore
+    @Override
+    public ZonedDateTime getIdleExpirationTime(final Ticket ticketState) {
+        val lastTimeUsed = ticketState.getLastTimeUsed();
+        return lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
     }
 }

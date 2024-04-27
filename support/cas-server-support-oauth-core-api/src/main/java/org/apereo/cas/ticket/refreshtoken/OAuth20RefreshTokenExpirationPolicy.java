@@ -63,13 +63,7 @@ public class OAuth20RefreshTokenExpirationPolicy extends AbstractCasExpirationPo
     public Long getTimeToLive() {
         return this.timeToKillInSeconds;
     }
-
-    @JsonIgnore
-    @Override
-    public Long getTimeToIdle() {
-        return 0L;
-    }
-
+    
     /**
      * Is refresh token expired ?
      *

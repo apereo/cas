@@ -2,6 +2,7 @@ package org.apereo.cas.support.events.ticket;
 
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
+import org.apereo.cas.ticket.IdleExpirationPolicy;
 import lombok.Getter;
 import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -26,7 +27,8 @@ public abstract class AbstractCasTicketGrantingTicketEvent extends AbstractCasEv
 
     private final AuthenticationAwareTicket ticketGrantingTicket;
 
-    protected AbstractCasTicketGrantingTicketEvent(final Object source, final AuthenticationAwareTicket ticketGrantingTicket, final ClientInfo clientInfo) {
+    protected AbstractCasTicketGrantingTicketEvent(final Object source, final AuthenticationAwareTicket ticketGrantingTicket,
+                                                   final ClientInfo clientInfo) {
         super(source, clientInfo);
         this.ticketGrantingTicket = ticketGrantingTicket;
     }
@@ -64,7 +66,7 @@ public abstract class AbstractCasTicketGrantingTicketEvent extends AbstractCasEv
      * @return tgt's TTI
      */
     public Long getTimeToIdle() {
-        return ticketGrantingTicket.getExpirationPolicy().getTimeToIdle();
+        return ticketGrantingTicket.getExpirationPolicy() instanceof final IdleExpirationPolicy iep ? iep.getTimeToIdle() : 0L;
     }
 
     /**

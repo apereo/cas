@@ -50,20 +50,10 @@ public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
     public Long getTimeToLive() {
         return (long) Integer.MAX_VALUE;
     }
-
-    @JsonIgnore
-    @Override
-    public Long getTimeToIdle() {
-        return (long) Integer.MAX_VALUE;
-    }
-
+    
     @Override
     public ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
         return ZonedDateTime.now(Clock.systemUTC()).plusYears(MAX_EXPIRATION_IN_YEARS);
     }
 
-    @Override
-    public ZonedDateTime getIdleExpirationTime(final Ticket ticketState) {
-        return ZonedDateTime.now(Clock.systemUTC()).plusYears(MAX_EXPIRATION_IN_YEARS);
-    }
 }

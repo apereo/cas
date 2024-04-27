@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.accesstoken;
 
 
+import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
 import org.apereo.cas.ticket.expiration.AbstractCasExpirationPolicy;
@@ -31,7 +32,7 @@ import java.time.temporal.ChronoUnit;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class OAuth20AccessTokenExpirationPolicy extends AbstractCasExpirationPolicy {
+public class OAuth20AccessTokenExpirationPolicy extends AbstractCasExpirationPolicy implements IdleExpirationPolicy {
 
     @Serial
     private static final long serialVersionUID = -8383186650682727360L;
