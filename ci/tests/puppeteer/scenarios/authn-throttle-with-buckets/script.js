@@ -1,4 +1,3 @@
-
 const cas = require("../../cas.js");
 
 (async () => {
@@ -9,7 +8,7 @@ const cas = require("../../cas.js");
     await submitLogin(page, "casuser", "Mellon");
     await cas.assertCookie(page);
     await cas.gotoLogout(page);
-    await cas.sleep(2000);
+    await cas.sleep(1000);
 
     await cas.log("Log in attempt: #1");
     await submitLogin(page);
@@ -36,6 +35,6 @@ const cas = require("../../cas.js");
 async function submitLogin(page, user = "casuser", password = "BadPassword1") {
     await cas.gotoLogin(page);
     await cas.sleep(500);
-    await cas.loginWith(page, user, password);
+    await cas.loginWith(page, user, password, "#username", "#password", 4000);
 }
 

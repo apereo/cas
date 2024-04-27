@@ -210,21 +210,21 @@ exports.inputValue = async (page, selector) => {
 
 exports.waitForElement = async (page, selector, timeout = 10000) => page.waitForSelector(selector, {timeout: timeout});
 
-exports.loginWith = async (page,
-    user = "casuser",
-    password = "Mellon",
-    usernameField = "#username",
-    passwordField = "#password") => {
+exports.submitLoginCredentials = async (page, user = "casuser", password = "Mellon",
+    usernameField = "#username", passwordField = "#password") => {
     await this.log(`Logging in with ${user} and ${password}`);
     await page.waitForSelector(usernameField, {visible: true});
     await this.type(page, usernameField, user);
-
     await page.waitForSelector(passwordField, {visible: true});
     await this.type(page, passwordField, password, true);
-
     await this.pressEnter(page);
+};
+
+exports.loginWith = async (page, user = "casuser", password = "Mellon",
+    usernameField = "#username", passwordField = "#password", timeout = 2000) => {
     try {
-        const response = await this.waitForNavigation(page);
+        await this.submitLoginCredentials(page, user, password, usernameField, passwordField);
+        const response = await this.waitForNavigation(page, timeout);
         await this.log(`Page response status after navigation: ${response.status()}`);
         return response;
     } catch (e) {
