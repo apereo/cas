@@ -4,6 +4,7 @@ import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
+import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -64,7 +65,7 @@ class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
         @Test
         void verifyRegisterDevice() throws Throwable {
             val bean = new MultifactorAuthenticationTrustBean();
-            WebUtils.putMultifactorAuthenticationTrustRecord(context, bean);
+            MultifactorAuthenticationTrustUtils.putMultifactorAuthenticationTrustRecord(context, bean);
             assertNull(bean.getDeviceName());
             assertEquals(CasWebflowConstants.TRANSITION_ID_STORE, mfaPrepareTrustDeviceViewAction.execute(context).getId());
             assertFalse(bean.getDeviceName().isBlank());

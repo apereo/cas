@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderMetadataPopulator;
@@ -24,7 +25,6 @@ import org.apereo.cas.gauth.credential.JsonGoogleAuthenticatorTokenCredentialRep
 import org.apereo.cas.gauth.credential.RestGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.gauth.token.GoogleAuthenticatorTokenRepositoryCleaner;
-import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorAuthenticationDeviceProviderAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorDeleteAccountAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorPrepareLoginAction;
 import org.apereo.cas.gauth.web.flow.GoogleAuthenticatorSaveRegistrationAction;
@@ -34,6 +34,7 @@ import org.apereo.cas.gauth.web.flow.account.GoogleMultifactorAuthenticationAcco
 import org.apereo.cas.gauth.web.flow.account.GoogleMultifactorAuthenticationAccountProfileRegistrationAction;
 import org.apereo.cas.gauth.web.flow.account.GoogleMultifactorAuthenticationAccountProfileWebflowConfigurer;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccountCipherExecutor;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialDeviceManager;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
@@ -51,6 +52,7 @@ import org.apereo.cas.util.thread.Cleanable;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.actions.DefaultMultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 
@@ -283,6 +285,15 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
                 .get();
         }
 
+        @ConditionalOnMissingBean(name = "googleAuthenticatorDeviceManager")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public MultifactorAuthenticationDeviceManager googleAuthenticatorDeviceManager(
+            @Qualifier("googleAuthenticatorAccountRegistry")
+            final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry) {
+            return new OneTimeTokenCredentialDeviceManager(googleAuthenticatorAccountRegistry);
+        }
+        
         @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -314,7 +325,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_GOOGLE_VALIDATE_SELECTED_REGISTRATION)
-        public Action validateSelectedRegistrationAction(
+        public Action googleValidateSelectedRegistrationAction(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return WebflowActionBeanSupplier.builder()
@@ -465,15 +476,18 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             @Qualifier("googleAuthenticatorBypassEvaluator")
             final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorBypassEvaluator,
             @Qualifier("failureModeEvaluator")
-            final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator) {
+            final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator,
+            @Qualifier("googleAuthenticatorDeviceManager")
+            final MultifactorAuthenticationDeviceManager googleAuthenticatorDeviceManager) {
             val gauth = casProperties.getAuthn().getMfa().getGauth();
-            val p = new GoogleAuthenticatorMultifactorAuthenticationProvider();
-            p.setBypassEvaluator(googleAuthenticatorBypassEvaluator);
-            p.setFailureMode(gauth.getFailureMode());
-            p.setFailureModeEvaluator(failureModeEvaluator);
-            p.setOrder(gauth.getRank());
-            p.setId(gauth.getId());
-            return p;
+            val provider = new GoogleAuthenticatorMultifactorAuthenticationProvider();
+            provider.setBypassEvaluator(googleAuthenticatorBypassEvaluator);
+            provider.setFailureMode(gauth.getFailureMode());
+            provider.setFailureModeEvaluator(failureModeEvaluator);
+            provider.setOrder(gauth.getRank());
+            provider.setId(gauth.getId());
+            provider.setDeviceManager(googleAuthenticatorDeviceManager);
+            return provider;
         }
     }
     @Configuration(value = "GoogleAuthenticatorAccountProfileWebflowConfiguration", proxyBeanMethods = false)
@@ -509,9 +523,9 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_DEVICE_PROVIDER)
         public MultifactorAuthenticationDeviceProviderAction googleAccountDeviceProviderAction(
-            @Qualifier("googleAuthenticatorAccountRegistry")
-            final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry) {
-            return new GoogleAuthenticatorAuthenticationDeviceProviderAction(googleAuthenticatorAccountRegistry);
+            @Qualifier("googleAuthenticatorDeviceManager")
+            final MultifactorAuthenticationDeviceManager googleAuthenticatorDeviceManager) {
+            return new DefaultMultifactorAuthenticationDeviceProviderAction(googleAuthenticatorDeviceManager);
         }
 
         @Bean

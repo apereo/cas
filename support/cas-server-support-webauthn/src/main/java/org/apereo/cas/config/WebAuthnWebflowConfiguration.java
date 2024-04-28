@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -11,6 +12,7 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
+import org.apereo.cas.web.flow.actions.DefaultMultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.flow.authentication.FinalMultifactorAuthenticationTransactionWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -29,7 +31,6 @@ import org.apereo.cas.webauthn.web.flow.WebAuthnValidateSessionCredentialTokenAc
 import org.apereo.cas.webauthn.web.flow.account.WebAuthnMultifactorAccountProfilePrepareAction;
 import org.apereo.cas.webauthn.web.flow.account.WebAuthnMultifactorAccountProfileRegistrationAction;
 import org.apereo.cas.webauthn.web.flow.account.WebAuthnMultifactorAccountProfileWebflowConfigurer;
-import org.apereo.cas.webauthn.web.flow.account.WebAuthnMultifactorDeviceProviderAction;
 import com.yubico.core.RegistrationStorage;
 import com.yubico.core.SessionManager;
 import lombok.val;
@@ -333,13 +334,14 @@ class WebAuthnWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_WEBAUTHN_MFA_DEVICE_PROVIDER)
+        @ConditionalOnMissingBean(name = "webAuthnDeviceProviderAction")
         public MultifactorAuthenticationDeviceProviderAction webAuthnDeviceProviderAction(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(WebAuthnCredentialRepository.BEAN_NAME) final RegistrationStorage webAuthnCredentialRepository) {
+            @Qualifier("webAuthnMultifactorAuthenticationDeviceManager")
+            final MultifactorAuthenticationDeviceManager webAuthnMultifactorAuthenticationDeviceManager) {
             return BeanSupplier.of(MultifactorAuthenticationDeviceProviderAction.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new WebAuthnMultifactorDeviceProviderAction(webAuthnCredentialRepository))
+                .supply(() -> new DefaultMultifactorAuthenticationDeviceProviderAction(webAuthnMultifactorAuthenticationDeviceManager))
                 .otherwiseProxy()
                 .get();
         }

@@ -82,6 +82,6 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
         }
 
         LOGGER.debug("Attaching X509 flow to regular login flow");
-        return new ImmutablePair<>(CasWebflowConstants.STATE_ID_AFTER_INIT_LOGIN_FORM, CasWebflowConstants.TRANSITION_ID_SUCCESS);
+        return Pair.of(CasWebflowConstants.STATE_ID_AFTER_INIT_LOGIN_FORM, CasWebflowConstants.TRANSITION_ID_SUCCESS);
     }
 }

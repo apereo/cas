@@ -1,8 +1,18 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 
@@ -10,8 +20,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.webflow.action.EventFactorySupport;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import java.util.Map;
 
 /**
  * This is {@link InitPasswordResetAction}, serves a as placeholder for extensions.
@@ -23,9 +36,13 @@ import org.springframework.webflow.execution.RequestContext;
 @RequiredArgsConstructor
 public class InitPasswordResetAction extends BaseCasWebflowAction {
     private final PasswordManagementService passwordManagementService;
+    private final CasConfigurationProperties casProperties;
+    private final PrincipalResolver principalResolver;
+    private final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
+    private final AuthenticationSystemSupport authenticationSystemSupport;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val token = PasswordManagementWebflowUtils.getPasswordResetToken(requestContext);
 
         if (StringUtils.isBlank(token)) {
@@ -39,9 +56,39 @@ public class InitPasswordResetAction extends BaseCasWebflowAction {
             return error();
         }
 
+        if (doesPasswordResetRequireMultifactorAuthentication(requestContext)) {
+            val principal = principalResolver.resolve(new BasicIdentifiableCredential(username));
+            val provider = selectMultifactorAuthenticationProvider(requestContext, principal);
+            val authentication = DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
+            WebUtils.putAuthentication(authentication, requestContext);
+            val builder = authenticationSystemSupport.getAuthenticationResultBuilderFactory().newBuilder();
+            val authenticationResult = builder.collect(authentication);
+            WebUtils.putAuthenticationResultBuilder(authenticationResult, requestContext);
+            WebUtils.putTargetTransition(requestContext, CasWebflowConstants.TRANSITION_ID_RESUME_RESET_PASSWORD);
+            WebUtils.putMultifactorAuthenticationProvider(requestContext, provider);
+            return new EventFactorySupport().event(this, provider.getId(),
+                new LocalAttributeMap<>(Map.of(MultifactorAuthenticationProvider.class.getName(), provider)));
+        }
         val credential = new UsernamePasswordCredential();
         credential.setUsername(username);
         WebUtils.putCredential(requestContext, credential);
         return success();
+    }
+    
+
+    protected MultifactorAuthenticationProvider selectMultifactorAuthenticationProvider(final RequestContext requestContext,
+                                                                                        final Principal principal) throws Throwable {
+        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
+        val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
+        val registeredService = WebUtils.getRegisteredService(requestContext);
+        return multifactorAuthenticationProviderSelector.resolve(providers.values(), registeredService, principal);
+    }
+    
+    protected boolean doesPasswordResetRequireMultifactorAuthentication(final RequestContext requestContext) {
+        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
+        val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
+        val providerId = WebUtils.getMultifactorAuthenticationProvider(requestContext);
+        return casProperties.getAuthn().getPm().getReset().isMultifactorAuthenticationEnabled()
+            && !providers.isEmpty() && StringUtils.isBlank(providerId);
     }
 }

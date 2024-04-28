@@ -2,7 +2,6 @@ package org.apereo.cas.consent;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
-import org.apereo.cas.util.MockRequestContext;
 
 import lombok.Getter;
 import lombok.val;
@@ -34,8 +33,6 @@ class DefaultConsentActivationStrategyDisabledTests {
     
     @Test
     void verifyNoConsent() throws Throwable {
-        MockRequestContext.create();
-
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(mock(RegisteredServiceAttributeReleasePolicy.class));
         assertFalse(getConsentActivationStrategy().isConsentRequired(

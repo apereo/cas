@@ -63,16 +63,16 @@ public class MultifactorAuthenticationVerifyTrustAction extends BaseCasWebflowAc
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val fingerprint = deviceFingerprintStrategy.determineFingerprint(authentication, request, response);
         LOGGER.trace("Retrieving authentication records for [{}] that matches [{}]", principal, fingerprint);
-        if (results.stream().noneMatch(entry -> entry.getDeviceFingerprint().equals(fingerprint))) {
+        val foundRecord = results.stream().filter(entry -> entry.getDeviceFingerprint().equals(fingerprint)).findAny();
+        if (foundRecord.isEmpty()) {
             LOGGER.debug("No trusted authentication records could be found for [{}] to match the current device fingerprint", principal);
             return no();
         }
-
         LOGGER.debug("Trusted authentication records found for [{}] that matches the current device fingerprint", principal);
         MultifactorAuthenticationTrustUtils.setMultifactorAuthenticationTrustedInScope(requestContext);
         MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
-            authentication,
-            trustedProperties.getCore().getAuthenticationContextAttribute());
+            authentication, trustedProperties.getCore().getAuthenticationContextAttribute());
+        MultifactorAuthenticationTrustUtils.putMultifactorAuthenticationTrustRecord(requestContext, foundRecord.get());
         return yes();
     }
 }

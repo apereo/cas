@@ -61,6 +61,7 @@ public class JpaGoogleAuthenticatorAccount extends GoogleAuthenticatorAccount {
                 .collect(Collectors.toList()))
             .registrationDate(acct.getRegistrationDate())
             .name(acct.getName())
+            .source(acct.getSource())
             .build();
     }
 }

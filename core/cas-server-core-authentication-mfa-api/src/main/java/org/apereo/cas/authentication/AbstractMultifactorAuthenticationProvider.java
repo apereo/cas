@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.RegexUtils;
@@ -35,6 +36,8 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
     private MultifactorAuthenticationProviderBypassEvaluator bypassEvaluator;
 
     private MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator;
+
+    private MultifactorAuthenticationDeviceManager deviceManager;
 
     private MultifactorAuthenticationProviderFailureModes failureMode = MultifactorAuthenticationProviderFailureModes.UNDEFINED;
 

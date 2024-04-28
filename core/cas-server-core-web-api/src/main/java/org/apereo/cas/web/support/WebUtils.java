@@ -932,28 +932,6 @@ public class WebUtils {
     }
 
     /**
-     * Gets multifactor authentication trust record.
-     *
-     * @param <T>     the type parameter
-     * @param context the context
-     * @param clazz   the clazz
-     * @return the multifactor authentication trust record
-     */
-    public static <T> Optional<T> getMultifactorAuthenticationTrustRecord(final RequestContext context, final Class<T> clazz) {
-        return Optional.ofNullable(context.getFlowScope().get(CasWebflowConstants.VAR_ID_MFA_TRUST_RECORD, clazz));
-    }
-
-    /**
-     * Put multifactor authentication trust record.
-     *
-     * @param context the context
-     * @param object  the object
-     */
-    public static void putMultifactorAuthenticationTrustRecord(final RequestContext context, final Serializable object) {
-        context.getFlowScope().put(CasWebflowConstants.VAR_ID_MFA_TRUST_RECORD, object);
-    }
-
-    /**
      * Put resolved multifactor authentication providers into scope.
      *
      * @param context the context
@@ -1862,25 +1840,7 @@ public class WebUtils {
         requestContext.getFlowScope().put("multifactorRegisteredAccounts", list);
     }
 
-    /**
-     * Put multifactor authentication trusted devices.
-     *
-     * @param requestContext the request context
-     * @param accounts       the accounts
-     */
-    public static void putMultifactorAuthenticationTrustedDevices(final RequestContext requestContext, final List accounts) {
-        requestContext.getFlowScope().put("multifactorTrustedDevices", accounts);
-    }
 
-    /**
-     * Gets multifactor authentication trusted devices.
-     *
-     * @param requestContext the request context
-     * @return the multifactor authentication trusted devices
-     */
-    public List getMultifactorAuthenticationTrustedDevices(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("multifactorTrustedDevices", List.class);
-    }
 
     /**
      * Gets multifactor authentication registered devices.

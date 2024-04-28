@@ -49,7 +49,6 @@ class YubiKeyAuthenticationHandlerTests {
 
     @Test
     void checkNoAuthN() throws Exception {
-        MockRequestContext.create();
         val handler = getHandler(YubicoClient.getClient(123456, EncodingUtils.encodeBase64("123456")));
         assertThrows(NullPointerException.class, () -> handler.authenticate(new YubiKeyCredential(OTP), mock(Service.class)));
     }

@@ -4,11 +4,9 @@ import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +39,6 @@ class RestfulAccountRegistrationProvisionerTests {
     @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
     private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;
 
-    @BeforeEach
-    public void setup() throws Exception {
-        MockRequestContext.create();
-    }
-    
     @Test
     void verifyOperation() throws Throwable {
         try (val webServer = new MockWebServer(5002, HttpStatus.OK)) {

@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.web.flow;
 
+import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorAccount;
@@ -55,7 +56,9 @@ class GoogleAuthenticatorAuthenticationDeviceProviderActionTests {
 
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(acct.getUsername()), context);
         assertNull(googleAccountDeviceProviderAction.execute(context));
-        assertEquals(1, WebUtils.getMultifactorAuthenticationRegisteredDevices(context).size());
+        val registeredDevices = (List<MultifactorAuthenticationRegisteredDevice>) WebUtils.getMultifactorAuthenticationRegisteredDevices(context);
+        assertEquals(1, registeredDevices.size());
+        assertEquals("Google Authenticator", registeredDevices.getFirst().getSource());
     }
 
 }
