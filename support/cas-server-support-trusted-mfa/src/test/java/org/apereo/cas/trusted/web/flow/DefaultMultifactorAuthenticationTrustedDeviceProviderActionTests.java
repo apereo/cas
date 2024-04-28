@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.web.flow;
 
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
+import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -45,12 +46,12 @@ public class DefaultMultifactorAuthenticationTrustedDeviceProviderActionTests {
         val context = getMockRequestContext();
 
         val bean = new MultifactorAuthenticationTrustBean().setDeviceName("ApereoCAS");
-        WebUtils.putMultifactorAuthenticationTrustRecord(context, bean);
+        MultifactorAuthenticationTrustUtils.putMultifactorAuthenticationTrustRecord(context, bean);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, mfaSetTrustAction.execute(context).getId());
 
         val result = action.execute(context);
         assertNull(result);
-        assertEquals(1, WebUtils.getMultifactorAuthenticationTrustedDevices(context).size());
+        assertEquals(1, MultifactorAuthenticationTrustUtils.getMultifactorAuthenticationTrustedDevices(context).size());
     }
 
     private MockRequestContext getMockRequestContext() throws Throwable {

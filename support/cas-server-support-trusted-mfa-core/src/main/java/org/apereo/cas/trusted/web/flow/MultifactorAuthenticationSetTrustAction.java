@@ -57,7 +57,7 @@ public class MultifactorAuthenticationSetTrustAction extends BaseCasWebflowActio
             return success();
         }
 
-        val deviceBean = WebUtils.getMultifactorAuthenticationTrustRecord(requestContext, MultifactorAuthenticationTrustBean.class);
+        val deviceBean = MultifactorAuthenticationTrustUtils.getMultifactorAuthenticationTrustRecord(requestContext, MultifactorAuthenticationTrustBean.class);
         if (deviceBean.isEmpty()) {
             LOGGER.debug("No device information is provided. Trusted authentication record is not stored and tracked");
             return success();

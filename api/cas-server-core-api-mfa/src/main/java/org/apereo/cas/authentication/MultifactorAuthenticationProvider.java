@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.services.RegisteredService;
 
@@ -43,6 +44,13 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
      */
     MultifactorAuthenticationFailureModeEvaluator getFailureModeEvaluator();
 
+    /**
+     * Returns an instance of the device manager for this provider
+     * that is able to determine and track user registered devices.
+     * @return MFA device manager instance
+     */
+    MultifactorAuthenticationDeviceManager getDeviceManager();
+    
     /**
      * Gets id for this provider.
      *

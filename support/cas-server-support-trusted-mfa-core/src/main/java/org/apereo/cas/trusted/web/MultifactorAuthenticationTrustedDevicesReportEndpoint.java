@@ -84,7 +84,7 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
         cleanExpiredRecords();
         return mfaTrustEngine.getObject().get(username);
     }
-
+    
     /**
      * Revoke record and return status.
      *
@@ -139,8 +139,8 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
         val deviceRec = MAPPER.readValue(requestBody, new TypeReference<MultifactorAuthenticationTrustRecord>() {
         });
         LOGGER.trace("Storing device record: [{}]", deviceRec);
-        mfaTrustEngine.getObject().save(deviceRec);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        val created = mfaTrustEngine.getObject().save(deviceRec);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     /**

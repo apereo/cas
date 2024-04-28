@@ -3,11 +3,9 @@ package org.apereo.cas.acct.provision;
 import org.apereo.cas.acct.AccountRegistrationRequest;
 import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
 import org.apereo.cas.config.CasScimAutoConfiguration;
-import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import lombok.val;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,11 +44,6 @@ class ScimAccountRegistrationProvisionerTests {
     @Autowired
     @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
     private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;
-
-    @BeforeEach
-    public void setup() throws Exception {
-        MockRequestContext.create();
-    }
 
     @Test
     void verifyOperation() throws Throwable {

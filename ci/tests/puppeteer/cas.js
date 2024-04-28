@@ -221,7 +221,7 @@ exports.submitLoginCredentials = async (page, user = "casuser", password = "Mell
 };
 
 exports.loginWith = async (page, user = "casuser", password = "Mellon",
-    usernameField = "#username", passwordField = "#password", timeout = 2000) => {
+    usernameField = "#username", passwordField = "#password", timeout = 4000) => {
     try {
         await this.submitLoginCredentials(page, user, password, usernameField, passwordField);
         const response = await this.waitForNavigation(page, timeout);

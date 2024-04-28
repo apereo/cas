@@ -395,21 +395,22 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
 
     @Override
     public SubflowState createSubflowState(final Flow flow, final String stateId, final String subflow, final Action entryAction) {
+        return createSubflowState(flow, stateId, subflow, this.mainFlowDefinitionRegistry, entryAction);
+    }
+    
+    @Override
+    public SubflowState createSubflowState(final Flow flow, final String stateId,
+                                           final String subflow, final FlowDefinitionRegistry registry,
+                                           final Action entryAction) {
         if (containsFlowState(flow, stateId)) {
             LOGGER.trace("Flow [{}] already contains a definition for state id [{}]", flow.getId(), stateId);
             return getTransitionableState(flow, stateId, SubflowState.class);
         }
-
-        val state = new SubflowState(flow, stateId, new BasicSubflowExpression(subflow, this.mainFlowDefinitionRegistry));
+        val state = new SubflowState(flow, stateId, new BasicSubflowExpression(subflow, registry));
         if (entryAction != null) {
             state.getEntryActionList().add(entryAction);
         }
         return state;
-    }
-
-    @Override
-    public SubflowState createSubflowState(final Flow flow, final String stateId, final String subflow) {
-        return createSubflowState(flow, stateId, subflow, null);
     }
 
     @Override

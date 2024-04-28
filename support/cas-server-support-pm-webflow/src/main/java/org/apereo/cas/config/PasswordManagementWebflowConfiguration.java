@@ -223,13 +223,22 @@ class PasswordManagementWebflowConfiguration {
         public Action initPasswordResetAction(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME) final PasswordManagementService passwordManagementService) {
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
+            final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
+            final PasswordManagementService passwordManagementService,
+            @Qualifier(MultifactorAuthenticationProviderSelector.BEAN_NAME)
+            final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> BeanSupplier.of(Action.class)
                     .alwaysMatch()
-                    .supply(() -> new InitPasswordResetAction(passwordManagementService))
+                    .supply(() -> new InitPasswordResetAction(passwordManagementService,
+                        casProperties, defaultPrincipalResolver,
+                        multifactorAuthenticationProviderSelector, authenticationSystemSupport))
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_PASSWORD_RESET_INIT)
                 .build()
@@ -260,16 +269,24 @@ class PasswordManagementWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action sendPasswordResetInstructionsAction(
-            @Qualifier(AuthenticationSystemSupport.BEAN_NAME) final AuthenticationSystemSupport authenticationSystemSupport,
-            @Qualifier(MultifactorAuthenticationProviderSelector.BEAN_NAME) final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector,
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
+            final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier(MultifactorAuthenticationProviderSelector.BEAN_NAME)
+            final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
-            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME) final PasswordManagementService passwordManagementService,
-            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
-            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver defaultPrincipalResolver,
-            @Qualifier(CommunicationsManager.BEAN_NAME) final CommunicationsManager communicationsManager,
-            @Qualifier(TicketFactory.BEAN_NAME) final TicketFactory ticketFactory,
-            @Qualifier(PasswordResetUrlBuilder.BEAN_NAME) final PasswordResetUrlBuilder passwordResetUrlBuilder) {
+            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
+            final PasswordManagementService passwordManagementService,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver,
+            @Qualifier(CommunicationsManager.BEAN_NAME)
+            final CommunicationsManager communicationsManager,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
+            @Qualifier(PasswordResetUrlBuilder.BEAN_NAME)
+            final PasswordResetUrlBuilder passwordResetUrlBuilder) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -501,7 +518,7 @@ class PasswordManagementWebflowConfiguration {
             @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME) final PasswordManagementService passwordManagementService) {
             return new AccountProfileUpdateSecurityQuestionsAction(passwordManagementService, casProperties);
         }
-
+        
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_PASSWORD_CHANGE_REQUEST)

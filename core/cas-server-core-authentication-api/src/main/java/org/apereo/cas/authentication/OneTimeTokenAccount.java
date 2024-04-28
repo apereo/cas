@@ -97,6 +97,10 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @JsonProperty("lastUsedDateTime")
     private String lastUsedDateTime;
 
+    @Column
+    @JsonProperty("source")
+    private String source;
+
     @Override
     public int compareTo(final OneTimeTokenAccount o) {
         return new CompareToBuilder()
@@ -106,6 +110,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
             .append(this.username, o.getUsername())
             .append(this.name, o.getName())
             .append(this.lastUsedDateTime, o.getLastUsedDateTime())
+            .append(this.source, o.getSource())
             .build()
             .intValue();
     }

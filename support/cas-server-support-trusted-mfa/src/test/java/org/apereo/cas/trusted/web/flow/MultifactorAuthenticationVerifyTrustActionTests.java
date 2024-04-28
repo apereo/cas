@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
@@ -73,10 +74,10 @@ class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifacto
 
         val authn = RegisteredServiceTestUtils.getAuthentication(record.getPrincipal());
         WebUtils.putAuthentication(authn, context);
-        assertEquals("yes", mfaVerifyTrustAction.execute(context).getId());
-
+        assertEquals(CasWebflowConstants.TRANSITION_ID_YES, mfaVerifyTrustAction.execute(context).getId());
         assertTrue(MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(context));
         assertTrue(authn.containsAttribute(casProperties.getAuthn().getMfa().getTrusted().getCore().getAuthenticationContextAttribute()));
+        assertTrue(MultifactorAuthenticationTrustUtils.getMultifactorAuthenticationTrustRecord(context, MultifactorAuthenticationTrustRecord.class).isPresent());
     }
 
     @Test

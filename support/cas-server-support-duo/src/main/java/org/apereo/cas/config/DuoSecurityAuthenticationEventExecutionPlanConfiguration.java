@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.duo.authn.DefaultDuoSecurityMultifactorAuthentica
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityDirectCredential;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationDeviceManager;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.UniversalPromptDuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.web.DuoSecurityAdminApiEndpoint;
@@ -244,10 +245,9 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                             provider.setOrder(duoProps.getRank());
                             provider.setId(duoProps.getId());
                             provider.setRegistration(duoProps.getRegistration());
-
+                            provider.setDeviceManager(new DuoSecurityMultifactorAuthenticationDeviceManager(provider));
                             val duoAuthenticationService = getDuoAuthenticationService(applicationContext,
-                                multifactorAuthenticationPrincipalResolvers,
-                                httpClient, casProperties, duoProps);
+                                multifactorAuthenticationPrincipalResolvers, httpClient, casProperties, duoProps);
                             var name = provider.getId().concat("-duoAuthenticationService");
                             ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, duoAuthenticationService, name);
                             provider.setDuoAuthenticationService(duoAuthenticationService);

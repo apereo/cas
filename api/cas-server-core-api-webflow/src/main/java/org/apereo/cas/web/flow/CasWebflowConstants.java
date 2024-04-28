@@ -1523,7 +1523,11 @@ public interface CasWebflowConstants {
      */
     String ACTION_ID_ACCOUNT_PROFILE_PASSWORD_CHANGE_REQUEST = "accountProfilePasswordChangeRequestAction";
 
-
+    /**
+     * Action id 'accountProfileActivateMfaAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_ACTIVATE_MFA = "accountProfileActivateMfaAction";
+    
     /**
      * Action id 'prepareAccountProfilePasswordMgmtAction'.
      */
@@ -1970,9 +1974,9 @@ public interface CasWebflowConstants {
     String ACTION_ID_GOOGLE_ACCOUNT_CREATE_REGISTRATION = "googleAccountCreateRegistrationAction";
 
     /**
-     * Action id 'validateSelectedRegistrationAction'.
+     * Action id 'googleValidateSelectedRegistrationAction'.
      */
-    String ACTION_ID_GOOGLE_VALIDATE_SELECTED_REGISTRATION = "validateSelectedRegistrationAction";
+    String ACTION_ID_GOOGLE_VALIDATE_SELECTED_REGISTRATION = "googleValidateSelectedRegistrationAction";
 
     /**
      * Action id 'yubikeyAuthenticationWebflowAction'.

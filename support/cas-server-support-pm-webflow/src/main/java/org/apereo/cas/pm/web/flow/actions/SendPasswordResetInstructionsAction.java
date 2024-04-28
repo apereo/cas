@@ -5,7 +5,6 @@ import org.apereo.cas.audit.AuditPrincipalResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
@@ -39,7 +38,6 @@ import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.action.EventFactorySupport;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.net.URL;
@@ -129,7 +127,11 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         }
         WebUtils.putPasswordManagementQuery(requestContext, query);
         if (doesPasswordResetRequireMultifactorAuthentication(requestContext)) {
-            return switchToMultifactorAuthenticationFlow(requestContext);
+            if (!hasPrincipalRegisteredMultifactorAuthenticationDevice(requestContext)) {
+                LOGGER.warn("No registered devices for multifactor authentication could be found for [{}]", query.getUsername());
+                WebUtils.addErrorMessageToContext(requestContext, "screen.mfaDenied.message");
+                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_DENY);
+            }
         }
         val service = WebUtils.getService(requestContext);
         val url = buildPasswordResetUrl(query.getUsername(), service);
@@ -156,19 +158,11 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
             && !providers.isEmpty() && StringUtils.isBlank(providerId);
     }
 
-    protected Event switchToMultifactorAuthenticationFlow(final RequestContext requestContext) throws Throwable {
+    protected boolean hasPrincipalRegisteredMultifactorAuthenticationDevice(final RequestContext requestContext) throws Throwable {
         val query = WebUtils.getPasswordManagementQuery(requestContext, PasswordManagementQuery.class);
         val principal = principalResolver.resolve(new BasicIdentifiableCredential(query.getUsername()));
         val provider = selectMultifactorAuthenticationProvider(requestContext, principal);
-        val authentication = DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
-        WebUtils.putAuthentication(authentication, requestContext);
-        val builder = authenticationSystemSupport.getAuthenticationResultBuilderFactory().newBuilder();
-        val authenticationResult = builder.collect(authentication);
-        WebUtils.putAuthenticationResultBuilder(authenticationResult, requestContext);
-        WebUtils.putTargetTransition(requestContext, CasWebflowConstants.TRANSITION_ID_RESUME_RESET_PASSWORD);
-        WebUtils.putMultifactorAuthenticationProvider(requestContext, provider);
-        return new EventFactorySupport().event(this, provider.getId(),
-            new LocalAttributeMap<>(Map.of(MultifactorAuthenticationProvider.class.getName(), provider)));
+        return provider.getDeviceManager() == null || provider.getDeviceManager().hasRegisteredDevices(principal);
     }
 
     protected MultifactorAuthenticationProvider selectMultifactorAuthenticationProvider(final RequestContext requestContext,

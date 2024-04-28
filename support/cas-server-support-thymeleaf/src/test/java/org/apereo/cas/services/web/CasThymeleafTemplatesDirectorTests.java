@@ -2,7 +2,6 @@ package org.apereo.cas.services.web;
 
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
 import lombok.val;
@@ -27,8 +26,6 @@ import static org.mockito.Mockito.*;
 class CasThymeleafTemplatesDirectorTests {
     @Test
     void verifyOperation() throws Throwable {
-        MockRequestContext.create();
-
         val plan = mock(CasWebflowExecutionPlan.class);
         when(plan.getWebflowLoginContextProviders()).thenReturn(List.of());
 

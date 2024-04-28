@@ -1,50 +1,39 @@
-package org.apereo.cas.webauthn.web.flow.account;
+package org.apereo.cas.webauthn;
 
+import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
-import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
-import org.apereo.cas.web.support.WebUtils;
-
 import com.yubico.core.RegistrationStorage;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.webauthn.attestation.Attestation;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.webflow.execution.Event;
-import org.springframework.webflow.execution.RequestContext;
-
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link WebAuthnMultifactorDeviceProviderAction}.
+ * This is {@link WebAuthnMultifactorAuthenticationDeviceManager}.
  *
  * @author Misagh Moayyed
- * @since 6.6.0
+ * @since 7.1.0
  */
 @RequiredArgsConstructor
-public class WebAuthnMultifactorDeviceProviderAction extends BaseCasWebflowAction
-    implements MultifactorAuthenticationDeviceProviderAction {
-
+public class WebAuthnMultifactorAuthenticationDeviceManager implements MultifactorAuthenticationDeviceManager {
     private final RegistrationStorage webAuthnCredentialRepository;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
-        val authentication = WebUtils.getAuthentication(requestContext);
-        val principal = authentication.getPrincipal();
-
+    public List<MultifactorAuthenticationRegisteredDevice> findRegisteredDevices(final Principal principal) {
         val registrations = webAuthnCredentialRepository.getRegistrationsByUsername(principal.getId());
-        val accounts = registrations
+        return registrations
             .stream()
             .filter(Objects::nonNull)
             .map(this::mapWebAuthnAccount)
             .collect(Collectors.toList());
-        WebUtils.putMultifactorAuthenticationRegisteredDevices(requestContext, accounts);
-        return null;
     }
 
     protected MultifactorAuthenticationRegisteredDevice mapWebAuthnAccount(
