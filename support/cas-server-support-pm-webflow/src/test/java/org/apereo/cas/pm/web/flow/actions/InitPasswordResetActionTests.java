@@ -12,6 +12,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -97,7 +98,7 @@ class InitPasswordResetActionTests extends BasePasswordManagementActionTests {
             assertNotNull(WebUtils.getAuthentication(context));
             assertNotNull(WebUtils.getAuthenticationResultBuilder(context));
             assertEquals(CasWebflowConstants.TRANSITION_ID_RESUME_RESET_PASSWORD, WebUtils.getTargetTransition(context));
-            assertEquals(multifactorAuthenticationProvider.getId(), WebUtils.getMultifactorAuthenticationProvider(context));
+            assertEquals(multifactorAuthenticationProvider.getId(), MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(context));
         }
 
         @Test

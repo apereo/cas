@@ -15,6 +15,7 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +62,7 @@ public class InitPasswordResetAction extends BaseCasWebflowAction {
                 val authenticationResult = builder.collect(authentication);
                 WebUtils.putAuthenticationResultBuilder(authenticationResult, requestContext);
                 WebUtils.putTargetTransition(requestContext, CasWebflowConstants.TRANSITION_ID_RESUME_RESET_PASSWORD);
-                WebUtils.putMultifactorAuthenticationProvider(requestContext, provider);
+                MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(requestContext, provider);
                 return new EventFactorySupport().event(this, provider.getId(),
                     new LocalAttributeMap<>(Map.of(MultifactorAuthenticationProvider.class.getName(), provider)));
             }
@@ -103,7 +104,7 @@ public class InitPasswordResetAction extends BaseCasWebflowAction {
     protected boolean doesPasswordResetRequireMultifactorAuthentication(final RequestContext requestContext) {
         val applicationContext = requestContext.getActiveFlow().getApplicationContext();
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
-        val providerId = WebUtils.getMultifactorAuthenticationProvider(requestContext);
+        val providerId = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(requestContext);
         return casProperties.getAuthn().getPm().getReset().isMultifactorAuthenticationEnabled()
             && !providers.isEmpty() && StringUtils.isBlank(providerId);
     }

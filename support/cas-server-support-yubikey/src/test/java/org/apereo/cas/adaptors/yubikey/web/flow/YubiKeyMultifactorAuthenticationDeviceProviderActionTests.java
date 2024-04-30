@@ -1,11 +1,11 @@
 package org.apereo.cas.adaptors.yubikey.web.flow;
 
 import org.apereo.cas.adaptors.yubikey.BaseYubiKeyTests;
-import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -42,7 +41,7 @@ class YubiKeyMultifactorAuthenticationDeviceProviderActionTests {
         val authentication = RegisteredServiceTestUtils.getAuthentication("casuseryubikey");
         WebUtils.putAuthentication(authentication, context);
         assertNull(yubiKeyDeviceProviderAction.execute(context));
-        val registeredDevices = (List<MultifactorAuthenticationRegisteredDevice>) WebUtils.getMultifactorAuthenticationRegisteredDevices(context);
+        val registeredDevices = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationRegisteredDevices(context);
         assertEquals(1, registeredDevices.size());
 
     }

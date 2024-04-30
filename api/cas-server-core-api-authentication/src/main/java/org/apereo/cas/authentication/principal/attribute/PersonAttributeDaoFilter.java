@@ -12,7 +12,7 @@ public interface PersonAttributeDaoFilter {
      * Choose person attribute dao.
      *
      * @param personAttributeDao the person attribute dao
-     * @return the boolean
+     * @return true/false
      */
     boolean choosePersonAttributeDao(PersonAttributeDao personAttributeDao);
 

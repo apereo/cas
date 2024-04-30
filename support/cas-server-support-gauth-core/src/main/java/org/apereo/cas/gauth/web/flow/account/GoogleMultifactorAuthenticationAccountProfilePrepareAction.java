@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 
@@ -23,7 +24,7 @@ public class GoogleMultifactorAuthenticationAccountProfilePrepareAction extends 
             val core = casProperties.getAuthn().getMfa().getGauth().getCore();
             val enabled = core.isMultipleDeviceRegistrationEnabled() || repository.count(principal.getId()) == 0;
             requestContext.getFlowScope().put("gauthAccountProfileRegistrationEnabled", enabled);
-            WebUtils.putMultifactorAuthenticationProvider(requestContext, googleAuthenticatorMultifactorAuthenticationProvider);
+            MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(requestContext, googleAuthenticatorMultifactorAuthenticationProvider);
         });
     }
 }

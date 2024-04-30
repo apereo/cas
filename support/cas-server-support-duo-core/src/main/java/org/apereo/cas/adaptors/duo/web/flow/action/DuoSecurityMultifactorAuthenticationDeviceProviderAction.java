@@ -4,6 +4,7 @@ import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationPro
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -41,7 +42,7 @@ public class DuoSecurityMultifactorAuthenticationDeviceProviderAction extends Ba
             .map(provider -> provider.getDeviceManager().findRegisteredDevices(principal))
             .flatMap(List::stream)
             .collect(Collectors.toList());
-        WebUtils.putMultifactorAuthenticationRegisteredDevices(requestContext, accounts);
+        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationRegisteredDevices(requestContext, accounts);
         return null;
     }
 }

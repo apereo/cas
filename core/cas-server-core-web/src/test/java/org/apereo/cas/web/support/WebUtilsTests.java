@@ -79,7 +79,6 @@ class WebUtilsTests {
 
         assertDoesNotThrow(() -> {
             WebUtils.putWildcardedRegisteredService(context, true);
-            WebUtils.putYubiKeyMultipleDeviceRegistrationEnabled(context, true);
             WebUtils.putInitialHttpRequestPostParameters(context);
             WebUtils.putExistingSingleSignOnSessionAvailable(context, true);
             WebUtils.putExistingSingleSignOnSessionPrincipal(context, CoreAuthenticationTestUtils.getPrincipal());

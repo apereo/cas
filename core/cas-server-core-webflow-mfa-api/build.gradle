@@ -22,6 +22,8 @@ dependencies {
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-logout-api")
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }
 
 

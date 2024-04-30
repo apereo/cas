@@ -5,7 +5,7 @@ import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ class DuoSecurityDirectAuthenticationActionTests extends BaseCasWebflowMultifact
     void verifyOperation() throws Throwable {
         val context = BaseDuoSecurityTests.getMockRequestContext(applicationContext);
         val provider = BaseDuoSecurityTests.getDuoSecurityMultifactorAuthenticationProvider();
-        WebUtils.putMultifactorAuthenticationProvider(context, provider);
+        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, provider);
         val event = duoNonWebAuthenticationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
     }

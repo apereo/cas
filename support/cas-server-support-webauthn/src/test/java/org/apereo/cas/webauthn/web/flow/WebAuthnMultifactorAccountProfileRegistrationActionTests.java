@@ -2,7 +2,7 @@ package org.apereo.cas.webauthn.web.flow;
 
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -35,6 +35,6 @@ public class WebAuthnMultifactorAccountProfileRegistrationActionTests {
         val context = MockRequestContext.create(applicationContext);
         val eventId = webAuthnAccountProfileRegistrationAction.execute(context);
         assertNull(eventId);
-        assertNotNull(WebUtils.getMultifactorAuthenticationProvider(context));
+        assertNotNull(MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(context));
     }
 }

@@ -15,6 +15,7 @@ import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
@@ -76,7 +77,7 @@ class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends BaseWeb
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
         val result = duoMultifactorAuthenticationDeviceProviderAction.execute(context);
         assertNull(result);
-        val devices = WebUtils.getMultifactorAuthenticationRegisteredDevices(context);
+        val devices = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationRegisteredDevices(context);
         assertNotNull(devices);
         assertEquals(1, devices.size());
     }

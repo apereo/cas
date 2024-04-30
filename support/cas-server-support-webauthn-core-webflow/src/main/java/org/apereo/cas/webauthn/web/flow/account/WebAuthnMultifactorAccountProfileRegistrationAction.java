@@ -2,7 +2,7 @@ package org.apereo.cas.webauthn.web.flow.account;
 
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 /**
  * This is {@link WebAuthnMultifactorAccountProfileRegistrationAction}.
@@ -12,7 +12,7 @@ import org.apereo.cas.web.support.WebUtils;
  */
 public class WebAuthnMultifactorAccountProfileRegistrationAction extends ConsumerExecutionAction {
     public WebAuthnMultifactorAccountProfileRegistrationAction(final MultifactorAuthenticationProvider provider) {
-        super(requestContext -> WebUtils.putMultifactorAuthenticationProvider(requestContext, provider));
+        super(requestContext -> MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(requestContext, provider));
     }
 }
 

@@ -14,6 +14,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import com.duosecurity.Client;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +48,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
     protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
 
         val authentication = WebUtils.getAuthentication(requestContext);
-        val duoSecurityIdentifier = WebUtils.getMultifactorAuthenticationProvider(requestContext);
+        val duoSecurityIdentifier = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(requestContext);
 
         val duoProvider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(duoSecurityIdentifier, applicationContext)
             .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
@@ -71,7 +72,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         val authenticationResult = WebUtils.getAuthenticationResult(requestContext);
         properties.put(AuthenticationResult.class.getSimpleName(), authenticationResult);
         properties.put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION_RESULT, authenticationResult);
-        properties.put(Credential.class.getSimpleName(), WebUtils.getMultifactorAuthenticationParentCredential(requestContext));
+        properties.put(Credential.class.getSimpleName(), MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationParentCredential(requestContext));
         FunctionUtils.doIfNotNull(service, __ -> properties.put(Service.class.getSimpleName(), service));
         properties.put(DuoSecurityAuthenticationService.class.getSimpleName(), state);
 
