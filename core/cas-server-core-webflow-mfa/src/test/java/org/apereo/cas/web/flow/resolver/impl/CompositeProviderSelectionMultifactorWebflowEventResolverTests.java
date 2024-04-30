@@ -15,6 +15,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -199,7 +200,7 @@ class CompositeProviderSelectionMultifactorWebflowEventResolverTests {
             WebUtils.putResolvedEventsAsAttribute(context, resolvedEvents);
             val result = compositeResolver.resolve(context);
             assertNotNull(result);
-            assertNotNull(WebUtils.getResolvedMultifactorAuthenticationProviders(context));
+            assertNotNull(MultifactorAuthenticationWebflowUtils.getResolvedMultifactorAuthenticationProviders(context));
             return result;
         }
     }

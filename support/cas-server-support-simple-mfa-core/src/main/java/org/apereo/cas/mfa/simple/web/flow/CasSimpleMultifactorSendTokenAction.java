@@ -15,6 +15,7 @@ import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -154,15 +155,15 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
     protected void storeToken(final RequestContext requestContext, final CasSimpleMultifactorAuthenticationTicket token) throws Throwable {
         multifactorAuthenticationService.store(token);
         WebUtils.addInfoMessageToContext(requestContext, MESSAGE_MFA_TOKEN_SENT);
-        WebUtils.putSimpleMultifactorAuthenticationToken(requestContext, token);
+        MultifactorAuthenticationWebflowUtils.putSimpleMultifactorAuthenticationToken(requestContext, token);
     }
 
     protected CasSimpleMultifactorAuthenticationTicket getOrCreateToken(final RequestContext requestContext, final Principal principal) {
-        val currentToken = WebUtils.getSimpleMultifactorAuthenticationToken(requestContext, CasSimpleMultifactorAuthenticationTicket.class);
+        val currentToken = MultifactorAuthenticationWebflowUtils.getSimpleMultifactorAuthenticationToken(requestContext, CasSimpleMultifactorAuthenticationTicket.class);
         return Optional.ofNullable(currentToken)
             .filter(token -> !token.isExpired())
             .orElseGet(Unchecked.supplier(() -> {
-                WebUtils.removeSimpleMultifactorAuthenticationToken(requestContext);
+                MultifactorAuthenticationWebflowUtils.removeSimpleMultifactorAuthenticationToken(requestContext);
                 val service = WebUtils.getService(requestContext);
                 return multifactorAuthenticationService.generate(principal, service);
             }));

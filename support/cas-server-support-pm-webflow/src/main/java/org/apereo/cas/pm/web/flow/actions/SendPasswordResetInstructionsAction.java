@@ -29,6 +29,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -153,7 +154,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
 
     protected boolean doesPasswordResetRequireMultifactorAuthentication(final RequestContext requestContext) {
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
-        val providerId = WebUtils.getMultifactorAuthenticationProvider(requestContext);
+        val providerId = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(requestContext);
         return casProperties.getAuthn().getPm().getReset().isMultifactorAuthenticationEnabled()
             && !providers.isEmpty() && StringUtils.isBlank(providerId);
     }

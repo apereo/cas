@@ -13,6 +13,7 @@ import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import com.duosecurity.Client;
 import com.duosecurity.model.AccessDevice;
@@ -124,7 +125,7 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
 
         val provider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(
             DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER, applicationContext).orElseThrow();
-        WebUtils.putMultifactorAuthenticationProvider(context, provider);
+        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, provider);
         WebUtils.putTargetTransition(context, "targetDestination");
 
         val authnResult = new DefaultAuthenticationResultBuilder()

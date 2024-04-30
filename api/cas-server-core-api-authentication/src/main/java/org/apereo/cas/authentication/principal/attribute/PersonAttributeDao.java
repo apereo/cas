@@ -230,7 +230,7 @@ public interface PersonAttributeDao extends Comparable<PersonAttributeDao>, Orde
     /**
      * Is this dao enabled?
      *
-     * @return the boolean
+     * @return true/false
      */
     default boolean isEnabled() {
         return true;

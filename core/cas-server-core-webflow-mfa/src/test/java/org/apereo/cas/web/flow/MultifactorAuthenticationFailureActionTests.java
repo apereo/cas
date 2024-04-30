@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticat
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -114,7 +115,7 @@ class MultifactorAuthenticationFailureActionTests {
             }
             servicesManager.save(service);
             WebUtils.putRegisteredService(context, service);
-            WebUtils.putMultifactorAuthenticationProvider(context, provider);
+            MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, provider);
             val event = mfaFailureAction.execute(context);
             assertEquals(transitionId, event.getId());
         }

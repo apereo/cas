@@ -5,6 +5,7 @@ import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import com.yubico.data.CredentialRegistration;
@@ -68,6 +69,6 @@ class WebAuthnMultifactorDeviceProviderActionTests {
                 .build());
 
         assertNull(webAuthnDeviceProviderAction.execute(context));
-        assertEquals(1, WebUtils.getMultifactorAuthenticationRegisteredDevices(context).size());
+        assertEquals(1, MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationRegisteredDevices(context).size());
     }
 }

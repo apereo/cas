@@ -8,6 +8,7 @@ import org.apereo.cas.adaptors.yubikey.registry.OpenYubiKeyAccountRegistry;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -30,7 +31,7 @@ class YubiKeyAccountCheckRegistrationActionTests extends BaseYubiKeyActionTests 
     void verifyActionSuccess() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
-        WebUtils.putMultifactorAuthenticationProvider(context, new YubiKeyMultifactorAuthenticationProvider());
+        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, new YubiKeyMultifactorAuthenticationProvider());
         val action = new YubiKeyAccountCheckRegistrationAction(new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()));
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
     }
@@ -40,7 +41,7 @@ class YubiKeyAccountCheckRegistrationActionTests extends BaseYubiKeyActionTests 
         val context = MockRequestContext.create(applicationContext);
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
         WebUtils.putAuthentication(authentication, context);
-        WebUtils.putMultifactorAuthenticationProvider(context, new YubiKeyMultifactorAuthenticationProvider());
+        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, new YubiKeyMultifactorAuthenticationProvider());
         val registry = new ClosedYubiKeyAccountRegistry(new DenyAllYubiKeyAccountValidator());
         val action = new YubiKeyAccountCheckRegistrationAction(registry);
         assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, action.execute(context).getId());

@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -50,7 +51,7 @@ class MultifactorAuthenticationAvailableActionTests {
             WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
 
             val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-            WebUtils.putMultifactorAuthenticationProvider(context, provider);
+            MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, provider);
 
             val event = mfaAvailableAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_YES, event.getId());
@@ -78,7 +79,7 @@ class MultifactorAuthenticationAvailableActionTests {
 
             WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
 
-            WebUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
+            MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
 
             val event = mfaAvailableAction.execute(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_YES, event.getId());

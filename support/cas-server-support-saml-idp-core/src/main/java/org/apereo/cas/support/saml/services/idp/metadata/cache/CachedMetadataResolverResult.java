@@ -36,7 +36,7 @@ public class CachedMetadataResolverResult implements Serializable {
     /**
      * Is metadata resolver available?
      *
-     * @return the boolean
+     * @return true/false
      */
     @JsonIgnore
     public boolean isResolved() {

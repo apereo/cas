@@ -8,6 +8,7 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -64,9 +65,9 @@ class GoogleAuthenticatorPrepareLoginActionTests {
             .build();
         googleAuthenticatorAccountRegistry.save(acct);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(acct.getUsername()), context);
-        WebUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
+        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
         assertNull(action.execute(context));
-        assertTrue(WebUtils.isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(context));
+        assertTrue(MultifactorAuthenticationWebflowUtils.isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(context));
         assertNotNull(WebUtils.getOneTimeTokenAccounts(context));
     }
 

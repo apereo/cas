@@ -1,0 +1,57 @@
+package org.apereo.cas.web.flow;
+
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
+import lombok.val;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * This is {@link MultifactorAuthenticationWebflowUtilsTests}.
+ *
+ * @author Misagh Moayyed
+ * @since 7.1.0
+ */
+@Tag("Webflow")
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    MultifactorAuthenticationWebflowUtilsTests.MultifactorAuthenticationTestConfiguration.class
+})
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+public class MultifactorAuthenticationWebflowUtilsTests {
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+    
+    @Test
+    void verifyCustomizers() throws Exception {
+        val results = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationWebflowCustomizers(applicationContext);
+        assertFalse(results.isEmpty());
+    }
+
+    @Test
+    void verifyRegistration() throws Exception {
+        val requestContext = MockRequestContext.create(applicationContext);
+        MultifactorAuthenticationWebflowUtils.putMultifactorDeviceRegistrationEnabled(requestContext, true);
+        assertTrue(MultifactorAuthenticationWebflowUtils.isMultifactorDeviceRegistrationEnabled(requestContext));
+    }
+    
+    @TestConfiguration(proxyBeanMethods = false)
+    public static class MultifactorAuthenticationTestConfiguration {
+        @Bean
+        public CasMultifactorWebflowCustomizer sampleCustomizer() {
+            return new CasMultifactorWebflowCustomizer() {
+            };
+        }
+    }
+}

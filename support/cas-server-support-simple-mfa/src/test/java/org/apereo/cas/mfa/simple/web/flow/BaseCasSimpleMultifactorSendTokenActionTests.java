@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
@@ -66,7 +67,7 @@ public abstract class BaseCasSimpleMultifactorSendTokenActionTests {
         val context = MockRequestContext.create(applicationContext);
         WebUtils.putServiceIntoFlashScope(context, RegisteredServiceTestUtils.getService());
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(principal), context);
-        WebUtils.putMultifactorAuthenticationProvider(context, casSimpleMultifactorAuthenticationProvider);
+        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, casSimpleMultifactorAuthenticationProvider);
         return context;
     }
 

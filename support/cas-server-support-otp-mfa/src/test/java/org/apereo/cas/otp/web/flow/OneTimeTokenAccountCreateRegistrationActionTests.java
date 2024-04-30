@@ -8,6 +8,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.val;
@@ -51,7 +52,7 @@ class OneTimeTokenAccountCreateRegistrationActionTests {
         val context = MockRequestContext.create(applicationContext);
 
         val provider = TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
-        WebUtils.putMultifactorAuthenticationProvider(context, provider);
+        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, provider);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER, action.execute(context).getId());
         assertTrue(context.getFlowScope().contains(OneTimeTokenAccountCreateRegistrationAction.FLOW_SCOPE_ATTR_ACCOUNT));
