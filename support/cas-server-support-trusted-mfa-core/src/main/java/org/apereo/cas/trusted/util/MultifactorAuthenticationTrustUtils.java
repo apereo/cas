@@ -111,4 +111,24 @@ public class MultifactorAuthenticationTrustUtils {
     public static void putMultifactorAuthenticationTrustRecord(final RequestContext context, final Serializable object) {
         context.getFlowScope().put(CasWebflowConstants.VAR_ID_MFA_TRUST_RECORD, object);
     }
+
+    /**
+     * Put multifactor authentication trusted devices disabled.
+     *
+     * @param context the context
+     * @param value   the value
+     */
+    public static void putMultifactorAuthenticationTrustedDevicesDisabled(final RequestContext context, final boolean value) {
+        context.getFlowScope().put("multifactorTrustedDevicesDisabled", value);
+    }
+
+    /**
+     * Is multifactor authentication trusted devices disabled boolean.
+     *
+     * @param context the context
+     * @return true/false
+     */
+    public static boolean isMultifactorAuthenticationTrustedDevicesDisabled(final RequestContext context) {
+        return context.getFlowScope().getBoolean("multifactorTrustedDevicesDisabled", false);
+    }
 }

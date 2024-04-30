@@ -2,7 +2,6 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.credential.OneTimeTokenCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
@@ -87,15 +86,6 @@ class WebUtilsTests {
             WebUtils.putForgotUsernameEnabled(context, true);
             WebUtils.putRecaptchaPropertiesFlowScope(context, new GoogleRecaptchaProperties().setEnabled(true));
             WebUtils.putLogoutUrls(context, Map.of());
-            val ac = OneTimeTokenAccount.builder()
-                .validationCode(123456)
-                .username("casuser")
-                .name("Example")
-                .build();
-            WebUtils.putOneTimeTokenAccount(context, ac);
-            assertNotNull(WebUtils.getOneTimeTokenAccount(context, OneTimeTokenAccount.class));
-            WebUtils.putOneTimeTokenAccounts(context, List.of(ac));
-
             WebUtils.putWarnCookieIfRequestParameterPresent(null, context);
             WebUtils.putTicketGrantingTicketInScopes(context, "ticket-id");
         });

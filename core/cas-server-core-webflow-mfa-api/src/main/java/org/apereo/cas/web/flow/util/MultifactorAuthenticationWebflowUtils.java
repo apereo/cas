@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.util;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -63,7 +64,6 @@ public class MultifactorAuthenticationWebflowUtils {
     public static void putMultifactorDeviceRegistrationEnabled(final RequestContext requestContext, final boolean enabled) {
         requestContext.getFlowScope().put("mfaDeviceRegistrationEnabled", enabled);
     }
-
 
     /**
      * Put resolved multifactor authentication providers into scope.
@@ -211,7 +211,6 @@ public class MultifactorAuthenticationWebflowUtils {
         list.addAll(accounts);
         requestContext.getFlowScope().put("multifactorRegisteredAccounts", list);
     }
-    
 
     /**
      * Gets multifactor authentication registered devices.
@@ -223,4 +222,45 @@ public class MultifactorAuthenticationWebflowUtils {
         return requestContext.getFlowScope().get("multifactorRegisteredAccounts", List.class);
     }
 
+    /**
+     * Put one time token account.
+     *
+     * @param requestContext the request context
+     * @param account        the account
+     */
+    public static void putOneTimeTokenAccount(final RequestContext requestContext, final OneTimeTokenAccount account) {
+        requestContext.getFlowScope().put("registeredDevice", account);
+    }
+
+    /**
+     * Put one time token accounts.
+     *
+     * @param requestContext the request context
+     * @param accounts       the accounts
+     */
+    public static void putOneTimeTokenAccounts(final RequestContext requestContext, final Collection accounts) {
+        requestContext.getFlowScope().put("registeredDevices", accounts);
+    }
+
+    /**
+     * Gets one time token accounts.
+     *
+     * @param requestContext the request context
+     * @return the one time token accounts
+     */
+    public static Collection getOneTimeTokenAccounts(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("registeredDevices", Collection.class);
+    }
+
+    /**
+     * Gets one time token account.
+     *
+     * @param <T>            the type parameter
+     * @param requestContext the request context
+     * @param clazz          the clazz
+     * @return the one time token account
+     */
+    public static <T extends OneTimeTokenAccount> T getOneTimeTokenAccount(final RequestContext requestContext, final Class<T> clazz) {
+        return requestContext.getFlowScope().get("registeredDevice", clazz);
+    }
 }

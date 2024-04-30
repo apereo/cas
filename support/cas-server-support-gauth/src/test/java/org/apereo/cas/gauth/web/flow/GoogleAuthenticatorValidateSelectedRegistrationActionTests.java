@@ -7,6 +7,7 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -49,7 +50,7 @@ class GoogleAuthenticatorValidateSelectedRegistrationActionTests {
             .validationCode(123456)
             .scratchCodes(List.of())
             .build();
-        WebUtils.putOneTimeTokenAccount(context, acct);
+        MultifactorAuthenticationWebflowUtils.putOneTimeTokenAccount(context, acct);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, googleValidateSelectedRegistrationAction.execute(context).getId());
 
         WebUtils.putCredential(context, new GoogleAuthenticatorTokenCredential("token", 987655L));

@@ -5,6 +5,7 @@ import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +35,7 @@ public class GoogleAuthenticatorValidateSelectedRegistrationAction extends BaseC
             return success(trustedDevice);
         }
 
-        val account = WebUtils.getOneTimeTokenAccount(requestContext, OneTimeTokenAccount.class);
+        val account = MultifactorAuthenticationWebflowUtils.getOneTimeTokenAccount(requestContext, OneTimeTokenAccount.class);
         if (account == null) {
             LOGGER.warn("Unable to determine google authenticator account");
             addErrorMessageToContext(requestContext);
