@@ -6,8 +6,11 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.web.flow.PasswordManagementWebflowUtils;
+import org.apereo.cas.pm.web.flow.PasswordResetRequest;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
@@ -30,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("Mail")
+@EnabledIfListeningOnPort(port = 25000)
 class InitPasswordResetActionTests extends BasePasswordManagementActionTests {
 
     @Nested
@@ -59,6 +63,14 @@ class InitPasswordResetActionTests extends BasePasswordManagementActionTests {
             val token = passwordManagementService.createToken(PasswordManagementQuery.builder().build());
             context.getFlowScope().put("token", token);
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, initPasswordResetAction.execute(context).getId());
+        }
+
+        @Test
+        void verifyActionUserWithResetRequest() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            val request = PasswordResetRequest.builder().username(UUID.randomUUID().toString()).build();
+            PasswordManagementWebflowUtils.putPasswordResetRequest(context, request);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, initPasswordResetAction.execute(context).getId());
         }
     }
 

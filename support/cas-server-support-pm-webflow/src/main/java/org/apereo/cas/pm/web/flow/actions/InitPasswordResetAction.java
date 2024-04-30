@@ -45,14 +45,7 @@ public class InitPasswordResetAction extends BaseCasWebflowAction {
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
-        val token = PasswordManagementWebflowUtils.getPasswordResetToken(requestContext);
-
-        if (StringUtils.isBlank(token)) {
-            LOGGER.debug("Password reset token is missing");
-            return error();
-        }
-
-        val username = passwordManagementService.parseToken(token);
+        val username = getPasswordResetUsername(requestContext);
         if (StringUtils.isBlank(username)) {
             LOGGER.error("Password reset token could not be verified to determine username");
             return error();
@@ -77,6 +70,15 @@ public class InitPasswordResetAction extends BaseCasWebflowAction {
         credential.setUsername(username);
         WebUtils.putCredential(requestContext, credential);
         return success();
+    }
+
+    private String getPasswordResetUsername(final RequestContext requestContext) {
+        val token = PasswordManagementWebflowUtils.getPasswordResetToken(requestContext);
+        if (StringUtils.isNotBlank(token)) {
+            return passwordManagementService.parseToken(token);
+        }
+        val request = PasswordManagementWebflowUtils.getPasswordResetRequest(requestContext);
+        return request != null ? request.getUsername() : null;
     }
 
     private boolean doesMultifactorAuthenticationProviderExistInContext(final RequestContext requestContext,

@@ -4,9 +4,12 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
+import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.credential.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -16,6 +19,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
+import org.apereo.cas.authentication.principal.merger.MultivaluedAttributeMerger;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
@@ -37,6 +41,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link RegisteredServiceTestUtils}.
@@ -439,5 +444,22 @@ public class RegisteredServiceTestUtils {
         list.add(svc25);
 
         return list;
+    }
+
+    /**
+     * Gets authentication result.
+     *
+     * @return the authentication result
+     */
+    public static AuthenticationResult getAuthenticationResult(final String username) {
+        return FunctionUtils.doUnchecked(() -> {
+            val authentication = getAuthentication(username);
+            val strategy = mock(PrincipalElectionStrategy.class);
+            when(strategy.getAttributeMerger()).thenReturn(new MultivaluedAttributeMerger());
+            when(strategy.nominate(anyCollection(), anyMap())).thenReturn(authentication.getPrincipal());
+            return new DefaultAuthenticationResultBuilder()
+                .collect(authentication)
+                .build(strategy);
+        });
     }
 }

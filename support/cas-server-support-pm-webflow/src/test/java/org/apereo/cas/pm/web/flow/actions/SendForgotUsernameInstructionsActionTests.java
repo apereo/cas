@@ -21,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @EnabledIfListeningOnPort(port = 25000)
+@Tag("Mail")
 class SendForgotUsernameInstructionsActionTests {
 
-    @Tag("Mail")
     @Nested
     class DefaultTests extends BasePasswordManagementActionTests {
         @Autowired
@@ -58,7 +58,6 @@ class SendForgotUsernameInstructionsActionTests {
         }
     }
 
-    @Tag("Mail")
     @Nested
     @TestPropertySource(properties = "spring.boot.config.CasPersonDirectoryTestConfiguration.enabled=false")
     class NoPrincipalResolutionTests extends BasePasswordManagementActionTests {
