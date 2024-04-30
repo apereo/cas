@@ -426,10 +426,10 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public void createStateDefaultTransition(final TransitionableState state, final String targetState) {
         if (state == null) {
             LOGGER.trace("Cannot add default transition of [{}] to the given state is null and cannot be found in the flow.", targetState);
-            return;
+        } else {
+            val transition = createTransition(targetState);
+            state.getTransitionSet().add(transition);
         }
-        val transition = createTransition(targetState);
-        state.getTransitionSet().add(transition);
     }
 
     @Override
@@ -488,25 +488,27 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public Transition createTransitionForState(final TransitionableState state, final String criteriaOutcome,
                                                final String targetState, final boolean removeExisting,
                                                final Map<String, Object> attributes, final Action... actions) {
-        try {
-            if (removeExisting) {
-                var transition = (Transition) null;
-                do {
-                    transition = (Transition) state.getTransition(criteriaOutcome);
-                    if (transition != null) {
-                        state.getTransitionSet().remove(transition);
-                    }
-                } while (transition != null);
+        return FunctionUtils.doIfNotNull(state, () -> {
+            try {
+                if (removeExisting) {
+                    var transition = (Transition) null;
+                    do {
+                        transition = (Transition) state.getTransition(criteriaOutcome);
+                        if (transition != null) {
+                            state.getTransitionSet().remove(transition);
+                        }
+                    } while (transition != null);
+                }
+                val transition = createTransition(criteriaOutcome, targetState, actions);
+                attributes.forEach((key, value) -> transition.getAttributes().put(key, value));
+                state.getTransitionSet().add(transition);
+                LOGGER.trace("Added transition [{}] to the state [{}]", transition.getId(), state.getId());
+                return transition;
+            } catch (final Exception e) {
+                LoggingUtils.error(LOGGER, e);
             }
-            val transition = createTransition(criteriaOutcome, targetState, actions);
-            attributes.forEach((key, value) -> transition.getAttributes().put(key, value));
-            state.getTransitionSet().add(transition);
-            LOGGER.trace("Added transition [{}] to the state [{}]", transition.getId(), state.getId());
-            return transition;
-        } catch (final Exception e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return null;
+            return null;
+        });
     }
 
     @Override
@@ -700,11 +702,9 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param flow     the flow
      * @return the mapper
      */
-    public Mapper createFlowInputMapper(final List<DefaultMapping> mappings,
+    public Mapper createFlowInputMapper(final List<? extends DefaultMapping> mappings,
                                         final Flow flow) {
-        val flowInputMapper = flow.getInputMapper() == null
-            ? new DefaultMapper()
-            : (DefaultMapper) flow.getInputMapper();
+        val flowInputMapper = flow.getInputMapper() == null ? new DefaultMapper() : (DefaultMapper) flow.getInputMapper();
         mappings.forEach(flowInputMapper::addMapping);
         flow.setInputMapper(flowInputMapper);
         return flowInputMapper;
@@ -716,7 +716,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      * @param mappings the mappings
      * @return the mapper
      */
-    public Mapper createFlowInputMapper(final List<DefaultMapping> mappings) {
+    public Mapper createFlowInputMapper(final List<? extends DefaultMapping> mappings) {
         val flowInputMapper = new DefaultMapper();
         mappings.forEach(flowInputMapper::addMapping);
         return flowInputMapper;

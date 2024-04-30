@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -153,7 +154,10 @@ class PasswordManagementWebflowConfiguration {
             return new CasMultifactorWebflowCustomizer() {
                 @Override
                 public List<String> getWebflowAttributeMappings() {
-                    return List.of(CasWebflowConstants.ATTRIBUTE_PASSWORD_MANAGEMENT_QUERY);
+                    return List.of(CasWebflowConstants.ATTRIBUTE_PASSWORD_MANAGEMENT_QUERY,
+                        CasWebflowConstants.ATTRIBUTE_PASSWORD_MANAGEMENT_REQUEST,
+                        CasWebflowConstants.ATTRIBUTE_AUTHENTICATION_RESULT_BUILDER,
+                        CasWebflowConstants.ATTRIBUTE_AUTHENTICATION);
                 }
             };
         }
@@ -230,7 +234,9 @@ class PasswordManagementWebflowConfiguration {
             @Qualifier(MultifactorAuthenticationProviderSelector.BEAN_NAME)
             final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-            final PrincipalResolver defaultPrincipalResolver) {
+            final PrincipalResolver defaultPrincipalResolver,
+            @Qualifier(MultifactorAuthenticationContextValidator.BEAN_NAME)
+            final MultifactorAuthenticationContextValidator multifactorAuthenticationContextValidator) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -238,7 +244,8 @@ class PasswordManagementWebflowConfiguration {
                     .alwaysMatch()
                     .supply(() -> new InitPasswordResetAction(passwordManagementService,
                         casProperties, defaultPrincipalResolver,
-                        multifactorAuthenticationProviderSelector, authenticationSystemSupport))
+                        multifactorAuthenticationProviderSelector, authenticationSystemSupport,
+                        multifactorAuthenticationContextValidator))
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_PASSWORD_RESET_INIT)
                 .build()

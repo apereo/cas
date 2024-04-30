@@ -1,15 +1,16 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.pm.PasswordManagementQuery;
+import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
-import org.apereo.inspektr.common.web.ClientInfo;
-import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,17 +37,16 @@ class InitPasswordResetActionTests extends BasePasswordManagementActionTests {
         @Test
         void verifyAction() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
-            val request = context.getHttpServletRequest();
-            request.setRemoteAddr("1.2.3.4");
-            request.setLocalAddr("1.2.3.4");
-            ClientInfoHolder.setClientInfo(ClientInfo.from(request));
+            context.setRemoteAddr("1.2.3.4");
+            context.setLocalAddr("1.2.3.4");
+            context.setClientInfo();
 
             val query = PasswordManagementQuery.builder().username(UUID.randomUUID().toString()).build();
             val token = passwordManagementService.createToken(query);
 
             assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, initPasswordResetAction.execute(context).getId());
 
-            context.getFlowScope().put("token", token);
+            context.getFlowScope().put(PasswordManagementService.PARAMETER_TOKEN, token);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, initPasswordResetAction.execute(context).getId());
             val credential = WebUtils.getCredential(context, UsernamePasswordCredential.class);
             assertNotNull(credential);
@@ -71,20 +73,43 @@ class InitPasswordResetActionTests extends BasePasswordManagementActionTests {
         @Test
         void verifyAction() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
-            val request = context.getHttpServletRequest();
-            request.setRemoteAddr("1.2.3.4");
-            request.setLocalAddr("1.2.3.4");
-            ClientInfoHolder.setClientInfo(ClientInfo.from(request));
+            context.setRemoteAddr("1.2.3.4");
+            context.setLocalAddr("1.2.3.4");
+            context.setClientInfo();
 
             val query = PasswordManagementQuery.builder().username(UUID.randomUUID().toString()).build();
             val token = passwordManagementService.createToken(query);
-            context.getFlowScope().put("token", token);
+            context.getFlowScope().put(PasswordManagementService.PARAMETER_TOKEN, token);
             val event = initPasswordResetAction.execute(context);
             assertEquals(multifactorAuthenticationProvider.getId(), event.getId());
             assertNotNull(WebUtils.getAuthentication(context));
             assertNotNull(WebUtils.getAuthenticationResultBuilder(context));
             assertEquals(CasWebflowConstants.TRANSITION_ID_RESUME_RESET_PASSWORD, WebUtils.getTargetTransition(context));
             assertEquals(multifactorAuthenticationProvider.getId(), WebUtils.getMultifactorAuthenticationProvider(context));
+        }
+
+        @Test
+        void verifyMfaHandledAction() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            context.setRemoteAddr("1.2.3.4");
+            context.setLocalAddr("1.2.3.4");
+            context.setClientInfo();
+
+            val query = PasswordManagementQuery.builder().username(UUID.randomUUID().toString()).build();
+            val token = passwordManagementService.createToken(query);
+            context.getFlowScope().put(PasswordManagementService.PARAMETER_TOKEN, token);
+
+            val resultBuilder = new DefaultAuthenticationResultBuilder()
+                .collect(RegisteredServiceTestUtils.getAuthentication(query.getUsername(),
+                    Map.of(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
+                        List.of(multifactorAuthenticationProvider.getId()))));
+
+            WebUtils.putAuthenticationResultBuilder(resultBuilder, context);
+            val event = initPasswordResetAction.execute(context);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());
+            val credential = WebUtils.getCredential(context, UsernamePasswordCredential.class);
+            assertNotNull(credential);
+            assertEquals(query.getUsername(), credential.getUsername());
         }
     }
 }

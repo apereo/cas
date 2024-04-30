@@ -61,9 +61,13 @@ public interface CasWebflowConstants {
     String ATTRIBUTE_REGISTERED_SERVICE = "registeredService";
 
     /**
-     * Attribute to indicate a password management reset request.
+     * Attribute to indicate a password management reset query.
      */
     String ATTRIBUTE_PASSWORD_MANAGEMENT_QUERY = "passwordManagementQuery";
+    /**
+     * Attribute to indicate a password reset request.
+     */
+    String ATTRIBUTE_PASSWORD_MANAGEMENT_REQUEST = "passwordResetRequest";
 
     /**
      * Attribute that indicates the transition one must activate
@@ -80,7 +84,7 @@ public interface CasWebflowConstants {
      */
     String ATTRIBUTE_AUTHENTICATION = "authentication";
     /**
-     * Attribute to track authenticationn result builder in the flow.
+     * Attribute to track authentication result builder in the flow.
      */
     String ATTRIBUTE_AUTHENTICATION_RESULT_BUILDER = "authenticationResultBuilder";
 
@@ -462,6 +466,11 @@ public interface CasWebflowConstants {
      * Transition id 'acceptedUsagePolicy'.
      */
     String TRANSITION_ID_AUP_ACCEPTED = "acceptedUsagePolicy";
+
+    /**
+     * Event id to signal security questions are disabled.
+     */
+    String TRANSITION_ID_SECURITY_QUESTIONS_DISABLED = "questionsDisabled";
     
     /*
      ****************************************

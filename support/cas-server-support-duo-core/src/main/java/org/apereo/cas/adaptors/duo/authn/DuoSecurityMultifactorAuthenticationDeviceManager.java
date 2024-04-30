@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.springframework.context.ConfigurableApplicationContext;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;

@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserDevice;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAdminApiService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationDeviceManager;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
@@ -100,6 +101,7 @@ class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends BaseWeb
             when(duoService.getAdminApiService()).thenReturn(Optional.of(adminApi));
             when(provider.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
             when(provider.getDuoAuthenticationService()).thenReturn(duoService);
+            when(provider.getDeviceManager()).thenReturn(new DuoSecurityMultifactorAuthenticationDeviceManager(provider));
             return provider;
         }
 

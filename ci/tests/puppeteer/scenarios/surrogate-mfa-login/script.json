@@ -19,7 +19,7 @@
     "--logging.level.org.springframework.webflow=debug",
 
     "--cas.authn.mfa.simple.mail.from=cas@example.com",
-    "--cas.authn.mfa.simple.mail.subject=CAS Token",
+    "--cas.authn.mfa.simple.mail.subject=CASToken",
     "--cas.authn.mfa.simple.mail.text=${token}",
     "--cas.authn.mfa.simple.mail.attribute-name=email",
 

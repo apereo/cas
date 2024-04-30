@@ -1,6 +1,7 @@
 package org.apereo.cas.pm.web.flow;
 
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
@@ -97,6 +98,28 @@ public class PasswordManagementWebflowUtils {
         flowScope.put("username", username);
     }
 
+    /**
+     * Put password reset request.
+     *
+     * @param requestContext the request context
+     * @param request        the request
+     */
+    public static void putPasswordResetRequest(final RequestContext requestContext, final PasswordResetRequest request) {
+        val flowScope = requestContext.getFlowScope();
+        flowScope.put(CasWebflowConstants.ATTRIBUTE_PASSWORD_MANAGEMENT_REQUEST, request);
+    }
+
+    /**
+     * Gets password reset request.
+     *
+     * @param requestContext the request context
+     * @return the password reset request
+     */
+    public PasswordResetRequest getPasswordResetRequest(final RequestContext requestContext) {
+        val flowScope = requestContext.getFlowScope();
+        return flowScope.get(CasWebflowConstants.ATTRIBUTE_PASSWORD_MANAGEMENT_REQUEST, PasswordResetRequest.class);
+    }
+    
     /**
      * Gets password reset username.
      *

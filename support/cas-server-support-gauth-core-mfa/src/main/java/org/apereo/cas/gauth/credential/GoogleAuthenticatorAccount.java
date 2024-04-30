@@ -1,13 +1,9 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.Builder;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-
 import java.io.Serial;
 
 /**
@@ -19,14 +15,10 @@ import java.io.Serial;
 @NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @SuperBuilder
-@Getter
 public class GoogleAuthenticatorAccount extends OneTimeTokenAccount {
     @Serial
     private static final long serialVersionUID = 2441775052626253711L;
 
-    @Builder.Default
-    private String source = "Google Authenticator";
-    
     /**
      * From one time token account into gauth account.
      *
@@ -44,5 +36,10 @@ public class GoogleAuthenticatorAccount extends OneTimeTokenAccount {
             .registrationDate(acct.getRegistrationDate())
             .source(acct.getSource())
             .build();
+    }
+
+    @Override
+    public String getSource() {
+        return "Google Authenticator";
     }
 }
