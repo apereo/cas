@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.duo.web.flow.action;
 
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
 import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
@@ -44,8 +43,9 @@ class DuoSecurityUniversalPromptPrepareLoginActionTests extends BaseCasWebflowMu
     @Test
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
-        WebUtils.putAuthenticationResult(CoreAuthenticationTestUtils.getAuthenticationResult(), context);
+        val authentication = RegisteredServiceTestUtils.getAuthentication();
+        WebUtils.putAuthentication(authentication, context);
+        WebUtils.putAuthenticationResult(RegisteredServiceTestUtils.getAuthenticationResult(authentication.getPrincipal().getId()), context);
         WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
         val provider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(
             DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER, applicationContext).orElseThrow();
