@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.duo.web.flow;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.trusted.web.flow.AbstractMultifactorTrustedDeviceWebflowConfigurer;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
@@ -58,13 +59,15 @@ public class DuoSecurityMultifactorWebflowConfigurer extends AbstractMultifactor
         if (passwordlessEnabled) {
             val flow = getLoginFlow();
             val verifyAccountState = getState(flow, CasWebflowConstants.STATE_ID_PASSWORDLESS_VERIFY_ACCOUNT);
-            val originalTargetState = verifyAccountState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
-            createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_DUO_PASSWORDLESS_VERIFY, true);
-            val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DUO_PASSWORDLESS_VERIFY, CasWebflowConstants.ACTION_ID_DUO_PASSWORDLESS_VERIFY);
-            val acceptedState = getState(flow, CasWebflowConstants.STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION)
-                .getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
-            createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, acceptedState);
-            createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_ERROR, originalTargetState);
+            FunctionUtils.doIfNotNull(verifyAccountState, __ -> {
+                val originalTargetState = verifyAccountState.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
+                createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_DUO_PASSWORDLESS_VERIFY, true);
+                val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_DUO_PASSWORDLESS_VERIFY, CasWebflowConstants.ACTION_ID_DUO_PASSWORDLESS_VERIFY);
+                val acceptedState = getState(flow, CasWebflowConstants.STATE_ID_ACCEPT_PASSWORDLESS_AUTHENTICATION)
+                    .getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS).getTargetStateId();
+                createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, acceptedState);
+                createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_ERROR, originalTargetState);
+            });
         }
     }
 

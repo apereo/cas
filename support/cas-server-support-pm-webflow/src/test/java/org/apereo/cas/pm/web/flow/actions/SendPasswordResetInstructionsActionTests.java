@@ -15,9 +15,12 @@ import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -128,9 +131,11 @@ class SendPasswordResetInstructionsActionTests {
         "cas.authn.pm.reset.security-questions-enabled=true",
         "cas.authn.pm.reset.number-of-uses=1"
     })
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     class NoMultifactorRegisteredDevicesTests extends BasePasswordManagementActionTests {
         
         @Test
+        @Order(1)
         void verifyActionRequiresMfa() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
             TestMultifactorAuthenticationProvider.registerProviderIntoApplicationContext(applicationContext);
@@ -140,12 +145,11 @@ class SendPasswordResetInstructionsActionTests {
         }
 
         @Test
+        @Order(0)
         void verifyActionMultiUse() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
-
             context.setParameter("username", "casuser");
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
-
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, sendPasswordResetInstructionsAction.execute(context).getId());
             val tickets = ticketRegistry.getTickets();
             assertEquals(1, tickets.size());

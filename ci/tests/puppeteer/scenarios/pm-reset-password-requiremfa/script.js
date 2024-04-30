@@ -1,5 +1,6 @@
 
 const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
@@ -15,18 +16,25 @@ const cas = require("../../cas.js");
     await cas.waitForNavigation(page);
     await cas.sleep(1000);
     await cas.screenshot(page);
+    await cas.assertInnerText(page, "#content h2", "Password Reset Instructions Sent Successfully.");
+    await cas.assertInnerTextStartsWith(page, "#content p", "You should shortly receive a message");
 
+    const link = await cas.extractFromEmail(browser);
+    assert(link !== undefined);
+    await cas.goto(page, link);
+    await cas.sleep(2000);
+    
     const code = await cas.extractFromEmail(browser);
-
     await page.bringToFront();
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
     await cas.sleep(4000);
-    await cas.screenshot(page);
-
-    await cas.sleep(1000);
-    await cas.assertInnerText(page, "#content h2", "Password Reset Instructions Sent Successfully.");
-    await cas.assertInnerTextStartsWith(page, "#content p", "You should shortly receive a message");
+    await cas.assertInnerText(page, "#pwdmain h3", "Hello, casuser. You must change your password.");
+    await cas.type(page,"#password", "Jv!e0mKD&dCNl^Q");
+    await cas.type(page,"#confirmedPassword", "Jv!e0mKD&dCNl^Q");
+    await cas.pressEnter(page);
+    await cas.waitForNavigation(page);
+    await cas.assertInnerText(page, "#content h2", "Password Change Successful");
 
     await browser.close();
 })();

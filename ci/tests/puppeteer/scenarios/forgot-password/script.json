@@ -16,7 +16,7 @@
     
     "--cas.authn.pm.reset.mail.from=cas@apereo.org",
     "--cas.authn.pm.reset.mail.text=${url}",
-    "--cas.authn.pm.reset.mail.subject=Reset your password",
+    "--cas.authn.pm.reset.mail.subject=Reset",
     "--cas.authn.pm.reset.mail.attribute-name=mail",
 
     "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
