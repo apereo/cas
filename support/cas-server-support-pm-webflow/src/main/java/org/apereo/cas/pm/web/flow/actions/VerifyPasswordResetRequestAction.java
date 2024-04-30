@@ -72,9 +72,8 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
 
             PasswordManagementWebflowUtils.putPasswordResetRequest(requestContext, resetRequest);
             PasswordManagementWebflowUtils.putPasswordResetUsername(requestContext, resetRequest.getUsername());
-            PasswordManagementWebflowUtils.putPasswordResetSecurityQuestionsEnabled(requestContext,
-                pm.getReset().isSecurityQuestionsEnabled());
-
+            PasswordManagementWebflowUtils.putPasswordResetSecurityQuestionsEnabled(requestContext, pm.getReset().isSecurityQuestionsEnabled());
+            
             if (pm.getReset().isSecurityQuestionsEnabled()) {
                 LOGGER.trace("Security questions are enabled; proceeding...");
                 return success();

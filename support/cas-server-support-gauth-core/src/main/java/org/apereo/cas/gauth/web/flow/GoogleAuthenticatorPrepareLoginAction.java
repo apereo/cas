@@ -28,7 +28,7 @@ public class GoogleAuthenticatorPrepareLoginAction extends AbstractMultifactorAu
         val enabled = casProperties.getAuthn().getMfa().getGauth().getCore().isMultipleDeviceRegistrationEnabled()
             && repository.count(principal.getId()) >= 1;
         MultifactorAuthenticationWebflowUtils.putGoogleAuthenticatorMultipleDeviceRegistrationEnabled(requestContext, enabled);
-        WebUtils.putOneTimeTokenAccounts(requestContext, repository.get(principal.getId()));
+        MultifactorAuthenticationWebflowUtils.putOneTimeTokenAccounts(requestContext, repository.get(principal.getId()));
         return null;
     }
 }

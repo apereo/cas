@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -73,7 +74,7 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
             val validate = requestContext.getRequestParameters().getBoolean(REQUEST_PARAMETER_VALIDATE);
             if (validate == null || !validate) {
                 LOGGER.trace("Storing account [{}]", account);
-                WebUtils.putOneTimeTokenAccount(requestContext, repository.save(account));
+                MultifactorAuthenticationWebflowUtils.putOneTimeTokenAccount(requestContext, repository.save(account));
             }
             return success();
         } catch (final Exception e) {

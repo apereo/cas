@@ -68,7 +68,7 @@ class GoogleAuthenticatorPrepareLoginActionTests {
         MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
         assertNull(action.execute(context));
         assertTrue(MultifactorAuthenticationWebflowUtils.isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(context));
-        assertNotNull(WebUtils.getOneTimeTokenAccounts(context));
+        assertNotNull(MultifactorAuthenticationWebflowUtils.getOneTimeTokenAccounts(context));
     }
 
     @TestConfiguration(value = "TestMultifactorTestConfiguration", proxyBeanMethods = false)

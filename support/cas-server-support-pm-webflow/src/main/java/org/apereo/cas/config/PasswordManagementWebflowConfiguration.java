@@ -17,6 +17,7 @@ import org.apereo.cas.pm.PasswordStrengthAuthenticationPostProcessor;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.web.flow.PasswordManagementAccountProfileWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.PasswordManagementCaptchaWebflowConfigurer;
+import org.apereo.cas.pm.web.flow.PasswordManagementMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.PasswordManagementSingleSignOnParticipationStrategy;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.WeakPasswordWebflowExceptionHandler;
@@ -60,6 +61,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -133,8 +135,10 @@ class PasswordManagementWebflowConfiguration {
         public CasWebflowConfigurer passwordManagementWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices) {
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
             return new PasswordManagementWebflowConfigurer(flowBuilderServices,
                 loginFlowDefinitionRegistry, applicationContext, casProperties);
         }
@@ -143,7 +147,8 @@ class PasswordManagementWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "passwordManagementCasWebflowExecutionPlanConfigurer")
         public CasWebflowExecutionPlanConfigurer passwordManagementCasWebflowExecutionPlanConfigurer(
-            @Qualifier("passwordManagementWebflowConfigurer") final CasWebflowConfigurer passwordManagementWebflowConfigurer) {
+            @Qualifier("passwordManagementWebflowConfigurer")
+            final CasWebflowConfigurer passwordManagementWebflowConfigurer) {
             return plan -> plan.registerWebflowConfigurer(passwordManagementWebflowConfigurer);
         }
 
@@ -157,7 +162,9 @@ class PasswordManagementWebflowConfiguration {
                     return List.of(CasWebflowConstants.ATTRIBUTE_PASSWORD_MANAGEMENT_QUERY,
                         CasWebflowConstants.ATTRIBUTE_PASSWORD_MANAGEMENT_REQUEST,
                         CasWebflowConstants.ATTRIBUTE_AUTHENTICATION_RESULT_BUILDER,
-                        CasWebflowConstants.ATTRIBUTE_AUTHENTICATION);
+                        CasWebflowConstants.ATTRIBUTE_AUTHENTICATION,
+                        "mfaDeviceRegistrationEnabled",
+                        "multifactorTrustedDevicesDisabled");
                 }
             };
         }
@@ -563,6 +570,36 @@ class PasswordManagementWebflowConfiguration {
         public CasWebflowExecutionPlanConfigurer passwordManagementAccountProfileWebflowExecutionPlanConfigurer(
             @Qualifier("passwordManagementAccountProfileWebflowConfigurer") final CasWebflowConfigurer passwordManagementAccountProfileWebflowConfigurer) {
             return plan -> plan.registerWebflowConfigurer(passwordManagementAccountProfileWebflowConfigurer);
+        }
+    }
+
+
+    @ConditionalOnClass(MultifactorAuthnTrustConfiguration.class)
+    @Configuration(value = "PasswordManagementMultifactorTrustConfiguration", proxyBeanMethods = false)
+    @DependsOn("passwordManagementWebflowConfigurer")
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.MultifactorAuthenticationTrustedDevices)
+    public static class PasswordManagementMultifactorTrustConfiguration {
+        @ConditionalOnMissingBean(name = "passwordManagementMfaTrustWebflowConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowConfigurer passwordManagementMfaTrustWebflowConfigurer(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
+            return new PasswordManagementMultifactorTrustWebflowConfigurer(flowBuilderServices,
+                loginFlowDefinitionRegistry, applicationContext, casProperties);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "passwordManagementMfaTrustWebflowExecutionPlanConfigurer")
+        public CasWebflowExecutionPlanConfigurer passwordManagementMfaTrustWebflowExecutionPlanConfigurer(
+            @Qualifier("passwordManagementMfaTrustWebflowConfigurer")
+            final CasWebflowConfigurer passwordManagementMfaTrustWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(passwordManagementMfaTrustWebflowConfigurer);
         }
     }
 }

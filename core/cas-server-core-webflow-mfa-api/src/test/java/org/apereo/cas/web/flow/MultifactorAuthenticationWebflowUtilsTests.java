@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -44,6 +46,16 @@ public class MultifactorAuthenticationWebflowUtilsTests {
         val requestContext = MockRequestContext.create(applicationContext);
         MultifactorAuthenticationWebflowUtils.putMultifactorDeviceRegistrationEnabled(requestContext, true);
         assertTrue(MultifactorAuthenticationWebflowUtils.isMultifactorDeviceRegistrationEnabled(requestContext));
+
+        val ac = OneTimeTokenAccount.builder()
+            .validationCode(123456)
+            .username("casuser")
+            .name("Example")
+            .build();
+        MultifactorAuthenticationWebflowUtils.putOneTimeTokenAccount(requestContext, ac);
+        assertNotNull(MultifactorAuthenticationWebflowUtils.getOneTimeTokenAccount(requestContext, OneTimeTokenAccount.class));
+        MultifactorAuthenticationWebflowUtils.putOneTimeTokenAccounts(requestContext, List.of(ac));
+        assertNotNull(MultifactorAuthenticationWebflowUtils.getOneTimeTokenAccounts(requestContext));
     }
     
     @TestConfiguration(proxyBeanMethods = false)
