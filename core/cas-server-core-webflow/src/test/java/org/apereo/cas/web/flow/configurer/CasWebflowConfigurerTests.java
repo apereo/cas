@@ -236,7 +236,7 @@ class CasWebflowConfigurerTests {
         };
         val state = mock(TransitionableState.class);
         when(state.getId()).thenReturn("example");
-        assertNotNull(cfg.createMappingToSubflowState("target", "source", false, Boolean.class));
+        assertNotNull(cfg.createFlowMapping("source", "target", false, Boolean.class));
     }
 
     @Test

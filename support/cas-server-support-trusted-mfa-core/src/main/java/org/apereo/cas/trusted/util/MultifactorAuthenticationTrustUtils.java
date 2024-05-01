@@ -8,6 +8,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.webflow.execution.RequestContext;
 import java.io.Serializable;
@@ -129,6 +130,6 @@ public class MultifactorAuthenticationTrustUtils {
      * @return true/false
      */
     public static boolean isMultifactorAuthenticationTrustedDevicesDisabled(final RequestContext context) {
-        return context.getFlowScope().getBoolean("multifactorTrustedDevicesDisabled", false);
+        return BooleanUtils.toBoolean(context.getFlowScope().getBoolean("multifactorTrustedDevicesDisabled", false));
     }
 }

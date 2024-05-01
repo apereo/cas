@@ -15,7 +15,6 @@ import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
-import org.springframework.binding.mapping.impl.DefaultMapping;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -182,11 +181,10 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
                 .filter(BeanSupplier::isNotProxy)
                 .sorted(AnnotationAwareOrderComparator.INSTANCE).toList();
 
-            val attrMapping = new DefaultMapping(createExpression("flowScope." + CasWebflowConstants.ATTRIBUTE_SERVICE),
-                createExpression(CasWebflowConstants.ATTRIBUTE_SERVICE));
+            val attrMapping = createFlowMapping("flowScope." + CasWebflowConstants.ATTRIBUTE_SERVICE, CasWebflowConstants.ATTRIBUTE_SERVICE);
             val attrMappings = CollectionUtils.wrapList(attrMapping);
             customizers.forEach(c -> c.getWebflowAttributeMappings()
-                .forEach(key -> attrMappings.add(new DefaultMapping(createExpression("flowScope." + key), createExpression(key)))));
+                .forEach(key -> attrMappings.add(createFlowMapping("flowScope." + key, key))));
             val attributeMapper = createFlowInputMapper(attrMappings);
             val subflowMapper = createSubflowAttributeMapper(attributeMapper, null);
             pswdResetSubFlowState.setAttributeMapper(subflowMapper);
@@ -253,10 +251,10 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
                 .filter(BeanSupplier::isNotProxy)
                 .sorted(AnnotationAwareOrderComparator.INSTANCE).toList();
 
-            val attrMapping = new DefaultMapping(createExpression("flowScope." + CasWebflowConstants.ATTRIBUTE_SERVICE), createExpression(CasWebflowConstants.ATTRIBUTE_SERVICE));
+            val attrMapping = createFlowMapping("flowScope." + CasWebflowConstants.ATTRIBUTE_SERVICE, CasWebflowConstants.ATTRIBUTE_SERVICE);
             val attrMappings = CollectionUtils.wrapList(attrMapping);
             customizers.forEach(c -> c.getWebflowAttributeMappings()
-                .forEach(key -> attrMappings.add(new DefaultMapping(createExpression("flowScope." + key), createExpression(key)))));
+                .forEach(key -> attrMappings.add(createFlowMapping("flowScope." + key, key))));
             val attributeMapper = createFlowInputMapper(attrMappings);
             val subflowMapper = createSubflowAttributeMapper(attributeMapper, null);
             subflowState.setAttributeMapper(subflowMapper);
@@ -310,17 +308,16 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             CasWebflowConstants.STATE_ID_PASSWORD_RESET_FLOW_COMPLETE);
 
         createTransitionStateForMultifactorSubflows(pswdFlow);
-        
+
         val customizers = applicationContext.getBeansOfType(CasMultifactorWebflowCustomizer.class)
             .values()
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .sorted(AnnotationAwareOrderComparator.INSTANCE).toList();
-        val attrMapping = new DefaultMapping(createExpression(CasWebflowConstants.ATTRIBUTE_SERVICE),
-            createExpression("flowScope." + CasWebflowConstants.ATTRIBUTE_SERVICE));
+        val attrMapping = createFlowMapping(CasWebflowConstants.ATTRIBUTE_SERVICE, "flowScope." + CasWebflowConstants.ATTRIBUTE_SERVICE);
         val attrMappings = CollectionUtils.wrapList(attrMapping);
         customizers.forEach(c -> c.getWebflowAttributeMappings()
-            .forEach(key -> attrMappings.add(new DefaultMapping(createExpression(key), createExpression("flowScope." + key)))));
+            .forEach(key -> attrMappings.add(createFlowMapping(key, "flowScope." + key))));
         createFlowInputMapper(attrMappings, pswdFlow);
         return pswdFlow;
     }
