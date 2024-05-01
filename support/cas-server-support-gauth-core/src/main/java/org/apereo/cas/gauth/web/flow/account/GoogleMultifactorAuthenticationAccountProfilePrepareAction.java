@@ -22,7 +22,8 @@ public class GoogleMultifactorAuthenticationAccountProfilePrepareAction extends 
         super(requestContext -> {
             val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
             val core = casProperties.getAuthn().getMfa().getGauth().getCore();
-            val enabled = core.isMultipleDeviceRegistrationEnabled() || repository.count(principal.getId()) == 0;
+            val enabled = (core.isMultipleDeviceRegistrationEnabled() || repository.count(principal.getId()) == 0)
+                && MultifactorAuthenticationWebflowUtils.isMultifactorDeviceRegistrationEnabled(requestContext);
             requestContext.getFlowScope().put("gauthAccountProfileRegistrationEnabled", enabled);
             MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(requestContext, googleAuthenticatorMultifactorAuthenticationProvider);
         });

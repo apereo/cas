@@ -11,6 +11,7 @@ import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 
 import lombok.experimental.UtilityClass;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
@@ -52,7 +53,7 @@ public class MultifactorAuthenticationWebflowUtils {
      * @return true/false
      */
     public static boolean isMultifactorDeviceRegistrationEnabled(final RequestContext requestContext) {
-        return requestContext.getFlowScope().getBoolean("mfaDeviceRegistrationEnabled", Boolean.TRUE);
+        return BooleanUtils.toBoolean(requestContext.getFlowScope().getBoolean("mfaDeviceRegistrationEnabled", Boolean.TRUE));
     }
 
     /**

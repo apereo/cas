@@ -59,6 +59,12 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
     protected Event doExecuteInternal(final RequestContext requestContext) {
         try {
             val currentAcct = getCandidateAccountFrom(requestContext);
+            val deviceRegistrationEnabled = MultifactorAuthenticationWebflowUtils.isMultifactorDeviceRegistrationEnabled(requestContext);
+            if (!deviceRegistrationEnabled) {
+                LOGGER.warn("Device registration is disabled for [{}]", currentAcct.getUsername());
+                return getErrorEvent(requestContext);
+            }
+
             if (!casProperties.getAuthn().getMfa().getGauth().getCore().isMultipleDeviceRegistrationEnabled()) {
                 if (repository.count(currentAcct.getUsername()) > 0) {
                     LOGGER.warn("Unable to register multiple devices for [{}]", currentAcct.getUsername());

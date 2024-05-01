@@ -86,7 +86,8 @@
             </form>
         </span>
 
-        <div th:if="${gauthMultipleDeviceRegistrationEnabled}">
+        <div id="deviceRegistrationDiv"
+             th:if="${gauthMultipleDeviceRegistrationEnabled && #bools.isTrue(mfaDeviceRegistrationEnabled)}">
             <p>
             <hr width="75%">
             <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
