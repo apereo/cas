@@ -17,6 +17,7 @@ import org.apereo.cas.authentication.handler.GroovyAuthenticationHandlerResolver
 import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.policy.RegisteredServiceAuthenticationPolicyResolver;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCache;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.cache.DefaultPrincipalAttributesRepositoryCache;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -118,6 +119,7 @@ class CasCoreAuthenticationSupportConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = AuthenticationSystemSupport.BEAN_NAME)
         public AuthenticationSystemSupport defaultAuthenticationSystemSupport(
+            @Qualifier(PrincipalFactory.BEAN_NAME) final PrincipalFactory principalFactory,
             @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER) final PrincipalResolver defaultPrincipalResolver,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
             @Qualifier("authenticationTransactionManager") final AuthenticationTransactionManager authenticationTransactionManager,
@@ -126,7 +128,7 @@ class CasCoreAuthenticationSupportConfiguration {
             @Qualifier(AuthenticationTransactionFactory.BEAN_NAME) final AuthenticationTransactionFactory authenticationTransactionFactory) {
             return new DefaultAuthenticationSystemSupport(authenticationTransactionManager,
                 principalElectionStrategy, authenticationResultBuilderFactory,
-                authenticationTransactionFactory, servicesManager, defaultPrincipalResolver);
+                authenticationTransactionFactory, servicesManager, defaultPrincipalResolver, principalFactory);
         }
     }
 

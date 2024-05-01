@@ -22,7 +22,7 @@
 
         <script type="text/javascript" th:inline="javascript">
             /*<![CDATA[*/
-            var appId = /*[[${webauthnApplicationId}]]*/;
+            let appId = /*[[${webauthnApplicationId}]]*/;
             /*]]>*/
         </script>
 
@@ -132,7 +132,7 @@
             let div = document.querySelector('#divDeviceInfo');
             new mdc.dataTable.MDCDataTable(div);
 
-            var btn = document.getElementById('authnButton');
+            let btn = document.getElementById('authnButton');
             btn.addEventListener('click', event => {
                 $("#errorPanel").hide();
                 let username = '[[${principal?.id}]]';

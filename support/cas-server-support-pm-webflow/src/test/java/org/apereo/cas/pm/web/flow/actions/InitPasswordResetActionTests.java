@@ -3,6 +3,7 @@ package org.apereo.cas.pm.web.flow.actions;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
@@ -20,6 +21,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import java.util.List;
@@ -72,6 +75,33 @@ class InitPasswordResetActionTests extends BasePasswordManagementActionTests {
             val request = PasswordResetRequest.builder().username(UUID.randomUUID().toString()).build();
             PasswordManagementWebflowUtils.putPasswordResetRequest(context, request);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, initPasswordResetAction.execute(context).getId());
+        }
+    }
+
+    @Nested
+    @Import(MfaHasNoDevicesTests.MfaHasNoDevicesTestConfiguration.class)
+    @TestPropertySource(properties = "cas.authn.pm.reset.multifactor-authentication-enabled=true")
+    class MfaHasNoDevicesTests extends BasePasswordManagementActionTests {
+        @Test
+        void verifyAction() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            context.setRemoteAddr("1.2.3.4");
+            context.setLocalAddr("1.2.3.4");
+            context.setClientInfo();
+
+            val query = PasswordManagementQuery.builder().username("user-without-devices").build();
+            val token = passwordManagementService.createToken(query);
+            context.getFlowScope().put(PasswordManagementService.PARAMETER_TOKEN, token);
+            val event = initPasswordResetAction.execute(context);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
+        }
+
+        @TestConfiguration(value = "MfaHasNoDevicesTestConfiguration", proxyBeanMethods = false)
+        static class MfaHasNoDevicesTestConfiguration {
+            @Bean
+            public MultifactorAuthenticationProvider dummyProvider() {
+                return new TestMultifactorAuthenticationProvider();
+            }
         }
     }
 

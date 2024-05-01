@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,8 @@ public class DefaultMultifactorAuthenticationDeviceProviderAction extends BaseCa
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = authentication.getPrincipal();
         val accounts = multifactorAuthenticationDeviceManager.findRegisteredDevices(principal);
+        val currentAccounts = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationRegisteredDevices(requestContext);
+        FunctionUtils.doIfNotNull(currentAccounts, __ -> accounts.addAll(currentAccounts));
         MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationRegisteredDevices(requestContext, accounts);
         return null;
     }

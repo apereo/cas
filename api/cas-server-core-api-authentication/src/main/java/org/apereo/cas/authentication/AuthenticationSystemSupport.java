@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
 
@@ -25,6 +26,13 @@ public interface AuthenticationSystemSupport {
      * Default impl bean name.
      */
     String BEAN_NAME = "defaultAuthenticationSystemSupport";
+
+    /**
+     * Gets principal factory.
+     *
+     * @return the principal factory
+     */
+    PrincipalFactory getPrincipalFactory();
 
     /**
      * Gets authentication transaction manager.

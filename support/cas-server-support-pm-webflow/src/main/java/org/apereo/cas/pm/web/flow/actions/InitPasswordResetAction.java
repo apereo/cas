@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -53,18 +54,15 @@ public class InitPasswordResetAction extends BaseCasWebflowAction {
         }
 
         if (doesPasswordResetRequireMultifactorAuthentication(requestContext)) {
-            val principal = principalResolver.resolve(new BasicIdentifiableCredential(username));
-            val provider = selectMultifactorAuthenticationProvider(requestContext, principal);
+            val resolvedPrincipal = resolvedPrincipal(username);
+            val provider = selectMultifactorAuthenticationProvider(requestContext, resolvedPrincipal);
             if (!doesMultifactorAuthenticationProviderExistInContext(requestContext, provider)) {
-                val authentication = DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
-                WebUtils.putAuthentication(authentication, requestContext);
-                val builder = authenticationSystemSupport.getAuthenticationResultBuilderFactory().newBuilder();
-                val authenticationResult = builder.collect(authentication);
-                WebUtils.putAuthenticationResultBuilder(authenticationResult, requestContext);
-                WebUtils.putTargetTransition(requestContext, CasWebflowConstants.TRANSITION_ID_RESUME_RESET_PASSWORD);
-                MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(requestContext, provider);
-                return new EventFactorySupport().event(this, provider.getId(),
-                    new LocalAttributeMap<>(Map.of(MultifactorAuthenticationProvider.class.getName(), provider)));
+                val deviceManager = provider.getDeviceManager();
+                if (deviceManager != null && !deviceManager.hasRegisteredDevices(resolvedPrincipal)) {
+                    LOGGER.warn("No registered devices for multifactor authentication could be found for [{}]", resolvedPrincipal.getId());
+                    return error();
+                }
+                return routeToMultifactorAuthenticationProvider(requestContext, resolvedPrincipal, provider);
             }
         }
         val credential = new UsernamePasswordCredential();
@@ -73,7 +71,28 @@ public class InitPasswordResetAction extends BaseCasWebflowAction {
         return success();
     }
 
-    private String getPasswordResetUsername(final RequestContext requestContext) {
+    protected Event routeToMultifactorAuthenticationProvider(final RequestContext requestContext,
+                                                             final Principal resolvedPrincipal,
+                                                             final MultifactorAuthenticationProvider provider) {
+        val authentication = DefaultAuthenticationBuilder.newInstance().setPrincipal(resolvedPrincipal).build();
+        WebUtils.putAuthentication(authentication, requestContext);
+        val builder = authenticationSystemSupport.getAuthenticationResultBuilderFactory().newBuilder();
+        val authenticationResult = builder.collect(authentication);
+        WebUtils.putAuthenticationResultBuilder(authenticationResult, requestContext);
+        WebUtils.putTargetTransition(requestContext, CasWebflowConstants.TRANSITION_ID_RESUME_RESET_PASSWORD);
+        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(requestContext, provider);
+        return new EventFactorySupport().event(this, provider.getId(),
+            new LocalAttributeMap<>(Map.of(MultifactorAuthenticationProvider.class.getName(), provider)));
+    }
+
+    protected Principal resolvedPrincipal(final String username) throws Throwable {
+        val resolvedPrincipal = principalResolver.resolve(new BasicIdentifiableCredential(username));
+        return resolvedPrincipal instanceof NullPrincipal
+            ? authenticationSystemSupport.getPrincipalFactory().createPrincipal(username)
+            : resolvedPrincipal;
+    }
+
+    protected String getPasswordResetUsername(final RequestContext requestContext) {
         val token = PasswordManagementWebflowUtils.getPasswordResetToken(requestContext);
         if (StringUtils.isNotBlank(token)) {
             return passwordManagementService.parseToken(token);
@@ -82,8 +101,8 @@ public class InitPasswordResetAction extends BaseCasWebflowAction {
         return request != null ? request.getUsername() : null;
     }
 
-    private boolean doesMultifactorAuthenticationProviderExistInContext(final RequestContext requestContext,
-                                                                        final MultifactorAuthenticationProvider provider) {
+    protected boolean doesMultifactorAuthenticationProviderExistInContext(final RequestContext requestContext,
+                                                                          final MultifactorAuthenticationProvider provider) {
         val authResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
         val registeredService = WebUtils.getRegisteredService(requestContext);
         return authResultBuilder != null && authResultBuilder.getAuthentications().stream().anyMatch(authentication -> {

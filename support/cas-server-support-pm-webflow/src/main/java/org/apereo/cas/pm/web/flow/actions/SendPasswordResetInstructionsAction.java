@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -161,11 +162,18 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
 
     protected boolean hasPrincipalRegisteredMultifactorAuthenticationDevice(final RequestContext requestContext) throws Throwable {
         val query = WebUtils.getPasswordManagementQuery(requestContext, PasswordManagementQuery.class);
-        val principal = principalResolver.resolve(new BasicIdentifiableCredential(query.getUsername()));
+        val principal = resolvedPrincipal(query.getUsername());
         val provider = selectMultifactorAuthenticationProvider(requestContext, principal);
         return provider.getDeviceManager() == null || provider.getDeviceManager().hasRegisteredDevices(principal);
     }
 
+    protected Principal resolvedPrincipal(final String username) throws Throwable {
+        val resolvedPrincipal = principalResolver.resolve(new BasicIdentifiableCredential(username));
+        return resolvedPrincipal instanceof NullPrincipal
+            ? authenticationSystemSupport.getPrincipalFactory().createPrincipal(username)
+            : resolvedPrincipal;
+    }
+    
     protected MultifactorAuthenticationProvider selectMultifactorAuthenticationProvider(final RequestContext requestContext,
                                                                                         final Principal principal) throws Throwable {
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);
@@ -208,9 +216,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         val reset = casProperties.getAuthn().getPm().getReset().getMail();
         val parameters = CollectionUtils.<String, Object>wrap("url", url.toExternalForm());
         if (StringUtils.isNotBlank(to)) {
-            val credential = new BasicIdentifiableCredential();
-            credential.setId(username);
-            val person = principalResolver.resolve(credential);
+            val person = resolvedPrincipal(username);
             FunctionUtils.doIfNotNull(person, principal -> parameters.put("principal", principal));
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val locale = Optional.ofNullable(RequestContextUtils.getLocaleResolver(request))
