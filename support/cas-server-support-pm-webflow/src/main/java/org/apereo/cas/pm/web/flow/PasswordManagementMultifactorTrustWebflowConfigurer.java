@@ -28,12 +28,16 @@ public class PasswordManagementMultifactorTrustWebflowConfigurer extends Abstrac
 
     @Override
     protected void doInitialize() {
-        val pswdFlow = getFlow(FLOW_ID_PASSWORD_RESET);
-        val initReset = getState(pswdFlow, CasWebflowConstants.STATE_ID_INIT_PASSWORD_RESET);
-        initReset.getExitActionList().add(new ConsumerExecutionAction(requestContext -> {
-            MultifactorAuthenticationWebflowUtils.putMultifactorDeviceRegistrationEnabled(requestContext, false);
-            MultifactorAuthenticationTrustUtils.putMultifactorAuthenticationTrustedDevicesDisabled(requestContext, true);
-        }));
+        val pm = casProperties.getAuthn().getPm();
+        if (pm.getCore().isEnabled()) {
+            val pswdFlow = getFlow(FLOW_ID_PASSWORD_RESET);
+            if (containsFlowState(pswdFlow, CasWebflowConstants.STATE_ID_INIT_PASSWORD_RESET)) {
+                val initReset = getState(pswdFlow, CasWebflowConstants.STATE_ID_INIT_PASSWORD_RESET);
+                initReset.getExitActionList().add(new ConsumerExecutionAction(requestContext -> {
+                    MultifactorAuthenticationWebflowUtils.putMultifactorDeviceRegistrationEnabled(requestContext, false);
+                    MultifactorAuthenticationTrustUtils.putMultifactorAuthenticationTrustedDevicesDisabled(requestContext, true);
+                }));
+            }
+        }
     }
-
 }

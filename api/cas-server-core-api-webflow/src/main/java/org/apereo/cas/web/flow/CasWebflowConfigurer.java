@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.springframework.binding.expression.Expression;
+import org.springframework.binding.mapping.Mapping;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.action.EvaluateAction;
@@ -708,4 +709,35 @@ public interface CasWebflowConfigurer extends Ordered {
      * @return the flow
      */
     Flow getFlow(FlowDefinitionRegistry registry, String id);
+
+    /**
+     * Create mapping to a (subflow) state.
+     *
+     * @param targetExpression the target expression
+     * @param sourceExpression the source expression
+     * @param required         the required
+     * @param type             the type
+     * @return the default mapping
+     */
+    Mapping createFlowMapping(String sourceExpression, String targetExpression,
+                              boolean required, Class type);
+
+    /**
+     * Gets transitionable state.
+     *
+     * @param <T>     the type parameter
+     * @param flow    the flow
+     * @param stateId the state id
+     * @param clazz   the clazz
+     * @return the transitionable state
+     */
+    <T extends TransitionableState> T getTransitionableState(Flow flow, String stateId, Class<T> clazz);
+
+    /**
+     * Create external redirect view factory.
+     *
+     * @param expressionId the expression id
+     * @return the view factory
+     */
+    ViewFactory createExternalRedirectViewFactory(String expressionId);
 }
