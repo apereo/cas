@@ -47,4 +47,14 @@ public class GoogleMultifactorAuthenticationAccountProfilePrepareActionTests {
         assertNotNull(MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(context));
         assertTrue(context.getFlowScope().contains("gauthAccountProfileRegistrationEnabled"));
     }
+
+    @Test
+    void verifyRegistrationDisabled() throws Exception {
+        val context = MockRequestContext.create(applicationContext);
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString()), context);
+        MultifactorAuthenticationWebflowUtils.putMultifactorDeviceRegistrationEnabled(context, false);
+        googleAccountProfilePrepareAction.execute(context);
+        assertNotNull(MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(context));
+        assertFalse(context.getFlowScope().contains("gauthAccountProfileRegistrationEnabled"));
+    }
 }

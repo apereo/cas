@@ -71,6 +71,25 @@ class GoogleAuthenticatorPrepareLoginActionTests {
         assertNotNull(MultifactorAuthenticationWebflowUtils.getOneTimeTokenAccounts(context));
     }
 
+    @Test
+    void verifyRegistrationDisabled() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        val acct = GoogleAuthenticatorAccount
+            .builder()
+            .username(UUID.randomUUID().toString())
+            .name(UUID.randomUUID().toString())
+            .secretKey(UUID.randomUUID().toString())
+            .validationCode(123456)
+            .scratchCodes(List.of(987345))
+            .build();
+        googleAuthenticatorAccountRegistry.save(acct);
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(acct.getUsername()), context);
+        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
+        MultifactorAuthenticationWebflowUtils.putMultifactorDeviceRegistrationEnabled(context, false);
+        assertNull(action.execute(context));
+        assertFalse(MultifactorAuthenticationWebflowUtils.isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(context));
+    }
+
     @TestConfiguration(value = "TestMultifactorTestConfiguration", proxyBeanMethods = false)
     static class TestMultifactorTestConfiguration {
         @Bean

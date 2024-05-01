@@ -1,0 +1,10 @@
+{
+  "casuser" : {
+    "email" : "casuser@example.org",
+    "password" : "D1&x8pe8k}",
+    "phone" : "1234567890",
+    "securityQuestions" : {
+      "Favorite Food" : "Salad"
+    }
+  }
+}
