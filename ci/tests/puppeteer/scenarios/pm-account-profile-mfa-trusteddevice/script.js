@@ -83,6 +83,12 @@ async function passwordResetFlowWithTrustedDevice(browser) {
         await cas.pressEnter(page);
         await cas.waitForNavigation(page);
         await cas.sleep(1000);
+        const scratch = await cas.fetchGoogleAuthenticatorScratchCode();
+        await cas.log(`Using scratch code ${scratch} to login...`);
+        await cas.type(page, "#token", scratch);
+        await cas.pressEnter(page);
+        await cas.waitForNavigation(page);
+        
         await cas.assertInnerText(page, "#pwdmain h3", "Hello, casuser. You must change your password.");
         await cas.attributeValue(page, ".generate-password", "title", "Generate password");
     } finally {
