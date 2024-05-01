@@ -43,7 +43,7 @@ public class DefaultMultifactorAuthenticationTrustedDeviceProviderAction extends
         final MultifactorAuthenticationTrustRecord device) {
         val source = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(device.getMultifactorAuthenticationProvider(), applicationContext)
             .map(MultifactorAuthenticationProvider::getFriendlyName)
-            .orElse(null);
+            .orElse("Unknown");
         val expirationDate = DateTimeUtils.zonedDateTimeOf(device.getExpirationDate());
         return MultifactorAuthenticationRegisteredDevice.builder()
             .id(String.valueOf(device.getId()))

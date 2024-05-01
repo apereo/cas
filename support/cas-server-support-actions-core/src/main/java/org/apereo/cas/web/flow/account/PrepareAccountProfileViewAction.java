@@ -52,9 +52,9 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
-        val tgt = WebUtils.getTicketGrantingTicketId(requestContext);
+        val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(requestContext);
         val ticketGrantingTicket = FunctionUtils.doAndHandle(
-            () -> Optional.of(ticketRegistry.getTicket(tgt, TicketGrantingTicket.class)),
+            () -> Optional.of(ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class)),
             throwable -> Optional.<TicketGrantingTicket>empty()).get();
 
         ticketGrantingTicket.ifPresent(ticket -> {

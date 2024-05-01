@@ -1,8 +1,14 @@
 {
   "dependencies": "webauthn,audit-jdbc,pm-webflow,gauth,trusted-mfa",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--CasFeatureModule.AccountManagement.enabled=true",
-    
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
@@ -28,6 +34,11 @@
     "--cas.authn.mfa.web-authn.core.relying-party-id=cas.example.org",
 
     "--cas.authn.mfa.trusted.device-fingerprint.client-ip.enabled=true",
-    "--cas.authn.mfa.trusted.device-fingerprint.cookie.enabled=false"
-  ]
+    "--cas.authn.mfa.trusted.device-fingerprint.cookie.enabled=false",
+
+    "--cas.authn.pm.reset.mail.from=cas@apereo.org",
+    "--cas.authn.pm.reset.mail.text=${url}",
+    "--cas.authn.pm.reset.mail.subject=Reset"
+  ],
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
 }
