@@ -12,12 +12,7 @@ public interface CasWebflowConstants {
      * Bean Names.
      ****************************************
      */
-
-    /**
-     * Bean name for account profile flow registry.
-     */
-    String BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY = "accountProfileFlowRegistry";
-
+    
     /**
      * Bean name for login flow registry.
      */

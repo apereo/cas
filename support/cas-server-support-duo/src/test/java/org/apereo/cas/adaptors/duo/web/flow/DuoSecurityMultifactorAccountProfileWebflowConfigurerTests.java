@@ -13,7 +13,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -62,10 +61,6 @@ import static org.mockito.Mockito.*;
     "cas.authn.mfa.duo[0].duo-api-host=theapi.duosecurity.com"
 })
 class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
-    @Autowired
-    @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
-    private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;
-
     @Autowired
     @Qualifier("duoMultifactorAuthenticationDeviceProviderAction")
     private MultifactorAuthenticationDeviceProviderAction duoMultifactorAuthenticationDeviceProviderAction;

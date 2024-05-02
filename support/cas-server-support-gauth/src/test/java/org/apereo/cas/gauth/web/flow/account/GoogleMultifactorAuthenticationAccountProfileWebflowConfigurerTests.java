@@ -29,12 +29,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
 public class GoogleMultifactorAuthenticationAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
-    @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
-    protected FlowDefinitionRegistry accountFlowDefinitionRegistry;
+    @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+    protected FlowDefinitionRegistry flowDefinitionRegistry;
 
     @Test
     void verifyOperation() throws Throwable {
-        val flow = (Flow) accountFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
+        val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         val accountView = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
         assertEquals(4, accountView.getRenderActionList().size());
         assertTrue(accountView.getRenderActionList().get(0).toString().contains(CasWebflowConstants.ACTION_ID_PREPARE_ACCOUNT_PROFILE));

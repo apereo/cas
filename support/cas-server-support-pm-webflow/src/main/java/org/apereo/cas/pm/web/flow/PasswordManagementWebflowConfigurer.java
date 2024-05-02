@@ -7,12 +7,14 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.WeakPasswordException;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.StringToCharArrayConverter;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.StaticEventExecutionAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -270,6 +272,9 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
         pswdFlow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
         val initReset = createActionState(pswdFlow, CasWebflowConstants.STATE_ID_INIT_PASSWORD_RESET, CasWebflowConstants.ACTION_ID_PASSWORD_RESET_INIT);
 
+        initReset.getExitActionList().add(new ConsumerExecutionAction(
+            requestContext -> MultifactorAuthenticationWebflowUtils.putMultifactorDeviceRegistrationEnabled(requestContext, false)));
+        
         createTransitionForState(initReset, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_MUST_CHANGE_PASSWORD);
         createTransitionForState(initReset, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_PASSWORD_RESET_ERROR_VIEW);
 
@@ -324,7 +329,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
 
     private void enablePasswordManagementForFlow(final Flow flow) {
         val action = new ConsumerExecutionAction(context -> {
-            WebUtils.putAccountProfileManagementEnabled(context, applicationContext.containsBean(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY));
+            WebUtils.putAccountProfileManagementEnabled(context, mainFlowDefinitionRegistry.containsFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT));
             WebUtils.putPasswordManagementEnabled(context, casProperties.getAuthn().getPm().getCore().isEnabled());
             WebUtils.putForgotUsernameEnabled(context, casProperties.getAuthn().getPm().getForgotUsername().isEnabled());
         });

@@ -502,12 +502,12 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         public CasWebflowConfigurer googleAccountProfileWebflowConfigurer(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
-            final FlowDefinitionRegistry accountProfileFlowRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices) {
             return new GoogleMultifactorAuthenticationAccountProfileWebflowConfigurer(flowBuilderServices,
-                accountProfileFlowRegistry, applicationContext, casProperties);
+                flowDefinitionRegistry, applicationContext, casProperties);
         }
 
         @Bean
