@@ -158,7 +158,7 @@ class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         final CipherExecutor yubikeyAccountCipherExecutor) throws Exception {
         val yubi = casProperties.getAuthn().getMfa().getYubikey();
         if (yubi.getJsonFile() != null) {
-            val jsonResource = ResourceUtils.getResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(yubi.getJsonFile()));
+            val jsonResource = ResourceUtils.getRawResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(yubi.getJsonFile()));
             LOGGER.debug("Using JSON resource [{}] as the YubiKey account registry", jsonResource);
             val registry = new JsonYubiKeyAccountRegistry(jsonResource, yubiKeyAccountValidator);
             registry.setCipherExecutor(yubikeyAccountCipherExecutor);
