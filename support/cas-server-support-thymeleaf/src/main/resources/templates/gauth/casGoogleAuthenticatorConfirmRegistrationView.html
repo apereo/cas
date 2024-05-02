@@ -37,7 +37,7 @@
                             <span class="mdc-button__label" th:text="#{screen.authentication.gauth.selectdevice}">Use</span>
                         </button>
                         <button th:id="${'delButton-' + device.id}"
-                                th:if="${#bools.isTrue(mfaDeviceRegistrationEnabled)}"
+                                th:if="${#bools.isTrue(#objects.nullSafe(mfaDeviceRegistrationEnabled,true))}"
                                 onclick="$(this).parent('form').find('input[name=_eventId]').val('delete'); $(this).parent('form').submit();"
                                 class="mdc-button mdc-button--raised" th:value="#{screen.authentication.gauth.deletedevice}">
                             <span class="mdc-button__label" th:text="#{screen.authentication.gauth.deletedevice}">Use</span>
@@ -49,7 +49,7 @@
                 </div>
             </div>
 
-            <form method="post" id="fm2" th:if="${gauthMultipleDeviceRegistrationEnabled && #bools.isTrue(mfaDeviceRegistrationEnabled)}">
+            <form method="post" id="fm2" th:if="${gauthMultipleDeviceRegistrationEnabled && #bools.isTrue(#objects.nullSafe(mfaDeviceRegistrationEnabled,true))}">
                 <p>
                 <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
                 <input type="hidden" name="_eventId_register" value="Register"/>

@@ -20,6 +20,7 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -53,7 +54,8 @@ public class MultifactorAuthenticationWebflowUtils {
      * @return true/false
      */
     public static boolean isMultifactorDeviceRegistrationEnabled(final RequestContext requestContext) {
-        return BooleanUtils.toBoolean(requestContext.getFlowScope().getBoolean("mfaDeviceRegistrationEnabled", Boolean.TRUE));
+        val enabled = Objects.requireNonNullElse(requestContext.getFlowScope().getBoolean("mfaDeviceRegistrationEnabled", Boolean.TRUE), Boolean.TRUE);
+        return BooleanUtils.toBoolean(enabled);
     }
 
     /**

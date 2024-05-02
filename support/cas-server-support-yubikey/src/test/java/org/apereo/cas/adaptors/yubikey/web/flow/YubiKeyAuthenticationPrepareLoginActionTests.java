@@ -29,10 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class YubiKeyAuthenticationPrepareLoginActionTests extends BaseYubiKeyActionTests {
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
+    
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_YUBIKEY_PREPARE_LOGIN)
     private Action prepareYubiKeyAuthenticationLoginAction;
