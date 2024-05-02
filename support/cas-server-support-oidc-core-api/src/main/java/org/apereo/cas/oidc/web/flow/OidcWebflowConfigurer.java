@@ -36,9 +36,11 @@ public class OidcWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override
     public void postInitialization(final ConfigurableApplicationContext applicationContext) {
-        val flow = (Flow) getMainFlowDefinitionRegistry().getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
-        val prepAction = createEvaluateAction(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_ACCESS_TOKENS);
-        val accountView = getState(flow, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW, ViewState.class);
-        accountView.getRenderActionList().add(prepAction);
+        val flow = getFlow(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
+        if (flow != null) {
+            val prepAction = createEvaluateAction(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_ACCESS_TOKENS);
+            val accountView = getState(flow, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW, ViewState.class);
+            accountView.getRenderActionList().add(prepAction);
+        }
     }
 }
