@@ -5,10 +5,11 @@ env:
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   TERM: xterm-256color
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  GRADLE_BUILDCACHE_USER: ci
-  GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
+#  GRADLE_BUILDCACHE_USER: ci
+#  GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
   GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
+  GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
   JDK_CURRENT: 21
   JDK_DISTRIBUTION: "corretto"
 
@@ -21,7 +22,7 @@ concurrency:
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 21 * * *'
+    - cron: '0 20 * * *'
 ##########################################################################
 
 jobs:
@@ -56,5 +57,8 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Report Dependency Updates
-        run: |
-          ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc dependencyUpdates --no-configuration-cache -Drevision=release -DskipNestedConfigMetadataGen=true -DgradleReleaseChannel=current --max-workers=8
+        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test |
+          -x javadoc dependencyUpdates --no-configuration-cache -Drevision=release |
+          -DskipNestedConfigMetadataGen=true -DgradleReleaseChannel=current --max-workers=8
+      - name: Generate and Submit Dependency Graph
+        uses: gradle/actions/dependency-submission@v3
