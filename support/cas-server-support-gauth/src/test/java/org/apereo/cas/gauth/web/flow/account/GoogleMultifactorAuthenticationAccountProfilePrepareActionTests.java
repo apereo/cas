@@ -55,6 +55,6 @@ public class GoogleMultifactorAuthenticationAccountProfilePrepareActionTests {
         MultifactorAuthenticationWebflowUtils.putMultifactorDeviceRegistrationEnabled(context, false);
         googleAccountProfilePrepareAction.execute(context);
         assertNotNull(MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(context));
-        assertFalse(context.getFlowScope().contains("gauthAccountProfileRegistrationEnabled"));
+        assertFalse(context.getFlowScope().getBoolean("gauthAccountProfileRegistrationEnabled"));
     }
 }
