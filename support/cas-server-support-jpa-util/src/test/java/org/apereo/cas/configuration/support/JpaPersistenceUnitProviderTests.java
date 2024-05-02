@@ -47,7 +47,7 @@ public class JpaPersistenceUnitProviderTests {
     }
 
 
-    @TestConfiguration(proxyBeanMethods = false)
+    @TestConfiguration(value = "JpaTestConfiguration", proxyBeanMethods = false)
     static class JpaTestConfiguration {
         @Bean
         public EntityManagerFactory testEntityManagerFactory() {

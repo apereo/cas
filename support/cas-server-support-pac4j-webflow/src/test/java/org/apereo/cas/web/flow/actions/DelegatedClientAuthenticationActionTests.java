@@ -61,7 +61,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 class DelegatedClientAuthenticationActionTests {
 
-    @TestConfiguration(proxyBeanMethods = false)
+    @TestConfiguration(value = "CredentialTestConfiguration", proxyBeanMethods = false)
     static class CredentialTestConfiguration {
         @Bean
         public DelegatedClientAuthenticationCredentialResolver testDelegatedCredentialResolver(

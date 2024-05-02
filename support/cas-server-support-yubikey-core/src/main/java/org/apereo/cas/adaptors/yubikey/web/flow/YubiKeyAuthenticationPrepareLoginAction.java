@@ -6,6 +6,7 @@ import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -21,8 +22,9 @@ public class YubiKeyAuthenticationPrepareLoginAction extends BaseCasWebflowActio
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
-        MultifactorAuthenticationWebflowUtils.putYubiKeyMultipleDeviceRegistrationEnabled(requestContext,
-            casProperties.getAuthn().getMfa().getYubikey().isMultipleDeviceRegistrationEnabled());
+        val registrationEnabled = casProperties.getAuthn().getMfa().getYubikey().isMultipleDeviceRegistrationEnabled()
+            && MultifactorAuthenticationWebflowUtils.isMultifactorDeviceRegistrationEnabled(requestContext);
+        MultifactorAuthenticationWebflowUtils.putYubiKeyMultipleDeviceRegistrationEnabled(requestContext, registrationEnabled);
         return null;
     }
 }

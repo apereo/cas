@@ -56,7 +56,7 @@ class PopulateSpringSecurityContextActionTests extends AbstractWebflowActionsTes
         assertTrue(securityContextRepository.containsContext(context.getHttpServletRequest()));
     }
 
-    @TestConfiguration(proxyBeanMethods = false)
+    @TestConfiguration(value = "PopulateSpringSecurityContextActionTestConfiguration", proxyBeanMethods = false)
     static class PopulateSpringSecurityContextActionTestConfiguration {
         @Bean
         public SecurityContextRepository securityContextRepository() {

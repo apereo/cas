@@ -341,7 +341,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
         }
     }
 
-    @TestConfiguration(proxyBeanMethods = false)
+    @TestConfiguration(value = "ReturnAllowedAttributeReleasePolicyTestConfiguration", proxyBeanMethods = false)
     static class ReturnAllowedAttributeReleasePolicyTestConfiguration {
         @Bean
         public ServicesManager servicesManager() {

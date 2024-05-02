@@ -87,7 +87,7 @@ class OneTimeTokenAccountSaveRegistrationActionTests extends BaseOneTimeTokenRep
             .build();
     }
 
-    @TestConfiguration(proxyBeanMethods = false)
+    @TestConfiguration(value = "OneTimeTokenAccountTestConfiguration", proxyBeanMethods = false)
     public static class OneTimeTokenAccountTestConfiguration {
         @Bean
         public Action oneTimeTokenAccountSaveRegistrationAction(

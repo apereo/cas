@@ -66,7 +66,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
 
     private static final String PRINCIPAL_ID = "principalId";
 
-    @TestConfiguration(proxyBeanMethods = false)
+    @TestConfiguration(value = "CommonTestConfiguration", proxyBeanMethods = false)
     public static class CommonTestConfiguration {
         @Bean
         public PrincipalAttributesRepositoryCache principalAttributesRepositoryCache() {
@@ -380,7 +380,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
             assertEquals(1, attr.size());
         }
 
-        @TestConfiguration(proxyBeanMethods = false)
+        @TestConfiguration(value = "AttributeRepositoryTestConfiguration", proxyBeanMethods = false)
         public static class AttributeRepositoryTestConfiguration {
             @Bean
             public PersonAttributeDao attributeRepository() {

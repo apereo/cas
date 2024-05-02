@@ -62,7 +62,7 @@ class GroovyRegisteredServiceAccessStrategyEnforcerTests {
         assertTrue(results.isExecutionFailure());
     }
 
-    @TestConfiguration(proxyBeanMethods = false)
+    @TestConfiguration(value = "GroovyTestConfiguration", proxyBeanMethods = false)
     static class GroovyTestConfiguration {
         @Bean
         public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan() {

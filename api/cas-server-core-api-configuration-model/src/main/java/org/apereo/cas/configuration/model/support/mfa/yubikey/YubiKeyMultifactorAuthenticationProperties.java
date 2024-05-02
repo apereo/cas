@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoPropertie
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -12,7 +13,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.core.io.Resource;
 import jakarta.annotation.Nonnull;
 import java.io.Serial;
 import java.util.ArrayList;
@@ -64,7 +64,8 @@ public class YubiKeyMultifactorAuthenticationProperties extends BaseMultifactorA
     /**
      * Keep device registration records inside a static JSON resource.
      */
-    private transient Resource jsonFile;
+    @ExpressionLanguageCapable
+    private String jsonFile;
 
     /**
      * Collection of allowed devices allowed per user.

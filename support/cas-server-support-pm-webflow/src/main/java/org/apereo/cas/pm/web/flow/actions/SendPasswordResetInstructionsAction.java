@@ -164,6 +164,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         val query = WebUtils.getPasswordManagementQuery(requestContext, PasswordManagementQuery.class);
         val principal = resolvedPrincipal(query.getUsername());
         val provider = selectMultifactorAuthenticationProvider(requestContext, principal);
+        LOGGER.debug("Selected multifactor authentication provider [{}]", provider.getId());
         return provider.getDeviceManager() == null || provider.getDeviceManager().hasRegisteredDevices(principal);
     }
 

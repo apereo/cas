@@ -59,7 +59,7 @@ public class InitPasswordResetAction extends BaseCasWebflowAction {
             if (!doesMultifactorAuthenticationProviderExistInContext(requestContext, provider)) {
                 val deviceManager = provider.getDeviceManager();
                 if (deviceManager != null && !deviceManager.hasRegisteredDevices(resolvedPrincipal)) {
-                    LOGGER.warn("No registered devices for multifactor authentication could be found for [{}]", resolvedPrincipal.getId());
+                    LOGGER.warn("No registered devices for multifactor authentication could be found for [{}] via [{}]", resolvedPrincipal.getId(), provider.getId());
                     return error();
                 }
                 return routeToMultifactorAuthenticationProvider(requestContext, resolvedPrincipal, provider);

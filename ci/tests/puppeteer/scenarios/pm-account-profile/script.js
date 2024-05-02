@@ -11,6 +11,13 @@ async function removeWebAuthnDevices() {
     });
 }
 
+async function removeAllYubiKeyDevices() {
+    await cas.doRequest("https://localhost:8443/cas/actuator/yubikeyAccountRepository", "DELETE", {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+    });
+}
+
 async function importMultifactorTrustedRecord() {
     const template = path.join(__dirname, "device-record.json");
     const body = fs.readFileSync(template, "utf8");
@@ -29,6 +36,17 @@ async function importWebAuthnDevice() {
     const body = fs.readFileSync(template, "utf8");
     await cas.log(`Import device record:\n${body}`);
     await cas.doRequest("https://localhost:8443/cas/actuator/webAuthnDevices/import", "POST", {
+        "Accept": "application/json",
+        "Content-Length": body.length,
+        "Content-Type": "application/json"
+    }, 201, body);
+}
+
+async function importYubiKeyDevice() {
+    const template = path.join(__dirname, "yubikey-acct.json");
+    const body = fs.readFileSync(template, "utf8");
+    await cas.log(`Import device record:\n${body}`);
+    await cas.doRequest("https://localhost:8443/cas/actuator/yubikeyAccountRepository/import", "POST", {
         "Accept": "application/json",
         "Content-Length": body.length,
         "Content-Type": "application/json"
@@ -120,6 +138,7 @@ async function verifyAccountManagementFlow(browser) {
 
 async function verifyPasswordManagementFlow(browser) {
     await removeWebAuthnDevices();
+    await removeAllYubiKeyDevices();
     const record = await importMultifactorTrustedRecord();
 
     const context = await browser.createBrowserContext();
@@ -139,7 +158,8 @@ async function verifyPasswordManagementFlow(browser) {
     await cas.assertInnerTextStartsWith(page, "#fm1 section div.alert p", "Your MFA provider has denied your attempt");
 
     await importWebAuthnDevice();
-
+    await importYubiKeyDevice();
+    
     await cas.type(page, "#username", "casuser");
     await cas.pressEnter(page);
     await cas.waitForNavigation(page);
@@ -165,6 +185,9 @@ async function verifyPasswordManagementFlow(browser) {
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
+
+    await importWebAuthnDevice();
+    await importYubiKeyDevice();
 
     await verifyAccountManagementFlow(browser);
     await verifyPasswordManagementFlow(browser);

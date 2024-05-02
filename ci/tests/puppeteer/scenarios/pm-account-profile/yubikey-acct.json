@@ -1,0 +1,6 @@
+{
+  "@class" : "org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest",
+  "token" : "cccccccvlidcrcbuhflgeureketrlfkhdcfunflugdlt",
+  "name": "MyDevice",
+  "username" : "casuser"
+}
