@@ -90,7 +90,7 @@ public class DuoSecurityPasswordlessUserAccountStoreTests {
         }
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "DuoSecurityTestConfiguration", proxyBeanMethods = false)
     static class DuoSecurityTestConfiguration {
         @Bean
         public Client duoUniversalPromptAuthenticationClient() throws Exception {

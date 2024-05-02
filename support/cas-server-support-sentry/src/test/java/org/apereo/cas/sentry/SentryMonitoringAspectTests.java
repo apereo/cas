@@ -49,7 +49,7 @@ class SentryMonitoringAspectTests {
         assertThrows(IllegalArgumentException.class, () -> greeter.greet(true));
     }
 
-    @TestConfiguration(proxyBeanMethods = false)
+    @TestConfiguration(value = "SentryMonitoringTestConfiguration", proxyBeanMethods = false)
     static class SentryMonitoringTestConfiguration {
         @Bean
         public Greeter greeter() {

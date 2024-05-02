@@ -2,18 +2,14 @@ package org.apereo.cas.adaptors.yubikey.registry;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
-import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
-import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.Resource;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -83,11 +79,10 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
     }
 
     @Override
-    public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request,
-                               final YubiKeyRegisteredDevice... device) {
-        val acct = super.save(request, device);
+    public YubiKeyAccount save(final YubiKeyAccount yubiAccount) {
+        val account = super.save(yubiAccount);
         writeDevicesToFile();
-        return acct;
+        return account;
     }
 
     @Override

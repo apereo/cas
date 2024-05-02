@@ -58,7 +58,7 @@ public class MultifactorAuthenticationWebflowUtilsTests {
         assertNotNull(MultifactorAuthenticationWebflowUtils.getOneTimeTokenAccounts(requestContext));
     }
     
-    @TestConfiguration(proxyBeanMethods = false)
+    @TestConfiguration(value = "MultifactorAuthenticationTestConfiguration", proxyBeanMethods = false)
     public static class MultifactorAuthenticationTestConfiguration {
         @Bean
         public CasMultifactorWebflowCustomizer sampleCustomizer() {

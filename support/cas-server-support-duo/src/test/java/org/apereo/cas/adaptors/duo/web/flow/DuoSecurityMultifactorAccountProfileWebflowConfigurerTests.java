@@ -82,7 +82,7 @@ class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends BaseWeb
         assertEquals(1, devices.size());
     }
 
-    @TestConfiguration("DuoSecurityTestConfiguration")
+    @TestConfiguration(value = "DuoSecurityTestConfiguration", proxyBeanMethods = false)
     static class DuoSecurityTestConfiguration {
         @Bean
         public DuoSecurityMultifactorAuthenticationProvider dummyDuoSecurityProvider() throws Exception {

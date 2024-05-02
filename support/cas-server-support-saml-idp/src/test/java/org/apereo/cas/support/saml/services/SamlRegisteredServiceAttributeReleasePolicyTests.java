@@ -123,7 +123,7 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
         }
 
 
-        @TestConfiguration(proxyBeanMethods = false)
+        @TestConfiguration(value = "SamlTestConfiguration", proxyBeanMethods = false)
         static class SamlTestConfiguration {
             @Bean
             public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() throws Throwable {
@@ -168,7 +168,7 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
             assertTrue(attributes.isEmpty());
         }
 
-        @TestConfiguration(proxyBeanMethods = false)
+        @TestConfiguration(value = "SamlTestConfiguration", proxyBeanMethods = false)
         static class SamlTestConfiguration {
             @Bean
             public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() throws Exception {

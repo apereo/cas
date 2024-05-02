@@ -33,7 +33,7 @@ class DelegatedAuthenticationWebflowConfigurerTests extends BaseWebflowConfigure
         assertTrue(flow.containsState(CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION));
     }
 
-    @TestConfiguration("DelegatedTestConfiguration")
+    @TestConfiguration(value = "DelegatedTestConfiguration", proxyBeanMethods = false)
     static class DelegatedTestConfiguration {
         @Bean
         public DelegatedClientWebflowCustomizer surrogateDuoSecurityMultifactorWebflowCustomizer() {
