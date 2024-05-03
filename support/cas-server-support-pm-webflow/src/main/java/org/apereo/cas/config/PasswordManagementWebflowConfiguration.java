@@ -159,7 +159,7 @@ public class PasswordManagementWebflowConfiguration {
             return new CasMultifactorWebflowCustomizer() {
                 @Override
                 public List<String> getWebflowAttributeMappings() {
-                    return List.of(CasWebflowConstants.ATTRIBUTE_PASSWORD_MANAGEMENT_QUERY);
+                    return List.of(CasWebflowConstants.ATTRIBUTE_PASSWORD_MANAGEMENT_QUERY, "mfaDeviceRegistrationEnabled");
                 }
             };
         }
