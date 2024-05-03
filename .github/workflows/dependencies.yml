@@ -61,5 +61,22 @@ jobs:
           ./gradlew dependencyUpdates --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc \
             -x check --no-configuration-cache -Drevision=release -DskipAot=true -DskipNestedConfigMetadataGen=true \
             -DgradleReleaseChannel=current --max-workers=8
-      - name: Generate and Submit Dependency Graph
+
+  ##########################################################################
+
+  submit-dependency-graph:
+    runs-on: ubuntu-latest
+    needs: [initialize]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: ${{ env.JDK_DISTRIBUTION }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Initialize
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
+      - name: Submit Dependency Graph
         uses: gradle/actions/dependency-submission@v3
