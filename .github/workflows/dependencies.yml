@@ -22,7 +22,7 @@ concurrency:
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 20 * * *'
+    - cron: '0 19 * * *'
 ##########################################################################
 
 jobs:
@@ -57,8 +57,8 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Report Dependency Updates
-        run: ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test |
-          -x javadoc dependencyUpdates --no-configuration-cache -Drevision=release |
-          -DskipNestedConfigMetadataGen=true -DgradleReleaseChannel=current --max-workers=8
+        run: ./gradlew dependencyUpdates --build-cache --configure-on-demand --no-daemon |
+          --parallel -x test -x javadoc -x check --no-configuration-cache -Drevision=release |
+          -DskipAot=true -DskipNestedConfigMetadataGen=true -DgradleReleaseChannel=current --max-workers=8
       - name: Generate and Submit Dependency Graph
         uses: gradle/actions/dependency-submission@v3
