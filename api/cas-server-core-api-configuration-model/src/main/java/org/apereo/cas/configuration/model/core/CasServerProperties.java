@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core;
 
+import org.apereo.cas.configuration.model.core.web.jetty.CasEmbeddedJettyProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatProperties;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
@@ -58,6 +59,12 @@ public class CasServerProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private CasEmbeddedApacheTomcatProperties tomcat = new CasEmbeddedApacheTomcatProperties();
+
+    /**
+     * Configuration settings that control the embedded Jetty container.
+     */
+    @NestedConfigurationProperty
+    private CasEmbeddedJettyProperties jetty = new CasEmbeddedJettyProperties();
 
     public CasServerProperties() {
         setPrefix(StringUtils.appendIfMissing(getName(), "/").concat("cas"));

@@ -1,6 +1,8 @@
 {
   "dependencies": "qr-authentication",
-
+  "requirements": {
+    "nodejs": "21.7.3"
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",

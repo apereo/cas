@@ -451,7 +451,8 @@ exports.doRequest = async (url, method = "GET",
         const options = {
             method: method,
             rejectUnauthorized: false,
-            headers: headers
+            headers: headers,
+            timeout: 5000
         };
         options.agent = new https.Agent(options);
 
