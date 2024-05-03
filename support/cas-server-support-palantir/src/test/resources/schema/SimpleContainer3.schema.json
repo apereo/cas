@@ -13,6 +13,9 @@
     "AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria" : {
       "type" : "object",
       "properties" : {
+        "tryAll" : {
+          "type" : "boolean"
+        },
         "@class" : {
           "const" : "org.apereo.cas.services.AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria"
         }
