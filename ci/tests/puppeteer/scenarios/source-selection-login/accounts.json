@@ -4,5 +4,10 @@
     "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
     "password" : "json",
     "status" : "OK"
+  },
+  "spongebob" : {
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
+    "password" : "spongebob",
+    "status" : "OK"
   }
 }
