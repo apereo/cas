@@ -1,6 +1,16 @@
 {
   "dependencies": "generic",
+  "conditions": {
+    "docker": "true"
+  },
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh",
   "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+
     "--cas.authn.policy.source-selection-enabled=true",
     
     "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
@@ -8,6 +18,9 @@
     
     "--cas.authn.accept.enabled=true",
     "--cas.authn.accept.name=EXAMPLE",
-    "--cas.authn.accept.users=example::example"
+    "--cas.authn.accept.users=example::example",
+
+    "--cas.authn.reject.users=blocked,banned,spongebob,json",
+    "--cas.authn.reject.name=REJECT"
   ]
 }

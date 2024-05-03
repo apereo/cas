@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.util.CollectionUtils;
@@ -11,6 +12,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.util.ArrayList;
@@ -173,7 +175,17 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
                 resolvedHandlers.addAll(defaultAuthenticationHandlerResolver.resolve(handlers, transaction));
             }
         }
-
+        
+        val byCredential = new ByCredentialSourceAuthenticationHandlerResolver();
+        if (byCredential.supports(resolvedHandlers, transaction)) {
+            val credentialHandlers = byCredential.resolve(resolvedHandlers, transaction);
+            if (!credentialHandlers.isEmpty()) {
+                LOGGER.debug("Authentication handlers resolved by credential source are [{}]", credentialHandlers);
+                resolvedHandlers.removeIf(handler -> !(handler instanceof MultifactorAuthenticationHandler)
+                    && credentialHandlers.stream().noneMatch(credHandler -> StringUtils.equalsIgnoreCase(credHandler.getName(), handler.getName())));
+            }
+        }
+        
         if (resolvedHandlers.isEmpty()) {
             throw new AuthenticationException("No authentication handlers could be resolved to support the authentication transaction");
         }
