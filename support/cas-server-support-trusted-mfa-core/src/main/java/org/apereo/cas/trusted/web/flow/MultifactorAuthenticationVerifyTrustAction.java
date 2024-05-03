@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Set;
@@ -65,7 +66,10 @@ public class MultifactorAuthenticationVerifyTrustAction extends BaseCasWebflowAc
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val fingerprint = deviceFingerprintStrategy.determineFingerprint(authentication, request, response);
         LOGGER.trace("Retrieving authentication records for [{}] that matches [{}]", principal, fingerprint);
-        val foundRecord = results.stream().filter(entry -> entry.getDeviceFingerprint().equals(fingerprint)).findAny();
+        val foundRecord = results.stream()
+            .filter(entry -> StringUtils.isNotBlank(entry.getDeviceFingerprint()))
+            .filter(entry -> entry.getDeviceFingerprint().equals(fingerprint))
+            .findAny();
         if (foundRecord.isEmpty()) {
             LOGGER.debug("No trusted authentication records could be found for [{}] to match the current device fingerprint", principal);
             return no();
