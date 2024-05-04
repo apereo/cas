@@ -23,9 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasEmbeddedContainerJettyAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     ServletWebServerFactoryAutoConfiguration.class,
-    RefreshAutoConfiguration.class,
+    RefreshAutoConfiguration.class
 }, properties = {
     "server.port=${random.int[8000,9999]}",
+    "server.ssl.enabled=false",
     "cas.server.jetty.sni-host-check=false"
 },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
