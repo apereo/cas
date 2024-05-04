@@ -59,6 +59,57 @@ public class Workflows {
         this.runs = runs;
     }
 
+
+    @Getter
+    @ToString(of = {"id", "name", "headSha", "displayTitle"}, includeFieldNames = false)
+    public static class WorkflowRunAttempt {
+        private final long id;
+        private final long workflowId;
+        private final long runNumber;
+        private final String name;
+        private final String event;
+        private final String displayTitle;
+        private final String status;
+        private final String conclusion;
+        private final String headBranch;
+        private final String headSha;
+        private final User actor;
+        private final HeadCommit headCommit;
+        private final Repository repository;
+        private final Repository headRepository;
+
+        @JsonCreator
+        public WorkflowRunAttempt(@JsonProperty("id") long id,
+                           @JsonProperty("name") String name,
+                           @JsonProperty("run_number") long runNumber,
+                           @JsonProperty("event") String event,
+                           @JsonProperty("status") String status,
+                           @JsonProperty("conclusion") String conclusion,
+                           @JsonProperty("repository") Repository repository,
+                           @JsonProperty("head_branch") String headBranch,
+                           @JsonProperty("display_title") String displayTitle,
+                           @JsonProperty("head_sha") String headSha,
+                           @JsonProperty("workflow_id") long workflowId,
+                           @JsonProperty("actor") User actor,
+                           @JsonProperty("head_commit") HeadCommit headCommit,
+                           @JsonProperty("head_repository") Repository headRepository) {
+            this.id = id;
+            this.name = name;
+            this.event = event;
+            this.status = status;
+            this.conclusion = conclusion;
+            this.repository = repository;
+            this.headBranch = headBranch;
+            this.runNumber = runNumber;
+            this.headSha = headSha;
+            this.workflowId = workflowId;
+            this.headRepository = headRepository;
+            this.headCommit = headCommit;
+            this.actor = actor;
+            this.displayTitle = displayTitle;
+        }
+    }
+
     @Getter
     @ToString(of = {"runNumber", "name", "status", "event", "conclusion", "workflowId", "headRepository", "headBranch"}, includeFieldNames = false)
     public static class WorkflowRun {
@@ -94,6 +145,8 @@ public class Workflows {
 
         private final OffsetDateTime updatedTime;
 
+        private final long runAttempt;
+
         @JsonCreator
         public WorkflowRun(@JsonProperty("id") long id,
                            @JsonProperty("name") String name,
@@ -107,6 +160,7 @@ public class Workflows {
                            @JsonProperty("head_branch") String headBranch,
                            @JsonProperty("head_sha") String headSha,
                            @JsonProperty("workflow_id") long workflowId,
+                           @JsonProperty("run_attempt") long runAttempt,
                            @JsonProperty("head_commit") HeadCommit headCommit,
                            @JsonProperty("created_at") final OffsetDateTime creationTime,
                            @JsonProperty("updated_at") final OffsetDateTime updatedTime,
@@ -127,6 +181,7 @@ public class Workflows {
             this.headRepository = headRepository;
             this.creationTime = creationTime;
             this.updatedTime = updatedTime;
+            this.runAttempt = runAttempt;
         }
 
         public boolean isConcludedSuccessfully() {

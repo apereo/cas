@@ -122,6 +122,7 @@ public interface GitHubOperations {
     Commit getCommit(String organization, String repository, String branchOrSha);
 
     void closePullRequest(String organization, String repository, String number);
+    
     void openPullRequest(String organization, String repository, String number);
 
     CheckRun getCheckRunsFor(String organization, String repository, String ref,
@@ -146,5 +147,8 @@ public interface GitHubOperations {
                            PullRequest pr, Map<String, ? extends Serializable> payload);
 
     Page<PullRequestReview> getPullRequestReviews(String organization, String name, PullRequest pr);
+    
     Page<TimelineEntry> getPullRequestTimeline(String organization, String name, PullRequest pr);
+
+    void rerunFailedWorkflowJobs(String organization, String name, Workflows.WorkflowRun run);
 }

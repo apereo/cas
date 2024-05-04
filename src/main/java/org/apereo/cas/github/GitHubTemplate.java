@@ -227,6 +227,17 @@ public class GitHubTemplate implements GitHubOperations {
     }
 
     @Override
+    public void rerunFailedWorkflowJobs(final String organization, final String name, final Workflows.WorkflowRun run) {
+        val url = "https://api.github.com/repos/" + organization + '/' + name + "/actions/runs/" + run.getId() + "/rerun-failed-jobs";
+        val responseEntity = this.rest.exchange(url, HttpMethod.POST, HttpEntity.EMPTY, Map.class);
+        if (responseEntity.getStatusCode().is2xxSuccessful()) {
+            log.info("Successfully rerun failed workflow run id", run);
+        } else {
+            log.warn("Failed to rerun failed workflow jobs. Response status: {}", responseEntity.getStatusCode());
+        }
+    }
+
+    @Override
     public Page<CommitStatus> getPullRequestCommitStatus(final String organization, final String repository, final String number) {
         val pr = getPullRequest(organization, repository, number);
         return getPullRequestCommitStatus(pr);
@@ -294,7 +305,7 @@ public class GitHubTemplate implements GitHubOperations {
             params.put("event", "APPROVE");
             val responseEntity = rest.exchange(new RequestEntity(params, HttpMethod.POST, URI.create(url)), Map.class);
             return responseEntity.getStatusCode().is2xxSuccessful();
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error approving PR", e);
         }
         return false;

@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -100,7 +101,7 @@ public class MonitoredRepository {
                 matchFound = false;
                 missingRuns.add(WorkflowRuns.UNIT_TESTS.getName());
             }
-            
+
             if (!matchFound) {
                 var template = IOUtils.toString(new ClassPathResource("template-run-tests.md").getInputStream(), StandardCharsets.UTF_8);
                 template = template.replace("${commitId}", mostRecentCommit.getSha());
@@ -108,7 +109,7 @@ public class MonitoredRepository {
                 template = template.replace("${link}", Memes.NO_TESTS.select());
                 template = template.replace("${branch}", pullRequest.getHead().getRef());
                 template = template.replace("${missingRuns}", String.join(",", missingRuns));
-                
+
                 labelPullRequestAs(pullRequest, CasLabels.LABEL_PENDING_NEEDS_TESTS);
                 labelPullRequestAs(pullRequest, CasLabels.LABEL_WIP);
                 addComment(pullRequest, template);
@@ -354,6 +355,10 @@ public class MonitoredRepository {
         return this.gitHub.getCommit(getOrganization(), getName(), shaOrBranch.getName());
     }
 
+    public Commit getHeadCommitFor(final String shaOrBranch) {
+        return this.gitHub.getCommit(getOrganization(), getName(), shaOrBranch);
+    }
+
     public Commit getCommit(final String commitSha) {
         return this.gitHub.getCommit(getOrganization(), getName(), commitSha);
     }
@@ -480,6 +485,20 @@ public class MonitoredRepository {
                 }
             }
         });
+    }
+
+    public Set<Workflows.WorkflowRun> rerunFailedWorkflowJobs() {
+        var commit = getHeadCommitFor("master");
+        var workflowRuns = gitHub.getWorkflowRuns(getOrganization(), getName(), commit, Workflows.WorkflowRunStatus.FAILURE);
+        return workflowRuns
+            .getRuns()
+            .stream()
+            .filter(run -> WorkflowRuns.isAnyOf(run.getName()) && run.getRunAttempt() == 1)
+            .peek(run -> {
+                log.info("Rerunning failed workflow run {}", run);
+                gitHub.rerunFailedWorkflowJobs(getOrganization(), getName(), run);
+            })
+            .collect(Collectors.toSet());
     }
 
     public void removeOldWorkflowRuns() {

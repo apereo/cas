@@ -1,13 +1,10 @@
 package org.apereo.cas.controller;
 
 import org.apereo.cas.CasLabels;
-import org.apereo.cas.Memes;
 import org.apereo.cas.MonitoredRepository;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +51,12 @@ public class RepositoryController {
         return ResponseEntity.ok(Map.of("verified", verified));
     }
 
+    @PostMapping(value = "/repo/workflows/rerun", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity rerunWorkflows() throws Exception {
+        return ResponseEntity.ok(repository.rerunFailedWorkflowJobs());
+    }
+    
 
     @PostMapping(value = "/repo/pulls/{prNumber}/comments/clean", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({"ROLE_ADMIN"})

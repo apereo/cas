@@ -71,6 +71,7 @@ class RepositoryMonitor {
             repository.removeCancelledWorkflowRuns();
             repository.removePullRequestWorkflowRunsForMissingBranches();
             repository.removeOldWorkflowRuns();
+            repository.rerunFailedWorkflowJobs();
         } catch (final Exception ex) {
             log.warn("A failure occurred during monitoring", ex);
         }
