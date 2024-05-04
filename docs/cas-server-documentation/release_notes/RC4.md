@@ -57,14 +57,26 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based via Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `478` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `479` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
 ## Other Stuff
+          
+- CAS offers options to control SNI Host Checking for Jetty when used as an embedded container.
+- Selecting an authentication source during login attempts will force CAS to use that source, disregarding other sources allowed via the application's authentication policy.
+- The dependency graph for CAS libraries and dependencies is now published to GitHub.
+- Device registration and management for multifactor authentication is disabled for YubiKey, Google Authenticator and WebAuthN providers during password reset operations.
+- Trusted devices for multifactor authentication are now disabled and ignored during password reset operations.
+- The password management flow is heavily reworked to better support multifactor authentication flows.
+- Account management profile will no longer list duplicate multifactor authentication devices when multiple providers are in effect. 
 
 ## Library Upgrades
 
 - Gradle
 - Spring Boot
+- Undertow
+- Amazon SDK
+- Ldaptive
+- NodeJS
 
