@@ -1,7 +1,7 @@
 {
   "type": "commonjs",
   "dependencies": {
-    "@stomp/stompjs": "6.1.2",
+    "@stomp/stompjs": "7.0.0",
     "archiver": "5.3.2",
     "axios": "1.6.8",
     "basic-auth": "2.0.1",
@@ -20,7 +20,7 @@
     "node-docker-api": "1.1.22",
     "node-static-auth": "1.0.6",
     "perf_hooks": "0.0.1",
-    "pino": "8.20.0",
+    "pino": "8.21.0",
     "pino-pretty": "10.3.1",
     "properties-reader": "2.3.0",
     "ps-node": "0.1.6",
@@ -29,14 +29,14 @@
     "qrcode-reader": "1.0.4",
     "request": "2.88.2",
     "sockjs-client": "1.6.1",
-    "unzipper": "0.10.14",
+    "unzipper": "0.11.5",
     "wait-on": "7.2.0",
     "xml2js": "0.6.2",
-    "yaml": "2.4.1"
+    "yaml": "2.4.2"
   },
   "devDependencies": {
-    "@eslint/js": "9.0.0",
-    "eslint": "9.0.0",
-    "globals": "15.0.0"
+    "@eslint/js": "9.2.0",
+    "eslint": "9.2.0",
+    "globals": "15.1.0"
   }
 }
