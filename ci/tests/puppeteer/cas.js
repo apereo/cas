@@ -235,11 +235,15 @@ exports.loginWith = async (page, user = "casuser", password = "Mellon",
 
 exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
     await this.log(`Fetching Scratch codes for ${user}...`);
-    const response = await this.doRequest(`https://localhost:8443/cas/actuator/gauthCredentialRepository/${user}`,
-        "GET", {
+    return this.doGet(`https://localhost:8443/cas/actuator/gauthCredentialRepository/${user}`,
+        (res) => JSON.stringify(res.data[0].scratchCodes[0]),
+        (error) => {
+            throw error;
+        }, {
+            "Content-Type": "application/json",
             "Accept": "application/json"
         });
-    return JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
+
 };
 
 exports.isVisible = async (page, selector) => {
@@ -498,13 +502,31 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
         .get(url, config)
         .then((res) => {
             if (responseType !== "blob" && responseType !== "stream") {
-                // let json = JSON.parse(body)
                 console.dir(res.data, {depth: null, colors: true});
-                // this.log(res.data);
             }
             return successHandler(res);
         })
         .catch((error) => failureHandler(error));
+};
+
+exports.doDelete = async (url, statusCode = 204, successHandler = undefined, failureHandler = undefined, headers = {}) => {
+    const instance = axios.create({
+        timeout: 5000,
+        httpsAgent: new https.Agent({
+            rejectUnauthorized: false
+        })
+    });
+    const config = {
+        headers: headers
+    };
+    await this.log(`Sending DELETE request to ${url}`);
+    return instance
+        .delete(url, config)
+        .then((res) => {
+            assert.equal(res.status, statusCode);
+            return successHandler === undefined ? undefined : successHandler(res);
+        })
+        .catch((error) => failureHandler === undefined ? undefined : failureHandler(error));
 };
 
 exports.doPost = async (url, params = "", headers = {}, successHandler, failureHandler) => {
