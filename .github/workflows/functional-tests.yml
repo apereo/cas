@@ -33,7 +33,7 @@ env:
   NODE_CURRENT: '22.1.0'
   MAX_ATTEMPTS: 3
   RETRY_MINUTES: 8
-  SCENARIO_REGEX: "pm-reset-password-requiremfa-selection"
+  SCENARIO_REGEX: ".*"
 
 on:
   workflow_dispatch:
