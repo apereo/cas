@@ -136,9 +136,7 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;
       - name: Configure CI
-        run: |
-          source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
-          echo "NODE_VERSION_REQUIRED=$(echo $NODE_REQUIRED)" >> $GITHUB_ENV
+        run: source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
       - name: Set up Nodejs
         uses: actions/setup-node@v4
         with:
@@ -187,9 +185,7 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \;
       - name: Configure CI
-        run: |
-          source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
-          echo "NODE_VERSION_REQUIRED=$(echo $NODE_REQUIRED)" >> $GITHUB_ENV
+        run: source ./ci/tests/puppeteer/configure-ci.sh ${{matrix.scenario}}
       - name: Set up Nodejs
         uses: actions/setup-node@v4
         with:
