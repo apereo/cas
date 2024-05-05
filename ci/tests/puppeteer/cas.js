@@ -456,7 +456,6 @@ exports.doRequest = async (url, method = "GET",
         };
         options.agent = new https.Agent(options);
 
-        this.logg(`Sending ${method} request to ${url}`);
         const handler = async (res) => {
             await this.logg(`Response status: ${res.statusCode}`);
             if (statusCode > 0) {
@@ -472,8 +471,10 @@ exports.doRequest = async (url, method = "GET",
         };
 
         if (requestBody === undefined) {
+            this.logg(`Sending ${method} request to ${url} without a body`);
             https.get(url, options, (res) => handler(res)).on("error", reject);
         } else {
+            this.logg(`Sending ${method} request to ${url} with body ${requestBody}`);
             const request = https.request(url, options, (res) => handler(res)).on("error", reject);
             request.write(requestBody);
         }
