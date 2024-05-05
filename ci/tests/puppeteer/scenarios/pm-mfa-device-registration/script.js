@@ -15,10 +15,7 @@ async function registerGoogleAuthenticatorAccount() {
 }
 
 async function deleteGoogleAuthenticatorAccounts() {
-    await cas.doRequest("https://localhost:8443/cas/actuator/gauthCredentialRepository", "DELETE", {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-    }, 200);
+    await cas.doRequest("https://localhost:8443/cas/actuator/gauthCredentialRepository");
 }
 
 async function passwordResetFlowMfaWithoutRegisteredDevice(browser) {

@@ -52,10 +52,7 @@ async function importTrustedDevice() {
 }
 
 async function removeTrustedDevice(record) {
-    await cas.doRequest(`https://localhost:8443/cas/actuator/multifactorTrustedDevices/${record.recordKey}`, "DELETE", {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-    });
+    await cas.doDelete(`https://localhost:8443/cas/actuator/multifactorTrustedDevices/${record.recordKey}`);
 }
 
 async function passwordResetFlowWithTrustedDevice(browser) {

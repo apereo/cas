@@ -30,7 +30,7 @@ const path = require("path");
     ];
 
     await sendRequest(page, entityIds);
-    await cas.doRequest("https://localhost:8443/cas/actuator/samlIdPRegisteredServiceMetadataCache", "DELETE", {}, 204);
+    await cas.doDelete("https://localhost:8443/cas/actuator/samlIdPRegisteredServiceMetadataCache");
 
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();

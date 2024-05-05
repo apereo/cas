@@ -26,7 +26,7 @@ const querystring = require("querystring");
 
     const baseUrl = "https://localhost:8443/cas/actuator";
     await cas.logg("Removing all SSO Sessions");
-    await cas.doRequest(`${baseUrl}/ssoSessions?type=ALL&from=1&count=100000`, "DELETE", {});
+    await cas.doDelete(`${baseUrl}/ssoSessions?type=ALL&from=1&count=100000`);
 
     const formData = {
         username: "casuser",

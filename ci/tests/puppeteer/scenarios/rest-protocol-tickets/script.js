@@ -19,9 +19,9 @@ const querystring = require("querystring");
     assert(st !== undefined);
 
     await executeRequest(`https://localhost:8443/cas/v1/tickets/${st}`, "GET", 200);
-    await executeRequest(`https://localhost:8443/cas/v1/tickets/${st}`, "DELETE", 200, "application/json");
+    await cas.doDelete(`https://localhost:8443/cas/v1/tickets/${st}`);
     await cas.sleep(2000);
-    await executeRequest(`https://localhost:8443/cas/v1/tickets/${tgt}`, "DELETE", 200, "application/json");
+    await cas.doDelete(`https://localhost:8443/cas/v1/tickets/${tgt}`);
     await executeRequest(`https://localhost:8443/cas/v1/tickets/${tgt}`, "GET", 404);
 })();
 
