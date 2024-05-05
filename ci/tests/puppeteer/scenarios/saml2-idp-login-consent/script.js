@@ -5,7 +5,7 @@ const assert = require("assert");
 
 (async () => {
     await cas.log("Removing previous consent decisions for casuser");
-    await cas.doRequest("https://localhost:8443/cas/actuator/attributeConsent/casuser", "DELETE");
+    await cas.doDelete("https://localhost:8443/cas/actuator/attributeConsent/casuser");
 
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);

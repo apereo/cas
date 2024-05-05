@@ -509,7 +509,7 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
         .catch((error) => failureHandler(error));
 };
 
-exports.doDelete = async (url, statusCode = 204, successHandler = undefined, failureHandler = undefined, headers = {}) => {
+exports.doDelete = async (url, statusCode = 0, successHandler = undefined, failureHandler = undefined, headers = {}) => {
     const instance = axios.create({
         timeout: 5000,
         httpsAgent: new https.Agent({
@@ -523,7 +523,12 @@ exports.doDelete = async (url, statusCode = 204, successHandler = undefined, fai
     return instance
         .delete(url, config)
         .then((res) => {
-            assert.equal(res.status, statusCode);
+            if (statusCode > 0) {
+                assert.equal(res.status, statusCode);
+            } else {
+                assert(statusCode === 200 || statusCode === 204, `Unexpected status code: ${res.status}`);
+            }
+            this.log(`DELETE response status: ${res.status}`);
             return successHandler === undefined ? undefined : successHandler(res);
         })
         .catch((error) => failureHandler === undefined ? undefined : failureHandler(error));

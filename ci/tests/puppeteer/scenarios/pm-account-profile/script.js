@@ -5,17 +5,11 @@ const path = require("path");
 const fs = require("fs");
 
 async function removeWebAuthnDevices() {
-    await cas.doRequest("https://localhost:8443/cas/actuator/webAuthnDevices/casuser", "DELETE", {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-    });
+    await cas.doDelete("https://localhost:8443/cas/actuator/webAuthnDevices/casuser");
 }
 
 async function removeAllYubiKeyDevices() {
-    await cas.doRequest("https://localhost:8443/cas/actuator/yubikeyAccountRepository", "DELETE", {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-    });
+    await cas.doDelete("https://localhost:8443/cas/actuator/yubikeyAccountRepository");
 }
 
 async function importMultifactorTrustedRecord() {
@@ -54,10 +48,7 @@ async function importYubiKeyDevice() {
 }
 
 async function removeMultifactorTrustedRecord(record) {
-    await cas.doRequest(`https://localhost:8443/cas/actuator/multifactorTrustedDevices/${record.recordKey}`, "DELETE", {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
-    });
+    await cas.doRequest(`https://localhost:8443/cas/actuator/multifactorTrustedDevices/${record.recordKey}`);
 }
 
 async function verifyAccountManagementFlow(browser) {

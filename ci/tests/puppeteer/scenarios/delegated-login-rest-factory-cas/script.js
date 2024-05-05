@@ -42,7 +42,7 @@ async function fetchIdentityProviders() {
     await cas.sleep(3000);
     await cas.gotoLogin(page);
     await fetchIdentityProviders();
-    await cas.doRequest("https://localhost:8443/cas/actuator/delegatedClients", "DELETE");
+    await cas.doDelete("https://localhost:8443/cas/actuator/delegatedClients");
     await fetchIdentityProviders();
     mockServer.stop();
     await browser.close();
