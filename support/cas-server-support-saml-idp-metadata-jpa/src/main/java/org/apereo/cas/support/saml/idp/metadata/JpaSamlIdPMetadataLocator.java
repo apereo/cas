@@ -10,6 +10,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,8 +37,9 @@ public class JpaSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     private EntityManager entityManager;
 
     public JpaSamlIdPMetadataLocator(final CipherExecutor<String, String> metadataCipherExecutor,
-                                     final Cache<String, SamlIdPMetadataDocument> metadataCache) {
-        super(metadataCipherExecutor, metadataCache);
+                                     final Cache<String, SamlIdPMetadataDocument> metadataCache,
+                                     final ConfigurableApplicationContext applicationContext) {
+        super(metadataCipherExecutor, metadataCache, applicationContext);
     }
 
     @Override

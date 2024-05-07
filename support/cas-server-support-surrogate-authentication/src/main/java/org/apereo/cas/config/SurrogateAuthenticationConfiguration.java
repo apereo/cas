@@ -248,6 +248,9 @@ class SurrogateAuthenticationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder(
+            @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
+            final AttributeRepositoryResolver attributeRepositoryResolver,
+            final CasConfigurationProperties casProperties,
             @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
             final SurrogateAuthenticationService surrogateAuthenticationService,
             @Qualifier("surrogatePrincipalFactory")
@@ -255,7 +258,7 @@ class SurrogateAuthenticationConfiguration {
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
             final PersonAttributeDao attributeRepository) throws Exception {
             return new DefaultSurrogateAuthenticationPrincipalBuilder(surrogatePrincipalFactory,
-                attributeRepository, surrogateAuthenticationService);
+                attributeRepository, surrogateAuthenticationService, attributeRepositoryResolver, casProperties);
         }
     }
 

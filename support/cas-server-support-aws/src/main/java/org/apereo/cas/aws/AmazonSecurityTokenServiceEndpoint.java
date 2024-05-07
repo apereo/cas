@@ -9,15 +9,15 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.rest.authentication.RestAuthenticationService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
-
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
@@ -30,7 +30,6 @@ import software.amazon.awssdk.services.sts.StsClient;
 import software.amazon.awssdk.services.sts.model.AssumeRoleRequest;
 import software.amazon.awssdk.services.sts.model.Credentials;
 import software.amazon.awssdk.services.sts.model.GetSessionTokenRequest;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
@@ -43,14 +42,15 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@RestControllerEndpoint(id = "awsSts", enableByDefault = false)
+@Endpoint(id = "awsSts", enableByDefault = false)
 @Slf4j
-public class AmazonSecurityTokenServiceEndpoint extends BaseCasActuatorEndpoint {
+public class AmazonSecurityTokenServiceEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<RestAuthenticationService> restAuthenticationService;
 
     public AmazonSecurityTokenServiceEndpoint(final ObjectProvider<CasConfigurationProperties> casProperties,
+                                              final ConfigurableApplicationContext applicationContext,
                                               final ObjectProvider<RestAuthenticationService> restAuthenticationService) {
-        super(casProperties.getObject());
+        super(casProperties.getObject(), applicationContext);
         this.restAuthenticationService = restAuthenticationService;
     }
 

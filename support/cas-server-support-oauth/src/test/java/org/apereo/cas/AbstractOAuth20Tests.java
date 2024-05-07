@@ -99,6 +99,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
+import org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration;
+import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -827,7 +829,9 @@ public abstract class AbstractOAuth20Tests {
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         SecurityAutoConfiguration.class,
-        AopAutoConfiguration.class
+        AopAutoConfiguration.class,
+        IntegrationAutoConfiguration.class,
+        MailSenderAutoConfiguration.class
     })
     @SpringBootConfiguration
     @Import({

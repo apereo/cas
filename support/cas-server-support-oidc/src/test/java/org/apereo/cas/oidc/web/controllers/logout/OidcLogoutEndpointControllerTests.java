@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 import java.util.UUID;
 
@@ -33,7 +34,7 @@ class OidcLogoutEndpointControllerTests extends AbstractOidcTests {
 
     @Autowired
     @Qualifier("oidcProtocolEndpointConfigurer")
-    private CasWebSecurityConfigurer<Void> oidcProtocolEndpointConfigurer;
+    private CasWebSecurityConfigurer<HttpSecurity> oidcProtocolEndpointConfigurer;
 
     @Test
     void verifyEndpoints() throws Throwable {

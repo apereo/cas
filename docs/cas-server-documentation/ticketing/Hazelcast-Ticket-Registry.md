@@ -51,6 +51,23 @@ refer to [the Hazelcast documentation](https://docs.hazelcast.com/imdg/latest/)
 Tokens and tickets that are managed by the Hazelcast ticket registry can be signed and encrypted.                        
 
 {% include_cached casproperties.html properties="cas.ticket.registry.hazelcast.crypto" %}
+     
+## Hazelcast Map Customization
+
+The Hazelcast ticket registry implementation allows you to customize the Hazelcast `Map` that is used to store tickets.
+CAS automatically creates instances of such maps for ticket storage for each known ticket type. If you do need to customize
+the map instance before it's registered with Hazelcast, you can do so by providing a bean of type `HazelcastMapCustomizer`
+in the application context. 
+
+```java
+@Bean
+public HazelcastMapCustomizer myHazelcastMapCustomizer() {
+    return new MyHazelcastMapCustomizer();
+}
+```
+
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn more about
+how to register configurations into the CAS runtime.
 
 ## Logging
 

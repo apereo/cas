@@ -3507,7 +3507,7 @@ ext.libraries = [
                 }
         ],
         bucket4j                   : [
-                dependencies.create("com.github.vladimir-bukhtoyarov:bucket4j-core:$bucket4jVersion") {
+                dependencies.create("com.bucket4j:bucket4j-core:$bucket4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.json", module: "json")
                 }

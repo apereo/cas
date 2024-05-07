@@ -27,6 +27,7 @@ import org.springframework.boot.actuate.autoconfigure.observation.ObservationAut
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -88,6 +89,7 @@ public abstract class BaseWebflowConfigurerTests {
         MailSenderAutoConfiguration.class,
         MailSenderValidatorAutoConfiguration.class,
         ObservationAutoConfiguration.class,
+        IntegrationAutoConfiguration.class,
         AopAutoConfiguration.class
     })
     @SpringBootConfiguration

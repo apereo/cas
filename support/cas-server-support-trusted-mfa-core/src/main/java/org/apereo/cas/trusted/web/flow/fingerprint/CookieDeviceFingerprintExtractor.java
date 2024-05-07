@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.web.flow.fingerprint;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 
@@ -15,7 +16,8 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * {@link DeviceFingerprintComponentManager} that sets/retrieves a cookie from the request to track trusted devices.
+ * {@link DeviceFingerprintExtractor} that sets/retrieves a
+ * cookie from the request to track trusted devices.
  *
  * @author Daniel Frett
  * @since 5.3.0
@@ -24,7 +26,7 @@ import java.util.function.Supplier;
 @Setter
 @RequiredArgsConstructor
 @Slf4j
-public class CookieDeviceFingerprintComponentManager implements DeviceFingerprintComponentManager {
+public class CookieDeviceFingerprintExtractor implements DeviceFingerprintExtractor {
     private final CasCookieBuilder cookieGenerator;
 
     private final RandomStringGenerator randomStringGenerator;
@@ -32,8 +34,8 @@ public class CookieDeviceFingerprintComponentManager implements DeviceFingerprin
     private int order = LOWEST_PRECEDENCE;
 
     @Override
-    public Optional<String> extractComponent(final String principal, final HttpServletRequest request,
-                                             final HttpServletResponse response) {
+    public Optional<String> extract(final Authentication authentication, final HttpServletRequest request,
+                                    final HttpServletResponse response) {
         val cookieValue = Optional.ofNullable(cookieGenerator.retrieveCookieValue(request))
             .orElseGet(() -> {
                 val newFingerprint = createDeviceFingerPrintCookieValue().get();
@@ -45,11 +47,6 @@ public class CookieDeviceFingerprintComponentManager implements DeviceFingerprin
         return Optional.of(cookieValue);
     }
 
-    /**
-     * Create device finger print cookie value supplier.
-     *
-     * @return the supplier
-     */
     protected Supplier<String> createDeviceFingerPrintCookieValue() {
         return randomStringGenerator::getNewString;
     }

@@ -82,6 +82,18 @@ class DefaultOAuth20RequestParameterResolverTests extends AbstractOidcTests {
     }
 
     @Test
+    void verifyQueryParameterAsNumber() {
+        val request = new MockHttpServletRequest();
+        request.setParameter("expiration", "10");
+        request.setParameter("rate", "12.4365");
+        val response = new MockHttpServletResponse();
+        val context = new JEEContext(request, response);
+        assertTrue(oauthRequestParameterResolver.resolveRequestParameter(context, "expiration", Integer.class).isPresent());
+        assertTrue(oauthRequestParameterResolver.resolveRequestParameter(context, "expiration", Long.class).isPresent());
+        assertTrue(oauthRequestParameterResolver.resolveRequestParameter(context, "rate", Double.class).isPresent());
+    }
+
+    @Test
     void verifyScopesCanBeExtracted() {
         val request = new MockHttpServletRequest();
         request.setParameter("scope", "openid profile email");

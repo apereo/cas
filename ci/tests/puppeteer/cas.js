@@ -480,7 +480,7 @@ exports.doRequest = async (url, method = "GET",
 
 exports.doGet = async (url, successHandler, failureHandler, headers = {}, responseType = undefined) => {
     const instance = axios.create({
-        timeout: 8000,
+        timeout: 5000,
         httpsAgent: new https.Agent({
             rejectUnauthorized: false
         })
@@ -835,7 +835,7 @@ exports.extractFromEmail = async (browser) => {
     return text;
 };
 
-exports.waitForNavigation = async (page) => page.waitForNavigation({timeout: 8000});
+exports.waitForNavigation = async (page, timeout = 10000) => page.waitForNavigation({timeout: timeout});
 
 exports.goto = async (page, url, retryCount = 5) => {
     let response = null;

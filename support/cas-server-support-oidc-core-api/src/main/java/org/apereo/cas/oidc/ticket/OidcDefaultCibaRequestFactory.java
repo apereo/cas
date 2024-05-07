@@ -8,6 +8,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -40,13 +41,18 @@ public class OidcDefaultCibaRequestFactory implements OidcCibaRequestFactory {
             ? new HardTimeoutExpirationPolicy(holder.getRequestedExpiry())
             : expirationPolicyBuilder.buildTicketExpirationPolicy();
 
-        val authentication = new DefaultAuthenticationBuilder(holder.getPrincipal())
+        val authenticationBuilder = new DefaultAuthenticationBuilder(holder.getPrincipal())
             .addAttribute(OAuth20Constants.SCOPE, holder.getScope())
-            .addAttribute(OAuth20Constants.CLIENT_ID, holder.getClientId())
-            .addAttribute(OidcConstants.USER_CODE, holder.getUserCode())
-            .addAttribute(OidcConstants.CLIENT_NOTIFICATION_TOKEN, holder.getClientNotificationToken())
-            .addAttribute(OidcConstants.BINDING_MESSAGE, holder.getBindingMessage())
-            .build();
-        return new OidcDefaultCibaRequest(id, authentication, expirationPolicy, holder.getScope(), holder.getClientNotificationToken());
+            .addAttribute(OAuth20Constants.CLIENT_ID, holder.getClientId());
+        
+        FunctionUtils.doIfNotBlank(holder.getUserCode(),
+            userCode -> authenticationBuilder.addAttribute(OidcConstants.USER_CODE, userCode));
+        FunctionUtils.doIfNotBlank(holder.getClientNotificationToken(),
+            token -> authenticationBuilder.addAttribute(OidcConstants.CLIENT_NOTIFICATION_TOKEN, token));
+        FunctionUtils.doIfNotBlank(holder.getBindingMessage(),
+            bindingMessage -> authenticationBuilder.addAttribute(OidcConstants.BINDING_MESSAGE, bindingMessage));
+        
+        val authentication = authenticationBuilder.build();
+        return new OidcDefaultCibaRequest(id, authentication, expirationPolicy, holder.getScope(), holder.getClientId());
     }
 }

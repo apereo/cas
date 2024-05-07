@@ -217,10 +217,12 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public GoogleAuthenticatorTokenCredentialRepositoryEndpoint googleAuthenticatorTokenCredentialRepositoryEndpoint(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("googleAuthenticatorAccountRegistry")
             final ObjectProvider<OneTimeTokenCredentialRepository> googleAuthenticatorAccountRegistry) {
-            return new GoogleAuthenticatorTokenCredentialRepositoryEndpoint(casProperties, googleAuthenticatorAccountRegistry);
+            return new GoogleAuthenticatorTokenCredentialRepositoryEndpoint(
+                casProperties, applicationContext, googleAuthenticatorAccountRegistry);
         }
     }
 

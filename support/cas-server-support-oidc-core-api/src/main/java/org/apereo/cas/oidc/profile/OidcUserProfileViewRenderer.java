@@ -1,15 +1,12 @@
 package org.apereo.cas.oidc.profile;
 
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.claims.OidcAttributeDefinition;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.views.OAuth20DefaultUserProfileViewRenderer;
-import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
@@ -17,14 +14,11 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -39,15 +33,13 @@ import java.util.UUID;
 public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRenderer {
     private final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService;
 
-    private final AttributeDefinitionStore attributeDefinitionStore;
 
     public OidcUserProfileViewRenderer(final OAuthProperties oauthProperties,
                                        final ServicesManager servicesManager,
                                        final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService,
                                        final AttributeDefinitionStore attributeDefinitionStore) {
-        super(servicesManager, oauthProperties);
+        super(servicesManager, oauthProperties, attributeDefinitionStore);
         this.signingAndEncryptionService = signingAndEncryptionService;
-        this.attributeDefinitionStore = attributeDefinitionStore;
     }
 
     @Override
@@ -76,25 +68,7 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
         val claims = convertUserProfileIntoClaims(userProfile);
         return buildResponseEntity(claims.toJson(), response, registeredService);
     }
-
-    private JwtClaims convertUserProfileIntoClaims(final Map<String, Object> userProfile) {
-        val claims = new JwtClaims();
-        userProfile
-            .entrySet()
-            .stream()
-            .filter(entry -> !entry.getKey().startsWith(CentralAuthenticationService.NAMESPACE))
-            .forEach(entry -> {
-                if (OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES.equals(entry.getKey())) {
-                    val attributes = (Map<String, Object>) entry.getValue();
-                    val newAttributes = new HashMap<String, Object>();
-                    attributes.forEach((attrName, attrValue) -> newAttributes.put(attrName, determineAttributeValue(attrName, attrValue)));
-                    claims.setClaim(entry.getKey(), newAttributes);
-                } else {
-                    claims.setClaim(entry.getKey(), determineAttributeValue(entry.getKey(), entry.getValue()));
-                }
-            });
-        return claims;
-    }
+    
 
     protected ResponseEntity<String> signAndEncryptUserProfileClaims(final Map<String, Object> userProfile,
                                                                      final HttpServletResponse response,
@@ -123,12 +97,5 @@ public class OidcUserProfileViewRenderer extends OAuth20DefaultUserProfileViewRe
         val headers = new HttpHeaders();
         headers.put("Content-Type", CollectionUtils.wrapList(response.getContentType()));
         return ResponseEntity.ok().headers(headers).body(result);
-    }
-
-    protected Object determineAttributeValue(final String name, final Object attrValue) {
-        val values = CollectionUtils.toCollection(attrValue, ArrayList.class);
-        val result = attributeDefinitionStore.locateAttributeDefinition(name, OidcAttributeDefinition.class);
-        return result.map(defn -> defn.toAttributeValue(values))
-            .orElseGet(() -> values.size() == 1 ? values.getFirst() : values);
     }
 }

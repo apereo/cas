@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
+import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
@@ -51,6 +52,7 @@ import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.scheduling.TaskScheduler;
 
 import java.io.Serializable;
 import java.util.List;
@@ -146,6 +148,12 @@ public class OAuth20ConfigurationContext {
     private final List<OAuth20IntrospectionResponseGenerator> introspectionResponseGenerator;
 
     private final PrincipalResolver principalResolver;
+
+    private final TaskScheduler taskScheduler;
+
+    private final CommunicationsManager communicationsManager;
+
+    private final CipherExecutor<byte[], byte[]> webflowCipherExecutor;
     
     /**
      * Gets ticket granting ticket.

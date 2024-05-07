@@ -2,10 +2,13 @@ package org.apereo.cas.util.cipher;
 
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.DecryptionException;
+import org.apereo.cas.util.crypto.PropertyBoundCipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +41,9 @@ import java.security.spec.AlgorithmParameterSpec;
 @Getter
 @Setter
 @Accessors(chain = true)
-public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
+@NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
+public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]>
+    implements PropertyBoundCipherExecutor<byte[], byte[]> {
     private static final int GCM_TAG_LENGTH = 128;
 
     private static final int MINIMUM_ENCRYPTION_KEY_LENGTH = 32;
@@ -48,11 +53,11 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     /**
      * Name of the cipher/component whose keys are generated here.
      */
-    protected final String cipherName;
+    protected String cipherName;
 
-    private final SecretKeySpec encryptionKey;
+    private SecretKeySpec encryptionKey;
 
-    private final AlgorithmParameterSpec parameterSpec;
+    private AlgorithmParameterSpec parameterSpec;
 
     /**
      * Secret key IV algorithm. Default is {@code AES}.
@@ -101,20 +106,24 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         }
     }
 
-    /**
-     * Gets encryption key setting.
-     *
-     * @return the encryption key setting
-     */
-    protected abstract String getEncryptionKeySetting();
-
-    /**
-     * Gets signing key setting.
-     *
-     * @return the signing key setting
-     */
-    protected abstract String getSigningKeySetting();
-
+    @Override
+    public PropertyBoundCipherExecutor<byte[], byte[]> withSigningDisabled() {
+        val cipher = new BaseBinaryCipherExecutor() {
+        };
+        cipher.setCipherName(getCipherName());
+        cipher.setEncryptionKey(getEncryptionKey());
+        cipher.setParameterSpec(getParameterSpec());
+        cipher.setCommonHeaders(getCommonHeaders());
+        cipher.setEncryptionOpHeaders(getEncryptionOpHeaders());
+        cipher.setEncryptionSecretKey(getEncryptionSecretKey());
+        cipher.setSecretKeyAlgorithm(getSecretKeyAlgorithm());
+        cipher.setSigningEnabled(false);
+        cipher.setSigningKey(getSigningKey());
+        cipher.setSigningOpHeaders(getSigningOpHeaders());
+        cipher.setSigningAlgorithm(getSigningAlgorithm());
+        return cipher;
+    }
+    
     private AlgorithmParameterSpec buildParameterSpec(final int encryptionKeySize) {
         val iv = new byte[encryptionSecretKey.length];
         if (encryptionKeySize > MINIMUM_ENCRYPTION_KEY_LENGTH) {
@@ -127,16 +136,12 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     private void ensureEncryptionKeyExists(final String encryptionSecretKey, final int encryptionKeySize) {
         final byte[] genEncryptionKey;
         if (StringUtils.isBlank(encryptionSecretKey)) {
-            LOGGER.warn("Secret key for encryption is not defined under [{}]. CAS will attempt to auto-generate the encryption key",
-                getEncryptionKeySetting());
+            LOGGER.warn("Secret key for encryption is undefined under [{}]. CAS will attempt to auto-generate the encryption key", getEncryptionKeySetting());
 
             if (encryptionKeySize <= MINIMUM_ENCRYPTION_KEY_LENGTH) {
                 val key = new Base64RandomStringGenerator(encryptionKeySize).getNewString();
                 val prop = String.format("%s=%s", getEncryptionKeySetting(), key);
-                //CHECKSTYLE:OFF
-                LOGGER.warn("Generated encryption key [{}] of size [{}]. The generated key MUST be added to CAS settings:\n\n\t{}\n\n",
-                    key, encryptionKeySize, prop);
-                //CHECKSTYLE:ON
+                issueWarningToAddKeyToSettings("encryption", encryptionKeySize, key, prop);
                 genEncryptionKey = EncodingUtils.decodeBase64(key);
             } else {
                 val keyGenerator = FunctionUtils.doUnchecked(() -> KeyGenerator.getInstance(this.secretKeyAlgorithm));
@@ -145,10 +150,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
                 genEncryptionKey = secretKey.getEncoded();
                 val encodedKey = EncodingUtils.encodeBase64(genEncryptionKey);
                 val prop = String.format("%s=%s", getEncryptionKeySetting(), encodedKey);
-                //CHECKSTYLE:OFF
-                LOGGER.warn("Generated encryption key [{}] of size [{}]. The generated key MUST be added to CAS settings:\n\n\t{}\n\n",
-                    encodedKey, encryptionKeySize, prop);
-                //CHECKSTYLE:ON
+                issueWarningToAddKeyToSettings("encryption", encryptionKeySize, encodedKey, prop);
             }
         } else if (encryptionKeySize <= MINIMUM_ENCRYPTION_KEY_LENGTH) {
             val base64 = EncodingUtils.isBase64(encryptionSecretKey);
@@ -178,12 +180,16 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
                 getSigningKeySetting());
             signingKeyToUse = generateOctetJsonWebKeyOfSize(signingKeySize);
             val prop = String.format("%s=%s", getSigningKeySetting(), signingKeyToUse);
-            //CHECKSTYLE:OFF
-            LOGGER.warn("Generated signing key [{}] of size [{}]. The generated key MUST be added to CAS settings:\n\n\t{}\n\n",
-                signingKeyToUse, signingKeySize, prop);
-            //CHECKSTYLE:ON
+            issueWarningToAddKeyToSettings("signing", signingKeySize, signingKeyToUse, prop);
         }
         configureSigningKey(signingKeyToUse);
     }
-
+    
+    //CHECKSTYLE:OFF
+    private static void issueWarningToAddKeyToSettings(final String keyType, final int encryptionKeySize, final String key, final String prop) {
+        LOGGER.warn("Generated {} key [{}] of size [{}]. The generated key MUST be added to CAS settings:\n\n\t{}\n\n",
+            keyType, key, encryptionKeySize, prop);
+    }
+    //CHECKSTYLE:ON
+    
 }

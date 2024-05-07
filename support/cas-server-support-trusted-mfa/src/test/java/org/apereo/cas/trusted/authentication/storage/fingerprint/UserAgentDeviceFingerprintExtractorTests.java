@@ -1,6 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage.fingerprint;
 
-import org.apereo.cas.trusted.web.flow.fingerprint.UserAgentDeviceFingerprintComponentManager;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.trusted.web.flow.fingerprint.UserAgentDeviceFingerprintExtractor;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
@@ -14,14 +15,14 @@ import org.springframework.context.ConfigurableApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link UserAgentDeviceFingerprintComponentManagerTests}.
+ * This is {@link UserAgentDeviceFingerprintExtractorTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @Tag("MFATrustedDevices")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
-class UserAgentDeviceFingerprintComponentManagerTests {
+class UserAgentDeviceFingerprintExtractorTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -29,8 +30,8 @@ class UserAgentDeviceFingerprintComponentManagerTests {
     void verifyAgentFingerprintNotFound() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
         ClientInfoHolder.setClientInfo(null);
-        val ex = new UserAgentDeviceFingerprintComponentManager();
-        assertFalse(ex.extractComponent("casuser",
+        val ex = new UserAgentDeviceFingerprintExtractor();
+        assertFalse(ex.extract(RegisteredServiceTestUtils.getAuthentication(),
             context.getHttpServletRequest(), context.getHttpServletResponse()).isPresent());
     }
 
@@ -39,8 +40,8 @@ class UserAgentDeviceFingerprintComponentManagerTests {
         val context = MockRequestContext.create(applicationContext);
         context.setRemoteAddr("1.2.3.4");
         context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "TestAgent");
-        val ex = new UserAgentDeviceFingerprintComponentManager();
-        assertTrue(ex.extractComponent("casuser",
+        val ex = new UserAgentDeviceFingerprintExtractor();
+        assertTrue(ex.extract(RegisteredServiceTestUtils.getAuthentication(),
             context.getHttpServletRequest(), context.getHttpServletResponse()).isPresent());
     }
 }

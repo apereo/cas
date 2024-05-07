@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 
@@ -187,8 +186,8 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         });
         val principal = context.getPrincipalFactory().createPrincipal(principalId, attributes);
         val service = givenService.orElse(null);
-        val query = new AttributeRepositoryResolver.AttributeRepositoryQuery(handler.orElse(null), principal,
-            service, context.getActiveAttributeRepositoryIdentifiers());
+        val query = new AttributeRepositoryResolver.AttributeRepositoryQuery(principal, context.getActiveAttributeRepositoryIdentifiers())
+            .withAuthenticationHandler(handler.orElse(null)).withService(service);
 
         val repositoryIds = context.getAttributeRepositoryResolver().resolve(query);
         LOGGER.debug("The following attribute repository IDs are resolved: [{}]", repositoryIds);
@@ -319,15 +318,16 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     }
 
     /**
-     * New PrincipalResolutionContext.
+     * Build principal resolution context.
      *
-     * @param applicationContext       the application context
-     * @param principalFactory         the principal factory
-     * @param attributeRepository      the attribute repository
-     * @param attributeMerger          the attribute merger
-     * @param servicesManager          the services manager
-     * @param attributeDefinitionStore the attribute definition store
-     * @param personDirectory          the person directory properties
+     * @param applicationContext          the application context
+     * @param principalFactory            the principal factory
+     * @param attributeRepository         the attribute repository
+     * @param attributeMerger             the attribute merger
+     * @param servicesManager             the services manager
+     * @param attributeDefinitionStore    the attribute definition store
+     * @param attributeRepositoryResolver the attribute repository resolver
+     * @param personDirectory             the person directory properties
      * @return the resolver
      */
     public static PrincipalResolutionContext buildPrincipalResolutionContext(
@@ -345,13 +345,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
             .collect(Collectors.toList());
         val transformer = new ChainingPrincipalNameTransformer(transformers);
 
-        val activeAttributeRepositoryIdentifiers = Arrays.stream(personDirectory)
-            .filter(p -> StringUtils.isNotBlank(p.getActiveAttributeRepositoryIds()))
-            .map(p -> org.springframework.util.StringUtils.commaDelimitedListToSet(p.getActiveAttributeRepositoryIds()))
-            .filter(p -> !p.isEmpty())
-            .flatMap(Set::stream)
-            .collect(Collectors.toSet());
-
+        val activeAttributeRepositoryIdentifiers = PrincipalResolverUtils.buildActiveAttributeRepositoryIds(personDirectory);
         return PrincipalResolutionContext.builder()
             .servicesManager(servicesManager)
             .applicationContext(applicationContext)

@@ -4,7 +4,7 @@ import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -13,8 +13,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
-import org.springframework.context.ApplicationContext;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,14 +34,12 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@RestControllerEndpoint(id = "duoAdmin", enableByDefault = false)
-public class DuoSecurityAdminApiEndpoint extends BaseCasActuatorEndpoint {
-    private final ApplicationContext applicationContext;
+@Endpoint(id = "duoAdmin", enableByDefault = false)
+public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
 
     public DuoSecurityAdminApiEndpoint(final CasConfigurationProperties casProperties,
-                                       final ApplicationContext applicationContext) {
-        super(casProperties);
-        this.applicationContext = applicationContext;
+                                       final ConfigurableApplicationContext applicationContext) {
+        super(casProperties, applicationContext);
     }
 
     /**

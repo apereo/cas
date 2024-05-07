@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.web.support.MappedExceptionErrorViewResolver;
+import org.apereo.cas.util.spring.RestActuatorEndpointDiscoverer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.CasYamlHttpMessageConverter;
@@ -21,8 +22,12 @@ import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
+import org.springframework.boot.actuate.endpoint.EndpointFilter;
+import org.springframework.boot.actuate.endpoint.web.PathMapper;
+import org.springframework.boot.actuate.endpoint.web.annotation.ExposableControllerEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
@@ -43,6 +48,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.webflow.conversation.NoSuchConversationException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -199,6 +206,16 @@ class CasCoreWebConfiguration {
                         StringUtils.prependIfMissing(CasProtocolConstants.ENDPOINT_PROXY, "/"));
                 }
             };
+        }
+
+        @Bean
+        public RestActuatorEndpointDiscoverer controllerEndpointDiscoverer(
+            final ConfigurableApplicationContext applicationContext,
+            final ObjectProvider<PathMapper> endpointPathMappers,
+            final ObjectProvider<Collection<EndpointFilter<ExposableControllerEndpoint>>> filters) {
+            return new RestActuatorEndpointDiscoverer(applicationContext,
+                endpointPathMappers.orderedStream().toList(),
+                filters.getIfAvailable(Collections::emptyList));
         }
     }
 }
