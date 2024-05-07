@@ -60,7 +60,8 @@ jobs:
         run: |
           ./gradlew dependencyUpdates --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc \
             -x check --no-configuration-cache -Drevision=release -DskipAot=true -DskipNestedConfigMetadataGen=true \
-            -DgradleReleaseChannel=current --max-workers=8
+            -DgradleReleaseChannel=current --max-workers=8 -DreportfileName=dependencies \
+            -DoutputFormatter=json,plain -DoutputDir=./build/reports/dependency-updates
 
   ##########################################################################
 
