@@ -26,13 +26,13 @@ public class SerialNoPrincipalResolverProperties implements Serializable {
     private static final long serialVersionUID = -4935371089672080311L;
 
     /**
-     * Radix used when {@link X509Properties.PrincipalTypes}
+     * Radix used when {@link X509Properties#getPrincipalType()}
      * is {@link X509Properties.PrincipalTypes#SERIAL_NO}.
      */
     private int principalSNRadix;
 
     /**
-     * If radix hex padding should be used when {@link X509Properties.PrincipalTypes}
+     * If radix hex padding should be used when {@link X509Properties#getPrincipalType()}
      * is {@link X509Properties.PrincipalTypes#SERIAL_NO}.
      */
     private boolean principalHexSNZeroPadding;
