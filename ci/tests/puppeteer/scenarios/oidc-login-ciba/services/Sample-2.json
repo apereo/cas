@@ -2,7 +2,7 @@
   "@class": "org.apereo.cas.services.OidcRegisteredService",
   "clientId": "clientping",
   "clientSecret": "secret",
-  "serviceId": "https://localhost:9859/anything/cas",
+  "serviceId": "https://localhost:9859/anything/clientping",
   "name": "Sample",
   "description": "This application is registered with CAS for CIBA PING requests",
   "id": 2,

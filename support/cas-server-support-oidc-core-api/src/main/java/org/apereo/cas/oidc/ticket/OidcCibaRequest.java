@@ -1,8 +1,7 @@
 package org.apereo.cas.oidc.ticket;
 
-import org.apereo.cas.ticket.AuthenticationAwareTicket;
+import org.apereo.cas.ticket.OAuth20Token;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import java.util.Set;
 
 /**
  * This is {@link OidcCibaRequest}.
@@ -11,26 +10,11 @@ import java.util.Set;
  * @since 7.1.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface OidcCibaRequest extends AuthenticationAwareTicket {
+public interface OidcCibaRequest extends OAuth20Token {
     /**
      * Ticket prefix.
      */
     String PREFIX = "CIBA";
-
-    /**
-     * Get requested scopes requested at the time of issuing this code.
-     *
-     * @return requested scopes.
-     */
-    Set<String> getScopes();
-
-    /**
-     * Gets client id.
-     *
-     * @return the client id
-     */
-    String getClientId();
-
     /**
      * Gets encoded id.
      *
