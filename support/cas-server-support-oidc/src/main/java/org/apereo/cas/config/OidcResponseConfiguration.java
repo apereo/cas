@@ -11,6 +11,8 @@ import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestValidator;
 import org.apereo.cas.oidc.token.OidcIdTokenExpirationPolicyBuilder;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
+import org.apereo.cas.oidc.token.ciba.CibaPushTokenDeliveryHandler;
+import org.apereo.cas.oidc.token.ciba.CibaTokenDeliveryHandler;
 import org.apereo.cas.oidc.web.OidcAccessTokenResponseGenerator;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder;
 import org.apereo.cas.oidc.web.OidcImplicitIdTokenAuthorizationResponseBuilder;
@@ -247,6 +249,17 @@ class OidcResponseConfiguration {
         public ExpirationPolicyBuilder oidcIdTokenExpirationPolicy(final CasConfigurationProperties casProperties) {
             return new OidcIdTokenExpirationPolicyBuilder(casProperties);
         }
+
+
+        @Bean
+        @ConditionalOnMissingBean(name = "oidcCibaPushTokenDeliveryHandler")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CibaTokenDeliveryHandler oidcCibaPushTokenDeliveryHandler(
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final OidcConfigurationContext oidcConfigurationContext) {
+            return new CibaPushTokenDeliveryHandler(oidcConfigurationContext);
+        }
+        
     }
 
 }

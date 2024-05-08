@@ -250,6 +250,22 @@ button.close {
     background-color: #adf096;
 }
 
+.banner-info h1:before,
+.banner-info h2:before,
+.banner-info h3:before,
+.banner-info h4:before,
+.banner-info h5:before {
+    content: "\F1C67";
+    font-size: 24px;
+    font: normal normal normal 24px/1 "Material Design Icons";
+}
+
+.banner-info {
+    border-color: var(--cas-theme-primary);
+    color: whitesmoke;
+    background-color: #147ad6;
+}
+
 .banner-dismissible {
     padding-right: 4rem;
 }
@@ -539,6 +555,10 @@ button.close {
 
 .mw-25 {
     max-width: 25%;
+}
+
+.mt-0 {
+    margin-top: 0;
 }
 
 .border-rounded {

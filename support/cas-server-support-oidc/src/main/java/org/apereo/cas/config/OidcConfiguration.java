@@ -118,6 +118,7 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.JacksonObjectMapperCustomizer;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -697,6 +698,8 @@ class OidcConfiguration {
         @ConditionalOnMissingBean(name = OidcConfigurationContext.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OidcConfigurationContext oidcConfigurationContext(
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
+            final HttpClient httpClient,
             @Qualifier(AttributeDefinitionStore.BEAN_NAME)
             final AttributeDefinitionStore attributeDefinitionStore,
             @Qualifier("oidcTokenIntrospectionSigningAndEncryptionService")
@@ -818,6 +821,7 @@ class OidcConfiguration {
                 .sessionStore(oauthDistributedSessionStore)
                 .servicesManager(servicesManager)
                 .ticketRegistry(ticketRegistry)
+                .httpClient(httpClient)
                 .clientRegistrationRequestSerializer(clientRegistrationRequestSerializer)
                 .clientIdGenerator(new DefaultRandomStringGenerator())
                 .clientSecretGenerator(new DefaultRandomStringGenerator())

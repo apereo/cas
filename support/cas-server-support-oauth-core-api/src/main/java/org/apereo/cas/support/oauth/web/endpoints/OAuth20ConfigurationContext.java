@@ -35,6 +35,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.RandomStringGenerator;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -154,6 +155,8 @@ public class OAuth20ConfigurationContext {
     private final CommunicationsManager communicationsManager;
 
     private final CipherExecutor<byte[], byte[]> webflowCipherExecutor;
+
+    private final HttpClient httpClient;
     
     /**
      * Gets ticket granting ticket.
