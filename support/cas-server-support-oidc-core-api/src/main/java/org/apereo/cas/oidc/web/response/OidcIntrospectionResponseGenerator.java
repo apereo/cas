@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20DefaultIntrospectionResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionAccessTokenResponse;
 import org.apereo.cas.ticket.OAuth20Token;
+import org.apereo.cas.ticket.ServiceAwareTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
@@ -31,10 +32,12 @@ public class OidcIntrospectionResponseGenerator extends OAuth20DefaultIntrospect
     protected OAuth20IntrospectionAccessTokenResponse collectIntrospectionDetails(final OAuth20IntrospectionAccessTokenResponse response,
                                                                                   final OAuth20Token accessToken) {
         super.collectIntrospectionDetails(response, accessToken);
-        Optional.ofNullable(accessToken.getService()).ifPresent(service -> {
+
+        if (accessToken instanceof final ServiceAwareTicket sat) {
+            val service = sat.getService();
             val registeredService = oidcConfigurationContext.getObject().getServicesManager().findServiceBy(service, OidcRegisteredService.class);
             response.setIss(oidcConfigurationContext.getObject().getIssuerService().determineIssuer(Optional.ofNullable(registeredService)));
-        });
+        }
         FunctionUtils.doIf(response.isActive(), __ -> response.setScope(String.join(" ", accessToken.getScopes()))).accept(response);
         CollectionUtils.firstElement(accessToken.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_CONFIRMATION))
             .ifPresent(dpop -> response.getConfirmation().setJkt(dpop.toString()));

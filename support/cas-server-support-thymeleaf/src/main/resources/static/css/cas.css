@@ -262,8 +262,8 @@ button.close {
 
 .banner-info {
     border-color: var(--cas-theme-primary);
-    color: whitesmoke;
-    background-color: #147ad6;
+    color: black;
+    background-color: #9fceff;
 }
 
 .banner-dismissible {

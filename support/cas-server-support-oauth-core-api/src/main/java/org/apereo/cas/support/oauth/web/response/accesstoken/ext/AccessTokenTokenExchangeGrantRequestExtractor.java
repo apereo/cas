@@ -10,6 +10,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.OAuth20Token;
+import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -65,7 +66,7 @@ public class AccessTokenTokenExchangeGrantRequestExtractor extends BaseAccessTok
 
         val extractedRequest = switch (subjectTokenType) {
             case ACCESS_TOKEN -> {
-                val token = getConfigurationContext().getTicketRegistry().getTicket(subjectToken, OAuth20Token.class);
+                val token = getConfigurationContext().getTicketRegistry().getTicket(subjectToken, OAuth20AccessToken.class);
                 val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(getConfigurationContext().getServicesManager(), token.getClientId());
                 yield new ExtractedRequest(token, token.getService(), registeredService, token.getAuthentication());
             }

@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.accesstoken;
 
 import org.apereo.cas.ticket.OAuth20Token;
+import org.apereo.cas.ticket.ServiceAwareTicket;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -12,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  * @since 5.0.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface OAuth20AccessToken extends OAuth20Token {
+public interface OAuth20AccessToken extends OAuth20Token, ServiceAwareTicket {
 
     /**
      * The prefix for access tokens.

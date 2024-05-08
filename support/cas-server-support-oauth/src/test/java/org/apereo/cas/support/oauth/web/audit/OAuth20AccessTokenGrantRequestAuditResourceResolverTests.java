@@ -26,11 +26,10 @@ import static org.mockito.Mockito.*;
 class OAuth20AccessTokenGrantRequestAuditResourceResolverTests {
     @Test
     void verifyAction() throws Throwable {
-        val r = new OAuth20AccessTokenGrantRequestAuditResourceResolver();
+        val resolver = new OAuth20AccessTokenGrantRequestAuditResourceResolver();
         val token = mock(OAuth20Token.class);
         when(token.getId()).thenReturn("CODE");
         val tokenService = RegisteredServiceTestUtils.getService();
-        when(token.getService()).thenReturn(tokenService);
         val authentication = RegisteredServiceTestUtils.getAuthentication();
         when(token.getAuthentication()).thenReturn(authentication);
 
@@ -51,6 +50,6 @@ class OAuth20AccessTokenGrantRequestAuditResourceResolverTests {
         val result = AuditableExecutionResult.builder()
             .executionResult(holder)
             .build();
-        assertTrue(r.resolveFrom(mock(JoinPoint.class), result).length > 0);
+        assertTrue(resolver.resolveFrom(mock(JoinPoint.class), result).length > 0);
     }
 }

@@ -190,9 +190,9 @@ public class OidcCibaController extends BaseOidcController {
         if (!CollectionUtils.containsAny(principal.getAttributes().keySet(), emailProperties.getAttributeName())) {
             return badCibaRequest("Principal does not contain required attributes for notification");
         }
-        val cibaRequestId = recordCibaRequest(cibaRequestContext.withPrincipal(principal));
-        val cibaResponse = buildCibaResponse(cibaRequestId);
-        scheduleUserVerificationRequest(cibaRequestId, cibaRequestContext, registeredService);
+        val cibaRequest = recordCibaRequest(cibaRequestContext.withPrincipal(principal));
+        val cibaResponse = buildCibaResponse(cibaRequest);
+        scheduleUserVerificationRequest(cibaRequest, cibaRequestContext, registeredService);
         return cibaResponse;
     }
 
@@ -281,6 +281,13 @@ public class OidcCibaController extends BaseOidcController {
     }
 
     protected ResponseEntity buildCibaResponse(final OidcCibaRequest cibaRequest) {
+        LoggingUtils.protocolMessage("OpenID Connect Backchannel Authentication Response",
+            Map.of(
+                "CAS Auth Request ID", cibaRequest.getId(),
+                "Client Auth Request ID", cibaRequest.getEncodedId(),
+                "Client ID", cibaRequest.getClientId(),
+                "Scopes", cibaRequest.getScopes(),
+                "Principal", cibaRequest.getAuthentication().getPrincipal().getId()));
         return ResponseEntity.ok(Map.of(
             OidcConstants.AUTH_REQ_ID, cibaRequest.getEncodedId(),
             OAuth20Constants.EXPIRES_IN, cibaRequest.getExpirationPolicy().getTimeToLive()
@@ -289,6 +296,12 @@ public class OidcCibaController extends BaseOidcController {
     
 
     protected OidcCibaRequest recordCibaRequest(final CibaRequestContext cibaRequestContext) throws Throwable {
+        LoggingUtils.protocolMessage("OpenID Connect Backchannel Authentication Request",
+            Map.of(
+                "Client ID", cibaRequestContext.getClientId(),
+                "Scopes", cibaRequestContext.getScope(),
+                "Binding Message", StringUtils.defaultString(cibaRequestContext.getBindingMessage()),
+                "Principal", cibaRequestContext.getPrincipal().getId()));
         val cibaFactory = (OidcCibaRequestFactory) configurationContext.getTicketFactory().get(OidcCibaRequest.class);
         val cibaRequest = cibaFactory.create(cibaRequestContext);
         configurationContext.getTicketRegistry().addTicket(cibaRequest);

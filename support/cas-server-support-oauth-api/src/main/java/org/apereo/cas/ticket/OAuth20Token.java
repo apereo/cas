@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.code.OAuth20Code;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,7 +18,7 @@ import java.util.Set;
  * @since 5.0.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface OAuth20Token extends ServiceTicket {
+public interface OAuth20Token extends TicketGrantingTicketAwareTicket {
 
     /**
      * Get requested scopes requested at the time of issuing this code.
@@ -31,7 +32,9 @@ public interface OAuth20Token extends ServiceTicket {
      *
      * @return map of requested claims.
      */
-    Map<String, Map<String, Object>> getClaims();
+    default Map<String, Map<String, Object>> getClaims() {
+        return new HashMap<>();
+    }
 
     /**
      * Client id for whom this token was issued.
@@ -45,14 +48,18 @@ public interface OAuth20Token extends ServiceTicket {
      *
      * @return the response type
      */
-    OAuth20ResponseTypes getResponseType();
+    default OAuth20ResponseTypes getResponseType() {
+        return OAuth20ResponseTypes.NONE;
+    }
 
     /**
      * Gets grant type.
      *
      * @return the grant type
      */
-    OAuth20GrantTypes getGrantType();
+    default OAuth20GrantTypes getGrantType() {
+        return OAuth20GrantTypes.NONE;
+    }
 
     /**
      * Is this an oauth code?
