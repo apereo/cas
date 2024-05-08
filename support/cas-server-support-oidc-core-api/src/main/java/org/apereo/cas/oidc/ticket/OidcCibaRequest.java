@@ -41,7 +41,7 @@ public interface OidcCibaRequest extends AuthenticationAwareTicket {
     /**
      * Mark ticket ready.
      */
-    void markTicketReady();
+    OidcCibaRequest markTicketReady();
 
     /**
      * Is this ticket and authentication request ready for CAS to
