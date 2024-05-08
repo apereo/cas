@@ -36,7 +36,7 @@ public class CibaPingTokenDeliveryHandler implements CibaTokenDeliveryHandler {
     private final OidcConfigurationContext configurationContext;
 
     @Override
-    public Map deliver(final OidcRegisteredService registeredService, final OidcCibaRequest cibaRequest) throws Throwable {
+    public Map<String, ?> deliver(final OidcRegisteredService registeredService, final OidcCibaRequest cibaRequest) throws Throwable {
         HttpResponse response = null;
         try {
             val clientNotificationValue = (String) cibaRequest.getAuthentication().getSingleValuedAttribute(OidcConstants.CLIENT_NOTIFICATION_TOKEN);

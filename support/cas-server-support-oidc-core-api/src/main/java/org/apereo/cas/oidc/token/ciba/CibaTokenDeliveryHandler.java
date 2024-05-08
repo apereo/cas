@@ -28,7 +28,7 @@ public interface CibaTokenDeliveryHandler {
      * @param cibaRequest       the ciba request
      * @return delivery payload
      */
-    Map deliver(OidcRegisteredService registeredService, OidcCibaRequest cibaRequest) throws Throwable;
+    Map<String, ?> deliver(OidcRegisteredService registeredService, OidcCibaRequest cibaRequest) throws Throwable;
 
     /**
      * Supports client application.

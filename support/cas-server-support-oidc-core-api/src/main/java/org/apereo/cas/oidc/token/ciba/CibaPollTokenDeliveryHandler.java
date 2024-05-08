@@ -23,7 +23,7 @@ public class CibaPollTokenDeliveryHandler implements CibaTokenDeliveryHandler {
     private final OidcConfigurationContext configurationContext;
 
     @Override
-    public Map deliver(final OidcRegisteredService registeredService, final OidcCibaRequest cibaRequest) throws Throwable {
+    public Map<String, ?> deliver(final OidcRegisteredService registeredService, final OidcCibaRequest cibaRequest) throws Throwable {
         configurationContext.getTicketRegistry().updateTicket(cibaRequest.markTicketReady());
         return Map.of(OidcConstants.AUTH_REQ_ID, cibaRequest.getEncodedId());
     }
