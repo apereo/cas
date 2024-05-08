@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Getter;
 import java.io.Serial;
 import java.util.Set;
@@ -46,7 +47,9 @@ public class OidcDefaultCibaRequest extends AbstractTicket implements OidcCibaRe
     }
 
     @Override
-    public void markTicketReady() {
+    @CanIgnoreReturnValue
+    public OidcCibaRequest markTicketReady() {
         this.ready = true;
+        return this;
     }
 }

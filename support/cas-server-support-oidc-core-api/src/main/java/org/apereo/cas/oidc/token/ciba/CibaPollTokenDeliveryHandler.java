@@ -1,0 +1,30 @@
+package org.apereo.cas.oidc.token.ciba;
+
+import org.apereo.cas.oidc.OidcConfigurationContext;
+import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.ticket.OidcCibaRequest;
+import org.apereo.cas.services.OidcBackchannelTokenDeliveryModes;
+import org.apereo.cas.services.OidcRegisteredService;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import java.util.Map;
+
+/**
+ * This is {@link CibaPollTokenDeliveryHandler}.
+ *
+ * @author Misagh Moayyed
+ * @since 7.1.0
+ */
+@RequiredArgsConstructor
+@Getter
+public class CibaPollTokenDeliveryHandler implements CibaTokenDeliveryHandler {
+    private final OidcBackchannelTokenDeliveryModes deliveryMode = OidcBackchannelTokenDeliveryModes.POLL;
+
+    private final OidcConfigurationContext configurationContext;
+
+    @Override
+    public Map deliver(final OidcRegisteredService registeredService, final OidcCibaRequest cibaRequest) throws Throwable {
+        configurationContext.getTicketRegistry().updateTicket(cibaRequest.markTicketReady());
+        return Map.of(OidcConstants.AUTH_REQ_ID, cibaRequest.getEncodedId());
+    }
+}
