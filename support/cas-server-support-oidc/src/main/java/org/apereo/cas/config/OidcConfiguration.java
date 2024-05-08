@@ -1074,11 +1074,13 @@ class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OidcCibaRequestFactory oidcCibaRequestFactory(
+            @Qualifier("webflowCipherExecutor")
+            final CipherExecutor webflowCipherExecutor,
             @Qualifier("cibaRequestExpirationPolicy")
             final ExpirationPolicyBuilder cibaRequestExpirationPolicy,
             @Qualifier("cibaRequestIdGenerator")
             final UniqueTicketIdGenerator cibaRequestIdGenerator) {
-            return new OidcDefaultCibaRequestFactory(cibaRequestIdGenerator, cibaRequestExpirationPolicy);
+            return new OidcDefaultCibaRequestFactory(cibaRequestIdGenerator, cibaRequestExpirationPolicy, webflowCipherExecutor);
         }
 
         @ConditionalOnMissingBean(name = "cibaRequestIdGenerator")

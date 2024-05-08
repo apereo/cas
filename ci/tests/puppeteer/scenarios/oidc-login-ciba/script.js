@@ -1,8 +1,8 @@
 const cas = require("../../cas.js");
 const assert = require("assert");
 
-async function verifyPushDeliveryMode(userCode = "393515b9-4bb0-43ef-9973-91f3c3236ffe") {
-    await cas.log(`Attempting to verify CIBA push delivery mode with user code ${userCode}`);
+async function verifyDeliveryMode(userCode = "393515b9-4bb0-43ef-9973-91f3c3236ffe", clientId = "client", clientSecret = "secret") {
+    await cas.log(`Attempting to verify CIBA delivery mode with user code ${userCode} for client ID ${clientId}`);
     
     const clientNotificationToken = "8d67dc78-7faa-4d41-aabd-67707b374255";
     const bindingMessage = "HelloFromCAS";
@@ -15,7 +15,7 @@ async function verifyPushDeliveryMode(userCode = "393515b9-4bb0-43ef-9973-91f3c3
     }
     url += "&requested_expiry=60";
 
-    const value = "client:secret";
+    const value = `${clientId}:${clientSecret}`;
     const buff = Buffer.alloc(value.length, value);
     const authzHeader = `Basic ${buff.toString("base64")}`;
     await cas.log(`Authorization header: ${authzHeader}`);
@@ -58,7 +58,14 @@ async function verifyPushDeliveryMode(userCode = "393515b9-4bb0-43ef-9973-91f3c3
 }
 
 (async () => {
-    await verifyPushDeliveryMode("393515b9-4bb0-43ef-9973-91f3c3236ffe");
-    await verifyPushDeliveryMode("");
+    await cas.log("Starting CIBA request with PUSH delivery mode...");
+    await verifyDeliveryMode("393515b9-4bb0-43ef-9973-91f3c3236ffe", "clientpush");
+    await cas.separator();
+    await verifyDeliveryMode("", "clientpush");
+    await cas.separator();
+    await cas.log("Starting CIBA request with PING delivery mode...");
+    await verifyDeliveryMode("393515b9-4bb0-43ef-9973-91f3c3236ffe", "clientping");
+    await cas.separator();
+    await verifyDeliveryMode("", "clientping");
 })();
 
