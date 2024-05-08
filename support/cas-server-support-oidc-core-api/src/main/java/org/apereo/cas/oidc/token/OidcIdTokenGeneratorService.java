@@ -138,7 +138,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val attributes = authentication.getAttributes();
         claims.setStringClaim(OAuth20Constants.CLIENT_ID, registeredService.getClientId());
 
-        val authTime = accessToken.isStateless()
+        var authTime = accessToken.isStateless() || accessToken.getTicketGrantingTicket() == null
             ? authentication.getAuthenticationDate().toEpochSecond()
             : ((AuthenticationAwareTicket) accessToken.getTicketGrantingTicket()).getAuthentication().getAuthenticationDate().toEpochSecond();
         claims.setClaim(OidcConstants.CLAIM_AUTH_TIME, authTime);
@@ -294,11 +294,16 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
     }
 
     protected String getJwtId(final OAuth20AccessToken ticket) {
-        val oAuthCallbackUrl = getConfigurationContext().getCasProperties().getServer().getPrefix()
-            + OAuth20Constants.BASE_OAUTH20_URL + '/'
-            + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
-        var jwtId = ticket.isStateless() ? ticket.getId() : ticket.getTicketGrantingTicket().getId();
+        var jwtId = ticket.getId();
+        if (ticket.getTicketGrantingTicket() != null) {
+            jwtId = ticket.getTicketGrantingTicket().getId();
+        }
+
         if (ticket instanceof final TicketGrantingTicket tgt) {
+            val oAuthCallbackUrl = getConfigurationContext().getCasProperties().getServer().getPrefix()
+                + OAuth20Constants.BASE_OAUTH20_URL + '/'
+                + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
+            
             val streamServices = new LinkedHashMap<String, Service>();
             val services = tgt.getServices();
             streamServices.putAll(services);

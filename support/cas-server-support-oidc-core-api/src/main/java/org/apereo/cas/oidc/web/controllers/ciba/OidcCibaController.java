@@ -1,14 +1,17 @@
 package org.apereo.cas.oidc.web.controllers.ciba;
 
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.notifications.mail.EmailCommunicationResult;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.ticket.OidcCibaRequest;
 import org.apereo.cas.oidc.ticket.OidcCibaRequestFactory;
+import org.apereo.cas.oidc.token.ciba.CibaTokenDeliveryHandler;
 import org.apereo.cas.oidc.web.controllers.BaseOidcController;
 import org.apereo.cas.services.OidcBackchannelTokenDeliveryModes;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -17,8 +20,10 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.collections.CollectionUtils;
@@ -27,12 +32,14 @@ import org.apache.hc.core5.net.URIBuilder;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -55,9 +62,12 @@ import java.util.Optional;
  */
 @Slf4j
 public class OidcCibaController extends BaseOidcController {
+    protected final List<CibaTokenDeliveryHandler> tokenDeliveryHandlers;
 
-    public OidcCibaController(final OidcConfigurationContext configurationContext) {
+    public OidcCibaController(final OidcConfigurationContext configurationContext,
+                              final List<CibaTokenDeliveryHandler> tokenDeliveryHandlers) {
         super(configurationContext);
+        this.tokenDeliveryHandlers = List.copyOf(tokenDeliveryHandlers);
     }
 
     /**
@@ -72,20 +82,26 @@ public class OidcCibaController extends BaseOidcController {
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL + "/{clientId}/{requestId}",
         "/**/" + OidcConstants.CIBA_URL + "/{clientId}/{requestId}"
     })
-    public ModelAndView initializeBackchannelVerificationRequest(
+    public Object initializeBackchannelVerificationRequest(
         @PathVariable("clientId") final String clientId,
         @PathVariable("requestId") final String requestId) throws Throwable {
-        val registeredService = findRegisteredService(clientId);
-        val cibaRequest = fetchOidcCibaRequest(requestId);
-        val model = new LinkedHashMap<String, Object>();
-        model.put("registeredService", registeredService);
-        model.put("cibaRequest", cibaRequest);
-        val attributes = cibaRequest.getAuthentication().getAttributes();
-        if (attributes.containsKey(OidcConstants.BINDING_MESSAGE)) {
-            val bindingMessage = attributes.get(OidcConstants.BINDING_MESSAGE).getFirst();
-            model.put("bindingMessage", bindingMessage);
+        try {
+            val registeredService = findRegisteredService(clientId);
+            val cibaRequest = fetchOidcCibaRequest(requestId);
+            val model = new LinkedHashMap<String, Object>();
+            model.put("registeredService", registeredService);
+            model.put("cibaRequest", cibaRequest);
+            val attributes = cibaRequest.getAuthentication().getAttributes();
+            if (attributes.containsKey(OidcConstants.BINDING_MESSAGE)) {
+                val bindingMessage = attributes.get(OidcConstants.BINDING_MESSAGE).getFirst();
+                model.put("bindingMessage", bindingMessage);
+            }
+            model.put("userCodeRequired", cibaRequest.getAuthentication().containsAttribute(OidcConstants.USER_CODE));
+            return new ModelAndView(OidcConstants.CIBA_VERIFICATION_VIEW, model);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return new ModelAndView(OidcConstants.CIBA_VERIFICATION_VIEW, model);
     }
 
     /**
@@ -101,14 +117,36 @@ public class OidcCibaController extends BaseOidcController {
         "/**/" + OidcConstants.CIBA_URL + "/{clientId}/{requestId}"
     }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity verifyBackchannelVerificationRequest(
+        @RequestParam(value = "userCode", required = false) final String userCode,
         @PathVariable("clientId") final String clientId,
         @PathVariable("requestId") final String requestId) throws Throwable {
-        val registeredService = findRegisteredService(clientId);
-        val cibaRequest = fetchOidcCibaRequest(requestId);
-        val model = new LinkedHashMap<String, Object>();
-        model.put("registeredService", registeredService);
-        model.put("cibaRequest", cibaRequest);
-        return ResponseEntity.ok(model);
+        try {
+            val registeredService = findRegisteredService(clientId);
+            val cibaRequest = fetchOidcCibaRequest(requestId);
+            if (cibaRequest.getAuthentication().containsAttribute(OidcConstants.USER_CODE)) {
+                val userCodeValues = cibaRequest.getAuthentication().getAttributes().get(OidcConstants.USER_CODE)
+                    .stream().map(Object::toString).filter(StringUtils::isNotBlank).toList();
+                if (StringUtils.isBlank(userCode) || !userCodeValues.contains(userCode)) {
+                    throw new AuthenticationException("Unable to verify provided user code " + userCode);
+                }
+            }
+
+            for (val handler : tokenDeliveryHandlers) {
+                if (BeanSupplier.isNotProxy(handler)
+                    && handler.getDeliveryMode() == OidcBackchannelTokenDeliveryModes.PUSH
+                    && handler.supports(registeredService)) {
+                    handler.deliver(registeredService, cibaRequest);
+                }
+            }
+
+            val model = new LinkedHashMap<String, Object>();
+            model.put("registeredService", registeredService);
+            model.put("cibaRequest", cibaRequest);
+            return ResponseEntity.ok(model);
+        } catch (final Exception e) {
+            LoggingUtils.error(LOGGER, e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 
     /**
@@ -139,14 +177,14 @@ public class OidcCibaController extends BaseOidcController {
             && StringUtils.isNotBlank(cibaRequest.getUserCode())) {
             return badCibaRequest("User code is not supported");
         }
-        if ((registeredService.isBackchannelUserCodeParameterSupported() || configurationContext.getDiscoverySettings().isBackchannelUserCodeParameterSupported())
-            && StringUtils.isBlank(cibaRequest.getUserCode())) {
-            return badCibaRequest("User code is required");
-        }
         val deliveryMode = OidcBackchannelTokenDeliveryModes.valueOf(registeredService.getBackchannelTokenDeliveryMode().toUpperCase(Locale.ENGLISH));
         if ((deliveryMode == OidcBackchannelTokenDeliveryModes.PUSH || deliveryMode == OidcBackchannelTokenDeliveryModes.PING)
             && StringUtils.isBlank(cibaRequest.getClientNotificationToken())) {
             return badCibaRequest("Client notification token is required");
+        }
+        if (StringUtils.isBlank(registeredService.getBackchannelClientNotificationEndpoint())
+            || !StringUtils.startsWithIgnoreCase(registeredService.getBackchannelClientNotificationEndpoint(), "https://")) {
+            return badCibaRequest("Client backchannel notification endpoint is invalid");
         }
         val principal = determineCibaRequestPrincipal(cibaRequest, registeredService);
         if (principal == null) {
@@ -179,41 +217,43 @@ public class OidcCibaController extends BaseOidcController {
                                                         final OidcRegisteredService registeredService) {
         val mail = configurationContext.getCasProperties().getAuthn().getOidc().getCiba().getVerification().getMail();
         val principal = cibaRequest.getAuthentication().getPrincipal();
-        mail.getAttributeName().forEach(attributeName -> {
-            val resolvedAttribute = SpringExpressionLanguageValueResolver.getInstance().resolve(attributeName);
-            if (principal.getAttributes().containsKey(resolvedAttribute)) {
-                val verificationUrl = buildCibaVerificationUrl(cibaRequest);
-                val addresses = (List) principal.getAttributes().get(resolvedAttribute);
-                val parameters = Map.<String, Object>of(
-                    "verificationUrl", verificationUrl,
-                    "registeredService", registeredService,
-                    "cibaRequest", cibaRequest);
-                val body = EmailMessageBodyBuilder.builder()
-                    .properties(mail)
-                    .parameters(parameters)
-                    .build()
-                    .get();
+        val verificationUrl = buildCibaVerificationUrl(cibaRequest);
+        val parameters = Map.<String, Object>of(
+            "verificationUrl", verificationUrl,
+            "registeredService", registeredService,
+            "cibaRequest", cibaRequest);
+        val body = EmailMessageBodyBuilder.builder()
+            .properties(mail)
+            .parameters(parameters)
+            .build()
+            .get();
+        val sent = mail.getAttributeName()
+            .stream()
+            .map(attributeName -> {
+                val resolvedAttribute = SpringExpressionLanguageValueResolver.getInstance().resolve(attributeName);
                 val emailRequest = EmailMessageRequest.builder()
                     .emailProperties(mail)
-                    .to(addresses)
                     .body(body)
+                    .principal(principal)
+                    .attribute(resolvedAttribute)
                     .build();
-                addresses.forEach(address -> configurationContext.getCommunicationsManager().email(emailRequest));
-            } else {
-                LOGGER.warn("Could not send email to [{}]. No email found for [{}] or email settings are not configured.", principal.getId(), resolvedAttribute);
-            }
-        });
+                return configurationContext.getCommunicationsManager().email(emailRequest);
+            })
+            .anyMatch(EmailCommunicationResult::isSuccess);
+        Assert.isTrue(sent, "Could not send email to " + principal.getId());
     }
 
     private String buildCibaVerificationUrl(final OidcCibaRequest cibaRequest) {
-        return FunctionUtils.doUnchecked(() ->
-            new URIBuilder(configurationContext.getCasProperties().getServer().getPrefix())
+        return FunctionUtils.doUnchecked(() -> {
+            val encodedId = encodeCibaRequestId(cibaRequest);
+            return new URIBuilder(configurationContext.getCasProperties().getServer().getPrefix())
                 .appendPath(OidcConstants.BASE_OIDC_URL)
                 .appendPath(OidcConstants.CIBA_URL)
                 .appendPath(cibaRequest.getClientId())
-                .appendPath(cibaRequest.getId())
+                .appendPath(encodedId)
                 .build()
-                .toString());
+                .toString();
+        });
     }
 
     protected OidcRegisteredService findRegisteredService(final CibaRequestContext cibaRequest) {
@@ -229,6 +269,9 @@ public class OidcCibaController extends BaseOidcController {
     protected CibaRequestContext buildCibaRequestContext(final WebContext webContext) {
         val manager = new ProfileManager(webContext, getConfigurationContext().getSessionStore());
         val requestParameterResolver = getConfigurationContext().getRequestParameterResolver();
+        val userProfile = manager.getProfile().orElseThrow();
+        val clientId = userProfile.getAttribute(OAuth20Constants.CLIENT_ID).toString();
+
         return CibaRequestContext.builder()
             .acrValues(requestParameterResolver.resolveRequestParameters(webContext, OidcConstants.ACR_VALUES))
             .bindingMessage(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.BINDING_MESSAGE).orElse(null))
@@ -238,19 +281,24 @@ public class OidcCibaController extends BaseOidcController {
             .loginHintToken(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.LOGIN_HINT_TOKEN).orElse(null))
             .requestedExpiry(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.REQUESTED_EXPIRY, Long.class).orElse(0L))
             .scope(requestParameterResolver.resolveRequestScopes(webContext))
-            .clientId(manager.getProfile().orElseThrow().getAttribute(OAuth20Constants.CLIENT_ID).toString())
+            .clientId(clientId)
             .userCode(requestParameterResolver.resolveRequestParameter(webContext, OidcConstants.USER_CODE).orElse(null))
             .build();
     }
 
     protected ResponseEntity buildCibaResponse(final OidcCibaRequest cibaRequestId) {
-        val encodedId = (byte[]) configurationContext.getWebflowCipherExecutor()
-            .withSigningDisabled()
-            .encode(cibaRequestId.getId().getBytes(StandardCharsets.UTF_8));
+        val urlEncodedId = encodeCibaRequestId(cibaRequestId);
         return ResponseEntity.ok(Map.of(
-            OidcConstants.AUTH_REQ_ID, Objects.requireNonNull(EncodingUtils.encodeUrlSafeBase64(encodedId)),
+            OidcConstants.AUTH_REQ_ID, urlEncodedId,
             OAuth20Constants.EXPIRES_IN, cibaRequestId.getExpirationPolicy().getTimeToLive()
         ));
+    }
+
+    private String encodeCibaRequestId(final OidcCibaRequest cibaRequest) {
+        val encodedId = (byte[]) configurationContext.getWebflowCipherExecutor()
+            .withSigningDisabled()
+            .encode(cibaRequest.getId().getBytes(StandardCharsets.UTF_8));
+        return Objects.requireNonNull(EncodingUtils.encodeUrlSafeBase64(encodedId));
     }
 
     protected OidcCibaRequest recordCibaRequest(final CibaRequestContext cibaRequest, final Principal principal) throws Throwable {

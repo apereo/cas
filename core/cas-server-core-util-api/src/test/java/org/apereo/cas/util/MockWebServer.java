@@ -55,6 +55,15 @@ public class MockWebServer implements Closeable {
 
     private Thread workerThread;
 
+    public MockWebServer(final boolean ssl) {
+        try {
+            this.worker = new Worker(getServerSocket(getRandomPort(), ssl),
+                new ByteArrayResource("OK".getBytes(StandardCharsets.UTF_8)), MediaType.APPLICATION_JSON_VALUE, HttpStatus.OK);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("Cannot create Web server", e);
+        }
+    }
+    
     public MockWebServer(final boolean ssl, final int port, final Resource resource) {
         try {
             this.worker = new Worker(getServerSocket(port, ssl), resource, MediaType.APPLICATION_JSON_VALUE, HttpStatus.OK);

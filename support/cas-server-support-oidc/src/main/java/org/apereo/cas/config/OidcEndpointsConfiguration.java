@@ -13,6 +13,7 @@ import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
+import org.apereo.cas.oidc.token.ciba.CibaTokenDeliveryHandler;
 import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapter;
 import org.apereo.cas.oidc.web.OidcLocaleChangeInterceptor;
 import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointController;
@@ -309,9 +310,10 @@ class OidcEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "oidcCibaController")
         @Bean
         public OidcCibaController oidcCibaController(
+            final List<CibaTokenDeliveryHandler> cibaTokenDeliveryHandlers,
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
-            return new OidcCibaController(oidcConfigurationContext);
+            return new OidcCibaController(oidcConfigurationContext, cibaTokenDeliveryHandlers);
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

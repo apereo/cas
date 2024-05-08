@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Immutable authentication event whose attributes may not change after creation.
@@ -111,5 +112,14 @@ public class DefaultAuthentication implements Authentication {
         builder.append(getCredentials(), auth2.getCredentials());
         builder.append(getSuccesses(), auth2.getSuccesses());
         return builder.isEquals();
+    }
+
+    @Override
+    public Object getSingleValuedAttribute(final String name) {
+        if (containsAttribute(name)) {
+            val values = getAttributes().get(name);
+            return values.stream().filter(Objects::nonNull).findFirst().orElse(null);
+        }
+        return null;
     }
 }
