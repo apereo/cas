@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.token.ciba;
 import org.apereo.cas.oidc.ticket.OidcCibaRequest;
 import org.apereo.cas.services.OidcBackchannelTokenDeliveryModes;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apache.commons.lang3.StringUtils;
 import java.util.Map;
 
 /**
@@ -35,5 +36,7 @@ public interface CibaTokenDeliveryHandler {
      * @param registeredService the registered service
      * @return true/false
      */
-    boolean supports(OidcRegisteredService registeredService);
+    default boolean supports(final OidcRegisteredService registeredService) {
+        return StringUtils.equalsIgnoreCase(registeredService.getBackchannelTokenDeliveryMode(), getDeliveryMode().getMode());
+    }
 }

@@ -105,6 +105,10 @@ exports.log = async (text, ...args) => {
     await LOGGER.debug(`💬 ${colors.blue(toLog)}`, args);
 };
 
+exports.separator = async() => {
+    console.log("*".repeat(100));
+};
+
 exports.logy = async (text) => {
     const toLog = inspect(text);
     await LOGGER.warn(`🔥 ${colors.yellow(toLog)}`);

@@ -30,4 +30,24 @@ public interface OidcCibaRequest extends AuthenticationAwareTicket {
      * @return the client id
      */
     String getClientId();
+
+    /**
+     * Gets encoded id.
+     *
+     * @return the encoded id
+     */
+    String getEncodedId();
+
+    /**
+     * Mark ticket ready.
+     */
+    void markTicketReady();
+
+    /**
+     * Is this ticket and authentication request ready for CAS to
+     * start issuing tokens? This is most relevant for poll and ping delivery modes.
+     *
+     * @return true/false
+     */
+    boolean isReady();
 }

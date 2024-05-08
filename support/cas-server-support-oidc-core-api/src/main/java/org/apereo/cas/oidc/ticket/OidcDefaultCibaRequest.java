@@ -28,14 +28,25 @@ public class OidcDefaultCibaRequest extends AbstractTicket implements OidcCibaRe
 
     private final Authentication authentication;
 
+    private final String encodedId;
+
+    private boolean ready;
+    
     public OidcDefaultCibaRequest(final String id,
                                   final Authentication authentication,
                                   final ExpirationPolicy expirationPolicy,
                                   final Set<String> scopes,
-                                  final String clientId) {
+                                  final String clientId,
+                                  final String encodedId) {
         super(id, expirationPolicy);
         this.scopes = scopes;
         this.clientId = clientId;
         this.authentication = authentication;
+        this.encodedId = encodedId;
+    }
+
+    @Override
+    public void markTicketReady() {
+        this.ready = true;
     }
 }

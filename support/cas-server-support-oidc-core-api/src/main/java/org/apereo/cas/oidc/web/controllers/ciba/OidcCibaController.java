@@ -19,7 +19,6 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.token.JwtBuilder;
-import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -43,7 +42,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -51,7 +49,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -132,9 +129,7 @@ public class OidcCibaController extends BaseOidcController {
             }
 
             for (val handler : tokenDeliveryHandlers) {
-                if (BeanSupplier.isNotProxy(handler)
-                    && handler.getDeliveryMode() == OidcBackchannelTokenDeliveryModes.PUSH
-                    && handler.supports(registeredService)) {
+                if (BeanSupplier.isNotProxy(handler) && handler.supports(registeredService)) {
                     handler.deliver(registeredService, cibaRequest);
                 }
             }
@@ -161,32 +156,32 @@ public class OidcCibaController extends BaseOidcController {
         "/**/" + OidcConstants.CIBA_URL}, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity handleBackchannelAuthnRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val webContext = new JEEContext(request, response);
-        val cibaRequest = buildCibaRequestContext(webContext);
+        val cibaRequestContext = buildCibaRequestContext(webContext);
 
-        var hintCount = StringUtils.isNotBlank(cibaRequest.getLoginHint()) ? 1 : 0;
-        hintCount += StringUtils.isNotBlank(cibaRequest.getLoginHintToken()) ? 1 : 0;
-        hintCount += StringUtils.isNotBlank(cibaRequest.getIdTokenHint()) ? 1 : 0;
+        var hintCount = StringUtils.isNotBlank(cibaRequestContext.getLoginHint()) ? 1 : 0;
+        hintCount += StringUtils.isNotBlank(cibaRequestContext.getLoginHintToken()) ? 1 : 0;
+        hintCount += StringUtils.isNotBlank(cibaRequestContext.getIdTokenHint()) ? 1 : 0;
         if (hintCount > 1) {
             return badCibaRequest("More than one hint specified");
         }
-        if (cibaRequest.getScope().isEmpty() || !cibaRequest.getScope().contains(OidcConstants.StandardScopes.OPENID.getScope())) {
+        if (cibaRequestContext.getScope().isEmpty() || !cibaRequestContext.getScope().contains(OidcConstants.StandardScopes.OPENID.getScope())) {
             return badCibaRequest("Scope must contain %s".formatted(OidcConstants.StandardScopes.OPENID.getScope()));
         }
-        val registeredService = findRegisteredService(cibaRequest);
+        val registeredService = findRegisteredService(cibaRequestContext);
         if (!registeredService.isBackchannelUserCodeParameterSupported() && !configurationContext.getDiscoverySettings().isBackchannelUserCodeParameterSupported()
-            && StringUtils.isNotBlank(cibaRequest.getUserCode())) {
+            && StringUtils.isNotBlank(cibaRequestContext.getUserCode())) {
             return badCibaRequest("User code is not supported");
         }
         val deliveryMode = OidcBackchannelTokenDeliveryModes.valueOf(registeredService.getBackchannelTokenDeliveryMode().toUpperCase(Locale.ENGLISH));
         if ((deliveryMode == OidcBackchannelTokenDeliveryModes.PUSH || deliveryMode == OidcBackchannelTokenDeliveryModes.PING)
-            && StringUtils.isBlank(cibaRequest.getClientNotificationToken())) {
+            && StringUtils.isBlank(cibaRequestContext.getClientNotificationToken())) {
             return badCibaRequest("Client notification token is required");
         }
         if (StringUtils.isBlank(registeredService.getBackchannelClientNotificationEndpoint())
             || !StringUtils.startsWithIgnoreCase(registeredService.getBackchannelClientNotificationEndpoint(), "https://")) {
             return badCibaRequest("Client backchannel notification endpoint is invalid");
         }
-        val principal = determineCibaRequestPrincipal(cibaRequest, registeredService);
+        val principal = determineCibaRequestPrincipal(cibaRequestContext, registeredService);
         if (principal == null) {
             return badCibaRequest("Unable to determine subject");
         }
@@ -195,9 +190,9 @@ public class OidcCibaController extends BaseOidcController {
         if (!CollectionUtils.containsAny(principal.getAttributes().keySet(), emailProperties.getAttributeName())) {
             return badCibaRequest("Principal does not contain required attributes for notification");
         }
-        val cibaRequestId = recordCibaRequest(cibaRequest, principal);
+        val cibaRequestId = recordCibaRequest(cibaRequestContext.withPrincipal(principal));
         val cibaResponse = buildCibaResponse(cibaRequestId);
-        scheduleUserVerificationRequest(cibaRequestId, cibaRequest, registeredService);
+        scheduleUserVerificationRequest(cibaRequestId, cibaRequestContext, registeredService);
         return cibaResponse;
     }
 
@@ -245,12 +240,11 @@ public class OidcCibaController extends BaseOidcController {
 
     private String buildCibaVerificationUrl(final OidcCibaRequest cibaRequest) {
         return FunctionUtils.doUnchecked(() -> {
-            val encodedId = encodeCibaRequestId(cibaRequest);
             return new URIBuilder(configurationContext.getCasProperties().getServer().getPrefix())
                 .appendPath(OidcConstants.BASE_OIDC_URL)
                 .appendPath(OidcConstants.CIBA_URL)
                 .appendPath(cibaRequest.getClientId())
-                .appendPath(encodedId)
+                .appendPath(cibaRequest.getEncodedId())
                 .build()
                 .toString();
         });
@@ -286,26 +280,19 @@ public class OidcCibaController extends BaseOidcController {
             .build();
     }
 
-    protected ResponseEntity buildCibaResponse(final OidcCibaRequest cibaRequestId) {
-        val urlEncodedId = encodeCibaRequestId(cibaRequestId);
+    protected ResponseEntity buildCibaResponse(final OidcCibaRequest cibaRequest) {
         return ResponseEntity.ok(Map.of(
-            OidcConstants.AUTH_REQ_ID, urlEncodedId,
-            OAuth20Constants.EXPIRES_IN, cibaRequestId.getExpirationPolicy().getTimeToLive()
+            OidcConstants.AUTH_REQ_ID, cibaRequest.getEncodedId(),
+            OAuth20Constants.EXPIRES_IN, cibaRequest.getExpirationPolicy().getTimeToLive()
         ));
     }
+    
 
-    private String encodeCibaRequestId(final OidcCibaRequest cibaRequest) {
-        val encodedId = (byte[]) configurationContext.getWebflowCipherExecutor()
-            .withSigningDisabled()
-            .encode(cibaRequest.getId().getBytes(StandardCharsets.UTF_8));
-        return Objects.requireNonNull(EncodingUtils.encodeUrlSafeBase64(encodedId));
-    }
-
-    protected OidcCibaRequest recordCibaRequest(final CibaRequestContext cibaRequest, final Principal principal) throws Throwable {
+    protected OidcCibaRequest recordCibaRequest(final CibaRequestContext cibaRequestContext) throws Throwable {
         val cibaFactory = (OidcCibaRequestFactory) configurationContext.getTicketFactory().get(OidcCibaRequest.class);
-        val cibaRequestId = cibaFactory.create(cibaRequest.withPrincipal(principal));
-        configurationContext.getTicketRegistry().addTicket(cibaRequestId);
-        return cibaRequestId;
+        val cibaRequest = cibaFactory.create(cibaRequestContext);
+        configurationContext.getTicketRegistry().addTicket(cibaRequest);
+        return cibaRequest;
     }
 
     protected ResponseEntity badCibaRequest(final String error) {
@@ -331,10 +318,11 @@ public class OidcCibaController extends BaseOidcController {
     }
 
     private OidcCibaRequest fetchOidcCibaRequest(final String requestId) {
-        val decoded = EncodingUtils.decodeUrlSafeBase64(requestId);
-        val decodedId = new String((byte[]) configurationContext.getWebflowCipherExecutor().withSigningDisabled().decode(decoded), StandardCharsets.UTF_8);
+        val cibaFactory = (OidcCibaRequestFactory) configurationContext.getTicketFactory().get(OidcCibaRequest.class);
+        val decodedId = cibaFactory.decodeId(requestId);
         val cibaRequest = configurationContext.getTicketRegistry().getTicket(decodedId, OidcCibaRequest.class);
         Assert.notNull(cibaRequest, "CIBA request cannot be found");
+        Assert.isTrue(cibaRequest.getEncodedId().equals(requestId), "CIBA request identifier is invalid");
         return cibaRequest;
     }
 }
