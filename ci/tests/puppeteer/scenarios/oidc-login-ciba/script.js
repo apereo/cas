@@ -95,11 +95,11 @@ async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", us
 }
 
 (async () => {
-    // await cas.log("Starting CIBA request with PUSH delivery mode...");
-    // await verifyDeliveryMode("clientpush", "push");
-    // await cas.separator();
-    // await verifyDeliveryMode("clientpush", "push", "");
-    // await cas.separator();
+    await cas.log("Starting CIBA request with PUSH delivery mode...");
+    await verifyDeliveryMode("clientpush", "push");
+    await cas.separator();
+    await verifyDeliveryMode("clientpush", "push", "");
+    await cas.separator();
 
     await cas.log("Starting CIBA request with PING delivery mode...");
     await verifyDeliveryMode("clientping", "ping");
@@ -107,7 +107,7 @@ async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", us
     await cas.separator();
     await verifyDeliveryMode("clientping", "ping", "");
     await cas.separator();
-    //
+    
     await cas.log("Starting CIBA request with POLL delivery mode...");
     await verifyDeliveryMode("clientpoll", "poll");
     await cas.separator();
