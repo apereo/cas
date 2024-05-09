@@ -106,6 +106,26 @@ public class OAuth20Utils {
     }
 
     /**
+     * Gets registered oauth service by client id.
+     *
+     * @param <T>             the type parameter
+     * @param servicesManager the services manager
+     * @param clientId        the client id
+     * @param clazz           the clazz
+     * @return the registered o auth service by client id
+     */
+    public static <T extends OAuthRegisteredService> T getRegisteredOAuthServiceByClientId(final ServicesManager servicesManager,
+                                                                                           final String clientId,
+                                                                                           final Class<T> clazz) {
+        return FunctionUtils.doIfNotBlank(clientId,
+            () -> {
+                val query = RegisteredServiceQuery.of(OAuthRegisteredService.class, "clientId", clientId).withIncludeAssignableTypes(true);
+                return servicesManager.findServicesBy(query).findFirst().map(clazz::cast).orElse(null);
+            },
+            () -> null);
+    }
+
+    /**
      * Locate the requested instance of {@link OAuthRegisteredService} by the given clientId.
      *
      * @param servicesManager the service registry DAO instance.
@@ -114,12 +134,7 @@ public class OAuth20Utils {
      */
     public static OAuthRegisteredService getRegisteredOAuthServiceByClientId(final ServicesManager servicesManager,
                                                                              final String clientId) {
-        return FunctionUtils.doIfNotBlank(clientId,
-            () -> {
-                val query = RegisteredServiceQuery.of(OAuthRegisteredService.class, "clientId", clientId).withIncludeAssignableTypes(true);
-                return servicesManager.findServicesBy(query).findFirst().map(OAuthRegisteredService.class::cast).orElse(null);
-            },
-            () -> null);
+        return getRegisteredOAuthServiceByClientId(servicesManager, clientId, OAuthRegisteredService.class);
     }
 
     /**
@@ -269,8 +284,8 @@ public class OAuth20Utils {
         validateRedirectUri(redirectUri);
         if (matchingStrategy == null || !matchingStrategy.matches(registeredService, redirectUri)) {
             LOGGER.error("Unsupported [{}]: [{}] does not match what is defined for registered service: [{}]. "
-                         + "Service is considered unauthorized. Verify the service matching strategy used in the service "
-                         + "definition is correct and does in fact match the client [{}]",
+                    + "Service is considered unauthorized. Verify the service matching strategy used in the service "
+                    + "definition is correct and does in fact match the client [{}]",
                 OAuth20Constants.REDIRECT_URI, redirectUri, registeredService.getServiceId(), redirectUri);
             return false;
         }
@@ -397,6 +412,7 @@ public class OAuth20Utils {
 
     /**
      * Find stateless ticket validation result.
+     *
      * @param profile the profile
      * @return the ticket validation result
      */

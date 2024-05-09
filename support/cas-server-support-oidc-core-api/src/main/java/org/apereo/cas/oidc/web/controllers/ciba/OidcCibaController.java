@@ -239,15 +239,13 @@ public class OidcCibaController extends BaseOidcController {
     }
 
     private String buildCibaVerificationUrl(final OidcCibaRequest cibaRequest) {
-        return FunctionUtils.doUnchecked(() -> {
-            return new URIBuilder(configurationContext.getCasProperties().getServer().getPrefix())
-                .appendPath(OidcConstants.BASE_OIDC_URL)
-                .appendPath(OidcConstants.CIBA_URL)
-                .appendPath(cibaRequest.getClientId())
-                .appendPath(cibaRequest.getEncodedId())
-                .build()
-                .toString();
-        });
+        return FunctionUtils.doUnchecked(() -> new URIBuilder(configurationContext.getCasProperties().getServer().getPrefix())
+            .appendPath(OidcConstants.BASE_OIDC_URL)
+            .appendPath(OidcConstants.CIBA_URL)
+            .appendPath(cibaRequest.getClientId())
+            .appendPath(cibaRequest.getEncodedId())
+            .build()
+            .toString());
     }
 
     protected OidcRegisteredService findRegisteredService(final CibaRequestContext cibaRequest) {

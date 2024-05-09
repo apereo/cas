@@ -1,12 +1,13 @@
 const cas = require("../../cas.js");
 const assert = require("assert");
 
-async function verifyDeliveryMode(userCode = "393515b9-4bb0-43ef-9973-91f3c3236ffe", clientId = "client", clientSecret = "secret") {
-    await cas.log(`Attempting to verify CIBA delivery mode with user code ${userCode} for client ID ${clientId}`);
-    
+async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", userCode = "393515b9-4bb0-43ef-9973-91f3c3236ffe", clientSecret = "secret") {
+    await cas.log(`Attempting to verify CIBA delivery mode ${deliveryMode} with user code ${userCode} for client ID ${clientId}`);
+
     const clientNotificationToken = "8d67dc78-7faa-4d41-aabd-67707b374255";
     const bindingMessage = "HelloFromCAS";
-    let url = `https://localhost:8443/cas/oidc/oidcCiba?scope=${encodeURIComponent("openid profile")}`;
+    const scopes = `${encodeURIComponent("openid profile")}`;
+    let url = `https://localhost:8443/cas/oidc/oidcCiba?scope=${scopes}`;
     url += `&client_notification_token=${clientNotificationToken}`;
     url += `&login_hint=${encodeURIComponent("casuser@apereo.org")}`;
     url += `&binding_message=${bindingMessage}`;
@@ -34,7 +35,20 @@ async function verifyDeliveryMode(userCode = "393515b9-4bb0-43ef-9973-91f3c3236f
             throw `CIBA operation failed: ${error}`;
         });
     await cas.log(`CIBA request id is ${authRequestId}`);
-
+    if (deliveryMode === "ping" || deliveryMode === "poll") {
+        const accessTokenUrl = `https://localhost:8443/cas/oidc/token?scope=${scopes}&grant_type=urn:openid:params:grant-type:ciba&auth_req_id=${authRequestId}`;
+        await cas.doPost(accessTokenUrl, "",
+            {
+                "Authorization": authzHeader,
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            (res) => {
+                throw `CIBA operation MUST fail but instead it passed incorrectly: ${res.data}`;
+            }, (error) => {
+                cas.log(`CIBA operation failed correctly: ${error}`);
+            });
+        await cas.sleep(1000);
+    }
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const verificationUrl = await cas.extractFromEmail(browser);
@@ -55,17 +69,48 @@ async function verifyDeliveryMode(userCode = "393515b9-4bb0-43ef-9973-91f3c3236f
     await cas.assertInvisibility(page, "#cibaContainer");
     await cas.assertVisibility(page, "#confirmation");
     await browser.close();
+
+    if (deliveryMode === "ping" || deliveryMode === "poll") {
+        const accessTokenUrl = `https://localhost:8443/cas/oidc/token?scope=${scopes}&grant_type=urn:openid:params:grant-type:ciba&auth_req_id=${authRequestId}`;
+        await cas.doPost(accessTokenUrl, "",
+            {
+                "Authorization": authzHeader,
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            (res) => {
+                cas.logg(`CIBA operation correctly succeeded to obtain tokens: ${res.data}`);
+                assert(res.data.access_token !== undefined);
+                assert(res.data.refresh_token !== undefined);
+                assert(res.data.id_token !== undefined);
+                assert(res.data.token_type === "Bearer");
+                assert(res.data.expires_in !== undefined);
+                assert(res.data.scope === "openid profile");
+            }, (error) => {
+                throw `CIBA operation MUST failed to obtain tokens: ${error}`;
+            });
+        await cas.sleep(1000);
+    }
+
+    return authRequestId;
 }
 
 (async () => {
-    await cas.log("Starting CIBA request with PUSH delivery mode...");
-    await verifyDeliveryMode("393515b9-4bb0-43ef-9973-91f3c3236ffe", "clientpush");
-    await cas.separator();
-    await verifyDeliveryMode("", "clientpush");
-    await cas.separator();
+    // await cas.log("Starting CIBA request with PUSH delivery mode...");
+    // await verifyDeliveryMode("clientpush", "push");
+    // await cas.separator();
+    // await verifyDeliveryMode("clientpush", "push", "");
+    // await cas.separator();
+
     await cas.log("Starting CIBA request with PING delivery mode...");
-    await verifyDeliveryMode("393515b9-4bb0-43ef-9973-91f3c3236ffe", "clientping");
+    await verifyDeliveryMode("clientping", "ping");
+
     await cas.separator();
-    await verifyDeliveryMode("", "clientping");
+    await verifyDeliveryMode("clientping", "ping", "");
+    await cas.separator();
+    //
+    await cas.log("Starting CIBA request with POLL delivery mode...");
+    await verifyDeliveryMode("clientpoll", "poll");
+    await cas.separator();
+    await verifyDeliveryMode("clientpoll", "poll", "");
 })();
 

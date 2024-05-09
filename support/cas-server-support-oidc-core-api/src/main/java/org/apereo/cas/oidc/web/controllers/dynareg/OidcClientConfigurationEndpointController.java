@@ -96,9 +96,8 @@ public class OidcClientConfigurationEndpointController extends BaseOidcControlle
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
             return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
-        var service = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(
-            getConfigurationContext().getServicesManager(), clientId);
-        
+        var service = OAuth20Utils.getRegisteredOAuthServiceByClientId(
+            getConfigurationContext().getServicesManager(), clientId, OidcRegisteredService.class);
         if (service != null) {
             if (StringUtils.isNotBlank(jsonInput)) {
                 val registrationRequest = (OidcClientRegistrationRequest) getConfigurationContext()

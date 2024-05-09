@@ -20,7 +20,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenAtHashGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenHashGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.BaseIdTokenGeneratorService;
@@ -82,7 +82,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                                 final OAuth20GrantTypes grantType,
                                 final OAuthRegisteredService registeredService) throws Throwable {
         Assert.isAssignable(OidcRegisteredService.class, registeredService.getClass(),
-            "Registered service instance is not an OIDC service");
+            "Registered service instance is not registered as an OpenID Connect application");
         if (!accessToken.getScopes().contains(OidcConstants.StandardScopes.OPENID.getScope())) {
             LOGGER.warn("Authentication request does not include the [{}] scope. "
                 + "Including this scope is a MUST for OpenID Connect and CAS will not produce an ID token without this scope.",
@@ -335,8 +335,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
 
         val alg = getConfigurationContext().getIdTokenSigningAndEncryptionService()
             .getJsonWebKeySigningAlgorithm(registeredService, jsonWebKey);
-        val hash = OAuth20AccessTokenAtHashGenerator.builder()
-            .encodedAccessToken(encodedAccessToken)
+        val hash = OAuth20TokenHashGenerator.builder()
+            .token(encodedAccessToken)
             .algorithm(alg)
             .registeredService(registeredService)
             .build()

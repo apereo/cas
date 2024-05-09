@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.token.ciba;
 
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.ticket.OidcCibaRequest;
@@ -7,6 +8,7 @@ import org.apereo.cas.services.OidcBackchannelTokenDeliveryModes;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -16,11 +18,13 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.servlet.ModelAndView;
 import java.util.Map;
 
 /**
@@ -31,6 +35,7 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @Getter
+@Slf4j
 public class CibaPushTokenDeliveryHandler implements CibaTokenDeliveryHandler {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .singleValueAsArray(true).defaultTypingEnabled(false).build().toObjectMapper();
@@ -43,36 +48,10 @@ public class CibaPushTokenDeliveryHandler implements CibaTokenDeliveryHandler {
     public Map<String, ?> deliver(final OidcRegisteredService registeredService, final OidcCibaRequest cibaRequest) throws Throwable {
         HttpResponse response = null;
         try {
-            val clientNotificationValue = (String) cibaRequest.getAuthentication().getSingleValuedAttribute(OidcConstants.CLIENT_NOTIFICATION_TOKEN);
             val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(cibaRequest.getClientId());
-            val tokenRequestContext = AccessTokenRequestContext
-                .builder()
-                .scopes(cibaRequest.getScopes())
-                .grantType(OAuth20GrantTypes.CIBA)
-                .registeredService(registeredService)
-                .authentication(cibaRequest.getAuthentication())
-                .service(service)
-                .build();
-            val generatedTokenResult = configurationContext.getAccessTokenGenerator().generate(tokenRequestContext);
-            val tokenResult = OAuth20AccessTokenResponseResult
-                .builder()
-                .registeredService(registeredService)
-                .accessTokenTimeout(generatedTokenResult.getAccessToken().orElseThrow().getExpirationPolicy().getTimeToLive())
-                .responseType(OAuth20ResponseTypes.NONE)
-                .casProperties(configurationContext.getCasProperties())
-                .generatedToken(generatedTokenResult)
-                .grantType(OAuth20GrantTypes.CIBA)
-                .service(service)
-                .build();
-            val payload = configurationContext.getAccessTokenResponseGenerator().generate(tokenResult);
-            val exec = HttpExecutionRequest.builder()
-                .bearerToken(clientNotificationValue)
-                .method(HttpMethod.POST)
-                .url(registeredService.getBackchannelClientNotificationEndpoint())
-                .entity(MAPPER.writeValueAsString(payload.getModel()))
-                .httpClient(configurationContext.getHttpClient())
-                .build();
-            response = HttpUtils.execute(exec);
+            val generatedTokenResult = generateAccessToken(registeredService, cibaRequest, service);
+            val payload = generateResponsePayload(registeredService, cibaRequest, generatedTokenResult, service);
+            response = sendPushNotification(registeredService, cibaRequest, payload.getModel());
             FunctionUtils.throwIf(!HttpStatus.valueOf(response.getCode()).is2xxSuccessful(),
                 () -> new HttpException("Unable to deliver tokens to client application %s".formatted(registeredService.getName())));
             configurationContext.getTicketRegistry().deleteTicket(cibaRequest);
@@ -80,5 +59,55 @@ public class CibaPushTokenDeliveryHandler implements CibaTokenDeliveryHandler {
         } finally {
             HttpUtils.close(response);
         }
+    }
+
+    protected HttpResponse sendPushNotification(final OidcRegisteredService registeredService,
+                                                final OidcCibaRequest cibaRequest,
+                                                final Map payload) throws Exception {
+        val clientNotificationValue = (String) cibaRequest.getAuthentication().getSingleValuedAttribute(OidcConstants.CLIENT_NOTIFICATION_TOKEN);
+        val exec = HttpExecutionRequest.builder()
+            .bearerToken(clientNotificationValue)
+            .method(HttpMethod.POST)
+            .url(registeredService.getBackchannelClientNotificationEndpoint())
+            .entity(MAPPER.writeValueAsString(payload))
+            .httpClient(configurationContext.getHttpClient())
+            .build();
+        LOGGER.debug("Sending a POST request to [{}] with payload [{}]", exec.getUrl(), exec.getEntity());
+        return HttpUtils.execute(exec);
+    }
+
+    protected ModelAndView generateResponsePayload(final OidcRegisteredService registeredService,
+                                                   final OidcCibaRequest cibaRequest,
+                                                   final OAuth20TokenGeneratedResult generatedTokenResult,
+                                                   final WebApplicationService service) {
+        val tokenResult = OAuth20AccessTokenResponseResult
+            .builder()
+            .registeredService(registeredService)
+            .accessTokenTimeout(generatedTokenResult.getAccessToken().orElseThrow().getExpirationPolicy().getTimeToLive())
+            .responseType(OAuth20ResponseTypes.NONE)
+            .casProperties(configurationContext.getCasProperties())
+            .generatedToken(generatedTokenResult)
+            .grantType(OAuth20GrantTypes.CIBA)
+            .cibaRequestId(cibaRequest.getId())
+            .service(service)
+            .build();
+        val payload = configurationContext.getAccessTokenResponseGenerator().generate(tokenResult);
+        payload.addObject(OidcConstants.AUTH_REQ_ID, cibaRequest.getEncodedId());
+        LOGGER.debug("Generated access token response payload [{}]", payload.getModel());
+        return payload;
+    }
+
+    protected OAuth20TokenGeneratedResult generateAccessToken(final OidcRegisteredService registeredService,
+                                                              final OidcCibaRequest cibaRequest,
+                                                              final WebApplicationService service) throws Throwable {
+        val tokenRequestContext = AccessTokenRequestContext
+            .builder()
+            .scopes(cibaRequest.getScopes())
+            .grantType(OAuth20GrantTypes.CIBA)
+            .registeredService(registeredService)
+            .authentication(cibaRequest.getAuthentication())
+            .service(service)
+            .build();
+        return configurationContext.getAccessTokenGenerator().generate(tokenRequestContext);
     }
 }

@@ -11,6 +11,7 @@
   "backchannelTokenDeliveryMode": "push",
   "backchannelClientNotificationEndpoint": "https://localhost:9859/anything/cibapush",
   "backchannelUserCodeParameterSupported": true,
+  "generateRefreshToken": true,
   "informationUrl": "https://github.com/apereo/cas",
   "privacyUrl": "https://github.com/apereo/cas"
 }

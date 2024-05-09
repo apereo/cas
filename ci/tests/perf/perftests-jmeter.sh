@@ -7,10 +7,10 @@ YELLOW="\e[33m"
 ENDCOLOR="\e[0m"
 
 function printred() {
-  printf "${RED}$1${ENDCOLOR}\n"
+  printf "${RED}$1${ENDCOLOR}%n"
 }
 function printgreen() {
-  printf "${GREEN}$1${ENDCOLOR}\n"
+  printf "${GREEN}$1${ENDCOLOR}%n"
 }
 
 jmeterVersion=5.6.2

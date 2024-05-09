@@ -2,13 +2,14 @@
   "@class": "org.apereo.cas.services.OidcRegisteredService",
   "clientId": "clientpoll",
   "clientSecret": "secret",
-  "serviceId": "https://localhost:9859/anything/clientpoll",
+  "serviceId": "^https://localhost:9859/anything/clientpoll",
   "name": "Sample",
-  "logo": "F059F",
-  "description": "This application is registered with CAS for CIBA PING requests",
+  "description": "This application is registered with CAS for CIBA POLL requests",
   "id": 3,
   "scopes" : [ "java.util.HashSet", [ "profile", "email", "openid" ] ],
+  "backchannelClientNotificationEndpoint": "https://localhost:9859/anything/cibapoll",
   "supportedGrantTypes": [ "java.util.HashSet", [ "urn:openid:params:grant-type:ciba" ] ],
   "backchannelTokenDeliveryMode": "poll",
-  "backchannelUserCodeParameterSupported": true
+  "backchannelUserCodeParameterSupported": true,
+  "generateRefreshToken": true
 }
