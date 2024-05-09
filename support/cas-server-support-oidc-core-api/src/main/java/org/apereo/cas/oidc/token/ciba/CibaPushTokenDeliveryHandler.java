@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.token.ciba;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.ticket.OidcCibaRequest;
@@ -11,7 +12,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
-import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -20,11 +21,13 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
+import java.time.Clock;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Map;
 
 /**
@@ -46,34 +49,45 @@ public class CibaPushTokenDeliveryHandler implements CibaTokenDeliveryHandler {
 
     @Override
     public Map<String, ?> deliver(final OidcRegisteredService registeredService, final OidcCibaRequest cibaRequest) throws Throwable {
-        HttpResponse response = null;
-        try {
-            val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(cibaRequest.getClientId());
-            val generatedTokenResult = generateAccessToken(registeredService, cibaRequest, service);
-            val payload = generateResponsePayload(registeredService, cibaRequest, generatedTokenResult, service);
-            response = sendPushNotification(registeredService, cibaRequest, payload.getModel());
-            FunctionUtils.throwIf(!HttpStatus.valueOf(response.getCode()).is2xxSuccessful(),
-                () -> new HttpException("Unable to deliver tokens to client application %s".formatted(registeredService.getName())));
-            configurationContext.getTicketRegistry().deleteTicket(cibaRequest);
-            return payload.getModel();
-        } finally {
-            HttpUtils.close(response);
-        }
+        val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(cibaRequest.getClientId());
+        val generatedTokenResult = generateAccessToken(registeredService, cibaRequest, service);
+        val payload = generateResponsePayload(registeredService, cibaRequest, generatedTokenResult, service);
+        sendPushNotification(registeredService, cibaRequest, payload.getModel());
+        return payload.getModel();
     }
 
-    protected HttpResponse sendPushNotification(final OidcRegisteredService registeredService,
-                                                final OidcCibaRequest cibaRequest,
-                                                final Map payload) throws Exception {
-        val clientNotificationValue = (String) cibaRequest.getAuthentication().getSingleValuedAttribute(OidcConstants.CLIENT_NOTIFICATION_TOKEN);
-        val exec = HttpExecutionRequest.builder()
-            .bearerToken(clientNotificationValue)
-            .method(HttpMethod.POST)
-            .url(registeredService.getBackchannelClientNotificationEndpoint())
-            .entity(MAPPER.writeValueAsString(payload))
-            .httpClient(configurationContext.getHttpClient())
-            .build();
-        LOGGER.debug("Sending a POST request to [{}] with payload [{}]", exec.getUrl(), exec.getEntity());
-        return HttpUtils.execute(exec);
+    @SuppressWarnings("FutureReturnValueIgnored")
+    protected void sendPushNotification(final OidcRegisteredService registeredService,
+                                        final OidcCibaRequest cibaRequest,
+                                        final Map payload) throws Exception {
+
+        val verification = configurationContext.getCasProperties().getAuthn().getOidc().getCiba().getVerification();
+        val delayInSeconds = Beans.newDuration(verification.getDelay()).toSeconds();
+        configurationContext.getTaskScheduler().schedule(
+            () -> {
+                HttpResponse response = null;
+                try {
+                    val clientNotificationValue = (String) cibaRequest.getAuthentication().getSingleValuedAttribute(OidcConstants.CLIENT_NOTIFICATION_TOKEN);
+                    val exec = HttpExecutionRequest.builder()
+                        .bearerToken(clientNotificationValue)
+                        .method(HttpMethod.POST)
+                        .url(registeredService.getBackchannelClientNotificationEndpoint())
+                        .entity(MAPPER.writeValueAsString(payload))
+                        .httpClient(configurationContext.getHttpClient())
+                        .build();
+                    LOGGER.debug("Sending a POST request to [{}] with payload [{}]", exec.getUrl(), exec.getEntity());
+                    response = HttpUtils.execute(exec);
+                    if (!HttpStatus.valueOf(response.getCode()).is2xxSuccessful()) {
+                        LOGGER.error("Unable to deliver tokens to client application [{}]", registeredService.getName());
+                        configurationContext.getTicketRegistry().deleteTicket(cibaRequest);
+                    }
+                } catch (final Exception e) {
+                    LoggingUtils.error(LOGGER, e);
+                } finally {
+                    HttpUtils.close(response);
+                }
+            },
+            LocalDateTime.now(Clock.systemUTC()).plusSeconds(delayInSeconds).toInstant(ZoneOffset.UTC));
     }
 
     protected ModelAndView generateResponsePayload(final OidcRegisteredService registeredService,
