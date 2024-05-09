@@ -31,7 +31,7 @@ public class OAuth20DefaultIntrospectionResponseGenerator implements OAuth20Intr
                                                                                   final OAuth20Token accessToken) {
         introspect.setClientId(accessToken.getClientId());
         if (accessToken instanceof final ServiceAwareTicket sat) {
-            introspect.setAud(sat.getId());
+            introspect.setAud(sat.getService().getId());
         }
 
         val authentication = accessToken.getAuthentication();

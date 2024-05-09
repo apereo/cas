@@ -92,7 +92,10 @@ public interface OidcConstants {
      * The refresh token hash.
      */
     String CLAIM_RT_HASH = "urn:openid:params:jwt:claim:rt_hash";
-
+    /**
+     * The authentication request id hash for CIBA.
+     */
+    String CLAIM_AUTH_REQ_ID = "urn:openid:params:jwt:claim:auth_req_id";
     /**
      * The session identifier claim.
      */

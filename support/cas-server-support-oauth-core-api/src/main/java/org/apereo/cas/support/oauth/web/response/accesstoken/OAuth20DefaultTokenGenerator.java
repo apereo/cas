@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.NullPrincipal;
@@ -139,7 +140,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             .build();
     }
 
-    protected Authentication prepareAuthentication(final AccessTokenRequestContext tokenRequestContext) {
+    protected AuthenticationBuilder prepareAuthentication(final AccessTokenRequestContext tokenRequestContext) {
         val ticketGrantingTicket = tokenRequestContext.getTicketGrantingTicket();
         var existingAuthn = tokenRequestContext.getAuthentication();
         if (existingAuthn == null && ticketGrantingTicket instanceof final AuthenticationAwareTicket aat) {
@@ -158,7 +159,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             __ -> authnBuilder.addAttribute(OAuth20Constants.DPOP, tokenRequestContext.getDpop()));
         FunctionUtils.doIfNotNull(tokenRequestContext.getDpopConfirmation(),
             __ -> authnBuilder.addAttribute(OAuth20Constants.DPOP_CONFIRMATION, tokenRequestContext.getDpopConfirmation()));
-        return authnBuilder.build();
+        return authnBuilder;
     }
 
     protected AccessAndRefreshTokens generateAccessTokenOAuthGrantTypes(
@@ -169,7 +170,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             return generateAccessTokenForTokenExchange(tokenRequestContext);
         }
 
-        val authentication = prepareAuthentication(tokenRequestContext);
+        val authentication = finalizeAuthentication(tokenRequestContext, prepareAuthentication(tokenRequestContext));
         LOGGER.debug("Creating access token for [{}]", tokenRequestContext);
         val accessToken = createAccessToken(tokenRequestContext, authentication);
         val addedAccessToken = addAccessToken(tokenRequestContext, accessToken);
@@ -180,6 +181,11 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
                 return null;
             }).get();
         return new AccessAndRefreshTokens(addedAccessToken, refreshToken);
+    }
+
+    protected Authentication finalizeAuthentication(final AccessTokenRequestContext tokenRequestContext,
+                                                    final AuthenticationBuilder authenticationBuilder) {
+        return authenticationBuilder.build();
     }
 
     protected AccessAndRefreshTokens generateAccessTokenForTokenExchange(final AccessTokenRequestContext tokenRequestContext) throws Throwable {

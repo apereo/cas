@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -90,7 +91,7 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         val generatedToken = result.getGeneratedToken();
         generatedToken.getAccessToken()
             .ifPresent(token -> {
-                val accessToken = resolveAccessToken(token);
+                val accessToken = resolveToken(token, OAuth20AccessToken.class);
                 if (accessToken.getExpiresIn() > 0) {
                     val encodedAccessTokenId = encodeAccessToken(accessToken, result);
                     if (StringUtils.equals(encodedAccessTokenId, accessToken.getId()) && token.isStateless()) {
@@ -118,8 +119,8 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         return model;
     }
 
-    protected OAuth20AccessToken resolveAccessToken(final Ticket token) {
-        return (OAuth20AccessToken) (token.isStateless() ? ticketRegistry.getTicket(token.getId()) : token);
+    protected <T extends OAuth20Token> T resolveToken(final Ticket token, final Class<T> clazz) {
+        return token == null ? null : (token.isStateless() ? ticketRegistry.getTicket(token.getId(), clazz) : (T) token);
     }
 
     protected String encodeAccessToken(final OAuth20AccessToken accessToken,

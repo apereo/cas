@@ -1,5 +1,9 @@
 const cas = require("../../cas.js");
 const assert = require("assert");
+const express = require("express");
+const https = require("https");
+const fs = require("fs");
+const path = require("path");
 
 async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", userCode = "393515b9-4bb0-43ef-9973-91f3c3236ffe", clientSecret = "secret") {
     await cas.log(`Attempting to verify CIBA delivery mode ${deliveryMode} with user code ${userCode} for client ID ${clientId}`);
@@ -47,8 +51,8 @@ async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", us
             }, (error) => {
                 cas.log(`CIBA operation failed correctly: ${error}`);
             });
-        await cas.sleep(1000);
     }
+    await cas.sleep(3000);
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     const verificationUrl = await cas.extractFromEmail(browser);
@@ -88,29 +92,61 @@ async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", us
             }, (error) => {
                 throw `CIBA operation MUST failed to obtain tokens: ${error}`;
             });
-        await cas.sleep(1000);
     }
-
+    await cas.sleep(3000);
     return authRequestId;
 }
 
 (async () => {
-    await cas.log("Starting CIBA request with PUSH delivery mode...");
-    await verifyDeliveryMode("clientpush", "push");
-    await cas.separator();
-    await verifyDeliveryMode("clientpush", "push", "");
-    await cas.separator();
+    const app = express();
+    app.use(express.json());
+    app.post("/notification", (req, res) => {
+        cas.logg("Received CIBA notification from CAS");
+        const requestBody = req.body;
+        cas.log(requestBody);
+        assert(requestBody.access_token !== undefined);
+        assert(requestBody.refresh_token !== undefined);
+        assert(requestBody.id_token !== undefined);
+        assert(requestBody.token_type === "Bearer");
+        assert(requestBody.expires_in !== undefined);
+        assert(requestBody.scope === "openid profile");
+        
+        const decoded = cas.decodeJwt(requestBody.id_token);
+        assert(decoded.sub === "casuser@apereo.org");
+        assert(decoded["urn:openid:params:jwt:claim:auth_req_id"] !== undefined);
+        assert(decoded["urn:openid:params:jwt:claim:rt_hash"] !== undefined);
 
-    await cas.log("Starting CIBA request with PING delivery mode...");
-    await verifyDeliveryMode("clientping", "ping");
+        res.status(200).send("Accepted");
+    });
+    const privateKey = fs.readFileSync(path.join(__dirname, "private.key"), "utf8");
+    const certificate = fs.readFileSync(path.join(__dirname, "certificate.crt"), "utf8");
+    const credentials = { key: privateKey, cert: certificate };
 
-    await cas.separator();
-    await verifyDeliveryMode("clientping", "ping", "");
-    await cas.separator();
-    
-    await cas.log("Starting CIBA request with POLL delivery mode...");
-    await verifyDeliveryMode("clientpoll", "poll");
-    await cas.separator();
-    await verifyDeliveryMode("clientpoll", "poll", "");
+    const httpsServer = https.createServer(credentials, app);
+    const server = httpsServer.listen(5544, async () => {
+        await cas.log("Starting CIBA request with PUSH delivery mode...");
+        await verifyDeliveryMode("clientpush", "push");
+        await cas.sleep();
+        await cas.separator();
+        await verifyDeliveryMode("clientpush", "push", "");
+        await cas.separator();
+
+        await cas.log("Starting CIBA request with PING delivery mode...");
+        await verifyDeliveryMode("clientping", "ping");
+
+        await cas.separator();
+        await verifyDeliveryMode("clientping", "ping", "");
+        await cas.separator();
+
+        await cas.log("Starting CIBA request with POLL delivery mode...");
+        await verifyDeliveryMode("clientpoll", "poll");
+        await cas.separator();
+        await verifyDeliveryMode("clientpoll", "poll", "");
+        
+        server.close(() => {
+            cas.log("Exiting server...");
+        });
+    });
+
 })();
 

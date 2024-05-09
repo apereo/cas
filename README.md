@@ -14,10 +14,11 @@
 ## Introduction
 
 Welcome to the home of the [Central Authentication Service project][apereocas], more commonly referred to as CAS. CAS is an
-enterprise multilingual single sign-on solution for the web and attempts to be a comprehensive platform for your authentication and authorization needs.
+enterprise multilingual identity provider and single sign-on solution for the web and attempts to 
+be a comprehensive platform for your authentication and authorization needs.
 
 CAS is an open and well-documented authentication protocol. The primary implementation of the protocol is an open-source Java server
-component by the same name hosted here, with support for a plethora of additional authentication protocols and features such a SAML2, OpenID Connect
+component by the same name hosted here, with support for a plethora of additional authentication protocols and features such a SAML2, OpenID Connect, MFA 
 and many many more.
 
 ## Contributions
@@ -69,7 +70,7 @@ The following features are supported by the CAS project:
 * Authorization via ABAC, Time/Date, REST, Internet2's Grouper and more.
 * HA clustered deployments via Hazelcast, JPA, Apache Cassandra, Memcached, Apache Ignite, MongoDB, Redis, DynamoDb, and more.
 * Application registration backed by JSON, LDAP, YAML, Apache Cassandra, JPA, MongoDB, DynamoDb, Redis and more.
-* Multifactor authentication via Duo Security, YubiKey, RSA, Google Authenticator, WebAuthn and more.
+* Multifactor authentication via Duo Security, Simple MFA, YubiKey, RSA, Google Authenticator, WebAuthn and more.
 * Administrative UIs to manage logging, monitoring, statistics, configuration, client registration and more.
 * Global and per-application user interface theme and branding.
 * Password management and password policy enforcement.
@@ -85,10 +86,10 @@ The foundations of CAS are built upon: [Spring Boot][springboot] and
 
 ## Support
 
-CAS is 100% free open source software managed by [Apereo](https://www.apereo.org/), licensed under [Apache v2](LICENSE). Our
+Apereo CAS is 100% free open source software managed by [Apereo](https://www.apereo.org/), licensed under [Apache v2](LICENSE). Our
 community has access to all releases of the CAS software with absolutely no costs. We welcome contributions from our community of all
 types and sizes. The time and effort to develop and maintain this project is dedicated by a group
-of [volunteers and contributors][githubcontributors]. Support options may be [found here][cassupport].
+of [volunteers and contributors][githubcontributors]. Commercial support options may be [found here][cassupport].
 If you (or your employer) benefit from this project, please consider becoming a [Friend of Apereo](https://www.apereo.org/friends) and contribute.
 
 [cascodecov]: https://codecov.io/gh/apereo/cas
