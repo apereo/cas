@@ -15,4 +15,13 @@ public interface MultifactorAuthenticationDeviceProviderAction extends Action, O
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
     }
+
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    default String getName() {
+        return getClass().getSimpleName();
+    }
 }
