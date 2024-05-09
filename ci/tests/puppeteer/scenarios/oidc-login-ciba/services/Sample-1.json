@@ -9,7 +9,7 @@
   "scopes" : [ "java.util.HashSet", [ "profile", "email", "openid" ] ],
   "supportedGrantTypes": [ "java.util.HashSet", [ "urn:openid:params:grant-type:ciba" ] ],
   "backchannelTokenDeliveryMode": "push",
-  "backchannelClientNotificationEndpoint": "https://localhost:9859/anything/cibapush",
+  "backchannelClientNotificationEndpoint": "https://localhost:5544/notification",
   "backchannelUserCodeParameterSupported": true,
   "generateRefreshToken": true,
   "informationUrl": "https://github.com/apereo/cas",

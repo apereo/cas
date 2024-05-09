@@ -1,4 +1,4 @@
-package org.apereo.cas.ticket;
+package org.apereo.cas.ticket.idtoken;
 
 import org.jose4j.jwt.JwtClaims;
 

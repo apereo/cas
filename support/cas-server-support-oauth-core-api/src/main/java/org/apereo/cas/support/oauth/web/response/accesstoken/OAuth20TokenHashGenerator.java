@@ -3,14 +3,12 @@ package org.apereo.cas.support.oauth.web.response.accesstoken;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
-
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.jose4j.jws.AlgorithmIdentifiers;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 

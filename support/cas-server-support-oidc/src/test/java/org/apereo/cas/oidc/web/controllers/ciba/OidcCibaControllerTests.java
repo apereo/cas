@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.ticket.idtoken.IdTokenGenerationContext;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -45,7 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "spring.mail.port=25000",
 
     "cas.http-client.host-name-verifier=none",
-    
+
     "cas.authn.oidc.ciba.verification.delay=PT1S",
     "cas.authn.oidc.ciba.verification.mail.html=false",
     "cas.authn.oidc.ciba.verification.mail.from=cas@apereo.org",
@@ -187,8 +188,14 @@ public class OidcCibaControllerTests extends AbstractOidcTests {
         profile.setId("casuser");
         profile.addAttributes((Map) RegisteredServiceTestUtils.getTestAttributes());
 
-        val idTokenHint = oidcIdTokenGenerator.generate(getAccessToken(registeredService.getClientId()), profile,
-            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE, registeredService).token();
+        val idTokenContext = IdTokenGenerationContext.builder()
+            .accessToken(getAccessToken(registeredService.getClientId()))
+            .userProfile(profile)
+            .responseType(OAuth20ResponseTypes.CODE)
+            .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
+            .registeredService(registeredService)
+            .build();
+        val idTokenHint = oidcIdTokenGenerator.generate(idTokenContext).token();
 
         mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
                 .secure(true)
@@ -244,7 +251,7 @@ public class OidcCibaControllerTests extends AbstractOidcTests {
             assertTrue(result.getModelAndView().getModel().containsKey("userCodeRequired"));
 
             webServer.start();
-            
+
             val csrfToken = (CsrfToken) result.getRequest().getAttribute("_csrf");
             mvc.perform(post(verifyUrl)
                     .secure(true)

@@ -11,8 +11,10 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
-import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.idtoken.IdTokenGenerationContext;
+import org.apereo.cas.ticket.idtoken.IdTokenGeneratorService;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -77,9 +79,8 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
         }
 
         val model = super.getAccessTokenResponseModel(result);
-        accessToken.map(this::resolveAccessToken).ifPresent(token -> {
-            if (result.getRegisteredService() instanceof OidcRegisteredService
-                && !token.getScopes().contains(OidcConstants.CLIENT_REGISTRATION_SCOPE)) {
+        accessToken.map(at -> resolveToken(at, OAuth20AccessToken.class)).ifPresent(token -> {
+            if (result.getRegisteredService() instanceof OidcRegisteredService && !token.getScopes().contains(OidcConstants.CLIENT_REGISTRATION_SCOPE)) {
                 val idToken = generateIdToken(result, token);
                 FunctionUtils.doIfNotBlank(idToken, __ -> model.put(OidcConstants.ID_TOKEN, idToken));
             }
@@ -90,9 +91,17 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
     protected String generateIdToken(final OAuth20AccessTokenResponseResult result,
                                      final OAuth20AccessToken accessToken) {
         return FunctionUtils.doUnchecked(() -> {
-            val idTokenGenerated = idTokenGenerator.generate(accessToken,
-                result.getUserProfile(), result.getResponseType(),
-                result.getGrantType(), (OAuthRegisteredService) result.getRegisteredService());
+
+            val refreshToken = result.getGeneratedToken().getRefreshToken().orElse(null);
+            val idTokenContext = IdTokenGenerationContext.builder()
+                .accessToken(accessToken)
+                .userProfile(result.getUserProfile())
+                .responseType(result.getResponseType())
+                .grantType(result.getGrantType())
+                .registeredService((OAuthRegisteredService) result.getRegisteredService())
+                .refreshToken(resolveToken(refreshToken, OAuth20RefreshToken.class))
+                .build();
+            val idTokenGenerated = idTokenGenerator.generate(idTokenContext);
             if (idTokenGenerated != null) {
                 val idToken = idTokenGenerated.token();
                 LOGGER.debug("Generated ID token [{}]", idToken);

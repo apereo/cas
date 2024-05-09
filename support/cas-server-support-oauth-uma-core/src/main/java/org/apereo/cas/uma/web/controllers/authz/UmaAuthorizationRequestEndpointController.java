@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.idtoken.IdTokenGenerationContext;
 import org.apereo.cas.uma.UmaConfigurationContext;
 import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionResult;
 import org.apereo.cas.uma.ticket.permission.UmaPermissionTicket;
@@ -169,8 +170,14 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
         userProfile.addAttribute(UmaPermissionTicket.class.getName(), permissionTicket);
         userProfile.addAttribute(ResourceSet.class.getName(), permissionTicket.getResourceSet());
 
-        val idToken = getUmaConfigurationContext().getRequestingPartyTokenGenerator()
-            .generate(accessToken, userProfile, OAuth20ResponseTypes.CODE, OAuth20GrantTypes.UMA_TICKET, registeredService);
+        val idTokenContext = IdTokenGenerationContext.builder()
+            .accessToken(accessToken)
+            .userProfile(userProfile)
+            .responseType(OAuth20ResponseTypes.CODE)
+            .grantType(OAuth20GrantTypes.UMA_TICKET)
+            .registeredService(registeredService)
+            .build();
+        val idToken = getUmaConfigurationContext().getRequestingPartyTokenGenerator().generate(idTokenContext);
         accessToken.setIdToken(idToken.token());
         if (!accessToken.isStateless()) {
             getUmaConfigurationContext().getTicketRegistry().updateTicket(accessToken);

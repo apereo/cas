@@ -12,6 +12,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
@@ -24,6 +25,7 @@ import lombok.val;
 import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.servlet.ModelAndView;
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -74,6 +76,7 @@ public class CibaPushTokenDeliveryHandler implements CibaTokenDeliveryHandler {
                         .url(registeredService.getBackchannelClientNotificationEndpoint())
                         .entity(MAPPER.writeValueAsString(payload))
                         .httpClient(configurationContext.getHttpClient())
+                        .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                         .build();
                     LOGGER.debug("Sending a POST request to [{}] with payload [{}]", exec.getUrl(), exec.getEntity());
                     response = HttpUtils.execute(exec);
@@ -102,7 +105,7 @@ public class CibaPushTokenDeliveryHandler implements CibaTokenDeliveryHandler {
             .casProperties(configurationContext.getCasProperties())
             .generatedToken(generatedTokenResult)
             .grantType(OAuth20GrantTypes.CIBA)
-            .cibaRequestId(cibaRequest.getId())
+            .cibaRequestId(cibaRequest.getEncodedId())
             .service(service)
             .build();
         val payload = configurationContext.getAccessTokenResponseGenerator().generate(tokenResult);
@@ -121,6 +124,8 @@ public class CibaPushTokenDeliveryHandler implements CibaTokenDeliveryHandler {
             .registeredService(registeredService)
             .authentication(cibaRequest.getAuthentication())
             .service(service)
+            .cibaRequestId(cibaRequest.getEncodedId())
+            .generateRefreshToken(registeredService.isGenerateRefreshToken())
             .build();
         return configurationContext.getAccessTokenGenerator().generate(tokenRequestContext);
     }
