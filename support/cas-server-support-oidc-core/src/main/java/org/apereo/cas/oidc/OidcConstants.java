@@ -89,6 +89,11 @@ public interface OidcConstants {
      */
     String CLAIM_AT_HASH = "at_hash";
     /**
+     * The refresh token hash.
+     */
+    String CLAIM_RT_HASH = "urn:openid:params:jwt:claim:rt_hash";
+
+    /**
      * The session identifier claim.
      */
     String CLAIM_SESSION_ID = "sid";

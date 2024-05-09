@@ -12,6 +12,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.hc.core5.http.HttpException;
 import org.apache.hc.core5.http.HttpResponse;
@@ -27,6 +28,7 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @Getter
+@Slf4j
 public class CibaPingTokenDeliveryHandler implements CibaTokenDeliveryHandler {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .singleValueAsArray(true).defaultTypingEnabled(false).build().toObjectMapper();
@@ -48,10 +50,11 @@ public class CibaPingTokenDeliveryHandler implements CibaTokenDeliveryHandler {
                 .entity(MAPPER.writeValueAsString(payload))
                 .httpClient(configurationContext.getHttpClient())
                 .build();
+            LOGGER.debug("Sending a POST request to [{}] with payload [{}]", exec.getUrl(), exec.getEntity());
             response = HttpUtils.execute(exec);
             FunctionUtils.throwIf(!HttpStatus.valueOf(response.getCode()).is2xxSuccessful(),
                 () -> new HttpException("Unable to deliver tokens to client application %s".formatted(registeredService.getName())));
-            
+            LOGGER.debug("Marking CIBA authentication request [{}] as ready", cibaRequest.getEncodedId());
             configurationContext.getTicketRegistry().updateTicket(cibaRequest.markTicketReady());
             return payload;
         } finally {

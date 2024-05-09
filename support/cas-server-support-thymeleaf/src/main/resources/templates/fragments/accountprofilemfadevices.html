@@ -78,6 +78,8 @@
                             <span th:switch="${entry.source}">
                                 <span th:case="'Google Authenticator'"><i class="mdi mdi-google" aria-hidden="true"></i></span>
                                 <span th:case="'Web Authn'"><i class="mdi mdi-fingerprint" aria-hidden="true"></i></span>
+                                <span th:case="'Duo Security'"><i class="mdi mdi-security"></i></span>
+                                <span th:case="'YubiKey'"><i class="mdi mdi-usb-flash-drive"></i></span>
                                 <span th:case="*"></span>
                             </span>
                             <span th:utext="${entry.source}"/>

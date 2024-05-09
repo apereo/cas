@@ -791,7 +791,7 @@ if [[ "${DRYRUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" 
   if [[ $RC -ne 0 ]]; then
     printred "Test scenario [${scenarioName}] has failed with exit code ${RC}.\n"
   else
-    printgreen "Test scenario [${scenarioName}] has passed successfully!\n"
+    printgreen "Test scenario [${scenarioName}] has passed successfully.\n"
   fi
 fi
 

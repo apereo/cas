@@ -502,19 +502,19 @@ if [[ -z "$task" ]] && [[ -z "$coverageTask" ]]; then
 fi
 
 cmd="$gradleCmd ${GREEN}$task $tests${ENDCOLOR}${flags}${debug}${dryRun}${info}${parallel}${GREEN}$coverageTask${ENDCOLOR}"
-printf "${cmd}\n"
+printf "${cmd}%n"
 
 cmd="$gradleCmd $task $tests $flags ${debug} ${parallel} ${dryRun} ${info} ${coverageTask}"
 eval "$cmd"
 retVal=$?
 echo -e "***************************************************************************************"
-printf "${CYAN}Gradle build finished at `date` with exit code $retVal ${ENDCOLOR}\n"
+printf "${CYAN}Gradle build finished at `date` with exit code $retVal ${ENDCOLOR}%n"
 echo -e "***************************************************************************************"
 
 if [ $retVal == 0 ]; then
-    printf "${GREEN}Gradle build finished successfully.${ENDCOLOR}\n"
+    printf "${GREEN}Gradle build finished successfully.${ENDCOLOR}%n"
     exit 0
 else
-    printf "${RED}Gradle build did NOT finish successfully.${ENDCOLOR}"
+    printf "${RED}Gradle build did NOT finish successfully.${ENDCOLOR}%n"
     exit $retVal
 fi

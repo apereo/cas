@@ -13,13 +13,13 @@ import java.util.LinkedHashSet;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link OAuth20AccessTokenAtHashGeneratorTests}.
+ * This is {@link OAuth20TokenHashGeneratorTests}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
 @Tag("OAuth")
-class OAuth20AccessTokenAtHashGeneratorTests extends AbstractOAuth20Tests {
+class OAuth20TokenHashGeneratorTests extends AbstractOAuth20Tests {
     @Test
     void verifyNoneAlgorithm() throws Throwable {
         val hash = generateHashWithAlgorithm("none");
@@ -32,11 +32,11 @@ class OAuth20AccessTokenAtHashGeneratorTests extends AbstractOAuth20Tests {
 
         val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(accessTokenJwtBuilder, registeredService,
             accessToken, accessToken.getService(), casProperties, false).encode(accessToken.getId());
-        return OAuth20AccessTokenAtHashGenerator
+        return OAuth20TokenHashGenerator
             .builder()
             .algorithm(alg)
             .registeredService(registeredService)
-            .encodedAccessToken(encodedAccessToken)
+            .token(encodedAccessToken)
             .build()
             .generate();
     }

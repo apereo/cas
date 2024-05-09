@@ -38,6 +38,9 @@ import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
+import org.apereo.cas.oidc.ticket.OidcCibaRequest;
+import org.apereo.cas.oidc.ticket.OidcCibaRequestFactory;
+import org.apereo.cas.oidc.web.controllers.ciba.CibaRequestContext;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
@@ -129,7 +132,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = AbstractOidcTests.SharedTestConfiguration.class,
     properties = {
         "spring.threads.virtual.enabled=true",
-        
+
         "spring.main.allow-bean-definition-overriding=true",
         "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",
 
@@ -472,8 +475,7 @@ public abstract class AbstractOidcTests {
 
     protected OAuth20AccessToken getAccessToken(final Principal principal, final String idToken,
                                                 final String clientId) throws Throwable {
-        val code = addCode(principal, getOidcRegisteredService());
-
+        val code = addCode(principal, getOidcRegisteredService(clientId));
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication(principal));
         when(accessToken.getService()).thenReturn(RegisteredServiceTestUtils.getService("https://oauth.example.org"));
@@ -508,6 +510,21 @@ public abstract class AbstractOidcTests {
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.ticketRegistry.addTicket(code);
         return code;
+    }
+
+    protected OidcCibaRequest newCibaRequest(final OidcRegisteredService registeredService,
+                                             final Principal principal) throws Throwable {
+        val cibaRequestContext = CibaRequestContext.builder()
+            .clientNotificationToken(UUID.randomUUID().toString())
+            .clientId(registeredService.getClientId())
+            .scope(Set.of(OidcConstants.StandardScopes.OPENID.getScope()))
+            .userCode(UUID.randomUUID().toString())
+            .principal(principal)
+            .build();
+        val cibaFactory = (OidcCibaRequestFactory) defaultTicketFactory.get(OidcCibaRequest.class);
+        val cibaRequestId = cibaFactory.create(cibaRequestContext);
+        ticketRegistry.addTicket(cibaRequestId);
+        return cibaRequestId;
     }
 
     @ImportAutoConfiguration({

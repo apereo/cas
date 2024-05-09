@@ -21,7 +21,7 @@ public class WebAuthnMultifactorAccountProfilePrepareAction extends ConsumerExec
         final CasConfigurationProperties casProperties) {
         super(requestContext -> {
             val principal = WebUtils.getAuthentication(requestContext).getPrincipal();
-            val core = casProperties.getAuthn().getMfa().getGauth().getCore();
+            val core = casProperties.getAuthn().getMfa().getWebAuthn().getCore();
             val enabled = core.isMultipleDeviceRegistrationEnabled() || webAuthnCredentialRepository.getRegistrationsByUsername(principal.getId()).isEmpty();
             requestContext.getFlowScope().put("webauthnAccountProfileRegistrationEnabled", enabled);
             MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(requestContext, webAuthnMultifactorAuthenticationProvider);

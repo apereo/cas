@@ -15,7 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
- * This is {@link OAuth20AccessTokenAtHashGenerator}.
+ * This is {@link OAuth20TokenHashGenerator}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
@@ -23,8 +23,8 @@ import java.util.Arrays;
 @SuperBuilder
 @Getter
 @Slf4j
-public class OAuth20AccessTokenAtHashGenerator {
-    private final String encodedAccessToken;
+public class OAuth20TokenHashGenerator {
+    private final String token;
 
     private final String algorithm;
 
@@ -36,7 +36,7 @@ public class OAuth20AccessTokenAtHashGenerator {
      * @return the string
      */
     public String generate() {
-        val tokenBytes = encodedAccessToken.getBytes(StandardCharsets.UTF_8);
+        val tokenBytes = token.getBytes(StandardCharsets.UTF_8);
         if (AlgorithmIdentifiers.NONE.equalsIgnoreCase(this.algorithm)) {
             LOGGER.debug("Signing algorithm specified by service [{}] is unspecified/none", registeredService.getServiceId());
             return EncodingUtils.encodeUrlSafeBase64(tokenBytes);
@@ -73,6 +73,6 @@ public class OAuth20AccessTokenAtHashGenerator {
             || AlgorithmIdentifiers.ECDSA_USING_P256_CURVE_AND_SHA256.equalsIgnoreCase(algorithm)) {
             return MessageDigestAlgorithms.SHA_256;
         }
-        throw new IllegalArgumentException("Could not determine the hash algorithm for the id token");
+        throw new IllegalArgumentException("Could not determine the hash algorithm for token");
     }
 }

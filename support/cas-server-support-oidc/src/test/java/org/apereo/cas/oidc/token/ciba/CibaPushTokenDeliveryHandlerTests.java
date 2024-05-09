@@ -1,13 +1,8 @@
 package org.apereo.cas.oidc.token.ciba;
 
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.ticket.OidcCibaRequest;
-import org.apereo.cas.oidc.ticket.OidcCibaRequestFactory;
-import org.apereo.cas.oidc.web.controllers.ciba.CibaRequestContext;
 import org.apereo.cas.services.OidcBackchannelTokenDeliveryModes;
-import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -54,22 +49,9 @@ public class CibaPushTokenDeliveryHandlerTests extends AbstractOidcTests {
             assertTrue(delivery.containsKey(OAuth20Constants.EXPIRES_IN));
             assertTrue(delivery.containsKey(OAuth20Constants.TOKEN_TYPE));
             assertTrue(delivery.containsKey(OidcConstants.ID_TOKEN));
+            assertTrue(delivery.containsKey(OidcConstants.AUTH_REQ_ID));
         }
     }
 
-    private OidcCibaRequest newCibaRequest(final OidcRegisteredService registeredService,
-                                           final Principal principal) throws Throwable {
-        val cibaRequestContext = CibaRequestContext.builder()
-            .clientNotificationToken(UUID.randomUUID().toString())
-            .clientId(registeredService.getClientId())
-            .scope(Set.of(OidcConstants.StandardScopes.OPENID.getScope()))
-            .userCode(UUID.randomUUID().toString())
-            .principal(principal)
-            .build();
-        val cibaFactory = (OidcCibaRequestFactory) defaultTicketFactory.get(OidcCibaRequest.class);
-        val cibaRequestId = cibaFactory.create(cibaRequestContext);
-        ticketRegistry.addTicket(cibaRequestId);
-        return cibaRequestId;
-    }
 
 }

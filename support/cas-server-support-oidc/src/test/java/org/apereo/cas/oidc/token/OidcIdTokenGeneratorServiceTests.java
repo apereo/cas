@@ -15,7 +15,7 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenAtHashGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenHashGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -418,8 +418,8 @@ class OidcIdTokenGeneratorServiceTests {
             val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(oidcAccessTokenJwtBuilder,
                 registeredService, accessToken, accessToken.getService(), issuer, casProperties);
             val encodedAccessToken = cipher.encode(accessToken.getId());
-            val newHash = OAuth20AccessTokenAtHashGenerator.builder()
-                .encodedAccessToken(encodedAccessToken)
+            val newHash = OAuth20TokenHashGenerator.builder()
+                .token(encodedAccessToken)
                 .registeredService(registeredService)
                 .algorithm(registeredService.getIdTokenSigningAlg())
                 .build()
