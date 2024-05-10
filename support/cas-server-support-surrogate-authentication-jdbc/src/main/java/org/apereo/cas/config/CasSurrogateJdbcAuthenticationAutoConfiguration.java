@@ -44,11 +44,9 @@ public class CasSurrogateJdbcAuthenticationAutoConfiguration {
         val su = casProperties.getAuthn().getSurrogate();
         return BeanSupplier.of(SurrogateAuthenticationService.class)
             .when(() -> StringUtils.isNotBlank(su.getJdbc().getSurrogateSearchQuery()))
-            .supply(Unchecked.supplier(() -> {
-                return new SurrogateJdbcAuthenticationService(su.getJdbc().getSurrogateSearchQuery(),
-                    new JdbcTemplate(surrogateAuthenticationJdbcDataSource),
-                    su.getJdbc().getSurrogateAccountQuery(), servicesManager);
-            }))
+            .supply(Unchecked.supplier(() -> new SurrogateJdbcAuthenticationService(
+                new JdbcTemplate(surrogateAuthenticationJdbcDataSource),
+                servicesManager, casProperties)))
             .otherwiseNull();
     }
 

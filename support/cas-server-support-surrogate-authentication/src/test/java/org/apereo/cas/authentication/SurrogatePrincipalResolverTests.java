@@ -58,7 +58,8 @@ class SurrogatePrincipalResolverTests {
     @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
     private AttributeRepositoryResolver attributeRepositoryResolver;
     
-    @Mock
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
     @Mock
@@ -188,7 +189,9 @@ class SurrogatePrincipalResolverTests {
     }
 
     private SurrogateAuthenticationPrincipalBuilder getBuilder() {
-        val surrogateAuthenticationService = new SimpleSurrogateAuthenticationService(Map.of("test", List.of("surrogate")), mock(ServicesManager.class));
+        val surrogateAuthenticationService = new SimpleSurrogateAuthenticationService(
+            Map.of("test", List.of("surrogate")),
+            servicesManager, casProperties);
         return new DefaultSurrogateAuthenticationPrincipalBuilder(
             PrincipalFactoryUtils.newPrincipalFactory(),
             CoreAuthenticationTestUtils.getAttributeRepository(),

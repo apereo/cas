@@ -40,6 +40,10 @@ class SurrogatePrincipalElectionStrategyTests {
     private AttributeRepositoryResolver attributeRepositoryResolver;
 
 
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    private ServicesManager servicesManager;
+
     @Test
     void verifyNominate() throws Throwable {
         val surrogate = buildSurrogatePrincipal("cas-surrogate",
@@ -139,7 +143,7 @@ class SurrogatePrincipalElectionStrategyTests {
 
     private SurrogateAuthenticationPrincipalBuilder getBuilder() {
         val surrogateAuthenticationService = new SimpleSurrogateAuthenticationService(
-            Map.of("test", List.of("surrogate")), mock(ServicesManager.class));
+            Map.of("test", List.of("surrogate")), servicesManager, casProperties);
         return new DefaultSurrogateAuthenticationPrincipalBuilder(
             PrincipalFactoryUtils.newPrincipalFactory(),
             CoreAuthenticationTestUtils.getAttributeRepository(),

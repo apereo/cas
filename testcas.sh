@@ -95,6 +95,10 @@ while (( "$#" )); do
         parallel=""
         shift
         ;;
+    --events)
+        flags+=" -DtestLoggingEvents=$2 "
+        shift 2
+        ;;
     --no-watch)
         flags+=" --no-watch-fs "
         shift

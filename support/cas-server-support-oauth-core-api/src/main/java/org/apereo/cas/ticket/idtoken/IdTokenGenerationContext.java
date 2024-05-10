@@ -6,6 +6,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.With;
@@ -35,9 +36,11 @@ public class IdTokenGenerationContext {
     @Nullable
     private final UserProfile userProfile;
     @Nonnull
-    private final OAuth20ResponseTypes responseType;
+    @Builder.Default
+    private final OAuth20ResponseTypes responseType = OAuth20ResponseTypes.NONE;
     @Nonnull
-    private final OAuth20GrantTypes grantType;
+    @Builder.Default
+    private final OAuth20GrantTypes grantType = OAuth20GrantTypes.NONE;
     @Nonnull
     private final OAuthRegisteredService registeredService;
 }

@@ -133,7 +133,6 @@ jobs:
             [[ $? -eq 0 ]] && ./testcas.sh --no-watch --with-coverage
       - name: Check Coverage Report
         run: |
-          ls build/reports/jacoco/jacocoRootReport
           xml_files=$(find build/reports -type f -name "*.xml")
           if [ -z "$xml_files" ]; then
             echo "No coverage XML files found"
