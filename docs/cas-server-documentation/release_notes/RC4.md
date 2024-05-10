@@ -31,6 +31,7 @@ maintenance and release planning, especially when it comes to addressing critica
 
 - [Release Schedule](https://github.com/apereo/cas/milestones)
 - [Release Policy](/cas/developer/Release-Policy.html)
+- [Maintenance Policy](/cas/developer/Maintenance-Policy.html)
 
 ## System Requirements
 
@@ -61,15 +62,25 @@ and scenarios. At the moment, total number of jobs stands at approximately `479`
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
+### OpenID Connect CIBA Flow
+
+[Client-Initiated Backchannel Authentication (CIBA)](../authentication/OIDC-Authentication-CIBA.html) is 
+an OpenId Connect authentication flow in which RPs, that can obtain a valid 
+identifier for the user they want to authenticate, will be able to initiate an interaction flow to authenticate their 
+users without having end-user interaction from the consumption device. The flow involves direct communication from the 
+Client to CAS without redirect through the user's browser (consumption device).
+
 ## Other Stuff
           
-- CAS offers options to control SNI Host Checking for Jetty when used as an embedded container.
+- CAS offers options to control SNI Host Checking for [Jetty](../installation/Configuring-Servlet-Container-Embedded-Jetty.html) when used as an embedded container.
 - Selecting an authentication source during login attempts will force CAS to use that source, disregarding other sources allowed via the application's authentication policy.
 - The dependency graph for CAS libraries and dependencies is now published to GitHub.
 - Device registration and management for multifactor authentication is disabled for YubiKey, Google Authenticator and WebAuthN providers during password reset operations.
 - Trusted devices for multifactor authentication are now disabled and ignored during password reset operations.
 - The password management flow is heavily reworked to better support multifactor authentication flows.
-- Account management profile will no longer list duplicate multifactor authentication devices when multiple providers are in effect. 
+- [Account management profile](../registration/Account-Management-Overview.html) will no longer list duplicate multifactor authentication devices when multiple providers are in effect. 
+- Registering multiple WebAuthN devices in account management profile is now corrected to use the correct configuration property for activation.
+- Calculating a [device fingerprint](../mfa/Multifactor-TrustedDevice-Authentication-DeviceFingerprint.html) for multifactor authentication trusted devices is now able to use client-side technology to build a browser fingerprint
 
 ## Library Upgrades
 
@@ -79,4 +90,8 @@ are now configured to run with parallelism enabled.
 - Amazon SDK
 - Ldaptive
 - NodeJS
+- Nimbus JOSE
+- Jackson
+- Oracle JDBC Driver
+- Google Cloud Monitoring
 
