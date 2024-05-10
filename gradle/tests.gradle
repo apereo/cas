@@ -280,19 +280,22 @@ tasks.withType(Test).configureEach {
     list.add("java.base/sun.security.action=jdk.crypto.ec")
 
     list.add("-Xms512m")
-    list.add("-Xmx4g")
+    list.add("-Xmx6g")
 
     list.add("-XX:+EnableDynamicAgentLoading")
     jvmArgs = list
 
     testLogging {
-        events "PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
+        def testLoggingEvents = providers.systemProperty("testLoggingEvents")
+                .orElse("PASSED,SKIPPED,FAILED,STANDARD_OUT,STANDARD_ERROR").get().toUpperCase().split(",")
+        println testLoggingEvents
+        events testLoggingEvents
         exceptionFormat = "full"
 
         def verbose = providers.systemProperty("verbose").present
 
-        showStandardStreams = verbose
-        showExceptions = verbose
+        showStandardStreams = verbose && testLoggingEvents.contains("STANDARD_OUT")
+        showExceptions = verbose && testLoggingEvents.contains("FAILED")
         showCauses = verbose
     }
     

@@ -30,9 +30,9 @@ public class DeviceFingerprintProperties implements Serializable {
     private static final long serialVersionUID = 747021103142441353L;
 
     /**
-     * Component Separator for device fingerprints.
+     * Core settings for device fingerprinting.
      */
-    private String componentSeparator = "@";
+    private Core core = new Core();
 
     /**
      * Configure usage of client ip within trusted device fingerprints.
@@ -166,5 +166,18 @@ public class DeviceFingerprintProperties implements Serializable {
             setEnabled(false);
             setOrder(DEFAULT_ORDER);
         }
+    }
+
+    @Getter
+    @Setter
+    @Accessors(chain = true)
+    @RequiresModule(name = "cas-server-support-trusted-mfa")
+    public static class Core implements Serializable {
+        @Serial
+        private static final long serialVersionUID = 3290828606869889754L;
+        /**
+         * Component Separator for device fingerprints.
+         */
+        private String componentSeparator = "@";
     }
 }

@@ -18,13 +18,13 @@ beforehand and is provided to CAS upon login using a special syntax.
 When entering credentials, the following syntax should be used:
 
 ```bash
-[surrogate-userid][separator][primary-userid]
+[impersonated-userid][separator][primary-userid]
 ```
 
 For example, if you are `casuser` and you need to switch to `jsmith` as the
-surrogate user, the credential id provided to CAS would be `jsmith+casuser` where
-the separator is `+` and can be altered via the CAS configuration. You will
-need to provide your own password of course.
+surrogate (impersonated) user, the credential id or username provided to CAS would be `jsmith+casuser` where
+the separator is `+` and can be altered via the CAS configuration. CAS will first authenticate `casuser` as the
+primary user, and will then switch to `jsmith` when allowed.
 
 {% endtab %}
 
@@ -54,11 +54,11 @@ any other username without any restrictions or additional checks.
 
 <div class="alert alert-warning">:warning: <strong>Usage Warning</strong>
 <p>Be careful with this strategy! Designating an account as a wildcard will disable any and all other checks
-on the surrogate/impersonatee account and CAS will completely back away from validating and verifying
+on the surrogate/impersonated account and CAS will completely back away from validating and verifying
 the requested surrogate account.</p></div>
 
 To designate an account as a wildcard, the account store must be able to return and provide a list of
-authorized *impersonatee* accounts for the primary user with `*` as the only entry in the list, indicating the primary
+authorized *impersonated* accounts for the primary user with `*` as the only entry in the list, indicating the primary
 user is authorized to impersonate anyone. Also, note that account selection using a GUI approach is
 disabled and turned off for wildcarded accounts. The primary user tagged as a wildcard must begin the impersonation
 flow using the *Preselected* approach with a known surrogate user.

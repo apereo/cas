@@ -85,7 +85,7 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
 
             val props = new CasConfigurationProperties();
             props.getAuthn().getSurrogate().getRest().setUrl("http://localhost:%s".formatted(webServer.getPort()));
-            val surrogateService = new SurrogateRestAuthenticationService(props.getAuthn().getSurrogate().getRest(), servicesManager);
+            val surrogateService = new SurrogateRestAuthenticationService(servicesManager, props);
 
             val result = surrogateService.canImpersonate("cassurrogate",
                 CoreAuthenticationTestUtils.getPrincipal("casuser"),
@@ -105,7 +105,7 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
             webServer.start();
             val props = new CasConfigurationProperties();
             props.getAuthn().getSurrogate().getRest().setUrl("http://localhost:%s".formatted(webServer.getPort()));
-            val surrogateService = new SurrogateRestAuthenticationService(props.getAuthn().getSurrogate().getRest(), servicesManager);
+            val surrogateService = new SurrogateRestAuthenticationService(servicesManager, props);
             val result = surrogateService.getImpersonationAccounts("cassurrogate", Optional.empty());
             assertTrue(result.isEmpty());
         }

@@ -29,12 +29,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticationService {
 
-    private final CasConfigurationProperties casProperties;
-
     public SurrogateLdapAuthenticationService(final CasConfigurationProperties casProperties,
                                               final ServicesManager servicesManager) {
-        super(servicesManager);
-        this.casProperties = casProperties;
+        super(servicesManager, casProperties);
     }
 
     @Override
