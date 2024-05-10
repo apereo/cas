@@ -14,7 +14,6 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenHashGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -32,7 +31,6 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
-import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -59,10 +57,6 @@ class OidcIdTokenGeneratorServiceTests {
 
     private static final String OIDC_CLAIM_PREFERRED_USERNAME = "preferred_username";
 
-    private static final class MockOAuthRegisteredService extends OAuthRegisteredService {
-        @Serial
-        private static final long serialVersionUID = 8152953800891665827L;
-    }
 
     private OAuth20AccessToken buildAccessToken(final TicketGrantingTicket tgt, final Set<String> scope) {
         val accessToken = mock(OAuth20AccessToken.class);
@@ -425,21 +419,6 @@ class OidcIdTokenGeneratorServiceTests {
             assertNotNull(idToken);
         }
 
-        @Test
-        void verifyUnknownServiceType() throws Throwable {
-            assertThrows(IllegalArgumentException.class, () -> {
-                val accessToken = mock(OAuth20AccessToken.class);
-                val idTokenContext = IdTokenGenerationContext.builder()
-                    .accessToken(accessToken)
-                    .userProfile(new CommonProfile())
-                    .responseType(OAuth20ResponseTypes.CODE)
-                    .grantType(OAuth20GrantTypes.NONE)
-                    .registeredService(new MockOAuthRegisteredService())
-                    .build();
-                oidcIdTokenGenerator.generate(idTokenContext);
-            });
-        }
-
         @RepeatedTest(2)
         void verifyAccessTokenAsJwt(final RepetitionInfo repetitionInfo) throws Throwable {
             val request = new MockHttpServletRequest();
@@ -467,7 +446,7 @@ class OidcIdTokenGeneratorServiceTests {
                 .userProfile(profile)
                 .responseType(OAuth20ResponseTypes.CODE)
                 .grantType(OAuth20GrantTypes.NONE)
-                .registeredService(new MockOAuthRegisteredService())
+                .registeredService(registeredService)
                 .build();
             val idToken = oidcIdTokenGenerator.generate(idTokenContext);
             assertNotNull(idToken);

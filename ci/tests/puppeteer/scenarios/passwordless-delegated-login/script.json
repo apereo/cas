@@ -1,6 +1,5 @@
 {
   "dependencies": "passwordless-webflow,pac4j-webflow,reports",
-
   "conditions": {
     "docker": "true"
   },
@@ -16,7 +15,7 @@
 
     "--cas.http-client.host-name-verifier=none",
 
-    "--cas.authn.accept.users=casuser-server::Mellon,casuser-client::Mellon,casuser-none::Mellon",
+    "--cas.authn.accept.users=casuser-server::Mellon,casuser-client::Mellon,casuser-none::Mellon,casuser-saml::Mellon",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
@@ -42,7 +41,18 @@
 
     "--cas.authn.pac4j.cas[2].login-url=https://localhost:8444/cas/login",
     "--cas.authn.pac4j.cas[2].protocol=CAS30",
-    "--cas.authn.pac4j.cas[2].client-name=CasClient-None"
+    "--cas.authn.pac4j.cas[2].client-name=CasClient-None",
+
+    "--cas.authn.pac4j.saml[0].keystore-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].private-key-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].service-provider-entity-id=cas:apereo:pac4j:saml",
+    "--cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/sp-metadata.xml",
+    "--cas.authn.pac4j.saml[0].keystore-path=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/samlKeystore.jks",
+    "--cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=http://localhost:9443/simplesaml/saml2/idp/metadata.php",
+    "--cas.authn.pac4j.saml[0].destination-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
+    "--cas.authn.pac4j.saml[0].client-name=SAML2Client",
+    "--cas.authn.pac4j.saml[0].auto-redirect-type=SERVER",
+    "--cas.authn.pac4j.saml[0].principal-id-attribute=email"
   ],
-  "initScript": "${PWD}/ci/tests/cas/run-cas-server.sh"
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

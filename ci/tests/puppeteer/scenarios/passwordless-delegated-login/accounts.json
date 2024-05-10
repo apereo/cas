@@ -23,6 +23,14 @@
     "phoneNumber": "1234567890",
     "name" : "CAS",
     "delegatedAuthenticationEligible": "TRUE"
+  },
+  "casuser-saml" : {
+    "@class" : "org.apereo.cas.api.PasswordlessUserAccount",
+    "username": "casuser-saml",
+    "email": "cas@example.org",
+    "phoneNumber": "1234567890",
+    "name" : "CAS",
+    "delegatedAuthenticationEligible": "TRUE"
   }
 }
 
