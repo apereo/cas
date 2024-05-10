@@ -12,17 +12,25 @@ async function startAuthFlow(page, username) {
     assert(pswd === null);
     await cas.type(page, "#username", username);
     await cas.pressEnter(page);
-    await cas.sleep(9000);
+    await cas.sleep(5000);
     await cas.screenshot(page);
     await cas.logPage(page);
     const url = await page.url();
-    assert(url.startsWith("https://localhost:8444"));
-    await cas.sleep(1000);
-    await cas.loginWith(page);
-    await cas.sleep(9000);
+
+    let expectedUser = "casuser";
+    if (username.endsWith("-saml")) {
+        expectedUser = "user1@example.com";
+        await cas.loginWith(page, "user1", "password");
+    } else {
+        assert(url.startsWith("https://localhost:8444"));
+        await cas.sleep(1000);
+        await cas.loginWith(page);
+    }
+    await cas.sleep(5000);
     await cas.logPage(page);
     await cas.assertCookie(page);
-    await cas.assertInnerTextStartsWith(page, "#content div p", "You, casuser, have successfully logged in");
+    
+    await cas.assertInnerTextStartsWith(page, "#content div p", `You, ${expectedUser}, have successfully logged in`);
 
     await cas.click(page, "#auth-tab");
     await cas.sleep(1000);
@@ -41,11 +49,12 @@ async function startAuthFlow(page, username) {
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
-    const page = await cas.newPage(browser);
-
-    await startAuthFlow(page, "casuser-server");
-    await startAuthFlow(page, "casuser-none");
-    await startAuthFlow(page, "casuser-client");
-
+    const users = ["casuser-server", "casuser-none", "casuser-client", "casuser-saml"];
+    for (const user of users) {
+        const context = await browser.createBrowserContext();
+        const page = await cas.newPage(context);
+        await startAuthFlow(page, user);
+        await context.close();
+    }
     await browser.close();
 })();
