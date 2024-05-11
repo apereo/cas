@@ -36,6 +36,19 @@
                     new material.banner.MDCBanner(b);
                 })
             }
+            
+            for (const el of document.querySelectorAll('.mdc-switch')) {
+                let switchElement = new material.switchControl.MDCSwitch(el);
+                const switchInputs = document.querySelectorAll(`input[data-switch-btn="${el.id}"]`);
+                if (switchInputs.length === 1) {
+                    el.addEventListener('click', () => {
+                        const switchInput = switchInputs[0];
+                        console.log(`Clicked switch element "${switchInput.id}": ${switchElement.selected}`)
+                        switchInput.value = switchElement.selected;
+                    });
+                }
+            }
+            
         },
         checkCaps: ev => {
             let s = String.fromCharCode(ev.which);

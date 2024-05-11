@@ -220,24 +220,7 @@
                     <section class="cas-field form-check"
                              th:if="${'true' == #strings.defaultString(#themes.code('cas.warn-on-redirect.enabled'), 'true')}">
                         <div class="mdc-form-field ">
-                            <div class="mdc-checkbox">
-                                <input type="checkbox"
-                                       class="mdc-checkbox__native-control form-check-input"
-                                       name="warn"
-                                       id="warn"/>
-                                <div class="mdc-checkbox__background">
-                                    <svg class="mdc-checkbox__checkmark"
-                                         viewBox="0 0 24 24">
-                                        <path class="mdc-checkbox__checkmark-path"
-                                              fill="none"
-                                              d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
-                                    </svg>
-                                    <div class="mdc-checkbox__mixedmark"></div>
-                                </div>
-                                <div class="mdc-checkbox__ripple"></div>
-                            </div>
-                            <label class="form-check-label" for="warn"
-                                   th:utext="#{screen.welcome.label.warn}">Warn Me</label>
+                            <div th:replace="~{fragments/switchbutton :: switchbutton (id='warn', label='screen.welcome.label.warn')}"/>
                         </div>
                         <p/>
                     </section>
@@ -245,54 +228,19 @@
                     <section class="cas-field form-check"
                              th:if="${'true' == #strings.defaultString(#themes.code('cas.public-workstation.enabled'), 'true')}">
                         <div class="mdc-form-field ">
-                            <div class="mdc-checkbox">
-                                <input type="checkbox"
-                                       class="mdc-checkbox__native-control form-check-input"
-                                       name="publicWorkstation"
-                                       id="publicWorkstation"/>
-                                <div class="mdc-checkbox__background">
-                                    <svg class="mdc-checkbox__checkmark"
-                                         viewBox="0 0 24 24">
-                                        <path class="mdc-checkbox__checkmark-path"
-                                              fill="none"
-                                              d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
-                                    </svg>
-                                    <div class="mdc-checkbox__mixedmark"></div>
-                                </div>
-                                <div class="mdc-checkbox__ripple"></div>
-                            </div>
-                            <label class="form-check-label" for="publicWorkstation"
-                                   th:text="#{screen.welcome.label.publicstation}">Public Workstation</label>
+                            <div th:replace="~{fragments/switchbutton :: switchbutton (id='publicWorkstation', label='screen.welcome.label.publicstation')}"/>
                         </div>
                         <p/>
                     </section>
 
                     <section class="cas-field form-check" th:if="${rememberMeAuthenticationEnabled}">
                         <div class="mdc-form-field ">
-                            <div class="mdc-checkbox">
-                                <input type="checkbox"
-                                       class="mdc-checkbox__native-control form-check-input"
-                                       name="rememberMe"
-                                       id="rememberMe"/>
-                                <div class="mdc-checkbox__background">
-                                    <svg class="mdc-checkbox__checkmark"
-                                         viewBox="0 0 24 24">
-                                        <path class="mdc-checkbox__checkmark-path"
-                                              fill="none"
-                                              d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
-                                    </svg>
-                                    <div class="mdc-checkbox__mixedmark"></div>
-                                </div>
-                                <div class="mdc-checkbox__ripple"></div>
-                            </div>
-                            <label class="form-check-label" for="rememberMe"
-                                   th:text="#{screen.rememberme.checkbox.title}">Remember Me</label>
+                            <div th:replace="~{fragments/switchbutton :: switchbutton (id='rememberMe', label='screen.rememberme.checkbox.title')}"/>
                         </div>
                         <p/>
                     </section>
 
                     <section class="cas-field">
-
                         <span th:if="${recaptchaLoginEnabled}">
                             <div th:replace="~{fragments/recaptcha :: recaptchaToken}"/>
                         </span>

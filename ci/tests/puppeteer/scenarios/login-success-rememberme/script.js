@@ -6,7 +6,7 @@ async function loginAndVerify(browser) {
     const page = await cas.newPage(browser);
     await cas.gotoLogout(page);
     await cas.gotoLogin(page);
-    await cas.click(page, "#rememberMe");
+    await cas.click(page, "#rememberMeButton");
     await cas.loginWith(page);
     await cas.sleep(1000);
     let tgc = await cas.assertCookie(page);
