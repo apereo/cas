@@ -73,14 +73,15 @@ Client to CAS without redirect through the user's browser (consumption device).
 ## Other Stuff
           
 - CAS offers options to control SNI Host Checking for [Jetty](../installation/Configuring-Servlet-Container-Embedded-Jetty.html) when used as an embedded container.
-- Selecting an authentication source during login attempts will force CAS to use that source, disregarding other sources allowed via the application's authentication policy.
+- Selecting an [authentication source](../authentication/Configuring-Authentication-Policy-SourceSelection.html) during login attempts will force CAS to use that source, disregarding other sources allowed via the application's authentication policy.
 - The dependency graph for CAS libraries and dependencies is now published to GitHub.
-- Device registration and management for multifactor authentication is disabled for YubiKey, Google Authenticator and WebAuthN providers during password reset operations.
+- Device registration and management for multifactor authentication is disabled for YubiKey, Google Authenticator and WebAuthN providers during [password reset](../password_management/Password-Management-Reset.html) operations.
 - Trusted devices for multifactor authentication are now disabled and ignored during password reset operations.
 - The password management flow is heavily reworked to better support multifactor authentication flows.
 - [Account management profile](../registration/Account-Management-Overview.html) will no longer list duplicate multifactor authentication devices when multiple providers are in effect. 
 - Registering multiple WebAuthN devices in account management profile is now corrected to use the correct configuration property for activation.
-- Calculating a [device fingerprint](../mfa/Multifactor-TrustedDevice-Authentication-DeviceFingerprint.html) for multifactor authentication trusted devices is now able to use client-side technology to build a browser fingerprint
+- Calculation a [device fingerprint](../mfa/Multifactor-TrustedDevice-Authentication-DeviceFingerprint.html) for multifactor authentication trusted devices can use client-side technology to build a browser fingerprint.
+- Impersonation conditions can now be controlled via [principal attributes](../authentication/Surrogate-Authentication-AccountSelection.html) to allow for more fine-grained control.
 
 ## Library Upgrades
 

@@ -143,7 +143,7 @@ public class RegisteredServiceAccessStrategyUtils {
         if (!registeredService.getAccessStrategy().authorizeRequest(accessRequest)) {
             LOGGER.warn("Cannot grant access to service [{}]; it is not authorized for use by [{}].", serviceId, principalId);
             val handlerErrors = new HashMap<String, Throwable>();
-            val message = String.format("Cannot grant service access %s to %s", serviceId, principalId);
+            val message = String.format("Cannot authorize principal %s to access service %s, likely due to insufficient permissions", principalId, serviceId);
             val exception = new UnauthorizedServiceForPrincipalException(message, registeredService, principalId, attributes);
             handlerErrors.put(UnauthorizedServiceForPrincipalException.class.getSimpleName(), exception);
             throw new PrincipalException(message, handlerErrors, new HashMap<>(0));

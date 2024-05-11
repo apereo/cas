@@ -31,9 +31,10 @@ public class SurrogateAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = -2088813217398883623L;
 
     /**
-     * The separator character used to distinguish between the surrogate account and the admin account.
+     * Core settings that drive surrogate authentication.
      */
-    private String separator = "+";
+    @NestedConfigurationProperty
+    private SurrogateCoreAuthenticationProperties core = new SurrogateCoreAuthenticationProperties();
 
     /**
      * Locate surrogate accounts via CAS configuration, hardcoded as properties.

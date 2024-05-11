@@ -23,6 +23,10 @@ Example use cases for impersonation include:
 Surrogate authentication is enabled by including the following dependencies in the WAR overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-surrogate-webflow" %}
+    
+## Configuration
+
+{% include_cached casproperties.html properties="cas.authn.surrogate.core" %}
 
 ## Account Storage
 

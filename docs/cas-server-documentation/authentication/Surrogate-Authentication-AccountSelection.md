@@ -45,6 +45,21 @@ will need to provide your own password of course.
 
 {% endtab %}
 
+{% tab impersonationoptions Principal Attribute %}
+
+This option is similar to the *Wildcard* strategy, except that the impersonation logic is based off of a predefined principal attribute
+that is resolved and whose value(s) matches a certain regular expression pattern. That is, CAS can be configured to look for a specific attribute
+name for the primary/admin user and ensure that the attribute value matches a pattern to allow impersonation. The attribute is expected 
+to be already be found and resolved for the admin user.
+
+{% include_cached casproperties.html properties="cas.authn.surrogate.core" %}
+
+<div class="alert alert-warning">:warning: <strong>Usage Warning</strong>
+<p>Be careful with this strategy! Once a match is found, CAS will completely back away from validating and verifying
+the requested surrogate account and the admin user is authorized to impersonate everyone and anyone.</p></div>
+
+{% endtab %}
+
 {% tab impersonationoptions Wildcard %}
 
 The underlying account store can mark a primary *impersonator* account with special permissions

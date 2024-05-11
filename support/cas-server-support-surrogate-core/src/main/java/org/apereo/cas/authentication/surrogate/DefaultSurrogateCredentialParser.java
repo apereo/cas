@@ -22,16 +22,19 @@ public class DefaultSurrogateCredentialParser implements SurrogateCredentialPars
 
     @Override
     public Optional<SurrogateAuthenticationRequest> parse(final MutableCredential credential) {
-        if (credential != null && credential.getId().contains(properties.getSeparator())) {
-            val givenUserName = credential.getId();
-            val surrogateUsername = givenUserName.substring(0, givenUserName.indexOf(properties.getSeparator()));
-            val primaryUserName = givenUserName.substring(givenUserName.indexOf(properties.getSeparator()) + properties.getSeparator().length());
-            LOGGER.debug("Converting to surrogate credential for username [{}], surrogate username [{}]", primaryUserName, surrogateUsername);
-            return Optional.of(SurrogateAuthenticationRequest.builder()
-                .surrogateUsername(surrogateUsername)
-                .username(primaryUserName)
-                .credential(credential)
-                .build());
+        if (credential != null) {
+            val separator = properties.getCore().getSeparator();
+            if (credential.getId().contains(separator)) {
+                val givenUserName = credential.getId();
+                val surrogateUsername = givenUserName.substring(0, givenUserName.indexOf(separator));
+                val primaryUserName = givenUserName.substring(givenUserName.indexOf(separator) + separator.length());
+                LOGGER.debug("Converting to surrogate credential for username [{}], surrogate username [{}]", primaryUserName, surrogateUsername);
+                return Optional.of(SurrogateAuthenticationRequest.builder()
+                    .surrogateUsername(surrogateUsername)
+                    .username(primaryUserName)
+                    .credential(credential)
+                    .build());
+            }
         }
         LOGGER.debug("Credential is undefined or does not indicate a surrogate authentication request");
         return Optional.empty();
