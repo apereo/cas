@@ -6,7 +6,7 @@ async function verifyAuthenticationFlow(context, service) {
     const page = await cas.newPage(context);
 
     await cas.gotoLogin(page, service);
-    await cas.click(page, "#rememberMe");
+    await cas.click(page, "#rememberMeButton");
     await cas.loginWith(page);
     await cas.sleep(2000);
     const ticket = await cas.assertTicketParameter(page);
