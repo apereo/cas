@@ -37,4 +37,11 @@ public class OidcPushedAuthorizationProperties implements Serializable {
      */
     @DurationCapable
     private String maxTimeToLiveInSeconds = "PT30S";
+
+
+    /**
+     * The storage object name used and created by CAS to hold PARs
+     * in the backing ticket registry implementation.
+     */
+    private String storageName = "oidcPushedAuthzRequestsCache";
 }

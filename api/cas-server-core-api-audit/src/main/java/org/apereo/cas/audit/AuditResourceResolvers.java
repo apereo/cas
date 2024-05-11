@@ -180,4 +180,8 @@ public interface AuditResourceResolvers {
      * Resource resolver id {@code OIDC_ID_TOKEN_RESOURCE_RESOLVER}.
      */
     String OIDC_ID_TOKEN_RESOURCE_RESOLVER = "OIDC_ID_TOKEN_RESOURCE_RESOLVER";
+    /**
+     * Resource resolver id {@code OIDC_CIBA_RESPONSE_RESOURCE_RESOLVER}.
+     */
+    String OIDC_CIBA_RESPONSE_RESOURCE_RESOLVER = "OIDC_CIBA_RESPONSE_RESOURCE_RESOLVER";
 }

@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
 import org.springframework.webflow.execution.RequestContext;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 /**
@@ -66,6 +67,7 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
                 case final AuditableEntity auditableEntity -> getPrincipalFromAuditableEntity(auditTarget, returnValue, exception, auditableEntity);
                 case final Assertion assertion -> getPrincipalFromAssertion(auditTarget, returnValue, exception, assertion);
                 case final Credential credential -> getPrincipalFromCredential(auditTarget, returnValue, exception, credential);
+                case final HttpServletRequest httpServletRequest -> getPrincipalFromRequest(auditTarget, returnValue, exception, httpServletRequest);
                 default -> UNKNOWN_USER;
             };
         }
@@ -78,6 +80,14 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
             };
         }
         return currentPrincipal;
+    }
+
+    protected String getPrincipalFromRequest(final JoinPoint auditTarget, final Object returnValue,
+                                             final Exception exception, final HttpServletRequest httpServletRequest) {
+        return Optional.ofNullable(httpServletRequest.getAttribute(Principal.class.getName()))
+            .map(Principal.class::cast)
+            .map(Principal::getId)
+            .orElse(UNKNOWN_USER);
     }
 
     protected String getPrincipalFromCredential(final JoinPoint auditTarget, final Object returnValue, final Exception exception,
@@ -117,7 +127,7 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
     }
 
     protected String getPrincipalFromAuditableEntity(final JoinPoint auditTarget, final Object returnValue,
-                                                      final Exception exception, final AuditableEntity entity) {
+                                                     final Exception exception, final AuditableEntity entity) {
         return StringUtils.defaultIfBlank(entity.getAuditablePrincipal(), UNKNOWN_USER);
     }
 

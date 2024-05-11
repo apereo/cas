@@ -1,5 +1,8 @@
 package org.apereo.cas.oidc.web.controllers.ciba;
 
+import org.apereo.cas.audit.AuditActionResolvers;
+import org.apereo.cas.audit.AuditResourceResolvers;
+import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -28,6 +31,7 @@ import lombok.val;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.jee.context.JEEContext;
@@ -154,6 +158,9 @@ public class OidcCibaController extends BaseOidcController {
     @PostMapping(value = {
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL,
         "/**/" + OidcConstants.CIBA_URL}, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Audit(action = AuditableActions.OIDC_CIBA_RESPONSE,
+        actionResolverName = AuditActionResolvers.OIDC_CIBA_RESPONSE_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.OIDC_CIBA_RESPONSE_RESOURCE_RESOLVER)
     public ResponseEntity handleBackchannelAuthnRequest(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         val webContext = new JEEContext(request, response);
         val cibaRequestContext = buildCibaRequestContext(webContext);
@@ -191,6 +198,8 @@ public class OidcCibaController extends BaseOidcController {
             return badCibaRequest("Principal does not contain required attributes for notification");
         }
         val cibaRequest = recordCibaRequest(cibaRequestContext.withPrincipal(principal));
+        request.setAttribute(CibaRequestContext.class.getName(), cibaRequestContext);
+        request.setAttribute(Principal.class.getName(), principal);
         val cibaResponse = buildCibaResponse(cibaRequest);
         scheduleUserVerificationRequest(cibaRequest, cibaRequestContext, registeredService);
         return cibaResponse;
@@ -286,10 +295,8 @@ public class OidcCibaController extends BaseOidcController {
                 "Client ID", cibaRequest.getClientId(),
                 "Scopes", cibaRequest.getScopes(),
                 "Principal", cibaRequest.getAuthentication().getPrincipal().getId()));
-        return ResponseEntity.ok(Map.of(
-            OidcConstants.AUTH_REQ_ID, cibaRequest.getEncodedId(),
-            OAuth20Constants.EXPIRES_IN, cibaRequest.getExpirationPolicy().getTimeToLive()
-        ));
+        val cibaResponse = new OidcCibaResponse(cibaRequest.getEncodedId(), cibaRequest.getExpirationPolicy().getTimeToLive());
+        return ResponseEntity.ok(cibaResponse);
     }
     
 
