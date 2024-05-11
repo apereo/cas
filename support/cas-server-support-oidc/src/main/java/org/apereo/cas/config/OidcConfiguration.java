@@ -60,6 +60,7 @@ import org.apereo.cas.oidc.ticket.OidcDefaultCibaRequestFactory;
 import org.apereo.cas.oidc.ticket.OidcDefaultPushedAuthorizationRequestFactory;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestExpirationPolicyBuilder;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestFactory;
+import org.apereo.cas.oidc.ticket.OidcTicketCatalogConfigurer;
 import org.apereo.cas.oidc.token.OidcDefaultTokenGenerator;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
 import org.apereo.cas.oidc.token.OidcJwtAccessTokenCipherExecutor;
@@ -106,6 +107,7 @@ import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolv
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.TicketCatalogConfigurer;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
@@ -1119,6 +1121,12 @@ class OidcConfiguration {
             return () -> oidcCibaRequestFactory;
         }
 
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcTicketCatalogConfigurer")
+        public TicketCatalogConfigurer oidcTicketCatalogConfigurer() {
+            return new OidcTicketCatalogConfigurer();
+        }
     }
 
     @Configuration(value = "OidcResponseModesConfiguration", proxyBeanMethods = false)
@@ -1209,8 +1217,7 @@ class OidcConfiguration {
         }
 
     }
-
-
+    
     @Configuration(value = "OidcAssuranceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class OidcAssuranceConfiguration {

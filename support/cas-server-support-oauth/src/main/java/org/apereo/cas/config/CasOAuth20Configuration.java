@@ -1575,10 +1575,14 @@ class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthAuditTrailRecordResolutionPlanConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailRecordResolutionPlanConfigurer oauthAuditTrailRecordResolutionPlanConfigurer(
-            @Qualifier("oauthUserProfileDataAuditResourceResolver") final AuditResourceResolver oauthUserProfileDataAuditResourceResolver,
-            @Qualifier("oauthAccessTokenGrantRequestAuditResourceResolver") final AuditResourceResolver oauthAccessTokenGrantRequestAuditResourceResolver,
-            @Qualifier("oauthAccessTokenResponseAuditResourceResolver") final AuditResourceResolver oauthAccessTokenResponseAuditResourceResolver,
-            @Qualifier("oauthAuthorizationResponseAuditResourceResolver") final AuditResourceResolver oauthAuthorizationResponseAuditResourceResolver,
+            @Qualifier("oauthUserProfileDataAuditResourceResolver")
+            final AuditResourceResolver oauthUserProfileDataAuditResourceResolver,
+            @Qualifier("oauthAccessTokenGrantRequestAuditResourceResolver")
+            final AuditResourceResolver oauthAccessTokenGrantRequestAuditResourceResolver,
+            @Qualifier("oauthAccessTokenResponseAuditResourceResolver")
+            final AuditResourceResolver oauthAccessTokenResponseAuditResourceResolver,
+            @Qualifier("oauthAuthorizationResponseAuditResourceResolver")
+            final AuditResourceResolver oauthAuthorizationResponseAuditResourceResolver,
             final CasConfigurationProperties casProperties) {
             return plan -> {
                 plan.registerAuditActionResolver(AuditActionResolvers.OAUTH2_USER_PROFILE_ACTION_RESOLVER,

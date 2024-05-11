@@ -31,6 +31,12 @@ public class OidcCibaProperties implements Serializable {
      */
     @DurationCapable
     private String maxTimeToLiveInSeconds = "PT5M";
+
+    /**
+     * The storage object name used and created by CAS to hold CIBA requests
+     * in the backing ticket registry implementation.
+     */
+    private String storageName = "oidcCibaRequestsCache";
     
     /**
      * Control CIBA notification settings

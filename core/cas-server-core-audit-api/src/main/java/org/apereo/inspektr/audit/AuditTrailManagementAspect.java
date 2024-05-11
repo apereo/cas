@@ -18,6 +18,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.util.Assert;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * A POJO style aspect modularizing management of an audit trail data concern.
@@ -114,8 +115,10 @@ public class AuditTrailManagementAspect {
             return joinPoint.proceed();
         }
 
-        val auditActionResolver = this.auditActionResolvers.get(audit.actionResolverName());
-        val auditResourceResolver = this.auditResourceResolvers.get(audit.resourceResolverName());
+        val auditActionResolver = auditActionResolvers.get(audit.actionResolverName());
+        Objects.requireNonNull(auditActionResolver, () -> "AuditActionResolver is undefined for %s".formatted(audit.actionResolverName()));
+        val auditResourceResolver = auditResourceResolvers.get(audit.resourceResolverName());
+        Objects.requireNonNull(auditResourceResolver, () -> "AuditActionResolver is undefined for %s".formatted(audit.actionResolverName()));
         auditResourceResolver.setAuditFormat(this.auditFormat);
 
         String currentPrincipal = null;

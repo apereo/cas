@@ -4,6 +4,7 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableEntity;
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.mock.web.MockHttpServletRequest;
 import java.util.UUID;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,6 +50,7 @@ public class DefaultAuditPrincipalResolverTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
+    
     @ParameterizedTest
     @MethodSource("getAuditParameters")
     void verifyOperation(final Object argument, final Object returnValue) throws Exception {
@@ -128,6 +131,9 @@ public class DefaultAuditPrincipalResolverTests {
         val auditableEntity = mock(AuditableEntity.class);
         when(auditableEntity.getAuditablePrincipal()).thenReturn(authentication.getPrincipal().getId());
 
+        val httpRequest = new MockHttpServletRequest();
+        httpRequest.setAttribute(Principal.class.getName(), authentication.getPrincipal());
+        
         return Stream.of(
             arguments(context, null),
             arguments(sloRequest, null),
@@ -137,7 +143,8 @@ public class DefaultAuditPrincipalResolverTests {
             arguments(auditableContext, null),
             arguments(authentication, null),
             arguments(assertion, null),
-            arguments(auditableEntity, null)
+            arguments(auditableEntity, null),
+            arguments(httpRequest, null)
         );
     }
 

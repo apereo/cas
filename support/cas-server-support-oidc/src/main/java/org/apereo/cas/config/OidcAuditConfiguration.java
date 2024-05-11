@@ -6,6 +6,7 @@ import org.apereo.cas.audit.AuditTrailConstants;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.oidc.audit.OidcCibaResponseAuditResourceResolver;
 import org.apereo.cas.oidc.audit.OidcIdTokenAuditResourceResolver;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
@@ -38,15 +39,31 @@ class OidcAuditConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "oidcCibaResponseResourceResolver")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public AuditResourceResolver oidcCibaResponseResourceResolver(final CasConfigurationProperties casProperties) {
+        return new OidcCibaResponseAuditResourceResolver(casProperties.getAudit().getEngine());
+    }
+
+    @Bean
     @ConditionalOnMissingBean(name = "oidcAuditTrailRecordResolutionPlanConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuditTrailRecordResolutionPlanConfigurer oidcAuditTrailRecordResolutionPlanConfigurer(
-        @Qualifier("oidcIdTokenResourceResolver") final AuditResourceResolver oidcIdTokenResourceResolver,
+        @Qualifier("oidcIdTokenResourceResolver")
+        final AuditResourceResolver oidcIdTokenResourceResolver,
+        @Qualifier("oidcCibaResponseResourceResolver")
+        final AuditResourceResolver oidcCibaResponseResourceResolver,
         final CasConfigurationProperties casProperties) {
         return plan -> {
             plan.registerAuditActionResolver(AuditActionResolvers.OIDC_ID_TOKEN_ACTION_RESOLVER,
                 new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
             plan.registerAuditResourceResolver(AuditResourceResolvers.OIDC_ID_TOKEN_RESOURCE_RESOLVER, oidcIdTokenResourceResolver);
+
+
+            plan.registerAuditActionResolver(AuditActionResolvers.OIDC_CIBA_RESPONSE_ACTION_RESOLVER,
+                new DefaultAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED, AuditTrailConstants.AUDIT_ACTION_POSTFIX_CREATED));
+            plan.registerAuditResourceResolver(AuditResourceResolvers.OIDC_CIBA_RESPONSE_RESOURCE_RESOLVER, oidcCibaResponseResourceResolver);
+            
         };
     }
 }
