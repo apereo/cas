@@ -37,9 +37,9 @@ public class MultifactorAuthenticationAccountProfileWebflowConfigurer extends Ab
 
     @Override
     protected void doInitialize() {
-        val flow = getFlow(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
-        if (flow != null) {
-            val accountView = getState(flow, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW, ViewState.class);
+        val accountFlow = getFlow(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
+        if (accountFlow != null) {
+            val accountView = getState(accountFlow, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW, ViewState.class);
             var currentActions = Arrays.stream(accountView.getRenderActionList().toArray())
                 .filter(MultifactorAuthenticationDeviceProviderAction.class::isInstance)
                 .map(MultifactorAuthenticationDeviceProviderAction.class::cast)

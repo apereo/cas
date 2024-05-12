@@ -58,7 +58,7 @@ class GoogleAuthenticatorAuthenticationDeviceProviderActionTests {
         assertNull(googleAccountDeviceProviderAction.execute(context));
         val registeredDevices = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationRegisteredDevices(context);
         assertEquals(1, registeredDevices.size());
-        assertEquals("Google Authenticator", registeredDevices.getFirst().getSource());
+        assertEquals("Google Authenticator", registeredDevices.iterator().next().getSource());
     }
 
 }

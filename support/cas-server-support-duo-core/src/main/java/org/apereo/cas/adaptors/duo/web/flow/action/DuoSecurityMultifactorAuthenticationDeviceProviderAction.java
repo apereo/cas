@@ -41,7 +41,7 @@ public class DuoSecurityMultifactorAuthenticationDeviceProviderAction extends Ba
             .filter(provider -> Objects.nonNull(provider.getDeviceManager()))
             .map(provider -> provider.getDeviceManager().findRegisteredDevices(principal))
             .flatMap(List::stream)
-            .collect(Collectors.toList());
+            .collect(Collectors.toSet());
         MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationRegisteredDevices(requestContext, accounts);
         return null;
     }

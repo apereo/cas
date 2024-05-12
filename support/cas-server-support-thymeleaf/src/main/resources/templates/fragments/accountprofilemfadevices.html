@@ -93,8 +93,9 @@
                         <td class="mdc-data-table__cell" th:title="${entry.number}"
                             th:utext="*{entry.number}?: 'N/A'">Value</td>
                         <td class="mdc-data-table__cell">
-                            <button type="button" name="viewMfaDeviceDetails" href="#" th:if="${entry.payload}" class="btn btn-link">
-                            <i class="mdi mdi-account-details fas fa-eye" aria-hidden="true"></i>
+                            <button type="button" name="viewMfaDeviceDetails" href="#" th:if="${entry.payload}"
+                                    class="mdc-button mdc-button--raised me-2 btn btn-link min-width-48x">
+                            <i class="mdi mdi-account-details fas fa-eye min-width-48x" aria-hidden="true"></i>
                             <span style="display: none" th:utext="${entry.payload}"/>
                             </button>
                         </td>
@@ -110,9 +111,9 @@
                     <button id="register" name="register" accesskey="r" value="Register" type="button"
                             class="mdc-button mdc-button--raised mdc-button--leading btn btn-primary me-2"
                             onclick="initializeMenus();">
-                    <span class="mdc-button__ripple"></span>
-                    <i class="mdi mdi-arrow-down" aria-hidden="true"></i>
-                    <span class="mdc-button__label" th:utext="#{screen.welcome.button.register}"></span>
+                        <span class="mdc-button__ripple"></span>
+                        <i class="mdi mdi-arrow-down" aria-hidden="true"></i>
+                        <span class="mdc-button__label" th:utext="#{screen.welcome.button.register}"></span>
                     </button>
                     <form method="post" id="fm2" th:action="@{${'/' + activeFlowId} }">
                         <div class="mdc-menu mdc-menu-surface mw-25">
@@ -146,23 +147,23 @@
                                 </li>
                             </ul>
                         </div>
-                        </div>
                         <input type="hidden" name="type" value=""/>
                         <input type="hidden" name="_eventId_register" value="Register"/>
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                     </form>
 
-                <script type="text/javascript" th:inline="javascript">
-                    function initializeMenus() {
-                        const registrationMenu = new mdc.menu.MDCMenu(document.querySelector('.mdc-menu'));
-                        registrationMenu.open = true;
-                    }
+                    <script type="text/javascript" th:inline="javascript">
+                        function initializeMenus() {
+                            const registrationMenu = new mdc.menu.MDCMenu(document.querySelector('.mdc-menu'));
+                            registrationMenu.open = true;
+                        }
 
-                    function submitRegistrationRequest(type) {
-                        document.forms.fm2.type.value = type;
-                        document.forms.fm2.submit();
-                    }
-                </script>
+                        function submitRegistrationRequest(type) {
+                            document.forms.fm2.type.value = type;
+                            document.forms.fm2.submit();
+                        }
+                    </script>
+                </div>
             </div>
         </div>
 

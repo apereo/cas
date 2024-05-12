@@ -50,7 +50,7 @@
 
                         <script th:inline="javascript">
                             /*<![CDATA[*/
-                            let serviceId = /*[[${service.serviceId}]]*/;
+                            serviceId = /*[[${service.serviceId}]]*/;
                             if (isValidURL(serviceId)) {
                                 let id = /*[[${'service' + service.id}]]*/;
                                 $(`a#${id}`).attr("href", serviceId);
@@ -59,7 +59,7 @@
                         </script>
                     </td>
                     <td class="mdc-data-table__cell">
-                        <span th:utext="${service.description}"/>
+                        <span th:utext="${service.description}" class="text-wrap"/>
                     </td>
                 </tr>
                 </tbody>

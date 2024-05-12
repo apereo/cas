@@ -288,7 +288,6 @@ tasks.withType(Test).configureEach {
     testLogging {
         def testLoggingEvents = providers.systemProperty("testLoggingEvents")
                 .orElse("PASSED,SKIPPED,FAILED,STANDARD_OUT,STANDARD_ERROR").get().toUpperCase().split(",")
-        println testLoggingEvents
         events testLoggingEvents
         exceptionFormat = "full"
 

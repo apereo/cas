@@ -19,24 +19,8 @@
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="_eventId" value="success"/>
             <div class="mdc-form-field form-check">
-                <div class="mdc-checkbox">
-                    <input id="ignorewarn"
-                           class="mdc-checkbox__native-control form-check-input"
-                           name="ignorewarn"
-                           type="checkbox"/>
-                    <div class="mdc-checkbox__background">
-                        <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
-                            <path class="mdc-checkbox__checkmark-path" fill="none"
-                                  d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
-                        </svg>
-                        <div class="mdc-checkbox__mixedmark"></div>
-                    </div>
-                    <div class="mdc-checkbox__ripple"></div>
-                </div>
-                <label class="form-check-label" for="ignorewarn"
-                       th:utext="#{screen.welcome.label.warnremove}">Do not warn me again</label>
+                <div th:replace="~{fragments/switchbutton :: switchbutton (id='ignorewarn', label='screen.welcome.label.warnremove')}"/>
             </div>
-
             <button id="continueButton" class="mdc-button mdc-button--raised btn btn-primary mt-4 d-block" type="submit">
                 <span th:text="#{screen.button.continue}"></span>
             </button>

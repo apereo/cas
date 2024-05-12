@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import java.util.HashSet;
 
 /**
  * This is {@link DefaultMultifactorAuthenticationDeviceProviderAction}.
@@ -28,7 +29,7 @@ public class DefaultMultifactorAuthenticationDeviceProviderAction extends BaseCa
         val accounts = multifactorAuthenticationDeviceManager.findRegisteredDevices(principal);
         val currentAccounts = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationRegisteredDevices(requestContext);
         FunctionUtils.doIfNotNull(currentAccounts, __ -> accounts.addAll(currentAccounts));
-        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationRegisteredDevices(requestContext, accounts);
+        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationRegisteredDevices(requestContext, new HashSet<>(accounts));
         return null;
     }
 }
