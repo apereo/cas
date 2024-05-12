@@ -43,8 +43,8 @@ public class MultifactorAuthenticationSetTrustAction extends BaseCasWebflowActio
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
-        val authn = WebUtils.getAuthentication(requestContext);
-        if (authn == null) {
+        val authentication = WebUtils.getAuthentication(requestContext);
+        if (authentication == null) {
             LOGGER.error("Could not determine authentication from the request context");
             return error();
         }
@@ -52,7 +52,7 @@ public class MultifactorAuthenticationSetTrustAction extends BaseCasWebflowActio
         val registeredService = WebUtils.getRegisteredService(requestContext);
         val service = WebUtils.getService(requestContext);
 
-        if (bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authn)) {
+        if (bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authentication)) {
             LOGGER.debug("Trusted device registration is disabled for [{}]", registeredService);
             return success();
         }
@@ -69,14 +69,19 @@ public class MultifactorAuthenticationSetTrustAction extends BaseCasWebflowActio
         }
 
         if (!MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
-            val stored = storeTrustedAuthenticationRecord(requestContext, authn, deviceRecord);
+            val stored = storeTrustedAuthenticationRecord(requestContext, authentication, deviceRecord);
+            trackTrustedMultifactorAuthentication(requestContext, authentication);
             return success(stored);
         }
+        trackTrustedMultifactorAuthentication(requestContext, authentication);
+        return success();
+    }
+
+    protected void trackTrustedMultifactorAuthentication(final RequestContext requestContext, final Authentication authn) {
         LOGGER.debug("Trusted authentication session exists for [{}]", authn.getPrincipal().getId());
         MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
             authn, trustedProperties.getCore().getAuthenticationContextAttribute());
         WebUtils.putAuthentication(authn, requestContext);
-        return success();
     }
 
     protected MultifactorAuthenticationTrustRecord storeTrustedAuthenticationRecord(
