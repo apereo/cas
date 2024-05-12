@@ -50,7 +50,7 @@
                               th:utext="#{screen.welcome.forcedsso(${existingSingleSignOnSessionPrincipal?.id}, 'CAS')}"/>
                     </div>
                     <h2 th:unless="${existingSingleSignOnSessionAvailable}" class="text-center">
-                        <i class="mdi mdi-security fas fa-shield-alt" aria-hidden="true"></i>
+                        <i class="mdi mdi-login fas fa-shield-alt" aria-hidden="true"></i>
                         <span th:utext="#{screen.welcome.instructions}">Enter your Username and Password:</span>
                     </h2>
 

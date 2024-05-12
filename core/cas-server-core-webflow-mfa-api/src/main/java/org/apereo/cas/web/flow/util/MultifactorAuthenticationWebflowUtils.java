@@ -17,10 +17,11 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -209,10 +210,10 @@ public class MultifactorAuthenticationWebflowUtils {
      * @param requestContext the request context
      * @param accounts       the accounts
      */
-    public static void putMultifactorAuthenticationRegisteredDevices(final RequestContext requestContext, final List accounts) {
-        val list = ObjectUtils.defaultIfNull(getMultifactorAuthenticationRegisteredDevices(requestContext), new ArrayList<>());
-        list.addAll(accounts);
-        requestContext.getFlowScope().put("multifactorRegisteredAccounts", list);
+    public static void putMultifactorAuthenticationRegisteredDevices(final RequestContext requestContext, final Set accounts) {
+        val items = ObjectUtils.defaultIfNull(getMultifactorAuthenticationRegisteredDevices(requestContext), new HashSet<>());
+        items.addAll(accounts);
+        requestContext.getFlowScope().put("multifactorRegisteredAccounts", items);
     }
 
     /**
@@ -221,8 +222,8 @@ public class MultifactorAuthenticationWebflowUtils {
      * @param requestContext the request context
      * @return the multifactor authentication registered devices
      */
-    public List<MultifactorAuthenticationRegisteredDevice> getMultifactorAuthenticationRegisteredDevices(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("multifactorRegisteredAccounts", List.class);
+    public Set<MultifactorAuthenticationRegisteredDevice> getMultifactorAuthenticationRegisteredDevices(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("multifactorRegisteredAccounts", Set.class);
     }
 
     /**

@@ -91,16 +91,26 @@
                         <td class="mdc-data-table__cell" th:title="${entry.lastUsedDateTime}" th:utext="*{entry.lastUsedDateTime}?: 'N/A'">Value</td>
                         <td class="mdc-data-table__cell" th:title="${entry.expirationDateTime}" th:utext="*{entry.expirationDateTime}?: 'N/A'">Value</td>
                         <td class="mdc-data-table__cell">
-                            <button type="button" name="viewTrustedDeviceDetails" href="#" th:if="${entry.payload}" class="btn btn-link">
-                            <i class="mdi mdi-account-details fas fa-eye" aria-hidden="true"></i>
-                            <span style="display: none" th:utext="${entry.payload}"/>
-                            </button>
+                            <div class="d-flex" th:if="${entry.payload}">
+                                <button type="button" name="viewTrustedDeviceDetails" href="#" 
+                                        class="mdc-button mdc-button--raised me-2 btn btn-link min-width-48x">
+                                    <i class="mdi mdi-account-details fas fa-eye" aria-hidden="true"></i>
+                                    <span style="display: none" th:utext="${entry.payload}"/>
+                                </button>
+                                <form id="fm3" method="post" th:action="@{/account#divMultifactorTrustedDevices}">
+                                    <button class="mdc-button mdc-button--raised me-2 btn btn-link text-danger min-width-48x">
+                                        <i class="mdi mdi-delete fas fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                    <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
+                                    <input type="hidden" name="key" th:value="${entry.model}" />
+                                    <input type="hidden" name="_eventId" value="deleteTrustedDevice" />
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-
 </span>
 </body>
 </html>

@@ -14,7 +14,10 @@
 <span th:fragment="navigation">
        <div>
             <div class="mdc-drawer__header">
-                <h3 class="mdc-drawer__title" th:text="${authentication.principal.id}">Username</h3>
+                <h3 class="mdc-drawer__title">
+                    <span class="mdi mdi-account-tie"></span>
+                    <span th:text="${authentication.principal.id}">Username</span>
+                </h3>
                 <code class="mdc-drawer__subtitle"
                       th:if="${authentication.principal.attributes['displayName'] != null}"
                       th:text="${authentication.principal.attributes['displayName'][0]}">Display Name</code>

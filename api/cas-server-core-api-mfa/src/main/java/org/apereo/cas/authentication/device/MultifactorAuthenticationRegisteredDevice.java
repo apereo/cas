@@ -26,7 +26,7 @@ import java.util.Map;
 @SuperBuilder
 @Getter
 @ToString(of = {"name", "type", "id", "model"})
-@EqualsAndHashCode(of = {"name", "type", "id", "model"})
+@EqualsAndHashCode(of = {"name", "type", "id", "model", "source"})
 @Jacksonized
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Setter

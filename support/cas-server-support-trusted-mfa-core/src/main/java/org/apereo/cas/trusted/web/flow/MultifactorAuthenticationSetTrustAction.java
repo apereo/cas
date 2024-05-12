@@ -69,7 +69,8 @@ public class MultifactorAuthenticationSetTrustAction extends BaseCasWebflowActio
         }
 
         if (!MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
-            storeTrustedAuthenticationRecord(requestContext, authn, deviceRecord);
+            val stored = storeTrustedAuthenticationRecord(requestContext, authn, deviceRecord);
+            return success(stored);
         }
         LOGGER.debug("Trusted authentication session exists for [{}]", authn.getPrincipal().getId());
         MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(
@@ -78,9 +79,10 @@ public class MultifactorAuthenticationSetTrustAction extends BaseCasWebflowActio
         return success();
     }
 
-    protected void storeTrustedAuthenticationRecord(final RequestContext requestContext,
-                                                    final Authentication authentication,
-                                                    final MultifactorAuthenticationTrustBean deviceRecord) {
+    protected MultifactorAuthenticationTrustRecord storeTrustedAuthenticationRecord(
+        final RequestContext requestContext,
+        final Authentication authentication,
+        final MultifactorAuthenticationTrustBean deviceRecord) {
         if (storageService.isAvailable()) {
             val principal = authentication.getPrincipal().getId();
             LOGGER.debug("Attempting to store trusted authentication record for [{}] as device [{}]", principal, deviceRecord.getDeviceName());
@@ -98,8 +100,10 @@ public class MultifactorAuthenticationSetTrustAction extends BaseCasWebflowActio
             }
 
             LOGGER.debug("Trusted authentication record will expire at [{}]", record.getExpirationDate());
-            storageService.save(record);
-            LOGGER.debug("Saved trusted authentication record for [{}] under [{}]", principal, record.getName());
+            val stored = storageService.save(record);
+            LOGGER.debug("Saved trusted authentication record for [{}] under [{}]", principal, stored.getName());
+            return stored;
         }
+        return null;
     }
 }

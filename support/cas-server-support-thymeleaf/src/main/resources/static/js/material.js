@@ -43,12 +43,16 @@
                 if (switchInputs.length === 1) {
                     el.addEventListener('click', () => {
                         const switchInput = switchInputs[0];
-                        console.log(`Clicked switch element "${switchInput.id}": ${switchElement.selected}`)
+                        console.log(`Clicked switch element "${switchInput.id}": ${switchElement.selected}`);
                         switchInput.value = switchElement.selected;
                     });
                 }
             }
-            
+
+            for (const el of document.querySelectorAll('.mdc-menu')) {
+                new mdc.menu.MDCMenu(el);
+            }
+
         },
         checkCaps: ev => {
             let s = String.fromCharCode(ev.which);

@@ -160,6 +160,10 @@ button.close {
     -webkit-appearance: none;
 }
 
+form button i.mdi {
+    margin-right: 2px;
+}
+
 .banner {
     border: 1px solid rgba(0, 0, 0, .2);
     border: var(--cas-theme-border-light, 1px solid rgba(0, 0, 0, .2));
@@ -323,7 +327,11 @@ button.close {
 
 .mdi {
     content: "";
-    vertical-align: sub;
+    /*vertical-align: baseline;*/
+}
+
+#casAccountProfile .mdi {
+    vertical-align: baseline;
 }
 
 .mdi:before {
@@ -536,6 +544,11 @@ button.close {
     max-height: 100%;
 }
 
+.min-width-48x {
+    min-width: 48px !important;
+    width: 24px;
+}
+
 .min-vw-100 {
     min-width: 100vw;
 }
@@ -630,6 +643,10 @@ button.close {
     text-align: justify;
 }
 
+.text-wrap {
+    white-space: normal;
+}
+
 #duo_iframe {
     width: 100%;
     min-width: 304px;
@@ -656,6 +673,7 @@ button.close {
 #main-content {
     margin-right: 10px;
     margin-left: 10px;
+    margin-top: 2px;
 }
 
 /* oddly, the auto right and left margins caused the login form to not be centered in IE */

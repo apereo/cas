@@ -1497,6 +1497,10 @@ public interface CasWebflowConstants {
      * Action id 'accountProfileOidcRemoveAccessTokenAction'.
      */
     String ACTION_ID_ACCOUNT_PROFILE_REMOVE_OIDC_ACCESS_TOKEN = "accountProfileOidcRemoveAccessTokenAction";
+    /**
+     * Action id 'accountProfileRemoveMultifactorTrustedDeviceAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_REMOVE_MFA_TRUSTED_DEVICE = "accountProfileRemoveMultifactorTrustedDeviceAction";
 
     /**
      * Action id 'putBrowserStorageAction'.
