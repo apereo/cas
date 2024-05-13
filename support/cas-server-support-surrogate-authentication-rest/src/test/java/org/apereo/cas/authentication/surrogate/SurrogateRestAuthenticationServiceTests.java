@@ -96,7 +96,7 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
             
             val result = surrogateService.canImpersonate("cassurrogate",
                 CoreAuthenticationTestUtils.getPrincipal("casuser"),
-                Optional.of(CoreAuthenticationTestUtils.getService()));
+                Optional.of(application));
             /*
              * Can't use super() until the REST classes are
              * completely refactored and don't need an actual server to connect to.
