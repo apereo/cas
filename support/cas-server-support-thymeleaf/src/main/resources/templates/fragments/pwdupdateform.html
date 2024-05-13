@@ -36,12 +36,7 @@
                 }
                 $("#password").val(text);
                 $("#confirmedPassword").val(text);
-
-                let fields = document.querySelectorAll('.mdc-text-field');
-                fields.forEach(f => {
-                    const textField = new mdc.textField.MDCTextField(f);
-                    textField.focus();
-                });
+                
                 $('#submit').prop('disabled', "");
                 document.getElementById("password").dispatchEvent(new Event("keyup"));
             }

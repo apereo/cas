@@ -82,11 +82,7 @@ function jqueryReady() {
     let bar;
 
     if (barElement !== null && barElement !== undefined) {
-        if (typeof mdc !== 'undefined') {
-            bar = new mdc.linearProgress.MDCLinearProgress(barElement);
-        } else {
-            bar = $(barElement);
-        }
+        bar = $(barElement);
     }
 
     if (password !== null && password !== undefined) {
