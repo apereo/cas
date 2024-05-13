@@ -49,7 +49,11 @@ public interface CasWebflowConstants {
      */
     String ATTRIBUTE_PUBLIC_WORKSTATION = "publicWorkstation";
 
-
+    /**
+     * Flow attribute or request parameter indicating warning before redirecting.
+     */
+    String ATTRIBUTE_WARN_ON_REDIRECT = "warn";
+    
     /**
      * Attribute to track registered service in the flow.
      */
