@@ -29,7 +29,6 @@
             <h2>
                 <i class="mdi mdi-door-open fas fa-door-open" aria-hidden="true"></i>
                 <span>Hello, <span th:utext="${authentication.principal.id}"></span>!</span>
-
             </h2>
             <div class="text-justify">
                 <p th:utext="#{screen.account.applications}">Applications</p>
@@ -57,6 +56,10 @@
                             }
                             /*]]>*/
                         </script>
+                        <p>
+                            <a target="_blank" th:if="${service.informationUrl}" th:href="${service.informationUrl}">Information URL</a>
+                            <a target="_blank" th:if="${service.privacyUrl}" th:href="${service.privacyUrl}">Privacy URL</a>
+                        </p>
                     </td>
                     <td class="mdc-data-table__cell">
                         <span th:utext="${service.description}" class="text-wrap"/>

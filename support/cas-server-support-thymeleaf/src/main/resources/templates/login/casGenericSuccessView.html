@@ -181,27 +181,11 @@
 
                             })
                         } else {
-                            new mdc.dataTable.MDCDataTable(div);
-                            tabify(mdc);
+                            
                         }
                     });
                 }
             });
-
-            function tabify(material) {
-                let elm = document.getElementById('attribute-tabs');
-                let tabs = material.tabBar.MDCTabBar.attachTo(elm);
-
-                tabs.listen('MDCTabBar:activated', ev => {
-                    let index = ev.detail.index;
-                    $('.attribute-tab').addClass('d-none');
-                    $(`#attribute-tab-${index}`).removeClass('d-none');
-                });
-
-                tabs.foundation.adapter.activateTabAtIndex(0);
-                return tabs;
-            }
-
         </script>
     </div>
 </main>

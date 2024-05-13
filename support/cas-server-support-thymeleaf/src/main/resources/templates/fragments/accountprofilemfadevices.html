@@ -154,8 +154,7 @@
 
                     <script type="text/javascript" th:inline="javascript">
                         function initializeMenus() {
-                            const registrationMenu = new mdc.menu.MDCMenu(document.querySelector('.mdc-menu'));
-                            registrationMenu.open = true;
+                            cas.openMenu();
                         }
 
                         function submitRegistrationRequest(type) {
