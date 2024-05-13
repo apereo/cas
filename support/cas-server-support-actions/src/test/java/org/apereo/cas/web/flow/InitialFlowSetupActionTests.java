@@ -71,7 +71,7 @@ class InitialFlowSetupActionTests {
         @BeforeEach
         public void initialize() throws Exception {
             val warn = CookieGenerationContext.builder()
-                .name("warn")
+                .name(CasWebflowConstants.ATTRIBUTE_WARN_ON_REDIRECT)
                 .path(StringUtils.EMPTY)
                 .maxAge(2)
                 .domain(null)

@@ -57,6 +57,6 @@ class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests {
     void verifyUpdateOperation() throws Throwable {
         assertNotNull(loggingConfigurationEndpoint);
         assertDoesNotThrow(() ->
-            loggingConfigurationEndpoint.updateLoggerLevel("org.apereo", "warn", false));
+            loggingConfigurationEndpoint.updateLoggerLevel("org.apereo", "WARN", false));
     }
 }
