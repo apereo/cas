@@ -132,5 +132,20 @@ class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
             assertEquals(CasWebflowConstants.TRANSITION_ID_REGISTER,
                 mfaPrepareTrustDeviceViewAction.execute(context).getId());
         }
+
+        @Test
+        void verifyFlowDisabled() throws Throwable {
+            MultifactorAuthenticationTrustUtils.putMultifactorAuthenticationTrustedDevicesDisabled(context, Boolean.TRUE);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SKIP,
+                mfaPrepareTrustDeviceViewAction.execute(context).getId());
+        }
+
+        @Test
+        void verifyFlowDisabledForPublicWorkStation() throws Throwable {
+            context.setParameter(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION, Boolean.TRUE.toString());
+            WebUtils.putPublicWorkstationToFlowIfRequestParameterPresent(context);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SKIP,
+                mfaPrepareTrustDeviceViewAction.execute(context).getId());
+        }
     }
 }

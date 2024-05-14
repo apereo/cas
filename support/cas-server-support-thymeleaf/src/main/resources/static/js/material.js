@@ -8,19 +8,21 @@ let cas = {
         menu.open = true;
     },
     attachFields: () => {
-        new mdc.textField.MDCTextFieldHelperText(document.querySelectorAll('.mdc-text-field-helper-text'));
 
         let divs = document.querySelectorAll('.mdc-text-field');
-
         for (const div of divs) {
-            const textField = new mdc.textField.MDCTextField(div);
-            textField.focus();
+            new mdc.textField.MDCTextField(div);
             let field = mdc.textField.MDCTextField.attachTo(div);
             if (div.classList.contains('caps-check')) {
                 field.foundation.adapter.registerInputInteractionHandler('keypress', cas.checkCaps);
             }
         }
 
+        let helpers = document.querySelectorAll('.mdc-text-field-helper-text');
+        for (const helper of helpers) {
+            new mdc.textField.MDCTextFieldHelperText(helper);
+        }
+        
         let selector = document.querySelector('.mdc-select');
         if (selector != null) {
             const select = new mdc.select.MDCSelect(selector);

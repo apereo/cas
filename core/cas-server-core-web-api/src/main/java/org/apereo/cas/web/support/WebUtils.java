@@ -526,7 +526,8 @@ public class WebUtils {
      * @return true if the cookie value is present
      */
     public static boolean isAuthenticatingAtPublicWorkstation(final RequestContext ctx) {
-        if (ctx.getFlowScope().contains(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION)) {
+        val foundParameter = ctx.getFlowScope().contains(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION);
+        if (foundParameter && BooleanUtils.toBoolean(ctx.getFlowScope().getBoolean(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION))) {
             LOGGER.debug("Public workstation flag detected. SSO session will be considered renewed.");
             return true;
         }

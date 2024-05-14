@@ -51,7 +51,8 @@ public class MultifactorAuthenticationVerifyTrustAction extends BaseCasWebflowAc
         val service = WebUtils.getService(requestContext);
 
         val trustedDevicesDisabled = MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedDevicesDisabled(requestContext);
-        if (trustedDevicesDisabled || bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authentication)) {
+        val publicWorkstation = WebUtils.isAuthenticatingAtPublicWorkstation(requestContext);
+        if (publicWorkstation || trustedDevicesDisabled || bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authentication)) {
             LOGGER.debug("Trusted device registration is disabled for [{}]", registeredService);
             return result(CasWebflowConstants.TRANSITION_ID_SKIP);
         }

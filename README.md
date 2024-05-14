@@ -110,7 +110,7 @@ If you (or your employer) benefit from this project, please consider becoming a 
 [blog]: https://apereo.github.io/
 [casbuildprocess]: https://apereo.github.io/cas/development/developer/Build-Process.html
 [githubcontributors]: https://github.com/apereo/cas/graphs/contributors
-[casjavadocs]: https://www.javadoc.io/doc/org.apereo.cas/cas-server-core
+[casjavadocs]: https://www.javadoc.io/doc/org.apereo.cas
 [apereocas]: https://www.apereo.org/projects/cas
 [springboot]: https://projects.spring.io/spring-boot/
 [springcloud]: https://projects.spring.io/spring-cloud/
