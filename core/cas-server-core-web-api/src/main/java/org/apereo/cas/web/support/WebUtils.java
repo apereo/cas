@@ -532,8 +532,7 @@ public class WebUtils {
         }
         return false;
     }
-
-
+    
     /**
      * Put public workstation into the flow if request parameter present.
      *

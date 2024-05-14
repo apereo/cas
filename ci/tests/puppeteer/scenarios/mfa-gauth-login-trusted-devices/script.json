@@ -1,5 +1,8 @@
 {
   "dependencies": "gauth,trusted-mfa",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--logging.level.org.apereo.cas=info",
     "--cas.server.name=https://localhost:8443",
@@ -8,5 +11,6 @@
     "--cas.authn.mfa.gauth.core.trusted-device-enabled=true",
     "--cas.authn.mfa.gauth.crypto.enabled=false",
     "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
