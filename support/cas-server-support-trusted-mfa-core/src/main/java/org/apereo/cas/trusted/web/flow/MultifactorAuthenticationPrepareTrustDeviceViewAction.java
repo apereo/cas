@@ -50,7 +50,11 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewAction extends BaseC
         val service = WebUtils.getService(requestContext);
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
 
-        if (!storage.isAvailable() || bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authn)) {
+        val trustedDevicesDisabled = MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedDevicesDisabled(requestContext);
+        val publicWorkstation = WebUtils.isAuthenticatingAtPublicWorkstation(requestContext);
+
+        if (trustedDevicesDisabled || publicWorkstation || !storage.isAvailable()
+            || bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authn)) {
             LOGGER.debug("Trusted device registration store is unavailable or is disabled for [{}]", registeredService);
             return result(CasWebflowConstants.TRANSITION_ID_SKIP);
         }

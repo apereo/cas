@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -98,5 +99,28 @@ class MultifactorAuthenticationVerifyTrustActionTests extends AbstractMultifacto
 
         registeredService.setMultifactorAuthenticationPolicy(new DefaultRegisteredServiceMultifactorPolicy());
         assertEquals(CasWebflowConstants.TRANSITION_ID_NO, mfaVerifyTrustAction.execute(context).getId());
+    }
+
+    @Test
+    void verifyTrustedDeviceDisabledForFlow() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()), context);
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.emptyMap());
+        WebUtils.putRegisteredService(context, registeredService);
+        MultifactorAuthenticationTrustUtils.putMultifactorAuthenticationTrustedDevicesDisabled(context, Boolean.TRUE);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SKIP, mfaVerifyTrustAction.execute(context).getId());
+    }
+
+    @Test
+    void verifyTrustedDeviceDisabledForPublicWorkstations() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        context.setParameter(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION, Boolean.TRUE.toString());
+        WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
+        WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString()), context);
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.emptyMap());
+        WebUtils.putRegisteredService(context, registeredService);
+        WebUtils.putPublicWorkstationToFlowIfRequestParameterPresent(context);
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SKIP, mfaVerifyTrustAction.execute(context).getId());
     }
 }

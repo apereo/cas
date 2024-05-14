@@ -48,21 +48,12 @@
         <script th:inline="javascript">
             /*<![CDATA[*/
             document.addEventListener('DOMContentLoaded', () => {
-                mdcPanelId = /*[[${id + 'SwitchButtonPanel'}]]*/;
-                htmlPanelId = /*[[${id + 'checkBoxPanel'}]]*/;
-
-                console.log(`MDC Button Panel: ${mdcPanelId}, HTML Panel: ${htmlPanelId}`);
-                
                 if (typeof mdc === 'undefined' || mdc === undefined) {
-                    document.getElementById(htmlPanelId).style.display = 'block';
-                    document.getElementById(mdcPanelId).style.display = 'none';
-                    $(mdcPanelId).hide().empty();
-                    $(htmlPanelId).show();
+                    $(/*[[${'#' + id + 'SwitchButtonPanel'}]]*/).hide().empty();
+                    $(/*[[${'#' + id + 'checkBoxPanel'}]]*/).show();
                 } else {
-                    document.getElementById(mdcPanelId).style.display = 'block';
-                    document.getElementById(htmlPanelId).style.display = 'none';
-                    $(mdcPanelId).show();
-                    $(htmlPanelId).hide().empty();
+                    $(/*[[${'#' + id + 'SwitchButtonPanel'}]]*/).show();
+                    $(/*[[${'#' + id + 'checkBoxPanel'}]]*/).hide().empty();
                 }
             });
             /*]]>*/
