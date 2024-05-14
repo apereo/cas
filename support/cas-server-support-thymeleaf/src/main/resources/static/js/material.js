@@ -13,7 +13,7 @@ let cas = {
         let divs = document.querySelectorAll('.mdc-text-field');
 
         for (const div of divs) {
-            const textField = new mdc.textField.MDCTextField(f);
+            const textField = new mdc.textField.MDCTextField(div);
             textField.focus();
             let field = mdc.textField.MDCTextField.attachTo(div);
             if (div.classList.contains('caps-check')) {
