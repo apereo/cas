@@ -6,8 +6,9 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
 
     await cas.log("Trying first app with a fancy theme");
-    await cas.gotoLogin(page, "https://apereo.github.io");
+    await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await cas.sleep(1000);
+    await cas.assertVisibility(page, "#publicWorkstation");
     await cas.click(page, "#publicWorkstation");
     await cas.loginWith(page);
     await cas.assertTicketParameter(page);
@@ -15,6 +16,6 @@ const cas = require("../../cas.js");
     await cas.assertCookie(page, false);
     await cas.assertVisibility(page, "#username");
     await cas.assertVisibility(page, "#password");
-
+    await cas.sleep(1000);
     await browser.close();
 })();

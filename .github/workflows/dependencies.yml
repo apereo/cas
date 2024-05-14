@@ -62,12 +62,12 @@ jobs:
             -x check --no-configuration-cache -Drevision=release -DskipAot=true -DskipNestedConfigMetadataGen=true \
             -DgradleReleaseChannel=current --max-workers=8 -DreportfileName=dependencies \
             -DoutputFormatter=json,plain -DoutputDir=./build/reports/dependency-updates
-      - name: Upload results
+      - name: Upload Results
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: dependency-updates
-          path: ./build/reports/dependency-updates.*
+          path: ./build/reports/dependency-updates/dependencies.json
           if-no-files-found: ignore
           retention-days: 2
   ##########################################################################

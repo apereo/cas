@@ -13,7 +13,7 @@
 <body>
 <main>
     <th:div th:fragment="switchbutton (id,label)">
-        <div id="switchButtonPanel" style="display: none">
+        <div th:id="${id + 'SwitchButtonPanel'}" style="display: none">
             <button th:id="${id + 'Button'}" th:name="${id + 'Button'}" class="mdc-switch mdc-switch--unselected"
                     type="button" role="switch" aria-checked="false">
                 <div class="mdc-switch__track"></div>
@@ -40,25 +40,33 @@
             <label class="form-check-label" th:id="${id + 'ButtonLabel'}" th:text="#{${label}}">Switch Me</label>
             <input type="hidden" th:name="${id}" th:id="${id}" value="false" th:data-switch-btn="${id + 'Button'}"/>
         </div>
-        <div id="checkBoxPanel" class="form-check form-switch" style="display: none">
+        <div th:id="${id + 'checkBoxPanel'}" class="form-check form-switch" style="display: none">
             <input type="checkbox" class="form-check-input" th:id="${id}" th:name="${id}" />
             <label class="form-check-label" th:for="${id}" th:id="${id + 'ButtonLabel'}" th:text="#{${label}}">Switch Me</label>
         </div>
-        
+
         <script th:inline="javascript">
             /*<![CDATA[*/
             document.addEventListener('DOMContentLoaded', () => {
+                mdcPanelId = /*[[${id + 'SwitchButtonPanel'}]]*/;
+                htmlPanelId = /*[[${id + 'checkBoxPanel'}]]*/;
+
+                console.log(`MDC Button Panel: ${mdcPanelId}, HTML Panel: ${htmlPanelId}`);
+                
                 if (typeof mdc === 'undefined' || mdc === undefined) {
-                    document.getElementById("checkBoxPanel").style.display = 'block';
-                    document.getElementById("switchButtonPanel").style.display = 'none';
+                    document.getElementById(htmlPanelId).style.display = 'block';
+                    document.getElementById(mdcPanelId).style.display = 'none';
+                    $(mdcPanelId).hide().empty();
+                    $(htmlPanelId).show();
                 } else {
-                    document.getElementById("switchButtonPanel").style.display = 'block';
-                    document.getElementById("checkBoxPanel").style.display = 'none';
+                    document.getElementById(mdcPanelId).style.display = 'block';
+                    document.getElementById(htmlPanelId).style.display = 'none';
+                    $(mdcPanelId).show();
+                    $(htmlPanelId).hide().empty();
                 }
             });
             /*]]>*/
         </script>
-
     </th:div>
 </main>
 </body>
