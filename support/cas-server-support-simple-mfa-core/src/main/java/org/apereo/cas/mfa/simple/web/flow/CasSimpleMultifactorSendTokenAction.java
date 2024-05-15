@@ -12,7 +12,6 @@ import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationSe
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.DigestUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
@@ -70,7 +69,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
         val token = getOrCreateToken(requestContext, principal);
@@ -83,32 +82,30 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
         val phoneCallSent = strategy.contains(TokenSharingStrategyOptions.PHONE)
             && CasSimpleMultifactorMakePhoneCall.of(communicationsManager, properties).call(principal, token, requestContext);
 
-        return FunctionUtils.doUnchecked(() -> {
-            var emailSent = false;
-            if (strategy.contains(TokenSharingStrategyOptions.EMAIL)) {
-                val cmd = CasSimpleMultifactorSendEmail.of(communicationsManager, properties);
-                val recipients = cmd.getEmailMessageRecipients(principal);
-                if (recipients.size() > 1) {
-                    val selectedEmailRecipients = findSelectedEmailRecipients(requestContext, principal);
-                    LOGGER.debug("Selected email recipients are [{}]", selectedEmailRecipients);
-                    if (selectedEmailRecipients.isEmpty()) {
-                        return buildSelectEmailRecipientEvent(requestContext, principal, recipients);
-                    }
-                    emailSent = cmd.send(principal, token, selectedEmailRecipients, requestContext).isAnyEmailSent();
-                } else {
-                    emailSent = cmd.send(principal, token, requestContext).isAnyEmailSent();
+        var emailSent = false;
+        if (strategy.contains(TokenSharingStrategyOptions.EMAIL)) {
+            val cmd = CasSimpleMultifactorSendEmail.of(communicationsManager, properties);
+            val recipients = cmd.getEmailMessageRecipients(principal);
+            if (recipients.size() > 1) {
+                val selectedEmailRecipients = findSelectedEmailRecipients(requestContext, principal);
+                LOGGER.debug("Selected email recipients are [{}]", selectedEmailRecipients);
+                if (selectedEmailRecipients.isEmpty()) {
+                    return buildSelectEmailRecipientEvent(requestContext, principal, recipients);
                 }
+                emailSent = cmd.send(principal, token, selectedEmailRecipients, requestContext).isAnyEmailSent();
+            } else {
+                emailSent = cmd.send(principal, token, requestContext).isAnyEmailSent();
             }
+        }
 
-            val notificationSent = strategy.contains(TokenSharingStrategyOptions.NOTIFICATION) && isNotificationSent(principal, token);
-            if (smsSent || emailSent || notificationSent || phoneCallSent) {
-                LOGGER.debug("Successfully submitted token via strategy option [{}] to [{}]", strategy, principal.getId());
-                storeToken(requestContext, token);
-                return buildSuccessEvent(token);
-            }
-            LOGGER.error("Communication strategies failed to submit token [{}] to user", token.getId());
-            return error();
-        });
+        val notificationSent = strategy.contains(TokenSharingStrategyOptions.NOTIFICATION) && isNotificationSent(principal, token);
+        if (smsSent || emailSent || notificationSent || phoneCallSent) {
+            LOGGER.debug("Successfully submitted token via strategy option [{}] to [{}]", strategy, principal.getId());
+            storeToken(requestContext, token);
+            return buildSuccessEvent(token);
+        }
+        LOGGER.error("Communication strategies failed to submit token [{}] to user", token.getId());
+        return error();
     }
 
     protected List<String> findSelectedEmailRecipients(final RequestContext requestContext, final Principal principal) {
