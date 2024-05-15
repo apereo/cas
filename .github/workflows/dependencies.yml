@@ -64,7 +64,6 @@ jobs:
             -DoutputFormatter=json,plain -DoutputDir=./build/reports/dependency-updates
       - name: Upload Results
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: dependency-updates
           path: ./build/reports/dependency-updates/dependencies.json
