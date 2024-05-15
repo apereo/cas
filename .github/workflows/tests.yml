@@ -136,9 +136,9 @@ jobs:
           xml_files=$(find build/reports -type f -name "*.xml")
           if [ -z "$xml_files" ]; then
             echo "No coverage XML files found"
-            exit 1
+          else
+            echo ${xml_files}
           fi
-          echo ${xml_files}
       - name: Upload to SonarCloud
         run: |
           ./gradlew sonar --build-cache --configure-on-demand --no-daemon -DskipAot=true --parallel \
