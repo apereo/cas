@@ -13,7 +13,8 @@
 <body>
 <main class="container mt-3 mb-3">
     <div th:fragment="serviceUI" th:if="${registeredService}" id="serviceui" class="banner banner-info mb-4 text-justify">
-        <div th:if="${serviceUIMetadata}" class="d-flex align-items-center px-3">
+        
+        <div th:if="${serviceUIMetadata}" class="d-flex align-items-center pr-2">
             <img id="serviceUIMetadataLogo" th:if="${serviceUIMetadata.logoUrl}" th:title="${serviceUIMetadata.displayName}"
                  th:alt="${serviceUIMetadata.displayName}" th:src="${serviceUIMetadata.logoUrl}"
                  th:width="${serviceUIMetadata.logoWidth}" th:height="${serviceUIMetadata.logoHeight}"/>
@@ -41,7 +42,7 @@
             </div>
         </div>
 
-        <div th:unless="${serviceUIMetadata}" class="d-flex align-items-center px-3">
+        <div th:unless="${serviceUIMetadata}" class="d-flex align-items-center pr-2">
             <img th:if="${registeredService.logo}" th:src="${registeredService.logo}"/>
             <div id="servicedesc" class="ml-2">
                 <strong><i class="mdi mdi-web" aria-hidden="true"></i>[[${registeredService.name}]]</strong>

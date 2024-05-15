@@ -358,6 +358,10 @@ form button i.mdi {
 
 /* utilities */
 
+.pr-2 {
+    padding-right: 0.8rem;
+}
+
 .bg-primary {
     background-color: rgba(21, 62, 80, 0.2);
     background-color: var(--cas-theme-primary-bg, rgba(21, 62, 80, 0.2));
@@ -647,13 +651,8 @@ form button i.mdi {
     white-space: normal;
 }
 
-#duo_iframe {
-    width: 100%;
-    min-width: 304px;
-    height: 330px;
-    border: none;
-    padding: 0;
-    margin: 0;
+#servicedesc .mdi {
+    vertical-align: sub;
 }
 
 .dataTables_wrapper {
