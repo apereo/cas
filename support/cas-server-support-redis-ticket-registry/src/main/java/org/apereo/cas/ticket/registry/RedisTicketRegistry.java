@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
+import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.ServiceAwareTicket;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -381,7 +382,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             val encTicket = encodeTicket(ticket);
             val json = serializeTicket(encTicket);
             FunctionUtils.throwIf(StringUtils.isBlank(json),
-                () -> new IllegalArgumentException("Ticket " + ticket.getId() + " cannot be serialized to JSON"));
+                () -> new IllegalArgumentException("Ticket %s cannot be serialized to JSON".formatted(ticket.getId())));
 
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace("Serialized ticket into a JSON document as\n [{}]",
@@ -416,7 +417,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
     private Ticket getTicketFromRedisByKey(final Predicate<Ticket> predicate, final String redisKeyPattern) {
         val query = redisKeyGeneratorFactory.getRedisKeyGenerator(Ticket.class.getName()).orElseThrow().rawKey(redisKeyPattern);
         val cachedTicket = ticketCache.stream().map(c -> c.getIfPresent(query)).filter(Objects::nonNull);
-        
+
         val ticket = cachedTicket
             .findFirst()
             .map(this::decodeTicket)
@@ -452,29 +453,55 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         val timeout = RedisCompositeKey.getTimeout(ticket);
         val ticketDocument = buildTicketAsDocument(ticket);
 
-        casRedisTemplates.getTicketsRedisTemplate().boundValueOps(redisKeyPattern).set(ticketDocument, timeout, TimeUnit.SECONDS);
+        casRedisTemplates.getTicketsRedisTemplate().boundValueOps(redisKeyPattern)
+            .set(ticketDocument, timeout, TimeUnit.SECONDS);
         val adapter = buildRedisKeyValueAdapter(redisKeyPattern);
         adapter.put(ticketDocument.getTicketId(), ticketDocument, redisKeyPattern);
-        casRedisTemplates.getTicketsRedisTemplate().expire(redisKeyPattern, timeout, TimeUnit.SECONDS);
+        configureTicketExpirationInstant(ticket, redisKeyPattern);
         ticketCache.ifAvailable(c -> c.put(redisKeyGenerator.rawKey(redisKeyPattern), ticket));
 
-        redisKeyGeneratorFactory.getRedisKeyGenerator(Principal.class.getName()).ifPresent(generator -> {
-            val onlyTrackMostRecentSession = casProperties.getTicket().getTgt().getCore().isOnlyTrackMostRecentSession();
-            val userId = digestIdentifier(getPrincipalIdFrom(ticket));
-            if (StringUtils.isNotBlank(userId) && ticket instanceof TicketGrantingTicket) {
-                val redisPrincipalPattern = generator.forEntry(userId);
-                val ops = casRedisTemplates.getSessionsRedisTemplate().boundZSetOps(redisPrincipalPattern);
-                val now = Instant.now(Clock.systemUTC());
-                if (onlyTrackMostRecentSession) {
-                    ops.expireAt(now);
-                } else {
-                    ops.removeRangeByScore(0, Long.valueOf(now.getEpochSecond()).doubleValue() + 1);
-                }
-                ops.add(digestedId, Long.valueOf(now.getEpochSecond() + timeout).doubleValue());
+        redisKeyGeneratorFactory.getRedisKeyGenerator(Principal.class.getName())
+            .ifPresent(generator -> trackAuthenticationPrincipal(ticket));
+    }
+
+    protected void trackAuthenticationPrincipal(final Ticket ticket) {
+        val userId = digestIdentifier(getPrincipalIdFrom(ticket));
+        if (StringUtils.isNotBlank(userId) && ticket instanceof TicketGrantingTicket) {
+            val generator = redisKeyGeneratorFactory.getRedisKeyGenerator(Principal.class.getName()).orElseThrow();
+            val redisPrincipalPattern = generator.forEntry(userId);
+            val ops = casRedisTemplates.getSessionsRedisTemplate().boundZSetOps(redisPrincipalPattern);
+            val now = Instant.now(Clock.systemUTC());
+            if (casProperties.getTicket().getTgt().getCore().isOnlyTrackMostRecentSession()) {
+                ops.expireAt(now);
+            } else {
+                ops.removeRangeByScore(0, Long.valueOf(now.getEpochSecond()).doubleValue() + 1);
+            }
+            val timeout = RedisCompositeKey.getTimeout(ticket);
+            val digestedId = digestIdentifier(ticket.getId());
+            ops.add(digestedId, Long.valueOf(now.getEpochSecond() + timeout).doubleValue());
+
+            if (ticket.getExpirationPolicy() instanceof final IdleExpirationPolicy iep) {
+                ops.expireAt(iep.getIdleExpirationTime(ticket).toInstant());
+            } else {
                 ops.expire(timeout, TimeUnit.SECONDS);
             }
-        });
+        }
     }
+
+    protected void configureTicketExpirationInstant(final Ticket ticket, final String redisKeyPattern) {
+        if (ticket instanceof TicketGrantingTicket) {
+            if (ticket.getExpirationPolicy() instanceof final IdleExpirationPolicy iep) {
+                val expirationInstant = iep.getIdleExpirationTime(ticket).toInstant();
+                casRedisTemplates.getTicketsRedisTemplate().expireAt(redisKeyPattern, expirationInstant);
+                LOGGER.debug("Ticket [{}] will expire at [{}]", ticket.getId(), expirationInstant);
+            } else {
+                val timeoutSeconds = RedisCompositeKey.getTimeout(ticket);
+                casRedisTemplates.getTicketsRedisTemplate().expire(redisKeyPattern, timeoutSeconds, TimeUnit.SECONDS);
+                LOGGER.debug("Ticket [{}] will expire in [{}] second(s)", ticket.getId(), timeoutSeconds);
+            }
+        }
+    }
+
 
     private RedisKeyValueAdapter buildRedisKeyValueAdapter(final String redisKeyPattern) {
         val redisMappingContext = new RedisMappingContext(
