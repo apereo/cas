@@ -1,0 +1,22 @@
+{
+  "dependencies": "reports,redis-ticket-registry",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+    
+    "--cas.ticket.registry.redis.host=localhost",
+    "--cas.ticket.registry.redis.port=6379",
+
+    "--cas.ticket.tgt.timeout.max-time-to-live-in-seconds=PT2S"
+  ],
+  "initScript": "${PWD}/ci/tests/redis/run-redis-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

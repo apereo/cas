@@ -18,7 +18,6 @@ const querystring = require("querystring");
 
             assert(res.data.components.redis.status !== undefined);
             assert(res.data.components.redis.details !== undefined);
-
         }, (error) => {
             throw error;
         }, { "Content-Type": "application/json" });

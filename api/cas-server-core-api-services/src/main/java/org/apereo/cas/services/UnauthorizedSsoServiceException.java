@@ -11,13 +11,13 @@ import java.io.Serial;
  */
 public class UnauthorizedSsoServiceException extends UnauthorizedServiceException {
 
-    @Serial
-    private static final long serialVersionUID = 8909291297815558561L;
-
     /**
      * The error code.
      */
     public static final String CODE = "service.not.authorized.sso";
+
+    @Serial
+    private static final long serialVersionUID = 8909291297815558561L;
 
     public UnauthorizedSsoServiceException() {
         this(CODE);

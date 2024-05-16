@@ -81,13 +81,12 @@ function inspect(text) {
 }
 
 exports.newBrowser = async (options) => {
-    let browser = undefined;
     let retry = 0;
     const maxRetries = 5;
     while (retry < maxRetries) {
         try {
             await this.logg(`Attempt #${retry} to launch browser...`);
-            browser = await puppeteer.launch(options);
+            const browser = await puppeteer.launch(options);
             await this.sleep();
             await this.logg(`Browser ${await browser.version()} / ${await browser.userAgent()} is launched...`);
             return browser;
@@ -102,7 +101,7 @@ exports.newBrowser = async (options) => {
 
 exports.log = async (text, ...args) => {
     const toLog = inspect(text);
-    await LOGGER.debug(`💬 ${colors.blue(toLog)}`, args);
+    await LOGGER.debug(`🔷 ${colors.blue(toLog)}`, args);
 };
 
 exports.separator = async() => {
@@ -111,17 +110,17 @@ exports.separator = async() => {
 
 exports.logy = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.warn(`🔥 ${colors.yellow(toLog)}`);
+    await LOGGER.warn(`⚠️ ${colors.yellow(toLog)}`);
 };
 
 exports.logb = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.debug(`💬 ${colors.blue(toLog)}`);
+    await LOGGER.debug(`🔷 ${colors.blue(toLog)}`);
 };
 
 exports.logg = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.info(`✅ ${colors.green(toLog)}`);
+    await LOGGER.info(`🍀 ${colors.green(toLog)}`);
 };
 
 exports.logr = async (text) => {

@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import org.apereo.cas.util.ServiceTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -38,6 +39,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import static org.awaitility.Awaitility.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -270,6 +272,20 @@ class RedisServerTicketRegistryTests {
         "CasFeatureModule.TicketRegistry.redis-messaging.enabled=false"
     })
     class NoMessagingTests extends BaseRedisSentinelTicketRegistryTests {
+        
+        @RepeatedTest(2)
+        void verifyTicketWithIdleTimeout() throws Throwable {
+            val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
+            val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
+            val addedTicket = getNewTicketRegistry().addTicket(new TicketGrantingTicketImpl(ticketGrantingTicketId,
+                originalAuthn, new TimeoutExpirationPolicy(2)));
+            val tgt = getNewTicketRegistry().getTicket(addedTicket.getId(), TicketGrantingTicket.class);
+            assertNotNull(tgt);
+            val authentication = tgt.getAuthentication();
+            assertNotNull(authentication);
+            await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertNull(getNewTicketRegistry().getTicket(ticketGrantingTicketId)));
+        }
+        
     }
 
     @Nested

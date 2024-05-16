@@ -27,13 +27,13 @@ CYAN="\e[36m"
 ENDCOLOR="\e[0m"
 
 function printcyan() {
-  printf "💬 ${CYAN}$1${ENDCOLOR}\n"
+  printf "🔷 ${CYAN}$1${ENDCOLOR}\n"
 }
 function printgreen() {
   printf "☘️ ${GREEN}$1${ENDCOLOR}\n"
 }
 function printyellow() {
-  printf "🧨 ${YELLOW}$1${ENDCOLOR}\n"
+  printf "⚠️ ${YELLOW}$1${ENDCOLOR}\n"
 }
 function printred() {
   printf "🔥 ${RED}$1${ENDCOLOR}\n"
