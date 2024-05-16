@@ -4,6 +4,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -12,21 +13,17 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Simple")
 class UnauthorizedSsoServiceExceptionTests {
-
-    private static final String CODE = "service.not.authorized.sso";
-
-    private static final String MESSAGE = "GG";
+    private static final String MESSAGE = UUID.randomUUID().toString();
 
     @Test
     void verifyGetCode() throws Throwable {
         val e = new UnauthorizedSsoServiceException();
-        assertEquals(CODE, e.getMessage());
+        assertEquals(UnauthorizedSsoServiceException.CODE, e.getMessage());
     }
 
     @Test
     void verifyCodeConstructor() throws Throwable {
         val e = new UnauthorizedSsoServiceException(MESSAGE);
-
         assertEquals(MESSAGE, e.getMessage());
     }
 
@@ -34,8 +31,8 @@ class UnauthorizedSsoServiceExceptionTests {
     void verifyThrowableConstructorWithCode() throws Throwable {
         val r = new RuntimeException();
         val e = new UnauthorizedSsoServiceException(MESSAGE, r);
-
         assertEquals(MESSAGE, e.getMessage());
+        assertEquals(UnauthorizedSsoServiceException.CODE, e.getCode());
         assertEquals(r, e.getCause());
     }
 }
