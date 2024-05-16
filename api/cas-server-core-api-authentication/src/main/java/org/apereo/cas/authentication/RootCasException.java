@@ -43,7 +43,7 @@ public class RootCasException extends RuntimeException {
     }
 
     protected RootCasException(final String code, final Throwable throwable) {
-        super(throwable);
+        super(code, throwable);
         this.code = code;
     }
 

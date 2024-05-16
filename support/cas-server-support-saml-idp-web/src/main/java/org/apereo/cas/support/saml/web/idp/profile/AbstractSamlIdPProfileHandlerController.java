@@ -201,7 +201,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val urlToRedirectTo = constructRedirectUrl(
             serviceUrl,
             Map.of(
-                SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, fetchRelayState(request, pair),
+                SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, StringUtils.defaultString(fetchRelayState(request, pair)),
                 CasProtocolConstants.PARAMETER_RENEW, BooleanUtils.toString(BooleanUtils.toBoolean(authnRequest.isForceAuthn()), "true", StringUtils.EMPTY),
                 CasProtocolConstants.PARAMETER_GATEWAY, BooleanUtils.toString(BooleanUtils.toBoolean(authnRequest.isPassive()), "true", StringUtils.EMPTY)
             )
