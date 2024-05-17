@@ -6,6 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
+    <title layout:title-pattern="$LAYOUT_TITLE $CONTENT_TITLE"
+        th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS - Central Authentication Service')}">
+    </title>
+
     <span th:remove="tag" th:if="${_csrf instanceof T(org.springframework.security.web.server.csrf.CsrfToken)}">
         <meta name="_csrf" th:content="${_csrf.token}"/>
         <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
@@ -14,10 +18,6 @@
         <meta name="_csrf" th:content="${_csrf}"/>
         <meta name="_csrf_header" content="X-CSRF-TOKEN"/>
     </span>
-    
-    <title layout:title-pattern="$LAYOUT_TITLE $CONTENT_TITLE"
-        th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS - Central Authentication Service')}">
-    </title>
 
     <!--/* Core CAS CSS */-->
     <span th:remove="tag" th:if="${'true' == #strings.defaultString(#themes.code('cas.css.core.enabled'), 'true')}">

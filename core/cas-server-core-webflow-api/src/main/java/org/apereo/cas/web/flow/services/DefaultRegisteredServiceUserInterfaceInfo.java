@@ -29,7 +29,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
 
-    private static final int DEFAULT_IMAGE_SIZE = 32;
+    private static final int DEFAULT_IMAGE_SIZE = 24;
 
     @Serial
     private static final long serialVersionUID = -2416684486715358748L;
