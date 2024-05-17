@@ -445,7 +445,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   PUPPETEER_BUILD_CTR=${PUPPETEER_BUILD_CTR:-$DEFAULT_PUPPETEER_BUILD_CTR}
 
   FLAGS=$(echo $BUILDFLAGS | sed 's/ //')
-  printgreen "\nBuilding CAS found in $PWD for dependencies [${dependencies}] with flags [${FLAGS}]"
+  printgreen "Building CAS found in $PWD for dependencies [${dependencies}] with flags [${FLAGS}]"
   
   if [[ -d ./webapp/cas-server-webapp-${project}/build/libs ]]; then
     rm -rf ./webapp/cas-server-webapp-${project}/build/libs
@@ -460,7 +460,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   BUILD_COMMAND=$(printf '%s' \
       "./gradlew ${BUILD_TASKS} -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc --build-cache --configure-on-demand --parallel \
       ${BUILD_SCRIPT} ${DAEMON} -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS}")
-  printcyan "Executing build command in the ${BUILD_SPAWN}:\n\n$BUILD_COMMAND"
+  printcyan "Executing build command in the ${BUILD_SPAWN}:\n\n${BUILD_COMMAND}"
 
   if [[ "${BUILD_SPAWN}" == "background" ]]; then
     printcyan "Launching build in background to make observing slow builds easier..."
