@@ -37,7 +37,7 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogic extends DefaultSecuri
         val request = ((JEEContext) callContext.webContext()).getNativeRequest();
         var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
             ticketGrantingTicketCookieGenerator, ticketRegistry, request);
-        if (ticketGrantingTicket == null) {
+        if (ticketGrantingTicket == null && !ticketGrantingTicketCookieGenerator.containsCookie(request)) {
             try {
                 ticketGrantingTicket = manager.getProfile()
                     .map(profile -> profile.getAttribute(TicketGrantingTicket.class.getName()))
