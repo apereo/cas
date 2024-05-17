@@ -77,7 +77,7 @@ class LdapDelegatedClientAuthenticationCredentialResolverTests {
     @Test
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.getHttpServletRequest().setAttribute(Credentials.class.getName(), "caspac4j");
+        context.setRequestAttribute(Credentials.class.getName(), "caspac4j");
         
         val credentials = new TokenCredentials(USER);
         val clientCredential = new ClientCredential(credentials, "FacebookClient");
