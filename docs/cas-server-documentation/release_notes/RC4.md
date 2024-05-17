@@ -75,6 +75,7 @@ Client to CAS without redirect through the user's browser (consumption device).
 - CAS offers options to control SNI Host Checking for [Jetty](../installation/Configuring-Servlet-Container-Embedded-Jetty.html) when used as an embedded container.
 - Selecting an [authentication source](../authentication/Configuring-Authentication-Policy-SourceSelection.html) during login attempts will force CAS to use that source, disregarding other sources allowed via the application's authentication policy.
 - The dependency graph for CAS libraries and dependencies is now published to GitHub.
+- [Redis ticket registry](../ticketing/Redis-Ticket-Registry.html) can now support [idle or moving](../ticketing/Configuring-Ticket-Expiration-Policy-TGT.html) ticket expiration policies.
 - Device registration and management for multifactor authentication is disabled for YubiKey, Google Authenticator and WebAuthN providers during [password reset](../password_management/Password-Management-Reset.html) operations.
 - Trusted devices for multifactor authentication are now disabled and ignored during password reset operations.
 - The password management flow is heavily reworked to better support multifactor authentication flows.
@@ -87,12 +88,17 @@ Client to CAS without redirect through the user's browser (consumption device).
 
 - Gradle
 - Spring Boot
+- Spring
+- Spring Retry
 - Undertow
 - Amazon SDK
 - Ldaptive
 - NodeJS
 - Nimbus JOSE
+- Node.js
 - Jackson
+- Swagger
+- ACME
 - Oracle JDBC Driver
 - Google Cloud Monitoring
 
