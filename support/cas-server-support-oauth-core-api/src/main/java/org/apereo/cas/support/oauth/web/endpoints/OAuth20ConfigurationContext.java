@@ -41,7 +41,6 @@ import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -54,7 +53,6 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.TaskScheduler;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
@@ -75,7 +73,7 @@ public class OAuth20ConfigurationContext {
     private final ServicesManager servicesManager;
 
     private final TicketFactory ticketFactory;
-    
+
     private final TicketRegistry ticketRegistry;
 
     private final PrincipalFactory principalFactory;
@@ -157,7 +155,7 @@ public class OAuth20ConfigurationContext {
     private final CipherExecutor<byte[], byte[]> webflowCipherExecutor;
 
     private final HttpClient httpClient;
-    
+
     /**
      * Gets ticket granting ticket.
      *
@@ -168,13 +166,16 @@ public class OAuth20ConfigurationContext {
         val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
             getTicketGrantingTicketCookieGenerator(),
             getTicketRegistry(), context.getNativeRequest());
-        return Optional.ofNullable(ticketGrantingTicket)
-            .orElseGet(() -> {
-                val manager = new ProfileManager(context, getSessionStore());
-                return manager.getProfile()
-                    .map(profile -> profile.getAttribute(TicketGrantingTicket.class.getName()))
-                    .map(ticketId -> ticketRegistry.getTicket(ticketId.toString(), TicketGrantingTicket.class))
-                    .orElse(null);
-            });
+        if (!ticketGrantingTicketCookieGenerator.containsCookie(context.getNativeRequest())) {
+            return Optional.ofNullable(ticketGrantingTicket)
+                .orElseGet(() -> {
+                    val manager = new ProfileManager(context, getSessionStore());
+                    return manager.getProfile()
+                        .map(profile -> profile.getAttribute(TicketGrantingTicket.class.getName()))
+                        .map(ticketId -> ticketRegistry.getTicket(ticketId.toString(), TicketGrantingTicket.class))
+                        .orElse(null);
+                });
+        }
+        return ticketGrantingTicket;
     }
 }
