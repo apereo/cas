@@ -289,7 +289,7 @@ exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TG
     if (cookies.length === 0) {
         await this.logg(`Correct! Cookie ${cookieName} cannot be found`);
     } else {
-        await this.logr(`Incorrect! Cookie ${cookieName} can be found`);
+        await this.logr(`Incorrect! Cookie ${cookieName} can be found but it must not be present`);
         const ck = cookies[0];
         const msg = `Found cookie => name: ${ck.name},value:${ck.value},path:${ck.path},domain:${ck.domain},httpOnly:${ck.httpOnly},secure:${ck.secure}`;
         await this.logb(msg);
