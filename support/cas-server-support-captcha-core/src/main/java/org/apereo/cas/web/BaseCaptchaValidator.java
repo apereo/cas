@@ -17,6 +17,7 @@ import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -40,8 +41,11 @@ public abstract class BaseCaptchaValidator implements CaptchaValidator {
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
                 .url(recaptchaProperties.getVerifyUrl())
-                .headers(CollectionUtils.wrap("User-Agent", userAgent, "Accept-Language", "en-US,en;q=0.5"))
-                .parameters(CollectionUtils.wrap("secret", recaptchaProperties.getSecret(), "response", recaptchaResponse))
+                .headers(CollectionUtils.wrap(
+                    "User-Agent", userAgent,
+                    "Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+                    "Accept-Language", "en-US,en;q=0.5"))
+                .entity("secret=%s&response=%s".formatted(recaptchaProperties.getSecret(), recaptchaResponse))
                 .build();
 
             response = HttpUtils.execute(exec);
