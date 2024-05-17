@@ -73,7 +73,7 @@ class DelegatedAuthenticationIdentityProviderLogoutActionTests {
         try (val webServer = new MockWebServer(HttpStatus.OK)) {
             webServer.start();
             val continuation = SingleLogoutContinuation.builder().url("http://localhost:%s".formatted(webServer.getPort()));
-            context.getHttpServletRequest().setAttribute(SingleLogoutContinuation.class.getName(), continuation.build());
+            context.setRequestAttribute(SingleLogoutContinuation.class.getName(), continuation.build());
             assertEquals(CasWebflowConstants.TRANSITION_ID_DONE, action.execute(context).getId());
             assertNull(configurationContext.getTicketRegistry().getTicket(tgt.getId()));
             assertNull(context.getHttpServletRequest().getAttribute(SingleLogoutContinuation.class.getName()));

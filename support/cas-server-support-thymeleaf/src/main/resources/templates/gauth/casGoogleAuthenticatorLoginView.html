@@ -19,7 +19,7 @@
             <div id="msg" class="banner banner-danger alert alert-danger my-2" th:if="${#fields.hasErrors('*')}">
                 <span th:each="err : ${#fields.errors('*')}" th:utext="${err + ' '}"/>
             </div>
-            <input type="hidden" name="_eventId_submit" value="Login"/>
+            <input type="hidden" name="_eventId" value="submit"/>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="geolocation"/>
             <section class="cas-field form-group my-3 mdc-input-group">
@@ -65,7 +65,7 @@
                     </p>
                 </div>
             </section>
-            <button id="login" class="mdc-button mdc-button--raised btn btn-primary" accesskey="l">
+            <button id="loginButton" class="mdc-button mdc-button--raised btn btn-primary" accesskey="l">
                 <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
             </button>
             <a class="mdc-button mdc-button--raised btn btn-primary" id="cancel" name="cancel"
@@ -78,7 +78,7 @@
             <hr width="75%">
             <p th:utext="#{screen.authentication.gauth.selanotherdevice(${registeredDevice.name})}"></p>
             <form method="post" id="fm3">
-                <input type="hidden" name="_eventId_select" value="select"/>
+                <input type="hidden" name="_eventId" value="select"/>
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 <button id="selectDeviceButton" class="mdc-button mdc-button--raised btn btn-primary me-2" accesskey="s">
                     <span class="mdc-button__label" th:text="#{screen.authentication.gauth.selectdevice}">Select Device</span>
@@ -115,7 +115,7 @@
 
                                     <p th:utext="#{screen.authentication.gauth.confirm.desc}">Description</p>
 
-                                    <input type="hidden" name="_eventId_confirm" value="Confirm"/>
+                                    <input type="hidden" name="_eventId" value="confirm"/>
                                     <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
 
                                     <section class="cas-field form-group my-3 mdc-input-group">

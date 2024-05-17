@@ -56,7 +56,7 @@ class DelegatedAuthenticationClientLogoutActionTests {
         val profile = new CommonProfile();
         profile.setId("casuser");
         profile.setClientName("CasClient");
-        context.getHttpServletRequest().setAttribute(Pac4jConstants.USER_PROFILES,
+        context.setRequestAttribute(Pac4jConstants.USER_PROFILES,
             CollectionUtils.wrapLinkedHashMap(profile.getClientName(), profile));
         val result = delegatedAuthenticationClientLogoutAction.execute(context);
         assertNull(result);
