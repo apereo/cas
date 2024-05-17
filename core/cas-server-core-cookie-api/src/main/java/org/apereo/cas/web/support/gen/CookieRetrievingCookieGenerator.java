@@ -180,6 +180,12 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                     })));
     }
 
+    @Override
+    public boolean containsCookie(final HttpServletRequest request) {
+        return request.getCookies() != null
+            && Arrays.stream(request.getCookies()).anyMatch(cookie -> StringUtils.equalsIgnoreCase(cookie.getName(), getCookieName()));
+    }
+
     protected Cookie addCookieHeaderToResponse(final Cookie cookie,
                                                final HttpServletRequest request,
                                                final HttpServletResponse response) {

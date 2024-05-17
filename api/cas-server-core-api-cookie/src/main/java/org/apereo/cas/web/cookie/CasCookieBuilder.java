@@ -113,4 +113,12 @@ public interface CasCookieBuilder {
      * @return the cas cookie value manager
      */
     CookieValueManager getCasCookieValueManager();
+
+    /**
+     * Contains cookie.
+     *
+     * @param request the request
+     * @return true/false
+     */
+    boolean containsCookie(HttpServletRequest request);
 }
