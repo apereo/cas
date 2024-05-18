@@ -58,7 +58,7 @@ class FileTrustStoreSslSocketFactoryTests {
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
     }
