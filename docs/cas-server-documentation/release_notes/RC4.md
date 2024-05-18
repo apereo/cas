@@ -90,11 +90,15 @@ Client to CAS without redirect through the user's browser (consumption device).
 - Spring Boot
 - Spring
 - Spring Retry
+- Spring Data
+- Spring WS
+- InfluxDb
 - Undertow
 - Amazon SDK
 - Ldaptive
 - NodeJS
 - Nimbus JOSE
+- Nimbus OIDC
 - Node.js
 - Jackson
 - Swagger
