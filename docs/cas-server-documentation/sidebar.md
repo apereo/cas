@@ -236,6 +236,7 @@ layout: null
         *   [SAML2](#delegationsaml2)
             *   [Overview](/cas/{{ version }}/integration/Delegate-Authentication-SAML.html) 
             *   [Metadata Management](/cas/{{ version }}/integration/Delegate-Authentication-SAML-Metadata.html) 
+            *   [Discovery](/cas/{{ version }}/integration/Delegate-Authentication-SAML-Discovery.html) 
         *   [ADFS](/cas/{{ version }}/integration/ADFS-Integration.html)
 
 * [Attributes](#casattributes)

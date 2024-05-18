@@ -1,6 +1,6 @@
 ---
 layout: default
-title: CAS - Delegate Authentication w/ SAML2 Identity Providers
+title: CAS - SAML2 Delegated Authentication
 category: Authentication
 ---
 
