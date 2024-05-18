@@ -9,15 +9,5 @@ ext {
 
 dependencies {
     api project(":api:cas-server-core-api")
-
-    runtimeOnly "com.yugabyte:jdbc-yugabytedb:$yugabytedbVersion"
-    runtimeOnly "org.hsqldb:hsqldb:$hsqlVersion"
-    runtimeOnly "org.postgresql:postgresql:$postgresqlVersion"
-    runtimeOnly "com.mysql:mysql-connector-j:$mysqlVersion"
-    runtimeOnly "org.mariadb.jdbc:mariadb-java-client:$mariaDbVersion"
-    runtimeOnly "net.sourceforge.jtds:jtds:$jtdsVersion"
-    runtimeOnly "com.microsoft.sqlserver:mssql-jdbc:$mssqlServerVersion"
-    runtimeOnly "com.oracle.database.jdbc:ojdbc11:$oracleJdbcVersion"
-    runtimeOnly "com.h2database:h2:$h2Version"
-    runtimeOnly "org.hibernate.orm:hibernate-community-dialects:$hibernateVersion"
+    runtimeOnly libraries.databasedrivers
 }

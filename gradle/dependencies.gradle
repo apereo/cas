@@ -3512,6 +3512,18 @@ ext.libraries = [
                     exclude(group: "org.json", module: "json")
                 }
         ],
+        databasedrivers : [
+                dependencies.create("com.yugabyte:jdbc-yugabytedb:$yugabytedbVersion"),
+                dependencies.create("org.hsqldb:hsqldb:$hsqlVersion"),
+                dependencies.create("org.postgresql:postgresql:$postgresqlVersion"),
+                dependencies.create("com.mysql:mysql-connector-j:$mysqlVersion"),
+                dependencies.create("org.mariadb.jdbc:mariadb-java-client:$mariaDbVersion"),
+                dependencies.create("net.sourceforge.jtds:jtds:$jtdsVersion"),
+                dependencies.create("com.microsoft.sqlserver:mssql-jdbc:$mssqlServerVersion"),
+                dependencies.create("com.oracle.database.jdbc:ojdbc11:$oracleJdbcVersion"),
+                dependencies.create("com.h2database:h2:$h2Version"),
+                dependencies.create("org.hibernate.orm:hibernate-community-dialects:$hibernateVersion")
+        ],
         webjarsbootstrap : [
                 dependencies.create("org.webjars:bootstrap:$bootstrapVersion") {
                     exclude(group: "org.webjars", module: "popper.js")
