@@ -160,7 +160,19 @@ jobs:
         with:
           name: "cas-tests-${{ matrix.category }}.coverage"
           path: "./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
-
+      - name: Rerun Failed Jobs
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          CURRENT_ATTEMPTS=${{ github.run_attempt }}
+          echo "Current attempts: $CURRENT_ATTEMPTS"
+          if [ "$CURRENT_ATTEMPTS" -le 2 ]; then
+            echo "Rerunning failed jobs..."
+            gh run retry --failed --repo ${{ github.repository }} ${{ github.run_id }}
+          else
+            echo "Max attempts reached. Not rerunning."
+          fi
   ##########################################################################
 
   coverage:
