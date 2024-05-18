@@ -41,7 +41,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
      */
     @GetMapping(path = WSFederationConstants.ENDPOINT_FEDERATION_REQUEST)
     public void handleFederationRequest(final HttpServletResponse response,
-                                        final HttpServletRequest request) throws Exception {
+                                              final HttpServletRequest request) throws Exception {
         val fedRequest = WSFederationRequest.of(request);
         val wa = fedRequest.wa();
         if (StringUtils.isBlank(wa)) {
