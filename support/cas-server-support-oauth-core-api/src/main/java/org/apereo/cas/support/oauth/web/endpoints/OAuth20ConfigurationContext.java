@@ -142,13 +142,16 @@ public class OAuth20ConfigurationContext {
         val ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
             getTicketGrantingTicketCookieGenerator(),
             getTicketRegistry(), context.getNativeRequest());
-        return Optional.ofNullable(ticketGrantingTicket)
-            .orElseGet(() -> {
-                val manager = new ProfileManager(context, getSessionStore());
-                return manager.getProfile()
-                    .map(profile -> profile.getAttribute(TicketGrantingTicket.class.getName()))
-                    .map(ticketId -> ticketRegistry.getTicket(ticketId.toString(), TicketGrantingTicket.class))
-                    .orElse(null);
-            });
+        if (ticketGrantingTicket == null && !ticketGrantingTicketCookieGenerator.containsCookie(context.getNativeRequest())) {
+            return Optional.ofNullable(ticketGrantingTicket)
+                .orElseGet(() -> {
+                    val manager = new ProfileManager(context, getSessionStore());
+                    return manager.getProfile()
+                        .map(profile -> profile.getAttribute(TicketGrantingTicket.class.getName()))
+                        .map(ticketId -> ticketRegistry.getTicket(ticketId.toString(), TicketGrantingTicket.class))
+                        .orElse(null);
+                });
+        }
+        return ticketGrantingTicket;
     }
 }
