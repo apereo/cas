@@ -1,0 +1,13 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": "^https://localhost:9859/anything/oidc.*",
+  "name": "Sample",
+  "id": 2,
+  "scopes" : [ "java.util.HashSet", [ "openid", "profile", "email" ] ],
+  "generateRefreshToken": true,
+  "byPassApprovalPrompt": true,
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "client_credentials", "refresh_token", "authorization_code" ] ]
+}

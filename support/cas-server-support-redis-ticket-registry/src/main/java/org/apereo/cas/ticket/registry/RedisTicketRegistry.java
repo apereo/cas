@@ -489,16 +489,14 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
     }
 
     protected void configureTicketExpirationInstant(final Ticket ticket, final String redisKeyPattern) {
-        if (ticket instanceof TicketGrantingTicket) {
-            if (ticket.getExpirationPolicy() instanceof final IdleExpirationPolicy iep) {
-                val expirationInstant = iep.getIdleExpirationTime(ticket).toInstant();
-                casRedisTemplates.getTicketsRedisTemplate().expireAt(redisKeyPattern, expirationInstant);
-                LOGGER.debug("Ticket [{}] will expire at [{}]", ticket.getId(), expirationInstant);
-            } else {
-                val timeoutSeconds = RedisCompositeKey.getTimeout(ticket);
-                casRedisTemplates.getTicketsRedisTemplate().expire(redisKeyPattern, timeoutSeconds, TimeUnit.SECONDS);
-                LOGGER.debug("Ticket [{}] will expire in [{}] second(s)", ticket.getId(), timeoutSeconds);
-            }
+        if (ticket.getExpirationPolicy() instanceof final IdleExpirationPolicy iep) {
+            val expirationInstant = iep.getIdleExpirationTime(ticket).toInstant();
+            casRedisTemplates.getTicketsRedisTemplate().expireAt(redisKeyPattern, expirationInstant);
+            LOGGER.debug("Ticket [{}] will expire at [{}]", ticket.getId(), expirationInstant);
+        } else {
+            val timeoutSeconds = RedisCompositeKey.getTimeout(ticket);
+            casRedisTemplates.getTicketsRedisTemplate().expire(redisKeyPattern, timeoutSeconds, TimeUnit.SECONDS);
+            LOGGER.debug("Ticket [{}] will expire in [{}] second(s)", ticket.getId(), timeoutSeconds);
         }
     }
 

@@ -23,6 +23,7 @@ import org.jooq.lambda.fi.util.function.CheckedFunction;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.LinkedHashMap;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -53,6 +54,8 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder extends BaseOA
             tokenRequestContext.getResponseType(), tokenRequestContext.getGrantType());
         LOGGER.debug("Generated OAuth code: [{}]", code);
         val addedCode = configurationContext.getTicketRegistry().addTicket(code);
+        Objects.requireNonNull(addedCode, () -> "Could not add OAuth code %s to the registry.".formatted(code.getId()));
+        
         val ticketGrantingTicket = tokenRequestContext.getTicketGrantingTicket();
         Optional.ofNullable(ticketGrantingTicket).ifPresent(tgt -> FunctionUtils.doAndHandle(ticket -> {
             configurationContext.getTicketRegistry().updateTicket(ticket);

@@ -51,7 +51,7 @@ const querystring = require("querystring");
     });
 
     await cas.logg("Querying registry for all ticket-granting tickets");
-    await cas.doGet(`${baseUrl}/ticketRegistry/query?prefix=TGT&count=${total}`, async (res) => {
+    await cas.doGet(`${baseUrl}/ticketRegistry/query?type=TGT&count=${total}`, async (res) => {
         assert(res.status === 200);
         assert(res.data.length === total);
     }, async (err) => {
@@ -62,7 +62,7 @@ const querystring = require("querystring");
     });
 
     await cas.logg("Querying registry for all decoded ticket-granting tickets");
-    await cas.doGet(`${baseUrl}/ticketRegistry/query?prefix=TGT&count=${total}&decode=true`, async (res) => {
+    await cas.doGet(`${baseUrl}/ticketRegistry/query?type=TGT&count=${total}&decode=true`, async (res) => {
         assert(res.status === 200);
         assert(res.data.length === total);
     }, async (err) => {

@@ -272,12 +272,32 @@ exports.assertInvisibility = async (page, selector) => {
     assert(result, `The element ${selector} must be invisible but it's not.`);
 };
 
+exports.deleteCookies = async(page) => {
+    const allCookies = await page.cookies();
+    for (const cookie of allCookies) {
+        await this.log(`Deleting cookie ${cookie.name}`);
+        await page.deleteCookie({
+            name : cookie.name,
+            domain : cookie.domain
+        });
+    }
+};
+
+exports.containsCookie = async(page, cookieName = "TGC") => {
+    const cookies = (await page.cookies()).filter((c) => {
+        this.log(`Checking cookie ${c.name}:${c.value}`);
+        return c.name === cookieName;
+    });
+    await this.log(`Found cookie ${cookieName}: ${cookies.length === 1 ? "yes" : "no"}`);
+    return cookies.length === 1 ? cookies[0] : null;
+};
+
 exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TGC") => {
     const cookies = (await page.cookies()).filter((c) => {
         this.log(`Checking cookie ${c.name}:${c.value}`);
         return c.name === cookieName;
     });
-    await this.log(`Found cookies ${cookies.length}`);
+    await this.log(`Found ${cookies.length} cookie(s)`);
     if (cookieMustBePresent) {
         await this.log(`Checking for cookie ${cookieName}, which MUST be present`);
         assert(cookies.length !== 0, `Cookie ${cookieName} must be present`);
