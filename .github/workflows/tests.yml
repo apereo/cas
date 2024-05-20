@@ -169,7 +169,7 @@ jobs:
           echo "Current attempts: $CURRENT_ATTEMPTS"
           if [ "$CURRENT_ATTEMPTS" -le 2 ]; then
             echo "Rerunning failed jobs..."
-            gh run rerun --failed --repo ${{ github.repository }} ${{ github.run_id }}
+            gh api --method POST -H "Accept: application/vnd.github+json" /repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/rerun-failed-jobs
           else
             echo "Max attempts reached. Not rerunning."
           fi
