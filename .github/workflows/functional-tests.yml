@@ -160,19 +160,6 @@ jobs:
           path: ./ci/tests/puppeteer/screenshots/*.png
           if-no-files-found: ignore
           retention-days: 2
-      - name: Rerun Failed Jobs
-        if: always()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          CURRENT_ATTEMPTS=${{ github.run_attempt }}
-          echo "Current attempts: $CURRENT_ATTEMPTS"
-          if [ "$CURRENT_ATTEMPTS" -le 2 ]; then
-            echo "Rerunning failed jobs..."
-            gh api --method POST -H "Accept: application/vnd.github+json" /repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/rerun-failed-jobs
-          else
-            echo "Max attempts reached. Not rerunning."
-          fi
   ##########################################################################
 
   puppeteer-tests-511:
@@ -223,17 +210,4 @@ jobs:
           path: ./ci/tests/puppeteer/screenshots/*.png
           if-no-files-found: ignore
           retention-days: 2
-      - name: Rerun Failed Jobs
-        if: always()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          CURRENT_ATTEMPTS=${{ github.run_attempt }}
-          echo "Current attempts: $CURRENT_ATTEMPTS"
-          if [ "$CURRENT_ATTEMPTS" -le 2 ]; then
-            echo "Rerunning failed jobs..."
-            gh api --method POST -H "Accept: application/vnd.github+json" /repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/rerun-failed-jobs
-          else
-            echo "Max attempts reached. Not rerunning."
-          fi
 ##########################################################################
