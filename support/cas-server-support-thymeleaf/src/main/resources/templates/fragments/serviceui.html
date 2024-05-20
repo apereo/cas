@@ -17,11 +17,7 @@
             <img id="serviceUIMetadataLogo" th:if="${serviceUIMetadata.logoUrl}" th:title="${serviceUIMetadata.displayName}"
                  th:alt="${serviceUIMetadata.displayName}" th:src="${serviceUIMetadata.logoUrl}"
                  th:width="${serviceUIMetadata.logoWidth}" th:height="${serviceUIMetadata.logoHeight}"/>
-
-            <img th:unless="${serviceUIMetadata.logoUrl}" th:title="${serviceUIMetadata.displayName}"
-                 th:alt="${serviceUIMetadata.displayName}" th:src="@{images/webapp.png}"
-                 th:width="${serviceUIMetadata.logoWidth}" th:height="${serviceUIMetadata.logoHeight}"/>
-
+            
             <div class="ml-2">
                 <h2 id="serviceUIMetadataDisplayName" th:utext="${serviceUIMetadata.displayName}">serviceUIMetadata.displayName</h2>
                 <p id="serviceUIMetadataDescription" th:utext="${serviceUIMetadata.description}">serviceUIMetadata.description</p>

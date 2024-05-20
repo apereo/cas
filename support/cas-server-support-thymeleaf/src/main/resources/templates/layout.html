@@ -10,9 +10,6 @@
         th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS - Central Authentication Service')}">
     </title>
 
-    <meta th:if="${_csrf instanceof T(org.springframework.security.web.server.csrf.CsrfToken)}" th:name="${_csrf.parameterName}" th:content="${_csrf.token}"/>
-    <meta th:if="${_csrf instanceof T(org.springframework.security.web.server.csrf.CsrfToken)}" name="_csrf_header" th:content="${_csrf.headerName}"/>
-
     <!--/* Core CAS CSS */-->
     <span th:remove="tag" th:if="${'true' == #strings.defaultString(#themes.code('cas.css.core.enabled'), 'true')}">
         <span th:replace="~{fragments/includes :: stylesheets}">

@@ -99,7 +99,6 @@
                         <span class="mdc-button__label" th:text="#{screen.welcome.button.confirm}">Confirm</span>
                     </button>
                 </div>
-                <input type="hidden" id="csrfToken" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <input type="hidden" name="cibaRequestId" th:value="${cibaRequest.id}"/>
 
                 <script type="text/javascript">
