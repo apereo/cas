@@ -12,6 +12,8 @@ import lombok.experimental.Accessors;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This is {@link GoogleRecaptchaProperties}.
@@ -93,6 +95,12 @@ public class GoogleRecaptchaProperties implements CasFeatureModule, Serializable
     @RegularExpressionCapable
     private String activateForIpAddressPattern;
 
+    /**
+     * Headers, defined as a {@link Map}, to include in the request when making
+     * the verification call to the recaptcha API.
+     */
+    private Map<String, String> headers = new HashMap<>();
+    
     /**
      * Recaptcha API versions.
      */
