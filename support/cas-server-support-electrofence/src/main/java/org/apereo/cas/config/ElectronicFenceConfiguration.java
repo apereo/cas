@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.impl.calcs.DateTimeAuthenticationRequestRiskCalculator;
+import org.apereo.cas.impl.calcs.DeviceFingerprintAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.GeoLocationAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.IpAddressAuthenticationRequestRiskCalculator;
 import org.apereo.cas.impl.calcs.UserAgentAuthenticationRequestRiskCalculator;
@@ -236,6 +237,21 @@ class ElectronicFenceConfiguration {
             return BeanSupplier.of(AuthenticationRequestRiskCalculator.class)
                 .when(BeanCondition.on("cas.authn.adaptive.risk.date-time.enabled").isTrue().given(applicationContext.getEnvironment()))
                 .supply(() -> new DateTimeAuthenticationRequestRiskCalculator(casEventRepository, casProperties))
+                .otherwiseProxy()
+                .get();
+        }
+
+        @ConditionalOnMissingBean(name = "deviceFingerprintAuthenticationRequestRiskCalculator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationRequestRiskCalculator deviceFingerprintAuthenticationRequestRiskCalculator(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CasEventRepository.BEAN_NAME)
+            final CasEventRepository casEventRepository) throws Exception {
+            return BeanSupplier.of(AuthenticationRequestRiskCalculator.class)
+                .when(BeanCondition.on("cas.authn.adaptive.risk.device-fingerprint.enabled").isTrue().given(applicationContext.getEnvironment()))
+                .supply(() -> new DeviceFingerprintAuthenticationRequestRiskCalculator(casEventRepository, casProperties))
                 .otherwiseProxy()
                 .get();
         }
