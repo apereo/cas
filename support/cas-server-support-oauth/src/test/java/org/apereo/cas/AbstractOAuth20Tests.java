@@ -766,6 +766,16 @@ public abstract class AbstractOAuth20Tests {
                                                                        final OAuth20GrantTypes grantType,
                                                                        final AbstractWebApplicationService service,
                                                                        final JEEContext webContext) throws Exception {
+        return buildAccessTokenRequestContext(registeredService, authentication, grantType, service,
+            new MockTicketGrantingTicket(authentication.getPrincipal().getId()), webContext);
+    }
+
+    protected AccessTokenRequestContext buildAccessTokenRequestContext(final OAuthRegisteredService registeredService,
+                                                                       final Authentication authentication,
+                                                                       final OAuth20GrantTypes grantType,
+                                                                       final AbstractWebApplicationService service,
+                                                                       final TicketGrantingTicket ticketGrantingTicket,
+                                                                       final JEEContext webContext) throws Exception {
         return AccessTokenRequestContext
             .builder()
             .clientId(registeredService.getClientId())
@@ -774,7 +784,7 @@ public abstract class AbstractOAuth20Tests {
             .registeredService(registeredService)
             .grantType(grantType)
             .responseType(OAuth20ResponseTypes.CODE)
-            .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
+            .ticketGrantingTicket(ticketGrantingTicket)
             .claims(oauthRequestParameterResolver.resolveRequestClaims(webContext))
             .requestedTokenType(oauthRequestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.REQUESTED_TOKEN_TYPE)
                 .map(OAuth20TokenExchangeTypes::from)

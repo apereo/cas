@@ -294,6 +294,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         val addedToken = ticketRegistry.addTicket(ticket);
         if (ticketGrantingTicket != null) {
             LOGGER.debug("Updating parent ticket-granting ticket [{}]", ticketGrantingTicket);
+            ticketGrantingTicket.update();
             ticketRegistry.updateTicket(ticketGrantingTicket);
         }
         return addedToken;

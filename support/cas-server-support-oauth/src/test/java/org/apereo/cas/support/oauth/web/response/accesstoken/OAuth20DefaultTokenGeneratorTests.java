@@ -14,7 +14,9 @@ import org.apereo.cas.support.oauth.validator.token.device.InvalidOAuth20DeviceT
 import org.apereo.cas.support.oauth.validator.token.device.ThrottledOAuth20DeviceUserCodeApprovalException;
 import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20DeviceUserCodeException;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import org.apereo.cas.util.EncodingUtils;
 import lombok.val;
 import org.jose4j.jwt.JwtClaims;
@@ -237,6 +239,27 @@ class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
     }
 
     @Test
+    void verifyTicketGrantingTicketUpdated() throws Throwable {
+        val registeredService = getRegisteredService(SERVICE_URL, UUID.randomUUID().toString(), "secret");
+        servicesManager.save(registeredService);
+        val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
+        val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
+        val mockResponse = new MockHttpServletResponse();
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        val webContext = new JEEContext(mockRequest, mockResponse);
+        val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), authentication,
+            new TimeoutExpirationPolicy(5));
+        val lastUsedTime = ticketGrantingTicket.getLastTimeUsed();
+        val tokenRequestContext = buildAccessTokenRequestContext(registeredService, authentication,
+            OAuth20GrantTypes.AUTHORIZATION_CODE, service, ticketGrantingTicket, webContext);
+        
+        val result = oauthTokenGenerator.generate(tokenRequestContext);
+        val accessToken = result.getAccessToken().map(OAuth20AccessToken.class::cast).orElseThrow();
+        assertNotNull(accessToken.getTicketGrantingTicket());
+        assertTrue(accessToken.getTicketGrantingTicket().getLastTimeUsed().isAfter(lastUsedTime));
+    }
+
+    @Test
     void verifyAccessTokenIsRefreshed() throws Throwable {
         val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
         registeredService.setJwtAccessToken(true);
@@ -253,9 +276,7 @@ class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         assertNotNull(jwt.getIssuedAt());
         assertNotEquals(authentication.getAuthenticationDate().toInstant().toEpochMilli(), jwt.getIssuedAt().getValueInMillis());
         assertNotNull(jwt.getExpirationTime());
-
         Thread.sleep(2000);
-
         mv = generateAccessTokenResponseAndGetModelAndView(registeredService, authentication, OAuth20GrantTypes.REFRESH_TOKEN);
         assertTrue(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
         val refreshedAt = mv.getModel().get(OAuth20Constants.ACCESS_TOKEN).toString();

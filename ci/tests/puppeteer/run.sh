@@ -802,7 +802,7 @@ if [[ "${RERUN}" != "true" ]]; then
   fi
 
   if [[ "${CI}" != "true" && "${QUIT_QUIETLY}" == "false" ]]; then
-    printgreen "Hit enter to clean up scenario ${scenario}\n"
+    printgreen "Hit Enter to clean up scenario ${scenario}\n"
     read -r
   fi
 

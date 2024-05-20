@@ -40,7 +40,7 @@ const cas = require("../../cas.js");
         }, { "Content-Type": "application/json" });
 
     await cas.logg("Querying registry for all ticket-granting tickets");
-    await cas.doGet(`${baseUrl}/ticketRegistry/query?prefix=TGT&count=10`, async (res) => {
+    await cas.doGet(`${baseUrl}/ticketRegistry/query?type=TGT&count=10`, async (res) => {
         assert(res.status === 200);
         assert(res.data.length === 1);
     }, async (err) => {
