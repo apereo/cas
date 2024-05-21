@@ -27,11 +27,11 @@ on:
 ##########################################################################
 
 jobs:
-  rerun-${{ github.event.workflow_run.name }}:
+  rerun-failed-jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     steps:
-      - name: Rerunning Failed Workflows Runs
+      - name: Rerunning ${{ github.event.workflow_run.name }}
         run: |
           echo "Workflow run ID: ${{ github.event.workflow_run.id }}"
           echo "Workflow run Name: ${{ github.event.workflow_run.name }}"
