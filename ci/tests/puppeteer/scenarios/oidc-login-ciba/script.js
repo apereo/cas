@@ -8,17 +8,20 @@ const path = require("path");
 async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", userCode = "393515b9-4bb0-43ef-9973-91f3c3236ffe", clientSecret = "secret") {
     await cas.log(`Attempting to verify CIBA delivery mode ${deliveryMode} with user code ${userCode} for client ID ${clientId}`);
 
+    const expiration = 60;
     const clientNotificationToken = "8d67dc78-7faa-4d41-aabd-67707b374255";
     const bindingMessage = "HelloFromCAS";
     const scopes = `${encodeURIComponent("openid profile")}`;
+
     let url = `https://localhost:8443/cas/oidc/oidcCiba?scope=${scopes}`;
     url += `&client_notification_token=${clientNotificationToken}`;
     url += `&login_hint=${encodeURIComponent("casuser@apereo.org")}`;
     url += `&binding_message=${bindingMessage}`;
+
     if (userCode.length > 0) {
         url += `&user_code=${userCode}`;
     }
-    url += "&requested_expiry=60";
+    url += `&requested_expiry=${expiration}`;
 
     const value = `${clientId}:${clientSecret}`;
     const buff = Buffer.alloc(value.length, value);
@@ -32,7 +35,7 @@ async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", us
         },
         (res) => {
             cas.log(res.data);
-            assert(res.data.expires_in === 60);
+            assert(res.data.expires_in === expiration);
             assert(res.data.auth_req_id !== undefined);
             return res.data.auth_req_id;
         }, (error) => {
@@ -62,6 +65,7 @@ async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", us
     await cas.assertVisibility(page, "#cibaContainer");
     await cas.assertInnerText(page, "#cibaContainer h1", "Backchannel Authentication Request");
     await cas.assertInnerText(page, "#cibaContainer #bindingMessage", bindingMessage);
+
     if (userCode.length > 0) {
         await cas.type(page, "#userCode", userCode);
     } else {
@@ -82,7 +86,8 @@ async function verifyDeliveryMode(clientId = "client", deliveryMode = "push", us
                 "Content-Type": "application/x-www-form-urlencoded"
             },
             (res) => {
-                cas.logg(`CIBA operation correctly succeeded to obtain tokens: ${res.data}`);
+                cas.logg("CIBA operation correctly succeeded to obtain tokens");
+                cas.log(res.data);
                 assert(res.data.access_token !== undefined);
                 assert(res.data.refresh_token !== undefined);
                 assert(res.data.id_token !== undefined);

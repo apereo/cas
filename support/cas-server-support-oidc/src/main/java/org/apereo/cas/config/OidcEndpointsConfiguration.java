@@ -37,6 +37,7 @@ import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.CasProtocolViewFactory;
@@ -64,7 +65,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.View;
@@ -212,11 +217,22 @@ class OidcEndpointsConfiguration {
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = "oidcCsrfTokenRepository")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CsrfTokenRepository oidcCsrfTokenRepository(final CasConfigurationProperties casProperties) {
+            val repository = new CookieCsrfTokenRepository();
+            repository.setHeaderName("X-CSRF-TOKEN");
+            return repository;
+        }
+
+        @Bean
         @ConditionalOnMissingBean(name = "oidcProtocolEndpointConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @CanIgnoreReturnValue
         @SuppressWarnings("UnnecessaryMethodReference")
         public CasWebSecurityConfigurer<HttpSecurity> oidcProtocolEndpointConfigurer(
+            @Qualifier("oidcCsrfTokenRepository")
+            final CsrfTokenRepository oidcCsrfTokenRepository,
             @Qualifier(OidcIssuerService.BEAN_NAME)
             final OidcIssuerService oidcIssuerService,
             final CasConfigurationProperties casProperties) {
@@ -232,6 +248,15 @@ class OidcEndpointsConfiguration {
                     http.authorizeHttpRequests(customizer -> {
                         val authEndpoints = new AntPathRequestMatcher("/**/" + OidcConstants.CIBA_URL + "/**");
                         customizer.requestMatchers(authEndpoints).anonymous();
+                    });
+                    http.csrf(customizer -> {
+                        val pattern = new AntPathRequestMatcher("/**/" + OidcConstants.CIBA_URL + "/{clientId}/{cibaRequestId}", HttpMethod.POST.name());
+                        val requestHandler = new XorCsrfTokenRequestAttributeHandler();
+                        requestHandler.setCsrfRequestAttributeName(null);
+                        requestHandler.setSecureRandom(RandomUtils.getNativeInstance());
+                        customizer.requireCsrfProtectionMatcher(pattern)
+                            .csrfTokenRequestHandler(requestHandler)
+                            .csrfTokenRepository(oidcCsrfTokenRepository);
                     });
                     return this;
                 }

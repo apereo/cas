@@ -99,6 +99,7 @@
                         <span class="mdc-button__label" th:text="#{screen.welcome.button.confirm}">Confirm</span>
                     </button>
                 </div>
+                <input type="hidden" id="loginCsrfToken" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <input type="hidden" name="cibaRequestId" th:value="${cibaRequest.id}"/>
 
                 <script type="text/javascript">
@@ -108,10 +109,18 @@
                         $("#fm1").submit(function (event) {
                             event.preventDefault();
                             const formData = $(this).serialize();
+                            console.log(formData);
+
+                            const csrfToken = $('#loginCsrfToken').val();
+                            console.log(`CSRF Token: ${csrfToken}`);
+                            
                             $.ajax({
                                 type: "POST",
                                 url: location.href,
                                 data: formData,
+                                headers: {
+                                    "X-CSRF-TOKEN": csrfToken
+                                },
                                 success: (response, status, xhr) => {
                                     if (xhr.status === 200) {
                                         $("#error").hide();
