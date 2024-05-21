@@ -92,6 +92,9 @@ Client to CAS without redirect through the user's browser (consumption device).
 - Spring Retry
 - Spring Data
 - Spring WS
+- Spring Security
+- Spring Rabbit
+- CosmosDb
 - InfluxDb
 - Undertow
 - Amazon SDK
