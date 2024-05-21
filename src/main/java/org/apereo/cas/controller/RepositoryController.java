@@ -109,6 +109,20 @@ public class RepositoryController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping(value = "/repo/pulls/{prNumber}/approve", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity approve(@PathVariable final String prNumber) {
+        val pullRequest = repository.getPullRequest(prNumber);
+        if (pullRequest == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (pullRequest.isLocked()) {
+            return ResponseEntity.status(HttpStatus.LOCKED).build();
+        }
+        return ResponseEntity.ok(Map.of("approved",
+            repository.approvePullRequest(pullRequest, false)));
+    }
+
     @PostMapping(value = "/repo/pulls/{prNumber}/labels/runci", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity runci(@PathVariable final String prNumber) {
