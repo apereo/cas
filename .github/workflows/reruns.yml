@@ -21,12 +21,15 @@ on:
       - Validation
     types:
       - completed
+    branches:
+      - master
 
 ##########################################################################
 
 jobs:
-  build:
+  rerun-${{ github.event.workflow_run.name }}:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
     steps:
       - name: Rerunning Failed Workflows Runs
         run: |
