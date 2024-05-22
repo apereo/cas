@@ -17,6 +17,7 @@ public class CasTomcatBanner extends AbstractCasBanner {
     @Override
     public void injectEnvironmentInfo(final Formatter formatter, final Environment environment,
                                       final Class<?> sourceClass) {
+        super.injectEnvironmentInfo(formatter, environment, sourceClass);
         formatter.format("Apache Tomcat Version: %s%n", ServerInfo.getServerInfo());
     }
 }

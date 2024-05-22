@@ -154,13 +154,13 @@ async function verifyAccessTokenAndProfile(context) {
     await verifyAccessTokenAndProfile(context);
     await context.close();
 
-    // context = await browser.createBrowserContext();
-    // await verifyAccessTokenIsNeverReceived(context);
-    // await context.close();
-    //
-    // context = await browser.createBrowserContext();
-    // await verifyAccessTokenIsLimited(context);
-    // await context.close();
+    context = await browser.createBrowserContext();
+    await verifyAccessTokenIsNeverReceived(context);
+    await context.close();
+
+    context = await browser.createBrowserContext();
+    await verifyAccessTokenIsLimited(context);
+    await context.close();
 
     await browser.close();
 })();
