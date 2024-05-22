@@ -87,9 +87,6 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
 
         val ticketGrantingTicketId = configureWebflowForTicketGrantingTicket(context);
         configureWebflowForSsoParticipation(context, ticketGrantingTicketId);
-
-
-        context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, RootCasException.withCode("INVALID_AUTHN_REQUEST"));
         
         return success();
     }

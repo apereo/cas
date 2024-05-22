@@ -41,7 +41,7 @@ public class JpaSamlMetadataProperties extends AbstractJpaProperties {
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
     public JpaSamlMetadataProperties() {
-        super.setUrl("jdbc:hsqldb:mem:cas-saml-metadata");
+        setUrl("jdbc:hsqldb:mem:cas-saml-metadata");
         crypto.getEncryption().setKeySize(EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
         crypto.getSigning().setKeySize(SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);
     }

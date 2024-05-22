@@ -34,7 +34,7 @@ public class LegacyValidateController extends AbstractServiceValidateController 
      */
     @GetMapping(path = CasProtocolConstants.ENDPOINT_VALIDATE)
     protected ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        return super.handleRequestInternal(request, response);
+        return handleRequestInternal(request, response);
     }
 
     @Override

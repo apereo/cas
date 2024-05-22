@@ -34,6 +34,6 @@ public class JpaServiceRegistryProperties extends AbstractJpaProperties {
     private boolean enabled = true;
 
     public JpaServiceRegistryProperties() {
-        super.setUrl("jdbc:hsqldb:mem:cas-service-registry");
+        setUrl("jdbc:hsqldb:mem:cas-service-registry");
     }
 }
