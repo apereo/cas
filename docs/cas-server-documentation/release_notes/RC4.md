@@ -94,6 +94,10 @@ Client to CAS without redirect through the user's browser (consumption device).
 - Spring WS
 - Spring Security
 - Spring Rabbit
+- Spring Session
+- Spring Integration
+- Spring Kafka
+- Apache Cassandra
 - CosmosDb
 - InfluxDb
 - Undertow
@@ -105,7 +109,10 @@ Client to CAS without redirect through the user's browser (consumption device).
 - Node.js
 - Jackson
 - Swagger
+- Hibernate
 - ACME
 - Oracle JDBC Driver
 - Google Cloud Monitoring
+- Google Firebase
+- Jakarta Validation
 
