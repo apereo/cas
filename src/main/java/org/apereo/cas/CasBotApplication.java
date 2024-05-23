@@ -26,6 +26,7 @@ import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -74,6 +75,7 @@ public class CasBotApplication {
 
 
     @Configuration(proxyBeanMethods = false)
+    @ConditionalOnProperty(name = "casbot.github.staging-repository.credentials.token")
     static class StagingRepositoryConfiguration {
         @Bean
         public GitHubOperations gitHubStagingRepositoryTemplate(final GitHubProperties gitHubProperties) {
