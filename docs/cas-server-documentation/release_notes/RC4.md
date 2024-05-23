@@ -83,6 +83,7 @@ Client to CAS without redirect through the user's browser (consumption device).
 - Registering multiple WebAuthN devices in account management profile is now corrected to use the correct configuration property for activation.
 - Calculation a [device fingerprint](../mfa/Multifactor-TrustedDevice-Authentication-DeviceFingerprint.html) for multifactor authentication trusted devices can use client-side technology to build a browser fingerprint.
 - Impersonation conditions can now be controlled via [principal attributes](../authentication/Surrogate-Authentication-AccountSelection.html) to allow for more fine-grained control.
+- CAS will forcefully not load services that might have been assigned a blank `id`, `name` or `serviceId` during service registration and loading.
 
 ## Library Upgrades
 
