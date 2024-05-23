@@ -96,9 +96,7 @@ public class GitHubProperties {
      */
     @Getter
     @Setter
-    @Validated
     public static class Credentials {
-        @NotBlank
         private String token;
     }
 
