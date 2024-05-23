@@ -17,7 +17,6 @@
 package org.apereo.cas.github;
 
 import org.apereo.cas.Memes;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -72,8 +71,6 @@ import java.util.TimeZone;
 @RequiredArgsConstructor
 @Slf4j
 public class GitHubTemplate implements GitHubOperations {
-
-    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private final RestOperations rest;
 

@@ -11,6 +11,7 @@ public enum WorkflowRuns {
     FUNCTIONAL_TESTS("Functional Tests"),
     UNIT_TESTS("Unit & Integration Tests"),
     PUBLISH_DOCS("Publish Documentation"),
+    RERUN_WORKFLOWS("Rerun Workflow Runs"),
     VALIDATION("Validation");
 
     private final String name;

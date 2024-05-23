@@ -47,6 +47,7 @@ import java.util.stream.Collectors;
 public class MonitoredRepository {
     private final GitHubOperations gitHub;
 
+    private final GitHubProperties.Repository repositoryProperties;
     private final GitHubProperties gitHubProperties;
 
     private Version currentVersionInMaster;
@@ -153,8 +154,8 @@ public class MonitoredRepository {
             val rest = new RestTemplate();
 
             val url = String.format("https://raw.githubusercontent.com/%s/%s/master/gradle.properties",
-                gitHubProperties.getRepository().getOrganization(),
-                gitHubProperties.getRepository().getName());
+                repositoryProperties.getOrganization(),
+                repositoryProperties.getName());
 
             val uri = URI.create(url);
             val entity = rest.getForEntity(uri, String.class);
@@ -202,7 +203,7 @@ public class MonitoredRepository {
     }
 
     public String getFullName() {
-        return gitHubProperties.getRepository().getFullName();
+        return repositoryProperties.getFullName();
     }
 
     public List<Milestone> getActiveMilestones() {
@@ -221,11 +222,11 @@ public class MonitoredRepository {
     }
 
     public String getOrganization() {
-        return this.gitHubProperties.getRepository().getOrganization();
+        return repositoryProperties.getOrganization();
     }
 
     public String getName() {
-        return this.gitHubProperties.getRepository().getName();
+        return repositoryProperties.getName();
     }
 
     public Optional<Milestone> getMilestoneForMaster() {
@@ -448,7 +449,7 @@ public class MonitoredRepository {
             for (final Comment lastComment : allComments) {
                 var body = lastComment.getBody().trim();
                 val runci = body.equals("@apereocas-bot runci");
-                if (gitHubProperties.getRepository().getCommitters().contains(lastComment.getUser().getLogin()) && runci) {
+                if (repositoryProperties.getCommitters().contains(lastComment.getUser().getLogin()) && runci) {
                     gitHub.removeComment(getOrganization(), getName(), lastComment.getId());
                     return true;
                 }
@@ -479,7 +480,7 @@ public class MonitoredRepository {
             } else {
                 var pr = found.get();
                 var foundci = pr.getLabels().stream().anyMatch(label -> label.getName().equalsIgnoreCase(CasLabels.LABEL_CI.getTitle()));
-                if (!gitHubProperties.getRepository().getCommitters().contains(pr.getUser().getLogin()) && !foundci) {
+                if (!repositoryProperties.getCommitters().contains(pr.getUser().getLogin()) && !foundci) {
                     log.info("Removing workflow run {} without the label {}", run, CasLabels.LABEL_CI.getTitle());
                     gitHub.removeWorkflowRun(getOrganization(), getName(), run);
                 }
@@ -508,7 +509,7 @@ public class MonitoredRepository {
 
             val now = OffsetDateTime.now();
             workflowRun.getRuns().forEach(run -> {
-                val staleExp = run.getUpdatedTime().plusDays(this.gitHubProperties.getStaleWorkflowRunInDays());
+                val staleExp = run.getUpdatedTime().plusDays(gitHubProperties.getStaleWorkflowRunInDays());
                 if (staleExp.isBefore(now)) {
                     Workflows.WorkflowRunStatus.from(run)
                         .filter(status -> status == Workflows.WorkflowRunStatus.IN_PROGRESS)
@@ -518,18 +519,22 @@ public class MonitoredRepository {
                     gitHub.removeWorkflowRun(getOrganization(), getName(), run);
                 } else if (run.isRemovable()) {
                     if (run.isConcludedSuccessfully() || run.isSkipped()) {
-                        val completedExp = run.getUpdatedTime().plusDays(this.gitHubProperties.getCompletedSuccessfulWorkflowRunInDays());
+                        val completedExp = run.getUpdatedTime().plusDays(gitHubProperties.getCompletedSuccessfulWorkflowRunInDays());
                         if (completedExp.isBefore(now)) {
                             log.info("Removing completed successful workflow run {} @ {}", run, run.getUpdatedTime());
                             gitHub.removeWorkflowRun(getOrganization(), getName(), run);
                         }
                     } else {
-                        val completedExp = run.getUpdatedTime().plusDays(this.gitHubProperties.getCompletedFailedWorkflowRunInDays());
+                        val completedExp = run.getUpdatedTime().plusDays(gitHubProperties.getCompletedFailedWorkflowRunInDays());
                         if (completedExp.isBefore(now)) {
                             log.info("Removing completed failed workflow run {} @ {}", run, run.getUpdatedTime());
                             gitHub.removeWorkflowRun(getOrganization(), getName(), run);
                         }
                     }
+                } else if (run.getName().equalsIgnoreCase(WorkflowRuns.RERUN_WORKFLOWS.getName())
+                    && ("success".equalsIgnoreCase(run.getConclusion()) || "skipped".equalsIgnoreCase(run.getConclusion()))) {
+                    log.info("Removing rerun workflow {} @ {}", run, run.getUpdatedTime());
+                    gitHub.removeWorkflowRun(getOrganization(), getName(), run);
                 }
             });
         }

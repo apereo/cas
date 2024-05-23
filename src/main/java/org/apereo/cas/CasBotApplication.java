@@ -19,13 +19,17 @@ package org.apereo.cas;
 import org.apereo.cas.github.GitHubOperations;
 import org.apereo.cas.github.GitHubTemplate;
 import org.apereo.cas.github.RegexLinkParser;
+import org.apereo.cas.job.MainRepositoryJob;
+import org.apereo.cas.job.StagingRepositoryJob;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -47,26 +51,50 @@ public class CasBotApplication {
         SpringApplication.run(CasBotApplication.class, args);
     }
 
-    @Bean
-    public GitHubTemplate gitHubTemplate(final GitHubProperties gitHubProperties) {
-        return new GitHubTemplate(gitHubProperties.getCredentials().getToken(), new RegexLinkParser());
+    @Configuration(proxyBeanMethods = false)
+    static class RepositoryConfiguration {
+        @Bean
+        public GitHubOperations gitHubRepositoryTemplate(final GitHubProperties gitHubProperties) {
+            return new GitHubTemplate(gitHubProperties.getRepository().getCredentials().getToken(), new RegexLinkParser());
+        }
+
+        @Bean
+        public MonitoredRepository monitoredRepository(@Qualifier("gitHubRepositoryTemplate") final GitHubOperations gitHub,
+                                                       final GitHubProperties gitHubProperties) {
+            return new MonitoredRepository(gitHub, gitHubProperties.getRepository(), gitHubProperties);
+        }
+
+        @Bean
+        public MainRepositoryJob monitoredRepositoryJob(@Qualifier("gitHubRepositoryTemplate") final GitHubOperations gitHub,
+                                                        @Qualifier("monitoredRepository") final MonitoredRepository repository,
+                                                        final List<PullRequestListener> pullRequestListeners) {
+            return new MainRepositoryJob(gitHub, repository, pullRequestListeners);
+        }
     }
 
-    @Bean
-    public MonitoredRepository monitoredRepository(final GitHubOperations gitHub,
-                                                   final GitHubProperties gitHubProperties) {
-        return new MonitoredRepository(gitHub, gitHubProperties);
-    }
 
-    @Bean
-    public RepositoryMonitor repositoryMonitor(final GitHubOperations gitHub,
-                                               final MonitoredRepository repository,
-                                               final List<PullRequestListener> pullRequestListeners) {
-        return new RepositoryMonitor(gitHub, repository, pullRequestListeners);
-    }
+    @Configuration(proxyBeanMethods = false)
+    static class StagingRepositoryConfiguration {
+        @Bean
+        public GitHubOperations gitHubStagingRepositoryTemplate(final GitHubProperties gitHubProperties) {
+            return new GitHubTemplate(gitHubProperties.getStagingRepository().getCredentials().getToken(), new RegexLinkParser());
+        }
 
+        @Bean
+        public MonitoredRepository stagingRepository(@Qualifier("gitHubStagingRepositoryTemplate") final GitHubOperations gitHub,
+                                                     final GitHubProperties gitHubProperties) {
+            return new MonitoredRepository(gitHub, gitHubProperties.getStagingRepository(), gitHubProperties);
+        }
+
+        @Bean
+        public StagingRepositoryJob stagingRepositoryJob(
+            @Qualifier("stagingRepository") final MonitoredRepository repository) {
+            return new StagingRepositoryJob(repository);
+        }
+    }
+    
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         return http.build();
     }
@@ -75,7 +103,7 @@ public class CasBotApplication {
     public void applicationReady(final ApplicationReadyEvent event) {
         log.info("CAS GitHub bot is now ready");
 
-        val repository = event.getApplicationContext().getBean(MonitoredRepository.class);
+        val repository = event.getApplicationContext().getBean("monitoredRepository", MonitoredRepository.class);
         log.info("Current version in master branch: {}", repository.getCurrentVersionInMaster());
         repository.getMilestoneForMaster().ifPresentOrElse(ms ->
                 log.info("Current milestone for master branch: {}", ms),

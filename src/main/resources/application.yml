@@ -14,7 +14,13 @@ casbot:
       url: https://github.com/apereo/cas
       admins: mmoayyed,apereocas-bot
       committers: leleuj,mmoayyed,apereocas-bot
-
+    staging-repository:
+      organization: mmoayyed
+      name: cas
+      url: https://github.com/mmoayyed/cas
+      admins: mmoayyed,apereocas-bot
+      committers: mmoayyed,apereocas-bot
+      
 spring:
   security:
     user:

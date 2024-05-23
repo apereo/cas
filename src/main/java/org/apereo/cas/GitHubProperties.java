@@ -22,7 +22,10 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.validation.annotation.Validated;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,13 +37,16 @@ import java.util.List;
 @ConfigurationProperties(prefix = "casbot.github", ignoreUnknownFields = false)
 @Getter
 @Setter
+@Validated
 public class GitHubProperties {
 
     @NestedConfigurationProperty
+    @Valid
     private Repository repository = new Repository();
-
+    
     @NestedConfigurationProperty
-    private Credentials credentials = new Credentials();
+    @Valid
+    private Repository stagingRepository = new Repository();
 
     @NestedConfigurationProperty
     private PullRequestProperties prs = new PullRequestProperties();
@@ -58,6 +64,7 @@ public class GitHubProperties {
      */
     @Getter
     @Setter
+    @Validated
     public static class Repository {
 
         /**
@@ -75,6 +82,10 @@ public class GitHubProperties {
         private List<String> committers = new ArrayList<>();
         private List<String> admins = new ArrayList<>();
 
+        @NestedConfigurationProperty
+        @Valid
+        private Credentials credentials = new Credentials();
+        
         public String getFullName() {
             return organization + '/' + name;
         }
@@ -85,7 +96,9 @@ public class GitHubProperties {
      */
     @Getter
     @Setter
+    @Validated
     public static class Credentials {
+        @NotBlank
         private String token;
     }
 

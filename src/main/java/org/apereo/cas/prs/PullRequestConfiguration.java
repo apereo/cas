@@ -3,6 +3,7 @@ package org.apereo.cas.prs;
 import org.apereo.cas.MonitoredRepository;
 import org.apereo.cas.PullRequestListener;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,7 +16,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 class PullRequestConfiguration {
     @Bean
-    public PullRequestListener pullRequestListener(final MonitoredRepository repository) {
+    public PullRequestListener pullRequestListener(
+        @Qualifier("monitoredRepository")
+        final MonitoredRepository repository) {
         return new CasPullRequestListener(repository);
     }
 
