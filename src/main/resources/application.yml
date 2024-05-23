@@ -25,7 +25,7 @@ spring:
   security:
     user:
       name: apereocasbot
-      password: ${CASBOT_GITHUB_CREDENTIALS_TOKEN}
+      password: ${casbot.github.repository.credentials.token}
       roles: ADMIN
   jackson:
     default-property-inclusion: non_null
