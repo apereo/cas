@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.util.CollectionUtils;
@@ -13,6 +14,7 @@ import org.apache.hc.core5.net.URIBuilder;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.http.url.UrlResolver;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +45,7 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
 
             val existingParameters = new HashMap<>(context.getRequestParameters());
             includeParameterNames.forEach(existingParameters.keySet()::remove);
+            existingParameters.keySet().removeAll(getExcludedParameterNames());
             existingParameters
                 .entrySet()
                 .stream()
@@ -53,6 +56,14 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
             LOGGER.debug("Final resolved callback URL is [{}]", callbackResolved);
             return callbackResolved;
         });
+    }
+
+    private static Collection<String> getExcludedParameterNames() {
+        return List.of(
+            CasProtocolConstants.PARAMETER_SERVICE,
+            CasProtocolConstants.PARAMETER_TARGET_SERVICE,
+            CasProtocolConstants.PARAMETER_TICKET
+        );
     }
 
     protected List<String> getIncludeParameterNames() {
