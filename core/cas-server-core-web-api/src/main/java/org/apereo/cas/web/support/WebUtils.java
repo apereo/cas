@@ -56,6 +56,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -1459,6 +1460,17 @@ public class WebUtils {
         requestContext.getFlowScope().put("gauthMultipleDeviceRegistrationEnabled", enabled);
     }
 
+    /**
+     * Is multifactor device registration enabled?
+     *
+     * @param requestContext the request context
+     * @return true/false
+     */
+    public static boolean isMultifactorDeviceRegistrationEnabled(final RequestContext requestContext) {
+        val enabled = Objects.requireNonNullElse(requestContext.getFlowScope().getBoolean("mfaDeviceRegistrationEnabled", Boolean.TRUE), Boolean.TRUE);
+        return BooleanUtils.toBoolean(enabled);
+    }
+    
     /**
      * Is google authenticator multiple device registration enabled?
      *

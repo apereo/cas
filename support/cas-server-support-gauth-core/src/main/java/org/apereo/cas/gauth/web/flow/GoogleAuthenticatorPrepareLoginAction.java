@@ -25,7 +25,9 @@ public class GoogleAuthenticatorPrepareLoginAction extends AbstractMultifactorAu
     protected Event doExecuteInternal(final RequestContext requestContext) {
         val principal = resolvePrincipal(WebUtils.getAuthentication(requestContext).getPrincipal(), requestContext);
         val enabled = casProperties.getAuthn().getMfa().getGauth().getCore().isMultipleDeviceRegistrationEnabled()
-            && repository.count(principal.getId()) >= 1;
+            && repository.count(principal.getId()) >= 1
+            && WebUtils.isMultifactorDeviceRegistrationEnabled(requestContext);
+
         WebUtils.putGoogleAuthenticatorMultipleDeviceRegistrationEnabled(requestContext, enabled);
         WebUtils.putOneTimeTokenAccounts(requestContext, repository.get(principal.getId()));
         return null;

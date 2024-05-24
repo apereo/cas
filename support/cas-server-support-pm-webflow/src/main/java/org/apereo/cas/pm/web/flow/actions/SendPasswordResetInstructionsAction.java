@@ -10,7 +10,9 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
+import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -160,7 +162,10 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
 
     protected Event switchToMultifactorAuthenticationFlow(final RequestContext requestContext) throws Throwable {
         val query = WebUtils.getPasswordManagementQuery(requestContext, PasswordManagementQuery.class);
-        val principal = principalResolver.resolve(new BasicIdentifiableCredential(query.getUsername()));
+        var principal = principalResolver.resolve(new BasicIdentifiableCredential(query.getUsername()));
+        if (principal instanceof NullPrincipal) {
+            principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(query.getUsername());
+        }
         val provider = selectMultifactorAuthenticationProvider(requestContext, principal);
         val authentication = DefaultAuthenticationBuilder.newInstance().setPrincipal(principal).build();
         WebUtils.putAuthentication(authentication, requestContext);
@@ -169,6 +174,8 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
         WebUtils.putAuthenticationResultBuilder(authenticationResult, requestContext);
         WebUtils.putTargetTransition(requestContext, CasWebflowConstants.TRANSITION_ID_RESUME_RESET_PASSWORD);
         WebUtils.putMultifactorAuthenticationProvider(requestContext, provider);
+        requestContext.getFlowScope().put("mfaDeviceRegistrationEnabled", false);
+
         return new EventFactorySupport().event(this, provider.getId(),
             new LocalAttributeMap<>(Map.of(MultifactorAuthenticationProvider.class.getName(), provider)));
     }
