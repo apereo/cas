@@ -114,9 +114,7 @@
                         <p/>
                         <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                         <input type="hidden" name="_eventId" value="updateSecurityQuestions"/>
-                        <button class="mdc-button mdc-button--raised btn btn-primary" accesskey="l" type="submit">
-                            <span class="mdc-button__label" th:utext="#{cas.screen.acct.button.update}">Submit</span>
-                        </button>
+                        <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')}"/>
                     </div>
                 </form>
             </div>

@@ -48,9 +48,7 @@
                     </label>
 
                     <p>
-                        <button class="mdc-button mdc-button--raised" accesskey="s" type="submit">
-                            <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
-                        </button>
+                        <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')}"/>
                         <button class="mdc-button mdc-button--outlined"
                                 name="cancel"
                                 th:value="cancel"

@@ -95,13 +95,7 @@
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="_eventId" value="proceed"/>
             <div class="form-actions d-flex align-items-center">
-                <button class="mdc-button mdc-button--raised btn btn-primary me-2"
-                        name="proceed"
-                        id="proceed"
-                        type="submit"
-                        accesskey="l">
-                    <span class="mdc-button__label" th:text="#{screen.interrupt.btn.proceed}">Proceed</span>
-                </button>
+                <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.interrupt.btn.proceed', id='proceed', name='proceed')}"/>
             </div>
         </form>
 

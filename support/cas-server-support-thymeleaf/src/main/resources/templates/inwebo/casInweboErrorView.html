@@ -24,11 +24,7 @@
             <form id="retryForm" method="POST">
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 <input type="hidden" name="_eventId" value="retry"/>
-                <button class="mdc-button mdc-button--raised btn btn-primary" name="retry"
-                        type="submit" value="retry"
-                        th:value="#{cas.inwebo.retry.button}">
-                    <span class="mdc-button__label" th:text="#{cas.inwebo.retry.button}">Retry the Inwebo multi-factor authentication</span>
-                </button>
+                <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.inwebo.retry.button', name='retry', id='retry')}"/>
             </form>
         </div>
         <div th:if="${mustEnroll}">
