@@ -61,7 +61,6 @@ jobs:
 
   publish-docs:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' || contains(github.event.pull_request.labels.*.name, 'CI') }}
     needs: [initialize]
     continue-on-error: false
     steps:
