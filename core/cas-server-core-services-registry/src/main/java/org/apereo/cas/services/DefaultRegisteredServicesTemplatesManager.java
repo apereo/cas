@@ -43,7 +43,7 @@ public class DefaultRegisteredServicesTemplatesManager implements RegisteredServ
         this.registeredServiceSerializer = registeredServiceSerializer;
 
         val location = properties.getTemplates().getDirectory().getLocation();
-        LOGGER.debug("Attrmpting to locate service template definitions from [{}]", location);
+        LOGGER.debug("Attempting to locate service template definitions from [{}]", location);
         templateDefinitionFiles = FunctionUtils.doUnchecked(() -> ResourceUtils.doesResourceExist(location)
             ? FileUtils.listFiles(location.getFile(), new String[]{"json"}, true)
             : new ArrayList<>());
