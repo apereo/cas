@@ -43,9 +43,7 @@
                  </span>
             </div>
 
-            <button id="continueButton" class="mdc-button mdc-button--raised btn btn-primary mt-4 d-block" type="submit">
-                <span th:text="#{screen.button.continue}"></span>
-            </button>
+            <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.button.continue', id='continueButton')}"/>
 
             <input type="hidden" id="eventId" name="_eventId" value="select"/>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
