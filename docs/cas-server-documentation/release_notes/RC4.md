@@ -42,11 +42,10 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release.
 
-### Spring Boot 3.3
+### Spring Boot 3.3.x
 
-The migration of the entire codebase to Spring Boot `3.3` is ongoing, and at the
-moment is waiting for the wider ecosystem of supporting frameworks and libraries to catch up to
-changes. We anticipate the work to finalize in the next few release candidates and certainly prior to the final release.
+The migration of the entire codebase to Spring Boot `3.3.x` is now complete, and we'll continue to watch for the wider 
+ecosystem of supporting frameworks and libraries to catch up to changes. 
 
 ### Graal VM Native Images
 
