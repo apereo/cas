@@ -1,3 +1,4 @@
+basebaseurl: /cas
 exclude:
   - .idea
   - .history
