@@ -332,7 +332,9 @@ public abstract class AbstractServicesManager implements ServicesManager {
                 .peek(this::loadInternal)
                 .filter(Objects::nonNull)
                 .map(this::applyTemplate)
-                .filter(Objects::nonNull)
+                .filter(service -> Objects.nonNull(service)
+                    && StringUtils.isNotBlank(service.getName())
+                    && StringUtils.isNotBlank(service.getServiceId()))
                 .collect(Collectors.toMap(service -> {
                     LOGGER.trace("Adding registered service [{}] with name [{}] and internal identifier [{}]",
                         service.getServiceId(), service.getName(), service.getId());
