@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export DOCKER_IMAGE="kenchan0130/simplesamlphp:latest"
+
 if [[ -z "${SP_SLO_SERVICE}" ]]; then
   export SP_SLO_SERVICE="https://localhost:8443/cas/login?client_name=SAML2Client"
 fi
@@ -56,7 +58,7 @@ docker run -d --rm --name=simplesamlphp-idp -p 9443:8080 \
   -v $PWD/ci/tests/saml2/authsources.php:/var/www/simplesamlphp/config/authsources.php \
   -v $PWD/ci/tests/saml2/config.php:/var/www/simplesamlphp/config/config.php \
   -v $PWD/ci/tests/saml2/php.ini-production:/usr/local/etc/php/php.ini \
-  kenchan0130/simplesamlphp
+  ${DOCKER_IMAGE}
 #docker logs -f simplesamlphp-idp &
 
 chmod +x ${PWD}/ci/tests/httpbin/run-httpbin-server.sh

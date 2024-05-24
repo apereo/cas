@@ -2,7 +2,7 @@ version: "3"
 
 services:
   redis-master:
-    image: redis/redis-stack:${REDIS_VERSION}
+    image: redis/redis-stack:7.2.0-v10
     container_name: redis_server_master
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
@@ -11,7 +11,7 @@ services:
     ports:
       - "6379:6379"
   redis-ssl:
-    image: redis/redis-stack:${REDIS_VERSION}
+    image: redis/redis-stack:7.2.0-v10
     container_name: redis_server_ssl
     environment:
       - REDIS_PASSWORD=pAssw0rd123
@@ -21,14 +21,14 @@ services:
     volumes:
       - ./certs:/etc/ssl/certs
   redis-master2:
-    image: redis/redis-stack:${REDIS_VERSION}
+    image: redis/redis-stack:7.2.0-v10
     container_name: redis_server_master2
     environment:
       - REDIS_PASSWORD=pAssw0rd123
     ports:
       - "16389:6379"
   sentinel_1:
-    image: bitnami/redis-sentinel:${REDIS_SENTINEL_VERSION}
+    image: bitnami/redis-sentinel:7.2.4
     container_name: redis_sentinel_1
     ports:
       - "26379:26379"
@@ -42,7 +42,7 @@ services:
       - redis-master
 
   sentinel_2:
-    image: bitnami/redis-sentinel:${REDIS_SENTINEL_VERSION}
+    image: bitnami/redis-sentinel:7.2.4
     container_name: redis_sentinel_2
     ports:
       - "26380:26379"
@@ -56,7 +56,7 @@ services:
       - redis-master
 
   sentinel_3:
-    image: bitnami/redis-sentinel:${REDIS_SENTINEL_VERSION}
+    image: bitnami/redis-sentinel:7.2.4
     container_name: redis_sentinel_3
     ports:
       - "26381:26379"
