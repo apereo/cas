@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
-
+export DOCKER_IMAGE="quay.io/keycloak/keycloak:latest"
 echo "Running Keycloak docker image..."
 docker stop keycloak || true && docker rm keycloak || true
 
@@ -19,7 +19,7 @@ docker run -d --rm --name keycloak \
   -e KEYCLOAK_ADMIN=admin \
   -e KEYCLOAK_ADMIN_PASSWORD=admin \
   -v "$PWD"/ci/tests/oidc/keycloak/import:/opt/keycloak/data/import:ro \
-  quay.io/keycloak/keycloak:latest \
+  ${DOCKER_IMAGE} \
   start-dev --import-realm
 echo "Waiting for Keycloak docker container to prepare..."
 sleep 15

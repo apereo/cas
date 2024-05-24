@@ -1,11 +1,12 @@
 #!/bin/bash
 
+export DOCKER_IMAGE="rabbitmq:3-management"
 echo "Running RabbitMQ docker image..."
 docker stop rabbitmq-server || true && docker rm rabbitmq-server || true
 docker run -d -p 5672:5672 -p 15672:15672 --hostname rabbitmq \
   --name rabbitmq-server -e RABBITMQ_DEFAULT_USER=rabbituser \
   -e RABBITMQ_DEFAULT_PASS=bugsbunny \
-  rabbitmq:3-management
+  ${DOCKER_IMAGE}
 
 docker ps | grep "rabbitmq"
 retVal=$?

@@ -12,7 +12,17 @@
   "schedule": [
     "after 10pm and before 6am every weekday"
   ],
+  "docker": {
+    "enabled": true,
+    "compose": {
+      "enabled": true
+    }
+  },
   "packageRules": [
+    {
+      "packagePatterns": ["export DOCKER_IMAGE=\"(.+):(.+)\""],
+      "groupName": "bash-docker-image-updates"
+    },
     {
       "matchManagers": ["gradle", "maven"],
       "enabled": false
@@ -20,6 +30,10 @@
     {
       "matchManagers": ["github-actions"],
       "enabled": true
+    },
+    {
+      "managers": ["dockerfile"],
+      "groupName": "all-docker-updates"
     },
     {
       "matchFileNames": ["**/package.json"],
