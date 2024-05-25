@@ -509,7 +509,7 @@ curl -u "username:password" \
             </div>
 
             <script>
-                document.getElementById('{{key}}ModalConfig').addEventListener('shown.bs.modal', function (event) {
+                document.getElementById('{{key}}ModalConfig').addEventListener('shown.bs.modal', event => {
                     let content = $("#jdbcauthpropReference").html();
                     $("#placeholderSecurityJdbc{{ key }}").html(content);
 
@@ -521,7 +521,7 @@ curl -u "username:password" \
 
                     let elementId = "#casEndpointConfigPropsDiv .nav-item a.nav-link:first";
                     console.log(`Selecting configuration tab via ${elementId}`);
-                    $(elementId).addClass("active")
+                    $(elementId).addClass("active");
                     $(elementId).click();
                 })
             </script>
