@@ -32,7 +32,7 @@
                 <input type="hidden" name="_eventId" value="submit"/>
 
                 <div class="form-actions d-flex">
-                    <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.aup.button.accept', id='aupSubmit')}"/>
+                    <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.aup.button.accept', name='submit', id='aupSubmit')}"/>
                     <button class="mdc-button mdc-button--outlined btn btn-outline-secondary"
                             name="cancel"
                             th:value="#{screen.aup.button.cancel}"
