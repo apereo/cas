@@ -69,6 +69,11 @@ identifier for the user they want to authenticate, will be able to initiate an i
 users without having end-user interaction from the consumption device. The flow involves direct communication from the 
 Client to CAS without redirect through the user's browser (consumption device).
 
+### CAS Initializr SBOM Support
+    
+CAS Initializr is now modified to generate a Software Bill of Materials (SBOM) using the CycloneDX format. This SBOM can be used to
+track and manage the open-source components used in your CAS deployment and may be examined via the `sbom` actuator endpoint.
+
 ## Other Stuff
           
 - CAS offers options to control SNI Host Checking for [Jetty](../installation/Configuring-Servlet-Container-Embedded-Jetty.html) when used as an embedded container.
@@ -84,6 +89,7 @@ Client to CAS without redirect through the user's browser (consumption device).
 - Impersonation conditions can now be controlled via [principal attributes](../authentication/Surrogate-Authentication-AccountSelection.html) to allow for more fine-grained control.
 - CAS will forcefully not load services that might have been assigned a blank `id`, `name` or `serviceId` during service registration and loading.
 - ID token `jti` claims in [OpenID Connect](../authentication/OIDC-Authentication.html) are no longer ticket (granting-ticket) identifiers but are instead digested using `SHA-512`.
+- The default content encryption algorithm for crypto operations has now switched to `A256CBC-HS512`.
 
 ## Library Upgrades
 
