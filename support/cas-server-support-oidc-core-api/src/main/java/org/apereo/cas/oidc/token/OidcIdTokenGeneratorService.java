@@ -30,7 +30,6 @@ import org.apereo.cas.ticket.idtoken.IdTokenGenerationContext;
 import org.apereo.cas.ticket.idtoken.OidcIdToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
-import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.google.common.collect.ImmutableSet;
 import lombok.extern.slf4j.Slf4j;

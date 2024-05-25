@@ -27,7 +27,7 @@ public class EncryptionJwtCryptoProperties implements Serializable {
      * The default content encryption algorithm.
      */
     public static final String DEFAULT_CONTENT_ENCRYPTION_ALGORITHM =
-        ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256;
+        ContentEncryptionAlgorithmIdentifiers.AES_256_CBC_HMAC_SHA_512;
 
     /**
      * Encryption key size for text data and ciphers.
