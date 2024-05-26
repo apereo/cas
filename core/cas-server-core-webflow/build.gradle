@@ -1,6 +1,6 @@
 description = "Apereo CAS Core Webflow"
 dependencies {
-
+    implementation libraries.jose4j
     implementation libraries.bouncycastle
     
     implementation project(":core:cas-server-core-authentication-api")
@@ -22,9 +22,7 @@ dependencies {
     api project(":api:cas-server-core-api-web")
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-cookie")
-
-
-
+    
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-webflow-mfa")

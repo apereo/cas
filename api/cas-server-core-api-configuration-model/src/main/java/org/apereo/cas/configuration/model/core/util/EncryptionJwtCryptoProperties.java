@@ -32,7 +32,7 @@ public class EncryptionJwtCryptoProperties implements Serializable {
     /**
      * Encryption key size for text data and ciphers.
      */
-    public static final int DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE = 256;
+    public static final int DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE = 512;
 
     @Serial
     private static final long serialVersionUID = 616825635591169628L;
@@ -47,5 +47,5 @@ public class EncryptionJwtCryptoProperties implements Serializable {
     /**
      * The encryption key size.
      */
-    private int keySize = 512;
+    private int keySize = DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE;
 }

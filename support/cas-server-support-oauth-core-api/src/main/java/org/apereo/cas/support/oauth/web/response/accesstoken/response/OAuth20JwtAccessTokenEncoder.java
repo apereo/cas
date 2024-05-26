@@ -302,7 +302,8 @@ public class OAuth20JwtAccessTokenEncoder {
             val serviceRequiresJwt = oAuthRegisteredService != null && oAuthRegisteredService.isJwtAccessToken();
             val dpopRequest = accessToken instanceof final AuthenticationAwareTicket aat
                 && aat.getAuthentication().containsAttribute(OAuth20Constants.DPOP);
-            return casProperties.getAuthn().getOauth().getAccessToken().isCreateAsJwt() || this.forceEncodeAsJwt || serviceRequiresJwt || dpopRequest;
+            return casProperties.getAuthn().getOauth().getAccessToken().isCreateAsJwt()
+                || this.forceEncodeAsJwt || serviceRequiresJwt || dpopRequest;
         }
 
     }

@@ -195,7 +195,7 @@
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="_eventId" value="submit"/>
             <div class="form-actions d-flex justify-content-center">
-                <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='cas.screen.acct.button.submit')}"/>
+                <div th:replace="~{fragments/submitbutton :: submitButton (name='submit', id='submit', messageKey='cas.screen.acct.button.submit')}"/>
                 &nbsp;
                 <a class="mdc-button mdc-button--outlined btn btn-secondary" th:href="@{/login}">
                     <span class="mdc-button__label" th:text="#{cas.screen.acct.button.cancel}">CANCEL</span>

@@ -17,7 +17,8 @@ class RestfulSamlIdPMetadataCipherExecutorTests {
     @Test
     void verifyAction() throws Throwable {
         val cipher = new RestfulSamlIdPMetadataCipherExecutor(null, null,
-            EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, 512, 256);
+            EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM, 512,
+            EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
 
         val encoded = cipher.encode("ST-1234567890");
         assertEquals("ST-1234567890", cipher.decode(encoded));

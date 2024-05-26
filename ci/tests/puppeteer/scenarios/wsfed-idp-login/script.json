@@ -11,6 +11,7 @@
 
     "--cas.authn.wsfed-idp.sts.subject-name-id-format=unspecified",
     "--cas.authn.wsfed-idp.sts.encrypt-tokens=true",
+    "--cas.authn.wsfed-idp.sts.crypto.alg=A128CBC-HS256",
     "--cas.authn.wsfed-idp.sts.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
     "--cas.authn.wsfed-idp.sts.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ",
     "--cas.authn.wsfed-idp.sts.realm.issuer=CAS",

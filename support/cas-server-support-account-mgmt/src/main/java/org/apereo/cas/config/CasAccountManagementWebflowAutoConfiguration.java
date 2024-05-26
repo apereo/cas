@@ -113,7 +113,8 @@ public class CasAccountManagementWebflowAutoConfiguration {
         final AccountRegistrationUsernameBuilder accountRegistrationUsernameBuilder,
         @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
         final AccountRegistrationProvisioner accountMgmtRegistrationProvisioner) {
-        return new DefaultAccountRegistrationService(accountMgmtRegistrationPropertyLoader, casProperties, accountMgmtCipherExecutor, accountRegistrationUsernameBuilder,
+        return new DefaultAccountRegistrationService(accountMgmtRegistrationPropertyLoader, casProperties,
+            accountMgmtCipherExecutor, accountRegistrationUsernameBuilder,
             accountMgmtRegistrationProvisioner);
     }
 

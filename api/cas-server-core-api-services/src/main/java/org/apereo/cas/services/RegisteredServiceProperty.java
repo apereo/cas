@@ -209,7 +209,12 @@ public interface RegisteredServiceProperty extends Serializable {
         TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY("jwtAsServiceTicketEncryptionKey", StringUtils.EMPTY,
             RegisteredServicePropertyGroups.JWT_SERVICE_TICKETS, RegisteredServicePropertyTypes.STRING,
             "Produce an encrypted JWT as a response when generating service tickets using the provided encryption key."),
-
+        /**
+         * Encryption algorithm when generating service tickets using the provided encryption key.
+         **/
+        TOKEN_AS_SERVICE_TICKET_ENCRYPTION_ALG("jwtAsServiceTicketEncryptionAlg", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.JWT_SERVICE_TICKETS, RegisteredServicePropertyTypes.STRING,
+            "Encryption algorithm when generating service tickets using the provided encryption key."),
         /**
          * Whether signing operations should be enabled when producing JWTs.
          **/
@@ -289,6 +294,12 @@ public interface RegisteredServiceProperty extends Serializable {
         ACCESS_TOKEN_AS_JWT_ENCRYPTION_KEY("accessTokenAsJwtEncryptionKey", StringUtils.EMPTY,
             RegisteredServicePropertyGroups.JWT_ACCESS_TOKENS, RegisteredServicePropertyTypes.STRING,
             "Produce an encrypted JWT as a response when generating access tokens using the provided encryption key."),
+        /**
+         * Encryption algorithm to use when generating access tokens using the provided encryption key.
+         */
+        ACCESS_TOKEN_AS_JWT_ENCRYPTION_ALG("accessTokenAsJwtEncryptionAlg", StringUtils.EMPTY,
+            RegisteredServicePropertyGroups.JWT_ACCESS_TOKENS, RegisteredServicePropertyTypes.STRING,
+            "Encryption algorithm to use when generating access tokens using the provided encryption key."),
         /**
          * Jwt signing secret defined for a given service.
          **/

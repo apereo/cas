@@ -42,6 +42,7 @@ dependencies {
     runtimeOnly libraries.casclient
 
     implementation libraries.nimbus
+    implementation libraries.jose4j
     implementation libraries.apachevelocity
     implementation libraries.dropwizard
 

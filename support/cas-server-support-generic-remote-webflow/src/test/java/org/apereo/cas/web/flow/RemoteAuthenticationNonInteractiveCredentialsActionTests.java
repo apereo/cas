@@ -4,6 +4,7 @@ import org.apereo.cas.BaseRemoteAddressTests;
 import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -53,6 +54,7 @@ class RemoteAuthenticationNonInteractiveCredentialsActionTests {
     @SpringBootTest(classes = BaseRemoteAddressTests.SharedTestConfiguration.class,
         properties = {
             "cas.authn.remote.cookie.cookie-name=MyRemoteCookie",
+            "cas.authn.remote.cookie.crypto.alg=" + ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256,
             "cas.authn.remote.cookie.crypto.encryption.key=u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w",
             "cas.authn.remote.cookie.crypto.signing.key=zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w"
         })

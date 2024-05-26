@@ -1,5 +1,6 @@
 package org.apereo.cas.token.cipher;
 
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -82,6 +83,11 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
                                                                    final RegisteredService registeredService) {
         val cipher = new JwtTicketCipherExecutor(encryptionKey, signingKey,
             StringUtils.isNotBlank(encryptionKey), StringUtils.isNotBlank(signingKey), 0, 0);
+
+        val encryptionAlg = getEncryptionAlgRegisteredServiceProperty().isAssignedTo(registeredService)
+            ? getEncryptionAlgRegisteredServiceProperty().getPropertyValue(registeredService).value()
+            : EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM;
+        cipher.setContentEncryptionAlgorithmIdentifier(encryptionAlg);
         cipher.getCommonHeaders().putAll(CollectionUtils.wrap(CUSTOM_HEADER_REGISTERED_SERVICE_ID, registeredService.getId()));
         return cipher;
     }
@@ -144,23 +150,16 @@ public class RegisteredServiceJwtTicketCipherExecutor extends JwtTicketCipherExe
         return BooleanUtils.toBoolean(prop.getDefaultValue());
     }
 
-
-    /**
-     * Gets signing key registered service property.
-     *
-     * @return the signing key registered service property
-     */
     protected RegisteredServiceProperties getSigningKeyRegisteredServiceProperty() {
         return RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY;
     }
 
-    /**
-     * Gets encryption key registered service property.
-     *
-     * @return the encryption key registered service property
-     */
     protected RegisteredServiceProperties getEncryptionKeyRegisteredServiceProperty() {
         return RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY;
+    }
+
+    protected RegisteredServiceProperties getEncryptionAlgRegisteredServiceProperty() {
+        return RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_ALG;
     }
 
     protected RegisteredServiceProperty.RegisteredServiceProperties getCipherOperationRegisteredServiceSigningEnabledProperty() {
