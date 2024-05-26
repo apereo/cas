@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.ticket.registry;
 
-import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -58,6 +57,6 @@ public class StatelessTicketRegistryProperties implements Serializable {
     public StatelessTicketRegistryProperties() {
         crypto.setEnabled(true);
         crypto.setSigningEnabled(false);
-        crypto.getEncryption().setKeySize(EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
+        crypto.getEncryption().setKeySize(EncryptionRandomizedSigningJwtCryptographyProperties.DEFAULT_ENCRYPTION_KEY_SIZE);
     }
 }

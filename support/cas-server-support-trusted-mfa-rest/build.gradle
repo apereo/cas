@@ -7,6 +7,8 @@ ext {
     ]
 }
 dependencies {
+    implementation libraries.jose4j
+    
     implementation project(":support:cas-server-support-trusted-mfa")
     implementation project(":support:cas-server-support-trusted-mfa-core")
     implementation project(":core:cas-server-core-configuration-api")

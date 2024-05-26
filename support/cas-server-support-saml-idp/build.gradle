@@ -49,11 +49,10 @@ dependencies {
     compileOnly project(":support:cas-server-support-jpa-util")
     compileOnly project(":support:cas-server-support-consent-api")
     compileOnly project(":support:cas-server-support-pac4j-webflow")
-
-
+    
     implementation libraries.pac4jcore
     implementation libraries.shibutiljavasupport
-
+    implementation libraries.jose4j
     
     testImplementation libraries.pac4joidcoauth
     testImplementation libraries.pac4jsaml

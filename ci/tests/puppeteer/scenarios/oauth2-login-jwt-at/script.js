@@ -43,10 +43,11 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
             keyManagementAlgorithms: ["dir"]
         });
     }
-    
+
     const params = new URLSearchParams();
     params.append("access_token", accessToken);
 
+    await cas.log(`Calling profile endpoint with a valid access token: ${accessToken}`);
     await cas.doPost("https://localhost:8443/cas/oauth2.0/profile", params, {},
         (res) => {
             const result = res.data;
@@ -72,6 +73,7 @@ async function executeFlow(browser, redirectUri, clientId, accessTokenSecret) {
     const badParams = new URLSearchParams();
     badParams.append("access_token", badAccessToken);
 
+    await cas.log(`Calling profile endpoint with a bad access token: ${badAccessToken}`);
     await cas.doPost("https://localhost:8443/cas/oauth2.0/profile", badParams, {},
         (res) => {
             console.log(res.data);

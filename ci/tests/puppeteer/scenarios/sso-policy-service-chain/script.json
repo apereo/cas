@@ -4,6 +4,8 @@
     "docker": "true"
   },
   "properties": [
+    "--logging.level.org.apereo.cas=debug",
+
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
 

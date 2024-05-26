@@ -906,21 +906,23 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     public void addActionsToActionStateExecutionListAt(final Flow flow, final String stateId, final int position,
                                                        final Action... actions) {
-        val givenState = getState(flow, stateId, TransitionableState.class);
-        var actionList = new ActionList();
-        if (givenState instanceof final ActionState as) {
-            actionList = as.getActionList();
+        if (flow != null) {
+            val givenState = getState(flow, stateId, TransitionableState.class);
+            var actionList = new ActionList();
+            if (givenState instanceof final ActionState as) {
+                actionList = as.getActionList();
+            }
+            if (givenState instanceof final ViewState vs) {
+                actionList = vs.getEntryActionList();
+            }
+            val currentActions = new ArrayList<Action>(actionList.size() + actions.length);
+            actionList.forEach(currentActions::add);
+            val index = position < 0 || position == Integer.MAX_VALUE ? currentActions.size() : position;
+            currentActions.forEach(actionList::remove);
+            currentActions.addAll(index, Arrays.stream(actions).toList());
+            actionList.addAll(currentActions.toArray(Action[]::new));
+            LOGGER.trace("Final (entry) action list for state [{}] is [{}]", stateId, actionList);
         }
-        if (givenState instanceof final ViewState vs) {
-            actionList = vs.getEntryActionList();
-        }
-        val currentActions = new ArrayList<Action>(actionList.size() + actions.length);
-        actionList.forEach(currentActions::add);
-        val index = position < 0 || position == Integer.MAX_VALUE ? currentActions.size() : position;
-        currentActions.forEach(actionList::remove);
-        currentActions.addAll(index, Arrays.stream(actions).toList());
-        actionList.addAll(currentActions.toArray(Action[]::new));
-        LOGGER.trace("Final (entry) action list for state [{}] is [{}]", stateId, actionList);
     }
 
 
