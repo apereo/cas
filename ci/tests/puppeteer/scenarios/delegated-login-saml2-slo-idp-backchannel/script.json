@@ -30,12 +30,14 @@
 
     "--cas.service-registry.core.init-from-json=true",
 
+    "--cas.tgc.crypto.alg=A128CBC-HS256",
     "--cas.tgc.crypto.encryption.key=qsa6phT9WBaCU-3E_e1lYGAaeGONQn9WzTwzYhn22kQ",
     "--cas.tgc.crypto.signing.key=bkw4lyYuldcs8-LW5XJMrA3F5Fnqd67S3vT0-pJP-wTK85t2I8tOZuUjg6ozpgzOA3uOoNchIW9bqTBv_NXxRg",
 
     "--cas.webflow.crypto.signing.key=v43dwqO_GbGSVsFqgPFpVdwdMSEunMUzc4QSF13x18kInHPeRuvntleljO5Y5cKqDGAFe1vv10mM4tpyoKyBBA",
     "--cas.webflow.crypto.encryption.key=2PikjfOKY6n8Bbux2cy-Hg",
 
+    "--cas.authn.pac4j.core.session-replication.cookie.crypto.alg=A128CBC-HS256",
     "--cas.authn.pac4j.core.session-replication.cookie.crypto.encryption.key=d-YgjeElQfIZsUCuHlvEN2UyaQsy6q2GxOXP1UPCs7I",
     "--cas.authn.pac4j.core.session-replication.cookie.crypto.signing.key=8_Zisbdbm_6eW1ZjkBUz17koElqlArO6805yAq85kCiVYI1RRJArLiFYLZRS00ZCoscwo8qjrgonvDIdbVbobA",
     
