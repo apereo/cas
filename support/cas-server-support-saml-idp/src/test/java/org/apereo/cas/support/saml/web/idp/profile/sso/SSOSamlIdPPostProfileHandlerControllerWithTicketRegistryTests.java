@@ -9,6 +9,7 @@ import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;

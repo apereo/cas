@@ -63,7 +63,7 @@ track and manage the open-source components used in your CAS deployment and may 
   
 ### Encryption Algorithm
 
-The default content encryption algorithm for crypto operations has now switched from `A128CBC-HS256` to `A256CBC-HS512`, which requires a larger key size.
+The default content encryption algorithm for crypto operations has now switched from `A128CBC-HS256` to `A256CBC-HS512`, which requires a larger key size for better security.
 To continue using your existing keys, you would need to instruct CAS to use the previous algorithm by setting the following property:
 
 ```properties

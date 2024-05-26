@@ -20,6 +20,10 @@
     "accessTokenAsJwtEncryptionEnabled" : {
       "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
       "values" : [ "java.util.HashSet", [ "true" ] ]
+    },
+    "accessTokenAsJwtEncryptionAlg": {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceProperty",
+      "values" : [ "java.util.HashSet", [ "A128CBC-HS256" ] ]
     }
   }
 }

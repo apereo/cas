@@ -85,11 +85,9 @@ track and manage the open-source components used in your CAS deployment and may 
 - The password management flow is heavily reworked to better support multifactor authentication flows.
 - [Account management profile](../registration/Account-Management-Overview.html) will no longer list duplicate multifactor authentication devices when multiple providers are in effect. 
 - Registering multiple WebAuthN devices in account management profile is now corrected to use the correct configuration property for activation.
-- Calculation a [device fingerprint](../mfa/Multifactor-TrustedDevice-Authentication-DeviceFingerprint.html) for multifactor authentication trusted devices can use client-side technology to build a browser fingerprint.
+- Calculation of the [device fingerprint](../mfa/Multifactor-TrustedDevice-Authentication-DeviceFingerprint.html) for multifactor authentication trusted devices can use client-side technology to build a browser fingerprint.
 - Impersonation conditions can now be controlled via [principal attributes](../authentication/Surrogate-Authentication-AccountSelection.html) to allow for more fine-grained control.
 - CAS will forcefully not load services that might have been assigned a blank `id`, `name` or `serviceId` during service registration and loading.
-- ID token `jti` claims in [OpenID Connect](../authentication/OIDC-Authentication.html) are no longer ticket (granting-ticket) identifiers but are instead digested using `SHA-512`.
-- The default content encryption algorithm for crypto operations has now switched to `A256CBC-HS512`.
 
 ## Library Upgrades
 
