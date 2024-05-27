@@ -13,6 +13,6 @@ pyzmq==25.1.2
 pip==24.0
 six==1.16.0
 setuptools==69.5.1
-requests==2.32.0
+requests==2.32.2
 Werkzeug==3.0.3
 urllib3==2.2.1
