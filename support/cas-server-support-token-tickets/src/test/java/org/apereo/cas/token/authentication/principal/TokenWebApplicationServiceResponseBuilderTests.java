@@ -28,6 +28,7 @@ import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,6 +91,7 @@ class TokenWebApplicationServiceResponseBuilderTests {
         val encryptionSecret = "dJ2YpUd-r_Qd7e3nDm79WiIHkqaLT8yZt6nN5eG0YnE";
 
         val cipher = new JwtTicketCipherExecutor(encryptionSecret, signingSecret, true, 0, 0);
+        cipher.setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
         val result = cipher.decode(cipher.encode("ThisIsValue"));
         assertEquals("ThisIsValue", result);
     }
