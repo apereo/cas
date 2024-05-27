@@ -9,6 +9,8 @@ ext {
 }
 dependencies {
     api project(":api:cas-server-core-api-webflow")
+
+    implementation libraries.jose4j
     
     implementation project(":support:cas-server-support-gauth-core")
     implementation project(":support:cas-server-support-otp-mfa")

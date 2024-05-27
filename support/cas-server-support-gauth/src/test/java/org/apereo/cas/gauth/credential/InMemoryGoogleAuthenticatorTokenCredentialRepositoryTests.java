@@ -9,6 +9,7 @@ import org.apereo.cas.util.cipher.JasyptNumberCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import lombok.val;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -36,7 +37,8 @@ class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
 
         @Override
         public OneTimeTokenCredentialRepository getRegistry() {
-            return new InMemoryGoogleAuthenticatorTokenCredentialRepository(CipherExecutor.noOpOfStringToString(),
+            return new InMemoryGoogleAuthenticatorTokenCredentialRepository(
+                CipherExecutor.noOpOfStringToString(),
                 CipherExecutor.noOpOfNumberToNumber(), getGoogle());
         }
 
@@ -59,6 +61,7 @@ class InMemoryGoogleAuthenticatorTokenCredentialRepositoryTests {
         public OneTimeTokenCredentialRepository getRegistry() {
             val crypto = new EncryptionJwtSigningJwtCryptographyProperties();
             crypto.getEncryption().setKeySize(256);
+            crypto.setAlg(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
             val tokenCredentialCipher = (CipherExecutor) CipherExecutorUtils.newStringCipherExecutor(crypto, OneTimeTokenAccountCipherExecutor.class);
             val password = new Base64RandomStringGenerator(16).getNewString();
             val scratchCodesCipher = new JasyptNumberCipherExecutor(password, "scratchCodesCipher");

@@ -16,6 +16,7 @@ import com.yubico.client.v2.YubicoClient;
 import com.yubico.client.v2.exceptions.YubicoVerificationException;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -111,9 +112,11 @@ class YubiKeyAuthenticationHandlerTests {
     void checkEncryptedAccount() {
         val registry = new PermissiveYubiKeyAccountRegistry(new LinkedHashMap<>(), (uid, token) -> true);
         assertNotNull(registry.save(YubiKeyAccount.builder().username(UUID.randomUUID().toString()).build()));
-        registry.setCipherExecutor(new YubikeyAccountCipherExecutor(
+        val cipherExecutor = new YubikeyAccountCipherExecutor(
             "1PbwSbnHeinpkZOSZjuSJ8yYpUrInm5aaV18J2Ar4rM",
-            "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w", 0, 0));
+            "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w", 0, 0);
+        cipherExecutor.setContentEncryptionAlgorithmIdentifier(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
+        registry.setCipherExecutor(cipherExecutor);
 
         val request = YubiKeyDeviceRegistrationRequest.builder().username("encrypteduser").token(OTP).name(UUID.randomUUID().toString()).build();
         assertTrue(registry.registerAccountFor(request));

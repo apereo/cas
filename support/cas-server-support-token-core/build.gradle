@@ -5,6 +5,7 @@ dependencies {
     api project(":api:cas-server-core-api-util")
 
     implementation libraries.nimbus
+    implementation libraries.jose4j
     implementation libraries.bouncycastle
     
     implementation project(":core:cas-server-core-configuration-api")
