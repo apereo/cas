@@ -289,6 +289,7 @@ while (( "$#" )); do
                 task+="testOAuth "
                 ;;
             oidc)
+                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh
                 task+="testOIDC "
                 ;;
             mfa)
