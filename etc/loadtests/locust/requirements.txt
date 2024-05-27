@@ -10,7 +10,7 @@ locust==2.21.0
 MarkupSafe==2.1.4
 msgpack-python==0.5.6
 pyzmq==25.1.2
-pip==23.3.2
+pip==24.0
 six==1.16.0
 setuptools==69.0.3
 requests==2.32.0
