@@ -16,7 +16,9 @@ import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20Devi
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.util.EncodingUtils;
 import lombok.val;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
@@ -259,6 +261,25 @@ class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         val accessToken = result.getAccessToken().map(OAuth20AccessToken.class::cast).orElseThrow();
         assertNotNull(accessToken.getTicketGrantingTicket());
         assertTrue(accessToken.getTicketGrantingTicket().getLastTimeUsed().isAfter(lastUsedTime));
+    }
+
+    @Test
+    void verifyTicketGrantingTicketExpired() throws Throwable {
+        val registeredService = getRegisteredService(SERVICE_URL, UUID.randomUUID().toString(), "secret");
+        servicesManager.save(registeredService);
+        val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
+        val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
+        val mockResponse = new MockHttpServletResponse();
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        val webContext = new JEEContext(mockRequest, mockResponse);
+        val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), authentication, AlwaysExpiresExpirationPolicy.INSTANCE);
+        val tokenRequestContext = buildAccessTokenRequestContext(registeredService, authentication,
+            OAuth20GrantTypes.AUTHORIZATION_CODE, service, ticketGrantingTicket, webContext).withGenerateRefreshToken(true);
+        val result = oauthTokenGenerator.generate(tokenRequestContext);
+        val accessToken = result.getAccessToken().map(OAuth20AccessToken.class::cast).orElseThrow();
+        val refreshToken = result.getRefreshToken().map(OAuth20RefreshToken.class::cast).orElseThrow();
+        assertNull(accessToken.getTicketGrantingTicket());
+        assertNull(refreshToken.getTicketGrantingTicket());
     }
 
     @Test
