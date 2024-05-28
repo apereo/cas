@@ -72,12 +72,12 @@ public class DefaultCommunicationsManager implements CommunicationsManager {
 
     @Override
     public boolean sms(final SmsRequest smsRequest) throws Throwable {
-        val recipient = smsRequest.getRecipient();
+        val recipients = Objects.requireNonNull(smsRequest.getRecipients(), "SMS recipients cannot be undefined");
         if (!isSmsSenderDefined() || !smsRequest.isSufficient()) {
-            LOGGER.warn("Could not send SMS to [{}]; No from/text is found or SMS settings are undefined.", recipient);
+            LOGGER.warn("Could not send SMS to [{}]; No from/text is found or SMS settings are undefined.", recipients);
             return false;
         }
-        return smsSender.send(smsRequest.getFrom(), recipient, smsRequest.getText());
+        return recipients.stream().anyMatch(Unchecked.predicate(to -> smsSender.send(smsRequest.getFrom(), to, smsRequest.getText())));
     }
 
     @Override

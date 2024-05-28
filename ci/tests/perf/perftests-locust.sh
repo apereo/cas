@@ -58,7 +58,7 @@ if [ $retVal == 0 ]; then
   pip install locust
 
   echo -e "\nRunning locust...\n"
-  locust -f cas/casLocust.py --headless --host=https://localhost:8443 --hatch-rate 3 --users 1 --run-time 1m --exit-code-on-error 1
+  locust -f cas/casLocust.py --headless --host=https://localhost:8443 --spawn-rate 3 --users 1 --run-time 1m --exit-code-on-error 1
 
   retVal=$?
 

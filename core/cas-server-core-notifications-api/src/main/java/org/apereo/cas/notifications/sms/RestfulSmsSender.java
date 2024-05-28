@@ -3,10 +3,12 @@ package org.apereo.cas.notifications.sms;
 import org.apereo.cas.configuration.model.support.sms.RestfulSmsProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.hc.core5.http.HttpResponse;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -22,10 +24,14 @@ import java.util.Locale;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-public record RestfulSmsSender(RestfulSmsProperties restProperties) implements SmsSender {
+@RequiredArgsConstructor
+public class RestfulSmsSender implements SmsSender {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
+    private final RestfulSmsProperties restProperties;
+    private final HttpClient httpClient;
+    
     @Override
     public boolean send(final String from, final String to, final String message) {
         HttpResponse response = null;
@@ -47,6 +53,7 @@ public record RestfulSmsSender(RestfulSmsProperties restProperties) implements S
                 .basicAuthUsername(restProperties.getBasicAuthUsername())
                 .method(HttpMethod.valueOf(restProperties.getMethod().toUpperCase(Locale.ENGLISH)))
                 .url(restProperties.getUrl())
+                .httpClient(this.httpClient)
                 .headers(headers);
 
             exec = switch (restProperties.getStyle()) {

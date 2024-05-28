@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -84,8 +85,12 @@ public class DefaultRegisteredServicesEventListener implements RegisteredService
                 .stream()
                 .filter(contact -> StringUtils.isNotBlank(contact.getPhone()))
                 .forEach(Unchecked.consumer(contact -> {
-                    val smsRequest = SmsRequest.builder().from(sms.getFrom())
-                        .to(contact.getPhone()).text(message).build();
+                    val recipients = new ArrayList<>(org.springframework.util.StringUtils.commaDelimitedListToSet(contact.getPhone()));
+                    val smsRequest = SmsRequest.builder()
+                        .from(sms.getFrom())
+                        .to(recipients)
+                        .text(message)
+                        .build();
                     communicationsManager.sms(smsRequest);
                 }));
         }

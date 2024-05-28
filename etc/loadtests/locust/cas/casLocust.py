@@ -116,7 +116,7 @@ class CASLocust(HttpUser):
                                      verify=False)
 
         ticket_status = ticket_response.status_code
-        assert ticket_status is 200, "CAS Ticket response code of: ".format(ticket_status)
+        assert ticket_status == 200, "CAS Ticket response code of: ".format(ticket_status)
 
         user_data = ticket_response.text
         if "<cas:authenticationSuccess>" in user_data:

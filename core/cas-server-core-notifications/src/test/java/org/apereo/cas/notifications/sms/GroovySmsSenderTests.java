@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfig
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -38,7 +39,7 @@ class GroovySmsSenderTests {
     void verifyOperation() throws Throwable {
         assertTrue(communicationsManager.isSmsSenderDefined());
         val smsRequest = SmsRequest.builder().from("CAS")
-            .to("1234567890").text("Hello CAS").build();
+            .to(List.of("1234567890")).text("Hello CAS").build();
         assertTrue(communicationsManager.sms(smsRequest));
     }
 }

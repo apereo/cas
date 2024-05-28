@@ -2,16 +2,17 @@ package org.apereo.cas.notifications.sms;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link SmsRequest}.
@@ -32,7 +33,7 @@ public class SmsRequest {
 
     private final String from;
 
-    private final String to;
+    private final List<String> to;
 
     /**
      * Has attribute value for the principal?
@@ -48,9 +49,9 @@ public class SmsRequest {
      *
      * @return the attribute value
      */
-    public Optional<Object> getAttributeValue() {
+    public List<String> getAttributeValue() {
         val value = principal.getAttributes().get(attribute);
-        return CollectionUtils.firstElement(value);
+        return CollectionUtils.toCollection(value, ArrayList.class);
     }
 
     /**
@@ -60,10 +61,8 @@ public class SmsRequest {
      *
      * @return the recipients
      */
-    public String getRecipient() {
-        return FunctionUtils.doIf(hasAttributeValue(),
-            () -> getAttributeValue().map(Object::toString).orElseGet(this::getTo),
-            this::getTo).get();
+    public List<String> getRecipients() {
+        return hasAttributeValue() ? getAttributeValue() : ObjectUtils.defaultIfNull(getTo(), List.of());
     }
 
     /**
@@ -72,6 +71,7 @@ public class SmsRequest {
      * @return true/false
      */
     public boolean isSufficient() {
-        return StringUtils.isNotBlank(getText()) && StringUtils.isNotBlank(getRecipient());
+        return StringUtils.isNotBlank(getText()) && !getRecipients().isEmpty();
     }
+    
 }

@@ -64,15 +64,20 @@ public class CreatePasswordlessAuthenticationTokenAction extends BasePasswordles
     }
 
     protected void smsToken(final RequestContext requestContext,
-                            final PasswordlessUserAccount user, final PasswordlessAuthenticationToken token) {
+                            final PasswordlessUserAccount user,
+                            final PasswordlessAuthenticationToken token) {
         if (communicationsManager.isSmsSenderDefined() && StringUtils.isNotBlank(user.getPhone())) {
             val passwordlessProperties = casProperties.getAuthn().getPasswordless();
             FunctionUtils.doUnchecked(u -> {
                 val smsProperties = passwordlessProperties.getTokens().getSms();
                 val text = SmsBodyBuilder.builder().properties(smsProperties)
                     .parameters(Map.of("token", token)).build().get();
-                val smsRequest = SmsRequest.builder().from(smsProperties.getFrom())
-                    .to(user.getPhone()).text(text).build();
+                val smsRequest = SmsRequest
+                    .builder()
+                    .from(smsProperties.getFrom())
+                    .to(List.of(user.getPhone()))
+                    .text(text)
+                    .build();
                 communicationsManager.sms(smsRequest);
             });
         }
