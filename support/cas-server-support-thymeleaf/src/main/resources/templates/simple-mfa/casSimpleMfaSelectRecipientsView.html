@@ -14,6 +14,12 @@
 <main class="container mt-3 mb-3">
     <div layout:fragment="content" id="login" class="mdc-card mdc-card-content card w-lg-50 p-4 m-auto">
         <form method="post" id="fm1" th:action="@{/login}">
+            <div class="banner banner-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+                <h2 th:utext="#{screen.mfaUnavailable.heading}">MFA Provider Unavailable</h2>
+                <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
+                   th:utext="${message.text}">Message Text</p>
+            </div>
+            
             <h2><i class="mdi mdi-email fas fa-door-open" aria-hidden="true"></i>
                 <span th:utext="#{cas.mfa.simple.contact-selection.title}">Select Address</span>
             </h2>
@@ -78,6 +84,16 @@
             <input type="hidden" name="geolocation"/>
         </form>
 
+        <script type="text/javascript">
+            $('#continueButton').prop('disabled', true);
+            function jqueryReady() {
+                $('#fm1 input[type="checkbox"]').change(() => {
+                    const atLeastOneChecked = $('input[type="checkbox"]').is(':checked');
+                    $('#continueButton').prop('disabled', !atLeastOneChecked);
+                });
+            }
+        </script>
+        
     </div>
 </main>
 </body>

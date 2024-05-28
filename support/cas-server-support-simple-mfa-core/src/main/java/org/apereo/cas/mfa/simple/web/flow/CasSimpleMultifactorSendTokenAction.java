@@ -12,6 +12,7 @@ import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationSe
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
@@ -53,6 +54,9 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
     public static final String FLOW_SCOPE_ATTR_SMS_RECIPIENTS = "smsRecipients";
 
     private static final String MESSAGE_MFA_TOKEN_SENT = "cas.mfa.simple.label.tokensent";
+    
+    private static final String MESSAGE_MFA_CONTACT_FAILED_SMS = "cas.mfa.simple.label.contactfailed.sms";
+    private static final String MESSAGE_MFA_CONTACT_FAILED_EMAIL = "cas.mfa.simple.label.contactfailed.email";
 
     protected final CommunicationsManager communicationsManager;
 
@@ -99,9 +103,15 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
                     mapOfAllRecipients.put(TokenSharingStrategyOptions.SMS, recipients);
                 } else {
                     smsSent = cmd.send(principal, token, requestContext, selectedSmsRecipients);
+                    if (!smsSent) {
+                        WebUtils.addErrorMessageToContext(requestContext, MESSAGE_MFA_CONTACT_FAILED_SMS);
+                    }
                 }
             } else {
                 smsSent = cmd.send(principal, token, requestContext);
+                if (!smsSent) {
+                    WebUtils.addErrorMessageToContext(requestContext, MESSAGE_MFA_CONTACT_FAILED_SMS);
+                }
             }
         }
 
@@ -117,9 +127,15 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
                     mapOfAllRecipients.put(TokenSharingStrategyOptions.EMAIL, recipients);
                 } else {
                     emailSent = cmd.send(principal, token, selectedEmailRecipients, requestContext).isAnyEmailSent();
+                    if (!emailSent) {
+                        WebUtils.addErrorMessageToContext(requestContext, MESSAGE_MFA_CONTACT_FAILED_EMAIL);
+                    }
                 }
             } else {
                 emailSent = cmd.send(principal, token, requestContext).isAnyEmailSent();
+                if (!emailSent) {
+                    WebUtils.addErrorMessageToContext(requestContext, MESSAGE_MFA_CONTACT_FAILED_EMAIL);
+                }
             }
         }
 
