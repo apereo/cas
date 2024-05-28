@@ -80,7 +80,7 @@ class SamlUtilsTests {
     @Test
     void verifyTransformFails() throws Throwable {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
-        val attr = builder.getNameID(NameIDType.TRANSIENT, "value");
+        val attr = builder.newNameID(NameIDType.TRANSIENT, "value");
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, attr).toString();
         assertThrows(SamlException.class, () -> SamlUtils.transformSamlObject(openSamlConfigBean,
             xml.getBytes(StandardCharsets.UTF_8), AuthnRequest.class));

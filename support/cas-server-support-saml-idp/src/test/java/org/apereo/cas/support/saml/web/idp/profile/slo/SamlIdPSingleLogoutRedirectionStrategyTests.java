@@ -5,6 +5,7 @@ import org.apereo.cas.logout.LogoutRedirectionStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlUtils;
+import org.apereo.cas.support.saml.util.Saml20ObjectBuilder;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
@@ -42,7 +43,7 @@ class SamlIdPSingleLogoutRedirectionStrategyTests {
     class SignResponsesGlobally extends BaseSamlIdPConfigurationTests {
         @Autowired
         @Qualifier("samlIdPLogoutResponseObjectBuilder")
-        private SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder;
+        private Saml20ObjectBuilder samlIdPLogoutResponseObjectBuilder;
 
         @Autowired
         @Qualifier("samlIdPSingleLogoutRedirectionStrategy")
@@ -61,7 +62,7 @@ class SamlIdPSingleLogoutRedirectionStrategyTests {
                 "https://github.com/apereo/cas",
                 samlIdPLogoutResponseObjectBuilder.newIssuer(registeredService.getServiceId()),
                 UUID.randomUUID().toString(),
-                samlIdPLogoutResponseObjectBuilder.getNameID(NameIDType.EMAIL, "cas@example.org"));
+                samlIdPLogoutResponseObjectBuilder.newNameID(NameIDType.EMAIL, "cas@example.org"));
             try (val writer = SamlUtils.transformSamlObject(openSamlConfigBean, logoutRequest)) {
                 val encodedRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
                 WebUtils.putSingleLogoutRequest(context.getHttpServletRequest(), encodedRequest);
@@ -88,7 +89,7 @@ class SamlIdPSingleLogoutRedirectionStrategyTests {
                 "https://github.com/apereo/cas",
                 samlIdPLogoutResponseObjectBuilder.newIssuer(registeredService.getServiceId()),
                 UUID.randomUUID().toString(),
-                samlIdPLogoutResponseObjectBuilder.getNameID(NameIDType.EMAIL, "cas@example.org"));
+                samlIdPLogoutResponseObjectBuilder.newNameID(NameIDType.EMAIL, "cas@example.org"));
             try (val writer = SamlUtils.transformSamlObject(openSamlConfigBean, logoutRequest)) {
                 val encodedRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
                 WebUtils.putSingleLogoutRequest(context.getHttpServletRequest(), encodedRequest);
@@ -110,7 +111,7 @@ class SamlIdPSingleLogoutRedirectionStrategyTests {
                 "https://github.com/apereo/cas",
                 samlIdPLogoutResponseObjectBuilder.newIssuer(registeredService.getServiceId()),
                 UUID.randomUUID().toString(),
-                samlIdPLogoutResponseObjectBuilder.getNameID(NameIDType.EMAIL, "cas@example.org"));
+                samlIdPLogoutResponseObjectBuilder.newNameID(NameIDType.EMAIL, "cas@example.org"));
             try (val writer = SamlUtils.transformSamlObject(openSamlConfigBean, logoutRequest)) {
                 val encodedRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
                 WebUtils.putSingleLogoutRequest(context.getHttpServletRequest(), encodedRequest);
@@ -147,7 +148,7 @@ class SamlIdPSingleLogoutRedirectionStrategyTests {
     class SignResponsesServices extends BaseSamlIdPConfigurationTests {
         @Autowired
         @Qualifier("samlIdPLogoutResponseObjectBuilder")
-        private SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder;
+        private Saml20ObjectBuilder samlIdPLogoutResponseObjectBuilder;
 
         @Autowired
         @Qualifier("samlIdPSingleLogoutRedirectionStrategy")
@@ -167,7 +168,7 @@ class SamlIdPSingleLogoutRedirectionStrategyTests {
                 "https://github.com/apereo/cas",
                 samlIdPLogoutResponseObjectBuilder.newIssuer(registeredService.getServiceId()),
                 UUID.randomUUID().toString(),
-                samlIdPLogoutResponseObjectBuilder.getNameID(NameIDType.EMAIL, "cas@example.org"));
+                samlIdPLogoutResponseObjectBuilder.newNameID(NameIDType.EMAIL, "cas@example.org"));
             try (val writer = SamlUtils.transformSamlObject(openSamlConfigBean, logoutRequest)) {
                 val encodedRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
                 WebUtils.putSingleLogoutRequest(context.getHttpServletRequest(), encodedRequest);
