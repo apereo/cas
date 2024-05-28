@@ -138,7 +138,7 @@
                         drawer.foundation.handleScrimClick = closeDrawer;
                         document.onkeydown = evt => {
                             evt = evt || window.event;
-                            if (evt.keyCode == 27) {
+                            if (evt.keyCode === 27) {
                                 closeDrawer();
                             }
                         };
@@ -155,7 +155,7 @@
                     if (drawer != undefined) {
                         header.attachDrawerToggle(drawer);
                     }
-                    if (dialog != undefined) {
+                    if (dialog !== undefined) {
                         header.attachNotificationToggle(dialog);
                     }
                 },
@@ -186,7 +186,7 @@
                         });
                     }
                 }
-            }
+            };
             function supportsCookies() {
                 try {
                     document.cookie = 'testcookie=1';

@@ -20,11 +20,12 @@ const cas = require("../../cas.js");
             lnk.click();
         });
     });
+    await cas.sleep(1000);
     await cas.screenshot(page);
     await cas.submitForm(page, "#fm1");
 
+    await cas.sleep(5000);
     await cas.assertVisibility(page, "#token");
-
     const page2 = await browser.newPage();
     await page2.goto("http://localhost:8282");
     await cas.sleep(2000);

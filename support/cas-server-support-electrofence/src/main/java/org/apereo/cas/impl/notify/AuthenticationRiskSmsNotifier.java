@@ -8,6 +8,7 @@ import org.apereo.cas.notifications.sms.SmsRequest;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -37,13 +38,10 @@ public class AuthenticationRiskSmsNotifier extends BaseAuthenticationRiskNotifie
         val sms = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getSms();
         val principal = authentication.getPrincipal();
 
-        if (StringUtils.isBlank(sms.getText()) || StringUtils.isBlank(sms.getFrom())
-            || !principal.getAttributes().containsKey(sms.getAttributeName())) {
+        if (StringUtils.isBlank(sms.getText()) || StringUtils.isBlank(sms.getFrom())) {
             LOGGER.debug("Could not send sms [{}] because either no phones could be found or sms settings are not configured.", principal.getId());
         } else {
             val verificationUrl = buildRiskVerificationUrl();
-            val to = CollectionUtils.firstElement(principal.getAttributes().get(sms.getAttributeName()))
-                .orElse(StringUtils.EMPTY).toString();
             val parameters = CollectionUtils.<String, Object>wrap(
                 "verificationUrl", verificationUrl,
                 "registeredService", registeredService,
@@ -53,7 +51,11 @@ public class AuthenticationRiskSmsNotifier extends BaseAuthenticationRiskNotifie
                 .parameters(parameters)
                 .build()
                 .get();
-            val smsRequest = SmsRequest.builder().from(sms.getFrom()).to(to).text(text).build();
+            val recipients = sms.getAttributeName().stream().map(attribute -> {
+                val values = principal.getAttributes().get(SpringExpressionLanguageValueResolver.getInstance().resolve(attribute));
+                return CollectionUtils.firstElement(values).orElse(StringUtils.EMPTY).toString();
+            }).toList();
+            val smsRequest = SmsRequest.builder().from(sms.getFrom()).to(recipients).text(text).build();
             communicationsManager.sms(smsRequest);
         }
     }

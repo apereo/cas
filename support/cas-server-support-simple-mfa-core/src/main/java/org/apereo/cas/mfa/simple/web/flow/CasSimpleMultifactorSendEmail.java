@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * @since 7.0.0
  */
 @RequiredArgsConstructor(staticName = "of",
-                         access = AccessLevel.PROTECTED)
+    access = AccessLevel.PROTECTED)
 class CasSimpleMultifactorSendEmail {
     private final CommunicationsManager communicationsManager;
     private final CasSimpleMultifactorAuthenticationProperties properties;
@@ -61,8 +61,10 @@ class CasSimpleMultifactorSendEmail {
         return new EmailCommunicationResults(results);
     }
 
-    protected EmailCommunicationResult sendEmail(final RequestContext requestContext, final EmailMessageBodyBuilder body,
-                                               final Principal principal, final List<String> recipients) {
+    protected EmailCommunicationResult sendEmail(final RequestContext requestContext,
+                                                 final EmailMessageBodyBuilder body,
+                                                 final Principal principal,
+                                                 final List<String> recipients) {
         val emailRequest = prepareEmailMessageRequest(requestContext, body, principal, StringUtils.EMPTY).withTo(recipients);
         return communicationsManager.email(emailRequest);
     }

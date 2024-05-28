@@ -73,8 +73,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findPhone(final PasswordManagementQuery query) {
-        return findAttribute(query, List.of(properties.getReset().getSms().getAttributeName()),
-            CollectionUtils.wrap(query.getUsername()));
+        return findAttribute(query, properties.getReset().getSms().getAttributeName(), CollectionUtils.wrap(query.getUsername()));
     }
 
     @Override

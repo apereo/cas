@@ -23,6 +23,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -77,7 +78,7 @@ class RestfulSmsSenderTests {
         void verifySms() throws Throwable {
             assertTrue(communicationsManager.isSmsSenderDefined());
             val smsRequest = SmsRequest.builder().from("CAS")
-                .to("1234567890").text("Hello CAS").build();
+                .to(List.of("1234567890")).text("Hello CAS").build();
             assertTrue(communicationsManager.sms(smsRequest));
         }
     }
@@ -124,7 +125,7 @@ class RestfulSmsSenderTests {
         void verifySms() throws Throwable {
             assertTrue(communicationsManager.isSmsSenderDefined());
             val smsRequest = SmsRequest.builder().from("CAS")
-                .to("1234567890").text("Hello CAS").build();
+                .to(List.of("1234567890")).text("Hello CAS").build();
             assertTrue(communicationsManager.sms(smsRequest));
         }
     }
