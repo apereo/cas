@@ -11,11 +11,11 @@ import org.apereo.cas.logout.slo.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.util.Saml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.validate.SamlObjectSignatureValidator;
-import org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPLogoutResponseObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -69,7 +69,7 @@ public class SamlProfileHandlerConfigurationContext {
     private SamlProfileObjectBuilder<? extends XMLObject> responseBuilder;
 
     @Nonnull
-    private final SamlIdPLogoutResponseObjectBuilder logoutResponseBuilder;
+    private final Saml20ObjectBuilder logoutResponseBuilder;
 
     @Nonnull
     private final CasConfigurationProperties casProperties;
@@ -87,7 +87,7 @@ public class SamlProfileHandlerConfigurationContext {
     private SSOSamlHttpRequestExtractor samlHttpRequestExtractor;
 
     @Nonnull
-    private HttpServletRequestXMLMessageDecodersMap samlMessageDecoders;
+    private XMLMessageDecodersMap samlMessageDecoders;
 
     @Nonnull
     private SamlProfileObjectBuilder<? extends XMLObject> samlFaultResponseBuilder;
