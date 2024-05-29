@@ -90,7 +90,6 @@ class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         assertEquals("adminuser", actor);
     }
 
-
     @Test
     void verifyExchangeTokens() throws Throwable {
         val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret",
@@ -312,9 +311,9 @@ class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         assertNotNull(refreshedJwt.getExpirationTime());
         assertNotEquals(jwt.getExpirationTime().getValue(), refreshedJwt.getExpirationTime().getValue());
     }
-
+    
     @Test
-    void verifyCustomizedRTWithNullAuthentication() throws Throwable {
+    void verifyCustomizedRefreshTokenWithNullAuthentication() throws Throwable {
         val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
         servicesManager.save(registeredService);
         val service = RegisteredServiceTestUtils.getService(SERVICE_URL);

@@ -65,6 +65,7 @@ import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
@@ -117,7 +118,6 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -152,7 +152,7 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier("oauthTokenGenerator")
     protected OAuth20TokenGenerator oauthTokenGenerator;
-    
+
     @Autowired
     @Qualifier(OAuth20ResponseModeFactory.BEAN_NAME)
     protected OAuth20ResponseModeFactory oauthResponseModeFactory;
@@ -505,15 +505,28 @@ public abstract class AbstractOidcTests {
 
     protected OAuth20Code addCode(final Principal principal,
                                   final OAuthRegisteredService registeredService) throws Throwable {
-        val tgt = new MockTicketGrantingTicket("casuser");
+        val ticketGrantingTicket = new MockTicketGrantingTicket("casuser");
         val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getClientId());
+        val scopes = List.of(OidcConstants.StandardScopes.OPENID.getScope());
         val code = defaultOAuthCodeFactory.create(service, authentication,
-            tgt, List.of(OidcConstants.StandardScopes.OPENID.getScope()),
-            null, null, registeredService.getClientId(), new HashMap<>(),
+            ticketGrantingTicket, scopes, registeredService.getClientId(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
-        this.ticketRegistry.addTicket(code);
+        ticketRegistry.addTicket(code);
+        return code;
+    }
+
+    protected OAuth20Code addCode(final TicketGrantingTicket ticketGrantingTicket,
+                                  final OAuthRegisteredService registeredService) throws Throwable {
+        val authentication = ticketGrantingTicket.getAuthentication();
+        val factory = new WebApplicationServiceFactory();
+        val service = factory.createService(registeredService.getClientId());
+        val scopes = List.of(OidcConstants.StandardScopes.OPENID.getScope());
+        val code = defaultOAuthCodeFactory.create(service, authentication,
+            ticketGrantingTicket, scopes, registeredService.getClientId(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
+        ticketRegistry.addTicket(code);
         return code;
     }
 

@@ -7,7 +7,11 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
+import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuth20Token;
+import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -52,8 +56,8 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
         val scopes = extractRequestedScopesByToken(requestedScopes, token, context);
         val service = getConfigurationContext().getWebApplicationServiceServiceFactory().createService(redirectUri);
-
         val generateRefreshToken = isAllowedToGenerateRefreshToken() && registeredService.isGenerateRefreshToken();
+        
         val builder = AccessTokenRequestContext
             .builder()
             .scopes(scopes)
@@ -64,7 +68,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             .generateRefreshToken(generateRefreshToken)
             .token(token)
             .claims(token.getClaims())
-            .ticketGrantingTicket(token.getTicketGrantingTicket());
+            .ticketGrantingTicket(fetchTicketGrantingTicket(token));
         return extractInternal(context, builder.build());
     }
 
@@ -136,5 +140,16 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
             param -> LOGGER.warn("Unable to locate registered service for clientId [{}] or redirectUri [{}]", clientId, redirectUri),
             ex -> LOGGER.debug("Located registered service [{}]", registeredService)).accept(registeredService);
         return registeredService;
+    }
+
+    protected Ticket fetchTicketGrantingTicket(final OAuth20Token token) {
+        try {
+            if (token.getTicketGrantingTicket() != null) {
+                return getConfigurationContext().getTicketRegistry().getTicket(token.getTicketGrantingTicket().getId(), TicketGrantingTicket.class);
+            }
+        } catch (final InvalidTicketException e) {
+            LoggingUtils.error(LOGGER, e);
+        }
+        return null;
     }
 }
