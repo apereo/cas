@@ -12,7 +12,6 @@ import org.apereo.cas.mfa.simple.validation.CasSimpleMultifactorAuthenticationSe
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.DigestUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
