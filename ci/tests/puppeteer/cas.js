@@ -944,9 +944,9 @@ exports.parseXML = async (xml, options = {}) => {
     return parsedXML;
 };
 
-exports.refreshContext = async (url = "https://localhost:8443/cas") => {
+exports.refreshContext = async (url = "https://localhost:8443/cas", headers = {}) => {
     await this.log("Refreshing CAS application context...");
-    const response = await this.doRequest(`${url}/actuator/refresh`, "POST");
+    const response = await this.doRequest(`${url}/actuator/refresh`, "POST", headers);
     await this.log(response);
 };
 

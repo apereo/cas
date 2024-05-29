@@ -36,6 +36,7 @@ public class ConfigurationPropertiesLoaderFactoryTests {
         val loader = configurationPropertiesLoaderFactory.getLoader(
             new ClassPathResource("directory/cas.groovy"), "groovyConfig");
         val source = loader.load();
+        assertEquals("true", source.getProperty("cas.service-registry.core.init-from-json"));
         assertEquals("test::dev", source.getProperty("cas.authn.accept.users"));
         assertEquals("Static", source.getProperty("cas.authn.accept.name"));
     }
