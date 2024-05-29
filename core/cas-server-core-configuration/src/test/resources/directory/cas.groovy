@@ -7,4 +7,5 @@ profiles {
     }
 }
 
+cas."service-registry".core."init-from-json"=true
 cas.authn.accept.name="Static"
