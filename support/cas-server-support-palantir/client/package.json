@@ -28,7 +28,7 @@
     "node-fetch": "^3.3.2",
     "notistack": "^3.0.1",
     "react": "^18.2.0",
-    "react-ace": "^10.1.0",
+    "react-ace": "^11.0.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.0.0",
     "react-router-dom": "^6.11.1",
