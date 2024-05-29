@@ -264,7 +264,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         var finalAccessToken = (Ticket) accessToken;
         if (tokenRequestContext.getResponseType() != OAuth20ResponseTypes.ID_TOKEN && accessToken.getExpiresIn() > 0) {
             LOGGER.debug("Created access token [{}]", accessToken);
-            finalAccessToken = addTicketToRegistry(accessToken, accessToken.getTicketGrantingTicket());
+            finalAccessToken = addTicketToRegistry(accessToken, tokenRequestContext.getTicketGrantingTicket());
             LOGGER.debug("Added access token [{}] to registry", finalAccessToken);
             updateRefreshToken(tokenRequestContext, finalAccessToken);
         }

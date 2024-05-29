@@ -96,6 +96,9 @@ async function testOidcApplication() {
         await cas.sleep(1000);
     }
 
+    await cas.separator();
+    await cas.log("Using refresh tokens to obtain new access tokens...");
+    
     const value = `${clientId}:secret`;
     const buff = Buffer.alloc(value.length, value);
     const authzHeader = `Basic ${buff.toString("base64")}`;
