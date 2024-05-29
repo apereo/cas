@@ -42,7 +42,7 @@ public class MainRepositoryJob {
         log.info("Monitoring of {} completed", this.repository.getFullName());
     }
 
-    @Scheduled(fixedRate = ONE_MINUTE * 2)
+    @Scheduled(fixedRate = ONE_MINUTE)
     void monitorWorkflowRuns() {
         log.info("Monitoring {}", this.repository.getFullName());
         try {
