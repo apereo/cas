@@ -30,7 +30,7 @@ public abstract class BaseNotificationTests {
     @Import({
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
-        CasCoreWebAutoConfiguration.class,
+        CasCoreWebAutoConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

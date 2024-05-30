@@ -23,8 +23,8 @@ import static org.mockito.Mockito.*;
  * @since 7.0.0
  */
 @SpringBootTest(classes = {
-    BaseNotificationTests.SharedTestConfiguration.class,
-    PhoneCallOperatorTests.PhoneCallOperatorTestConfiguration.class
+    PhoneCallOperatorTests.PhoneCallOperatorTestConfiguration.class,
+    BaseNotificationTests.SharedTestConfiguration.class
 })
 @Tag("SMS")
 public class PhoneCallOperatorTests {
