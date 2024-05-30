@@ -58,8 +58,17 @@ public class RepositoryController {
     public ResponseEntity rerunWorkflows() throws Exception {
         return ResponseEntity.ok(repository.rerunFailedWorkflowJobs());
     }
-    
 
+    @PostMapping(value = "/repo/workflows/clean", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity cleanWorkflows() throws Exception {
+        repository.removeCancelledWorkflowRuns();
+        repository.removePullRequestWorkflowRunsForMissingBranches();
+        repository.removeOldWorkflowRuns();
+        return ResponseEntity.ok().build();
+    }
+
+    
     @PostMapping(value = "/repo/pulls/{prNumber}/comments/clean", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity cleanComments(@PathVariable final String prNumber) throws Exception {

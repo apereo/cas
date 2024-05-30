@@ -503,11 +503,11 @@ public class MonitoredRepository {
     }
 
     public void removeOldWorkflowRuns() {
+        val now = OffsetDateTime.now();
         for (var i = 10; i > 0; i--) {
             var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(), i);
-            log.info("Found {} workflow runs for page {}", workflowRun.getCount(), i);
+            log.info("Found {} workflow runs for page {}", workflowRun.getRuns().size(), i);
 
-            val now = OffsetDateTime.now();
             workflowRun.getRuns().forEach(run -> {
                 val staleExp = run.getUpdatedTime().plusDays(gitHubProperties.getStaleWorkflowRunInDays());
                 if (staleExp.isBefore(now)) {

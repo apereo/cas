@@ -25,7 +25,6 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.validation.annotation.Validated;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
