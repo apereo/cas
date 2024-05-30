@@ -1,6 +1,6 @@
 package org.apereo.cas.notifications.sms;
 
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.notifications.BaseNotificationTests;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.util.MockWebServer;
 import lombok.val;
@@ -14,11 +14,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -37,13 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class RestfulSmsSenderTests {
 
     @Nested
-    @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        CasCoreNotificationsAutoConfiguration.class,
-        MailSenderAutoConfiguration.class,
-        MailSenderValidatorAutoConfiguration.class
-    },
+    @SpringBootTest(classes = BaseNotificationTests.SharedTestConfiguration.class,
         properties = {
             "cas.sms-provider.rest.style=REQUEST_BODY",
             "cas.sms-provider.rest.url=http://localhost:8232"
@@ -84,13 +74,7 @@ class RestfulSmsSenderTests {
     }
 
     @Nested
-    @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        CasCoreNotificationsAutoConfiguration.class,
-        MailSenderAutoConfiguration.class,
-        MailSenderValidatorAutoConfiguration.class
-    },
+    @SpringBootTest(classes = BaseNotificationTests.SharedTestConfiguration.class,
         properties = {
             "cas.sms-provider.rest.style=QUERY_PARAMETERS",
             "cas.sms-provider.rest.url=http://localhost:8132"

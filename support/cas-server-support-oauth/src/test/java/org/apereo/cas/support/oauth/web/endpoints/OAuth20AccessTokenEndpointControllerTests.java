@@ -951,27 +951,31 @@ class OAuth20AccessTokenEndpointControllerTests {
 
         @Test
         void verifyRefreshTokenOK() throws Throwable {
-            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), randomServiceUrl());
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN),
+                UUID.randomUUID().toString(), randomServiceUrl());
             assertRefreshTokenOk(service);
         }
 
         @Test
-        void verifyRefreshTokenOKCustomizedWithNullAuthentication() throws Throwable {
-            val registeredService = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), randomServiceUrl());
+        void verifyRefreshTokenWithNoAuthentication() throws Throwable {
+            val registeredService = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN),
+                UUID.randomUUID().toString(), randomServiceUrl());
             val principal = createPrincipal();
             val factory = new WebApplicationServiceFactory();
             val service = factory.createService(registeredService.getServiceId());
-            val refreshToken = defaultRefreshTokenFactory.create(service, null,
-                new MockTicketGrantingTicket("casuser"),
-                new ArrayList<>(), registeredService.getClientId(), StringUtils.EMPTY, new HashMap<>(),
+            val ticketGrantingTicket = new MockTicketGrantingTicket("casuser");
+            ticketRegistry.addTicket(ticketGrantingTicket);
+            val refreshToken = defaultRefreshTokenFactory.create(service,
+                ticketGrantingTicket, registeredService.getClientId(),
                 OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
-            this.ticketRegistry.addTicket(refreshToken);
+            ticketRegistry.addTicket(refreshToken);
             assertRefreshTokenOk(registeredService, refreshToken, principal);
         }
 
         @Test
         void verifyRefreshTokenOKWithRefreshToken() throws Throwable {
-            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), randomServiceUrl());
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN),
+                UUID.randomUUID().toString(), randomServiceUrl());
             service.setGenerateRefreshToken(true);
             service.setRenewRefreshToken(true);
             assertRefreshTokenOk(service);
@@ -979,13 +983,15 @@ class OAuth20AccessTokenEndpointControllerTests {
 
         @Test
         void verifyJsonRefreshTokenOK() throws Throwable {
-            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), randomServiceUrl());
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN),
+                UUID.randomUUID().toString(), randomServiceUrl());
             assertRefreshTokenOk(service);
         }
 
         @Test
         void verifyJsonRefreshTokenOKWithRefreshToken() throws Throwable {
-            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN), UUID.randomUUID().toString(), randomServiceUrl());
+            val service = addRegisteredService(Set.of(OAuth20GrantTypes.REFRESH_TOKEN),
+                UUID.randomUUID().toString(), randomServiceUrl());
             service.setGenerateRefreshToken(true);
             service.setRenewRefreshToken(true);
             assertRefreshTokenOk(service);
