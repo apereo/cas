@@ -2,7 +2,6 @@ package org.apereo.cas.notifications;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
@@ -15,11 +14,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
@@ -33,17 +28,10 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
-    MailSenderValidatorAutoConfiguration.class
-},
-    properties = {
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+@SpringBootTest(classes = BaseNotificationTests.SharedTestConfiguration.class, properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000"
+})
 @Tag("Mail")
 @EnabledIfListeningOnPort(port = 25000)
 class DefaultCommunicationsManagerTests {

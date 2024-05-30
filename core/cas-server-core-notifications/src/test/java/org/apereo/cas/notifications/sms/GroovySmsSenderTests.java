@@ -1,17 +1,13 @@
 package org.apereo.cas.notifications.sms;
 
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.notifications.BaseNotificationTests;
 import org.apereo.cas.notifications.CommunicationsManager;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,13 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
-    MailSenderValidatorAutoConfiguration.class
-},
+@SpringBootTest(classes = BaseNotificationTests.SharedTestConfiguration.class,
     properties = "cas.sms-provider.groovy.location=classpath:/GroovySmsSender.groovy")
 @Tag("Groovy")
 class GroovySmsSenderTests {

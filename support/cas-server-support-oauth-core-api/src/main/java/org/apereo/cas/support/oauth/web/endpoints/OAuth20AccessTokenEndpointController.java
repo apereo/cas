@@ -34,6 +34,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -107,19 +108,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
 
         try {
             val tokenRequestContext = examineAndExtractAccessTokenGrantRequest(request, response);
-            var authn = tokenRequestContext.getAuthentication();
-            if (authn == null && tokenRequestContext.getTicketGrantingTicket() instanceof final AuthenticationAwareTicket aat) {
-                authn = aat.getAuthentication();
-            }
-            LoggingUtils.protocolMessage("OAuth/OpenID Connect Token Request",
-                Map.of("Token", Optional.ofNullable(tokenRequestContext.getToken()).map(OAuth20Token::getId).orElse("none"),
-                    "Device Code", StringUtils.defaultString(tokenRequestContext.getDeviceCode()),
-                    "Scopes", String.join(",", tokenRequestContext.getScopes()),
-                    "Registered Service", tokenRequestContext.getRegisteredService().getName(),
-                    "Service", tokenRequestContext.getService().getId(),
-                    "Principal", authn.getPrincipal().getId(),
-                    "Grant Type", tokenRequestContext.getGrantType().getType(),
-                    "Response Type", tokenRequestContext.getResponseType().getType()));
+            logProtocolRequest(tokenRequestContext);
             LOGGER.debug("Creating access token for [{}]", tokenRequestContext);
             val generatedTokenResult = getConfigurationContext().getAccessTokenGenerator().generate(tokenRequestContext);
             LOGGER.debug("Access token generated result is: [{}]", generatedTokenResult);
@@ -127,6 +116,23 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
         } catch (final Throwable e) {
             return handleAccessTokenException(e, response);
         }
+    }
+
+    private static void logProtocolRequest(final AccessTokenRequestContext tokenRequestContext) {
+        var authn = tokenRequestContext.getAuthentication();
+        if (authn == null && tokenRequestContext.getTicketGrantingTicket() instanceof final AuthenticationAwareTicket aat) {
+            authn = aat.getAuthentication();
+        }
+        Objects.requireNonNull(authn, "No authentication is available to handle this request");
+        LoggingUtils.protocolMessage("OAuth/OpenID Connect Token Request",
+            Map.of("Token", Optional.ofNullable(tokenRequestContext.getToken()).map(OAuth20Token::getId).orElse("none"),
+                "Device Code", StringUtils.defaultString(tokenRequestContext.getDeviceCode()),
+                "Scopes", String.join(",", tokenRequestContext.getScopes()),
+                "Registered Service", tokenRequestContext.getRegisteredService().getName(),
+                "Service", tokenRequestContext.getService().getId(),
+                "Principal", authn.getPrincipal().getId(),
+                "Grant Type", tokenRequestContext.getGrantType().getType(),
+                "Response Type", tokenRequestContext.getResponseType().getType()));
     }
 
     /**

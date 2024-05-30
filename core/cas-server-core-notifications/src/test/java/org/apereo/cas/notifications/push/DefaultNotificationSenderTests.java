@@ -1,17 +1,15 @@
 package org.apereo.cas.notifications.push;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.notifications.BaseNotificationTests;
 import org.apereo.cas.notifications.sms.SmsSender;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.Ordered;
 import java.util.List;
 import java.util.Map;
@@ -25,10 +23,8 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    DefaultNotificationSenderTests.DefaultNotificationSenderTestConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class
+    BaseNotificationTests.SharedTestConfiguration.class,
+    DefaultNotificationSenderTests.DefaultNotificationSenderTestConfiguration.class
 })
 @Tag("Simple")
 class DefaultNotificationSenderTests {
