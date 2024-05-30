@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.notifications.BaseNotificationTests;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.notifications.sms.SmsSender;
@@ -17,13 +18,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@SpringBootTest(classes = {
-    
-},
-    properties = {
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+@SpringBootTest(classes = BaseNotificationTests.SharedTestConfiguration.class, properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000"
+})
 @Tag("Mail")
 @EnabledIfListeningOnPort(port = 25000)
 class CasCoreNotificationsAutoConfigurationTests {

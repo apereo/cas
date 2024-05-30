@@ -32,11 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
     CasGoogleFirebaseCloudMessagingAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class
+    BaseNotificationTests.SharedTestConfiguration.class
 }, properties = {
     "cas.google-firebase-messaging.service-account-key.location=file:${java.io.tmpdir}/account-key.json",
     "cas.google-firebase-messaging.database-url=https://cassso-2531381995058.firebaseio.com",
