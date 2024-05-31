@@ -82,3 +82,7 @@ cas.[path-to-configuration-key].crypto.alg=A128CBC-HS256
 - Grouper Client
 - Elastic APM
 - Spring Boot
+- Spring Cloud
+- Google Cloud
+- Nimbus JOSE JWT
+- Java Melody
