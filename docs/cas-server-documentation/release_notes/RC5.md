@@ -86,3 +86,4 @@ cas.[path-to-configuration-key].crypto.alg=A128CBC-HS256
 - Google Cloud
 - Nimbus JOSE JWT
 - Java Melody
+- ErrorProne

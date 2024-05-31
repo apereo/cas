@@ -9,10 +9,10 @@ function printred() {
   printf "🔥 ${RED}$1${ENDCOLOR}\n"
 }
 function printgreen() {
-  printf "✅ ${GREEN}$1${ENDCOLOR}\n"
+  printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
 }
 function printyellow() {
-  printf "🔥 ${YELLOW}$1${ENDCOLOR}\n"
+  printf "⚠️ ${YELLOW}$1${ENDCOLOR}\n"
 }
 
 function validateProjectDocumentation() {
@@ -51,12 +51,13 @@ userinterface=true
 
 serve=false
 
+
 while (("$#")); do
   case "$1" in
   --reset)
     printgreen "Resetting local build to allow forceful creation of documentation binary artifacts...\n"
     ./gradlew :api:cas-server-core-api-configuration-model:clean :docs:cas-server-documentation-processor:clean $GRADLE_BUILD_OPTIONS
-    printgreen "\nBuild completed. Documentation binary artifacts and configuration catalog will be rebuilt on the next attempt."
+    printgreen "Build completed. Documentation binary artifacts and configuration catalog will be rebuilt on the next attempt."
     shift 1
     ;;
   --local)
