@@ -11,6 +11,7 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ReflectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.Getter;
@@ -56,6 +57,7 @@ import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -417,182 +419,13 @@ public class CasDocumentationApplication {
             LOGGER.debug("Unable to create directory");
         }
 
+        LOGGER.info("Checking REST endpoints...");
         var subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(RestControllerEndpoint.class), "org");
-        subTypes.forEach(clazz -> {
-            var properties = new ArrayList<Map<?, ?>>();
-            var endpoint = clazz.getAnnotation(RestControllerEndpoint.class);
+        collectRestActuators(subTypes, parentPath, RestControllerEndpoint.class);
 
-            var methods = findAnnotatedMethods(clazz, GetMapping.class);
-            LOGGER.debug("Checking actuator endpoint (GET) for [{}]", clazz.getName());
-            methods.forEach(Unchecked.consumer(method -> {
-                var get = method.getAnnotation(GetMapping.class);
-                var map = new LinkedHashMap<>();
-                var paths = Arrays.stream(get.path())
-                    .map(path -> StringUtils.isBlank(path) ? endpoint.id() : endpoint.id() + StringUtils.prependIfMissing(path, "/"))
-                    .findFirst()
-                    .orElse(null);
-                map.put("method", RequestMethod.GET.name());
-                map.put("path", Optional.ofNullable(paths).orElseGet(endpoint::id));
-                map.put("name", endpoint.id());
-                map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
-
-                collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
-                if (get.produces().length > 0) {
-                    map.put("produces", get.produces());
-                }
-                if (get.consumes().length > 0) {
-                    map.put("consumes", get.consumes());
-                }
-                if (get.params().length > 0) {
-                    map.put("parameters", get.params());
-                }
-                if (get.headers().length > 0) {
-                    map.put("headers", get.headers());
-                }
-                if (get.value().length > 0) {
-                    map.put("value", get.value());
-                }
-                properties.add(map);
-            }));
-
-            LOGGER.debug("Checking actuator endpoint (DELETE) for [{}]", clazz.getName());
-            methods = findAnnotatedMethods(clazz, DeleteMapping.class);
-            methods.forEach(Unchecked.consumer(method -> {
-                var delete = method.getAnnotation(DeleteMapping.class);
-                var map = new LinkedHashMap<>();
-                var paths = Arrays.stream(delete.path())
-                    .map(path -> StringUtils.isBlank(path) ? endpoint.id() : endpoint.id()
-                                                                             + StringUtils.prependIfMissing(path, "/"))
-                    .findFirst().orElse(null);
-                map.put("method", RequestMethod.DELETE.name());
-                map.put("path", Optional.ofNullable(paths).orElseGet(endpoint::id));
-                map.put("name", endpoint.id());
-                map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
-                collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
-                if (delete.produces().length > 0) {
-                    map.put("produces", delete.produces());
-                }
-                if (delete.consumes().length > 0) {
-                    map.put("consumes", delete.consumes());
-                }
-                if (delete.params().length > 0) {
-                    map.put("parameters", delete.params());
-                }
-                if (delete.headers().length > 0) {
-                    map.put("headers", delete.headers());
-                }
-                if (delete.value().length > 0) {
-                    map.put("value", delete.value());
-                }
-                properties.add(map);
-            }));
-
-            LOGGER.debug("Checking actuator endpoint (POST) for [{}]", clazz.getName());
-            methods = findAnnotatedMethods(clazz, PostMapping.class);
-            methods.forEach(Unchecked.consumer(method -> {
-                var post = method.getAnnotation(PostMapping.class);
-                var map = new LinkedHashMap<>();
-                var paths = Arrays.stream(post.path())
-                    .map(path -> StringUtils.isBlank(path) ? endpoint.id() : endpoint.id()
-                                                                             + StringUtils.prependIfMissing(path, "/"))
-                    .findFirst().orElse(null);
-                map.put("method", RequestMethod.POST.name());
-                map.put("path", Optional.ofNullable(paths).orElseGet(endpoint::id));
-                map.put("name", endpoint.id());
-                map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
-                collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
-                if (post.produces().length > 0) {
-                    map.put("produces", post.produces());
-                }
-                if (post.consumes().length > 0) {
-                    map.put("consumes", post.consumes());
-                }
-                if (post.params().length > 0) {
-                    map.put("parameters", post.params());
-                }
-                if (post.headers().length > 0) {
-                    map.put("headers", post.headers());
-                }
-                if (post.value().length > 0) {
-                    map.put("value", post.value());
-                }
-                properties.add(map);
-            }));
-
-            LOGGER.debug("Checking actuator endpoint (PATCH) for [{}]", clazz.getName());
-            methods = findAnnotatedMethods(clazz, PatchMapping.class);
-            methods.forEach(Unchecked.consumer(method -> {
-                var patch = method.getAnnotation(PatchMapping.class);
-                var map = new LinkedHashMap<>();
-                var paths = Arrays.stream(patch.path())
-                    .map(path -> StringUtils.isBlank(path) ? endpoint.id() : endpoint.id()
-                                                                             + StringUtils.prependIfMissing(path, "/"))
-                    .findFirst().orElse(null);
-                map.put("method", RequestMethod.PATCH.name());
-                map.put("path", Optional.ofNullable(paths).orElseGet(endpoint::id));
-                map.put("name", endpoint.id());
-                map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
-                collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
-                if (patch.produces().length > 0) {
-                    map.put("produces", patch.produces());
-                }
-                if (patch.consumes().length > 0) {
-                    map.put("consumes", patch.consumes());
-                }
-                if (patch.params().length > 0) {
-                    map.put("parameters", patch.params());
-                }
-                if (patch.headers().length > 0) {
-                    map.put("headers", patch.headers());
-                }
-                if (patch.value().length > 0) {
-                    map.put("value", patch.value());
-                }
-                properties.add(map);
-            }));
-
-            LOGGER.debug("Checking actuator endpoint (PUT) for [{}]", clazz.getName());
-            methods = findAnnotatedMethods(clazz, PutMapping.class);
-            methods.forEach(Unchecked.consumer(method -> {
-                var put = method.getAnnotation(PutMapping.class);
-                var map = new LinkedHashMap<>();
-                var paths = Arrays.stream(put.path())
-                    .map(path -> StringUtils.isBlank(path) ? endpoint.id() : endpoint.id()
-                                                                             + StringUtils.prependIfMissing(path, "/"))
-                    .findFirst().orElse(null);
-                map.put("method", RequestMethod.PUT.name());
-                map.put("path", Optional.ofNullable(paths).orElseGet(endpoint::id));
-                map.put("name", endpoint.id());
-                map.put("endpointType", RestControllerEndpoint.class.getSimpleName());
-                collectActuatorEndpointMethodMetadata(method, map, endpoint.id());
-                if (put.produces().length > 0) {
-                    map.put("produces", put.produces());
-                }
-                if (put.consumes().length > 0) {
-                    map.put("consumes", put.consumes());
-                }
-                if (put.params().length > 0) {
-                    map.put("parameters", put.params());
-                }
-                if (put.headers().length > 0) {
-                    map.put("headers", put.headers());
-                }
-                if (put.value().length > 0) {
-                    map.put("value", put.value());
-                }
-                properties.add(map);
-            }));
-
-            if (!properties.isEmpty()) {
-                var destination = new File(parentPath, endpoint.id());
-                if (!destination.mkdirs()) {
-                    LOGGER.debug("Unable to create directory");
-                }
-
-                var configFile = new File(destination, "config.yml");
-                CasConfigurationMetadataCatalog.export(configFile, properties);
-            }
-        });
+        
+        var restActuators = ReflectionUtils.findSubclassesInPackage(BaseCasRestActuatorEndpoint.class, "org.apereo.cas");
+        collectRestActuators(restActuators, parentPath, Endpoint.class);
 
         LOGGER.info("Checking endpoints...");
         subTypes = ReflectionUtils.findClassesWithAnnotationsInPackage(List.of(Endpoint.class), "org");
@@ -659,6 +492,197 @@ public class CasDocumentationApplication {
                 CasConfigurationMetadataCatalog.export(configFile, properties);
             }
         });
+    }
+
+    private static void collectRestActuators(final Collection<? extends Class> subTypes, final File parentPath, final Class annotationClazz) {
+        subTypes.forEach(clazz -> {
+            var properties = new ArrayList<Map<?, ?>>();
+            var endpoint = clazz.getAnnotation(annotationClazz);
+            var endpointId = getEndpointId(endpoint, annotationClazz);
+            
+            var methods = findAnnotatedMethods(clazz, GetMapping.class);
+            LOGGER.debug("Checking actuator endpoint (GET) for [{}]", clazz.getName());
+            methods.forEach(Unchecked.consumer(method -> {
+                var get = method.getAnnotation(GetMapping.class);
+                var map = new LinkedHashMap<>();
+                var paths = Arrays.stream(get.path())
+                    .map(path -> StringUtils.isBlank(path)
+                        ? endpointId
+                        : endpointId + StringUtils.prependIfMissing(path, "/"))
+                    .findFirst()
+                    .orElse(null);
+                map.put("method", RequestMethod.GET.name());
+                map.put("path", Optional.ofNullable(paths).orElse(endpointId));
+                map.put("name", endpointId);
+                map.put("endpointType", annotationClazz.getSimpleName());
+
+                collectActuatorEndpointMethodMetadata(method, map, endpointId);
+                if (get.produces().length > 0) {
+                    map.put("produces", get.produces());
+                }
+                if (get.consumes().length > 0) {
+                    map.put("consumes", get.consumes());
+                }
+                if (get.params().length > 0) {
+                    map.put("parameters", get.params());
+                }
+                if (get.headers().length > 0) {
+                    map.put("headers", get.headers());
+                }
+                if (get.value().length > 0) {
+                    map.put("value", get.value());
+                }
+                properties.add(map);
+            }));
+
+            LOGGER.debug("Checking actuator endpoint (DELETE) for [{}]", clazz.getName());
+            methods = findAnnotatedMethods(clazz, DeleteMapping.class);
+            methods.forEach(Unchecked.consumer(method -> {
+                var delete = method.getAnnotation(DeleteMapping.class);
+                var map = new LinkedHashMap<>();
+                var paths = Arrays.stream(delete.path())
+                    .map(path -> StringUtils.isBlank(path) ? endpointId : endpointId
+                        + StringUtils.prependIfMissing(path, "/"))
+                    .findFirst().orElse(null);
+                map.put("method", RequestMethod.DELETE.name());
+                map.put("path", Optional.ofNullable(paths).orElse(endpointId));
+                map.put("name", endpointId);
+                map.put("endpointType", annotationClazz.getSimpleName());
+                collectActuatorEndpointMethodMetadata(method, map, endpointId);
+                if (delete.produces().length > 0) {
+                    map.put("produces", delete.produces());
+                }
+                if (delete.consumes().length > 0) {
+                    map.put("consumes", delete.consumes());
+                }
+                if (delete.params().length > 0) {
+                    map.put("parameters", delete.params());
+                }
+                if (delete.headers().length > 0) {
+                    map.put("headers", delete.headers());
+                }
+                if (delete.value().length > 0) {
+                    map.put("value", delete.value());
+                }
+                properties.add(map);
+            }));
+
+            LOGGER.debug("Checking actuator endpoint (POST) for [{}]", clazz.getName());
+            methods = findAnnotatedMethods(clazz, PostMapping.class);
+            methods.forEach(Unchecked.consumer(method -> {
+                var post = method.getAnnotation(PostMapping.class);
+                var map = new LinkedHashMap<>();
+                var paths = Arrays.stream(post.path())
+                    .map(path -> StringUtils.isBlank(path)
+                        ? endpointId
+                        : endpointId + StringUtils.prependIfMissing(path, "/"))
+                    .findFirst().orElse(null);
+                map.put("method", RequestMethod.POST.name());
+                map.put("path", Optional.ofNullable(paths).orElse(endpointId));
+                map.put("name", endpointId);
+                map.put("endpointType", annotationClazz.getSimpleName());
+                collectActuatorEndpointMethodMetadata(method, map, endpointId);
+                if (post.produces().length > 0) {
+                    map.put("produces", post.produces());
+                }
+                if (post.consumes().length > 0) {
+                    map.put("consumes", post.consumes());
+                }
+                if (post.params().length > 0) {
+                    map.put("parameters", post.params());
+                }
+                if (post.headers().length > 0) {
+                    map.put("headers", post.headers());
+                }
+                if (post.value().length > 0) {
+                    map.put("value", post.value());
+                }
+                properties.add(map);
+            }));
+
+            LOGGER.debug("Checking actuator endpoint (PATCH) for [{}]", clazz.getName());
+            methods = findAnnotatedMethods(clazz, PatchMapping.class);
+            methods.forEach(Unchecked.consumer(method -> {
+                var patch = method.getAnnotation(PatchMapping.class);
+                var map = new LinkedHashMap<>();
+                var paths = Arrays.stream(patch.path())
+                    .map(path -> StringUtils.isBlank(path)
+                        ? endpointId
+                        : endpointId + StringUtils.prependIfMissing(path, "/"))
+                    .findFirst().orElse(null);
+                map.put("method", RequestMethod.PATCH.name());
+                map.put("path", Optional.ofNullable(paths).orElse(endpointId));
+                map.put("name", endpointId);
+                map.put("endpointType", annotationClazz.getSimpleName());
+                collectActuatorEndpointMethodMetadata(method, map, endpointId);
+                if (patch.produces().length > 0) {
+                    map.put("produces", patch.produces());
+                }
+                if (patch.consumes().length > 0) {
+                    map.put("consumes", patch.consumes());
+                }
+                if (patch.params().length > 0) {
+                    map.put("parameters", patch.params());
+                }
+                if (patch.headers().length > 0) {
+                    map.put("headers", patch.headers());
+                }
+                if (patch.value().length > 0) {
+                    map.put("value", patch.value());
+                }
+                properties.add(map);
+            }));
+
+            LOGGER.debug("Checking actuator endpoint (PUT) for [{}]", clazz.getName());
+            methods = findAnnotatedMethods(clazz, PutMapping.class);
+            methods.forEach(Unchecked.consumer(method -> {
+                var put = method.getAnnotation(PutMapping.class);
+                var map = new LinkedHashMap<>();
+                var paths = Arrays.stream(put.path())
+                    .map(path -> StringUtils.isBlank(path)
+                        ? endpointId
+                        : endpointId + StringUtils.prependIfMissing(path, "/"))
+                    .findFirst().orElse(null);
+                map.put("method", RequestMethod.PUT.name());
+                map.put("path", Optional.ofNullable(paths).orElse(endpointId));
+                map.put("name", endpointId);
+                map.put("endpointType", annotationClazz.getSimpleName());
+                collectActuatorEndpointMethodMetadata(method, map, endpointId);
+                if (put.produces().length > 0) {
+                    map.put("produces", put.produces());
+                }
+                if (put.consumes().length > 0) {
+                    map.put("consumes", put.consumes());
+                }
+                if (put.params().length > 0) {
+                    map.put("parameters", put.params());
+                }
+                if (put.headers().length > 0) {
+                    map.put("headers", put.headers());
+                }
+                if (put.value().length > 0) {
+                    map.put("value", put.value());
+                }
+                properties.add(map);
+            }));
+
+            if (!properties.isEmpty()) {
+                var destination = new File(parentPath, endpointId);
+                if (!destination.mkdirs()) {
+                    LOGGER.debug("Unable to create directory");
+                }
+
+                var configFile = new File(destination, "config.yml");
+                CasConfigurationMetadataCatalog.export(configFile, properties);
+            }
+        });
+    }
+
+    private static String getEndpointId(final Annotation endpoint, final Class annotationClazz) {
+        if (annotationClazz.equals(RestControllerEndpoint.class)) {
+            return ((RestControllerEndpoint) endpoint).id();
+        }
+        return ((Endpoint) endpoint).id();
     }
 
     private static void collectActuatorEndpointMethodMetadata(final Method method,

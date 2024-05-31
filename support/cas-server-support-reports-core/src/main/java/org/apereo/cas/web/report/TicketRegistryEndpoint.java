@@ -48,7 +48,7 @@ public class TicketRegistryEndpoint extends BaseCasRestActuatorEndpoint {
      * @return the object
      */
     @GetMapping(
-        value = "/query",
+        path = "/query",
         produces = {
             MEDIA_TYPE_SPRING_BOOT_V2_JSON,
             MEDIA_TYPE_SPRING_BOOT_V3_JSON,

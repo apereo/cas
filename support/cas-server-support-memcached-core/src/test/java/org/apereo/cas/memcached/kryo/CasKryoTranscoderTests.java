@@ -129,8 +129,7 @@ class CasKryoTranscoderTests {
         val data = new CachedData(0, ArrayUtils.EMPTY_BYTE_ARRAY, 10);
         assertThrows(KryoException.class, () -> transcoder.decode(data));
         
-        if (transcoder instanceof CasKryoTranscoder) {
-            val enc = (CasKryoTranscoder) this.transcoder;
+        if (transcoder instanceof final CasKryoTranscoder enc) {
             assertNotNull(enc.getKryo());
         }
     }
