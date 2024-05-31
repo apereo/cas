@@ -54,8 +54,6 @@ class DefaultLoginWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Test
     void verifyRenderAction() throws Throwable {
-        MockRequestContext.create();
-
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
         val cfg = casWebflowExecutionPlan.getWebflowConfigurers().iterator().next();
         assertNotNull(cfg.createRenderAction("ExampleRenderAction"));

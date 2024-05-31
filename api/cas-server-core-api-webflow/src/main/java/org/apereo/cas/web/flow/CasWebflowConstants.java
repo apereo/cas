@@ -12,12 +12,7 @@ public interface CasWebflowConstants {
      * Bean Names.
      ****************************************
      */
-
-    /**
-     * Bean name for account profile flow registry.
-     */
-    String BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY = "accountProfileFlowRegistry";
-
+    
     /**
      * Bean name for login flow registry.
      */
@@ -54,16 +49,24 @@ public interface CasWebflowConstants {
      */
     String ATTRIBUTE_PUBLIC_WORKSTATION = "publicWorkstation";
 
-
+    /**
+     * Flow attribute or request parameter indicating warning before redirecting.
+     */
+    String ATTRIBUTE_WARN_ON_REDIRECT = "warn";
+    
     /**
      * Attribute to track registered service in the flow.
      */
     String ATTRIBUTE_REGISTERED_SERVICE = "registeredService";
 
     /**
-     * Attribute to indicate a password management reset request.
+     * Attribute to indicate a password management reset query.
      */
     String ATTRIBUTE_PASSWORD_MANAGEMENT_QUERY = "passwordManagementQuery";
+    /**
+     * Attribute to indicate a password reset request.
+     */
+    String ATTRIBUTE_PASSWORD_MANAGEMENT_REQUEST = "passwordResetRequest";
 
     /**
      * Attribute that indicates the transition one must activate
@@ -80,7 +83,7 @@ public interface CasWebflowConstants {
      */
     String ATTRIBUTE_AUTHENTICATION = "authentication";
     /**
-     * Attribute to track authenticationn result builder in the flow.
+     * Attribute to track authentication result builder in the flow.
      */
     String ATTRIBUTE_AUTHENTICATION_RESULT_BUILDER = "authenticationResultBuilder";
 
@@ -462,6 +465,11 @@ public interface CasWebflowConstants {
      * Transition id 'acceptedUsagePolicy'.
      */
     String TRANSITION_ID_AUP_ACCEPTED = "acceptedUsagePolicy";
+
+    /**
+     * Event id to signal security questions are disabled.
+     */
+    String TRANSITION_ID_SECURITY_QUESTIONS_DISABLED = "questionsDisabled";
     
     /*
      ****************************************
@@ -1493,6 +1501,10 @@ public interface CasWebflowConstants {
      * Action id 'accountProfileOidcRemoveAccessTokenAction'.
      */
     String ACTION_ID_ACCOUNT_PROFILE_REMOVE_OIDC_ACCESS_TOKEN = "accountProfileOidcRemoveAccessTokenAction";
+    /**
+     * Action id 'accountProfileRemoveMultifactorTrustedDeviceAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_REMOVE_MFA_TRUSTED_DEVICE = "accountProfileRemoveMultifactorTrustedDeviceAction";
 
     /**
      * Action id 'putBrowserStorageAction'.
@@ -1523,7 +1535,11 @@ public interface CasWebflowConstants {
      */
     String ACTION_ID_ACCOUNT_PROFILE_PASSWORD_CHANGE_REQUEST = "accountProfilePasswordChangeRequestAction";
 
-
+    /**
+     * Action id 'accountProfileActivateMfaAction'.
+     */
+    String ACTION_ID_ACCOUNT_PROFILE_ACTIVATE_MFA = "accountProfileActivateMfaAction";
+    
     /**
      * Action id 'prepareAccountProfilePasswordMgmtAction'.
      */
@@ -1970,9 +1986,9 @@ public interface CasWebflowConstants {
     String ACTION_ID_GOOGLE_ACCOUNT_CREATE_REGISTRATION = "googleAccountCreateRegistrationAction";
 
     /**
-     * Action id 'validateSelectedRegistrationAction'.
+     * Action id 'googleValidateSelectedRegistrationAction'.
      */
-    String ACTION_ID_GOOGLE_VALIDATE_SELECTED_REGISTRATION = "validateSelectedRegistrationAction";
+    String ACTION_ID_GOOGLE_VALIDATE_SELECTED_REGISTRATION = "googleValidateSelectedRegistrationAction";
 
     /**
      * Action id 'yubikeyAuthenticationWebflowAction'.

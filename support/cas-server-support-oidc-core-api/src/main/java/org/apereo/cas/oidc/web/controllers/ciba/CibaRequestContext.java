@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.With;
 import lombok.experimental.SuperBuilder;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -17,7 +19,10 @@ import java.util.Set;
 @SuperBuilder
 @AllArgsConstructor
 @With
-public class CibaRequestContext {
+public class CibaRequestContext implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -6506681662666375343L;
+    
     private final Set<String> scope;
     private final String clientNotificationToken;
     private final Set<String> acrValues;

@@ -21,12 +21,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
 class AccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
-    @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
-    protected FlowDefinitionRegistry accountProfileFlowRegistry;
+    @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+    protected FlowDefinitionRegistry flowDefinitionRegistry;
 
     @Test
     void verifyOperation() throws Throwable {
-        val flow = (Flow) accountProfileFlowRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
+        val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         assertNotNull(flow);
     }
 }

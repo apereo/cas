@@ -58,11 +58,15 @@ Maps to the `Required` [authentication policy](../authentication/Configuring-Aut
     "@class": "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
     "requiredAuthenticationHandlers" : ["java.util.TreeSet", [ "JSON" ]],
     "criteria": {
-      "@class": "org.apereo.cas.services.AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria"
+      "@class": "org.apereo.cas.services.AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria",
+      "tryAll: false
     }
   }
 }
 ```
+      
+The `tryAll` flag will ensure that the the total number of collected credentials in the current authentication transaction
+matches the sum of all authentication successes and failures.
 
 ### Excluded
 

@@ -4,8 +4,8 @@ plugins {
 }
 
 ext.isCiServer = System.getenv().containsKey("CI")
-ext.buildCacheUser = System.getenv("GRADLE_BUILDCACHE_USER")
-ext.buildCachePsw = System.getenv("GRADLE_BUILDCACHE_PSW")
+//ext.buildCacheUser = System.getenv("GRADLE_BUILDCACHE_USER")
+//ext.buildCachePsw = System.getenv("GRADLE_BUILDCACHE_PSW")
 ext.gradleEnterpriseAccessKey = System.getenv("GRADLE_ENTERPRISE_ACCESS_KEY")
 ext.githubPackageRegistryUser = System.getenv("GH_PACKAGE_REGISTRY_USER")
 ext.githubPackageRegistryPassword = System.getenv("GH_PACKAGE_REGISTRY_TOKEN")

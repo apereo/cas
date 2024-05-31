@@ -51,7 +51,7 @@ class CasCoreServicesMonitoringConfigurationTests {
         assertFalse(ENTRIES.isEmpty());
     }
 
-    @TestConfiguration(proxyBeanMethods = false)
+    @TestConfiguration(value = "CasCoreServicesMonitoringTestConfiguration", proxyBeanMethods = false)
     static class CasCoreServicesMonitoringTestConfiguration {
         @Bean
         public ObservationHandler<Observation.Context> collectingObservationHandler() {

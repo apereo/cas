@@ -12,19 +12,15 @@
 
 <body>
 <main class="container mt-3 mb-3">
-    <div th:fragment="serviceUI" th:if="${registeredService}" id="serviceui" class="mb-4">
-        <div th:if="${serviceUIMetadata}" class="d-flex align-items-center p-2">
+    <div th:fragment="serviceUI" th:if="${registeredService}" id="serviceui" class="banner banner-info mb-4 text-justify">
+        <div th:if="${serviceUIMetadata}" class="d-flex align-items-center pr-2">
             <img id="serviceUIMetadataLogo" th:if="${serviceUIMetadata.logoUrl}" th:title="${serviceUIMetadata.displayName}"
                  th:alt="${serviceUIMetadata.displayName}" th:src="${serviceUIMetadata.logoUrl}"
                  th:width="${serviceUIMetadata.logoWidth}" th:height="${serviceUIMetadata.logoHeight}"/>
-
-            <img th:unless="${serviceUIMetadata.logoUrl}" th:title="${serviceUIMetadata.displayName}"
-                 th:alt="${serviceUIMetadata.displayName}" th:src="@{images/webapp.png}"
-                 th:width="${serviceUIMetadata.logoWidth}" th:height="${serviceUIMetadata.logoHeight}"/>
-
+            
             <div class="ml-2">
-                <h2 id="serviceUIMetadataDisplayName" th:text="${serviceUIMetadata.displayName}">serviceUIMetadata.displayName</h2>
-                <p id="serviceUIMetadataDescription" th:text="${serviceUIMetadata.description}">serviceUIMetadata.description</p>
+                <h2 id="serviceUIMetadataDisplayName" th:utext="${serviceUIMetadata.displayName}">serviceUIMetadata.displayName</h2>
+                <p id="serviceUIMetadataDescription" th:utext="${serviceUIMetadata.description}">serviceUIMetadata.description</p>
 
                 <div id="wildcardService" th:if="${wildcardedRegisteredService}">
                     <p><i class="mdi mdi-information-slab-box" aria-hidden="true"></i><span th:utext="#{screen.service.wildcard.message}" /></p>
@@ -41,11 +37,11 @@
             </div>
         </div>
 
-        <div th:unless="${serviceUIMetadata}" class="d-flex align-items-center p-2">
+        <div th:unless="${serviceUIMetadata}" class="d-flex align-items-center pr-2">
             <img th:if="${registeredService.logo}" th:src="${registeredService.logo}"/>
             <div id="servicedesc" class="ml-2">
                 <strong><i class="mdi mdi-web" aria-hidden="true"></i>[[${registeredService.name}]]</strong>
-                <p th:text="${registeredService.description}">Registered Service Description</p>
+                <p th:utext="${registeredService.description}">Registered Service Description</p>
                 <div id="wildcardService" th:if="${wildcardedRegisteredService}">
                     <p><i class="mdi mdi-information-slab-box" aria-hidden="true"></i><span th:utext="#{screen.service.wildcard.message}" /></p>
                 </div>

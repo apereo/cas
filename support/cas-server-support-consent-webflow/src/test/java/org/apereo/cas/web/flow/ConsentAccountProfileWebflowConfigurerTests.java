@@ -28,13 +28,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
 class ConsentAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
-    @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
-    protected FlowDefinitionRegistry accountFlowDefinitionRegistry;
+    @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+    protected FlowDefinitionRegistry flowDefinitionRegistry;
 
     @Test
     void verifyOperation() throws Throwable {
         assertFalse(casWebflowExecutionPlan.getWebflowConfigurers().isEmpty());
-        val flow = (Flow) accountFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
+        val flow = (Flow) flowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         assertNotNull(flow);
         val view = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW);
         assertTrue(view.getRenderActionList().get(1).toString().contains(CasWebflowConstants.ACTION_ID_CONSENT_ACCOUNT_PROFILE_PREPARE));

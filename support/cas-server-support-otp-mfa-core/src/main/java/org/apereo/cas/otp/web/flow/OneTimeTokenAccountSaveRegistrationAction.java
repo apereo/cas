@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -58,6 +59,12 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
     protected Event doExecuteInternal(final RequestContext requestContext) {
         try {
             val currentAcct = getCandidateAccountFrom(requestContext);
+            val deviceRegistrationEnabled = MultifactorAuthenticationWebflowUtils.isMultifactorDeviceRegistrationEnabled(requestContext);
+            if (!deviceRegistrationEnabled) {
+                LOGGER.warn("Device registration is disabled for [{}]", currentAcct.getUsername());
+                return getErrorEvent(requestContext);
+            }
+
             if (!casProperties.getAuthn().getMfa().getGauth().getCore().isMultipleDeviceRegistrationEnabled()) {
                 if (repository.count(currentAcct.getUsername()) > 0) {
                     LOGGER.warn("Unable to register multiple devices for [{}]", currentAcct.getUsername());
@@ -73,7 +80,7 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
             val validate = requestContext.getRequestParameters().getBoolean(REQUEST_PARAMETER_VALIDATE);
             if (validate == null || !validate) {
                 LOGGER.trace("Storing account [{}]", account);
-                WebUtils.putOneTimeTokenAccount(requestContext, repository.save(account));
+                MultifactorAuthenticationWebflowUtils.putOneTimeTokenAccount(requestContext, repository.save(account));
             }
             return success();
         } catch (final Exception e) {

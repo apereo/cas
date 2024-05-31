@@ -11,7 +11,6 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ReflectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.Getter;
@@ -48,7 +47,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -68,9 +66,9 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasDocumentationApplication}.
@@ -392,11 +390,15 @@ public class CasDocumentationApplication {
     }
 
     private static Pair<String, String> getEndpoint(final Class clazz) {
+        if (Modifier.isAbstract(clazz.getModifiers())) {
+            return null;
+        }
+        
         var endpoint = (Endpoint) clazz.getAnnotation(Endpoint.class);
         if (endpoint != null) {
             return Pair.of(endpoint.id(), endpoint.annotationType().getSimpleName());
         }
-
+        
         LOGGER.debug("[{}] is not an Endpoint. Checking for WebEndpoint...", clazz.getName());
         var webEndpoint = (WebEndpoint) clazz.getAnnotation(WebEndpoint.class);
         if (webEndpoint != null) {

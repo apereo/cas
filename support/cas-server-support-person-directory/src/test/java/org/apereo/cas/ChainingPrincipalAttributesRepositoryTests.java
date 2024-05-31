@@ -63,7 +63,7 @@ class ChainingPrincipalAttributesRepositoryTests {
             CoreAuthenticationTestUtils.getPrincipal().getAttributes(), context));
     }
 
-    @TestConfiguration(proxyBeanMethods = false)
+    @TestConfiguration(value = "ChainingPrincipalAttributesRepositoryTestConfiguration", proxyBeanMethods = false)
     static class ChainingPrincipalAttributesRepositoryTestConfiguration {
         @Bean
         public ServicesManager servicesManager() {

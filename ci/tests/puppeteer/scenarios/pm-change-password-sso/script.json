@@ -1,6 +1,5 @@
 {
-  "dependencies": "generic,pm-webflow",
-
+  "dependencies": "reports,generic,pm-webflow",
   "properties": [
     "--cas.authn.pm.core.enabled=true",
     "--cas.authn.pm.core.password-policy-pattern=.+",
@@ -9,6 +8,10 @@
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
-    "--cas.server.scope=example.net"
+    "--cas.server.scope=example.net",
+
+    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.web.exposure.include=*",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS"
   ]
 }

@@ -3,15 +3,14 @@ package org.apereo.cas.oidc.audit;
 import org.apereo.cas.configuration.model.core.audit.AuditEngineProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.ticket.OidcIdToken;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.idtoken.IdTokenGenerationContext;
+import org.apereo.cas.ticket.idtoken.OidcIdToken;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
-import org.pac4j.core.profile.UserProfile;
 import java.util.HashMap;
 
 /**
@@ -28,7 +27,8 @@ public class OidcIdTokenAuditResourceResolver extends ReturnValueAsStringResourc
     public String[] resolveFrom(final JoinPoint auditableTarget, final Object returnValue) {
         val values = new HashMap<>();
 
-        val accessToken = (OAuth20AccessToken) auditableTarget.getArgs()[0];
+        val idTokenContext = (IdTokenGenerationContext) auditableTarget.getArgs()[0];
+        val accessToken = idTokenContext.getAccessToken();
         if (returnValue instanceof final OidcIdToken idToken) {
             if (idToken.claims().hasClaim(OidcConstants.TXN)) {
                 val txn = FunctionUtils.doUnchecked(() -> idToken.claims().getStringClaimValue(OidcConstants.TXN));
@@ -37,7 +37,7 @@ public class OidcIdTokenAuditResourceResolver extends ReturnValueAsStringResourc
             }
             values.put(OidcConstants.ID_TOKEN, DigestUtils.abbreviate(idToken.token(), properties.getAbbreviationLength()));
         }
-        val userProfile = (UserProfile) auditableTarget.getArgs()[1];
+        val userProfile = idTokenContext.getUserProfile();
         values.put(OAuth20Constants.CLIENT_ID, accessToken.getClientId());
         if (!accessToken.getScopes().isEmpty()) {
             values.put(OAuth20Constants.SCOPE, accessToken.getScopes());

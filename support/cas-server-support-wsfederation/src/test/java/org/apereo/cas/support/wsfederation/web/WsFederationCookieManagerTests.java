@@ -28,8 +28,8 @@ class WsFederationCookieManagerTests extends AbstractWsFederationTests {
         context.setClientInfo();
 
         context.setParameter(CasProtocolConstants.PARAMETER_METHOD, "POST");
-        context.getHttpServletRequest().setAttribute("locale", "en");
-        context.getHttpServletRequest().setAttribute("theme", "custom");
+        context.setRequestAttribute("locale", "en");
+        context.setRequestAttribute("theme", "custom");
 
         val config = wsFederationConfigurations.toList().getFirst();
         val wctx = config.getId();

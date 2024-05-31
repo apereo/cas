@@ -1,5 +1,5 @@
-
 const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     let browser = await cas.newBrowser(cas.browserOptions());
@@ -9,18 +9,25 @@ const cas = require("../../cas.js");
     await submitLogin(page, "casuser", "Mellon");
     await cas.assertCookie(page);
     await cas.gotoLogout(page);
-    await cas.sleep(2000);
+    await cas.sleep(1000);
 
     await cas.log("Log in attempt: #1");
     await submitLogin(page);
 
     await cas.assertInnerTextStartsWith(page, "#content div.banner p", "Authentication attempt has failed");
 
-    await cas.log("Log in attempt: #2");
-    await submitLogin(page);
-
-    await cas.assertInnerText(page, "#content h2", "Access Denied");
-    await cas.assertInnerText(page, "#content p", "You've entered the wrong password for the user too many times. You've been throttled.");
+    for (let i = 2; i < 6; i++) {
+        await cas.log(`Log in attempt: #${i}`);
+        const response = await submitLogin(page);
+        await cas.log(`${response.status()} ${response.statusText()}`);
+        const status = response.status();
+        if (status === 401) {
+            await cas.assertInnerTextStartsWith(page, "#content div.banner p", "Authentication attempt has failed");
+        } else if (status === 423) {
+            await cas.assertInnerText(page, "#content h2", "Access Denied");
+            await cas.assertInnerText(page, "#content p", "You've entered the wrong password for the user too many times. You've been throttled.");
+        }
+    }
 
     await cas.log("Closing browser and trying again with bad credentials...");
     await browser.close();
@@ -28,7 +35,9 @@ const cas = require("../../cas.js");
     browser = await cas.newBrowser(cas.browserOptions());
     page = await cas.newPage(browser);
     await cas.log("Log in attempt: #2");
-    await submitLogin(page);
+    const response = await submitLogin(page);
+    assert(response.status() === 401);
+    
     await cas.assertInnerTextStartsWith(page, "#content div.banner p", "Authentication attempt has failed");
     await browser.close();
 })();
@@ -36,6 +45,6 @@ const cas = require("../../cas.js");
 async function submitLogin(page, user = "casuser", password = "BadPassword1") {
     await cas.gotoLogin(page);
     await cas.sleep(500);
-    await cas.loginWith(page, user, password);
+    return cas.loginWith(page, user, password, "#username", "#password", 8000);
 }
 

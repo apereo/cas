@@ -60,6 +60,8 @@ import org.apereo.cas.oidc.ticket.OidcDefaultCibaRequestFactory;
 import org.apereo.cas.oidc.ticket.OidcDefaultPushedAuthorizationRequestFactory;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestExpirationPolicyBuilder;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestFactory;
+import org.apereo.cas.oidc.ticket.OidcTicketCatalogConfigurer;
+import org.apereo.cas.oidc.token.OidcDefaultTokenGenerator;
 import org.apereo.cas.oidc.token.OidcIdTokenSigningAndEncryptionService;
 import org.apereo.cas.oidc.token.OidcJwtAccessTokenCipherExecutor;
 import org.apereo.cas.oidc.token.OidcRegisteredServiceJwtAccessTokenCipherExecutor;
@@ -104,12 +106,13 @@ import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
+import org.apereo.cas.ticket.TicketCatalogConfigurer;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.accesstoken.OAuth20JwtBuilder;
+import org.apereo.cas.ticket.idtoken.IdTokenGeneratorService;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.token.JwtBuilder;
@@ -118,6 +121,7 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.JacksonObjectMapperCustomizer;
 import org.apereo.cas.util.serialization.StringSerializer;
@@ -439,6 +443,24 @@ class OidcConfiguration {
     @Configuration(value = "OidcTokenServiceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class OidcTokenServiceConfiguration {
+
+        @ConditionalOnMissingBean(name = "oidcTokenGenerator")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public OAuth20TokenGenerator oauthTokenGenerator(
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver principalResolver,
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
+            final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            final CasConfigurationProperties casProperties) {
+            return new OidcDefaultTokenGenerator(ticketFactory, ticketRegistry,
+                principalResolver, profileScopeToAttributesFilter, casProperties);
+        }
+        
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oidcTokenSigningAndEncryptionService")
@@ -697,6 +719,8 @@ class OidcConfiguration {
         @ConditionalOnMissingBean(name = OidcConfigurationContext.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OidcConfigurationContext oidcConfigurationContext(
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
+            final HttpClient httpClient,
             @Qualifier(AttributeDefinitionStore.BEAN_NAME)
             final AttributeDefinitionStore attributeDefinitionStore,
             @Qualifier("oidcTokenIntrospectionSigningAndEncryptionService")
@@ -818,6 +842,7 @@ class OidcConfiguration {
                 .sessionStore(oauthDistributedSessionStore)
                 .servicesManager(servicesManager)
                 .ticketRegistry(ticketRegistry)
+                .httpClient(httpClient)
                 .clientRegistrationRequestSerializer(clientRegistrationRequestSerializer)
                 .clientIdGenerator(new DefaultRandomStringGenerator())
                 .clientSecretGenerator(new DefaultRandomStringGenerator())
@@ -1070,11 +1095,13 @@ class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OidcCibaRequestFactory oidcCibaRequestFactory(
+            @Qualifier("webflowCipherExecutor")
+            final CipherExecutor webflowCipherExecutor,
             @Qualifier("cibaRequestExpirationPolicy")
             final ExpirationPolicyBuilder cibaRequestExpirationPolicy,
             @Qualifier("cibaRequestIdGenerator")
             final UniqueTicketIdGenerator cibaRequestIdGenerator) {
-            return new OidcDefaultCibaRequestFactory(cibaRequestIdGenerator, cibaRequestExpirationPolicy);
+            return new OidcDefaultCibaRequestFactory(cibaRequestIdGenerator, cibaRequestExpirationPolicy, webflowCipherExecutor);
         }
 
         @ConditionalOnMissingBean(name = "cibaRequestIdGenerator")
@@ -1094,6 +1121,12 @@ class OidcConfiguration {
             return () -> oidcCibaRequestFactory;
         }
 
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "oidcTicketCatalogConfigurer")
+        public TicketCatalogConfigurer oidcTicketCatalogConfigurer() {
+            return new OidcTicketCatalogConfigurer();
+        }
     }
 
     @Configuration(value = "OidcResponseModesConfiguration", proxyBeanMethods = false)
@@ -1184,8 +1217,7 @@ class OidcConfiguration {
         }
 
     }
-
-
+    
     @Configuration(value = "OidcAssuranceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class OidcAssuranceConfiguration {

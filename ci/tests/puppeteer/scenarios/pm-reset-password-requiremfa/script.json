@@ -3,7 +3,6 @@
   "conditions": {
     "docker": "true"
   },
-
   "properties": [
     "--cas.authn.pm.core.enabled=true",
     "--cas.authn.pm.core.password-policy-pattern=.+",
@@ -12,7 +11,7 @@
 
     "--cas.authn.pm.reset.mail.from=cas@apereo.org",
     "--cas.authn.pm.reset.mail.text=${url}",
-    "--cas.authn.pm.reset.mail.subject=Reset your password",
+    "--cas.authn.pm.reset.mail.subject=Reset",
     "--cas.authn.pm.reset.mail.attribute-name=mail",
     "--cas.authn.pm.reset.security-questions-enabled=false",
 
@@ -25,7 +24,7 @@
 
     "--cas.authn.mfa.simple.mail.html=false",
     "--cas.authn.mfa.simple.mail.from=cas@example.com",
-    "--cas.authn.mfa.simple.mail.subject=CAS Token",
+    "--cas.authn.mfa.simple.mail.subject=CASToken",
     "--cas.authn.mfa.simple.mail.text=${token}",
 
     "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",

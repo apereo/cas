@@ -62,7 +62,7 @@ class ElasticApmAgentInitializerTests {
 
     }
 
-    @TestConfiguration(proxyBeanMethods = false)
+    @TestConfiguration(value = "ElasticApmTestConfiguration", proxyBeanMethods = false)
     static class ElasticApmTestConfiguration {
         @Bean
         public Greeter greeter() {

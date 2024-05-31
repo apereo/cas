@@ -70,10 +70,18 @@ public class CasRedisTicketRegistryAutoConfiguration {
 
     private static final BeanCondition CONDITION = BeanCondition.on("cas.ticket.registry.redis.enabled").isTrue().evenIfMissing();
 
-    @Configuration(value = "RedisTicketRegistryCoreConfiguration", proxyBeanMethods = false)
+    @Configuration(value = "RedisTicketRegistryCachingConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "redis-messaging")
     @Lazy(false)
-    static class RedisTicketRegistryCoreConfiguration {
+    static class RedisTicketRegistryCachingConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "redisTicketRegistryCache")
+        public Cache<String, Ticket> redisTicketRegistryCache(final CasConfigurationProperties casProperties) {
+            val redis = casProperties.getTicket().getRegistry().getRedis();
+            return Beans.newCache(redis.getCache(), new CachedTicketExpirationPolicy());
+        }
 
         @Bean
         @ConditionalOnAvailableEndpoint
@@ -145,7 +153,12 @@ public class CasRedisTicketRegistryAutoConfiguration {
             final CasRedisTemplate<String, RedisTicketDocument> ticketRedisTemplate) {
             return new DefaultRedisTicketRegistryMessagePublisher(ticketRedisTemplate, redisTicketRegistryMessageIdentifier);
         }
-
+    }
+    
+    @Configuration(value = "RedisTicketRegistryCoreConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class RedisTicketRegistryCoreConfiguration {
+        
         @ConditionalOnMissingBean(name = "redisTicketConnectionFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -192,13 +205,6 @@ public class CasRedisTicketRegistryAutoConfiguration {
                 .get();
         }
 
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "redisTicketRegistryCache")
-        public Cache<String, Ticket> redisTicketRegistryCache(final CasConfigurationProperties casProperties) {
-            val redis = casProperties.getTicket().getRegistry().getRedis();
-            return Beans.newCache(redis.getCache(), new CachedTicketExpirationPolicy());
-        }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -233,9 +239,9 @@ public class CasRedisTicketRegistryAutoConfiguration {
             @Qualifier(TicketSerializationManager.BEAN_NAME)
             final TicketSerializationManager ticketSerializationManager,
             @Qualifier("redisTicketRegistryCache")
-            final Cache<String, Ticket> redisTicketRegistryCache,
+            final ObjectProvider<Cache<String, Ticket>> redisTicketRegistryCache,
             @Qualifier("redisTicketRegistryMessagePublisher")
-            final RedisTicketRegistryMessagePublisher redisTicketRegistryMessagePublisher,
+            final ObjectProvider<RedisTicketRegistryMessagePublisher> redisTicketRegistryMessagePublisher,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(TicketRegistry.class)

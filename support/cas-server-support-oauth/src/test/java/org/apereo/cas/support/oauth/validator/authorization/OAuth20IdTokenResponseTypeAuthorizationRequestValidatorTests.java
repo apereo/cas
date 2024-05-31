@@ -1,19 +1,16 @@
 package org.apereo.cas.support.oauth.validator.authorization;
 
 import org.apereo.cas.AbstractOAuth20Tests;
-import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -34,7 +31,7 @@ class OAuth20IdTokenResponseTypeAuthorizationRequestValidatorTests extends Abstr
 
         servicesManager.save(service);
 
-        val validator = new OAuth20IdTokenResponseTypeAuthorizationRequestValidator(servicesManager, new WebApplicationServiceFactory(),
+        val validator = new OAuth20IdTokenResponseTypeAuthorizationRequestValidator(servicesManager, serviceFactory,
             new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext), oauthRequestParameterResolver);
 
         val request = new MockHttpServletRequest();

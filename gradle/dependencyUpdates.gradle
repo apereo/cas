@@ -6,8 +6,23 @@ def isNonStable = { String version ->
     return !stableKeyword && !(version ==~ regex)
 }
 
+def isCommonsCollectionsRejected = { candidate ->
+    return candidate.version == "20040616" && candidate.group == "commons-collections" && candidate.name == "commons-collections"
+}
+
+def isH2DatabaseRejected = { candidate ->
+    return candidate.group == "com.h2database" && candidate.name == "h2"
+}
+
+def isAwsSDKRejected = { candidate ->
+    return candidate.group == "software.amazon.awssdk" && !candidate.version.endsWith("0")
+}
+
 tasks.named('dependencyUpdates') {
     rejectVersionIf {
-        isNonStable(it.candidate.version)
+            isNonStable(it.candidate.version)
+            || isCommonsCollectionsRejected(it.candidate)
+            || isH2DatabaseRejected(it.candidate)
+            || isAwsSDKRejected(it.candidate)
     }
 }

@@ -75,8 +75,8 @@ const os = require("os");
             throw error;
         }, {}, "stream");
 
-    await cas.doRequest(`${baseUrl}/casuser/1`, "DELETE");
-    await cas.doRequest(`${baseUrl}/casuser`, "DELETE");
+    await cas.doDelete(`${baseUrl}/casuser/1`);
+    await cas.doDelete(`${baseUrl}/casuser`);
 
     await browser.close();
 })();

@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.duo.DuoSecurityUserAccount;
 import org.apereo.cas.adaptors.duo.DuoSecurityUserDevice;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAdminApiService;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationDeviceManager;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
@@ -12,8 +13,8 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.Getter;
@@ -61,10 +62,6 @@ import static org.mockito.Mockito.*;
 })
 class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
-    @Qualifier(CasWebflowConstants.BEAN_NAME_ACCOUNT_PROFILE_FLOW_DEFINITION_REGISTRY)
-    private FlowDefinitionRegistry multifactorFlowDefinitionRegistry;
-
-    @Autowired
     @Qualifier("duoMultifactorAuthenticationDeviceProviderAction")
     private MultifactorAuthenticationDeviceProviderAction duoMultifactorAuthenticationDeviceProviderAction;
 
@@ -75,12 +72,12 @@ class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends BaseWeb
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
         val result = duoMultifactorAuthenticationDeviceProviderAction.execute(context);
         assertNull(result);
-        val devices = WebUtils.getMultifactorAuthenticationRegisteredDevices(context);
+        val devices = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationRegisteredDevices(context);
         assertNotNull(devices);
         assertEquals(1, devices.size());
     }
 
-    @TestConfiguration("DuoSecurityTestConfiguration")
+    @TestConfiguration(value = "DuoSecurityTestConfiguration", proxyBeanMethods = false)
     static class DuoSecurityTestConfiguration {
         @Bean
         public DuoSecurityMultifactorAuthenticationProvider dummyDuoSecurityProvider() throws Exception {
@@ -100,6 +97,7 @@ class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends BaseWeb
             when(duoService.getAdminApiService()).thenReturn(Optional.of(adminApi));
             when(provider.getId()).thenReturn(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
             when(provider.getDuoAuthenticationService()).thenReturn(duoService);
+            when(provider.getDeviceManager()).thenReturn(new DuoSecurityMultifactorAuthenticationDeviceManager(provider));
             return provider;
         }
 

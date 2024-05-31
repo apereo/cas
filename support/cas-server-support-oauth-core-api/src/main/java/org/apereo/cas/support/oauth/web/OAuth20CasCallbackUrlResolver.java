@@ -1,9 +1,10 @@
 package org.apereo.cas.support.oauth.web;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.token.TokenConstants;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -13,8 +14,8 @@ import org.apache.hc.core5.net.URIBuilder;
 import org.jooq.lambda.Unchecked;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.http.url.UrlResolver;
-
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,32 +40,47 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
 
         return FunctionUtils.doUnchecked(() -> {
             val builder = new URIBuilder(url);
-            addUrlParameter(context, builder, OAuth20Constants.CLIENT_ID);
-            addUrlParameter(context, builder, OAuth20Constants.SCOPE);
-            addUrlParameter(context, builder, OAuth20Constants.REDIRECT_URI);
-            addUrlParameter(context, builder, OAuth20Constants.ACR_VALUES);
-            addUrlParameter(context, builder, OAuth20Constants.RESPONSE_TYPE);
-            addUrlParameter(context, builder, OAuth20Constants.GRANT_TYPE);
-            addUrlParameter(context, builder, OAuth20Constants.RESPONSE_MODE);
-            addUrlParameter(context, builder, OAuth20Constants.CLAIMS);
-            addUrlParameter(context, builder, OAuth20Constants.REQUEST);
-            addUrlParameter(context, builder, OAuth20Constants.STATE);
-            addUrlParameter(context, builder, OAuth20Constants.NONCE);
-            addUrlParameter(context, builder, TokenConstants.PARAMETER_NAME_TOKEN);
-            getIncludeParameterNames().forEach(param -> addUrlParameter(context, builder, param));
+            val includeParameterNames = getIncludeParameterNames();
+            includeParameterNames.forEach(param -> addUrlParameter(context, builder, param));
+
+            val existingParameters = new HashMap<>(context.getRequestParameters());
+            includeParameterNames.forEach(existingParameters.keySet()::remove);
+            existingParameters.keySet().removeAll(getExcludedParameterNames());
+            existingParameters
+                .entrySet()
+                .stream()
+                .filter(entry -> entry.getValue().length > 0)
+                .forEach(entry -> builder.addParameter(entry.getKey(), entry.getValue()[0]));
+
             val callbackResolved = builder.build().toString();
             LOGGER.debug("Final resolved callback URL is [{}]", callbackResolved);
             return callbackResolved;
         });
     }
 
-    /**
-     * Gets include parameter names.
-     *
-     * @return the include parameter names
-     */
+    private static Collection<String> getExcludedParameterNames() {
+        return List.of(
+            CasProtocolConstants.PARAMETER_SERVICE,
+            CasProtocolConstants.PARAMETER_TARGET_SERVICE,
+            CasProtocolConstants.PARAMETER_TICKET
+        );
+    }
+
     protected List<String> getIncludeParameterNames() {
-        return new ArrayList<>(0);
+        return CollectionUtils.wrapList(
+            OAuth20Constants.CLIENT_ID,
+            OAuth20Constants.SCOPE,
+            OAuth20Constants.REDIRECT_URI,
+            OAuth20Constants.ACR_VALUES,
+            OAuth20Constants.RESPONSE_TYPE,
+            OAuth20Constants.GRANT_TYPE,
+            OAuth20Constants.RESPONSE_MODE,
+            OAuth20Constants.CLAIMS,
+            OAuth20Constants.REQUEST,
+            OAuth20Constants.STATE,
+            OAuth20Constants.NONCE,
+            TokenConstants.PARAMETER_NAME_TOKEN
+        );
     }
 
     private Optional<NameValuePair> getQueryParameter(final WebContext context, final String name) {

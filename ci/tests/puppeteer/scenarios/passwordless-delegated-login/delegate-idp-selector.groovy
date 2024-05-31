@@ -14,5 +14,8 @@ def run(Object[] args) {
     if (passwordlessUser.username == "casuser-client") {
         return clients.find { it.name == "CasClient-Client" }
     }
+    if (passwordlessUser.username == "casuser-saml") {
+        return clients.find { it.name == "SAML2Client" }
+    }
     return clients.find { it.name == "CasClient-None" }
 }

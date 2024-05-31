@@ -6,7 +6,7 @@ const cas = require("../../cas.js");
     const baseUrl = "https://localhost:8443/cas/actuator/ssoSessions";
 
     await cas.logg("Removing all SSO Sessions");
-    await cas.doRequest(`${baseUrl}?type=ALL&from=1&count=1000`, "DELETE", {});
+    await cas.doDelete(`${baseUrl}?type=ALL&from=1&count=1000`);
 
     await login("https://apereo.github.io");
 

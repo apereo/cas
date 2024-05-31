@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
 import org.apereo.cas.dynamodb.DynamoDbQueryBuilder;
 import org.apereo.cas.dynamodb.DynamoDbTableUtils;
+import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -357,8 +358,10 @@ public class DynamoDbTicketRegistryFacilitator {
             AttributeValue.builder().n(Integer.toString(payload.getOriginalTicket().getCountOfUses())).build());
         values.put(ColumnNames.TIME_TO_LIVE.getColumnName(),
             AttributeValue.builder().n(Long.toString(payload.getOriginalTicket().getExpirationPolicy().getTimeToLive())).build());
-        values.put(ColumnNames.TIME_TO_IDLE.getColumnName(),
-            AttributeValue.builder().n(Long.toString(payload.getOriginalTicket().getExpirationPolicy().getTimeToIdle())).build());
+
+        val idleTimeout = payload.getOriginalTicket().getExpirationPolicy() instanceof final IdleExpirationPolicy iep ? Long.toString(iep.getTimeToIdle()) : "0";
+        values.put(ColumnNames.TIME_TO_IDLE.getColumnName(), AttributeValue.builder().n(idleTimeout).build());
+
         values.put(ColumnNames.ENCODED.getColumnName(),
             AttributeValue.builder().b(SdkBytes.fromByteBuffer(ByteBuffer.wrap(SerializationUtils.serialize(payload.getEncodedTicket())))).build());
         LOGGER.debug("Created attribute values [{}] based on provided ticket [{}]", values, payload.getEncodedTicket().getId());

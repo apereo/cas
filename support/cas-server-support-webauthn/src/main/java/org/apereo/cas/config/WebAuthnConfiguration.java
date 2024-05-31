@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.MultifactorAuthenticationFailureModeEvaluator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
+import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
 import org.apereo.cas.authentication.handler.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.metadata.MultifactorAuthenticationProviderMetadataPopulator;
@@ -29,6 +30,7 @@ import org.apereo.cas.web.CasWebSecurityConstants;
 import org.apereo.cas.webauthn.WebAuthnAuthenticationHandler;
 import org.apereo.cas.webauthn.WebAuthnCredential;
 import org.apereo.cas.webauthn.WebAuthnCredentialRegistrationCipherExecutor;
+import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationDeviceManager;
 import org.apereo.cas.webauthn.WebAuthnMultifactorAuthenticationProvider;
 import org.apereo.cas.webauthn.metadata.CompositeAttestationTrustSource;
 import org.apereo.cas.webauthn.storage.JsonResourceWebAuthnCredentialRepository;
@@ -382,6 +384,15 @@ class WebAuthnConfiguration {
                 .get();
         }
 
+        @ConditionalOnMissingBean(name = "webAuthnMultifactorAuthenticationDeviceManager")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public MultifactorAuthenticationDeviceManager webAuthnMultifactorAuthenticationDeviceManager(
+            @Qualifier("webAuthnCredentialRepository")
+            final WebAuthnCredentialRepository webAuthnCredentialRepository) {
+            return new WebAuthnMultifactorAuthenticationDeviceManager(webAuthnCredentialRepository);
+        }
+        
         @Configuration(value = "WebAuthnMultifactorProviderConfiguration", proxyBeanMethods = false)
         @EnableConfigurationProperties(CasConfigurationProperties.class)
         static class WebAuthnMultifactorProviderConfiguration {
@@ -391,6 +402,8 @@ class WebAuthnConfiguration {
             public MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider(
                 final ConfigurableApplicationContext applicationContext,
                 final CasConfigurationProperties casProperties,
+                @Qualifier("webAuthnMultifactorAuthenticationDeviceManager")
+                final MultifactorAuthenticationDeviceManager multifactorAuthenticationDeviceManager,
                 @Qualifier("failureModeEvaluator")
                 final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator,
                 @Qualifier("webAuthnBypassEvaluator")
@@ -405,6 +418,7 @@ class WebAuthnConfiguration {
                         provider.setFailureModeEvaluator(failureModeEvaluator);
                         provider.setOrder(webauthn.getRank());
                         provider.setId(webauthn.getId());
+                        provider.setDeviceManager(multifactorAuthenticationDeviceManager);
                         return provider;
                     })
                     .otherwiseProxy()

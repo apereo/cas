@@ -60,6 +60,10 @@ public interface AuditTrailManager extends Cleanable {
          */
         GEO_LOCATION,
         /**
+         * Device/Browser fingerprint extracted from the browser.
+         */
+        DEVICE_FINGERPRINT,
+        /**
          * Headers attached to the request.
          */
         HEADERS

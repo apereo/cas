@@ -11,11 +11,11 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.introspection.OAuth20IntrospectionResponseGenerator;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
+import org.apereo.cas.ticket.idtoken.IdTokenGeneratorService;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
 import org.apereo.cas.token.JwtBuilder;
@@ -53,6 +53,7 @@ import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrat
 import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpointController;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
@@ -145,6 +146,8 @@ public class CasOAuthUmaAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UmaConfigurationContext umaConfigurationContext(
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
+            final HttpClient httpClient,
             @Qualifier("umaTokenSigningAndEncryptionService")
             final OAuth20TokenSigningAndEncryptionService umaTokenSigningAndEncryptionService,
             final ConfigurableApplicationContext applicationContext,
@@ -183,6 +186,7 @@ public class CasOAuthUmaAutoConfiguration {
 
             return UmaConfigurationContext
                 .builder()
+                .httpClient(httpClient)
                 .communicationsManager(communicationManager)
                 .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
                 .applicationContext(applicationContext)

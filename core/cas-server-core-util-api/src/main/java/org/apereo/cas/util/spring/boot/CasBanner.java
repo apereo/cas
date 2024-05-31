@@ -3,7 +3,6 @@ package org.apereo.cas.util.spring.boot;
 import lombok.val;
 import org.springframework.boot.Banner;
 import org.springframework.core.env.Environment;
-
 import java.util.Formatter;
 import java.util.ServiceLoader;
 
@@ -31,6 +30,7 @@ public interface CasBanner extends Banner {
     default void injectEnvironmentInfo(final Formatter formatter,
                                        final Environment environment,
                                        final Class<?> sourceClass) {
+        formatter.format("Active Profiles: %s%n", String.join(",", environment.getActiveProfiles()));
     }
 
     /**

@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.Getter;
@@ -25,9 +26,11 @@ import java.util.Optional;
 public class SimpleSurrogateAuthenticationService extends BaseSurrogateAuthenticationService {
     private final Map<String, List> eligibleAccounts;
 
-    public SimpleSurrogateAuthenticationService(final Map<String, List> eligibleAccounts, final ServicesManager servicesManager) {
-        super(servicesManager);
-        this.eligibleAccounts = eligibleAccounts;
+    public SimpleSurrogateAuthenticationService(final Map<String, List> eligibleAccounts,
+                                                final ServicesManager servicesManager,
+                                                final CasConfigurationProperties casProperties) {
+        super(servicesManager, casProperties);
+        this.eligibleAccounts = Map.copyOf(eligibleAccounts);
     }
 
     @Override

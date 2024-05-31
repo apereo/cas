@@ -5,10 +5,11 @@ env:
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   TERM: xterm-256color
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  GRADLE_BUILDCACHE_USER: ci
-  GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
+#  GRADLE_BUILDCACHE_USER: ci
+#  GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
   GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
+  GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
   JDK_CURRENT: 21
   JDK_DISTRIBUTION: "corretto"
 
@@ -21,7 +22,7 @@ concurrency:
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 21 * * *'
+    - cron: '0 19 * * *'
 ##########################################################################
 
 jobs:
@@ -57,4 +58,32 @@ jobs:
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Report Dependency Updates
         run: |
-          ./gradlew --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc dependencyUpdates --no-configuration-cache -Drevision=release -DskipNestedConfigMetadataGen=true -DgradleReleaseChannel=current --max-workers=8
+          ./gradlew dependencyUpdates --build-cache --configure-on-demand --no-daemon --parallel -x test -x javadoc \
+            -x check --no-configuration-cache -Drevision=release -DskipAot=true -DskipNestedConfigMetadataGen=true \
+            -DgradleReleaseChannel=current --max-workers=8 -DreportfileName=dependencies \
+            -DoutputFormatter=json,plain -DoutputDir=./build/reports/dependency-updates
+      - name: Upload Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-updates
+          path: ./build/reports/dependency-updates/dependencies.json
+          if-no-files-found: ignore
+          retention-days: 2
+  ##########################################################################
+
+  submit-dependency-graph:
+    runs-on: ubuntu-latest
+    needs: [initialize]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: ${{ env.JDK_DISTRIBUTION }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+      - name: Initialize
+        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
+      - name: Submit Dependency Graph
+        uses: gradle/actions/dependency-submission@v3

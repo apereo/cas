@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.web;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
@@ -36,6 +37,7 @@ class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
             .refreshToken(getRefreshToken())
             .registeredService(getOidcRegisteredService())
             .responseType(OAuth20ResponseTypes.CODE)
+            .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
             .build();
 
         val request = new MockHttpServletRequest();
@@ -55,6 +57,8 @@ class OidcAccessTokenResponseGeneratorTests extends AbstractOidcTests {
             .casProperties(casProperties)
             .generatedToken(token)
             .userProfile(profile)
+            .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
+            .responseType(OAuth20ResponseTypes.CODE)
             .build();
 
         val modelAndView = oidcAccessTokenResponseGenerator.generate(result);

@@ -65,4 +65,13 @@ to consider authentication requests outside that window suspicious for the user.
 
 {% endtab %}
 
+{% tab adaptiveriskcalc Device Fingerprint %}
+
+This calculator looks into past authentication events that match the device fingerprint. The device (browser) fingerprint 
+is calculated via client-side Javascript and collected during authentication events.
+
+{% include_cached casproperties.html properties="cas.authn.adaptive.risk.device-fingerprint" %}
+
+{% endtab %}
+
 {% endtabs %}

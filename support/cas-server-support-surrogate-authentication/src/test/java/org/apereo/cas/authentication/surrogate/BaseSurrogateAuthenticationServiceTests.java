@@ -17,10 +17,13 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasSurrogateAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
+import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -30,6 +33,7 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import java.util.Optional;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -43,7 +47,8 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
 
     public static final String ADMIN = "casadmin";
 
-    @Mock
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
     public abstract SurrogateAuthenticationService getService();
@@ -60,7 +65,11 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
 
     @Test
     void verifyProxying() throws Throwable {
-        val service = Optional.of(CoreAuthenticationTestUtils.getService());
+        val service = Optional.of(RegisteredServiceTestUtils.getService(UUID.randomUUID().toString()));
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.get().getId());
+        registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
+        servicesManager.save(registeredService);
+        
         val surrogateService = getService();
         assertTrue(surrogateService.canImpersonate(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(getTestUser()), service));
         assertTrue(surrogateService.canImpersonate(BANDERSON, CoreAuthenticationTestUtils.getPrincipal(BANDERSON), service));
@@ -70,7 +79,10 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
 
     @Test
     void verifyWildcard() throws Throwable {
-        val service = Optional.of(CoreAuthenticationTestUtils.getService());
+        val service = Optional.of(RegisteredServiceTestUtils.getService(UUID.randomUUID().toString()));
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.get().getId());
+        registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy());
+        servicesManager.save(registeredService);
         val admin = CoreAuthenticationTestUtils.getPrincipal(getAdminUser());
         assertTrue(getService().canImpersonate(BANDERSON, admin, service));
         assertTrue(getService().isWildcardedAccount(BANDERSON, admin, service));

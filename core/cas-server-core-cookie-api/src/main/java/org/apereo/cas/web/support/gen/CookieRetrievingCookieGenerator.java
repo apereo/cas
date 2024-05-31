@@ -52,11 +52,11 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
 
     public CookieRetrievingCookieGenerator(final CookieGenerationContext context,
                                            final CookieValueManager casCookieValueManager) {
-        super.setCookieName(context.getName());
-        super.setCookiePath(context.getPath());
-        super.setCookieMaxAge(context.getMaxAge());
-        super.setCookieSecure(context.isSecure());
-        super.setCookieHttpOnly(context.isHttpOnly());
+        setCookieName(context.getName());
+        setCookiePath(context.getPath());
+        setCookieMaxAge(context.getMaxAge());
+        setCookieSecure(context.isSecure());
+        setCookieHttpOnly(context.isHttpOnly());
         this.setCookieDomain(context.getDomain());
 
         this.cookieGenerationContext = context;
@@ -178,6 +178,12 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                         LOGGER.debug("Removing cookie [{}] with path [{}] and [{}]", crm.getName(), crm.getPath(), crm.getValue());
                         response.addCookie(crm);
                     })));
+    }
+
+    @Override
+    public boolean containsCookie(final HttpServletRequest request) {
+        return request.getCookies() != null
+            && Arrays.stream(request.getCookies()).anyMatch(cookie -> StringUtils.equalsIgnoreCase(cookie.getName(), getCookieName()));
     }
 
     protected Cookie addCookieHeaderToResponse(final Cookie cookie,

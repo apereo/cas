@@ -1,0 +1,45 @@
+name: Rerun Workflow Runs
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  TERM: xterm-256color
+
+##########################################################################
+
+concurrency:
+  group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.repository != 'apereo/cas' }}
+
+on:
+  workflow_run:
+    workflows:
+      - Functional Tests
+      - Unit & Integration Tests
+      - Dependencies
+      - Code Analysis
+      - Publish Documentation
+      - Validation
+    types:
+      - completed
+    branches:
+      - master
+
+##########################################################################
+
+jobs:
+  rerun-failed-jobs:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    steps:
+      - name: Rerunning ${{ github.event.workflow_run.name }}
+        run: |
+          echo "Workflow run ID: ${{ github.event.workflow_run.id }}"
+          echo "Workflow run Name: ${{ github.event.workflow_run.name }}"
+          echo "Workflow run attempt #: ${{ github.event.workflow_run.run_attempt }}"
+          CURRENT_ATTEMPTS=${{ github.event.workflow_run.run_attempt }}
+          if [ "$CURRENT_ATTEMPTS" -le 2 ]; then
+            echo "Rerunning failed workflow jobs for workflow ${{ github.event.workflow_run.name }}..."
+            gh api --method POST -H "Accept: application/vnd.github+json" /repos/${{ github.repository }}/actions/runs/${{ github.event.workflow_run.id }}/rerun-failed-jobs
+          else
+            echo "Max run attempts reached. Not rerunning."
+          fi

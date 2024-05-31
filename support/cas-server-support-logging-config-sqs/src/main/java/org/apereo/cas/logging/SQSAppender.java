@@ -158,6 +158,6 @@ public class SQSAppender extends AbstractAppender implements Serializable {
     @Override
     public boolean stop(final long timeout, final TimeUnit timeUnit) {
         sqsAsyncClient.close();
-        return super.stop(timeout, timeUnit, false);
+        return stop(timeout, timeUnit, false);
     }
 }

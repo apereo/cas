@@ -6,7 +6,7 @@ const assert = require("assert");
 (async () => {
     const ssoSessionsUrl = "https://localhost:8443/cas/actuator/ssoSessions";
     await cas.logg("Removing all SSO Sessions");
-    await cas.doRequest(`${ssoSessionsUrl}`, "DELETE", {});
+    await cas.doDelete(`${ssoSessionsUrl}`);
 
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);

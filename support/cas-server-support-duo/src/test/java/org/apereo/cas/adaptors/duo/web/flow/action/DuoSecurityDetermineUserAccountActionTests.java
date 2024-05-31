@@ -13,6 +13,7 @@ import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactor
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
@@ -84,7 +85,7 @@ class DuoSecurityDetermineUserAccountActionTests extends BaseCasWebflowMultifact
         WebUtils.putAuthentication(authentication, context);
 
         servicesManager.save(RegisteredServiceTestUtils.getRegisteredService("registration.duo.com"));
-        WebUtils.putMultifactorAuthenticationProvider(context, provider);
+        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, provider);
 
         val event = determineDuoUserAccountAction.execute(context);
         assertEquals(eventId, event.getId());

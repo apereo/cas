@@ -53,7 +53,7 @@ class CasCoreTicketsMonitoringConfigurationTests {
         assertFalse(ENTRIES.isEmpty());
     }
 
-    @TestConfiguration(proxyBeanMethods = false)
+    @TestConfiguration(value = "CasCoreTicketsMonitoringTestConfiguration", proxyBeanMethods = false)
     static class CasCoreTicketsMonitoringTestConfiguration {
         @Bean
         public ObservationHandler<Observation.Context> collectingObservationHandler() {

@@ -151,7 +151,7 @@ class CachingPrincipalAttributesRepositoryTests {
 
     }
 
-    @TestConfiguration
+    @TestConfiguration(value = "CacheTestConfiguration", proxyBeanMethods = false)
     static class CacheTestConfiguration {
         @Bean
         public PersonAttributeDao attributeRepository() {

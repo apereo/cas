@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationTrustedDeviceProviderAction;
@@ -34,7 +35,7 @@ public class DefaultMultifactorAuthenticationTrustedDeviceProviderAction extends
             .stream()
             .map(this::mapMultifactorAuthenticationTrustRecord)
             .toList();
-        WebUtils.putMultifactorAuthenticationTrustedDevices(requestContext, devices);
+        MultifactorAuthenticationTrustUtils.putMultifactorAuthenticationTrustedDevices(requestContext, devices);
         return null;
     }
 
@@ -42,7 +43,7 @@ public class DefaultMultifactorAuthenticationTrustedDeviceProviderAction extends
         final MultifactorAuthenticationTrustRecord device) {
         val source = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(device.getMultifactorAuthenticationProvider(), applicationContext)
             .map(MultifactorAuthenticationProvider::getFriendlyName)
-            .orElse(null);
+            .orElse("Unknown");
         val expirationDate = DateTimeUtils.zonedDateTimeOf(device.getExpirationDate());
         return MultifactorAuthenticationRegisteredDevice.builder()
             .id(String.valueOf(device.getId()))

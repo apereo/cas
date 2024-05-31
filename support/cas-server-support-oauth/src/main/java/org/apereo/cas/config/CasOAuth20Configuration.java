@@ -149,6 +149,7 @@ import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -344,9 +345,12 @@ class CasOAuth20Configuration {
             @Qualifier("taskScheduler")
             final TaskScheduler taskScheduler,
             @Qualifier("webflowCipherExecutor")
-            final CipherExecutor webflowCipherExecutor) {
+            final CipherExecutor webflowCipherExecutor,
+            @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT)
+            final HttpClient httpClient) {
             return OAuth20ConfigurationContext.builder()
                 .argumentExtractor(argumentExtractor)
+                .httpClient(httpClient)
                 .requestParameterResolver(oauthRequestParameterResolver)
                 .applicationContext(applicationContext)
                 .registeredServiceCipherExecutor(oauthRegisteredServiceCipherExecutor)
@@ -1571,10 +1575,14 @@ class CasOAuth20Configuration {
         @ConditionalOnMissingBean(name = "oauthAuditTrailRecordResolutionPlanConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailRecordResolutionPlanConfigurer oauthAuditTrailRecordResolutionPlanConfigurer(
-            @Qualifier("oauthUserProfileDataAuditResourceResolver") final AuditResourceResolver oauthUserProfileDataAuditResourceResolver,
-            @Qualifier("oauthAccessTokenGrantRequestAuditResourceResolver") final AuditResourceResolver oauthAccessTokenGrantRequestAuditResourceResolver,
-            @Qualifier("oauthAccessTokenResponseAuditResourceResolver") final AuditResourceResolver oauthAccessTokenResponseAuditResourceResolver,
-            @Qualifier("oauthAuthorizationResponseAuditResourceResolver") final AuditResourceResolver oauthAuthorizationResponseAuditResourceResolver,
+            @Qualifier("oauthUserProfileDataAuditResourceResolver")
+            final AuditResourceResolver oauthUserProfileDataAuditResourceResolver,
+            @Qualifier("oauthAccessTokenGrantRequestAuditResourceResolver")
+            final AuditResourceResolver oauthAccessTokenGrantRequestAuditResourceResolver,
+            @Qualifier("oauthAccessTokenResponseAuditResourceResolver")
+            final AuditResourceResolver oauthAccessTokenResponseAuditResourceResolver,
+            @Qualifier("oauthAuthorizationResponseAuditResourceResolver")
+            final AuditResourceResolver oauthAuthorizationResponseAuditResourceResolver,
             final CasConfigurationProperties casProperties) {
             return plan -> {
                 plan.registerAuditActionResolver(AuditActionResolvers.OAUTH2_USER_PROFILE_ACTION_RESOLVER,

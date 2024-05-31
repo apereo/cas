@@ -184,7 +184,7 @@ class SurrogateAuthenticationConfiguration {
                 .supply(Unchecked.supplier(() -> {
                     val su = casProperties.getAuthn().getSurrogate();
                     LOGGER.debug("Using Groovy resource [{}] to locate surrogate accounts", su.getGroovy().getLocation());
-                    return new GroovySurrogateAuthenticationService(servicesManager, su.getGroovy().getLocation());
+                    return new GroovySurrogateAuthenticationService(servicesManager, casProperties);
                 }))
                 .otherwiseNull();
         }
@@ -203,7 +203,7 @@ class SurrogateAuthenticationConfiguration {
                 .supply(Unchecked.supplier(() -> {
                     val su = casProperties.getAuthn().getSurrogate();
                     LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getLocation());
-                    return new JsonResourceSurrogateAuthenticationService(su.getJson().getLocation(), servicesManager);
+                    return new JsonResourceSurrogateAuthenticationService(servicesManager, casProperties);
                 }))
                 .otherwiseNull();
         }
@@ -220,9 +220,9 @@ class SurrogateAuthenticationConfiguration {
                 .supply(() -> {
                     val su = casProperties.getAuthn().getSurrogate();
                     val accounts = new HashMap<String, List>();
-                    su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, new ArrayList<>(StringUtils.commaDelimitedListToSet(v))));
+                    su.getSimple().getSurrogates().forEach((user, v) -> accounts.put(user, new ArrayList<>(StringUtils.commaDelimitedListToSet(v))));
                     LOGGER.debug("Using accounts [{}] for surrogate authentication", accounts);
-                    return new SimpleSurrogateAuthenticationService(accounts, servicesManager);
+                    return new SimpleSurrogateAuthenticationService(accounts, servicesManager, casProperties);
                 });
         }
     }

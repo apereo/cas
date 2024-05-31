@@ -41,7 +41,7 @@ const assert = require("assert");
 
     await cas.gotoLogout(page);
     await cas.log(`Removing trusted device ${record.name}`);
-    await cas.doRequest(`${baseUrl}/${record.recordKey}`, "DELETE");
+    await cas.doDelete(`${baseUrl}/${record.recordKey}`);
     await cas.gotoLogin(page, "https://example.com");
     await cas.loginWith(page);
     await cas.sleep(1000);

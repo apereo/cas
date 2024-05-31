@@ -36,6 +36,12 @@ public class RiskBasedAuthenticationProperties implements Serializable {
     private RiskBasedAuthenticationUserAgentProperties agent = new RiskBasedAuthenticationUserAgentProperties();
 
     /**
+     * Handle risky authentication attempts via a device fingerprint criteria.
+     */
+    @NestedConfigurationProperty
+    private RiskBasedAuthenticationDeviceFingerprintProperties deviceFingerprint = new RiskBasedAuthenticationDeviceFingerprintProperties();
+
+    /**
      * Handle risky authentication attempts via geolocation criteria.
      */
     @NestedConfigurationProperty

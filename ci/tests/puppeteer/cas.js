@@ -81,13 +81,12 @@ function inspect(text) {
 }
 
 exports.newBrowser = async (options) => {
-    let browser = undefined;
     let retry = 0;
     const maxRetries = 5;
     while (retry < maxRetries) {
         try {
             await this.logg(`Attempt #${retry} to launch browser...`);
-            browser = await puppeteer.launch(options);
+            const browser = await puppeteer.launch(options);
             await this.sleep();
             await this.logg(`Browser ${await browser.version()} / ${await browser.userAgent()} is launched...`);
             return browser;
@@ -102,22 +101,26 @@ exports.newBrowser = async (options) => {
 
 exports.log = async (text, ...args) => {
     const toLog = inspect(text);
-    await LOGGER.debug(`💬 ${colors.blue(toLog)}`, args);
+    await LOGGER.debug(`🔷 ${colors.blue(toLog)}`, args);
+};
+
+exports.separator = async() => {
+    console.log("*".repeat(100));
 };
 
 exports.logy = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.warn(`🔥 ${colors.yellow(toLog)}`);
+    await LOGGER.warn(`⚠️ ${colors.yellow(toLog)}`);
 };
 
 exports.logb = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.debug(`💬 ${colors.blue(toLog)}`);
+    await LOGGER.debug(`🔷 ${colors.blue(toLog)}`);
 };
 
 exports.logg = async (text) => {
     const toLog = inspect(text);
-    await LOGGER.info(`✅ ${colors.green(toLog)}`);
+    await LOGGER.info(`🍀 ${colors.green(toLog)}`);
 };
 
 exports.logr = async (text) => {
@@ -210,21 +213,21 @@ exports.inputValue = async (page, selector) => {
 
 exports.waitForElement = async (page, selector, timeout = 10000) => page.waitForSelector(selector, {timeout: timeout});
 
-exports.loginWith = async (page,
-    user = "casuser",
-    password = "Mellon",
-    usernameField = "#username",
-    passwordField = "#password") => {
+exports.submitLoginCredentials = async (page, user = "casuser", password = "Mellon",
+    usernameField = "#username", passwordField = "#password") => {
     await this.log(`Logging in with ${user} and ${password}`);
     await page.waitForSelector(usernameField, {visible: true});
     await this.type(page, usernameField, user);
-
     await page.waitForSelector(passwordField, {visible: true});
     await this.type(page, passwordField, password, true);
-
     await this.pressEnter(page);
+};
+
+exports.loginWith = async (page, user = "casuser", password = "Mellon",
+    usernameField = "#username", passwordField = "#password", timeout = 4000) => {
     try {
-        const response = await this.waitForNavigation(page);
+        await this.submitLoginCredentials(page, user, password, usernameField, passwordField);
+        const response = await this.waitForNavigation(page, timeout);
         await this.log(`Page response status after navigation: ${response.status()}`);
         return response;
     } catch (e) {
@@ -235,11 +238,15 @@ exports.loginWith = async (page,
 
 exports.fetchGoogleAuthenticatorScratchCode = async (user = "casuser") => {
     await this.log(`Fetching Scratch codes for ${user}...`);
-    const response = await this.doRequest(`https://localhost:8443/cas/actuator/gauthCredentialRepository/${user}`,
-        "GET", {
+    return this.doGet(`https://localhost:8443/cas/actuator/gauthCredentialRepository/${user}`,
+        (res) => JSON.stringify(res.data[0].scratchCodes[0]),
+        (error) => {
+            throw error;
+        }, {
+            "Content-Type": "application/json",
             "Accept": "application/json"
         });
-    return JSON.stringify(JSON.parse(response)[0].scratchCodes[0]);
+
 };
 
 exports.isVisible = async (page, selector) => {
@@ -265,12 +272,32 @@ exports.assertInvisibility = async (page, selector) => {
     assert(result, `The element ${selector} must be invisible but it's not.`);
 };
 
+exports.deleteCookies = async(page) => {
+    const allCookies = await page.cookies();
+    for (const cookie of allCookies) {
+        await this.log(`Deleting cookie ${cookie.name}`);
+        await page.deleteCookie({
+            name : cookie.name,
+            domain : cookie.domain
+        });
+    }
+};
+
+exports.containsCookie = async(page, cookieName = "TGC") => {
+    const cookies = (await page.cookies()).filter((c) => {
+        this.log(`Checking cookie ${c.name}:${c.value}`);
+        return c.name === cookieName;
+    });
+    await this.log(`Found cookie ${cookieName}: ${cookies.length === 1 ? "yes" : "no"}`);
+    return cookies.length === 1 ? cookies[0] : null;
+};
+
 exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TGC") => {
     const cookies = (await page.cookies()).filter((c) => {
         this.log(`Checking cookie ${c.name}:${c.value}`);
         return c.name === cookieName;
     });
-    await this.log(`Found cookies ${cookies.length}`);
+    await this.log(`Found ${cookies.length} cookie(s)`);
     if (cookieMustBePresent) {
         await this.log(`Checking for cookie ${cookieName}, which MUST be present`);
         assert(cookies.length !== 0, `Cookie ${cookieName} must be present`);
@@ -282,7 +309,7 @@ exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TG
     if (cookies.length === 0) {
         await this.logg(`Correct! Cookie ${cookieName} cannot be found`);
     } else {
-        await this.logr(`Incorrect! Cookie ${cookieName} can be found`);
+        await this.logr(`Incorrect! Cookie ${cookieName} can be found but it must not be present`);
         const ck = cookies[0];
         const msg = `Found cookie => name: ${ck.name},value:${ck.value},path:${ck.path},domain:${ck.domain},httpOnly:${ck.httpOnly},secure:${ck.secure}`;
         await this.logb(msg);
@@ -451,11 +478,11 @@ exports.doRequest = async (url, method = "GET",
         const options = {
             method: method,
             rejectUnauthorized: false,
-            headers: headers
+            headers: headers,
+            timeout: 15000
         };
         options.agent = new https.Agent(options);
 
-        this.logg(`Sending ${method} request to ${url}`);
         const handler = async (res) => {
             await this.logg(`Response status: ${res.statusCode}`);
             if (statusCode > 0) {
@@ -471,8 +498,10 @@ exports.doRequest = async (url, method = "GET",
         };
 
         if (requestBody === undefined) {
+            this.logg(`Sending ${method} request to ${url} without a body`);
             https.get(url, options, (res) => handler(res)).on("error", reject);
         } else {
+            this.logg(`Sending ${method} request to ${url} with body ${requestBody}`);
             const request = https.request(url, options, (res) => handler(res)).on("error", reject);
             request.write(requestBody);
         }
@@ -496,13 +525,36 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
         .get(url, config)
         .then((res) => {
             if (responseType !== "blob" && responseType !== "stream") {
-                // let json = JSON.parse(body)
                 console.dir(res.data, {depth: null, colors: true});
-                // this.log(res.data);
             }
             return successHandler(res);
         })
         .catch((error) => failureHandler(error));
+};
+
+exports.doDelete = async (url, statusCode = 0, successHandler = undefined, failureHandler = undefined, headers = {}) => {
+    const instance = axios.create({
+        timeout: 5000,
+        httpsAgent: new https.Agent({
+            rejectUnauthorized: false
+        })
+    });
+    const config = {
+        headers: headers
+    };
+    await this.log(`Sending DELETE request to ${url}`);
+    return instance
+        .delete(url, config)
+        .then((res) => {
+            if (statusCode > 0) {
+                assert.equal(res.status, statusCode);
+            } else {
+                assert(statusCode === 200 || statusCode === 204, `Unexpected status code: ${res.status}`);
+            }
+            this.log(`DELETE response status: ${res.status}`);
+            return successHandler === undefined ? undefined : successHandler(res);
+        })
+        .catch((error) => failureHandler === undefined ? undefined : failureHandler(error));
 };
 
 exports.doPost = async (url, params = "", headers = {}, successHandler, failureHandler) => {
@@ -860,7 +912,7 @@ exports.goto = async (page, url, retryCount = 5) => {
     return response;
 };
 
-exports.gotoLoginWithLocale = async (page, service, locale) => this.gotoLoginWithAuthnMethod(page, service, undefined, locale);
+exports.gotoLoginWithLocale = async (page, service, locale = "en") => this.gotoLoginWithAuthnMethod(page, service, undefined, locale);
 
 exports.gotoLoginWithAuthnMethod = async (page, service, authnMethod = undefined, locale = undefined) => {
     let queryString = (service === undefined ? "" : `service=${service}&`);

@@ -33,7 +33,7 @@ public interface RegisteredServiceOAuthTokenExchangePolicy extends Serializable 
      * @param subject        the subject
      * @param actor          the actor
      * @param actorTokenType the actor token type
-     * @return the boolean
+     * @return true/false
      */
     boolean canSubjectTokenActAs(Authentication subject, Authentication actor, String actorTokenType);
 }

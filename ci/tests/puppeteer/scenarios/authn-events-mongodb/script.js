@@ -12,7 +12,7 @@ const fs = require("fs");
     await page.setGeolocation({latitude: 90, longitude: 20});
 
     await cas.log("Deleting all startup events...");
-    await cas.doRequest("https://localhost:8443/cas/actuator/events", "DELETE");
+    await cas.doDelete("https://localhost:8443/cas/actuator/events");
 
     const totalAttempts = 2;
     for (let i = 1; i <= totalAttempts; i++) {
@@ -45,7 +45,7 @@ const fs = require("fs");
         }, {"Content-Type": "application/json"});
 
     await cas.log("Deleting all events...");
-    await cas.doRequest("https://localhost:8443/cas/actuator/events", "DELETE");
+    await cas.doDelete("https://localhost:8443/cas/actuator/events");
     await cas.log("Checking events...");
     await cas.doGet("https://localhost:8443/cas/actuator/events",
         async (res) => assert(Object.keys(res.data[1]).length === 0), async (error) => {

@@ -5,8 +5,6 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Response;
@@ -56,7 +54,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.Serializable;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -529,21 +526,22 @@ public class WebUtils {
      * @return true if the cookie value is present
      */
     public static boolean isAuthenticatingAtPublicWorkstation(final RequestContext ctx) {
-        if (ctx.getFlowScope().contains(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION)) {
+        val foundParameter = ctx.getFlowScope().contains(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION);
+        if (foundParameter && BooleanUtils.toBoolean(ctx.getFlowScope().getBoolean(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION))) {
             LOGGER.debug("Public workstation flag detected. SSO session will be considered renewed.");
             return true;
         }
         return false;
     }
-
-
+    
     /**
      * Put public workstation into the flow if request parameter present.
      *
      * @param context the context
      */
     public static void putPublicWorkstationToFlowIfRequestParameterPresent(final RequestContext context) {
-        if (context.getRequestParameters().contains(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION)) {
+        val foundParameter = context.getRequestParameters().contains(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION);
+        if (foundParameter && context.getRequestParameters().getBoolean(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION)) {
             context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION, Boolean.TRUE);
         }
     }
@@ -557,7 +555,8 @@ public class WebUtils {
     public static void putWarnCookieIfRequestParameterPresent(final CasCookieBuilder warnCookieGenerator, final RequestContext context) {
         if (warnCookieGenerator != null) {
             LOGGER.trace("Evaluating request to determine if warning cookie should be generated");
-            if (StringUtils.isNotBlank(context.getExternalContext().getRequestParameterMap().get("warn"))) {
+            val foundParameter = context.getRequestParameters().contains(CasWebflowConstants.ATTRIBUTE_WARN_ON_REDIRECT);
+            if (foundParameter && context.getRequestParameters().getBoolean(CasWebflowConstants.ATTRIBUTE_WARN_ON_REDIRECT)) {
                 val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
                 warnCookieGenerator.addCookie(response, "true");
             }
@@ -931,49 +930,7 @@ public class WebUtils {
         return context.getFlowScope().getBoolean("rememberMeAuthenticationEnabled", Boolean.FALSE);
     }
 
-    /**
-     * Gets multifactor authentication trust record.
-     *
-     * @param <T>     the type parameter
-     * @param context the context
-     * @param clazz   the clazz
-     * @return the multifactor authentication trust record
-     */
-    public static <T> Optional<T> getMultifactorAuthenticationTrustRecord(final RequestContext context, final Class<T> clazz) {
-        return Optional.ofNullable(context.getFlowScope().get(CasWebflowConstants.VAR_ID_MFA_TRUST_RECORD, clazz));
-    }
 
-    /**
-     * Put multifactor authentication trust record.
-     *
-     * @param context the context
-     * @param object  the object
-     */
-    public static void putMultifactorAuthenticationTrustRecord(final RequestContext context, final Serializable object) {
-        context.getFlowScope().put(CasWebflowConstants.VAR_ID_MFA_TRUST_RECORD, object);
-    }
-
-    /**
-     * Put resolved multifactor authentication providers into scope.
-     *
-     * @param context the context
-     * @param value   the value
-     */
-    public static void putResolvedMultifactorAuthenticationProviders(final RequestContext context,
-                                                                     final Collection<MultifactorAuthenticationProvider> value) {
-        val providerIds = value.stream().map(MultifactorAuthenticationProvider::getId).collect(Collectors.toSet());
-        context.getConversationScope().put("resolvedMultifactorAuthenticationProviders", providerIds);
-    }
-
-    /**
-     * Gets resolved multifactor authentication providers.
-     *
-     * @param context the context
-     * @return the resolved multifactor authentication providers
-     */
-    public static Collection<String> getResolvedMultifactorAuthenticationProviders(final RequestContext context) {
-        return context.getConversationScope().get("resolvedMultifactorAuthenticationProviders", Collection.class);
-    }
 
     /**
      * Sets service user interface metadata.
@@ -1389,121 +1346,7 @@ public class WebUtils {
             flowVariable.create(requestContext);
         }
     }
-
-    /**
-     * Add the mfa provider id into flow scope.
-     *
-     * @param context  request context
-     * @param provider the mfa provider
-     */
-    public static void putMultifactorAuthenticationProvider(final RequestContext context, final MultifactorAuthenticationProvider provider) {
-        context.getFlowScope().put(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, provider.getId());
-    }
-
-    /**
-     * Get the mfa provider id from flow scope.
-     *
-     * @param context request context
-     * @return provider id
-     */
-    public static String getMultifactorAuthenticationProvider(final RequestContext context) {
-        return context.getFlowScope().get(CasWebflowConstants.VAR_ID_MFA_PROVIDER_ID, String.class);
-    }
-
-    /**
-     * Put selectable multifactor authentication providers.
-     *
-     * @param requestContext the request context
-     * @param mfaProviders   the mfa providers
-     */
-    public static void putSelectableMultifactorAuthenticationProviders(final RequestContext requestContext, final List<String> mfaProviders) {
-        requestContext.getViewScope().put("mfaSelectableProviders", mfaProviders);
-    }
-
-    /**
-     * Gets selectable multifactor authentication providers.
-     *
-     * @param requestContext the request context
-     * @return the selectable multifactor authentication providers
-     */
-    public static List<String> getSelectableMultifactorAuthenticationProviders(final RequestContext requestContext) {
-        return requestContext.getViewScope().get("mfaSelectableProviders", List.class);
-    }
-
-    /**
-     * Put one time token account.
-     *
-     * @param requestContext the request context
-     * @param account        the account
-     */
-    public static void putOneTimeTokenAccount(final RequestContext requestContext, final OneTimeTokenAccount account) {
-        requestContext.getFlowScope().put("registeredDevice", account);
-    }
-
-    /**
-     * Put one time token accounts.
-     *
-     * @param requestContext the request context
-     * @param accounts       the accounts
-     */
-    public static void putOneTimeTokenAccounts(final RequestContext requestContext, final Collection accounts) {
-        requestContext.getFlowScope().put("registeredDevices", accounts);
-    }
-
-    /**
-     * Gets one time token accounts.
-     *
-     * @param requestContext the request context
-     * @return the one time token accounts
-     */
-    public static Collection getOneTimeTokenAccounts(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("registeredDevices", Collection.class);
-    }
-
-    /**
-     * Gets one time token account.
-     *
-     * @param <T>            the type parameter
-     * @param requestContext the request context
-     * @param clazz          the clazz
-     * @return the one time token account
-     */
-    public static <T extends OneTimeTokenAccount> T getOneTimeTokenAccount(final RequestContext requestContext, final Class<T> clazz) {
-        return requestContext.getFlowScope().get("registeredDevice", clazz);
-    }
-
-
-    /**
-     * Put google authenticator multiple device registration enabled.
-     *
-     * @param requestContext the request context
-     * @param enabled        the enabled
-     */
-    public static void putGoogleAuthenticatorMultipleDeviceRegistrationEnabled(final RequestContext requestContext,
-                                                                               final boolean enabled) {
-        requestContext.getFlowScope().put("gauthMultipleDeviceRegistrationEnabled", enabled);
-    }
-
-    /**
-     * Is google authenticator multiple device registration enabled?
-     *
-     * @param requestContext the request context
-     * @return true /false
-     */
-    public static Boolean isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("gauthMultipleDeviceRegistrationEnabled", Boolean.class);
-    }
-
-    /**
-     * Put yubikey multiple device registration enabled.
-     *
-     * @param requestContext the request context
-     * @param enabled        the enabled
-     */
-    public static void putYubiKeyMultipleDeviceRegistrationEnabled(final RequestContext requestContext, final boolean enabled) {
-        requestContext.getFlowScope().put("yubikeyMultipleDeviceRegistrationEnabled", enabled);
-    }
-
+   
     /**
      * Put single logout request.
      *
@@ -1605,37 +1448,7 @@ public class WebUtils {
         return requestContext.getFlowScope().get("recaptchaPasswordManagementEnabled", Boolean.class);
     }
 
-    /**
-     * Put simple multifactor authentication token.
-     *
-     * @param requestContext the request context
-     * @param token          the token
-     */
-    public static void putSimpleMultifactorAuthenticationToken(final RequestContext requestContext, final Ticket token) {
-        requestContext.getFlowScope().put("simpleMultifactorAuthenticationToken", token);
-    }
 
-    /**
-     * Remove simple multifactor authentication token.
-     *
-     * @param requestContext the request context
-     */
-    public static void removeSimpleMultifactorAuthenticationToken(final RequestContext requestContext) {
-        requestContext.getFlowScope().remove("simpleMultifactorAuthenticationToken");
-    }
-
-    /**
-     * Gets simple multifactor authentication token.
-     *
-     * @param <T>            the type parameter
-     * @param requestContext the request context
-     * @param clazz          the clazz
-     * @return the simple multifactor authentication token
-     */
-    public static <T extends Ticket> T getSimpleMultifactorAuthenticationToken(final RequestContext requestContext,
-                                                                               final Class<T> clazz) {
-        return requestContext.getFlowScope().get("simpleMultifactorAuthenticationToken", clazz);
-    }
 
     /**
      * Resolve registered service.
@@ -1818,15 +1631,6 @@ public class WebUtils {
         requestContext.getRequestScope().remove("authenticationFlowInterruptFinalized");
     }
 
-    /**
-     * Gets multifactor authentication parent credential.
-     *
-     * @param requestContext the request context
-     * @return the multifactor authentication parent credential
-     */
-    public static Credential getMultifactorAuthenticationParentCredential(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("parentCredential", Credential.class);
-    }
 
     /**
      * Put ws federation delegated clients.
@@ -1848,48 +1652,6 @@ public class WebUtils {
      */
     public static <T extends Serializable> List<T> getWsFederationDelegatedClients(final RequestContext context, final Class<T> clazz) {
         return (List<T>) context.getFlowScope().get("wsfedUrls", List.class);
-    }
-
-    /**
-     * Put multifactor authentication registered devices.
-     *
-     * @param requestContext the request context
-     * @param accounts       the accounts
-     */
-    public static void putMultifactorAuthenticationRegisteredDevices(final RequestContext requestContext, final List accounts) {
-        val list = ObjectUtils.defaultIfNull(getMultifactorAuthenticationRegisteredDevices(requestContext), new ArrayList<>());
-        list.addAll(accounts);
-        requestContext.getFlowScope().put("multifactorRegisteredAccounts", list);
-    }
-
-    /**
-     * Put multifactor authentication trusted devices.
-     *
-     * @param requestContext the request context
-     * @param accounts       the accounts
-     */
-    public static void putMultifactorAuthenticationTrustedDevices(final RequestContext requestContext, final List accounts) {
-        requestContext.getFlowScope().put("multifactorTrustedDevices", accounts);
-    }
-
-    /**
-     * Gets multifactor authentication trusted devices.
-     *
-     * @param requestContext the request context
-     * @return the multifactor authentication trusted devices
-     */
-    public List getMultifactorAuthenticationTrustedDevices(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("multifactorTrustedDevices", List.class);
-    }
-
-    /**
-     * Gets multifactor authentication registered devices.
-     *
-     * @param requestContext the request context
-     * @return the multifactor authentication registered devices
-     */
-    public List getMultifactorAuthenticationRegisteredDevices(final RequestContext requestContext) {
-        return requestContext.getFlowScope().get("multifactorRegisteredAccounts", List.class);
     }
 
     /**

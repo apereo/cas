@@ -40,7 +40,7 @@ public class RestActuatorEndpointDiscovererTests extends AbstractCasEndpointTest
         assertEquals("myEndpoint", endpoint.getEndpointId().toString());
     }
 
-    @TestConfiguration(proxyBeanMethods = false)
+    @TestConfiguration(value = "MyTestConfiguration", proxyBeanMethods = false)
     static class MyTestConfiguration {
         @Bean
         public MyEndpoint myEndpoint() {

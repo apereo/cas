@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -80,7 +81,7 @@ public class SelectiveMultifactorAuthenticationProviderWebflowEventResolver
         }
         val result = filterEventsByMultifactorAuthenticationProvider(resolveEvents, authentication, registeredService, request, service);
         return result.map(pair -> {
-            WebUtils.putResolvedMultifactorAuthenticationProviders(context, pair.getValue());
+            MultifactorAuthenticationWebflowUtils.putResolvedMultifactorAuthenticationProviders(context, pair.getValue());
             return new HashSet<>(pair.getKey());
         }).orElseGet(HashSet::new);
     }

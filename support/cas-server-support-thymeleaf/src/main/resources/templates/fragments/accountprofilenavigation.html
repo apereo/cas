@@ -14,7 +14,10 @@
 <span th:fragment="navigation">
        <div>
             <div class="mdc-drawer__header">
-                <h3 class="mdc-drawer__title" th:text="${authentication.principal.id}">Username</h3>
+                <h3 class="mdc-drawer__title">
+                    <span class="mdi mdi-account-tie"></span>
+                    <span th:text="${authentication.principal.id}">Username</span>
+                </h3>
                 <code class="mdc-drawer__subtitle"
                       th:if="${authentication.principal.attributes['displayName'] != null}"
                       th:text="${authentication.principal.attributes['displayName'][0]}">Display Name</code>
@@ -28,7 +31,7 @@
                        onclick="showPanel('#divOverview');"
                        id="linkOverview"
                        href="#divOverview">
-                        <i class="mdi mdi-form-textbox-password fa fa-key" aria-hidden="true"></i>&nbsp;
+                        <i class="mdi mdi-home fa fa-key" aria-hidden="true"></i>&nbsp;
                         <span class="mdc-list-item__text">Overview</span>
                     </a>
                     <a class="mdc-list-item list-group-item list-group-item-action"
@@ -69,7 +72,7 @@
                        id="linkMfaRegisteredAccounts"
                        th:if="${multifactorRegisteredAccounts}"
                        href="#divMfaRegisteredAccounts">
-                        <i class="mdi mdi-account-reactivate fa fa-key" aria-hidden="true"></i>&nbsp;
+                        <i class="mdi mdi-cellphone fa fa-key" aria-hidden="true"></i>&nbsp;
                         <span class="mdc-list-item__text">Multifactor Devices</span>
                     </a>
 
@@ -78,7 +81,7 @@
                        id="linkMfaTrustedDevices"
                        th:if="${multifactorTrustedDevices}"
                        href="#divMultifactorTrustedDevices">
-                        <i class="mdi mdi-account-reactivate fa fa-key" aria-hidden="true"></i>&nbsp;
+                        <i class="mdi mdi-cellphone-check fa fa-key" aria-hidden="true"></i>&nbsp;
                         <span class="mdc-list-item__text">Multifactor Trusted Devices</span>
                     </a>
 

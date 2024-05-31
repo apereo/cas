@@ -8,6 +8,7 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -64,10 +65,29 @@ class GoogleAuthenticatorPrepareLoginActionTests {
             .build();
         googleAuthenticatorAccountRegistry.save(acct);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(acct.getUsername()), context);
-        WebUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
+        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
         assertNull(action.execute(context));
-        assertTrue(WebUtils.isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(context));
-        assertNotNull(WebUtils.getOneTimeTokenAccounts(context));
+        assertTrue(MultifactorAuthenticationWebflowUtils.isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(context));
+        assertNotNull(MultifactorAuthenticationWebflowUtils.getOneTimeTokenAccounts(context));
+    }
+
+    @Test
+    void verifyRegistrationDisabled() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        val acct = GoogleAuthenticatorAccount
+            .builder()
+            .username(UUID.randomUUID().toString())
+            .name(UUID.randomUUID().toString())
+            .secretKey(UUID.randomUUID().toString())
+            .validationCode(123456)
+            .scratchCodes(List.of(987345))
+            .build();
+        googleAuthenticatorAccountRegistry.save(acct);
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(acct.getUsername()), context);
+        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
+        MultifactorAuthenticationWebflowUtils.putMultifactorDeviceRegistrationEnabled(context, false);
+        assertNull(action.execute(context));
+        assertFalse(MultifactorAuthenticationWebflowUtils.isGoogleAuthenticatorMultipleDeviceRegistrationEnabled(context));
     }
 
     @TestConfiguration(value = "TestMultifactorTestConfiguration", proxyBeanMethods = false)

@@ -9,13 +9,12 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequ
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationModelAndViewBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20TokenAuthorizationResponseBuilder;
 import org.apereo.cas.ticket.Ticket;
-
+import org.apereo.cas.ticket.idtoken.IdTokenGenerationContext;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.http.message.BasicNameValuePair;
 import org.springframework.web.servlet.ModelAndView;
-
 import java.util.List;
 
 /**
@@ -43,9 +42,15 @@ public class OidcImplicitIdTokenAndTokenAuthorizationResponseBuilder<T extends O
                                                         final Ticket givenAccessToken, final Ticket givenRefreshToken,
                                                         final List<NameValuePair> parameters) throws Throwable {
         val accessToken = resolveAccessToken(givenAccessToken);
-        val idToken = configurationContext.getIdTokenGeneratorService().generate(accessToken,
-            tokenRequestContext.getUserProfile(), OAuth20ResponseTypes.IDTOKEN_TOKEN, tokenRequestContext.getGrantType(),
-            tokenRequestContext.getRegisteredService());
+
+        val idTokenContext = IdTokenGenerationContext.builder()
+            .accessToken(accessToken)
+            .userProfile(tokenRequestContext.getUserProfile())
+            .responseType(OAuth20ResponseTypes.IDTOKEN_TOKEN)
+            .grantType(tokenRequestContext.getGrantType())
+            .registeredService(tokenRequestContext.getRegisteredService())
+            .build();
+        val idToken = configurationContext.getIdTokenGeneratorService().generate(idTokenContext);
         if (idToken != null) {
             LOGGER.debug("Generated id token [{}]", idToken);
             parameters.add(new BasicNameValuePair(OidcConstants.ID_TOKEN, idToken.token()));

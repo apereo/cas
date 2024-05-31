@@ -17,6 +17,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 /**
@@ -36,22 +37,35 @@ public class MultifactorAuthenticationAccountProfileWebflowConfigurer extends Ab
 
     @Override
     protected void doInitialize() {
-        val flow = getFlow(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
-        if (flow != null) {
-            val accountView = getState(flow, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW, ViewState.class);
+        val accountFlow = getFlow(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
+        if (accountFlow != null) {
+            val accountView = getState(accountFlow, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW, ViewState.class);
+            var currentActions = Arrays.stream(accountView.getRenderActionList().toArray())
+                .filter(MultifactorAuthenticationDeviceProviderAction.class::isInstance)
+                .map(MultifactorAuthenticationDeviceProviderAction.class::cast)
+                .map(MultifactorAuthenticationDeviceProviderAction::getName)
+                .collect(Collectors.toSet());
 
             val providerActions = applicationContext.getBeansOfType(MultifactorAuthenticationDeviceProviderAction.class)
                 .values()
                 .stream()
                 .filter(BeanSupplier::isNotProxy)
+                .filter(action -> !currentActions.contains(action.getName()))
                 .collect(Collectors.toCollection(ArrayList::new));
             AnnotationAwareOrderComparator.sort(providerActions);
             accountView.getRenderActionList().addAll(providerActions.toArray(new Action[]{}));
+            
+            val currentTrustActions = Arrays.stream(accountView.getRenderActionList().toArray())
+                .filter(MultifactorAuthenticationTrustedDeviceProviderAction.class::isInstance)
+                .map(MultifactorAuthenticationTrustedDeviceProviderAction.class::cast)
+                .map(MultifactorAuthenticationTrustedDeviceProviderAction::getName)
+                .collect(Collectors.toSet());
             
             val trustedActions = applicationContext.getBeansOfType(MultifactorAuthenticationTrustedDeviceProviderAction.class)
                 .values()
                 .stream()
                 .filter(BeanSupplier::isNotProxy)
+                .filter(action -> !currentTrustActions.contains(action.getName()))
                 .collect(Collectors.toCollection(ArrayList::new));
             AnnotationAwareOrderComparator.sort(trustedActions);
             accountView.getRenderActionList().addAll(trustedActions.toArray(new Action[]{}));

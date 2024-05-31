@@ -5,7 +5,6 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
 import org.apereo.cas.adaptors.yubikey.YubiKeyRegisteredDevice;
 import org.apereo.cas.util.CollectionUtils;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -76,7 +75,7 @@ public class OpenYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public YubiKeyAccount save(final YubiKeyDeviceRegistrationRequest request,
-                                  final YubiKeyRegisteredDevice... device) {
+                               final YubiKeyRegisteredDevice... device) {
         return getStaticAccount(request.getUsername());
     }
 

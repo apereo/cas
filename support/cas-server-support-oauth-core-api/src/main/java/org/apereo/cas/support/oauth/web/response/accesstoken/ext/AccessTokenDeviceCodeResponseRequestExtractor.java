@@ -87,9 +87,4 @@ public class AccessTokenDeviceCodeResponseRequestExtractor extends BaseAccessTok
     public OAuth20ResponseTypes getResponseType() {
         return OAuth20ResponseTypes.DEVICE_CODE;
     }
-
-    @Override
-    public boolean requestMustBeAuthenticated() {
-        return false;
-    }
 }

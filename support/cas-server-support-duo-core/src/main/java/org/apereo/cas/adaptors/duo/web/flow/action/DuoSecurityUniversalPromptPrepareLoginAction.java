@@ -14,6 +14,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.AbstractMultifactorAuthenticationAction;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import com.duosecurity.Client;
 import lombok.RequiredArgsConstructor;
@@ -45,8 +46,9 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+
         val authentication = WebUtils.getAuthentication(requestContext);
-        val duoSecurityIdentifier = WebUtils.getMultifactorAuthenticationProvider(requestContext);
+        val duoSecurityIdentifier = MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(requestContext);
 
         val duoProvider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(duoSecurityIdentifier, applicationContext)
             .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
@@ -63,9 +65,14 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         val properties = new LinkedHashMap<String, Object>();
         properties.put("duoProviderId", duoSecurityIdentifier);
         properties.put(Authentication.class.getSimpleName(), authentication);
-        properties.put(AuthenticationResultBuilder.class.getSimpleName(), WebUtils.getAuthenticationResultBuilder(requestContext));
-        properties.put(AuthenticationResult.class.getSimpleName(), WebUtils.getAuthenticationResult(requestContext));
-        properties.put(Credential.class.getSimpleName(), WebUtils.getMultifactorAuthenticationParentCredential(requestContext));
+        properties.put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, authentication);
+        val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
+        properties.put(AuthenticationResultBuilder.class.getSimpleName(), authenticationResultBuilder);
+        properties.put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION_RESULT_BUILDER, authenticationResultBuilder);
+        val authenticationResult = WebUtils.getAuthenticationResult(requestContext);
+        properties.put(AuthenticationResult.class.getSimpleName(), authenticationResult);
+        properties.put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION_RESULT, authenticationResult);
+        properties.put(Credential.class.getSimpleName(), MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationParentCredential(requestContext));
         FunctionUtils.doIfNotNull(service, __ -> properties.put(Service.class.getSimpleName(), service));
         properties.put(DuoSecurityAuthenticationService.class.getSimpleName(), state);
 

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.springframework.webflow.execution.Event;
@@ -39,7 +40,7 @@ public class PrepareMultifactorProviderSelectionAction extends BaseCasWebflowAct
             .map(MultifactorAuthenticationProvider::getId)
             .collect(Collectors.toList());
 
-        WebUtils.putSelectableMultifactorAuthenticationProviders(requestContext, mfaProviders);
+        MultifactorAuthenticationWebflowUtils.putSelectableMultifactorAuthenticationProviders(requestContext, mfaProviders);
         return null;
     }
 }

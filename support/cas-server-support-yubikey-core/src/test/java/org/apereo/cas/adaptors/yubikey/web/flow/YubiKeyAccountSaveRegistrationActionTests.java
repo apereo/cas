@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.yubikey.registry.OpenYubiKeyAccountRegistry;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -24,7 +25,7 @@ class YubiKeyAccountSaveRegistrationActionTests extends BaseYubiKeyActionTests {
     @Test
     void verifyActionSuccess() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        WebUtils.putMultifactorAuthenticationProvider(context, new YubiKeyMultifactorAuthenticationProvider());
+        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, new YubiKeyMultifactorAuthenticationProvider());
         context.setParameter(YubiKeyAccountSaveRegistrationAction.PARAMETER_NAME_TOKEN, "yubikeyToken");
         context.setParameter(YubiKeyAccountSaveRegistrationAction.PARAMETER_NAME_ACCOUNT, UUID.randomUUID().toString());
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
@@ -35,7 +36,7 @@ class YubiKeyAccountSaveRegistrationActionTests extends BaseYubiKeyActionTests {
     @Test
     void verifyActionFails() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        WebUtils.putMultifactorAuthenticationProvider(context, new YubiKeyMultifactorAuthenticationProvider());
+        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, new YubiKeyMultifactorAuthenticationProvider());
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         val action = new YubiKeyAccountSaveRegistrationAction(new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()));
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, action.execute(context).getId());

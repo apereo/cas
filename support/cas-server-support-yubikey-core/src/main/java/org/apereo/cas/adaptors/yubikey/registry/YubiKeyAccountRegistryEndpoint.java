@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.yubikey.registry;
 
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
+import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
@@ -130,10 +131,10 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasRestActuatorEndpoint 
     public ResponseEntity importAccount(final HttpServletRequest request) throws Exception {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.trace("Submitted account: [{}]", requestBody);
-        val account = MAPPER.readValue(requestBody, new TypeReference<YubiKeyAccount>() {
+        val account = MAPPER.readValue(requestBody, new TypeReference<YubiKeyDeviceRegistrationRequest>() {
         });
         LOGGER.trace("Storing account: [{}]", account);
-        registry.getObject().save(account);
+        registry.getObject().registerAccountFor(account);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }

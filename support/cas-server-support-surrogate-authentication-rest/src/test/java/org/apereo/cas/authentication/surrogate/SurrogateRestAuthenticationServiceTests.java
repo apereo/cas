@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.surrogate;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasSurrogateRestAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -17,7 +18,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -85,11 +88,15 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
 
             val props = new CasConfigurationProperties();
             props.getAuthn().getSurrogate().getRest().setUrl("http://localhost:%s".formatted(webServer.getPort()));
-            val surrogateService = new SurrogateRestAuthenticationService(props.getAuthn().getSurrogate().getRest(), servicesManager);
+            val surrogateService = new SurrogateRestAuthenticationService(servicesManager, props);
 
+            val application = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService(application.getId(), Map.of());
+            servicesManager.save(registeredService);
+            
             val result = surrogateService.canImpersonate("cassurrogate",
                 CoreAuthenticationTestUtils.getPrincipal("casuser"),
-                Optional.of(CoreAuthenticationTestUtils.getService()));
+                Optional.of(application));
             /*
              * Can't use super() until the REST classes are
              * completely refactored and don't need an actual server to connect to.
@@ -105,7 +112,7 @@ class SurrogateRestAuthenticationServiceTests extends BaseSurrogateAuthenticatio
             webServer.start();
             val props = new CasConfigurationProperties();
             props.getAuthn().getSurrogate().getRest().setUrl("http://localhost:%s".formatted(webServer.getPort()));
-            val surrogateService = new SurrogateRestAuthenticationService(props.getAuthn().getSurrogate().getRest(), servicesManager);
+            val surrogateService = new SurrogateRestAuthenticationService(servicesManager, props);
             val result = surrogateService.getImpersonationAccounts("cassurrogate", Optional.empty());
             assertTrue(result.isEmpty());
         }

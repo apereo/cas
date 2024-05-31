@@ -1,0 +1,14 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "serviceId": "^https://localhost:9859/anything/cas.*",
+  "id": 1,
+  "name": "Sample",
+  "authenticationPolicy": {
+    "@class": "org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy",
+    "requiredAuthenticationHandlers" : ["java.util.TreeSet", [ "JSON", "REJECT" ]],
+    "criteria": {
+      "@class": "org.apereo.cas.services.AllowedAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria",
+      "tryAll": false
+    }
+  }
+}

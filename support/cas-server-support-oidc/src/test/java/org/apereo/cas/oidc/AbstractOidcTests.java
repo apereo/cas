@@ -38,6 +38,9 @@ import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.OidcJsonWebKeyCacheKey;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
+import org.apereo.cas.oidc.ticket.OidcCibaRequest;
+import org.apereo.cas.oidc.ticket.OidcCibaRequestFactory;
+import org.apereo.cas.oidc.web.controllers.ciba.CibaRequestContext;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
@@ -52,6 +55,7 @@ import org.apereo.cas.support.oauth.profile.OAuth20UserProfileDataCreator;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFactory;
@@ -59,7 +63,6 @@ import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
-import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
@@ -68,6 +71,7 @@ import org.apereo.cas.ticket.code.OAuth20CodeFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceTokenFactory;
 import org.apereo.cas.ticket.device.OAuth20DeviceUserCodeFactory;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.idtoken.IdTokenGeneratorService;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
@@ -129,7 +133,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = AbstractOidcTests.SharedTestConfiguration.class,
     properties = {
         "spring.threads.virtual.enabled=true",
-        
+
         "spring.main.allow-bean-definition-overriding=true",
         "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",
 
@@ -145,6 +149,10 @@ import static org.mockito.Mockito.*;
 public abstract class AbstractOidcTests {
     protected static final String TGT_ID = "TGT-0";
 
+    @Autowired
+    @Qualifier("oauthTokenGenerator")
+    protected OAuth20TokenGenerator oauthTokenGenerator;
+    
     @Autowired
     @Qualifier(OAuth20ResponseModeFactory.BEAN_NAME)
     protected OAuth20ResponseModeFactory oauthResponseModeFactory;
@@ -472,8 +480,7 @@ public abstract class AbstractOidcTests {
 
     protected OAuth20AccessToken getAccessToken(final Principal principal, final String idToken,
                                                 final String clientId) throws Throwable {
-        val code = addCode(principal, getOidcRegisteredService());
-
+        val code = addCode(principal, getOidcRegisteredService(clientId));
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication(principal));
         when(accessToken.getService()).thenReturn(RegisteredServiceTestUtils.getService("https://oauth.example.org"));
@@ -508,6 +515,21 @@ public abstract class AbstractOidcTests {
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         this.ticketRegistry.addTicket(code);
         return code;
+    }
+
+    protected OidcCibaRequest newCibaRequest(final OidcRegisteredService registeredService,
+                                             final Principal principal) throws Throwable {
+        val cibaRequestContext = CibaRequestContext.builder()
+            .clientNotificationToken(UUID.randomUUID().toString())
+            .clientId(registeredService.getClientId())
+            .scope(Set.of(OidcConstants.StandardScopes.OPENID.getScope()))
+            .userCode(UUID.randomUUID().toString())
+            .principal(principal)
+            .build();
+        val cibaFactory = (OidcCibaRequestFactory) defaultTicketFactory.get(OidcCibaRequest.class);
+        val cibaRequestId = cibaFactory.create(cibaRequestContext);
+        ticketRegistry.addTicket(cibaRequestId);
+        return cibaRequestId;
     }
 
     @ImportAutoConfiguration({
