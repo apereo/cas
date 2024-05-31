@@ -13,6 +13,7 @@ import org.apereo.cas.oidc.discovery.webfinger.OidcWebFingerDiscoveryService;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.jwks.generator.OidcJsonWebKeystoreGeneratorService;
 import org.apereo.cas.oidc.jwks.rotation.OidcJsonWebKeystoreRotationService;
+import org.apereo.cas.oidc.token.ciba.CibaTokenDeliveryHandler;
 import org.apereo.cas.oidc.web.OidcHandlerInterceptorAdapter;
 import org.apereo.cas.oidc.web.OidcLocaleChangeInterceptor;
 import org.apereo.cas.oidc.web.controllers.authorize.OidcAuthorizeEndpointController;
@@ -36,6 +37,7 @@ import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenGrantRequestExtractor;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.validation.CasProtocolViewFactory;
@@ -67,6 +69,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.View;
@@ -216,7 +219,7 @@ class OidcEndpointsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "oidcCsrfTokenRepository")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public CsrfTokenRepository oidcCsrfTokenRepository() {
+        public CsrfTokenRepository oidcCsrfTokenRepository(final CasConfigurationProperties casProperties) {
             val repository = new CookieCsrfTokenRepository();
             repository.setHeaderName("X-CSRF-TOKEN");
             return repository;
@@ -242,13 +245,18 @@ class OidcEndpointsConfiguration {
 
                 @Override
                 public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
-                    http.csrf(customizer -> {
-                        val pattern = new AntPathRequestMatcher("/**/" + OidcConstants.CIBA_URL + "/{clientId}/{cibaRequestId}", HttpMethod.POST.name());
-                        customizer.requireCsrfProtectionMatcher(pattern).csrfTokenRepository(oidcCsrfTokenRepository);
-                    });
                     http.authorizeHttpRequests(customizer -> {
                         val authEndpoints = new AntPathRequestMatcher("/**/" + OidcConstants.CIBA_URL + "/**");
                         customizer.requestMatchers(authEndpoints).anonymous();
+                    });
+                    http.csrf(customizer -> {
+                        val pattern = new AntPathRequestMatcher("/**/" + OidcConstants.CIBA_URL + "/{clientId}/{cibaRequestId}", HttpMethod.POST.name());
+                        val requestHandler = new XorCsrfTokenRequestAttributeHandler();
+                        requestHandler.setCsrfRequestAttributeName(null);
+                        requestHandler.setSecureRandom(RandomUtils.getNativeInstance());
+                        customizer.requireCsrfProtectionMatcher(pattern)
+                            .csrfTokenRequestHandler(requestHandler)
+                            .csrfTokenRepository(oidcCsrfTokenRepository);
                     });
                     return this;
                 }
@@ -309,9 +317,10 @@ class OidcEndpointsConfiguration {
         @ConditionalOnMissingBean(name = "oidcCibaController")
         @Bean
         public OidcCibaController oidcCibaController(
+            final List<CibaTokenDeliveryHandler> cibaTokenDeliveryHandlers,
             @Qualifier(OidcConfigurationContext.BEAN_NAME)
             final OidcConfigurationContext oidcConfigurationContext) {
-            return new OidcCibaController(oidcConfigurationContext);
+            return new OidcCibaController(oidcConfigurationContext, cibaTokenDeliveryHandlers);
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

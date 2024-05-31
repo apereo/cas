@@ -58,6 +58,8 @@ public class OAuth20AccessTokenResponseResult implements Serializable, Auditable
 
     private final String tokenExchangeAudience;
 
+    private final String cibaRequestId;
+    
     @Override
     @JsonIgnore
     public String getAuditablePrincipal() {

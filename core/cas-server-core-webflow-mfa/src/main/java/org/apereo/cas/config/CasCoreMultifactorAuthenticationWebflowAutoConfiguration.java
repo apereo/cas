@@ -46,6 +46,7 @@ import org.apereo.cas.web.flow.authentication.ChainingMultifactorAuthenticationP
 import org.apereo.cas.web.flow.authentication.GroovyScriptMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.configurer.CompositeProviderSelectionMultifactorWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.MultifactorAuthenticationAccountProfileWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -635,6 +636,43 @@ public class CasCoreMultifactorAuthenticationWebflowAutoConfiguration {
             return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> plan.registerWebflowConfigurer(compositeProviderSelectionMultifactorWebflowConfigurer))
+                .otherwiseProxy()
+                .get();
+        }
+    }
+
+    @Configuration(value = "CasCoreMultifactorAuthenticationAccountProfileConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
+    static class CasCoreMultifactorAuthenticationAccountProfileConfiguration {
+        @ConditionalOnMissingBean(name = "accountProfileMultifactorWebflowConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowConfigurer accountProfileMultifactorWebflowConfigurer(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
+            return BeanSupplier.of(CasWebflowConfigurer.class)
+                .alwaysMatch()
+                .supply(() -> new MultifactorAuthenticationAccountProfileWebflowConfigurer(flowBuilderServices,
+                    flowDefinitionRegistry, applicationContext, casProperties))
+                .otherwiseProxy()
+                .get();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "accountProfileMultifactorWebflowExecutionPlanConfigurer")
+        public CasWebflowExecutionPlanConfigurer accountProfileMultifactorWebflowExecutionPlanConfigurer(
+            @Qualifier("accountProfileMultifactorWebflowConfigurer")
+            final CasWebflowConfigurer duoMultifactorAccountProfileWebflowConfigurer,
+            final ConfigurableApplicationContext applicationContext) {
+            return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
+                .alwaysMatch()
+                .supply(() -> plan -> plan.registerWebflowConfigurer(duoMultifactorAccountProfileWebflowConfigurer))
                 .otherwiseProxy()
                 .get();
         }

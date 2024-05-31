@@ -21,16 +21,12 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @since 6.6.0
  */
 public class AccountProfileWebflowConfigurer extends AbstractCasWebflowConfigurer {
-    private final FlowDefinitionRegistry loginFlowRegistry;
-
     public AccountProfileWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                            final FlowDefinitionRegistry mainFlowDefinitionRegistry,
-                                           final FlowDefinitionRegistry loginFlowRegistry,
                                            final ConfigurableApplicationContext applicationContext,
                                            final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, mainFlowDefinitionRegistry, applicationContext, casProperties);
         setOrder(casProperties.getAuthn().getPm().getWebflow().getOrder());
-        this.loginFlowRegistry = loginFlowRegistry;
     }
 
     @Override
@@ -63,7 +59,7 @@ public class AccountProfileWebflowConfigurer extends AbstractCasWebflowConfigure
         createTransitionForState(validate, CasWebflowConstants.TRANSITION_ID_TICKET_GRANTING_TICKET_VALID, myAccountView.getId());
         createStateDefaultTransition(validate, CasWebflowConstants.STATE_ID_REDIRECT_TO_LOGIN);
 
-        val loginFlow = getFlow(loginFlowRegistry, CasWebflowConfigurer.FLOW_ID_LOGIN);
+        val loginFlow = getLoginFlow();
         val serviceUrl = StringUtils.appendIfMissing(casProperties.getServer().getPrefix(), "/").concat(accountFlow.getId());
         val view = createExternalRedirectViewFactory(String.format("'%s?%s=%s'",
             loginFlow.getId(), CasProtocolConstants.PARAMETER_SERVICE, serviceUrl));

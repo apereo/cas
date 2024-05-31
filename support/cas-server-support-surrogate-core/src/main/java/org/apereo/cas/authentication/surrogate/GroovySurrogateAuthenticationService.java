@@ -2,14 +2,12 @@ package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.core.io.Resource;
-
 import java.util.Collection;
 import java.util.Optional;
 
@@ -24,9 +22,9 @@ public class GroovySurrogateAuthenticationService extends BaseSurrogateAuthentic
     private final WatchableGroovyScriptResource watchableScript;
 
     public GroovySurrogateAuthenticationService(final ServicesManager servicesManager,
-                                                final Resource groovyResource) {
-        super(servicesManager);
-        this.watchableScript = new WatchableGroovyScriptResource(groovyResource);
+                                                final CasConfigurationProperties casProperties) {
+        super(servicesManager, casProperties);
+        this.watchableScript = new WatchableGroovyScriptResource(casProperties.getAuthn().getSurrogate().getGroovy().getLocation());
     }
 
     @Override

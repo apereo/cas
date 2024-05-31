@@ -14,11 +14,11 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20AccessTokenAtHashGenerator;
+import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenHashGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.idtoken.IdTokenGenerationContext;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -31,7 +31,6 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
-import java.io.Serial;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -58,10 +57,6 @@ class OidcIdTokenGeneratorServiceTests {
 
     private static final String OIDC_CLAIM_PREFERRED_USERNAME = "preferred_username";
 
-    private static final class MockOAuthRegisteredService extends OAuthRegisteredService {
-        @Serial
-        private static final long serialVersionUID = 8152953800891665827L;
-    }
 
     private OAuth20AccessToken buildAccessToken(final TicketGrantingTicket tgt, final Set<String> scope) {
         val accessToken = mock(OAuth20AccessToken.class);
@@ -117,8 +112,15 @@ class OidcIdTokenGeneratorServiceTests {
             registeredService.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(List.of("org.apereo.cas.entity")));
             servicesManager.save(registeredService);
 
-            val idToken = oidcIdTokenGenerator.generate(accessToken, profile,
-                OAuth20ResponseTypes.ID_TOKEN, OAuth20GrantTypes.NONE, registeredService);
+            val idTokenContext = IdTokenGenerationContext.builder()
+                .accessToken(accessToken)
+                .userProfile(profile)
+                .responseType(OAuth20ResponseTypes.ID_TOKEN)
+                .grantType(OAuth20GrantTypes.NONE)
+                .registeredService(registeredService)
+                .build();
+            
+            val idToken = oidcIdTokenGenerator.generate(idTokenContext);
             assertNotNull(idToken);
 
             val claims = oidcTokenSigningAndEncryptionService.decode(idToken.token(), Optional.of(registeredService));
@@ -165,8 +167,16 @@ class OidcIdTokenGeneratorServiceTests {
 
             val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
             registeredService.setScopes(CollectionUtils.wrapSet(EMAIL.getScope(), PROFILE.getScope(), PHONE.getScope()));
-            val idToken = oidcIdTokenGenerator.generate(accessToken, profile,
-                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, registeredService);
+
+
+            val idTokenContext = IdTokenGenerationContext.builder()
+                .accessToken(accessToken)
+                .userProfile(profile)
+                .responseType(OAuth20ResponseTypes.CODE)
+                .grantType(OAuth20GrantTypes.NONE)
+                .registeredService(registeredService)
+                .build();
+            val idToken = oidcIdTokenGenerator.generate(idTokenContext);
             assertNotNull(idToken);
 
             val claims = oidcTokenSigningAndEncryptionService.decode(idToken.token(), Optional.of(registeredService));
@@ -196,8 +206,16 @@ class OidcIdTokenGeneratorServiceTests {
             val profile = new CommonProfile();
             profile.setClientName("OIDC");
             profile.setId(authentication.getPrincipal().getId());
-            val idToken = oidcIdTokenGenerator.generate(accessToken, profile,
-                OAuth20ResponseTypes.ID_TOKEN, OAuth20GrantTypes.NONE, registeredService);
+
+
+            val idTokenContext = IdTokenGenerationContext.builder()
+                .accessToken(accessToken)
+                .userProfile(profile)
+                .responseType(OAuth20ResponseTypes.ID_TOKEN)
+                .grantType(OAuth20GrantTypes.NONE)
+                .registeredService(registeredService)
+                .build();
+            val idToken = oidcIdTokenGenerator.generate(idTokenContext);
             assertNull(idToken);
         }
 
@@ -237,8 +255,15 @@ class OidcIdTokenGeneratorServiceTests {
             registeredService.setScopes(CollectionUtils.wrapSet(EMAIL.getScope(), PROFILE.getScope(), PHONE.getScope()));
             servicesManager.save(registeredService);
 
-            val idToken = oidcIdTokenGenerator.generate(accessToken, profile,
-                OAuth20ResponseTypes.ID_TOKEN, OAuth20GrantTypes.NONE, registeredService);
+
+            val idTokenContext = IdTokenGenerationContext.builder()
+                .accessToken(accessToken)
+                .userProfile(profile)
+                .responseType(OAuth20ResponseTypes.ID_TOKEN)
+                .grantType(OAuth20GrantTypes.NONE)
+                .registeredService(registeredService)
+                .build();
+            val idToken = oidcIdTokenGenerator.generate(idTokenContext);
             assertNotNull(idToken);
 
             val claims = oidcTokenSigningAndEncryptionService.decode(idToken.token(), Optional.of(registeredService));
@@ -290,8 +315,15 @@ class OidcIdTokenGeneratorServiceTests {
             registeredService.setScopes(CollectionUtils.wrapSet(EMAIL.getScope(), PROFILE.getScope(), PHONE.getScope()));
             servicesManager.save(registeredService);
 
-            val idToken = oidcIdTokenGenerator.generate(accessToken, profile,
-                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, registeredService);
+
+            val idTokenContext = IdTokenGenerationContext.builder()
+                .accessToken(accessToken)
+                .userProfile(profile)
+                .responseType(OAuth20ResponseTypes.CODE)
+                .grantType(OAuth20GrantTypes.NONE)
+                .registeredService(registeredService)
+                .build();
+            val idToken = oidcIdTokenGenerator.generate(idTokenContext);
             assertNotNull(idToken);
 
             val claims = oidcTokenSigningAndEncryptionService.decode(idToken.token(), Optional.of(registeredService));
@@ -335,8 +367,15 @@ class OidcIdTokenGeneratorServiceTests {
             val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
             registeredService.setScopes(CollectionUtils.wrapSet(EMAIL.getScope(), PROFILE.getScope(), PHONE.getScope()));
             servicesManager.save(registeredService);
-            val idToken = oidcIdTokenGenerator.generate(accessToken, profile,
-                OAuth20ResponseTypes.ID_TOKEN, OAuth20GrantTypes.AUTHORIZATION_CODE, registeredService);
+
+            val idTokenContext = IdTokenGenerationContext.builder()
+                .accessToken(accessToken)
+                .userProfile(profile)
+                .responseType(OAuth20ResponseTypes.ID_TOKEN)
+                .grantType(OAuth20GrantTypes.AUTHORIZATION_CODE)
+                .registeredService(registeredService)
+                .build();
+            val idToken = oidcIdTokenGenerator.generate(idTokenContext);
             assertNotNull(idToken);
             val claims = oidcTokenSigningAndEncryptionService.decode(idToken.token(), Optional.of(registeredService));
             assertNotNull(claims);
@@ -369,18 +408,15 @@ class OidcIdTokenGeneratorServiceTests {
             val registeredService = getOidcRegisteredService(UUID.randomUUID().toString(), randomServiceUrl());
             servicesManager.save(registeredService);
 
-            val idToken = oidcIdTokenGenerator.generate(accessToken, profile,
-                OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, registeredService);
+            val idTokenContext = IdTokenGenerationContext.builder()
+                .accessToken(accessToken)
+                .userProfile(profile)
+                .responseType(OAuth20ResponseTypes.CODE)
+                .grantType(OAuth20GrantTypes.NONE)
+                .registeredService(registeredService)
+                .build();
+            val idToken = oidcIdTokenGenerator.generate(idTokenContext);
             assertNotNull(idToken);
-        }
-
-        @Test
-        void verifyUnknownServiceType() throws Throwable {
-            assertThrows(IllegalArgumentException.class, () -> {
-                val accessToken = mock(OAuth20AccessToken.class);
-                oidcIdTokenGenerator.generate(accessToken, new CommonProfile(),
-                    OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, new MockOAuthRegisteredService());
-            });
         }
 
         @RepeatedTest(2)
@@ -405,7 +441,14 @@ class OidcIdTokenGeneratorServiceTests {
             ));
 
             servicesManager.save(registeredService);
-            val idToken = oidcIdTokenGenerator.generate(accessToken, profile, OAuth20ResponseTypes.CODE, OAuth20GrantTypes.NONE, registeredService);
+            val idTokenContext = IdTokenGenerationContext.builder()
+                .accessToken(accessToken)
+                .userProfile(profile)
+                .responseType(OAuth20ResponseTypes.CODE)
+                .grantType(OAuth20GrantTypes.NONE)
+                .registeredService(registeredService)
+                .build();
+            val idToken = oidcIdTokenGenerator.generate(idTokenContext);
             assertNotNull(idToken);
             val claims = oidcTokenSigningAndEncryptionService.decode(idToken.token(), Optional.of(registeredService));
             assertNotNull(claims);
@@ -418,8 +461,8 @@ class OidcIdTokenGeneratorServiceTests {
             val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(oidcAccessTokenJwtBuilder,
                 registeredService, accessToken, accessToken.getService(), issuer, casProperties);
             val encodedAccessToken = cipher.encode(accessToken.getId());
-            val newHash = OAuth20AccessTokenAtHashGenerator.builder()
-                .encodedAccessToken(encodedAccessToken)
+            val newHash = OAuth20TokenHashGenerator.builder()
+                .token(encodedAccessToken)
                 .registeredService(registeredService)
                 .algorithm(registeredService.getIdTokenSigningAlg())
                 .build()

@@ -14,6 +14,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.DisposableBean;
@@ -106,6 +107,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         return storage
             .values()
             .stream()
+            .filter(entry -> StringUtils.isNotBlank(entry.getRecordKey()))
             .filter(entry -> entry.getId() == id)
             .sorted()
             .findFirst()
@@ -118,6 +120,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         return storage
             .values()
             .stream()
+            .filter(entry -> StringUtils.isNotBlank(entry.getRecordKey()))
             .filter(entry -> entry.getRecordDate().isEqual(onOrAfterDate) || entry.getRecordDate().isAfter(onOrAfterDate))
             .sorted()
             .collect(Collectors.toCollection(LinkedHashSet::new));
@@ -130,6 +133,7 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
             .values()
             .stream()
             .filter(entry -> entry.getPrincipal().equalsIgnoreCase(principal))
+            .filter(entry -> StringUtils.isNotBlank(entry.getRecordKey()))
             .sorted()
             .collect(Collectors.toCollection(LinkedHashSet::new));
     }

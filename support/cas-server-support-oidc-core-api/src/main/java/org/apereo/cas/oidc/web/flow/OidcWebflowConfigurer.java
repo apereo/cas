@@ -5,10 +5,8 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
@@ -19,15 +17,11 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @since 5.0.0
  */
 public class OidcWebflowConfigurer extends AbstractCasWebflowConfigurer {
-    private final ObjectProvider<FlowDefinitionRegistry> accountFlowDefinitionRegistry;
-
     public OidcWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                  final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                  final ConfigurableApplicationContext applicationContext,
-                                 final ObjectProvider<FlowDefinitionRegistry> accountFlowDefinitionRegistry,
                                  final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
-        this.accountFlowDefinitionRegistry = accountFlowDefinitionRegistry;
     }
 
     @Override
@@ -41,11 +35,11 @@ public class OidcWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     @Override
     public void postInitialization(final ConfigurableApplicationContext applicationContext) {
-        accountFlowDefinitionRegistry.ifAvailable(registry -> {
-            val flow = (Flow) registry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
+        val flow = getFlow(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
+        if (flow != null) {
             val prepAction = createEvaluateAction(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_ACCESS_TOKENS);
             val accountView = getState(flow, CasWebflowConstants.STATE_ID_MY_ACCOUNT_PROFILE_VIEW, ViewState.class);
             accountView.getRenderActionList().add(prepAction);
-        });
+        }
     }
 }

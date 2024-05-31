@@ -85,6 +85,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
 
         val ticketGrantingTicketId = configureWebflowForTicketGrantingTicket(context);
         configureWebflowForSsoParticipation(context, ticketGrantingTicketId);
+        
         return success();
     }
 

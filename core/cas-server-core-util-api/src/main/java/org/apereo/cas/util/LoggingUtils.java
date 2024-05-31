@@ -108,7 +108,7 @@ public class LoggingUtils {
     public static void error(final Logger logger, final String msg) {
         logger.error(msg);
     }
-
+    
     /**
      * Error.
      *

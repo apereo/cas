@@ -63,8 +63,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoi
     @Operation(summary = "Fetch registered devices for username", parameters = @Parameter(name = "username", required = true))
     @GetMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Collection<? extends CredentialRegistration> fetch(
-        @PathVariable
-        final String username) {
+        @PathVariable final String username) {
         return registrationStorage.getObject().getRegistrationsByUsername(username);
     }
 
@@ -80,10 +79,8 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoi
     @Operation(summary = "Add device registration for username",
         parameters = {@Parameter(name = "username", required = true), @Parameter(name = "record", required = true)})
     public boolean write(
-        @PathVariable
-        final String username,
-        @RequestParam
-        final String record) throws Exception {
+        @PathVariable final String username,
+        @RequestParam final String record) throws Exception {
         val json = EncodingUtils.decodeBase64ToString(record);
         val registration = WebAuthnUtils.getObjectMapper().readValue(json, CredentialRegistration.class);
         return registrationStorage.getObject().addRegistrationByUsername(username, registration);
@@ -96,9 +93,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoi
      */
     @Operation(summary = "Remove device registrations for username", parameters = @Parameter(name = "username", required = true))
     @DeleteMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(
-        @PathVariable
-        final String username) {
+    public void delete(@PathVariable final String username) {
         registrationStorage.getObject().removeAllRegistrations(username);
     }
 
@@ -112,11 +107,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoi
     @Operation(summary = "Remove device registration for username and credential id",
         parameters = {@Parameter(name = "username", required = true), @Parameter(name = "credentialId", required = true)})
     @DeleteMapping(path = "{username}/{credentialId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void delete(
-        @PathVariable
-        final String username,
-        @PathVariable
-        final String credentialId) throws Exception {
+    public void delete(@PathVariable final String username, @PathVariable final String credentialId) throws Exception {
         val ba = ByteArray.fromBase64Url(credentialId);
         registrationStorage.getObject().getRegistrationByUsernameAndCredentialId(username, ba)
             .ifPresent(registration -> registrationStorage.getObject().removeRegistrationByUsername(username, registration));

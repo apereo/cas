@@ -9,6 +9,7 @@ import org.apereo.cas.otp.web.flow.OneTimeTokenAccountConfirmSelectionRegistrati
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -67,7 +68,7 @@ class GoogleAuthenticatorValidateTokenActionTests {
         googleAuthenticatorAccountRegistry.save(acct);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(acct.getUsername()), context);
 
-        WebUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
+        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, dummyProvider);
         assertThrows(IllegalArgumentException.class, () -> action.execute(context));
 
         context.setParameter(GoogleAuthenticatorSaveRegistrationAction.REQUEST_PARAMETER_TOKEN, "111222");

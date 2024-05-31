@@ -2,6 +2,7 @@ package org.apereo.cas.otp.web.flow;
 
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ public class OneTimeTokenAccountConfirmSelectionRegistrationAction extends BaseC
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
         val id = Long.parseLong(WebUtils.getRequestParameterOrAttribute(requestContext, REQUEST_PARAMETER_ACCOUNT_ID).orElseThrow());
-        WebUtils.putOneTimeTokenAccount(requestContext, repository.get(id));
+        MultifactorAuthenticationWebflowUtils.putOneTimeTokenAccount(requestContext, repository.get(id));
         return success();
     }
 }

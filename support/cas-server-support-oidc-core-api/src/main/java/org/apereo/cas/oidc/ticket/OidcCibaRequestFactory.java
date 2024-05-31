@@ -18,4 +18,12 @@ public interface OidcCibaRequestFactory extends TicketFactory {
      * @throws Throwable the throwable
      */
     OidcCibaRequest create(CibaRequestContext holder) throws Throwable;
+
+    /**
+     * Decode id from request id.
+     *
+     * @param requestId the request id
+     * @return the decoded id
+     */
+    String decodeId(String requestId);
 }

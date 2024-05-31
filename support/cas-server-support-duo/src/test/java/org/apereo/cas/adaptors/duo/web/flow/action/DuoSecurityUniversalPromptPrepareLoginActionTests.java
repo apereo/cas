@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactor
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -43,11 +44,13 @@ class DuoSecurityUniversalPromptPrepareLoginActionTests extends BaseCasWebflowMu
     @Test
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
+        val authentication = RegisteredServiceTestUtils.getAuthentication();
+        WebUtils.putAuthentication(authentication, context);
+        WebUtils.putAuthenticationResult(RegisteredServiceTestUtils.getAuthenticationResult(authentication.getPrincipal().getId()), context);
         WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService());
         val provider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(
             DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER, applicationContext).orElseThrow();
-        WebUtils.putMultifactorAuthenticationProvider(context, provider);
+        MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, provider);
         val result = duoUniversalPromptPrepareLoginAction.execute(context);
         assertNotNull(result);
         assertNotNull(result.getAttributes().get("result"));

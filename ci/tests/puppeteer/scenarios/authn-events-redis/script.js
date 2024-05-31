@@ -16,7 +16,7 @@ async function getAllEvents() {
     await page.setGeolocation({latitude: 90, longitude: 20});
 
     await cas.log("Deleting all startup events...");
-    await cas.doRequest("https://localhost:8443/cas/actuator/events", "DELETE");
+    await cas.doDelete("https://localhost:8443/cas/actuator/events");
 
     const totalAttempts = 2;
     for (let i = 1; i <= totalAttempts; i++) {
@@ -43,7 +43,7 @@ async function getAllEvents() {
     });
     
     await cas.log("Deleting all events...");
-    await cas.doRequest("https://localhost:8443/cas/actuator/events", "DELETE");
+    await cas.doDelete("https://localhost:8443/cas/actuator/events");
     await cas.log("Checking events...");
     let allEvents = await getAllEvents();
     assert(Object.keys(allEvents[1]).length === 0);

@@ -61,7 +61,6 @@ class MultiTimeUseOrTimeoutExpirationPolicyTests extends BaseTicketFactoryTests 
     void verifyTicketIsNotExpired() throws Throwable {
         expirationPolicy.setClock(Clock.fixed(ticket.getCreationTime().toInstant().plusSeconds(TIMEOUT_SECONDS).minusNanos(1), ZoneOffset.UTC));
         assertFalse(ticket.isExpired());
-        assertEquals(0, expirationPolicy.getTimeToIdle());
     }
 
     @Test

@@ -6,7 +6,7 @@ const cas = require("../../cas.js");
     const baseUrl = "https://localhost:8443/cas/actuator/ssoSessions";
     
     await cas.logg("Removing all SSO Sessions");
-    await cas.doRequest(`${baseUrl}?type=ALL&from=1&count=1000`, "DELETE", {});
+    await cas.doDelete(`${baseUrl}?type=ALL&from=1&count=1000`);
 
     await login();
     
@@ -45,10 +45,10 @@ const cas = require("../../cas.js");
     });
 
     await cas.logg("Removing all SSO Sessions for single user");
-    await cas.doRequest(`${baseUrl}?type=ALL&usernam=casuser1`, "DELETE", {});
-    await cas.doRequest(`${baseUrl}?type=ALL&usernam=casuser2`, "DELETE", {});
-    await cas.doRequest(`${baseUrl}?type=ALL&usernam=casuser3`, "DELETE", {});
-    await cas.doRequest(`${baseUrl}/users/casuser3`, "DELETE", {});
+    await cas.doDelete(`${baseUrl}?type=ALL&usernam=casuser1`);
+    await cas.doDelete(`${baseUrl}?type=ALL&usernam=casuser2`);
+    await cas.doDelete(`${baseUrl}?type=ALL&usernam=casuser3`);
+    await cas.doDelete(`${baseUrl}/users/casuser3`);
 
 })();
 

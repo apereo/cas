@@ -62,7 +62,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
             val count = entityManager.createQuery("DELETE FROM " + ENTITY_NAME + " r WHERE :expirationDate >= r.expirationDate")
                 .setParameter("expirationDate", value)
                 .executeUpdate();
-            LOGGER.info("Found and removed [{}] records", count);
+            LOGGER.info("Found and removed [{}] trusted records", count);
         });
     }
 

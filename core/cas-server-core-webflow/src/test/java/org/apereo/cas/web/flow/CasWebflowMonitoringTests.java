@@ -41,7 +41,7 @@ public class CasWebflowMonitoringTests extends BaseWebflowConfigurerTests {
         assertEquals(CasWebflowConfigurer.FLOW_ID_LOGOUT, flowId);
     }
 
-    @TestConfiguration(proxyBeanMethods = false)
+    @TestConfiguration(value = "FlowExecutorTestConfiguration", proxyBeanMethods = false)
     static class FlowExecutorTestConfiguration {
         @Bean
         public FlowExecutor testFlowExecutor() {

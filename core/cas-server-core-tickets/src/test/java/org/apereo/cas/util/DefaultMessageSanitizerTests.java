@@ -75,6 +75,6 @@ class DefaultMessageSanitizerTests {
         assertTrue(results.contains("[token=********"));
 
         results = messageSanitizer.sanitize("found a ,clientSecret = p@$$wordSecret...");
-        assertTrue(results.contains(",clientSecret = ********..."));
+        assertTrue(results.matches(".+,clientSecret = \\*\\*\\*\\*\\*\\*\\*\\*.*\\.\\.\\."));
     }
 }

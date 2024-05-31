@@ -7,6 +7,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -55,7 +56,7 @@ class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests {
             WebUtils.putResolvedEventsAsAttribute(context, resolvedEvents);
             val result = selectiveAuthenticationProviderWebflowEventResolver.resolve(context);
             assertNotNull(result);
-            assertNotNull(WebUtils.getResolvedMultifactorAuthenticationProviders(context));
+            assertNotNull(MultifactorAuthenticationWebflowUtils.getResolvedMultifactorAuthenticationProviders(context));
             assertEquals(provider.getId(), result.iterator().next().getId());
         }
 
@@ -90,7 +91,7 @@ class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests {
             WebUtils.putResolvedEventsAsAttribute(context, resolvedEvents);
             val result = selectiveAuthenticationProviderWebflowEventResolver.resolve(context);
             assertNotNull(result);
-            assertTrue(WebUtils.getResolvedMultifactorAuthenticationProviders(context).isEmpty());
+            assertTrue(MultifactorAuthenticationWebflowUtils.getResolvedMultifactorAuthenticationProviders(context).isEmpty());
         }
 
         @Test

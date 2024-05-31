@@ -5,7 +5,7 @@ const cas = require("../../cas.js");
 (async () => {
     const baseUrl = "https://localhost:8443/cas/actuator";
     await cas.logg("Removing all SSO Sessions");
-    await cas.doRequest(`${baseUrl}/ssoSessions?type=ALL&from=1&count=100000`, "DELETE", {});
+    await cas.doDelete(`${baseUrl}/ssoSessions?type=ALL&from=1&count=100000`);
 
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
@@ -40,7 +40,7 @@ const cas = require("../../cas.js");
         }, { "Content-Type": "application/json" });
 
     await cas.logg("Querying registry for all ticket-granting tickets");
-    await cas.doGet(`${baseUrl}/ticketRegistry/query?prefix=TGT&count=10`, async (res) => {
+    await cas.doGet(`${baseUrl}/ticketRegistry/query?type=TGT&count=10`, async (res) => {
         assert(res.status === 200);
         assert(res.data.length === 1);
     }, async (err) => {

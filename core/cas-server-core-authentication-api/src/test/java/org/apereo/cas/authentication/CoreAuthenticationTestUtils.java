@@ -274,7 +274,8 @@ public class CoreAuthenticationTestUtils {
             new DefaultAuthenticationResultBuilderFactory(),
             getAuthenticationTransactionFactory(servicesManager),
             servicesManager,
-            new EchoingPrincipalResolver());
+            new EchoingPrincipalResolver(),
+            PrincipalFactoryUtils.newPrincipalFactory());
     }
 
     public static AuthenticationTransactionFactory getAuthenticationTransactionFactory(final ServicesManager servicesManager) {

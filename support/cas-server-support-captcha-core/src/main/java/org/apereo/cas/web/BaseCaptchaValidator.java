@@ -17,6 +17,7 @@ import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -37,36 +38,49 @@ public abstract class BaseCaptchaValidator implements CaptchaValidator {
     public boolean validate(final String recaptchaResponse, final String userAgent) {
         HttpResponse response = null;
         try {
-            val exec = HttpExecutionRequest.builder()
-                .method(HttpMethod.POST)
-                .url(recaptchaProperties.getVerifyUrl())
-                .headers(CollectionUtils.wrap("User-Agent", userAgent, "Accept-Language", "en-US,en;q=0.5"))
-                .parameters(CollectionUtils.wrap("secret", recaptchaProperties.getSecret(), "response", recaptchaResponse))
-                .build();
-
-            response = HttpUtils.execute(exec);
+            response = executeCaptchaVerification(recaptchaResponse, userAgent);
             if (response != null && response.getCode() == HttpStatus.OK.value()) {
-                try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
-                    val result = IOUtils.toString(content, StandardCharsets.UTF_8);
-                    if (StringUtils.isBlank(result)) {
-                        throw new IllegalArgumentException("Unable to parse empty entity response from " + recaptchaProperties.getVerifyUrl());
-                    }
-                    LOGGER.debug("Recaptcha verification response received: [{}]", result);
-                    val node = READER.readTree(result);
-                    if (node.has("score") && node.get("score").doubleValue() <= recaptchaProperties.getScore()) {
-                        LOGGER.warn("Recaptcha score received is less than the threshold score defined for CAS");
-                        return false;
-                    }
-                    if (node.has("success") && node.get("success").booleanValue()) {
-                        LOGGER.trace("Recaptcha has successfully verified the request");
-                        return true;
-                    }
-                }
+                return parseCaptchaResponse(response);
             }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         } finally {
             HttpUtils.close(response);
+        }
+        return false;
+    }
+
+    protected HttpResponse executeCaptchaVerification(final String recaptchaResponse, final String userAgent) {
+        val headers = CollectionUtils.<String, String>wrap(
+            "User-Agent", userAgent,
+            "Content-Type", MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            "Accept-Language", "en-US,en;q=0.5");
+        headers.putAll(recaptchaProperties.getHeaders());
+        val exec = HttpExecutionRequest.builder()
+            .method(HttpMethod.POST)
+            .url(recaptchaProperties.getVerifyUrl())
+            .headers(headers)
+            .entity("secret=%s&response=%s".formatted(recaptchaProperties.getSecret(), recaptchaResponse))
+            .build();
+        return HttpUtils.execute(exec);
+    }
+
+    protected boolean parseCaptchaResponse(final HttpResponse response) throws Exception {
+        try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
+            val result = IOUtils.toString(content, StandardCharsets.UTF_8);
+            if (StringUtils.isBlank(result)) {
+                throw new IllegalArgumentException("Unable to parse empty entity response from " + recaptchaProperties.getVerifyUrl());
+            }
+            LOGGER.debug("Recaptcha verification response received: [{}]", result);
+            val node = READER.readTree(result);
+            if (node.has("score") && node.get("score").doubleValue() <= recaptchaProperties.getScore()) {
+                LOGGER.warn("Recaptcha score received is less than the threshold score defined for CAS");
+                return false;
+            }
+            if (node.has("success") && node.get("success").booleanValue()) {
+                LOGGER.trace("Recaptcha has successfully verified the request");
+                return true;
+            }
         }
         return false;
     }

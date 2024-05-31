@@ -7,6 +7,7 @@ import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationPrepareLogi
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyMultifactorWebflowConfigurer;
+import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -15,6 +16,8 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.actions.DefaultMultifactorAuthenticationDeviceProviderAction;
+import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.flow.authentication.FinalMultifactorAuthenticationTransactionWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.CasWebflowEventResolutionConfigurationContext;
@@ -147,6 +150,15 @@ class YubiKeyAuthenticationWebflowConfiguration {
             @Qualifier("yubiKeyAccountRegistry")
             final YubiKeyAccountRegistry yubiKeyAccountRegistry) {
             return new YubiKeyAccountSaveRegistrationAction(yubiKeyAccountRegistry);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "yubiKeyDeviceProviderAction")
+        public MultifactorAuthenticationDeviceProviderAction yubiKeyDeviceProviderAction(
+            @Qualifier("yubiKeyMultifactorAuthenticatorDeviceManager")
+            final MultifactorAuthenticationDeviceManager yubiKeyMultifactorAuthenticatorDeviceManager) {
+            return new DefaultMultifactorAuthenticationDeviceProviderAction(yubiKeyMultifactorAuthenticatorDeviceManager);
         }
     }
 

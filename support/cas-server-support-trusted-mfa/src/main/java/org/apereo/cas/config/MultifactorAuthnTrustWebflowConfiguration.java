@@ -10,13 +10,18 @@ import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDev
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.web.flow.DefaultMultifactorAuthenticationTrustedDeviceProviderAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationPrepareTrustDeviceViewAction;
+import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationRemoveTrustedDeviceAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationTrustProviderSelectionCriteria;
+import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationTrustedDeviceAccountProfileWebflowConfigurer;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustAction;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
+import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationTrustedDeviceProviderAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.actions.composite.MultifactorProviderSelectionCriteria;
@@ -30,6 +35,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
 /**
@@ -140,13 +147,59 @@ class MultifactorAuthnTrustWebflowConfiguration {
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.AccountManagement, enabledByDefault = false)
     @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
     static class MultifactorAuthnTrustAccountProfileWebflowConfiguration {
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "accountProfileMultifactorTrustedDeviceWebflowExecutionPlanConfigurer")
+        public CasWebflowExecutionPlanConfigurer accountProfileMultifactorTrustedDeviceWebflowExecutionPlanConfigurer(
+            @Qualifier("accountProfileMultifactorTrustedDeviceWebflowConfigurer")
+            final CasWebflowConfigurer accountProfileMultifactorTrustedDeviceWebflowConfigurer) {
+            return plan -> plan.registerWebflowConfigurer(accountProfileMultifactorTrustedDeviceWebflowConfigurer);
+        }
+        
+        @ConditionalOnMissingBean(name = "accountProfileMultifactorTrustedDeviceWebflowConfigurer")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public CasWebflowConfigurer accountProfileMultifactorTrustedDeviceWebflowConfigurer(
+            final CasConfigurationProperties casProperties,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry flowDefinitionRegistry,
+            @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
+            final FlowBuilderServices flowBuilderServices) {
+            return BeanSupplier.of(CasWebflowConfigurer.class)
+                .alwaysMatch()
+                .supply(() -> new MultifactorAuthenticationTrustedDeviceAccountProfileWebflowConfigurer(flowBuilderServices,
+                    flowDefinitionRegistry, applicationContext, casProperties))
+                .otherwiseProxy()
+                .get();
+        }
+
+
         @ConditionalOnMissingBean(name = "multifactorAuthenticationTrustedDeviceProviderAction")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationTrustedDeviceProviderAction multifactorAuthenticationTrustedDeviceProviderAction(
-            @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME) final MultifactorAuthenticationTrustStorage mfaTrustEngine,
+            @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
+            final MultifactorAuthenticationTrustStorage mfaTrustEngine,
             final ConfigurableApplicationContext applicationContext) {
             return new DefaultMultifactorAuthenticationTrustedDeviceProviderAction(applicationContext, mfaTrustEngine);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_MFA_TRUSTED_DEVICE)
+        public Action accountProfileRemoveMultifactorTrustedDeviceAction(
+            @Qualifier(MultifactorAuthenticationTrustStorage.BEAN_NAME)
+            final MultifactorAuthenticationTrustStorage mfaTrustEngine,
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return WebflowActionBeanSupplier.builder()
+                .withApplicationContext(applicationContext)
+                .withProperties(casProperties)
+                .withAction(() -> new MultifactorAuthenticationRemoveTrustedDeviceAction(applicationContext, mfaTrustEngine))
+                .withId(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_REMOVE_MFA_TRUSTED_DEVICE)
+                .build()
+                .get();
         }
     }
 }

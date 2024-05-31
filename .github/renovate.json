@@ -14,11 +14,12 @@
   ],
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
-      "automerge": true,
-      "ignoreTests": true,
-      "automergeType": "pr",
-      "automergeSchedule": ["at any time"]
+      "matchManagers": ["gradle", "maven"],
+      "enabled": false
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "enabled": true
     },
     {
       "matchFileNames": ["**/package.json"],

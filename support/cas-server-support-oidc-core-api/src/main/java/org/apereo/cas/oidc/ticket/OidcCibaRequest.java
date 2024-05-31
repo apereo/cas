@@ -1,8 +1,7 @@
 package org.apereo.cas.oidc.ticket;
 
-import org.apereo.cas.ticket.AuthenticationAwareTicket;
+import org.apereo.cas.ticket.OAuth20Token;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import java.util.Set;
 
 /**
  * This is {@link OidcCibaRequest}.
@@ -11,23 +10,28 @@ import java.util.Set;
  * @since 7.1.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface OidcCibaRequest extends AuthenticationAwareTicket {
+public interface OidcCibaRequest extends OAuth20Token {
     /**
      * Ticket prefix.
      */
     String PREFIX = "CIBA";
+    /**
+     * Gets encoded id.
+     *
+     * @return the encoded id
+     */
+    String getEncodedId();
 
     /**
-     * Get requested scopes requested at the time of issuing this code.
-     *
-     * @return requested scopes.
+     * Mark ticket ready.
      */
-    Set<String> getScopes();
+    OidcCibaRequest markTicketReady();
 
     /**
-     * Gets client id.
+     * Is this ticket and authentication request ready for CAS to
+     * start issuing tokens? This is most relevant for poll and ping delivery modes.
      *
-     * @return the client id
+     * @return true/false
      */
-    String getClientId();
+    boolean isReady();
 }

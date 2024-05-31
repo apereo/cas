@@ -6,6 +6,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDeviceBypassEvaluator;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustedDeviceNamingStrategy;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.trusted.web.flow.fingerprint.DeviceFingerprintStrategy;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
@@ -49,12 +50,16 @@ public class MultifactorAuthenticationPrepareTrustDeviceViewAction extends BaseC
         val service = WebUtils.getService(requestContext);
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
 
-        if (!storage.isAvailable() || bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authn)) {
+        val trustedDevicesDisabled = MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedDevicesDisabled(requestContext);
+        val publicWorkstation = WebUtils.isAuthenticatingAtPublicWorkstation(requestContext);
+
+        if (trustedDevicesDisabled || publicWorkstation || !storage.isAvailable()
+            || bypassEvaluator.shouldBypassTrustedDevice(registeredService, service, authn)) {
             LOGGER.debug("Trusted device registration store is unavailable or is disabled for [{}]", registeredService);
             return result(CasWebflowConstants.TRANSITION_ID_SKIP);
         }
         if (trustedProperties.getCore().isAutoAssignDeviceName()) {
-            WebUtils.getMultifactorAuthenticationTrustRecord(requestContext, MultifactorAuthenticationTrustBean.class)
+            MultifactorAuthenticationTrustUtils.getMultifactorAuthenticationTrustRecord(requestContext, MultifactorAuthenticationTrustBean.class)
                 .ifPresent(device -> {
                     val deviceName = namingStrategy.determineDeviceName(registeredService, service, request, authn);
                     LOGGER.debug("Auto-generated device name is [{}]", deviceName);

@@ -141,7 +141,7 @@ public class InternalJwtAccessTokenCipherExecutor extends JwtTicketCipherExecuto
                 val alg = StringUtils.defaultIfBlank(key.getAlgorithm(),
                     getSigningAlgorithmFor(key.getKey()));
                 getSigningOpHeaders().put(JsonWebKey.ALGORITHM_PARAMETER, alg);
-                return super.signWith(value, alg, signingKey);
+                return signWith(value, alg, signingKey);
             })
             .orElseGet(() -> super.sign(value, signingKey));
     }

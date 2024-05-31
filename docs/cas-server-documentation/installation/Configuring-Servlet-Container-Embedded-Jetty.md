@@ -11,4 +11,4 @@ category: Installation
 
 ### Embedded Jetty Container
 
-{% include_cached casproperties.html thirdPartyStartsWith="server.jetty" %}
+{% include_cached casproperties.html properties="cas.server.jetty" thirdPartyStartsWith="server.jetty" %}

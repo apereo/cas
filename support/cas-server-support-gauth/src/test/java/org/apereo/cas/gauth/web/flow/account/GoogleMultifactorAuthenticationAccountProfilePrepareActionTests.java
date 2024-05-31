@@ -5,6 +5,7 @@ import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -43,7 +44,17 @@ public class GoogleMultifactorAuthenticationAccountProfilePrepareActionTests {
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString()), context);
         val eventId = googleAccountProfilePrepareAction.execute(context);
         assertNull(eventId);
-        assertNotNull(WebUtils.getMultifactorAuthenticationProvider(context));
+        assertNotNull(MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(context));
         assertTrue(context.getFlowScope().contains("gauthAccountProfileRegistrationEnabled"));
+    }
+
+    @Test
+    void verifyRegistrationDisabled() throws Exception {
+        val context = MockRequestContext.create(applicationContext);
+        WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString()), context);
+        MultifactorAuthenticationWebflowUtils.putMultifactorDeviceRegistrationEnabled(context, false);
+        googleAccountProfilePrepareAction.execute(context);
+        assertNotNull(MultifactorAuthenticationWebflowUtils.getMultifactorAuthenticationProvider(context));
+        assertFalse(context.getFlowScope().getBoolean("gauthAccountProfileRegistrationEnabled"));
     }
 }

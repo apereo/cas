@@ -1,7 +1,7 @@
 package org.apereo.cas.uma;
 
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.apereo.cas.ticket.IdTokenGeneratorService;
+import org.apereo.cas.ticket.idtoken.IdTokenGeneratorService;
 import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionExaminer;
 import org.apereo.cas.uma.ticket.resource.repository.ResourceSetRepository;
 

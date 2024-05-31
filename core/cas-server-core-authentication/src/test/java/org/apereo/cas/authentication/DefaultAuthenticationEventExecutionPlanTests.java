@@ -2,16 +2,21 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
+import org.apereo.cas.authentication.handler.ByCredentialSourceAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.handler.RegisteredServiceAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.metadata.RememberMeAuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.policy.AllCredentialsValidatedAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.authentication.principal.resolvers.PrincipalResolutionContext;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.configuration.model.core.ticket.RememberMeAuthenticationProperties;
+import org.apereo.cas.services.RegisteredServiceAuthenticationPolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
@@ -26,6 +31,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -123,4 +129,62 @@ class DefaultAuthenticationEventExecutionPlanTests {
         assertNotNull(input.getAuthenticationHandlersBy(handler -> false));
     }
 
+    @Test
+    void verifyByCredentialType() throws Throwable {
+        val h1 = new SimpleTestUsernamePasswordAuthenticationHandler("Handler1");
+        val h2 = new SimpleTestUsernamePasswordAuthenticationHandler("Handler2");
+        val plan = new DefaultAuthenticationEventExecutionPlan();
+        assertTrue(plan.registerAuthenticationHandler(h1));
+        assertTrue(plan.registerAuthenticationHandler(h2));
+
+        val credential = new UsernamePasswordCredential();
+        credential.setUsername(UUID.randomUUID().toString());
+        credential.assignPassword(credential.getUsername());
+        credential.setSource(h1.getName());
+        
+        val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory()
+            .newTransaction(CoreAuthenticationTestUtils.getWebApplicationService(), credential);
+        
+        val handlers = plan.getAuthenticationHandlers(transaction);
+        assertEquals(1, handlers.size());
+        assertEquals(h1, handlers.iterator().next());
+    }
+
+    @Test
+    void verifyByCredentialTypeAndServiceByResolvers() throws Throwable {
+        val h1 = new SimpleTestUsernamePasswordAuthenticationHandler("Handler1");
+        val h2 = new SimpleTestUsernamePasswordAuthenticationHandler("Handler2");
+        val h3 = mock(MultifactorAuthenticationHandler.class);
+        when(h3.getName()).thenReturn("Handler3");
+        
+        val plan = new DefaultAuthenticationEventExecutionPlan();
+        assertTrue(plan.registerAuthenticationHandler(h1));
+        assertTrue(plan.registerAuthenticationHandler(h2));
+        assertTrue(plan.registerAuthenticationHandler(h3));
+
+        val credential = new UsernamePasswordCredential();
+        credential.setUsername(UUID.randomUUID().toString());
+        credential.assignPassword(credential.getUsername());
+        credential.setSource(h1.getName());
+
+        val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
+        val authnPolicy = mock(RegisteredServiceAuthenticationPolicy.class);
+        when(authnPolicy.getRequiredAuthenticationHandlers()).thenReturn(Set.of(h2.getName()));
+        when(registeredService.getAuthenticationPolicy()).thenReturn(authnPolicy);
+        
+        val service = CoreAuthenticationTestUtils.getWebApplicationService();
+        val transaction = CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(service, credential);
+        when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
+
+        val serviceSelectionPlan = new DefaultAuthenticationServiceSelectionPlan();
+        serviceSelectionPlan.registerStrategy(new DefaultAuthenticationServiceSelectionStrategy());
+        
+        plan.registerAuthenticationHandlerResolver(new ByCredentialSourceAuthenticationHandlerResolver());
+        plan.registerAuthenticationHandlerResolver(new RegisteredServiceAuthenticationHandlerResolver(servicesManager, serviceSelectionPlan));
+        
+        val handlers = plan.getAuthenticationHandlers(transaction);
+        assertEquals(2, handlers.size());
+        assertTrue(handlers.containsAll(Set.of(h1, h3)));
+    }
+    
 }

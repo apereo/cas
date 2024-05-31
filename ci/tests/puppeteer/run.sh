@@ -27,13 +27,13 @@ CYAN="\e[36m"
 ENDCOLOR="\e[0m"
 
 function printcyan() {
-  printf "💬 ${CYAN}$1${ENDCOLOR}\n"
+  printf "🔷 ${CYAN}$1${ENDCOLOR}\n"
 }
 function printgreen() {
   printf "☘️ ${GREEN}$1${ENDCOLOR}\n"
 }
 function printyellow() {
-  printf "🧨 ${YELLOW}$1${ENDCOLOR}\n"
+  printf "⚠️ ${YELLOW}$1${ENDCOLOR}\n"
 }
 function printred() {
   printf "🔥 ${RED}$1${ENDCOLOR}\n"
@@ -445,7 +445,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   PUPPETEER_BUILD_CTR=${PUPPETEER_BUILD_CTR:-$DEFAULT_PUPPETEER_BUILD_CTR}
 
   FLAGS=$(echo $BUILDFLAGS | sed 's/ //')
-  printgreen "\nBuilding CAS found in $PWD for dependencies [${dependencies}] with flags [${FLAGS}]"
+  printgreen "Building CAS found in $PWD for dependencies [${dependencies}] with flags [${FLAGS}]"
   
   if [[ -d ./webapp/cas-server-webapp-${project}/build/libs ]]; then
     rm -rf ./webapp/cas-server-webapp-${project}/build/libs
@@ -460,7 +460,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   BUILD_COMMAND=$(printf '%s' \
       "./gradlew ${BUILD_TASKS} -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc --build-cache --configure-on-demand --parallel \
       ${BUILD_SCRIPT} ${DAEMON} -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS}")
-  printcyan "Executing build command in the ${BUILD_SPAWN}:\n\n$BUILD_COMMAND"
+  printcyan "Executing build command in the ${BUILD_SPAWN}:\n\n${BUILD_COMMAND}"
 
   if [[ "${BUILD_SPAWN}" == "background" ]]; then
     printcyan "Launching build in background to make observing slow builds easier..."
@@ -762,7 +762,7 @@ if [[ "${DRYRUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" 
     while [ $retry_count -lt $max_retries ]; do
         echo -e "**************************************************************************"
         echo -e "Attempt: #${retry_count}: Running ${scriptPath}\n"
-        node --unhandled-rejections=strict ${scriptPath} ${config}
+        node --unhandled-rejections=strict --no-experimental-websocket ${scriptPath} ${config}
         RC=$?
 
         if [[ $RC -ne 0 ]]; then
@@ -791,7 +791,7 @@ if [[ "${DRYRUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" 
   if [[ $RC -ne 0 ]]; then
     printred "Test scenario [${scenarioName}] has failed with exit code ${RC}.\n"
   else
-    printgreen "Test scenario [${scenarioName}] has passed successfully!\n"
+    printgreen "Test scenario [${scenarioName}] has passed successfully.\n"
   fi
 fi
 
@@ -802,7 +802,7 @@ if [[ "${RERUN}" != "true" ]]; then
   fi
 
   if [[ "${CI}" != "true" && "${QUIT_QUIETLY}" == "false" ]]; then
-    printgreen "Hit enter to clean up scenario ${scenario}\n"
+    printgreen "Hit Enter to clean up scenario ${scenario}\n"
     read -r
   fi
 

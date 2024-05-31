@@ -132,4 +132,12 @@ public interface Authentication extends Serializable {
      * @return true/false
      */
     boolean isEqualTo(Authentication auth2);
+
+    /**
+     * Gets attribute.
+     *
+     * @param name the name
+     * @return the attribute
+     */
+    Object getSingleValuedAttribute(String name);
 }

@@ -28,8 +28,6 @@ function validateProjectDocumentation() {
   fi
 }
 
-clear
-
 GRADLE_BUILD_OPTIONS="-q --no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache "
 
 REPOSITORY_NAME="apereo/cas"

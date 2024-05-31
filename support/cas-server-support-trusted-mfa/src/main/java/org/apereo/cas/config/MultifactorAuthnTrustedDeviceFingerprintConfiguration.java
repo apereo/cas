@@ -149,7 +149,7 @@ class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
                                                                    final CasConfigurationProperties casProperties) {
             val properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint();
             val activeExtractors = extractors.stream().filter(BeanSupplier::isNotProxy).collect(Collectors.toList());
-            return new DefaultDeviceFingerprintStrategy(activeExtractors, properties.getComponentSeparator());
+            return new DefaultDeviceFingerprintStrategy(activeExtractors, properties.getCore().getComponentSeparator());
         }
 
     }

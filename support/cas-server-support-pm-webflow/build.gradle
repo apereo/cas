@@ -33,10 +33,15 @@ dependencies {
     implementation project(":support:cas-server-support-pm-core")
     implementation project(":support:cas-server-support-token-core-api")
 
+    compileOnly project(":support:cas-server-support-trusted-mfa-core")
+    compileOnly project(":support:cas-server-support-trusted-mfa")
+
     implementation libraries.mail
 
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-simple-mfa")
+    testImplementation project(":support:cas-server-support-trusted-mfa-core")
+    testImplementation project(":support:cas-server-support-trusted-mfa")
 
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")
@@ -50,6 +55,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-notifications")
 
+
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
@@ -57,5 +63,6 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-mfa-api", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
 }

@@ -1,5 +1,5 @@
 {
-  "dependencies": "oidc",
+  "dependencies": "oidc,reports",
   "conditions": {
     "docker": "true"
   },
@@ -7,9 +7,16 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
+    "--cas.http-client.host-name-verifier=none",
+    
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",
 
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+    
+    "--cas.authn.oidc.ciba.max-time-to-live-in-seconds=PT10M",
     "--cas.authn.oidc.ciba.verification.delay=PT1S",
     "--cas.authn.oidc.ciba.verification.mail.html=false",
     "--cas.authn.oidc.ciba.verification.mail.from=cas@apereo.org",

@@ -8,7 +8,6 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.binding.mapping.impl.DefaultMapping;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.util.StringUtils;
@@ -107,25 +106,25 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
 
                 val subflowState = createSubflowState(flow, providerId, providerId);
                 val subflowMappings = getDefaultAttributeMappings()
-                    .map(attr -> new DefaultMapping(createExpression("flowScope." + attr), createExpression(attr)))
+                    .map(attr -> createFlowMapping("flowScope." + attr, attr))
                     .collect(Collectors.toList());
-                subflowMappings.add(new DefaultMapping(createExpression("flowScope." + CasWebflowConstants.VAR_ID_CREDENTIAL),
-                    createExpression("parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL))));
+                subflowMappings.add(createFlowMapping("flowScope." + CasWebflowConstants.VAR_ID_CREDENTIAL,
+                    "parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL)));
 
                 multifactorAuthenticationFlowCustomizers.forEach(customizer -> customizer.getWebflowAttributeMappings()
-                    .forEach(key -> subflowMappings.add(new DefaultMapping(createExpression("flowScope." + key), createExpression(key)))));
+                    .forEach(key -> subflowMappings.add(createFlowMapping("flowScope." + key, key))));
                 val inputMapper = createFlowInputMapper(subflowMappings);
                 val subflowMapper = createSubflowAttributeMapper(inputMapper, null);
                 subflowState.setAttributeMapper(subflowMapper);
 
                 val flowMappings = getDefaultAttributeMappings()
-                    .map(attr -> new DefaultMapping(createExpression(attr), createExpression("flowScope." + attr)))
+                    .map(attr -> createFlowMapping(attr, "flowScope." + attr))
                     .collect(Collectors.toList());
-                flowMappings.add(new DefaultMapping(createExpression("parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL)),
-                    createExpression("flowScope.parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL))));
+                flowMappings.add(createFlowMapping("parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL),
+                    "flowScope.parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL)));
                 
                 multifactorAuthenticationFlowCustomizers.forEach(customizer -> customizer.getWebflowAttributeMappings()
-                    .forEach(key -> flowMappings.add(new DefaultMapping(createExpression(key), createExpression("flowScope." + key)))));
+                    .forEach(key -> flowMappings.add(createFlowMapping(key, "flowScope." + key))));
                 createFlowInputMapper(flowMappings, mfaFlow);
 
                 val states = getCandidateStatesForMultifactorAuthentication();
@@ -145,6 +144,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
 
     private static Stream<String> getDefaultAttributeMappings() {
         return Stream.of(
+            CasWebflowConstants.ATTRIBUTE_WARN_ON_REDIRECT,
             CasWebflowConstants.ATTRIBUTE_PUBLIC_WORKSTATION,
             CasWebflowConstants.ATTRIBUTE_TARGET_TRANSITION,
             CasWebflowConstants.ATTRIBUTE_AUTHENTICATION_RESULT,

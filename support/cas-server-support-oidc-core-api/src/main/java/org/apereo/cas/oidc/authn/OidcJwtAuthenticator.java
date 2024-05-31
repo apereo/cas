@@ -146,7 +146,7 @@ public class OidcJwtAuthenticator implements Authenticator {
             return givenCode == null || givenCode.isExpired() ? null : givenCode;
         });
         val clientId = oauthCode == null ? webContext.getRequestParameter(OAuth20Constants.CLIENT_ID).orElse(null) : oauthCode.getClientId();
-        val registeredService = (OidcRegisteredService) OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId);
+        val registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(servicesManager, clientId, OidcRegisteredService.class);
         val audit = AuditableContext.builder()
             .registeredService(registeredService)
             .build();

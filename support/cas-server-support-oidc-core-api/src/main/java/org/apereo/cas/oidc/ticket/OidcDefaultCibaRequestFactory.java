@@ -8,10 +8,14 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
+import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**
  * This is {@link OidcDefaultCibaRequestFactory}.
@@ -29,6 +33,8 @@ public class OidcDefaultCibaRequestFactory implements OidcCibaRequestFactory {
     @Getter
     protected final ExpirationPolicyBuilder<OidcCibaRequest> expirationPolicyBuilder;
 
+    private final CipherExecutor<byte[], byte[]> cipherExecutor;
+    
     @Override
     public Class<? extends Ticket> getTicketType() {
         return OidcCibaRequest.class;
@@ -53,6 +59,20 @@ public class OidcDefaultCibaRequestFactory implements OidcCibaRequestFactory {
             bindingMessage -> authenticationBuilder.addAttribute(OidcConstants.BINDING_MESSAGE, bindingMessage));
         
         val authentication = authenticationBuilder.build();
-        return new OidcDefaultCibaRequest(id, authentication, expirationPolicy, holder.getScope(), holder.getClientId());
+        return new OidcDefaultCibaRequest(id, authentication, expirationPolicy,
+            holder.getScope(), holder.getClientId(), encodeCibaRequestId(id));
     }
+
+    @Override
+    public String decodeId(final String requestId) {
+        val decoded = EncodingUtils.decodeUrlSafeBase64(requestId);
+        return new String((byte[]) cipherExecutor.withSigningDisabled().decode(decoded), StandardCharsets.UTF_8);
+    }
+    
+    private String encodeCibaRequestId(final String id) {
+        val encodedId = (byte[]) cipherExecutor.withSigningDisabled().encode(id.getBytes(StandardCharsets.UTF_8));
+        return Objects.requireNonNull(EncodingUtils.encodeUrlSafeBase64(encodedId));
+    }
+
+    
 }

@@ -47,6 +47,7 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.mgmr.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.mgmr.DefaultCookieSameSitePolicy;
+import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -234,25 +235,36 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactoryCache")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public Cache<String, Collection<IndirectClient>> pac4jDelegatedClientFactoryCache(
+            final CasConfigurationProperties casProperties) {
+            val core = casProperties.getAuthn().getPac4j().getCore();
+            return Caffeine.newBuilder()
+                .maximumSize(core.getCacheSize())
+                .expireAfterWrite(Beans.newDuration(core.getCacheDuration()))
+                .build();
+        }
+        
+        @Bean
         @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public DelegatedIdentityProviderFactory pac4jDelegatedClientFactory(
-            @Qualifier(DelegatedIdentityProviderFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY) final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory,
+            @Qualifier("pac4jDelegatedClientFactoryCache")
+            final Cache<String, Collection<IndirectClient>> clientsCache,
+            @Qualifier(DelegatedIdentityProviderFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)
+            final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory,
             final CasConfigurationProperties casProperties,
             final ObjectProvider<List<DelegatedClientFactoryCustomizer>> customizerList,
-            @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext) {
-
-            val core = casProperties.getAuthn().getPac4j().getCore();
-            val clientsCache = Caffeine.newBuilder()
-                .maximumSize(core.getCacheSize())
-                .expireAfterAccess(Beans.newDuration(core.getCacheDuration()))
-                .<String, Collection<IndirectClient>>build();
+            @Qualifier(CasSSLContext.BEAN_NAME)
+            final CasSSLContext casSslContext) {
 
             val customizers = Optional.ofNullable(customizerList.getIfAvailable())
                 .map(result -> {
                     AnnotationAwareOrderComparator.sortIfNecessary(result);
                     return result;
-                }).orElseGet(() -> new ArrayList<>(0));
+                })
+                .orElseGet(() -> new ArrayList<>(0));
 
             if (StringUtils.isNotBlank(casProperties.getAuthn().getPac4j().getRest().getUrl())) {
                 return new RestfulDelegatedIdentityProviderFactory(customizers, casSslContext,

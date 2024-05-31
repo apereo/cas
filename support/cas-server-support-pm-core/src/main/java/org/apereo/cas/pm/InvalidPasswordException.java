@@ -1,8 +1,8 @@
 package org.apereo.cas.pm;
 
+import org.apereo.cas.authentication.RootCasException;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ArrayUtils;
 import java.io.Serial;
 
 /**
@@ -13,22 +13,29 @@ import java.io.Serial;
  * @since 5.2.0
  */
 @Getter
-@NoArgsConstructor(force = true)
-@RequiredArgsConstructor
-public class InvalidPasswordException extends RuntimeException {
+public class InvalidPasswordException extends RootCasException {
 
     @Serial
     private static final long serialVersionUID = 458954862481279L;
 
-    private final String code;
+    private static final String CODE = "pm.passwordFailedCriteria";
 
     private final String validationMessage;
 
     private final Object[] params;
 
+    public InvalidPasswordException() {
+        this(null, ArrayUtils.EMPTY_OBJECT_ARRAY);
+    }
+
+    public InvalidPasswordException(final String validationMessage, final Object[] params) {
+        super(CODE);
+        this.validationMessage = validationMessage;
+        this.params = params;
+    }
+
     protected InvalidPasswordException(final String message) {
-        super(message);
-        this.code = "pm.passwordFailedCriteria";
+        super(CODE, message);
         this.validationMessage = null;
         this.params = null;
     }

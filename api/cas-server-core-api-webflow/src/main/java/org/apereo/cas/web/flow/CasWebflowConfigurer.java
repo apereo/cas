@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.springframework.binding.expression.Expression;
+import org.springframework.binding.mapping.Mapping;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.action.EvaluateAction;
@@ -376,15 +377,29 @@ public interface CasWebflowConfigurer extends Ordered {
                                     Action entryAction);
 
     /**
+     * Create subflow state.
+     *
+     * @param flow        the flow
+     * @param id          the id
+     * @param subflow     the subflow
+     * @param registry    the registry
+     * @param entryAction the entry action
+     * @return the subflow state
+     */
+    SubflowState createSubflowState(Flow flow, String id, String subflow,
+                                    FlowDefinitionRegistry registry, Action entryAction);
+
+    /**
      * Create subflow state subflow state.
      *
      * @param flow    the flow
-     * @param id      the id
+     * @param stateId the state id
      * @param subflow the subflow
      * @return the subflow state
      */
-    SubflowState createSubflowState(Flow flow, String id, String subflow);
-
+    default SubflowState createSubflowState(final Flow flow, final String stateId, final String subflow) {
+        return createSubflowState(flow, stateId, subflow, null);
+    }
 
     /**
      * Build flow.
@@ -694,4 +709,35 @@ public interface CasWebflowConfigurer extends Ordered {
      * @return the flow
      */
     Flow getFlow(FlowDefinitionRegistry registry, String id);
+
+    /**
+     * Create mapping to a (subflow) state.
+     *
+     * @param targetExpression the target expression
+     * @param sourceExpression the source expression
+     * @param required         the required
+     * @param type             the type
+     * @return the default mapping
+     */
+    Mapping createFlowMapping(String sourceExpression, String targetExpression,
+                              boolean required, Class type);
+
+    /**
+     * Gets transitionable state.
+     *
+     * @param <T>     the type parameter
+     * @param flow    the flow
+     * @param stateId the state id
+     * @param clazz   the clazz
+     * @return the transitionable state
+     */
+    <T extends TransitionableState> T getTransitionableState(Flow flow, String stateId, Class<T> clazz);
+
+    /**
+     * Create external redirect view factory.
+     *
+     * @param expressionId the expression id
+     * @return the view factory
+     */
+    ViewFactory createExternalRedirectViewFactory(String expressionId);
 }

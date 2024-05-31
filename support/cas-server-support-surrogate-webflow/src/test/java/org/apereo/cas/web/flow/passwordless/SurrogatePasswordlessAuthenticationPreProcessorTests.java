@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.config.CasSurrogateAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.impl.token.PasswordlessAuthenticationToken;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.action.BaseSurrogateAuthenticationTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -19,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -39,6 +42,11 @@ class SurrogatePasswordlessAuthenticationPreProcessorTests extends BaseSurrogate
     @Qualifier("surrogatePasswordlessAuthenticationPreProcessor")
     private PasswordlessAuthenticationPreProcessor surrogatePasswordlessAuthenticationPreProcessor;
 
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    private ServicesManager servicesManager;
+
+    
     @Test
     void verifyOperation() throws Throwable {
         val uid = "casuser";
@@ -46,8 +54,11 @@ class SurrogatePasswordlessAuthenticationPreProcessorTests extends BaseSurrogate
         val account = PasswordlessUserAccount.builder().username(uid).build();
 
         val credential = new BasicIdentifiableCredential(uid);
+        val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
+        servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
+
         val results = surrogatePasswordlessAuthenticationPreProcessor.process(builder, account,
-            RegisteredServiceTestUtils.getService(), credential,
+            service, credential,
             PasswordlessAuthenticationToken.builder().username(uid).build().property("surrogateUsername", "cassurrogate"));
         assertTrue(credential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class).isPresent());
         val authns = new ArrayList<>(results.getAuthentications());

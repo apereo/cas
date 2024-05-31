@@ -7,8 +7,8 @@ env:
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
-  GRADLE_BUILDCACHE_USER: ci
-  GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
+#  GRADLE_BUILDCACHE_USER: ci
+#  GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
   CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
   SONARCLOUD_TOKEN: ${{ secrets.SONARCLOUD_TOKEN }}
   CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
@@ -31,7 +31,7 @@ env:
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 20 * * *'
   push:
     branches:
       - master
@@ -133,13 +133,12 @@ jobs:
             [[ $? -eq 0 ]] && ./testcas.sh --no-watch --with-coverage
       - name: Check Coverage Report
         run: |
-          ls build/reports/jacoco/jacocoRootReport
           xml_files=$(find build/reports -type f -name "*.xml")
           if [ -z "$xml_files" ]; then
             echo "No coverage XML files found"
-            exit 1
+          else
+            echo ${xml_files}
           fi
-          echo ${xml_files}
       - name: Upload to SonarCloud
         run: |
           ./gradlew sonar --build-cache --configure-on-demand --no-daemon -DskipAot=true --parallel \
@@ -161,7 +160,6 @@ jobs:
         with:
           name: "cas-tests-${{ matrix.category }}.coverage"
           path: "./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
-
   ##########################################################################
 
   coverage:

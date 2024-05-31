@@ -64,7 +64,7 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
     private boolean enabled = true;
 
     public JpaTicketRegistryProperties() {
-        super.setUrl("jdbc:hsqldb:mem:cas-ticket-registry");
+        setUrl("jdbc:hsqldb:mem:cas-ticket-registry");
         this.crypto.setEnabled(false);
     }
 }

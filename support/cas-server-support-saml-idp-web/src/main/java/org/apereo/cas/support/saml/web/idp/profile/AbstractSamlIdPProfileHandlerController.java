@@ -38,6 +38,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hc.core5.net.URIBuilder;
@@ -197,9 +198,15 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         LOGGER.debug("Created service url [{}]", DigestUtils.abbreviate(serviceUrl));
 
         val properties = configurationContext.getCasProperties();
-        val urlToRedirectTo = constructRedirectUrl(properties.getServer().getLoginUrl(),
-            serviceUrl, Boolean.TRUE.equals(authnRequest.isForceAuthn()), Boolean.TRUE.equals(authnRequest.isPassive()));
-        LOGGER.debug("Redirecting SAML authN request to [{}]", urlToRedirectTo);
+        val urlToRedirectTo = constructRedirectUrl(
+            serviceUrl,
+            Map.of(
+                SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, StringUtils.defaultString(fetchRelayState(request, pair)),
+                CasProtocolConstants.PARAMETER_RENEW, BooleanUtils.toString(BooleanUtils.toBoolean(authnRequest.isForceAuthn()), "true", StringUtils.EMPTY),
+                CasProtocolConstants.PARAMETER_GATEWAY, BooleanUtils.toString(BooleanUtils.toBoolean(authnRequest.isPassive()), "true", StringUtils.EMPTY)
+            )
+        );
+        LOGGER.debug("Redirecting SAML authentication request to [{}]", urlToRedirectTo);
 
         val type = properties.getAuthn().getSamlIdp().getCore().getSessionStorageType();
         if (type == SessionStorageTypes.BROWSER_STORAGE) {
@@ -217,13 +224,16 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         return mv;
     }
 
-    private static String constructRedirectUrl(final String casServerLoginUrl,
-                                               final String serviceUrl, final boolean renew,
-                                               final boolean gateway) {
-        return casServerLoginUrl + '?' + CasProtocolConstants.PARAMETER_SERVICE + '='
-            + EncodingUtils.urlEncode(serviceUrl)
-            + (renew ? '&' + CasProtocolConstants.PARAMETER_RENEW + "=true" : StringUtils.EMPTY)
-            + (gateway ? '&' + CasProtocolConstants.PARAMETER_GATEWAY + "=true" : StringUtils.EMPTY);
+    private String constructRedirectUrl(final String serviceUrl, final Map<String, String> parameters) throws Exception {
+        val properties = configurationContext.getCasProperties();
+        val urlBuilder = new URIBuilder(properties.getServer().getLoginUrl());
+        urlBuilder.addParameter(CasProtocolConstants.PARAMETER_SERVICE, serviceUrl);
+        parameters
+            .entrySet()
+            .stream()
+            .filter(entry -> StringUtils.isNotBlank(entry.getValue()))
+            .forEach(entry -> urlBuilder.addParameter(entry.getKey(), EncodingUtils.urlEncode(entry.getValue())));
+        return urlBuilder.build().toASCIIString();
     }
 
     protected String constructServiceUrl(final HttpServletRequest request, final HttpServletResponse response,
@@ -317,10 +327,15 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         final HttpServletRequest request,
         final HttpServletResponse response,
         final Pair<? extends RequestAbstractType, MessageContext> authnContext) {
-        val relayState = Optional.ofNullable(SAMLBindingSupport.getRelayState(authnContext.getValue()))
-            .orElseGet(() -> request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
+        val relayState = fetchRelayState(request, authnContext);
         val messageContext = bindRelayStateParameter(request, response, authnContext, relayState);
         return Pair.of(authnContext.getLeft(), messageContext);
+    }
+
+    private static String fetchRelayState(final HttpServletRequest request,
+                                          final Pair<? extends SignableSAMLObject, MessageContext> authnContext) {
+        return Optional.ofNullable(SAMLBindingSupport.getRelayState(authnContext.getValue()))
+            .orElseGet(() -> request.getParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE));
     }
 
     protected Optional<TicketGrantingTicket> singleSignOnSessionExists(
@@ -502,7 +517,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
                 .orElseThrow(() -> new IllegalArgumentException("SAML2 authentication request cannot be determined from the CAS session store. "
                     + "This typically means that the original SAML2 authentication request that was submitted to CAS via a SAML2 service provider "
                     + "cannot be retrieved and restored after an authentication attempt. If you are running a multi-node CAS deployment, you may "
-                    + "need to opt for a different session storage mechanism that what is configured now: %s"
+                    + "need to opt for a different session storage mechanism than what is configured now: %s"
                     .formatted(configurationContext.getSessionStore().getClass().getName())));
         });
     }

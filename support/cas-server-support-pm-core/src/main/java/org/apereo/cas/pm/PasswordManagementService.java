@@ -29,7 +29,7 @@ public interface PasswordManagementService {
     String PARAMETER_PASSWORD_RESET_TOKEN = "pswdrst";
 
     /**
-     * Flowscope param name for token.
+     * FlowScope param name for token.
      */
     String PARAMETER_TOKEN = "token";
 

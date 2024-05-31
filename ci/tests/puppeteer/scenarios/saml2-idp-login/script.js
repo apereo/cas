@@ -20,7 +20,7 @@ async function normalAuthenticationFlow(context) {
     await cas.sleep(1000);
 
     await cas.log("Removing cached metadata for service providers");
-    await cas.doRequest("https://localhost:8443/cas/actuator/samlIdPRegisteredServiceMetadataCache", "DELETE", {}, 204);
+    await cas.doDelete("https://localhost:8443/cas/actuator/samlIdPRegisteredServiceMetadataCache");
     const entityId = "http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/default-sp";
     const endpoints = ["health", `samlIdPRegisteredServiceMetadataCache?serviceId=Sample&entityId=${entityId}`];
     const baseUrl = "https://localhost:8443/cas/actuator/";
