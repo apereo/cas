@@ -11,6 +11,11 @@ import org.apereo.cas.ticket.Ticket;
 public interface TicketRegistryCleaner {
 
     /**
+     * The bean name.
+     */
+    String BEAN_NAME = "ticketRegistryCleaner";
+
+    /**
      * Clean the ticket registry by collecting
      * tickets in the storage unit that may be expired.
      *

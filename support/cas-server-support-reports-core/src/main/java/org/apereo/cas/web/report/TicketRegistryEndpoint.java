@@ -2,6 +2,7 @@ package org.apereo.cas.web.report;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistryQueryCriteria;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
@@ -10,14 +11,18 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link TicketRegistryEndpoint}.
@@ -30,15 +35,18 @@ import java.util.List;
 @Getter
 public class TicketRegistryEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<TicketRegistry> ticketRegistryProvider;
+    private final ObjectProvider<TicketRegistryCleaner> ticketRegistryCleanerProvider;
     private final ObjectProvider<TicketRegistrySupport> ticketRegistrySupportProvider;
 
     public TicketRegistryEndpoint(final CasConfigurationProperties casProperties,
                                   final ConfigurableApplicationContext applicationContext,
                                   final ObjectProvider<TicketRegistry> ticketRegistryProvider,
+                                  final ObjectProvider<TicketRegistryCleaner> ticketRegistryCleanerProvider,
                                   final ObjectProvider<TicketRegistrySupport> ticketRegistrySupportProvider) {
         super(casProperties, applicationContext);
         this.ticketRegistryProvider = ticketRegistryProvider;
         this.ticketRegistrySupportProvider = ticketRegistrySupportProvider;
+        this.ticketRegistryCleanerProvider = ticketRegistryCleanerProvider;
     }
 
     /**
@@ -69,5 +77,24 @@ public class TicketRegistryEndpoint extends BaseCasRestActuatorEndpoint {
         })
     public List<?> query(@Valid @ModelAttribute final TicketRegistryQueryCriteria criteria) {
         return ticketRegistryProvider.getObject().query(criteria);
+    }
+
+    /**
+     * Clean the ticket registry.
+     */
+    @DeleteMapping(
+        path = "/clean",
+        produces = {
+            MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+            MEDIA_TYPE_SPRING_BOOT_V3_JSON,
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MediaType.APPLICATION_JSON_VALUE,
+            MEDIA_TYPE_CAS_YAML
+        })
+    @Operation(summary = "Clean the ticket registry on demand particularly when the cleaner schedule "
+        + "is turned off and you wish to force a cleanup manually via your own scheduler")
+    public ResponseEntity clean() {
+        val count = ticketRegistryCleanerProvider.getObject().clean();
+        return ResponseEntity.ok(Map.of("count", count));
     }
 }

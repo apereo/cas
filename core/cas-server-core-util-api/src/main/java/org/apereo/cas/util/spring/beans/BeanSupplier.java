@@ -159,7 +159,18 @@ public interface BeanSupplier<T> extends Supplier<T> {
      *
      * @return the bean supplier
      */
-    BeanSupplier<T> otherwiseProxy();
+    default BeanSupplier<T> otherwiseProxy() {
+        return otherwiseProxy(null);
+    }
+
+    /**
+     * Otherwise proxy bean supplier.
+     *
+     * @param beforeCallback the callback to execute before proxy is created
+     * @return the bean supplier
+     */
+    BeanSupplier<T> otherwiseProxy(Consumer<T> beforeCallback);
+    
     /**
      * Create a null bean.
      *
@@ -214,7 +225,10 @@ public interface BeanSupplier<T> extends Supplier<T> {
 
         @Override
         @CanIgnoreReturnValue
-        public BeanSupplier<T> otherwiseProxy() {
+        public BeanSupplier<T> otherwiseProxy(final Consumer<T> beforeCallback) {
+            if (beforeCallback != null) {
+                beforeCallback.accept(null);
+            }
             return otherwise(new ProxiedBeanSupplier<>(this.clazz));
         }
 

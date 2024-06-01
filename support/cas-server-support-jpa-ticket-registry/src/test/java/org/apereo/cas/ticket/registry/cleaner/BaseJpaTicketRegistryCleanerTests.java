@@ -87,7 +87,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     private TicketRegistry ticketRegistry;
 
     @Autowired
-    @Qualifier("ticketRegistryCleaner")
+    @Qualifier(TicketRegistryCleaner.BEAN_NAME)
     private TicketRegistryCleaner ticketRegistryCleaner;
 
     @BeforeEach
@@ -238,7 +238,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
                 ticketRegistryCleaner.clean();
             }
         };
-        val cleanerTimer = new Timer("TicketRegistryCleaner");
+        val cleanerTimer = new Timer("TicketRegistryCleanerTimer");
         cleanerTimer.scheduleAtFixedRate(cleanerTask, 10, 5);
 
         Thread.sleep(1000 * 15);
