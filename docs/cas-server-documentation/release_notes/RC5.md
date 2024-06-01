@@ -73,6 +73,7 @@ cas.[path-to-configuration-key].crypto.alg=A128CBC-HS256
 ## Other Stuff
 
 - ID token `jti` claims in [OpenID Connect](../authentication/OIDC-Authentication.html) are no longer ticket (granting-ticket) identifiers but are instead digested using `SHA-512`.
+- The `ticketRegistry` [actuator endpoint](../ticketing/Configuring-Ticketing-Components.html) now offers the ability to run the ticket registry cleaner task on-demand.
 
 ## Library Upgrades
 

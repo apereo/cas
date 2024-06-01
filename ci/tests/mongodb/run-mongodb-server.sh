@@ -7,7 +7,7 @@ function runscript {
     return 0;
 }
 
-export DOCKER_IMAGE="mongo:7.0.9"
+export DOCKER_IMAGE="mongo:7.0.11"
 echo "Running MongoDb docker image..."
 docker stop mongodb-server || true && docker rm mongodb-server || true
 docker run --rm -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=root \

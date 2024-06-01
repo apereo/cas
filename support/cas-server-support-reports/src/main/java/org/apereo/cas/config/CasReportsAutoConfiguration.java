@@ -18,6 +18,7 @@ import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -337,9 +338,11 @@ public class CasReportsAutoConfiguration {
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final ObjectProvider<TicketRegistrySupport> ticketRegistrySupport,
             @Qualifier(TicketRegistry.BEAN_NAME)
-            final ObjectProvider<TicketRegistry> ticketRegistry) {
+            final ObjectProvider<TicketRegistry> ticketRegistry,
+            @Qualifier(TicketRegistryCleaner.BEAN_NAME)
+            final ObjectProvider<TicketRegistryCleaner> ticketRegistryCleaner) {
             return new TicketRegistryEndpoint(casProperties, applicationContext,
-                ticketRegistry, ticketRegistrySupport);
+                ticketRegistry, ticketRegistryCleaner, ticketRegistrySupport);
         }
 
         @Bean
