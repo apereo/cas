@@ -85,6 +85,7 @@ cas.[path-to-configuration-key].crypto.alg=A128CBC-HS256
 - Spring Boot
 - Spring Cloud
 - Google Cloud
+- Spring Boot Admin
 - Nimbus JOSE JWT
 - Java Melody
 - ErrorProne
