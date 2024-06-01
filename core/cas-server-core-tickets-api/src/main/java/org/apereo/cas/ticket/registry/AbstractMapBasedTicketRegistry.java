@@ -145,7 +145,8 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
         return getMapInstance()
             .values()
             .stream()
-            .filter(ticket -> criteria.getType().equals(ticket.getPrefix()))
+            .filter(ticket -> criteria.getType().equals(ticket.getPrefix())
+                && (StringUtils.isBlank(criteria.getId()) || criteria.getId().equals(ticket.getId())))
             .map(ticket -> criteria.isDecode() ? decodeTicket(ticket) : ticket)
             .filter(ticket -> StringUtils.isBlank(criteria.getPrincipal())
                 || (ticket instanceof final AuthenticationAwareTicket aat

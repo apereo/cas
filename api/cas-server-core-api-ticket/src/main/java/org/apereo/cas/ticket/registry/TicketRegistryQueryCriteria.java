@@ -30,6 +30,8 @@ public class TicketRegistryQueryCriteria implements Serializable {
     private static final long serialVersionUID = 3295014227993873566L;
 
     private String type;
+    
+    private String id;
 
     private String principal;
 

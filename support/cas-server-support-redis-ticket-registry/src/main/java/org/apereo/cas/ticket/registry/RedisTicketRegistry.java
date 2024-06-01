@@ -327,7 +327,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
     @Override
     public List<? extends Serializable> query(final TicketRegistryQueryCriteria queryCriteria) {
         val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(Ticket.class.getName()).orElseThrow();
-        val redisTicketsKey = redisKeyGenerator.forEntryType(queryCriteria.getType());
+        val redisTicketsKey = StringUtils.isNotBlank(queryCriteria.getId())
+            ? redisKeyGenerator.forEntry(queryCriteria.getType(), queryCriteria.getId())
+            : redisKeyGenerator.forEntryType(queryCriteria.getType());
 
         if (queryCriteria.isDecode()) {
             try (val scanResults = casRedisTemplates.getTicketsRedisTemplate().scan(redisTicketsKey, queryCriteria.getCount())) {
