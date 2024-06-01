@@ -22,8 +22,8 @@ public class TicketRedisKeyGenerator implements RedisKeyGenerator {
     }
 
     @Override
-    public String forEntry(final String type, final String entry) {
-        return RedisCompositeKey.forTickets().withTicketId(type, entry).toKeyPattern();
+    public String forEntry(final String type, final String ticketId) {
+        return RedisCompositeKey.forTickets().withTicketId(type, ticketId).toKeyPattern();
     }
 
     @Override

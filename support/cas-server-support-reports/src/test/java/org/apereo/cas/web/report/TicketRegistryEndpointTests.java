@@ -32,11 +32,21 @@ public class TicketRegistryEndpointTests extends AbstractCasEndpointTests {
     private TicketRegistry ticketRegistry;
 
     @Test
-    void verifyOperation() throws Throwable {
-        val criteria = TicketRegistryQueryCriteria.builder()
-            .type(TicketGrantingTicket.PREFIX).build();
+    void verifyOperationByType() throws Throwable {
+        val criteria = TicketRegistryQueryCriteria.builder().type(TicketGrantingTicket.PREFIX).build();
         val results = ticketRegistryEndpoint.query(criteria);
         assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void verifyOperationById() throws Throwable {
+        val ticket = new MockTicketGrantingTicket(UUID.randomUUID().toString());
+        ticketRegistry.addTicket(ticket);
+        val criteria = TicketRegistryQueryCriteria.builder()
+            .id(ticket.getId())
+            .type(TicketGrantingTicket.PREFIX).build();
+        val results = ticketRegistryEndpoint.query(criteria);
+        assertFalse(results.isEmpty());
     }
 
     @Test

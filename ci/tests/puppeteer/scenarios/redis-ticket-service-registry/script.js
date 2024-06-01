@@ -1,4 +1,3 @@
-
 const assert = require("assert");
 const cas = require("../../cas.js");
 const querystring = require("querystring");
@@ -20,7 +19,7 @@ const querystring = require("querystring");
             assert(res.data.components.redis.details !== undefined);
         }, (error) => {
             throw error;
-        }, { "Content-Type": "application/json" });
+        }, {"Content-Type": "application/json"});
     await browser.close();
 
     const baseUrl = "https://localhost:8443/cas/actuator";
@@ -44,7 +43,7 @@ const querystring = require("querystring");
     }
 
     await cas.logg("Checking for SSO sessions for all users");
-    await cas.doGet(`${baseUrl}/ssoSessions?type=ALL`, (res) => {
+    await cas.doGet(`${baseUrl}/ssoSessions?type=ALL`, async (res) => {
         assert(res.status === 200);
     }, (err) => {
         throw err;
@@ -60,17 +59,32 @@ const querystring = require("querystring");
         "Accept": "application/json",
         "Content-Type": "application/x-www-form-urlencoded"
     });
-
+    const ticketIds = [];
     await cas.logg("Querying registry for all decoded ticket-granting tickets");
     await cas.doGet(`${baseUrl}/ticketRegistry/query?type=TGT&count=${total}&decode=true`, async (res) => {
+        await cas.log(res.data);
         assert(res.status === 200);
         assert(res.data.length === total);
+        res.data.forEach((doc) => ticketIds.push(doc.id));
     }, async (err) => {
         throw err;
     }, {
         "Accept": "application/json",
         "Content-Type": "application/x-www-form-urlencoded"
     });
-    
+
+    await cas.log(`Found ticket IDs: ${ticketIds.length}`);
+    for (let i = 0; i < ticketIds.length; i++) {
+        const id = ticketIds[i];
+        await cas.log(`Querying ticket: ${id}`);
+        await cas.doGet(`${baseUrl}/ticketRegistry/query?type=TGT&id=${id}&decode=false`,
+            async (res) => assert(res.status === 200),
+            async (err) => {
+                throw err;
+            }, {
+                "Accept": "application/json",
+                "Content-Type": "application/x-www-form-urlencoded"
+            });
+    }
 })();
 
