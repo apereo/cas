@@ -199,10 +199,16 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     @Override
     public List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
         val factory = getJpaTicketEntityFactory();
-        val sql = String.format("SELECT t FROM %s t WHERE t.type=:type", factory.getEntityName());
+        var sql = String.format("SELECT t FROM %s t WHERE t.type=:type", factory.getEntityName());
+        if (StringUtils.isNotBlank(criteria.getId())) {
+            sql = sql.concat(" AND t.id = :id");
+        }
         val definition = ticketCatalog.find(criteria.getType());
-        val query = entityManager.createQuery(sql, factory.getType())
-            .setParameter("type", getTicketTypeName(definition.getApiClass()));
+        val query = entityManager.createQuery(sql, factory.getType());
+        query.setParameter("type", getTicketTypeName(definition.getApiClass()));
+        if (StringUtils.isNotBlank(criteria.getId())) {
+            query.setParameter("id", digestIdentifier(criteria.getId()));
+        }
         if (criteria.getCount() > 0) {
             query.setMaxResults(Long.valueOf(criteria.getCount()).intValue());
         }
