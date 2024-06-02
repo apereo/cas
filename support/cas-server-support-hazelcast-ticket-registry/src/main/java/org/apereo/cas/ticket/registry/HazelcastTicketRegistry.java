@@ -48,8 +48,10 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
 
     private final HazelcastTicketRegistryProperties properties;
 
-    public HazelcastTicketRegistry(final CipherExecutor cipherExecutor, final TicketSerializationManager ticketSerializationManager,
-                                   final TicketCatalog ticketCatalog, final HazelcastInstance hazelcastInstance,
+    public HazelcastTicketRegistry(final CipherExecutor cipherExecutor,
+                                   final TicketSerializationManager ticketSerializationManager,
+                                   final TicketCatalog ticketCatalog,
+                                   final HazelcastInstance hazelcastInstance,
                                    final HazelcastTicketRegistryProperties properties) {
         super(cipherExecutor, ticketSerializationManager, ticketCatalog);
         this.hazelcastInstance = hazelcastInstance;

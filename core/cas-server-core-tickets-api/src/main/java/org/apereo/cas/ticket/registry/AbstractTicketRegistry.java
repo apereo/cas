@@ -17,7 +17,6 @@ import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
-
 import com.google.common.io.ByteSource;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -26,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
-
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.HashMap;
@@ -51,7 +49,7 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public abstract class AbstractTicketRegistry implements TicketRegistry {
 
-    private static final String MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
+    private static final String TICKET_ENCRYPTION_LOG_MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
 
     @Setter
     protected CipherExecutor cipherExecutor;
@@ -195,11 +193,11 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     @Override
     public String digestIdentifier(final String identifier) {
-        if (!isCipherExecutorEnabled()) {
-            LOGGER.trace(MESSAGE);
+        if (StringUtils.isBlank(identifier)) {
             return identifier;
         }
-        if (StringUtils.isBlank(identifier)) {
+        if (!isCipherExecutorEnabled()) {
+            LOGGER.trace(TICKET_ENCRYPTION_LOG_MESSAGE);
             return identifier;
         }
         val encodedId = DigestUtils.sha512(identifier);
@@ -299,7 +297,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     protected Ticket encodeTicket(final Ticket ticket) throws Exception {
         if (!isCipherExecutorEnabled()) {
-            LOGGER.trace(MESSAGE);
+            LOGGER.trace(TICKET_ENCRYPTION_LOG_MESSAGE);
             return ticket;
         }
         if (ticket == null) {
@@ -319,7 +317,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         }
 
         if (!isCipherExecutorEnabled()) {
-            LOGGER.trace(MESSAGE);
+            LOGGER.trace(TICKET_ENCRYPTION_LOG_MESSAGE);
             return ticketToProcess;
         }
         if (ticketToProcess == null) {
@@ -343,7 +341,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     protected Stream<Ticket> decodeTickets(final Stream<Ticket> items) {
         if (!isCipherExecutorEnabled()) {
-            LOGGER.trace(MESSAGE);
+            LOGGER.trace(TICKET_ENCRYPTION_LOG_MESSAGE);
             return items;
         }
         return items.map(this::decodeTicket);

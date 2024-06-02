@@ -18,6 +18,7 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.SerializationUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
@@ -145,12 +146,20 @@ public class DynamoDbTicketRegistryFacilitator {
      */
     public Stream<Ticket> query(final TicketRegistryQueryCriteria criteria) {
         val definition = ticketCatalog.find(criteria.getType());
-        val keys = List.<DynamoDbQueryBuilder>of(
+        val keys = CollectionUtils.<DynamoDbQueryBuilder>wrapList(
             DynamoDbQueryBuilder.builder()
                 .key(ColumnNames.PREFIX.getColumnName())
                 .attributeValue(List.of(AttributeValue.builder().s(definition.getPrefix()).build()))
                 .operator(ComparisonOperator.EQ)
                 .build());
+        if (StringUtils.isNotBlank(criteria.getId())) {
+            keys.add(DynamoDbQueryBuilder.builder()
+                .key(ColumnNames.ID.getColumnName())
+                .attributeValue(List.of(AttributeValue.builder().s(criteria.getId()).build()))
+                .operator(ComparisonOperator.EQ)
+                .build());
+        }
+        
         return DynamoDbTableUtils.scanPaginator(amazonDynamoDBClient,
             definition.getProperties().getStorageName(), criteria.getCount(),
             keys, DynamoDbTicketRegistryFacilitator::deserializeTicket);
