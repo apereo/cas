@@ -5,8 +5,11 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryQueryCriteria;
 import lombok.val;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
@@ -22,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "management.endpoint.ticketRegistry.enabled=true")
 @Tag("ActuatorEndpoint")
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TicketRegistryEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("ticketRegistryEndpoint")
@@ -32,6 +36,7 @@ public class TicketRegistryEndpointTests extends AbstractCasEndpointTests {
     private TicketRegistry ticketRegistry;
 
     @Test
+    @Order(0)
     void verifyOperationByType() throws Throwable {
         val criteria = TicketRegistryQueryCriteria.builder().type(TicketGrantingTicket.PREFIX).build();
         val results = ticketRegistryEndpoint.query(criteria);
