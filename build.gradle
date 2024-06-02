@@ -55,6 +55,8 @@ ext {
     remoteDebuggingSuspend = providers.systemProperty("remoteDebuggingSuspend").getOrElse("false") == "true" ? "y" : "n"
     generateGitProperties = publishFlag || providers.systemProperty("generateGitProperties").present
     generateTimestamps = publishFlag || providers.systemProperty("generateTimestamps").present
+    
+    skipBootifulLaunchScript = providers.systemProperty("skipBootifulLaunchScript").present
 
     ci = System.getenv("CI") || providers.systemProperty("CI").present
 

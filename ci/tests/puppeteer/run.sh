@@ -459,7 +459,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
   rm -rf ${targetArtifact}
   BUILD_COMMAND=$(printf '%s' \
       "./gradlew ${BUILD_TASKS} -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc --build-cache --configure-on-demand --parallel \
-      ${BUILD_SCRIPT} ${DAEMON} -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS}")
+      ${BUILD_SCRIPT} ${DAEMON} -DskipBootifulLaunchScript=true -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS}")
   printcyan "Executing build command in the ${BUILD_SPAWN}:\n\n${BUILD_COMMAND}"
 
   if [[ "${BUILD_SPAWN}" == "background" ]]; then
@@ -689,8 +689,17 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
             cas-${scenarioName}:latest
         docker logs -f cas-${scenarioName} 2>/dev/null &
       else
+        rm -rf ${PWD}/cas 2>/dev/null
+        printcyan "Extracting CAS overlay to ${PWD}/cas"
+        java -Djarmode=tools -jar "$PWD"/cas.${projectType} extract
+        printcyan "Launching CAS from ${PWD}/cas/cas.${projectType} to perform a training run"
+        java -XX:ArchiveClassesAtExit=${PWD}/cas/cas.jsa -Dspring.context.exit=onRefresh -jar ${PWD}/cas/cas.${projectType}
+        printcyan "Generated archive cache file ${PWD}/cas/cas.jsa"
         printcyan "Launching CAS instance #${c} under port ${serverPort} from "$PWD"/cas.${projectType}"
-        java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
+        java ${runArgs} \
+          -Dlog.console.stacktraces=true \
+          -XX:SharedArchiveFile=${PWD}/cas/cas.jsa \
+          -jar "$PWD"/cas/cas.${projectType} \
            -Dcom.sun.net.ssl.checkRevocation=false \
            --server.port=${serverPort} \
            --spring.main.lazy-initialization=false \
@@ -812,6 +821,7 @@ if [[ "${RERUN}" != "true" ]]; then
   done
   
   printgreen "Removing previous build artifacts..."
+  rm -Rf "${PWD}"/cas >/dev/null 2>&1
   rm -f "$PWD"/cas.${projectType} >/dev/null 2>&1
   rm -f "${public_cert}" >/dev/null 2>&1
   rm -Rf "${PUPPETEER_DIR}/overlay" >/dev/null 2>&1
