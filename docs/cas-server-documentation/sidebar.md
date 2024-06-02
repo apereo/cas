@@ -453,7 +453,6 @@ layout: null
                 *   [Apache ZooKeeper](/cas/{{ version }}/ticketing/Hazelcast-Ticket-Registry-AutoDiscovery-Apache-ZooKeeper.html)
                 *   [AWS EC2](/cas/{{ version }}/ticketing/Hazelcast-Ticket-Registry-AutoDiscovery-AWS-EC2.html)
                 *   [Azure](/cas/{{ version }}/ticketing/Hazelcast-Ticket-Registry-AutoDiscovery-Azure.html)
-                *   [Docker Swarm](/cas/{{ version }}/ticketing/Hazelcast-Ticket-Registry-AutoDiscovery-Docker-Swarm.html)
                 *   [Google Cloud](/cas/{{ version }}/ticketing/Hazelcast-Ticket-Registry-AutoDiscovery-Docker-GCP.html)
                 *   [Kubernetes](/cas/{{ version }}/ticketing/Hazelcast-Ticket-Registry-AutoDiscovery-Kubernetes.html)
                 *   [Multicast](/cas/{{ version }}/ticketing/Hazelcast-Ticket-Registry-AutoDiscovery-Multicast.html)

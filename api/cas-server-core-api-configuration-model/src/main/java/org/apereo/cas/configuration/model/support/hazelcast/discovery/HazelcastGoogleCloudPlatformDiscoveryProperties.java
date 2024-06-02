@@ -20,7 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("HazelcastDockerSwarmDiscoveryProperties")
+@JsonFilter("HazelcastGoogleCloudPlatformDiscoveryProperties")
 public class HazelcastGoogleCloudPlatformDiscoveryProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 6056456067944569289L;
