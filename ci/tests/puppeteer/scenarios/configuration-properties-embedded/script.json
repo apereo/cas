@@ -1,7 +1,11 @@
 {
   "dependencies": "core,reports",
-
   "server": "jetty",
+  "requirements": {
+    "cds": {
+      "enabled": false
+    }
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -16,7 +20,6 @@
     "--logging.level.org.apereo.cas=info",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=AUTHENTICATED",
-    
     "--management.endpoints.enabled-by-default=true",
     
     "--cas.standalone.configuration-directory=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config"
