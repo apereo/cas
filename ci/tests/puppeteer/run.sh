@@ -299,6 +299,8 @@ if [[ "${buildDockerImage}" == "true" && $dockerInstalled -ne 0 ]]; then
     exit 1
 fi
 
+cdsEnabled=$(jq -j 'if .requirements.cds.enabled == "" or .requirements.cds.enabled == null or .requirements.cds.enabled == true then true else false end' "${config}")
+
 scenarioName=${scenario##*/}
 enabled=$(jq -j '.enabled' "${config}")
 if [[ "${enabled}" == "false" ]]; then
@@ -689,26 +691,34 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
             cas-${scenarioName}:latest
         docker logs -f cas-${scenarioName} 2>/dev/null &
       else
-        rm -rf ${PWD}/cas 2>/dev/null
-        printcyan "Extracting CAS overlay to ${PWD}/cas"
-        java -Djarmode=tools -jar "$PWD"/cas.${projectType} extract
-        printcyan "Launching CAS from ${PWD}/cas/cas.${projectType} to perform a training run"
-        java -XX:ArchiveClassesAtExit=${PWD}/cas/cas.jsa -Dspring.context.exit=onRefresh -jar ${PWD}/cas/cas.${projectType}
-        printcyan "Generated archive cache file ${PWD}/cas/cas.jsa"
-        printcyan "Launching CAS instance #${c} under port ${serverPort} from "$PWD"/cas.${projectType}"
+        casArtifactToRun="$PWD/cas.${projectType}"
+        if [[ "${cdsEnabled}" == "true" ]]; then
+          printgreen "The scenario ${scenarioName} will run with CDS"
+          rm -rf ${PWD}/cas 2>/dev/null
+          printcyan "Extracting CAS to ${PWD}/cas"
+          java -Djarmode=tools -jar "$PWD"/cas.${projectType} extract
+          printcyan "Launching CAS from ${PWD}/cas/cas.${projectType} to perform a training run"
+          java -XX:ArchiveClassesAtExit=${PWD}/cas/cas.jsa -Dspring.context.exit=onRefresh -jar ${PWD}/cas/cas.${projectType}
+          printcyan "Generated archive cache file ${PWD}/cas/cas.jsa"
+          runArgs="${runArgs} -XX:SharedArchiveFile=${PWD}/cas/cas.jsa"
+          casArtifactToRun="${PWD}/cas/cas.${projectType}"
+        else
+          printcyan "The scenario ${scenarioName} will run without CDS"
+        fi
+
+        printcyan "Launching CAS instance #${c} under port ${serverPort} from ${casArtifactToRun}"
         java ${runArgs} \
           -Dlog.console.stacktraces=true \
-          -XX:SharedArchiveFile=${PWD}/cas/cas.jsa \
-          -jar "$PWD"/cas/cas.${projectType} \
-           -Dcom.sun.net.ssl.checkRevocation=false \
-           --server.port=${serverPort} \
-           --spring.main.lazy-initialization=false \
-           --spring.profiles.active=none \
-           --management.endpoints.web.discovery.enabled=true \
-           --server.ssl.key-store="$keystore" \
-           --cas.audit.engine.enabled=true \
-           --cas.audit.slf4j.use-single-line=true \
-           ${properties} &
+          -jar "${casArtifactToRun}" \
+          -Dcom.sun.net.ssl.checkRevocation=false \
+          --server.port=${serverPort} \
+          --spring.main.lazy-initialization=false \
+          --spring.profiles.active=none \
+          --management.endpoints.web.discovery.enabled=true \
+          --server.ssl.key-store="$keystore" \
+          --cas.audit.engine.enabled=true \
+          --cas.audit.slf4j.use-single-line=true \
+          ${properties} &
       fi
       pid=$!
       printcyan "Waiting for CAS instance #${c} under process id ${pid}"
