@@ -72,7 +72,8 @@ cas.[path-to-configuration-key].crypto.alg=A128CBC-HS256
 
 ## Other Stuff
 
-- ID token `jti` claims in [OpenID Connect](../authentication/OIDC-Authentication.html) are no longer ticket (granting-ticket) identifiers but are instead digested using `SHA-512`.
+- [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) may prompt the user to proceed to account registration, when no contact information is found.
+- ID token `jti` claims in [OpenID Connect](../authentication/OIDC-Authentication.html) are no longer plain ticket (granting-ticket) identifiers but are instead digested using `SHA-512`.
 - The `ticketRegistry` [actuator endpoint](../ticketing/Configuring-Ticketing-Components.html) now offers the ability to run the ticket registry cleaner task on-demand.
 - Docker Swarm support for Hazelcast has been removed from the CAS codebase. 
 
