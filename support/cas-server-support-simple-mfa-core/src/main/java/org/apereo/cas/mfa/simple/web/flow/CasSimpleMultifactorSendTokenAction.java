@@ -138,9 +138,15 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
             }
         }
 
-        if (!emailSent && !smsSent && !mapOfAllRecipients.isEmpty()) {
-            LOGGER.debug("Multiple recipients found for [{}]: [{}]", principal.getId(), mapOfAllRecipients);
-            return buildSelectRecipientsEvent(requestContext, principal, mapOfAllRecipients);
+        if (!emailSent && !smsSent) {
+            if (mapOfAllRecipients.isEmpty()) {
+                LOGGER.debug("No recipients found for [{}]", principal.getId());
+                return getEventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REGISTER,
+                    new LocalAttributeMap<>(Map.of("principal", principal, "authentication", authentication)));
+            } else {
+                LOGGER.debug("Multiple recipients found for [{}]: [{}]", principal.getId(), mapOfAllRecipients);
+                return buildSelectRecipientsEvent(requestContext, principal, mapOfAllRecipients);
+            }
         }
 
         val notificationSent = communicationStrategy.contains(TokenSharingStrategyOptions.NOTIFICATION) && isNotificationSent(principal, token);

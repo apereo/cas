@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -13,12 +12,13 @@ import org.springframework.core.Ordered;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
+import org.springframework.webflow.engine.NoMatchingTransitionException;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.TransitionableState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
-
+import org.springframework.webflow.engine.support.TransitionExecutingFlowExecutionExceptionHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -103,7 +103,8 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
                 registerMultifactorProviderBypassAction(mfaFlow);
                 registerMultifactorProviderAvailableAction(mfaFlow, targetStateId);
                 registerMultifactorProviderFailureAction(flow, mfaFlow);
-
+                registerMultifactorFlowExceptionHandlers(mfaFlow);
+                
                 val subflowState = createSubflowState(flow, providerId, providerId);
                 val subflowMappings = getDefaultAttributeMappings()
                     .map(attr -> createFlowMapping("flowScope." + attr, attr))
@@ -140,6 +141,13 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
                 val initState = getState(flow, CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
                 createTransitionForState(initState, providerId, providerId, true);
             });
+    }
+
+    private void registerMultifactorFlowExceptionHandlers(final Flow mfaFlow) {
+        createViewState(mfaFlow, CasWebflowConstants.STATE_ID_VIEW_WEBFLOW_CONFIG_ERROR, CasWebflowConstants.VIEW_ID_WEBFLOW_CONFIG_ERROR);
+        val handler = new TransitionExecutingFlowExecutionExceptionHandler();
+        handler.add(NoMatchingTransitionException.class, CasWebflowConstants.STATE_ID_VIEW_WEBFLOW_CONFIG_ERROR);
+        mfaFlow.getExceptionHandlerSet().add(handler);
     }
 
     private static Stream<String> getDefaultAttributeMappings() {

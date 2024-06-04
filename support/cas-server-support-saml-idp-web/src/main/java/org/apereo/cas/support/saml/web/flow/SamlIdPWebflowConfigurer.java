@@ -33,9 +33,9 @@ public class SamlIdPWebflowConfigurer extends AbstractCasWebflowConfigurer {
         if (flow != null) {
             val state = getTransitionableState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
             state.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_SAML_IDP_METADATA_UI_PARSER));
-            val h = new TransitionExecutingFlowExecutionExceptionHandler();
-            h.add(SamlException.class, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
-            flow.getExceptionHandlerSet().add(h);
+            val handler = new TransitionExecutingFlowExecutionExceptionHandler();
+            handler.add(SamlException.class, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
+            flow.getExceptionHandlerSet().add(handler);
         }
     }
 }

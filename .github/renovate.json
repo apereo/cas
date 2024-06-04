@@ -5,6 +5,7 @@
     ":rebaseStalePrs",
     ":preserveSemverRanges",
     ":disableRateLimiting",
+    ":disableDependencyDashboard",
     ":semanticCommits",
     ":semanticCommitTypeAll(renovatebot)"
   ],
