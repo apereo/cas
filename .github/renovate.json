@@ -13,10 +13,13 @@
     "after 10pm and before 6am every weekday"
   ],
   "docker": {
-    "enabled": true,
-    "compose": {
-      "enabled": true
-    }
+    "enabled": true
+  },
+  "dockerfile": {
+    "enabled": true
+  },
+  "docker-compose": {
+    "enabled": true
   },
   "packageRules": [
     {
