@@ -41,7 +41,8 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
     CasSimpleMultifactorAuthenticationEventExecutionPlanConfiguration.class,
     CasSimpleMultifactorAuthenticationMultifactorProviderBypassConfiguration.class,
     CasSimpleMultifactorAuthenticationRestConfiguration.class,
-    CasSimpleMultifactorAuthenticationTicketCatalogConfiguration.class
+    CasSimpleMultifactorAuthenticationTicketCatalogConfiguration.class,
+    CasSimpleMultifactorAuthenticationWebflowConfiguration.class
 })
 public class CasSimpleMultifactorAuthenticationAutoConfiguration {
 
