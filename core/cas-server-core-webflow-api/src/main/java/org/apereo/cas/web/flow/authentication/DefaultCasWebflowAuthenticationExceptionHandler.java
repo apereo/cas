@@ -41,6 +41,7 @@ public class DefaultCasWebflowAuthenticationExceptionHandler implements CasWebfl
     @Override
     public Event handle(final AuthenticationException exception, final RequestContext requestContext) {
         val id = handleAuthenticationException(exception, requestContext);
+        WebUtils.trackFailedAuthenticationAttempt(requestContext);
         return new EventFactorySupport().event(this, id);
     }
 

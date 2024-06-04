@@ -1879,4 +1879,27 @@ public class WebUtils {
             .or(() -> Optional.ofNullable((String) request.getAttribute(name)))
             .filter(StringUtils::isNotBlank);
     }
+
+    /**
+     * Track failed authentication attempts.
+     *
+     * @param requestContext the request context
+     */
+    public static void trackFailedAuthenticationAttempt(final RequestContext requestContext) {
+        val flowScope = requestContext.getFlowScope();
+        val attempts = flowScope.contains("authenticationFailureCount", Integer.class)
+            ? flowScope.get("authenticationFailureCount", Integer.class)
+            : 0;
+        flowScope.put("authenticationFailureCount", attempts + 1);
+    }
+
+    /**
+     * Gets authentication failure count.
+     *
+     * @param requestContext the request context
+     * @return the authentication failure count
+     */
+    public static Integer countFailedAuthenticationAttempts(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("authenticationFailureCount", Integer.class);
+    }
 }
