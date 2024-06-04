@@ -69,9 +69,13 @@ class DefaultCasWebflowAuthenticationExceptionHandlerTests {
 
     @Test
     void verifyAuthUnauthz() throws Throwable {
-        val ex = new AuthenticationException(new UnauthorizedAuthenticationException("failure"));
-        val event = handler.handle(ex, context);
-        assertNotNull(event);
-        assertEquals(UnauthorizedAuthenticationException.class.getSimpleName(), event.getId());
+        for (var i = 0; i < 3; i++) {
+            val ex = new AuthenticationException(new UnauthorizedAuthenticationException("failure"));
+            val event = handler.handle(ex, context);
+            assertNotNull(event);
+            assertEquals(UnauthorizedAuthenticationException.class.getSimpleName(), event.getId());
+        }
+        val count = WebUtils.countFailedAuthenticationAttempts(context);
+        assertEquals(3, count);
     }
 }
