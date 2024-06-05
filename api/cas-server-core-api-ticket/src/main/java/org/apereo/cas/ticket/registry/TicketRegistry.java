@@ -227,4 +227,13 @@ public interface TicketRegistry {
     default long countTicketsFor(final Service service) {
         return 0;
     }
+
+    /**
+     * Count all tickets.
+     *
+     * @return the total count.
+     */
+    default long countTickets() {
+        return stream().count();
+    }
 }

@@ -325,6 +325,12 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
     }
 
     @Override
+    public long countTickets() {
+        val redisTicketsKey = redisKeyGeneratorFactory.getRedisKeyGenerator(Ticket.class.getName()).orElseThrow().forAllEntries();
+        return casRedisTemplates.getTicketsRedisTemplate().count(redisTicketsKey);
+    }
+
+    @Override
     public List<? extends Serializable> query(final TicketRegistryQueryCriteria queryCriteria) {
         val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(Ticket.class.getName()).orElseThrow();
         val redisTicketsKey = StringUtils.isNotBlank(queryCriteria.getId())

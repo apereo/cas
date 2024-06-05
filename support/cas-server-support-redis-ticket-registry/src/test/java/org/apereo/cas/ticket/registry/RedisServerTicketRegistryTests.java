@@ -211,6 +211,20 @@ class RedisServerTicketRegistryTests {
             assertEquals(criteria2.getCount(), queryResults.size());
         }
 
+        @RepeatedTest(2)
+        void verifyRegistryCount() throws Throwable {
+            LOGGER.info("Current repetition: [{}]", useEncryption ? "Encrypted" : "Plain");
+            val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+            val ticketGrantingTicketToAdd = Stream.generate(() -> {
+                    val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                        .getNewTicketId(TicketGrantingTicket.PREFIX);
+                    return new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+                }).limit(5);
+            getNewTicketRegistry().addTicket(ticketGrantingTicketToAdd);
+            val totalCount = getNewTicketRegistry().countTickets();
+            assertTrue(totalCount > 0);
+        }
+
         private static <T> T executedTimedOperation(final String name, final Supplier<T> operation) {
             val stopwatch = new StopWatch();
             stopwatch.start();

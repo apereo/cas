@@ -200,6 +200,16 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public long countTickets() {
+        return ticketCatalog
+            .findAll()
+            .stream()
+            .map(this::getTicketCollectionInstanceByMetadata)
+            .mapToLong(map -> mongoTemplate.count(new Query(), map))
+            .sum();
+    }
+
+    @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
         val ticketDefinitions = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class);
         return ticketDefinitions
