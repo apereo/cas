@@ -140,6 +140,7 @@ jobs:
             echo ${xml_files}
           fi
       - name: Upload to SonarCloud
+        if: ${{ env.SONARCLOUD_TOKEN != null }}
         run: |
           ./gradlew sonar --build-cache --configure-on-demand --no-daemon -DskipAot=true --parallel \
             -x javadoc -DskipNestedConfigMetadataGen=true -Dverbose=true \
