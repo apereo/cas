@@ -39,9 +39,14 @@ jobs:
     steps:
       - name: Trigger CI
         run: echo "CI Triggered"
+##########################################################################
+
   initialize:
     needs: [trigger-ci]
     runs-on: ubuntu-latest
+    outputs:
+      JDK_CURRENT: ${{ env.JDK_CURRENT }}
+      JDK_LATEST: ${{ env.JDK_LATEST }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
@@ -84,8 +89,8 @@ jobs:
       fail-fast: false
       matrix:
         jdk:
-          - ${{ env.JDK_CURRENT }}
-          - ${{ env.JDK_LATEST }}
+          - ${{ needs.initialize.outputs.JDK_CURRENT }}
+          - ${{ needs.initialize.outputs.JDK_LATEST }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK ${{ matrix.jdk }}
@@ -116,8 +121,8 @@ jobs:
       fail-fast: false
       matrix:
         jdk:
-          - ${{ env.JDK_CURRENT }}
-          - ${{ env.JDK_LATEST }}
+          - ${{ needs.initialize.outputs.JDK_CURRENT }}
+          - ${{ needs.initialize.outputs.JDK_LATEST }}
         category:
           - tomcat
           - jetty
@@ -147,8 +152,8 @@ jobs:
       fail-fast: false
       matrix:
         jdk:
-          - ${{ env.JDK_CURRENT }}
-          - ${{ env.JDK_LATEST }}
+          - ${{ needs.initialize.outputs.JDK_CURRENT }}
+          - ${{ needs.initialize.outputs.JDK_LATEST }}
         category:
           - cas-server
           - config-server
@@ -177,8 +182,8 @@ jobs:
       fail-fast: false
       matrix:
         jdk:
-          - ${{ env.JDK_CURRENT }}
-          - ${{ env.JDK_LATEST }}
+          - ${{ needs.initialize.outputs.JDK_CURRENT }}
+          - ${{ needs.initialize.outputs.JDK_LATEST }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK ${{ matrix.jdk }}
