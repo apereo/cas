@@ -62,6 +62,10 @@ public class TicketRegistryEndpointTests extends AbstractCasEndpointTests {
         ticket.markTicketExpired();
         val results = (Map) ticketRegistryEndpoint.clean().getBody();
         assertNotNull(results);
-        assertTrue(results.containsKey("count"));
+        assertTrue(results.containsKey("removed"));
+        assertTrue(results.containsKey("total"));
+        assertTrue(results.containsKey("duration"));
+        assertTrue(results.containsKey("startTime"));
+        assertTrue(results.containsKey("endTime"));
     }
 }
