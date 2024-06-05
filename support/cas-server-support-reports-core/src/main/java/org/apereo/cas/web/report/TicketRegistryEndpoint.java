@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -21,8 +22,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import jakarta.validation.Valid;
+import java.time.Clock;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link TicketRegistryEndpoint}.
@@ -98,7 +102,20 @@ public class TicketRegistryEndpoint extends BaseCasRestActuatorEndpoint {
     @Operation(summary = "Clean the ticket registry on demand particularly when the cleaner schedule "
         + "is turned off and you wish to force a cleanup manually via your own scheduler")
     public ResponseEntity clean() {
-        val count = ticketRegistryCleanerProvider.getObject().clean();
-        return ResponseEntity.ok(Map.of("count", count));
+        val startTime = ZonedDateTime.now(Clock.systemUTC());
+        var stopwatch = new StopWatch();
+        stopwatch.start();
+        val total = ticketRegistryProvider.getObject().countTickets();
+        val removed = ticketRegistryCleanerProvider.getObject().clean();
+        stopwatch.stop();
+        val endTime = ZonedDateTime.now(Clock.systemUTC());
+        val duration = stopwatch.getTime(TimeUnit.SECONDS);
+        return ResponseEntity.ok(Map.of(
+            "total", total,
+            "removed", removed,
+            "startTime", startTime,
+            "endTime", endTime,
+            "duration", duration
+            ));
     }
 }

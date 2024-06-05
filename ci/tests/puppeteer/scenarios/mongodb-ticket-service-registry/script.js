@@ -53,7 +53,10 @@ const cas = require("../../cas.js");
         async (res) => {
             await cas.log(res.data);
             assert(res.status === 200);
-            assert(res.data.count === 0);
+            assert(res.data.removed === 0);
+            assert(res.data.startTime !== undefined);
+            assert(res.data.endTime !== undefined);
+            assert(res.data.total !== undefined);
         }, async (err) => {
             throw err;
         }, {

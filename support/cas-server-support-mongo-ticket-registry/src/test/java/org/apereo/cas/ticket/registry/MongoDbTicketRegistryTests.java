@@ -102,6 +102,20 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
         assertEquals(criteria2.getCount(), queryResults.size());
     }
 
+    @RepeatedTest(2)
+    void verifyCount() throws Throwable {
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(UUID.randomUUID().toString());
+        val ticketGrantingTicketToAdd = Stream.generate(() -> {
+                val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                    .getNewTicketId(TicketGrantingTicket.PREFIX);
+                return new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+            })
+            .limit(5);
+        getNewTicketRegistry().addTicket(ticketGrantingTicketToAdd);
+        val count = getNewTicketRegistry().countTickets();
+        assertTrue(count > 0);
+    }
+    
     @RepeatedTest(1)
     void verifyBadTicketInCatalog() throws Throwable {
         val ticket = new MockTicketGrantingTicket("casuser");
