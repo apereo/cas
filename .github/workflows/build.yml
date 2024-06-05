@@ -37,6 +37,9 @@ jobs:
   initialize:
     if: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
     runs-on: ubuntu-latest
+    outputs:
+      JDK_CURRENT: ${{ env.JDK_CURRENT }}
+      JDK_LATEST: ${{ env.JDK_LATEST }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
@@ -59,8 +62,8 @@ jobs:
       fail-fast: false
       matrix:
         jdk:
-          - ${{ env.JDK_CURRENT }}
-          - ${{ env.JDK_LATEST }}
+          - ${{ needs.initialize.outputs.JDK_CURRENT }}
+          - ${{ needs.initialize.outputs.JDK_LATEST }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK ${{ matrix.jdk }}
