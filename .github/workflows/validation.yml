@@ -91,6 +91,7 @@ jobs:
         jdk:
           - ${{ needs.initialize.outputs.JDK_CURRENT }}
           - ${{ needs.initialize.outputs.JDK_LATEST }}
+    name: commandline shell - JDK ${{ matrix.jdk }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK ${{ matrix.jdk }}
@@ -157,7 +158,7 @@ jobs:
         category:
           - cas-server
           - config-server
-    name: external tomcat - JDK ${{ matrix.jdk }}
+    name: ${{ matrix.category }} with external tomcat - JDK ${{ matrix.jdk }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK ${{ matrix.jdk }}
@@ -184,6 +185,7 @@ jobs:
         jdk:
           - ${{ needs.initialize.outputs.JDK_CURRENT }}
           - ${{ needs.initialize.outputs.JDK_LATEST }}
+    name: spring cloud config server - JDK ${{ matrix.jdk }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK ${{ matrix.jdk }}
