@@ -138,6 +138,8 @@ graalvmNative {
             buildArgs.add('-J-Xmx14G')
             buildArgs.add('-J-Xms4G')
             buildArgs.add('--native-image-info')
+            buildArgs.add('--enable-sbom')
+            buildArgs.add('--gc=G1')
             buildArgs.add('--strict-image-heap')
 
             buildArgs.add('-march=native')

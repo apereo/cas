@@ -684,7 +684,7 @@ ext.libraries = [
                 }
         ],
         hibernate                  : [
-                dependencies.create("io.hypersistence:hypersistence-utils-hibernate-62:$hypersistenceVersion") {
+                dependencies.create("io.hypersistence:hypersistence-utils-hibernate-63:$hypersistenceVersion") {
                     exclude(group: "javax.xml.bind", module: "jaxb-api")
                 },
                 dependencies.create("org.hibernate.orm:hibernate-graalvm:$hibernateVersion") {
