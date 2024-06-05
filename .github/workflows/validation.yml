@@ -83,7 +83,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        jdk: [ ${{ env.JDK_CURRENT }},${{ env.JDK_LATEST }} ]
+        jdk:
+          - ${{ env.JDK_CURRENT }}
+          - ${{ env.JDK_LATEST }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK ${{ matrix.jdk }}
