@@ -53,7 +53,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
     public static final String FLOW_SCOPE_ATTR_SMS_RECIPIENTS = "smsRecipients";
 
     private static final String MESSAGE_MFA_TOKEN_SENT = "cas.mfa.simple.label.tokensent";
-    
+
     private static final String MESSAGE_MFA_CONTACT_FAILED_SMS = "cas.mfa.simple.label.contactfailed.sms";
     private static final String MESSAGE_MFA_CONTACT_FAILED_EMAIL = "cas.mfa.simple.label.contactfailed.email";
 
@@ -95,12 +95,12 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
         if (communicationStrategy.contains(TokenSharingStrategyOptions.SMS)) {
             val cmd = CasSimpleMultifactorSendSms.of(communicationsManager, properties);
             val recipients = cmd.getSmsRecipients(principal);
+            mapOfAllRecipients.put(TokenSharingStrategyOptions.SMS, recipients);
+
             if (recipients.size() > 1) {
                 val selectedSmsRecipients = findSelectedSmsRecipients(requestContext, principal);
                 LOGGER.debug("Selected SMS recipients are [{}]", selectedSmsRecipients);
-                if (selectedSmsRecipients.isEmpty()) {
-                    mapOfAllRecipients.put(TokenSharingStrategyOptions.SMS, recipients);
-                } else {
+                if (!selectedSmsRecipients.isEmpty()) {
                     smsSent = cmd.send(principal, token, requestContext, selectedSmsRecipients);
                     if (!smsSent) {
                         WebUtils.addErrorMessageToContext(requestContext, MESSAGE_MFA_CONTACT_FAILED_SMS);
@@ -119,12 +119,12 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
         if (communicationStrategy.contains(TokenSharingStrategyOptions.EMAIL)) {
             val cmd = CasSimpleMultifactorSendEmail.of(communicationsManager, properties);
             val recipients = cmd.getEmailMessageRecipients(principal);
+            mapOfAllRecipients.put(TokenSharingStrategyOptions.EMAIL, recipients);
+
             if (recipients.size() > 1) {
                 val selectedEmailRecipients = findSelectedEmailRecipients(requestContext, principal);
                 LOGGER.debug("Selected email recipients are [{}]", selectedEmailRecipients);
-                if (selectedEmailRecipients.isEmpty()) {
-                    mapOfAllRecipients.put(TokenSharingStrategyOptions.EMAIL, recipients);
-                } else {
+                if (!selectedEmailRecipients.isEmpty()) {
                     emailSent = cmd.send(principal, token, selectedEmailRecipients, requestContext).isAnyEmailSent();
                     if (!emailSent) {
                         WebUtils.addErrorMessageToContext(requestContext, MESSAGE_MFA_CONTACT_FAILED_EMAIL);
@@ -144,15 +144,20 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
                 return getEventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REGISTER,
                     new LocalAttributeMap<>(Map.of("principal", principal, "authentication", authentication)));
             } else {
-                LOGGER.debug("Multiple recipients found for [{}]: [{}]", principal.getId(), mapOfAllRecipients);
-                return buildSelectRecipientsEvent(requestContext, principal, mapOfAllRecipients);
+                val emailRecipients = mapOfAllRecipients.getOrDefault(TokenSharingStrategyOptions.EMAIL, List.of());
+                val smsRecipients = mapOfAllRecipients.getOrDefault(TokenSharingStrategyOptions.SMS, List.of());
+
+                if (emailRecipients.size() > 1 || smsRecipients.size() > 1) {
+                    LOGGER.debug("Multiple recipients found for [{}]: [{}]", principal.getId(), mapOfAllRecipients);
+                    return buildSelectRecipientsEvent(requestContext, principal, mapOfAllRecipients);
+                }
             }
         }
 
         val notificationSent = communicationStrategy.contains(TokenSharingStrategyOptions.NOTIFICATION) && isNotificationSent(principal, token);
         val phoneCallSent = communicationStrategy.contains(TokenSharingStrategyOptions.PHONE)
             && CasSimpleMultifactorMakePhoneCall.of(communicationsManager, properties).call(principal, token, requestContext);
-        
+
         if (smsSent || emailSent || notificationSent || phoneCallSent) {
             LOGGER.debug("Successfully submitted token via strategy option [{}] to [{}]", communicationStrategy, principal.getId());
             storeToken(requestContext, token);
@@ -189,9 +194,9 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
     }
 
     private Event buildSelectRecipientsEvent(final RequestContext requestContext, final Principal principal,
-                                            final Map<TokenSharingStrategyOptions, List<String>> recipients) {
+                                             final Map<TokenSharingStrategyOptions, List<String>> recipients) {
         val eventAttributes = new LocalAttributeMap<>();
-        
+
         val emailRecipients = recipients.get(TokenSharingStrategyOptions.EMAIL);
         if (emailRecipients != null) {
             val emailDomainPattern = Pattern.compile(".{2}@.{2}");
@@ -246,7 +251,7 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
         return (Map<String, CandidateRecipientAddress>) requestContext.getFlowScope().get(FLOW_SCOPE_ATTR_SMS_RECIPIENTS, Map.class);
     }
 
-    
+
     protected Event buildSuccessEvent(final CasSimpleMultifactorAuthenticationTicket token) {
         val attributes = new LocalAttributeMap<Object>("token", token.getId());
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_SUCCESS, attributes);
@@ -276,5 +281,6 @@ public class CasSimpleMultifactorSendTokenAction extends AbstractMultifactorAuth
     }
 
     public record CandidateRecipientAddress(TokenSharingStrategyOptions option, String hash,
-        String contact, String obfuscated) implements Serializable {}
+        String contact, String obfuscated) implements Serializable {
+    }
 }
