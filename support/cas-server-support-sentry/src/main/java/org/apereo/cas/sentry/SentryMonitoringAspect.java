@@ -90,9 +90,7 @@ public class SentryMonitoringAspect implements Serializable {
     @Pointcut("within(org.apereo.cas..*) "
         + "&& !within(org.apereo.cas..*config..*) "
         + "&& !within(org.apereo.cas..*Configuration) "
-        + "&& !within(org.apereo.cas.authentication.credential..*)"
-        + "&& !within(org.apereo.cas.support.saml.web.idp.profile.slo.SamlIdPLogoutResponseObjectBuilder)"
-        + "&& !within(org.apereo.cas.support.saml.web.idp.profile.HttpServletRequestXMLMessageDecodersMap)")
+        + "&& !within(org.apereo.cas.authentication.credential..*)")
     private void allSentryComponents() {
     }
 }
