@@ -1,5 +1,5 @@
 {
-  "dependencies": "core,google-analytics",
+  "dependencies": "core,google-analytics,sentry",
   "conditions": {
     "docker": "true"
   },
@@ -17,7 +17,8 @@
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
-    "--management.endpoints.enabled-by-default=true"
+    "--management.endpoints.enabled-by-default=true",
+    "--management.server.port=8081"
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
