@@ -8,7 +8,6 @@ let cas = {
         menu.open = true;
     },
     attachFields: () => {
-
         let divs = document.querySelectorAll('.mdc-text-field');
         for (const div of divs) {
             new mdc.textField.MDCTextField(div);
@@ -34,15 +33,15 @@ let cas = {
 
         let tooltips = document.querySelectorAll('.mdc-tooltip');
         if (tooltips != null) {
-            tooltips.forEach(t => {
-                new mdc.tooltip.MDCTooltip(t);
-            })
+            tooltips.forEach(t => new mdc.tooltip.MDCTooltip(t))
         }
         let banners = document.querySelectorAll('.mdc-banner');
         if (banners != null) {
-            banners.forEach(b => {
-                new mdc.banner.MDCBanner(b);
-            })
+            banners.forEach(b => new mdc.banner.MDCBanner(b))
+        }
+        let dialogs = document.querySelectorAll('.mdc-dialog');
+        if (dialogs != null) {
+            dialogs.forEach(b => new mdc.dialog.MDCDialog.attachTo(b))
         }
 
         for (const el of document.querySelectorAll('.mdc-switch')) {
@@ -82,7 +81,7 @@ let cas = {
         }
 
     },
-    checkCaps: ev => {
+    checkCaps: (ev) => {
         let s = String.fromCharCode(ev.which);
         if (s.toUpperCase() === s && s.toLowerCase() !== s && !ev.shiftKey) {
             for (let el of document.getElementsByClassName("caps-warn")) {
@@ -96,7 +95,80 @@ let cas = {
             }
         }
 
+    },
+    openDialog: (id) => {
+        const dialog = new mdc.dialog.MDCDialog(document.getElementById(id));
+        dialog.open();
+        return false;
+    },
+};
+
+let header = {
+    init: () => {
+        header.attachTopbar();
+        mdc.autoInit();
+    },
+    attachDrawer: () => {
+        let elm = document.getElementById('app-drawer');
+        if (elm != null) {
+            let drawer = mdc.drawer.MDCDrawer.attachTo(elm);
+            let closeDrawer = evt => {
+                drawer.open = false;
+            };
+            drawer.foundation.handleScrimClick = closeDrawer;
+            document.onkeydown = evt => {
+                evt = evt || window.event;
+                if (evt.keyCode === 27) {
+                    closeDrawer();
+                }
+            };
+            header.drawer = drawer;
+            return drawer;
+        }
+        return undefined;
+    },
+    attachTopbar: drawer => {
+
+        drawer = header.attachDrawer();
+        let dialog = header.attachNotificationDialog();
+
+        if (drawer !== undefined) {
+            header.attachDrawerToggle(drawer);
+        }
+        if (dialog !== undefined) {
+            header.attachNotificationToggle(dialog);
+        }
+    },
+    attachDrawerToggle: drawer => {
+        let appBar = document.getElementById('app-bar');
+        if (appBar != null) {
+            let topAppBar = mdc.topAppBar.MDCTopAppBar.attachTo(appBar);
+            topAppBar.setScrollTarget(document.getElementById('main-content'));
+            topAppBar.listen('MDCTopAppBar:nav', () => {
+                drawer.open = !drawer.open;
+            });
+            return topAppBar;
+        }
+        return undefined;
+    },
+    attachNotificationDialog: () => {
+        let element = document.getElementById('cas-notification-dialog');
+        if (element != null) {
+            return mdc.dialog.MDCDialog.attachTo(element);
+        }
+        return undefined;
+    },
+    attachNotificationToggle: dialog => {
+        let btn = document.getElementById('cas-notifications-menu');
+        if (btn != null) {
+            btn.addEventListener('click', () => {
+                dialog.open();
+            });
+        }
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => cas.init());
+document.addEventListener('DOMContentLoaded', () => {
+    cas.init();
+    header.init();
+});

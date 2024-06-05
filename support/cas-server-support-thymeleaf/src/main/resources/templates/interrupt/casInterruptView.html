@@ -100,7 +100,7 @@
         </form>
 
         <div th:if="${interrupt.block}">
-            <a class="mdc-button mdc-button--raised me-2 btn btn-outline-secondary" id="cancel" name="cancel" th:href="@{/login}">
+            <a class="mdc-button mdc-button--raised me-2 btn btn-outline-secondary button-cancel" id="cancel" name="cancel" th:href="@{/login}">
                 <span th:if="${interruptTriggerMode == 'AFTER_AUTHENTICATION'}" class="mdc-button__label"
                       th:text="#{screen.interrupt.btn.cancel}">Cancel</span>
 
