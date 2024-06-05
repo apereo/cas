@@ -242,7 +242,7 @@
             <hr class="my-4"/>
             <section class="cas-section form-actions mt-4 d-flex justify-content-center">
                 <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.consent.confirm', id='confirm', name='confirm')}"/>
-                <a class="mdc-button mdc-button--raised btn btn-outline-secondary" id="cancel" name="cancel" th:href="@{/login}">
+                <a class="mdc-button mdc-button--raised btn btn-outline-secondary button-cancel" id="cancel" name="cancel" th:href="@{/login}">
                     <span class="mdc-button__label" th:text="#{screen.consent.cancel}">Cancel</span>
                 </a>
             </section>
