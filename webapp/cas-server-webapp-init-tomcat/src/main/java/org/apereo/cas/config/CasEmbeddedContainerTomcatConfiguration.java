@@ -12,8 +12,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.embedded.tomcat.ConfigurableTomcatWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
-import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -33,7 +33,7 @@ class CasEmbeddedContainerTomcatConfiguration {
 
     @ConditionalOnMissingBean(name = "casServletWebServerFactory")
     @Bean
-    public ConfigurableServletWebServerFactory casServletWebServerFactory(
+    public ConfigurableTomcatWebServerFactory casServletWebServerFactory(
         final ServerProperties serverProperties,
         final CasConfigurationProperties casProperties) {
         return new CasTomcatServletWebServerFactory(casProperties, serverProperties);
