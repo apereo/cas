@@ -19,6 +19,7 @@ on:
       - Code Analysis
       - Publish Documentation
       - Validation
+      - Build
     types:
       - completed
     branches:
