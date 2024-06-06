@@ -25,13 +25,13 @@ const fs = require("fs");
     await cas.assertVisibility(page, "#passwordValidationMessage");
 
     await cas.loginWith(page);
-    await cas.sleep(1000);
+    await cas.sleep(2000);
     await cas.screenshot(page);
     await cas.assertCookie(page);
     await cas.assertPageTitle(page, "CAS - Central Authentication Service Log In Successful");
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
 
-    await cas.sleep(1000);
+    await cas.sleep(2000);
     assert (await cas.pageVariable(page, "googleAnalyticsTrackingId") !== null);
 
     await cas.gotoLogout(page);
@@ -59,13 +59,14 @@ const fs = require("fs");
     await cas.log(`Login page is written to ${loginFile}`);
 
     await cas.goto(page, `file://${loginFile}`);
-    await cas.sleep(1000);
+    await cas.sleep(2000);
     await cas.loginWith(page);
-    await cas.sleep(1000);
+    await cas.sleep(2000);
     const content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
     assert(payload.form.ticket !== undefined);
     await cas.gotoLogout(page);
-    
+    await cas.sleep(1000);
+
     await browser.close();
 })();
