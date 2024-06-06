@@ -77,3 +77,4 @@ ci/tests/k3d/install.sh
 ci/tests/k3d/get_helm.sh
 support/cas-server-support-palantir/src/main/resources/static/assets
 cas/lib
+*.jsa

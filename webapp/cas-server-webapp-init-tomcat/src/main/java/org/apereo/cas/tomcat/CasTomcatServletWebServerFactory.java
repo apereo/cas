@@ -2,6 +2,7 @@ package org.apereo.cas.tomcat;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatClusteringProperties;
+import org.apereo.cas.monitor.NotMonitorable;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -47,6 +48,7 @@ import java.util.Locale;
  * @since 5.3.0
  */
 @Slf4j
+@NotMonitorable
 public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFactory {
 
     private final CasConfigurationProperties casProperties;
