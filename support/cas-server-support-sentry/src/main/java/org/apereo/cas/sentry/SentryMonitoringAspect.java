@@ -92,8 +92,7 @@ public class SentryMonitoringAspect implements Serializable {
         + "&& !within(org.apereo.cas..*Configuration) "
         + "&& !within(org.apereo.cas.authentication.credential..*)"
         + "&& !@within(org.apereo.cas.monitor.NotMonitorable)"
-        + "&& !@target(org.apereo.cas.monitor.NotMonitorable)"
-    )
+        + "&& !@target(org.apereo.cas.monitor.NotMonitorable)")
     private void allSentryComponents() {
     }
 }
