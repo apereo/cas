@@ -91,3 +91,5 @@ cas.[path-to-configuration-key].crypto.alg=A128CBC-HS256
 - Nimbus JOSE JWT
 - Java Melody
 - ErrorProne
+- Twilio
+- Sentry
