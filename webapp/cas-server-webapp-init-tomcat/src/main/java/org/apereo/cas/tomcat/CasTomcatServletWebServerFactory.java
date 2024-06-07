@@ -47,7 +47,6 @@ import java.util.Locale;
  * @author sbearcsiro
  * @since 5.3.0
  */
-@NotMonitorable
 @Slf4j
 @NotMonitorable
 public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFactory {
