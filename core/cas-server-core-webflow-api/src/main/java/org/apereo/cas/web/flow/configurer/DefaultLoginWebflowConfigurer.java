@@ -65,7 +65,6 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
         createDefaultActionStates(flow);
         createDefaultViewStates(flow);
         createRememberMeAuthnWebflowConfig(flow);
-
         setStartState(flow, CasWebflowConstants.STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK);
     }
 
