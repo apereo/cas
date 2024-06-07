@@ -3,7 +3,6 @@ package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,6 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -35,13 +33,12 @@ class DefaultSamlIdPObjectSignerTests extends BaseSamlIdPConfigurationTests {
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
 
-        val adaptor = SamlRegisteredServiceMetadataAdaptor
-            .get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService,
+        val adaptor = SamlRegisteredServiceMetadataAdaptor.get(samlRegisteredServiceCachingMetadataResolver, samlRegisteredService,
                 samlRegisteredService.getServiceId()).get();
-
         val authnRequest = SamlIdPTestUtils.getAuthnRequest(openSamlConfigBean, samlRegisteredService);
-        assertNotNull(samlIdPObjectSigner.encode(authnRequest, samlRegisteredService, adaptor, response, request,
-            SAMLConstants.SAML2_POST_BINDING_URI, authnRequest, new MessageContext()));
+        val encodedRequest = samlIdPObjectSigner.encode(authnRequest, samlRegisteredService, adaptor, response, request,
+            SAMLConstants.SAML2_POST_BINDING_URI, authnRequest, new MessageContext());
+        assertNotNull(encodedRequest);
 
     }
 }
