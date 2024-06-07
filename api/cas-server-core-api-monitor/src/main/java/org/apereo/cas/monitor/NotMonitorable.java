@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * @since 7.1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.TYPE})
+@Target(ElementType.TYPE)
 @Documented
 public @interface NotMonitorable {
 }
