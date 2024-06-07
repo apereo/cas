@@ -7,13 +7,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This is {@link NotMonitorable}.
+ * For components that should not be monitored.
  *
- * @author Misagh Moayyed
+ * @author Jerome LELEU
  * @since 7.1.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Documented
 public @interface NotMonitorable {
 }
