@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
@@ -269,7 +270,6 @@ public class OAuth20JwtAccessTokenEncoder {
                         attributes.put(claim.getKey(), List.of(claim.getValue()));
                     });
             }
-
             if (attributes.containsKey(OAuth20Constants.X509_CERTIFICATE_DIGEST)) {
                 CollectionUtils.firstElement(attributes.get(OAuth20Constants.X509_CERTIFICATE_DIGEST))
                     .ifPresent(conf -> {
@@ -278,6 +278,7 @@ public class OAuth20JwtAccessTokenEncoder {
                         attributes.put(claim.getKey(), List.of(claim.getValue()));
                     });
             }
+            attributes.remove(CasProtocolConstants.PARAMETER_PASSWORD);
             return attributes;
         }
 
