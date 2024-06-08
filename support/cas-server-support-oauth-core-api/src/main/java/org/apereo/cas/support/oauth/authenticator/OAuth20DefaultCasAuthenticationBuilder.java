@@ -82,7 +82,7 @@ public class OAuth20DefaultCasAuthenticationBuilder implements OAuth20CasAuthent
         val authenticator = profile.getClass().getCanonicalName();
         val credential = new BasicIdentifiableCredential(profile.getId());
         val handlerResult = new DefaultAuthenticationHandlerExecutionResult(authenticator,
-            credential, newPrincipal, new ArrayList<>(0));
+            credential, newPrincipal, new ArrayList<>());
 
         val scopes = requestParameterResolver.resolveRequestedScopes(context);
         scopes.retainAll(registeredService.getScopes());
