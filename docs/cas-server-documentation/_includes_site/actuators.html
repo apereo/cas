@@ -246,7 +246,7 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                                     <br />
                                     {%- assign allParams="" -%}
                                     {%- if cfg.parameters.size > 0 -%}
-                                    <p>Endpoint Parameters:</p>
+                                    <h5>Endpoint Parameters</h5>
                                     <ul>
                                         {% for param in cfg.parameters -%}
                                         <li>
@@ -265,7 +265,7 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                                                data-bs-placment="top" data-bs-html="true"
                                                title="{{ paramTitle }}"></i>
                                             <code>{{param.type}} {{ param.name }}</code>
-                                            {%- if param.description.size > 0 -%} - <sub>{{ param.description }}</sub>{%- endif -%}
+                                            {%- if param.description.size > 0 -%}: <span>{{ param.description }}</span>{%- endif -%}
                                             {%- assign allParams = allParams | append: param.name | append: "=...&" -%}
                                         </li>
                                         {%- endfor -%}

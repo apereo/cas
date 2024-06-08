@@ -14,6 +14,7 @@ import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -125,8 +126,8 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
         parameters = {
             @Parameter(name = "type", in = ParameterIn.QUERY, description = "Type of sessions to retrieve (ALL, DIRECT, PROXIED)"),
             @Parameter(name = "username", in = ParameterIn.QUERY, description = "Username assigned to each session"),
-            @Parameter(name = "from", in = ParameterIn.QUERY, description = "Starting position/index of the query"),
-            @Parameter(name = "count", in = ParameterIn.QUERY, description = "Total number of sessions to return")
+            @Parameter(name = "from", schema = @Schema(type = "integer"), in = ParameterIn.QUERY, description = "Starting position/index of the query"),
+            @Parameter(name = "count", schema = @Schema(type = "integer"), in = ParameterIn.QUERY, description = "Total number of sessions to return")
         })
     public Map<String, Object> getSsoSessions(
         @Valid
@@ -207,8 +208,8 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
         parameters = {
             @Parameter(name = "type", in = ParameterIn.QUERY, description = "Type of sessions to retrieve (ALL, DIRECT, PROXIED)"),
             @Parameter(name = "username", in = ParameterIn.QUERY, description = "Username assigned to each session"),
-            @Parameter(name = "from", in = ParameterIn.QUERY, description = "Starting position/index of the query"),
-            @Parameter(name = "count", in = ParameterIn.QUERY, description = "Total number of sessions to return")
+            @Parameter(name = "from", schema = @Schema(type = "integer"), in = ParameterIn.QUERY, description = "Starting position/index of the query"),
+            @Parameter(name = "count", schema = @Schema(type = "integer"), in = ParameterIn.QUERY, description = "Total number of sessions to return")
         })
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> destroySsoSessions(

@@ -9,6 +9,7 @@ import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -68,7 +69,8 @@ public class TicketRegistryEndpoint extends BaseCasRestActuatorEndpoint {
             MediaType.APPLICATION_JSON_VALUE,
             MEDIA_TYPE_CAS_YAML
         })
-    @Operation(summary = "Query the ticket registry. Querying capabilities vary and depend on the registry implementation.",
+    @Operation(
+        summary = "Query the ticket registry. Querying capabilities vary and depend on the registry implementation.",
         parameters = {
             @Parameter(name = "type",
                 required = false,
@@ -79,9 +81,13 @@ public class TicketRegistryEndpoint extends BaseCasRestActuatorEndpoint {
                 description = "The ticket id to query. Requires type to be specified.",
                 in = ParameterIn.QUERY),
             @Parameter(name = "decode", required = false,
+                schema = @Schema(type = "boolean"),
                 description = "Whether the registry should return objects in raw form or decode and transform and check each ticket",
                 in = ParameterIn.QUERY),
-            @Parameter(name = "count", required = false, in = ParameterIn.QUERY)
+            @Parameter(name = "count",
+                schema = @Schema(type = "integer"),
+                description = "Limit the number of objects and tickets returned in the response",
+                required = false, in = ParameterIn.QUERY)
         })
     public List<?> query(@Valid @ModelAttribute final TicketRegistryQueryCriteria criteria) {
         return ticketRegistryProvider.getObject().query(criteria);
@@ -110,12 +116,14 @@ public class TicketRegistryEndpoint extends BaseCasRestActuatorEndpoint {
         stopwatch.stop();
         val endTime = ZonedDateTime.now(Clock.systemUTC());
         val duration = stopwatch.getTime(TimeUnit.SECONDS);
-        return ResponseEntity.ok(Map.of(
+        val payload = Map.of(
             "total", total,
             "removed", removed,
             "startTime", startTime,
             "endTime", endTime,
             "duration", duration
-            ));
+        );
+        LOGGER.debug("Ticket registry cleaner finished with the following payload: [{}]", payload);
+        return ResponseEntity.ok(payload);
     }
 }

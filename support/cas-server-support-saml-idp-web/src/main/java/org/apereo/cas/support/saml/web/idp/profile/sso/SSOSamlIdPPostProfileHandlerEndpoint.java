@@ -29,6 +29,7 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -146,7 +147,7 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEnd
         @Parameter(name = "username", required = true),
         @Parameter(name = "password", required = false),
         @Parameter(name = SamlProtocolConstants.PARAMETER_ENTITY_ID, required = true),
-        @Parameter(name = "encrypt")
+        @Parameter(name = "encrypt", schema = @Schema(type = "boolean"))
     })
     public ResponseEntity<Object> producePost(final HttpServletRequest request,
                                               final HttpServletResponse response,
