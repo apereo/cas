@@ -264,7 +264,7 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                                             <i class="fas fa-info-circle" data-bs-toggle="tooltip"
                                                data-bs-placment="top" data-bs-html="true"
                                                title="{{ paramTitle }}"></i>
-                                            <code>{{param.type}} {{ param.name }}</code>
+                                            <code>{{ param.name }} ({{ param.type }})</code>
                                             {%- if param.description.size > 0 -%}: <span>{{ param.description }}</span>{%- endif -%}
                                             {%- assign allParams = allParams | append: param.name | append: "=...&" -%}
                                         </li>
@@ -277,7 +277,7 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                                         <p>Once the endpoint is available, here is an example of how you could use it with <code>curl</code>: </p>
 {%- capture curlrequest -%}
 ```bash
-curl -u "username:password" \
+curl -k -u "username:password" \
     -X {{ cfg.method }} \
     -X "Content-Type: {{ cfg.consumes[0] | default: 'application/json' }}" \
     -X "Accept: {{ cfg.produces[0] | default: 'application/json' }}" \

@@ -805,7 +805,7 @@ public class CasDocumentationApplication {
                 if (StringUtils.isNotBlank(parameter.description())) {
                     paramData.put("description", parameter.description());
                 } else {
-                    LOGGER.error("No description found for parameter [{}] in [{}]", parameter.name(), clazz.getName());
+                    throw new RuntimeException("No description found for parameter %s in %s".formatted(parameter.name(), clazz.getName()));
                 }
                 paramData.put("required", parameter.required());
 
@@ -815,7 +815,7 @@ public class CasDocumentationApplication {
                     paramData.put("query", true);
                 }
                 if (parameter.schema() != null && StringUtils.isNotBlank(parameter.schema().type())) {
-                    paramData.put("schema", parameter.schema().type());
+                    paramData.put("type", parameter.schema().type());
                 }
                 parameters.add(paramData);
             }

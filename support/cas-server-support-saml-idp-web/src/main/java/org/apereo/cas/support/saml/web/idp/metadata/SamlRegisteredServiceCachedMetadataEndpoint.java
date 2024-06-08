@@ -121,10 +121,10 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActu
      * @return the cached metadata object
      */
     @GetMapping(produces = {
+        MediaType.APPLICATION_JSON_VALUE,
         MEDIA_TYPE_SPRING_BOOT_V2_JSON,
         MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-        MediaType.APPLICATION_JSON_VALUE,
         MEDIA_TYPE_CAS_YAML
     })
     @Operation(summary = "Get SAML2 cached metadata for a SAML2 registered service. The service id could be the registered service numeric identifier, its name or actual service id. "
