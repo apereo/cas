@@ -6,6 +6,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -149,7 +150,7 @@ public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint {
     @Operation(summary = "Update logger level for a logger name", parameters = {
         @Parameter(name = "loggerName", required = true),
         @Parameter(name = "loggerLevel", required = true),
-        @Parameter(name = "additive")
+        @Parameter(name = "additive", schema = @Schema(type = "boolean"))
     })
     public void updateLoggerLevel(@Selector final String loggerName,
                                   final String loggerLevel,

@@ -804,6 +804,8 @@ public class CasDocumentationApplication {
                 paramData.put("name", parameter.name());
                 if (StringUtils.isNotBlank(parameter.description())) {
                     paramData.put("description", parameter.description());
+                } else {
+                    LOGGER.error("No description found for parameter [{}] in [{}]", parameter.name(), clazz.getName());
                 }
                 paramData.put("required", parameter.required());
 
@@ -811,6 +813,9 @@ public class CasDocumentationApplication {
                     paramData.put("selector", true);
                 } else {
                     paramData.put("query", true);
+                }
+                if (parameter.schema() != null && StringUtils.isNotBlank(parameter.schema().type())) {
+                    paramData.put("schema", parameter.schema().type());
                 }
                 parameters.add(paramData);
             }
