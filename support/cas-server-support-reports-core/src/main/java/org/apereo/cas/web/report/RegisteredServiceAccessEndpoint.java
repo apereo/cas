@@ -84,10 +84,10 @@ public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint
             MediaType.APPLICATION_JSON_VALUE
         },
         produces = {
+            MediaType.APPLICATION_JSON_VALUE,
             MEDIA_TYPE_SPRING_BOOT_V2_JSON,
             MEDIA_TYPE_SPRING_BOOT_V3_JSON,
-            MEDIA_TYPE_CAS_YAML,
-            MediaType.APPLICATION_JSON_VALUE
+            MEDIA_TYPE_CAS_YAML
         })
     @Operation(summary = "Verify if service access can be granted to the user", parameters = {
         @Parameter(name = "username", required = true, in = ParameterIn.QUERY),

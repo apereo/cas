@@ -63,10 +63,10 @@ public class TicketRegistryEndpoint extends BaseCasRestActuatorEndpoint {
     @GetMapping(
         path = "/query",
         produces = {
+            MediaType.APPLICATION_JSON_VALUE,
             MEDIA_TYPE_SPRING_BOOT_V2_JSON,
             MEDIA_TYPE_SPRING_BOOT_V3_JSON,
             MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-            MediaType.APPLICATION_JSON_VALUE,
             MEDIA_TYPE_CAS_YAML
         })
     @Operation(
@@ -99,10 +99,10 @@ public class TicketRegistryEndpoint extends BaseCasRestActuatorEndpoint {
     @DeleteMapping(
         path = "/clean",
         produces = {
+            MediaType.APPLICATION_JSON_VALUE,
             MEDIA_TYPE_SPRING_BOOT_V2_JSON,
             MEDIA_TYPE_SPRING_BOOT_V3_JSON,
             MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-            MediaType.APPLICATION_JSON_VALUE,
             MEDIA_TYPE_CAS_YAML
         })
     @Operation(summary = "Clean the ticket registry on demand particularly when the cleaner schedule "
