@@ -9,6 +9,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapter;
+import org.apereo.cas.web.security.CasWebflowSecurityContextRepository;
 
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoExtractionOptions;
@@ -44,6 +45,8 @@ import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.webflow.context.servlet.FlowUrlHandler;
+import org.springframework.webflow.executor.FlowExecutor;
 
 import jakarta.annotation.Nonnull;
 
@@ -93,10 +96,15 @@ class CasWebSecurityConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "securityContextRepository")
-        public SecurityContextRepository securityContextRepository() {
+        public SecurityContextRepository securityContextRepository(
+            @Qualifier("loginFlowUrlHandler")
+            final FlowUrlHandler loginFlowUrlHandler,
+            @Qualifier("loginFlowExecutor")
+            final FlowExecutor loginFlowExecutor) {
             return new DelegatingSecurityContextRepository(
                 new RequestAttributeSecurityContextRepository(),
-                new HttpSessionSecurityContextRepository()
+                new HttpSessionSecurityContextRepository(),
+                new CasWebflowSecurityContextRepository(loginFlowExecutor, loginFlowUrlHandler)
             );
         }
 
