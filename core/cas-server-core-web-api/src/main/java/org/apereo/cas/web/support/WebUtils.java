@@ -572,7 +572,7 @@ public class WebUtils {
      * @param requestContext the ctx
      */
     public static void putAuthentication(final Authentication authentication, final RequestContext requestContext) {
-        requestContext.getConversationScope().put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, authentication);
+        putAuthentication(authentication, requestContext.getConversationScope());
     }
 
     /**
@@ -588,13 +588,33 @@ public class WebUtils {
     }
 
     /**
+     * Put authentication.
+     *
+     * @param authentication the authentication
+     * @param scope          the scope
+     */
+    public static void putAuthentication(final Authentication authentication, final MutableAttributeMap scope) {
+        scope.put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, authentication);
+    }
+    
+    /**
      * Gets authentication from conversation scope.
      *
      * @param ctx the ctx
      * @return the authentication
      */
     public static Authentication getAuthentication(final RequestContext ctx) {
-        return ctx.getConversationScope().get(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, Authentication.class);
+        return getAuthentication(ctx.getConversationScope());
+    }
+
+    /**
+     * Gets authentication.
+     *
+     * @param ctx the ctx
+     * @return the authentication
+     */
+    public static Authentication getAuthentication(final MutableAttributeMap<Object> ctx) {
+        return ctx.get(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, Authentication.class);
     }
 
     /**

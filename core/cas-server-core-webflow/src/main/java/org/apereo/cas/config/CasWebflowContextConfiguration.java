@@ -156,8 +156,10 @@ class CasWebflowContextConfiguration {
     @Configuration(value = "CasWebflowContextFlowExecutorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasWebflowContextFlowExecutorConfiguration {
+        
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
+        @ConditionalOnMissingBean(name = "logoutFlowExecutor")
         public FlowExecutor logoutFlowExecutor(
             final CasConfigurationProperties casProperties,
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry logoutFlowRegistry,
@@ -169,10 +171,13 @@ class CasWebflowContextConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
+        @ConditionalOnMissingBean(name = "loginFlowExecutor")
         public FlowExecutor loginFlowExecutor(
             final CasConfigurationProperties casProperties,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry loginFlowRegistry,
-            @Qualifier("webflowCipherExecutor") final CipherExecutor webflowCipherExecutor) {
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry loginFlowRegistry,
+            @Qualifier("webflowCipherExecutor")
+            final CipherExecutor webflowCipherExecutor) {
             val factory = new WebflowExecutorFactory(casProperties.getWebflow(),
                 loginFlowRegistry, webflowCipherExecutor,
                 FLOW_EXECUTION_LISTENERS);
