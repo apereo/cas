@@ -30,6 +30,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -82,6 +83,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
     @Autowired
     @Qualifier(CentralAuthenticationService.BEAN_NAME)
     protected CentralAuthenticationService centralAuthenticationService;
+    
     @Autowired
     @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
     protected AuthenticationSystemSupport authenticationSystemSupport;
@@ -105,6 +107,10 @@ public abstract class BaseOAuth20AuthenticatorTests {
     @Autowired
     @Qualifier("oauthClientAuthenticator")
     protected Authenticator oauthClientAuthenticator;
+
+    @Autowired
+    @Qualifier("oauth20ConfigurationContext")
+    protected OAuth20ConfigurationContext configurationContext;
 
     @Autowired
     @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)

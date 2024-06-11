@@ -438,10 +438,8 @@ class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator(
-            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
-            @Qualifier("accessTokenJwtBuilder") final JwtBuilder accessTokenJwtBuilder,
-            final CasConfigurationProperties casProperties) {
-            return new OAuth20DefaultAccessTokenResponseGenerator(accessTokenJwtBuilder, ticketRegistry, casProperties);
+            @Qualifier("oauth20ConfigurationContext") final ObjectProvider<OAuth20ConfigurationContext> context) {
+            return new OAuth20DefaultAccessTokenResponseGenerator(context);
         }
     }
 

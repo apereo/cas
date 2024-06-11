@@ -190,7 +190,6 @@ class OidcAccessTokenEndpointControllerTests {
             val expirationTime = expirationPolicy.getIdleExpirationTime(ticketGrantingTicket);
             val lastTimeUsed = ticketGrantingTicket.getLastTimeUsed();
             
-
             ticketRegistry.addTicket(ticketGrantingTicket);
             val code = addCode(ticketGrantingTicket, registeredService);
             val result = mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
