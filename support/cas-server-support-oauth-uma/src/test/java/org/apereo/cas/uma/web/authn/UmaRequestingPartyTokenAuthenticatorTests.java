@@ -26,7 +26,8 @@ class UmaRequestingPartyTokenAuthenticatorTests extends BaseUmaEndpointControlle
 
     @Test
     void verifyOperation() throws Throwable {
-        val input = new UmaRequestingPartyTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
+        val input = new UmaRequestingPartyTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder,
+                profileScopeToAttributesFilter, authenticationAttributeReleasePolicy);
         val token = getAccessToken();
         val credentials = new TokenCredentials(token.getId());
         ticketRegistry.addTicket(token);

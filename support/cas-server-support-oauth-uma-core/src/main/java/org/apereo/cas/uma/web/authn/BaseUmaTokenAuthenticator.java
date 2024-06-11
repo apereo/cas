@@ -1,10 +1,12 @@
 package org.apereo.cas.uma.web.authn;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +35,10 @@ public abstract class BaseUmaTokenAuthenticator implements Authenticator {
 
     private final JwtBuilder accessTokenJwtBuilder;
 
+    private final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter;
+
+    private final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
+    
     @Override
     public Optional<Credentials> validate(final CallContext callContext, final Credentials creds) {
         val credentials = (TokenCredentials) creds;
@@ -68,6 +74,8 @@ public abstract class BaseUmaTokenAuthenticator implements Authenticator {
     protected String extractAccessTokenFrom(final String token) {
         return OAuth20JwtAccessTokenEncoder.builder()
             .accessTokenJwtBuilder(accessTokenJwtBuilder)
+            .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
+            .profileScopeToAttributesFilter(profileScopeToAttributesFilter)
             .build()
             .decode(token);
     }

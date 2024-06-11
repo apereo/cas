@@ -4,12 +4,14 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.IdTokenGeneratorService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -36,8 +38,10 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
     public OidcAccessTokenResponseGenerator(final IdTokenGeneratorService idTokenGenerator,
                                             final JwtBuilder jwtBuilder,
                                             final CasConfigurationProperties casProperties,
-                                            final OidcIssuerService oidcIssuerService) {
-        super(jwtBuilder, casProperties);
+                                            final OidcIssuerService oidcIssuerService,
+                                            final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
+                                            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
+        super(jwtBuilder, casProperties, profileScopeToAttributesFilter, authenticationAttributeReleasePolicy);
         this.idTokenGenerator = idTokenGenerator;
         this.oidcIssuerService = oidcIssuerService;
     }

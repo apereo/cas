@@ -542,6 +542,10 @@ public class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthenticationClientProvider oidcClientConfigurationAuthenticationClientProvider(
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
+            final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder,
             @Qualifier(TicketRegistry.BEAN_NAME)
@@ -550,7 +554,7 @@ public class OidcConfiguration {
                 val accessTokenClient = new HeaderClient();
                 accessTokenClient.setCredentialsExtractor(new BearerAuthExtractor());
                 accessTokenClient.setAuthenticator(new OidcClientConfigurationAccessTokenAuthenticator(
-                    ticketRegistry, accessTokenJwtBuilder));
+                    ticketRegistry, accessTokenJwtBuilder, profileScopeToAttributesFilter, authenticationAttributeReleasePolicy));
                 accessTokenClient.setName(OidcConstants.CAS_OAUTH_CLIENT_CONFIG_ACCESS_TOKEN_AUTHN);
                 accessTokenClient.init();
                 return accessTokenClient;
@@ -629,6 +633,10 @@ public class OidcConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oauthAccessTokenAuthenticator")
         public Authenticator oauthAccessTokenAuthenticator(
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
+            final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("oidcTokenSigningAndEncryptionService")
             final OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService,
             @Qualifier("accessTokenJwtBuilder")
@@ -638,13 +646,18 @@ public class OidcConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) throws Exception {
             return new OidcAccessTokenAuthenticator(ticketRegistry,
-                oidcTokenSigningAndEncryptionService, servicesManager, accessTokenJwtBuilder);
+                oidcTokenSigningAndEncryptionService, servicesManager, accessTokenJwtBuilder,
+                profileScopeToAttributesFilter, authenticationAttributeReleasePolicy);
         }
 
         @ConditionalOnMissingBean(name = "oidcDynamicRegistrationAuthenticator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Authenticator oidcDynamicRegistrationAuthenticator(
+            @Qualifier(OAuth20ProfileScopeToAttributesFilter.BEAN_NAME)
+            final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
+            @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
+            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
             @Qualifier("oidcTokenSigningAndEncryptionService")
             final OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService,
             @Qualifier("accessTokenJwtBuilder")
@@ -654,7 +667,8 @@ public class OidcConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager) throws Exception {
             val authenticator = new OidcAccessTokenAuthenticator(ticketRegistry,
-                oidcTokenSigningAndEncryptionService, servicesManager, accessTokenJwtBuilder);
+                oidcTokenSigningAndEncryptionService, servicesManager, accessTokenJwtBuilder,
+                profileScopeToAttributesFilter, authenticationAttributeReleasePolicy);
             authenticator.setRequiredScopes(Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));
             return authenticator;
         }
