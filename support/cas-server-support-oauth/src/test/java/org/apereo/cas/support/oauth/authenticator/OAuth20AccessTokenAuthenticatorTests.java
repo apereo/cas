@@ -33,8 +33,8 @@ class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTests
         val accessToken = getAccessToken();
         ticketRegistry.addTicket(accessToken);
 
-        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(accessTokenJwtBuilder, serviceJwtAccessToken,
-            accessToken, accessToken.getService(), casProperties, false).encode(accessToken.getId());
+        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, serviceJwtAccessToken,
+            accessToken, accessToken.getService(), false).encode(accessToken.getId());
         val credentials = new TokenCredentials(encodedAccessToken);
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -45,8 +45,8 @@ class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTests
     @Test
     void verifyAuthenticationFailsWithNoToken() throws Throwable {
         val accessToken = getAccessToken();
-        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(accessTokenJwtBuilder, serviceJwtAccessToken,
-            accessToken, accessToken.getService(), casProperties, false).encode(accessToken.getId());
+        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, serviceJwtAccessToken,
+            accessToken, accessToken.getService(), false).encode(accessToken.getId());
         val credentials = new TokenCredentials(encodedAccessToken);
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
@@ -58,8 +58,8 @@ class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20AuthenticatorTests
     void verifyAuthentication() throws Throwable {
         val accessToken = getAccessToken();
         ticketRegistry.addTicket(accessToken);
-        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(accessTokenJwtBuilder, service,
-            accessToken, accessToken.getService(), casProperties, false).encode(accessToken.getId());
+        val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, service,
+            accessToken, accessToken.getService(), false).encode(accessToken.getId());
         val credentials = new TokenCredentials(encodedAccessToken);
         val request = new MockHttpServletRequest();
         val ctx = new JEEContext(request, new MockHttpServletResponse());
