@@ -16,7 +16,7 @@ function printred() {
 }
 
 function clean {
-  ./gradlew clean --parallel --no-configuration-cache
+  ./gradlew clean --parallel --no-configuration-cache --no-daemon
 }
 
 function build {
@@ -27,7 +27,7 @@ function build {
     git add "**/rewrite/*.yml" && git commit -am "Generated OpenRewrite recipe for ${casVersion}"
 
     printgreen "Building CAS. Please be patient as this might take a while..."
-    ./gradlew assemble -x test -x check --parallel --no-watch-fs --no-configuration-cache \
+    ./gradlew assemble -x test -x check --parallel --no-watch-fs --no-daemon --no-configuration-cache \
         -DskipAot=true -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2"
     if [ $? -ne 0 ]; then
         printred "Building CAS failed."
@@ -64,7 +64,7 @@ function publish {
     fi
     printgreen "Publishing CAS releases. This might take a while..."
     ./gradlew publishToSonatype closeAndReleaseStagingRepository \
-      --no-build-cache --no-parallel --no-watch-fs --no-configuration-cache -DskipAot=true -DpublishReleases=true \
+      --no-build-cache --no-parallel --no-daemon --no-watch-fs --no-configuration-cache -DskipAot=true -DpublishReleases=true \
       -DrepositoryUsername="$1" -DrepositoryPassword="$2" -DpublishReleases=true \
       -Dorg.gradle.internal.http.socketTimeout=640000 \
       -Dorg.gradle.internal.http.connectionTimeout=640000 \
