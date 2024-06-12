@@ -76,6 +76,8 @@ cas.[path-to-configuration-key].crypto.alg=A128CBC-HS256
 - ID token `jti` claims in [OpenID Connect](../authentication/OIDC-Authentication.html) are no longer plain ticket (granting-ticket) identifiers but are instead digested using `SHA-512`.
 - The `ticketRegistry` [actuator endpoint](../ticketing/Configuring-Ticketing-Components.html) now offers the ability to run the ticket registry cleaner task on-demand.
 - Docker Swarm support for Hazelcast has been removed from the CAS codebase. 
+- Claims that are collected in a JWT Access Token are now forced to pass through attribute release policies assigned to the application definition.
+- WebAuthn registration endpoint is now able to detect and track an authenticated request using the CAS in-progress authentication attempt. 
 
 ## Library Upgrades
 
@@ -93,3 +95,7 @@ cas.[path-to-configuration-key].crypto.alg=A128CBC-HS256
 - ErrorProne
 - Twilio
 - Sentry
+- Jakarta Servlet API
+- Netty
+- Amazon SDK
+- Micrometer
