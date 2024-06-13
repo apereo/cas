@@ -37,7 +37,7 @@ class GroovyGeoLocationServiceTests {
     void verifyOperation() throws Throwable {
         var results = geoLocationService.locate(InetAddress.getByName("www.google.com"));
         assertNotNull(results);
-        results = geoLocationService.locate(1234D, 1234D);
+        results = geoLocationService.locate(1234.0D, 1234.0D);
         assertNotNull(results);
     }
 }

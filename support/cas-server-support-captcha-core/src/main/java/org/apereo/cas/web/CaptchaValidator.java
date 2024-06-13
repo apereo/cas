@@ -20,7 +20,8 @@ public interface CaptchaValidator {
         return switch (googleRecaptcha.getVersion()) {
             case GOOGLE_RECAPTCHA_V2 -> new GoogleCaptchaV2Validator(googleRecaptcha);
             case GOOGLE_RECAPTCHA_V3 -> new GoogleCaptchaV3Validator(googleRecaptcha);
-            default -> new HCaptchaValidator(googleRecaptcha);
+            case HCAPTCHA -> new HCaptchaValidator(googleRecaptcha);
+            case TURNSTILE -> new TurnstileCaptchaValidator(googleRecaptcha);
         };
     }
 
@@ -40,6 +41,13 @@ public interface CaptchaValidator {
      * @return the recaptcha response
      */
     String getRecaptchaResponse(HttpServletRequest request);
+
+    /**
+     * Gets recaptcha response parameter name.
+     *
+     * @return the recaptcha response parameter name
+     */
+    String getRecaptchaResponseParameterName();
 
     /**
      * Gets recaptcha properties.
