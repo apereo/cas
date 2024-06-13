@@ -37,9 +37,13 @@ dependencies {
                 project.name.matches(pattern)
             }
 
-            ansi.green("Including CAS module(s): ${projectsToAdd}")
-            projectsToAdd.each {
-                implementation it
+            if (projectsToAdd.isEmpty()) {
+                ansi.yellow("No CAS module(s) found for ${it}")
+            } else {
+                ansi.green("Including CAS module(s): ${projectsToAdd}")
+                projectsToAdd.each {
+                    implementation it
+                }
             }
         }
     }

@@ -18,6 +18,7 @@ import org.apache.hc.core5.http.HttpResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -50,6 +51,11 @@ public abstract class BaseCaptchaValidator implements CaptchaValidator {
         return false;
     }
 
+    @Override
+    public String getRecaptchaResponse(final HttpServletRequest request) {
+        return request.getParameter(getRecaptchaResponseParameterName());
+    }
+    
     protected HttpResponse executeCaptchaVerification(final String recaptchaResponse, final String userAgent) {
         val headers = CollectionUtils.<String, String>wrap(
             "User-Agent", userAgent,
