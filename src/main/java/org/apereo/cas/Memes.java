@@ -46,6 +46,13 @@ public class Memes {
     );
 
     public static final Memes PULL_REQUEST_APPROVED = new Memes(
+        "https://github.com/apereo/cas/assets/1205228/1dc37fac-56fa-440f-9e08-0af714d2727d",
+        "https://github.com/apereo/cas/assets/1205228/dbc4bf79-af4c-48a2-8037-c0466d9d4eb5",
+        "https://github.com/apereo/cas/assets/1205228/228d990f-e048-40bf-b850-379e5af36009",
+        "https://github.com/apereo/cas/assets/1205228/b8f7f21b-bde6-44fe-9391-312b6a8f39be",
+        "https://github.com/apereo/cas/assets/1205228/b7a8c97c-5299-41f5-9965-6e9ce2b4e2a7",
+        "https://github.com/apereo/cas/assets/1205228/45422e03-188d-46e4-b1a3-d4aacbed2160",
+        "https://github.com/apereo/cas/assets/1205228/347d7dd7-6f97-48ad-90e2-a737827f737e",
         "https://github.com/apereo/cas/assets/1205228/b5a423b1-f63d-4bd3-b2a8-1eb1e5d1c1ec",
         "https://github.com/apereo/cas/assets/1205228/dec1826c-0495-4227-96ec-a8c239f5e5a7",
         "https://github.com/apereo/cas/assets/1205228/c490c182-a798-4a69-8a9b-61b5c51dbc06",
