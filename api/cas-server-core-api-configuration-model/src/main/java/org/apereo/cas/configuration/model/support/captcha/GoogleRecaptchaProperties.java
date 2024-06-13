@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.captcha;
 
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -47,6 +48,7 @@ public class GoogleRecaptchaProperties implements CasFeatureModule, Serializable
      * The google reCAPTCHA site key.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String siteKey;
 
     /**

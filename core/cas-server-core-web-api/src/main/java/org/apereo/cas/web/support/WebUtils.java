@@ -22,6 +22,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -778,7 +779,7 @@ public class WebUtils {
     public static void putRecaptchaPropertiesFlowScope(final RequestContext context, final GoogleRecaptchaProperties googleRecaptcha) {
         val flowScope = context.getFlowScope();
         if (googleRecaptcha.isEnabled()) {
-            flowScope.put("recaptchaSiteKey", googleRecaptcha.getSiteKey());
+            flowScope.put("recaptchaSiteKey", SpringExpressionLanguageValueResolver.getInstance().resolve(googleRecaptcha.getSiteKey()));
             flowScope.put("recaptchaInvisible", googleRecaptcha.isInvisible());
             flowScope.put("recaptchaPosition", googleRecaptcha.getPosition());
             flowScope.put("recaptchaVersion", googleRecaptcha.getVersion().name().toLowerCase(Locale.ENGLISH));
@@ -793,7 +794,7 @@ public class WebUtils {
      */
     public static String getRecaptchaSiteKey(final RequestContext context) {
         val flowScope = context.getFlowScope();
-        return flowScope.get("recaptchaSiteKey", String.class);
+        return SpringExpressionLanguageValueResolver.getInstance().resolve(flowScope.get("recaptchaSiteKey", String.class));
     }
 
     /**

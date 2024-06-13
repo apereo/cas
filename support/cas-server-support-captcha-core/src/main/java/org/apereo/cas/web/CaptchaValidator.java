@@ -1,8 +1,6 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
-import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties.RecaptchaVersions;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -19,13 +17,11 @@ public interface CaptchaValidator {
      * @return the instance
      */
     static CaptchaValidator getInstance(final GoogleRecaptchaProperties googleRecaptcha) {
-        if (googleRecaptcha.getVersion() == RecaptchaVersions.GOOGLE_RECAPTCHA_V2) {
-            return new GoogleCaptchaV2Validator(googleRecaptcha);
-        }
-        if (googleRecaptcha.getVersion() == RecaptchaVersions.GOOGLE_RECAPTCHA_V3) {
-            return new GoogleCaptchaV3Validator(googleRecaptcha);
-        }
-        return new HCaptchaValidator(googleRecaptcha);
+        return switch (googleRecaptcha.getVersion()) {
+            case GOOGLE_RECAPTCHA_V2 -> new GoogleCaptchaV2Validator(googleRecaptcha);
+            case GOOGLE_RECAPTCHA_V3 -> new GoogleCaptchaV3Validator(googleRecaptcha);
+            default -> new HCaptchaValidator(googleRecaptcha);
+        };
     }
 
     /**

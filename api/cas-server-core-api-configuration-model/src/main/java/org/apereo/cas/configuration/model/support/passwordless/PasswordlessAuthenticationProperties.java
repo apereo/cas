@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.passwordless;
 
 import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
+import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
@@ -44,6 +45,12 @@ public class PasswordlessAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private PasswordlessAuthenticationCoreProperties core = new PasswordlessAuthenticationCoreProperties();
+
+    /**
+     * Google reCAPTCHA settings.
+     */
+    @NestedConfigurationProperty
+    private GoogleRecaptchaProperties googleRecaptcha = new GoogleRecaptchaProperties();
 
     /**
      * The webflow configuration.

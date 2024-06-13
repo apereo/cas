@@ -1412,6 +1412,11 @@ public interface CasWebflowConstants {
     String ACTION_ID_SERVICE_AUTHZ_CHECK = "serviceAuthorizationCheck";
 
     /**
+     * Action id 'passwordlessValidateCaptchaAction'.
+     */
+    String ACTION_ID_PASSWORDLESS_VALIDATE_CAPTCHA = "passwordlessValidateCaptchaAction";
+    
+    /**
      * Action id 'validateCaptchaAction'.
      */
     String ACTION_ID_VALIDATE_CAPTCHA = "validateCaptchaAction";
@@ -1774,6 +1779,11 @@ public interface CasWebflowConstants {
      * Action id 'accountMgmtRegistrationInitializeCaptchaAction .
      */
     String ACTION_ID_ACCOUNT_REGISTRATION_INIT_CAPTCHA = "accountMgmtRegistrationInitializeCaptchaAction";
+
+    /**
+     * Action id 'passwordlessInitializeCaptchaAction'.
+     */
+    String ACTION_ID_PASSWORDLESS_INIT_CAPTCHA = "passwordlessInitializeCaptchaAction";
 
     /**
      * Action id 'accountMgmtRegistrationValidateCaptchaAction .
