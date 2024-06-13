@@ -69,6 +69,11 @@ To continue using your existing keys, you would need to instruct CAS to use the 
 ```properties
 cas.[path-to-configuration-key].crypto.alg=A128CBC-HS256
 ```
+  
+### Passwordless Authentication with reCAPTCHA
+
+[Passwordless authentication](../authentication/Passwordless-Authentication.html) can now support reCAPTCHA to protect against automated abuse, 
+such as credential stuffing attacks.
 
 ## Other Stuff
 
