@@ -60,7 +60,12 @@ are now configured to run with parallelism enabled.
 
 CAS Initializr is now modified to generate a Software Bill of Materials (SBOM) using the CycloneDX format. This SBOM can be used to
 track and manage the open-source components used in your CAS deployment and may be examined via the `sbom` actuator endpoint.
-  
+   
+### Cloudflare Turnstile
+
+Cloudflare Turnstile is a free tool to replace CAPTCHAs and delivers frustration-free, CAPTCHA-free web experiences 
+to website visitors. CAS now supports Cloudflare Turnstile as a [CAPTCHA option](../integration/Configuring-Google-reCAPTCHA.html).
+
 ### Encryption Algorithm
 
 The default content encryption algorithm for crypto operations has now switched from `A128CBC-HS256` to `A256CBC-HS512`, which requires a larger key size for better security.
@@ -69,7 +74,11 @@ To continue using your existing keys, you would need to instruct CAS to use the 
 ```properties
 cas.[path-to-configuration-key].crypto.alg=A128CBC-HS256
 ```
-  
+
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
+This is potentially a breaking change. Make sure to review your configuration and adjust settings accordingly.
+</p></div>
+
 ### Passwordless Authentication with reCAPTCHA
 
 [Passwordless authentication](../authentication/Passwordless-Authentication.html) can now support reCAPTCHA to protect against automated abuse, 
