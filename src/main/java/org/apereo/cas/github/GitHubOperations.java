@@ -151,4 +151,7 @@ public interface GitHubOperations {
     Page<TimelineEntry> getPullRequestTimeline(String organization, String name, PullRequest pr);
 
     void rerunFailedWorkflowJobs(String organization, String name, Workflows.WorkflowRun run);
+
+    PullRequestSearchResults searchPullRequests(String organization, String name, String sha);
+    
 }

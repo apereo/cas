@@ -219,8 +219,15 @@ public class GitHubTemplate implements GitHubOperations {
         urlBuilder.addParameter("per_page", "25");
         urlBuilder.addParameter("page", String.valueOf(page));
 
-        val headers = new LinkedMultiValueMap(Map.of("Accept", List.of("application/vnd.github.v3+json")));
+        val headers = new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github.v3+json")));
         return getSinglePage(urlBuilder.toString(), Workflows.class, Map.of(), headers);
+    }
+
+    @Override
+    public PullRequestSearchResults searchPullRequests(final String organization, final String repository, final String sha) {
+        var url = "https://api.github.com/search/issues?q=" + sha + "+repo:" + organization + '/' + repository + "+type:pr";
+        val headers = new LinkedMultiValueMap<>(Map.of("Accept", List.of("application/vnd.github.v3+json")));
+        return getSinglePage(url, PullRequestSearchResults.class, Map.of(), headers);
     }
 
     @Override
@@ -228,7 +235,7 @@ public class GitHubTemplate implements GitHubOperations {
         val url = "https://api.github.com/repos/" + organization + '/' + name + "/actions/runs/" + run.getId() + "/rerun-failed-jobs";
         val responseEntity = this.rest.exchange(url, HttpMethod.POST, HttpEntity.EMPTY, Map.class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            log.info("Successfully rerun failed workflow run id", run);
+            log.info("Successfully rerun failed workflow run id {}", run);
         } else {
             log.warn("Failed to rerun failed workflow jobs. Response status: {}", responseEntity.getStatusCode());
         }
