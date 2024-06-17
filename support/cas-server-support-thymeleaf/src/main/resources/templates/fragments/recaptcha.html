@@ -13,8 +13,8 @@
 <body>
     <main role="main" class="container mt-3 mb-3">
         <div th:fragment="recaptchaToken">
-            <span th:if="${recaptchaSiteKey != null AND #strings.equalsIgnoreCase(recaptchaVersion, 'GOOGLE_RECAPTCHA_V2')}" th:remove="tag">
-                <script src="https://www.google.com/recaptcha/api.js"></script>
+            <span th:if="${recaptchaSiteKey != null AND (#strings.equalsIgnoreCase(recaptchaVersion, 'GOOGLE_RECAPTCHA_V2') || #strings.equalsIgnoreCase(recaptchaVersion, 'CLOUDFLARE_TURNSTILE'))}" th:remove="tag">
+                <script th:attr="src=${#strings.equalsIgnoreCase(recaptchaVersion, 'CLOUDFLARE_TURNSTILE') ? 'https://challenges.cloudflare.com/turnstile/v0/api.js?compat=recaptcha' : 'https://www.google.com/recaptcha/api.js'}"></script>
                 <script type="text/javascript"
                         th:if="${recaptchaInvisible != null AND recaptchaInvisible}"
                         th:inline="javascript">

@@ -87,5 +87,9 @@ public class CaptchaValidatorTests {
         assertNotNull(CaptchaValidator.getInstance(new GoogleRecaptchaProperties()
             .setVersion(GoogleRecaptchaProperties.RecaptchaVersions.HCAPTCHA)
             .setVerifyUrl("http://localhost:8812")));
+
+        assertNotNull(CaptchaValidator.getInstance(new GoogleRecaptchaProperties()
+            .setVersion(GoogleRecaptchaProperties.RecaptchaVersions.CLOUDFLARE_TURNSTILE)
+            .setVerifyUrl("http://localhost:8812")));
     }
 }

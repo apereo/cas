@@ -25,6 +25,9 @@ public interface CaptchaValidator {
         if (googleRecaptcha.getVersion() == RecaptchaVersions.GOOGLE_RECAPTCHA_V3) {
             return new GoogleCaptchaV3Validator(googleRecaptcha);
         }
+        if(googleRecaptcha.getVersion() == RecaptchaVersions.CLOUDFLARE_TURNSTILE){
+            return new TurnstileCaptchaV2CompatibleValidator(googleRecaptcha);
+        }
         return new HCaptchaValidator(googleRecaptcha);
     }
 

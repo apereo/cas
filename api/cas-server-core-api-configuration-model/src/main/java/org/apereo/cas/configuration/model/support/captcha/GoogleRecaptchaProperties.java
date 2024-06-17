@@ -40,7 +40,11 @@ public class GoogleRecaptchaProperties implements Serializable {
         /**
          * hCaptcha.
          */
-        HCAPTCHA
+        HCAPTCHA,
+        /**
+         * Cloudflare turnstyle(google recaptcha v2 compatibility mode).
+         */
+        CLOUDFLARE_TURNSTILE
     }
 
     /**
