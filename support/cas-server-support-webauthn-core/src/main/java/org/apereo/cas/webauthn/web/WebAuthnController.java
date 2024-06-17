@@ -56,22 +56,22 @@ public class WebAuthnController {
      */
     public static final String WEBAUTHN_ENDPOINT_AUTHENTICATE = "/authenticate";
 
-    private static final String WEBAUTHN_ENDPOINT_FINISH = "/finish";
+    protected static final String WEBAUTHN_ENDPOINT_FINISH = "/finish";
 
-    private static final ObjectMapper MAPPER = JacksonCodecs.json().findAndRegisterModules();
+    protected static final ObjectMapper MAPPER = JacksonCodecs.json().findAndRegisterModules();
 
-    private final WebAuthnServer server;
+    protected final WebAuthnServer server;
 
-    private static ResponseEntity<Object> startResponse(final Object request) throws Exception {
+    protected static ResponseEntity<Object> startResponse(final Object request) throws Exception {
         LOGGER.trace("Response: [{}]", request);
         return ResponseEntity.ok(writeJson(request));
     }
 
-    private static String writeJson(final Object o) throws Exception {
+    protected static String writeJson(final Object o) throws Exception {
         return MAPPER.writeValueAsString(o);
     }
 
-    private static ResponseEntity<Object> finishResponse(final Either<List<String>, ?> result,
+    protected static ResponseEntity<Object> finishResponse(final Either<List<String>, ?> result,
                                                          final String responseJson) throws Exception {
         if (result.isRight()) {
             LOGGER.trace("Response: [{}]", responseJson);
@@ -80,11 +80,11 @@ public class WebAuthnController {
         return messagesJson(ResponseEntity.badRequest(), result.left().get());
     }
 
-    private static ResponseEntity<Object> messagesJson(final ResponseEntity.BodyBuilder response, final String message) {
+    protected static ResponseEntity<Object> messagesJson(final ResponseEntity.BodyBuilder response, final String message) {
         return messagesJson(response, List.of(message));
     }
 
-    private static ResponseEntity<Object> messagesJson(final ResponseEntity.BodyBuilder response, final List<String> messages) {
+    protected static ResponseEntity<Object> messagesJson(final ResponseEntity.BodyBuilder response, final List<String> messages) {
         return response.body(Map.of("messages", messages));
     }
 
@@ -185,7 +185,7 @@ public class WebAuthnController {
     @RequiredArgsConstructor
     @Getter
     @SuppressWarnings("UnusedMethod")
-    private static final class StartAuthenticationResponse {
+    protected static final class StartAuthenticationResponse {
         private final boolean success = true;
 
         private final AssertionRequestWrapper request;
@@ -196,7 +196,7 @@ public class WebAuthnController {
     @RequiredArgsConstructor
     @Getter
     @SuppressWarnings("UnusedMethod")
-    private static final class StartRegistrationResponse {
+    protected static final class StartRegistrationResponse {
         private final boolean success = true;
 
         private final RegistrationRequest request;
@@ -206,13 +206,13 @@ public class WebAuthnController {
 
     @Getter
     @SuppressWarnings("UnusedMethod")
-    private static final class StartRegistrationActions {
+    protected static final class StartRegistrationActions {
         private final String finish = BASE_ENDPOINT_WEBAUTHN.substring(1) + WEBAUTHN_ENDPOINT_REGISTER + WEBAUTHN_ENDPOINT_FINISH;
     }
 
     @Getter
     @SuppressWarnings("UnusedMethod")
-    private static final class StartAuthenticationActions {
+    protected static final class StartAuthenticationActions {
         private final String finish = BASE_ENDPOINT_WEBAUTHN.substring(1) + WEBAUTHN_ENDPOINT_AUTHENTICATE + WEBAUTHN_ENDPOINT_FINISH;
     }
 }
