@@ -69,16 +69,18 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
 
     protected void buildDefaultAuthenticatingAuthority(final SamlProfileBuilderContext context,
                                                        final AuthnContext authnContext) throws Exception {
-        val entityIdCriteriaSet = new CriteriaSet(
-            new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME),
-            new SamlIdPSamlRegisteredServiceCriterion(context.getRegisteredService()));
-        LOGGER.trace("Resolving entity id from SAML2 IdP metadata for signature signing configuration is [{}]",
-            context.getRegisteredService().getName());
-        val entityId = Objects.requireNonNull(samlIdPMetadataResolver.resolveSingle(entityIdCriteriaSet)).getEntityID();
-        LOGGER.trace("Resolved entity id from SAML2 IdP metadata is [{}]", entityId);
-        val authority = newSamlObject(AuthenticatingAuthority.class);
-        authority.setURI(entityId);
-        authnContext.getAuthenticatingAuthorities().add(authority);
+        if (!context.getRegisteredService().isSkipGeneratingAuthenticatingAuthority()) {
+            val entityIdCriteriaSet = new CriteriaSet(
+                new EvaluableEntityRoleEntityDescriptorCriterion(IDPSSODescriptor.DEFAULT_ELEMENT_NAME),
+                new SamlIdPSamlRegisteredServiceCriterion(context.getRegisteredService()));
+            LOGGER.trace("Resolving entity id from SAML2 IdP metadata for signature signing configuration is [{}]",
+                context.getRegisteredService().getName());
+            val entityId = Objects.requireNonNull(samlIdPMetadataResolver.resolveSingle(entityIdCriteriaSet)).getEntityID();
+            LOGGER.trace("Resolved entity id from SAML2 IdP metadata is [{}]", entityId);
+            val authority = newSamlObject(AuthenticatingAuthority.class);
+            authority.setURI(entityId);
+            authnContext.getAuthenticatingAuthorities().add(authority);
+        }
     }
 
     private String buildAuthnContextClassRefValue(final SamlProfileBuilderContext context) {

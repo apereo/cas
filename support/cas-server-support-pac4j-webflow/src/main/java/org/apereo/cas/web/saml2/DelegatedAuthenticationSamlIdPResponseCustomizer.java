@@ -29,7 +29,7 @@ public class DelegatedAuthenticationSamlIdPResponseCustomizer implements SamlIdP
     public void customizeAssertion(final SamlProfileBuilderContext context, final Saml20ObjectBuilder builder, final Assertion assertion) {
         val attributes = context.getAuthenticatedAssertion().orElseThrow().getAttributes();
         LOGGER.debug("Attributes to evaluate to customize SAML2 assertion are [{}]", attributes);
-        if (attributes.containsKey(Pac4jConstants.CLIENT_NAME)) {
+        if (attributes.containsKey(Pac4jConstants.CLIENT_NAME) && !context.getRegisteredService().isSkipGeneratingAuthenticatingAuthority()) {
             val clientNames = CollectionUtils.toCollection(attributes.get(Pac4jConstants.CLIENT_NAME));
             clientNames.forEach(clientName -> identityProviders.findClient(clientName.toString())
                 .filter(SAML2Client.class::isInstance)

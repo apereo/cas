@@ -133,6 +133,9 @@ public class SamlRegisteredService extends BaseWebBasedRegisteredService {
     @JacksonInject("skipGeneratingServiceProviderNameIdQualifier")
     private boolean skipGeneratingServiceProviderNameIdQualifier;
 
+    @JacksonInject("skipGeneratingAuthenticatingAuthority")
+    private boolean skipGeneratingAuthenticatingAuthority;
+
     @JacksonInject("skipGeneratingNameIdQualifier")
     private boolean skipGeneratingNameIdQualifier;
 
