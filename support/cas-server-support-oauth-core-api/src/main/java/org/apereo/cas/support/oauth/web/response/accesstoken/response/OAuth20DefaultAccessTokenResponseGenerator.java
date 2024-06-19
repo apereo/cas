@@ -6,6 +6,7 @@ import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -13,6 +14,7 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
@@ -36,6 +38,9 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
 
     private final CasConfigurationProperties casProperties;
 
+    private final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter;
+    private final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
+    
     private static boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
         val generatedToken = result.getGeneratedToken();
         return OAuth20ResponseTypes.DEVICE_CODE == result.getResponseType()
@@ -114,6 +119,8 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
             .accessToken(accessToken)
             .registeredService(result.getRegisteredService())
             .service(result.getService())
+            .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
+            .profileScopeToAttributesFilter(profileScopeToAttributesFilter)
             .accessTokenJwtBuilder(accessTokenJwtBuilder)
             .casProperties(casProperties);
     }

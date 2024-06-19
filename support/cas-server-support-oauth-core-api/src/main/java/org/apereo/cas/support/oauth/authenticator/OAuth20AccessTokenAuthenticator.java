@@ -1,10 +1,12 @@
 package org.apereo.cas.support.oauth.authenticator;
 
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -37,11 +39,17 @@ public class OAuth20AccessTokenAuthenticator implements Authenticator {
 
     private final JwtBuilder accessTokenJwtBuilder;
 
+    private final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter;
+
+    private final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
+
     private Set<String> requiredScopes = new LinkedHashSet<>();
 
     protected String extractAccessTokenFrom(final TokenCredentials tokenCredentials) {
         return OAuth20JwtAccessTokenEncoder.builder()
             .accessTokenJwtBuilder(accessTokenJwtBuilder)
+            .authenticationAttributeReleasePolicy(authenticationAttributeReleasePolicy)
+            .profileScopeToAttributesFilter(profileScopeToAttributesFilter)
             .build()
             .decode(tokenCredentials.getToken());
     }

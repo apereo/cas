@@ -82,6 +82,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOidcCon
                 .service(accessToken.getService())
                 .accessTokenJwtBuilder(getConfigurationContext().getAccessTokenJwtBuilder())
                 .casProperties(getConfigurationContext().getCasProperties())
+                .authenticationAttributeReleasePolicy(getConfigurationContext().getAuthenticationAttributeReleasePolicy())
+                .profileScopeToAttributesFilter(getConfigurationContext().getProfileScopeToAttributesFilter())
                 .build()
                 .encode(accessToken.getId());
             clientResponse.setRegistrationAccessToken(encodedAccessToken);

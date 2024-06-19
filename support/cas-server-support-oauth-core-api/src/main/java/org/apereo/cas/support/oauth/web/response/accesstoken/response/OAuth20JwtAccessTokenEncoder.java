@@ -1,10 +1,13 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.token.JwtBuilder;
@@ -12,6 +15,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import com.nimbusds.jose.Header;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTParser;
@@ -50,6 +54,10 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
     private final CasConfigurationProperties casProperties;
 
     private final String issuer;
+
+    private final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter;
+
+    private final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
     /**
      * Decode a JWT token or return an opaque token as-is.
@@ -90,12 +98,12 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
 
     protected JwtBuilder.JwtRequest getJwtRequestBuilder(
         final OAuthRegisteredService registeredService,
-        final OAuth20AccessToken accessToken) {
+        final OAuth20AccessToken accessToken) throws Throwable {
         
-        val authentication = accessToken.getAuthentication();
-        val attributes = new HashMap<>(authentication.getAttributes());
-        attributes.putAll(authentication.getPrincipal().getAttributes());
-
+        val activePrincipal = buildPrincipalForAttributeFilter(accessToken, registeredService);
+        val principal = profileScopeToAttributesFilter.filter(accessToken.getService(), activePrincipal, registeredService, accessToken);
+        val attributes = principal.getAttributes();
+        
         if (attributes.containsKey(OAuth20Constants.DPOP_CONFIRMATION)) {
             CollectionUtils.firstElement(attributes.get(OAuth20Constants.DPOP_CONFIRMATION))
                 .ifPresent(conf -> {
@@ -114,6 +122,7 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
                 });
         }
 
+        val authentication = accessToken.getAuthentication();
         val builder = JwtBuilder.JwtRequest.builder();
         val validUntilDate = authentication.getAuthenticationDate()
             .plusSeconds(accessToken.getExpirationPolicy().getTimeToLive());
@@ -151,5 +160,14 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
             }
         }
         return oAuthRegisteredService;
+    }
+
+    private Principal buildPrincipalForAttributeFilter(final OAuth20AccessToken accessToken,
+                                                       final RegisteredService registeredService) throws Throwable {
+        val authentication = accessToken.getAuthentication();
+        val attributes = new HashMap<>(authentication.getPrincipal().getAttributes());
+        val authnAttributes = authenticationAttributeReleasePolicy.getAuthenticationAttributesForRelease(authentication, registeredService);
+        attributes.putAll(authnAttributes);
+        return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(authentication.getPrincipal().getId(), attributes);
     }
 }

@@ -102,6 +102,7 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.CasEventListener;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import com.github.benmanes.caffeine.cache.LoadingCache;
@@ -258,6 +259,10 @@ public abstract class AbstractOidcTests {
     @Qualifier("oidcUserProfileSigningAndEncryptionService")
     protected OAuth20TokenSigningAndEncryptionService oidcUserProfileSigningAndEncryptionService;
 
+    @Autowired
+    @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
+    protected AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
+    
     @Autowired
     @Qualifier("oidcServiceRegistryListener")
     protected ServiceRegistryListener oidcServiceRegistryListener;
