@@ -104,7 +104,11 @@ such as credential stuffing attacks.
 - Spring Cloud
 - Google Cloud
 - Spring Boot Admin
+- Spring Integration
+- Spring Security
+- Spring Data
 - Nimbus JOSE JWT
+- Spring Session
 - Java Melody
 - ErrorProne
 - Twilio
