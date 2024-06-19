@@ -24,7 +24,7 @@
             <form id="retryForm" method="POST">
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 <input type="hidden" name="_eventId" value="retry"/>
-                <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.inwebo.retry.button', name='retry', id='retry')}"/>
+                <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='cas.inwebo.retry.button', name='retry', id='retry')}"/>
             </form>
         </div>
         <div th:if="${mustEnroll}">
