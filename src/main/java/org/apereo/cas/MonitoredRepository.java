@@ -462,8 +462,9 @@ public class MonitoredRepository {
 
     public void removePullRequestWorkflowRunsForMissingBranches() {
         var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(), Workflows.WorkflowRunEvent.PULL_REQUEST);
-        log.info("Found {} workflow runs for pull requests", workflowRun.getCount());
-
+        if (!workflowRun.getRuns().isEmpty()) {
+            log.info("Found {} workflow runs for pull requests", workflowRun.getCount());
+        }
         var pullRequests = new ArrayList<PullRequest>();
         var pages = this.gitHub.getPullRequests(getOrganization(), getName());
         while (pages != null) {
