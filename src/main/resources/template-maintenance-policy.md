@@ -10,4 +10,8 @@ As ever, we strongly recommend that you take advantage of the CAS release candid
 
 ![image](${link})
 
+# How to contribute
+
+Furthermore, before showing up with a large batch of files, changes with a brand new feature, you need to start a discussion with the community and project developers to see if they are OK with accepting, maintaining, and managing this change. Make sure the changes you have proposed fit the scope of the targeted CAS release policy. Unless your change is trivial and has been through proper review and is sponsored by a project maintainer, please do not spend time modifying code and configuration in a proposed pull request.
+
 If you are seeking assistance or have a question about your CAS deployment, please visit [support options](https://apereo.github.io/cas/Support.html) to learn more.

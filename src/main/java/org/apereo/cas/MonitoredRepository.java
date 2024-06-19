@@ -436,11 +436,13 @@ public class MonitoredRepository {
 
     public void removeCancelledWorkflowRuns() {
         var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(), Workflows.WorkflowRunStatus.CANCELLED);
-        log.info("Found {} cancelled workflow runs", workflowRun.getCount());
-        workflowRun.getRuns().forEach(run -> {
-            log.info("Removing workflow run {}", run);
-            gitHub.removeWorkflowRun(getOrganization(), getName(), run);
-        });
+        if (!workflowRun.getRuns().isEmpty()) {
+            log.info("Found {} cancelled workflow runs", workflowRun.getRuns().size());
+            workflowRun.getRuns().forEach(run -> {
+                log.info("Removing workflow run {}", run);
+                gitHub.removeWorkflowRun(getOrganization(), getName(), run);
+            });
+        }
     }
 
     public boolean shouldResumeCiBuild(final PullRequest pr) {
@@ -506,8 +508,10 @@ public class MonitoredRepository {
         val now = OffsetDateTime.now();
         for (var i = 10; i > 0; i--) {
             var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(), i);
-            log.info("Found {} workflow runs for page {}", workflowRun.getRuns().size(), i);
-
+            if (!workflowRun.getRuns().isEmpty()) {
+                log.info("Found {} workflow runs for page {}", workflowRun.getRuns().size(), i);
+            }
+            
             workflowRun.getRuns().forEach(run -> {
                 val staleExp = run.getUpdatedTime().plusDays(gitHubProperties.getStaleWorkflowRunInDays());
                 if (staleExp.isBefore(now)) {
