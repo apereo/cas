@@ -2,10 +2,12 @@ package org.apereo.cas.oidc.authn;
 
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.authenticator.OAuth20AccessTokenAuthenticator;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.LoggingUtils;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -23,8 +25,10 @@ import org.pac4j.core.profile.CommonProfile;
 public class OidcClientConfigurationAccessTokenAuthenticator extends OAuth20AccessTokenAuthenticator {
     public OidcClientConfigurationAccessTokenAuthenticator(
         final TicketRegistry ticketRegistry,
-        final JwtBuilder accessTokenJwtBuilder) {
-        super(ticketRegistry, accessTokenJwtBuilder);
+        final JwtBuilder accessTokenJwtBuilder,
+        final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
+        final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
+        super(ticketRegistry, accessTokenJwtBuilder, profileScopeToAttributesFilter, authenticationAttributeReleasePolicy);
     }
 
     @Override

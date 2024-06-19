@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGenerator;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -45,6 +46,7 @@ import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpoin
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.val;
 import org.pac4j.core.authorization.authorizer.DefaultAuthorizers;
@@ -198,6 +200,8 @@ public class CasOAuthUmaConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SecurityInterceptor umaRequestingPartyTokenSecurityInterceptor(
+            @Qualifier("profileScopeToAttributesFilter")
+            final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
             final CasConfigurationProperties casProperties,
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
@@ -205,13 +209,15 @@ public class CasOAuthUmaConfiguration {
             final TicketRegistry ticketRegistry,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder) {
-            val authenticator = new UmaRequestingPartyTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
+            val authenticator = new UmaRequestingPartyTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder, profileScopeToAttributesFilter);
             return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_RPT_AUTH", oauthDistributedSessionStore, casProperties);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SecurityInterceptor umaAuthorizationApiTokenSecurityInterceptor(
+            @Qualifier("profileScopeToAttributesFilter")
+            final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
             final CasConfigurationProperties casProperties,
             @Qualifier("oauthDistributedSessionStore")
             final SessionStore oauthDistributedSessionStore,
@@ -219,11 +225,11 @@ public class CasOAuthUmaConfiguration {
             final TicketRegistry ticketRegistry,
             @Qualifier("accessTokenJwtBuilder")
             final JwtBuilder accessTokenJwtBuilder) {
-            val authenticator = new UmaAuthorizationApiTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
+            val authenticator = new UmaAuthorizationApiTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder,
+                profileScopeToAttributesFilter);
             return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_AAT_AUTH",
                 oauthDistributedSessionStore, casProperties);
         }
-
     }
 
     @Configuration(value = "CasOAuthUmaDiscoveryConfiguration", proxyBeanMethods = false)

@@ -43,7 +43,8 @@ public class OidcClientConfigurationAccessTokenAuthenticatorTests extends Abstra
 
     private OidcClientConfigurationAccessTokenAuthenticator getAuthenticator() {
         return new OidcClientConfigurationAccessTokenAuthenticator(
-            oidcConfigurationContext.getTicketRegistry(), oidcAccessTokenJwtBuilder);
+            oidcConfigurationContext.getTicketRegistry(), oidcAccessTokenJwtBuilder,
+            profileScopeToAttributesFilter, authenticationAttributeReleasePolicy);
     }
 
     @Test

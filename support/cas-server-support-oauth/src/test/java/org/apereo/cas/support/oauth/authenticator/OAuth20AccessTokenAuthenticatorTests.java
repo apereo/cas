@@ -28,7 +28,7 @@ public class OAuth20AccessTokenAuthenticatorTests extends BaseOAuth20Authenticat
     @BeforeEach
     public void init() {
         authenticator = new OAuth20AccessTokenAuthenticator(
-            ticketRegistry, accessTokenJwtBuilder);
+            ticketRegistry, accessTokenJwtBuilder, profileScopeToAttributesFilter, authenticationAttributeReleasePolicy);
     }
 
     @Override

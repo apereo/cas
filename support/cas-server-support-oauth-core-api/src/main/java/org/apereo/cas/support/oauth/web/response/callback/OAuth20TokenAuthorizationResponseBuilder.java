@@ -70,6 +70,7 @@ public class OAuth20TokenAuthorizationResponseBuilder<T extends OAuth20Configura
             .service(holder.getService())
             .accessTokenJwtBuilder(configurationContext.getAccessTokenJwtBuilder())
             .casProperties(configurationContext.getCasProperties())
+            .profileScopeToAttributesFilter(configurationContext.getProfileScopeToAttributesFilter())
             .build()
             .encode(accessToken.getId());
 

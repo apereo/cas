@@ -274,6 +274,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
             .registeredService(registeredService)
             .service(accessToken.getService())
             .accessTokenJwtBuilder(getConfigurationContext().getAccessTokenJwtBuilder())
+            .profileScopeToAttributesFilter(getConfigurationContext().getProfileScopeToAttributesFilter())
             .casProperties(getConfigurationContext().getCasProperties())
             .issuer(getConfigurationContext().getIssuerService().determineIssuer(Optional.of(registeredService)))
             .build()

@@ -188,6 +188,7 @@ public class UmaAuthorizationRequestEndpointController extends BaseUmaEndpointCo
             .service(holder.getService())
             .accessTokenJwtBuilder(getUmaConfigurationContext().getAccessTokenJwtBuilder())
             .casProperties(getUmaConfigurationContext().getCasProperties())
+            .profileScopeToAttributesFilter(getUmaConfigurationContext().getProfileScopeToAttributesFilter())
             .build()
             .encode(accessToken.getId());
         

@@ -11,6 +11,27 @@ function build {
     ./gradlew assemble -x test -x check --no-watch-fs -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2"
 }
 
+function snapshot() {
+  if [[ "${casVersion}" != *SNAPSHOT* ]] ;
+  then
+      echo -e "${YELLOW}CAS version ${casVersion} MUST be a SNAPSHOT version${NORMAL}"
+      exit 1
+  fi
+  echo -e "Publishing CAS SNAPSHOT artifacts. This might take a while...\n"
+  ./gradlew build publish -x test -x javadoc -x check --no-daemon --parallel \
+    -DskipAot=true -DpublishSnapshots=true --build-cache --no-configuration-cache --configure-on-demand \
+    -Dorg.gradle.internal.http.socketTimeout=640000 \
+    -Dorg.gradle.internal.http.connectionTimeout=640000 \
+    -Dorg.gradle.internal.publish.checksums.insecure=true \
+    -Dorg.gradle.internal.network.retry.max.attempts=5 \
+    -Dorg.gradle.internal.network.retry.initial.backOff=5000 \
+    -DrepositoryUsername="$1" -DrepositoryPassword="$2"
+  if [ $? -ne 0 ]; then
+      echo -e "\n${YELLOW}Publishing CAS SNAPSHOTs failed.${NORMAL}\n"
+      exit 1
+  fi
+}
+
 function publish {
     echo -e "\n${GREEN}Publishing CAS. Please be patient as this might take a while...${NORMAL}\n"
     ./gradlew publishToSonatype closeAndReleaseStagingRepository --no-watch-fs -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2" \
@@ -24,7 +45,6 @@ function instructions {
     echo -e "\n${YELLOW}Done!\nThe release should be automatically closed and published on Sonatype.\nThank you!${NORMAL}"
 }
 
-clear
 java -version
 
 casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
@@ -51,18 +71,21 @@ echo -e "\t\torg.gradle.parallel=false"
 echo -e "\nFor more information, please visit\n\thttps://apereo.github.io/cas/developer/Release-Process.html\n"
 
 read -s -p "If you are ready, press ENTER to continue..." anykey
-clear
 
-read -s -p "Sonatype Username: " username
-echo
-read -s -p "Sonatype Password: " password
-echo
-
-clear
-
+if [[ -z $REPOSITORY_USER && -z $REPOSITORY_PWD ]]; then
+  read -s -p "Sonatype Username: " username
+  echo
+  read -s -p "Sonatype Password: " password
+  echo
+else
+  echo -e "\n\n${GREEN}Repository username and password are predefined.${NORMAL}\n"
+  username="$REPOSITORY_USER"
+  password="$REPOSITORY_PWD"
+fi
 echo "1) Clean, Build and Publish"
 echo "2) Publish"
-read -p "Choose (1, 2, etc): " selection
+echo "3) Publish SNAPSHOTs"
+read -p "Choose (1, 2, 3, etc): " selection
 echo
 
 case "$selection" in
@@ -73,6 +96,10 @@ case "$selection" in
         ;;
     2)
         publish ${username} ${password}
+        instructions
+        ;;
+    3)
+        snapshot ${username} ${password}
         instructions
         ;;
     *)

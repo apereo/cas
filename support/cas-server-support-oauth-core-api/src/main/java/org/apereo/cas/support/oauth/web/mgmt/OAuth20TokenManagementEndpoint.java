@@ -1,12 +1,14 @@
 package org.apereo.cas.support.oauth.web.mgmt;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,12 +38,16 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
 
     private final JwtBuilder accessTokenJwtBuilder;
 
+    private final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter;
+
     public OAuth20TokenManagementEndpoint(final CasConfigurationProperties casProperties,
                                           final TicketRegistry ticketRegistry,
-                                          final JwtBuilder accessTokenJwtBuilder) {
+                                          final JwtBuilder accessTokenJwtBuilder,
+                                          final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter) {
         super(casProperties);
         this.ticketRegistry = ticketRegistry;
         this.accessTokenJwtBuilder = accessTokenJwtBuilder;
+        this.profileScopeToAttributesFilter = profileScopeToAttributesFilter;
     }
 
     /**
@@ -94,6 +100,7 @@ public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
     private String extractAccessTokenFrom(final String token) {
         return OAuth20JwtAccessTokenEncoder.builder()
             .accessTokenJwtBuilder(accessTokenJwtBuilder)
+            .profileScopeToAttributesFilter(profileScopeToAttributesFilter)
             .build()
             .decode(token);
     }

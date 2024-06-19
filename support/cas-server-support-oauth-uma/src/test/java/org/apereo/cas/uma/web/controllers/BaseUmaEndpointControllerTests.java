@@ -4,6 +4,7 @@ import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.config.CasOAuthUmaComponentSerializationConfiguration;
 import org.apereo.cas.config.CasOAuthUmaConfiguration;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.uma.claim.UmaResourceSetClaimPermissionExaminer;
 import org.apereo.cas.uma.discovery.UmaServerDiscoverySettings;
 import org.apereo.cas.uma.ticket.resource.ResourceSetPolicy;
@@ -25,6 +26,7 @@ import org.apereo.cas.uma.web.controllers.resource.UmaResourceRegistrationReques
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpointController;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -64,6 +66,14 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Slf4j
 public abstract class BaseUmaEndpointControllerTests extends AbstractOAuth20Tests {
+
+    @Autowired
+    @Qualifier(AuthenticationAttributeReleasePolicy.BEAN_NAME)
+    protected AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
+
+    @Autowired
+    @Qualifier("profileScopeToAttributesFilter")
+    protected OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter;
 
     @Autowired
     @Qualifier("umaWellKnownEndpointController")

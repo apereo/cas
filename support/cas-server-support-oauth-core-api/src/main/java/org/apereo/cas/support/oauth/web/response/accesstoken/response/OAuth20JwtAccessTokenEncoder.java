@@ -1,17 +1,20 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import com.nimbusds.jose.util.Base64URL;
 import com.nimbusds.jwt.JWTParser;
 import com.nimbusds.oauth2.sdk.dpop.JWKThumbprintConfirmation;
@@ -20,7 +23,6 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +49,8 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
     private final CasConfigurationProperties casProperties;
 
     private final String issuer;
+
+    private final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter;
 
     @Override
     public String decode(final String tokenId, final Object[] parameters) {
@@ -87,8 +91,11 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
         final Optional<RegisteredService> registeredService,
         final OAuth20AccessToken accessToken) {
         val authentication = accessToken.getAuthentication();
-        val attributes = new HashMap<>(authentication.getAttributes());
-        attributes.putAll(authentication.getPrincipal().getAttributes());
+
+        val activePrincipal = buildPrincipalForAttributeFilter(accessToken);
+        val principal = profileScopeToAttributesFilter.filter(accessToken.getService(),
+            activePrincipal, registeredService.orElseThrow(), accessToken);
+        val attributes = principal.getAttributes();
 
         if (accessToken.getAuthentication().containsAttribute(OAuth20Constants.DPOP_CONFIRMATION)) {
             CollectionUtils.firstElement(accessToken.getAuthentication().getAttributes().get(OAuth20Constants.DPOP_CONFIRMATION))
@@ -116,7 +123,14 @@ public class OAuth20JwtAccessTokenEncoder implements CipherExecutor<String, Stri
     protected boolean shouldEncodeAsJwt(final OAuthRegisteredService oAuthRegisteredService,
                                         final OAuth20AccessToken accessToken) {
         return casProperties.getAuthn().getOauth().getAccessToken().isCreateAsJwt()
-               || (oAuthRegisteredService != null && oAuthRegisteredService.isJwtAccessToken())
-               || accessToken.getAuthentication().containsAttribute(OAuth20Constants.DPOP);
+            || (oAuthRegisteredService != null && oAuthRegisteredService.isJwtAccessToken())
+            || accessToken.getAuthentication().containsAttribute(OAuth20Constants.DPOP);
+    }
+
+
+    private Principal buildPrincipalForAttributeFilter(final OAuth20AccessToken accessToken) {
+        val authentication = accessToken.getAuthentication();
+        val attributes = new HashMap<>(authentication.getPrincipal().getAttributes());
+        return PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(authentication.getPrincipal().getId(), attributes);
     }
 }

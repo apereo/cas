@@ -17,6 +17,7 @@ import org.apereo.cas.oidc.web.OidcImplicitIdTokenAuthorizationResponseBuilder;
 import org.apereo.cas.oidc.web.OidcPushedAuthorizationModelAndViewBuilder;
 import org.apereo.cas.oidc.web.OidcPushedAuthorizationRequestUriResponseBuilder;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.authorization.OAuth20AuthorizationRequestValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseGenerator;
@@ -68,9 +69,11 @@ public class OidcResponseConfiguration {
             final JwtBuilder accessTokenJwtBuilder,
             final CasConfigurationProperties casProperties,
             @Qualifier(OidcIssuerService.BEAN_NAME)
-            final OidcIssuerService oidcIssuerService) {
+            final OidcIssuerService oidcIssuerService,
+            @Qualifier("profileScopeToAttributesFilter")
+            final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter) {
             return new OidcAccessTokenResponseGenerator(oidcIdTokenGenerator, accessTokenJwtBuilder,
-                casProperties, oidcIssuerService);
+                casProperties, oidcIssuerService, profileScopeToAttributesFilter);
         }
     }
 
@@ -159,9 +162,7 @@ public class OidcResponseConfiguration {
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
             @Qualifier(OAuth20RequestParameterResolver.BEAN_NAME)
-            final OAuth20RequestParameterResolver oauthRequestParameterResolver,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
+            final OAuth20RequestParameterResolver oauthRequestParameterResolver) {
             return new OidcPushedAuthorizationRequestValidator(servicesManager,
                 webApplicationServiceFactory, registeredServiceAccessStrategyEnforcer,
                 ticketRegistry, ticketFactory, oauthRequestParameterResolver);

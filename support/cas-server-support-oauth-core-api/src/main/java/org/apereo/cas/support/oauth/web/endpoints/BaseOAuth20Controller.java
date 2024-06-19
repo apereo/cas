@@ -28,6 +28,7 @@ public abstract class BaseOAuth20Controller<T extends OAuth20ConfigurationContex
     protected String extractAccessTokenFrom(final String token) {
         return OAuth20JwtAccessTokenEncoder.builder()
             .accessTokenJwtBuilder(getConfigurationContext().getAccessTokenJwtBuilder())
+            .profileScopeToAttributesFilter(getConfigurationContext().getProfileScopeToAttributesFilter())
             .build()
             .decode(token);
     }

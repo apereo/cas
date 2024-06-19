@@ -228,10 +228,4 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
             .forEach(header -> response.addHeader("Set-Cookie", header));
         return cookie;
     }
-
-    @Override
-    public boolean containsCookie(final HttpServletRequest request) {
-        return request.getCookies() != null
-            && Arrays.stream(request.getCookies()).anyMatch(cookie -> StringUtils.equalsIgnoreCase(cookie.getName(), getCookieName()));
-    }
 }

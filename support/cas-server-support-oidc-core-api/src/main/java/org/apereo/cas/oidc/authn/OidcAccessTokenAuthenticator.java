@@ -2,13 +2,14 @@ package org.apereo.cas.oidc.authn;
 
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.OAuth20AccessTokenAuthenticator;
+import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.LoggingUtils;
-
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -16,7 +17,6 @@ import org.jose4j.jwt.MalformedClaimException;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.pac4j.core.profile.CommonProfile;
-
 import java.util.Optional;
 
 /**
@@ -35,11 +35,14 @@ public class OidcAccessTokenAuthenticator extends OAuth20AccessTokenAuthenticato
         final TicketRegistry ticketRegistry,
         final OAuth20TokenSigningAndEncryptionService signingAndEncryptionService,
         final ServicesManager servicesManager,
-        final JwtBuilder accessTokenJwtBuilder) {
-        super(ticketRegistry, accessTokenJwtBuilder);
+        final JwtBuilder accessTokenJwtBuilder,
+        final OAuth20ProfileScopeToAttributesFilter profileScopeToAttributesFilter,
+        final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
+        super(ticketRegistry, accessTokenJwtBuilder, profileScopeToAttributesFilter, authenticationAttributeReleasePolicy);
         this.idTokenSigningAndEncryptionService = signingAndEncryptionService;
         this.servicesManager = servicesManager;
     }
+
     @Override
     protected CommonProfile buildUserProfile(final TokenCredentials tokenCredentials,
                                              final WebContext webContext, final OAuth20AccessToken accessToken) {
