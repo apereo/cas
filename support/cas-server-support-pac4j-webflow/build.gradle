@@ -58,6 +58,7 @@ dependencies {
     compileOnly project(":support:cas-server-support-jpa-util")
     compileOnly project(":support:cas-server-support-ldap-core")
     compileOnly project(":support:cas-server-support-mongo-core")
+    compileOnly project(":support:cas-server-support-saml-idp-core")
     compileOnly project(":support:cas-server-support-saml-idp-web")
     compileOnly project(":support:cas-server-support-scim-core")
 

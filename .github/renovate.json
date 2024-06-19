@@ -22,11 +22,16 @@
   "docker-compose": {
     "enabled": true
   },
-  "packageRules": [
+  "regexManagers": [
     {
-      "packagePatterns": ["export DOCKER_IMAGE=\"(.+):(.+)\""],
-      "groupName": "bash-docker-image-updates"
-    },
+      "fileMatch": ["^.*\\.sh$"],
+      "matchStrings": [
+        "export\\s+DOCKER_IMAGE\\s*=\\s*\"(?<depName>[^\"]+):(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "docker"
+    }
+  ],
+  "packageRules": [
     {
       "matchManagers": ["gradle", "maven"],
       "enabled": false
@@ -38,6 +43,10 @@
     {
       "managers": ["dockerfile"],
       "groupName": "all-docker-updates"
+    },
+    {
+      "matchDatasources": ["docker"],
+      "versioning": "semver"
     },
     {
       "matchFileNames": ["**/package.json"],
