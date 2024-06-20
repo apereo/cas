@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
@@ -14,7 +13,6 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +54,8 @@ public class CasConfigurationMetadataServerEndpoint extends BaseCasActuatorEndpo
      * @return the response entity
      */
     @ReadOperation
-    @Operation(summary = "Get all properties from the repository that match the name", parameters = @Parameter(name = "name", required = true))
+    @Operation(summary = "Get all properties from the repository that match the name", parameters =
+        @Parameter(name = "name", required = true, description = "The name of the property to search for"))
     public List<ConfigurationMetadataSearchResult> search(@Selector final String name) {
         val allProps = repository.getRepository().getAllProperties();
 

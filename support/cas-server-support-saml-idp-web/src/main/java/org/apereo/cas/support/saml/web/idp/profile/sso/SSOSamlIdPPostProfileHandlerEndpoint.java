@@ -144,10 +144,10 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEnd
     @PostMapping(produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
     @Operation(summary = "Produce SAML2 response entity", parameters = {
-        @Parameter(name = "username", required = true),
-        @Parameter(name = "password", required = false),
-        @Parameter(name = SamlProtocolConstants.PARAMETER_ENTITY_ID, required = true),
-        @Parameter(name = "encrypt", schema = @Schema(type = "boolean"))
+        @Parameter(name = "username", required = true, description = "The username to authenticate"),
+        @Parameter(name = "password", required = false, description = "The password to authenticate"),
+        @Parameter(name = SamlProtocolConstants.PARAMETER_ENTITY_ID, required = true, description = "The entity id"),
+        @Parameter(name = "encrypt", schema = @Schema(type = "boolean"), description = "Whether to encrypt the response")
     })
     public ResponseEntity<Object> producePost(final HttpServletRequest request,
                                               final HttpServletResponse response,
@@ -167,7 +167,7 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEnd
      */
     @PostMapping(value = "/logout/post", produces = MediaType.TEXT_HTML_VALUE)
     @Operation(summary = "Produce SAML2 logout request for the given SAML2 SP",
-               parameters = @Parameter(name = SamlProtocolConstants.PARAMETER_ENTITY_ID, required = true))
+               parameters = @Parameter(name = SamlProtocolConstants.PARAMETER_ENTITY_ID, required = true, description = "The entity id"))
     public ResponseEntity<Object> produceLogoutRequestPost(
         @RequestParam(SamlProtocolConstants.PARAMETER_ENTITY_ID) final String entityId,
         final HttpServletResponse response) throws Exception {

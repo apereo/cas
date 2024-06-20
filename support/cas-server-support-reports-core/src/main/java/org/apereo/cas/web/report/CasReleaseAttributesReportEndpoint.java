@@ -142,8 +142,8 @@ public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint 
     @WriteOperation
     @Operation(summary = "Get collection of released attributes for the user and application",
         parameters = {
-            @Parameter(name = "username", required = true),
-            @Parameter(name = "password", required = false),
+            @Parameter(name = "username", required = true, description = "The username to authenticate"),
+            @Parameter(name = "password", required = false, description = "The password to authenticate"),
             @Parameter(name = "service", required = true, description = "May be the service id or its numeric identifier")
         })
     public Map<String, Object> releaseAttributes(final String username, @Nullable final String password,

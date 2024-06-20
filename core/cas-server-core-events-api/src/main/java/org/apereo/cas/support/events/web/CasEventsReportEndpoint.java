@@ -64,7 +64,7 @@ public class CasEventsReportEndpoint extends BaseCasRestActuatorEndpoint {
         MEDIA_TYPE_CAS_YAML
     })
     @Operation(summary = "Provide a report of CAS events in the event repository",
-        parameters = @Parameter(name = "limit", required = false))
+        parameters = @Parameter(name = "limit", required = false, description = "Limit the number of events to fetch"))
     public ResponseEntity events(@RequestParam(required = false, defaultValue = "1000") final int limit) throws Exception {
         val eventRepository = applicationContext.getBean(CasEventRepository.BEAN_NAME, CasEventRepository.class);
         val results = eventRepository.load()
