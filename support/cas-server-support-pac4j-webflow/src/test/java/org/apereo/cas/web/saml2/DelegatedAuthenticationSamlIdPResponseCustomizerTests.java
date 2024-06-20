@@ -1,10 +1,13 @@
 package org.apereo.cas.web.saml2;
 
 import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.util.Saml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlIdPResponseCustomizer;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -44,6 +47,10 @@ class DelegatedAuthenticationSamlIdPResponseCustomizerTests {
     @Qualifier("delegatedSaml2IdPResponseCustomizer")
     private SamlIdPResponseCustomizer delegatedSaml2IdPResponseCustomizer;
 
+    @Autowired
+    @Qualifier(ServicesManager.BEAN_NAME)
+    private ServicesManager servicesManager;
+    
     @Test
     void verifyOperation() throws Throwable {
         val assertion = mock(Assertion.class);
@@ -53,11 +60,20 @@ class DelegatedAuthenticationSamlIdPResponseCustomizerTests {
         when(authnContext.getAuthenticatingAuthorities()).thenReturn(listofAuthorities);
         when(authnStatement.getAuthnContext()).thenReturn(authnContext);
         when(assertion.getAuthnStatements()).thenReturn(List.of(authnStatement));
+
+        val registeredService = new SamlRegisteredService();
+        registeredService.setId(RandomUtils.nextInt());
+        registeredService.setName("SAML");
+        registeredService.setServiceId("https://samltest.id/saml/sp");
+        registeredService.setMetadataLocation("https://samltest.id/saml/sp");
+        servicesManager.save(registeredService);
+
         val context = SamlProfileBuilderContext.builder()
             .authenticatedAssertion(Optional.of(AuthenticatedAssertionContext.builder()
                 .name("casuser")
                 .attributes(Map.of(Pac4jConstants.CLIENT_NAME, "SAML2Client"))
                 .build()))
+            .registeredService(registeredService)
             .build();
 
         val builder = mock(Saml20ObjectBuilder.class);
