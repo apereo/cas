@@ -133,7 +133,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
                     "flowScope.parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL)));
 
                 multifactorAuthenticationFlowCustomizers.forEach(customizer -> customizer.getWebflowAttributeMappings()
-                    .forEach(key -> SCOPES.forEach(scope -> subflowMappings.add(createFlowMapping(key, scope + '.' + key)))));
+                    .forEach(key -> SCOPES.forEach(scope -> flowMappings.add(createFlowMapping(key, scope + '.' + key)))));
                 createFlowInputMapper(flowMappings, mfaFlow);
 
                 val states = getCandidateStatesForMultifactorAuthentication();
