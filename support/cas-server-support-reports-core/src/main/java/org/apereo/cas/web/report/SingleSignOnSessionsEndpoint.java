@@ -93,7 +93,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @GetMapping(path = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get all single sign-on sessions for username. " + MESSAGE_FEATURE_SUPPORTED_TICKET_REGISTRY,
-        parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH))
+        parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to look up"))
     public Map<String, Object> getSsoSessionsForUser(
         @PathVariable final String username) {
         return getSsoSessions(new SsoSessionsRequest().withUsername(username));
@@ -107,7 +107,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @DeleteMapping(path = "/users/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Destroy all single sign-on sessions for username. " + MESSAGE_FEATURE_SUPPORTED_TICKET_REGISTRY,
-        parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH))
+        parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to look up"))
     public Map<String, Object> destroySsoSessionsForUser(
         @PathVariable final String username,
         final HttpServletRequest request,
@@ -176,7 +176,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @DeleteMapping(path = "/{ticketGrantingTicket}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Remove single sign-on session for ticket id",
-        parameters = @Parameter(name = "ticketGrantingTicket", required = true, in = ParameterIn.PATH))
+        parameters = @Parameter(name = "ticketGrantingTicket", required = true, in = ParameterIn.PATH, description = "The ticket-granting ticket to remove"))
     public Map<String, Object> destroySsoSession(
         @PathVariable final String ticketGrantingTicket,
         final HttpServletRequest request,

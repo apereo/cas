@@ -57,10 +57,9 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
      * @return the one time token account
      */
     @GetMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Load and get all accounts for the user", parameters = @Parameter(name = "username", required = true))
+    @Operation(summary = "Load and get all accounts for the user", parameters = @Parameter(name = "username", required = true, description = "The username to look up"))
     public Collection<? extends OneTimeTokenAccount> get(
-        @PathVariable
-        final String username) {
+        @PathVariable final String username) {
         return repository.getObject().get(username);
     }
 
@@ -81,10 +80,9 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
      * @param username the username
      */
     @DeleteMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Delete account for the user", parameters = @Parameter(name = "username", required = true))
+    @Operation(summary = "Delete account for the user", parameters = @Parameter(name = "username", required = true, description = "The username to look up"))
     public void delete(
-        @PathVariable
-        final String username) {
+        @PathVariable final String username) {
         repository.getObject().delete(username);
     }
 
@@ -130,7 +128,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
      * @throws Exception the exception
      */
     @PostMapping(path = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Import account as a JSON document", parameters = @Parameter(name = "request"))
+    @Operation(summary = "Import account as a JSON document", parameters = @Parameter(name = "request", required = true, description = "The request"))
     public ResponseEntity importAccount(final HttpServletRequest request) throws Exception {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.trace("Submitted account: [{}]", requestBody);

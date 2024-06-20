@@ -69,7 +69,7 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
      */
     @WriteOperation(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Produce an authentication token for the user and the intended application", parameters = {
-        @Parameter(name = "username", required = true, in = ParameterIn.PATH),
+        @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to authenticate"),
         @Parameter(name = "service", required = true, in = ParameterIn.QUERY, description = "May be the service id or its numeric identifier")
     })
     public Map<?, ?> produceToken(@Selector final String username,
@@ -103,7 +103,7 @@ public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Validate an authentication token for the user and the intended application", parameters = {
-        @Parameter(name = "token", required = true, in = ParameterIn.PATH),
+        @Parameter(name = "token", required = true, in = ParameterIn.PATH, description = "The token to validate"),
         @Parameter(name = "service", required = true, in = ParameterIn.QUERY, description = "May be the service id or its numeric identifier")
     })
     public Map<?, ?> validateToken(@Selector final String token,

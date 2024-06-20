@@ -90,9 +90,9 @@ public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint
             MEDIA_TYPE_CAS_YAML
         })
     @Operation(summary = "Verify if service access can be granted to the user", parameters = {
-        @Parameter(name = "username", required = true, in = ParameterIn.QUERY),
+        @Parameter(name = "username", required = true, in = ParameterIn.QUERY, description = "The username to authenticate"),
         @Parameter(name = "password", required = false, in = ParameterIn.QUERY, description = "The password to authenticate the user if necessary"),
-        @Parameter(name = "service", required = false, in = ParameterIn.QUERY),
+        @Parameter(name = "service", required = false, in = ParameterIn.QUERY, description = "The service to authorize access to"),
         @Parameter(name = "client_id", required = false, in = ParameterIn.QUERY, description = "The application client id for OAuth or OpenID Connect"),
         @Parameter(name = "entityId", required = false, in = ParameterIn.QUERY, description = "The entity id for SAML2 service providers")
     })

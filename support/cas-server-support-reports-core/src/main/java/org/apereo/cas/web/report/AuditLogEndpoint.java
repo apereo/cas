@@ -92,10 +92,10 @@ public class AuditLogEndpoint extends BaseCasActuatorEndpoint {
     @Operation(summary = "Provide a report of the audit log. Each filter other than `interval` can accept a regular expression to match against.",
         parameters = {
             @Parameter(name = "interval", description = "Accepts the duration syntax, such as PT1H"),
-            @Parameter(name = "actionPerformed"),
-            @Parameter(name = "clientIpAddress"),
-            @Parameter(name = "principal"),
-            @Parameter(name = "resourceOperatedUpon")
+            @Parameter(name = "actionPerformed", description = "The action performed"),
+            @Parameter(name = "clientIpAddress", description = "The client IP address"),
+            @Parameter(name = "principal", description = "The principal"),
+            @Parameter(name = "resourceOperatedUpon", description = "The resource operated upon")
         })
     public Set<AuditActionContext> getAuditLog(
         @Nullable final String interval,

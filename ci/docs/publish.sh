@@ -12,7 +12,7 @@ function printgreen() {
   printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
 }
 function printyellow() {
-  printf "⚠️ ${YELLOW}$1${ENDCOLOR}\n"
+  printf "⚠️  ${YELLOW}$1${ENDCOLOR}\n"
 }
 
 function validateProjectDocumentation() {

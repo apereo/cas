@@ -57,9 +57,9 @@ public class CasProtocolValidationEndpoint extends BaseCasRestActuatorEndpoint {
         consumes = {MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     @Operation(summary = "Produce a ticket validation response based on CAS Protocol v1",
         parameters = {
-            @Parameter(name = "username", required = true),
-            @Parameter(name = "password", required = false),
-            @Parameter(name = "service", required = true)
+            @Parameter(name = "username", required = true, description = "The username"),
+            @Parameter(name = "password", required = false, description = "The password"),
+            @Parameter(name = "service", required = true, description = "The service")
         })
     public void validate(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         renderValidationView(request, response, LegacyValidateController.class);
@@ -77,9 +77,9 @@ public class CasProtocolValidationEndpoint extends BaseCasRestActuatorEndpoint {
         consumes = {MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     @Operation(summary = "Produce a ticket validation response based on CAS Protocol v2",
         parameters = {
-            @Parameter(name = "username", required = true),
-            @Parameter(name = "password", required = false),
-            @Parameter(name = "service", required = true)
+            @Parameter(name = "username", required = true, description = "The username"),
+            @Parameter(name = "password", required = false, description = "The password"),
+            @Parameter(name = "service", required = true, description = "The service")
         })
     public void serviceValidate(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         renderValidationView(request, response, ServiceValidateController.class);

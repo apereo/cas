@@ -79,7 +79,8 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
      * @return the set
      */
     @GetMapping(value = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get collection of trusted devices for the user", parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH))
+    @Operation(summary = "Get collection of trusted devices for the user",
+        parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to look up"))
     public Set<? extends MultifactorAuthenticationTrustRecord> devicesForUser(@PathVariable(name = "username") final String username) {
         cleanExpiredRecords();
         return mfaTrustEngine.getObject().get(username);
@@ -91,7 +92,8 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
      * @param key the key
      * @return the integer
      */
-    @Operation(summary = "Remove trusted device using its key", parameters = @Parameter(name = "key", required = true, in = ParameterIn.PATH))
+    @Operation(summary = "Remove trusted device using its key",
+        parameters = @Parameter(name = "key", required = true, in = ParameterIn.PATH, description = "The key to look up"))
     @DeleteMapping(value = "/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Integer revoke(@PathVariable(name = "key") final String key) {
         mfaTrustEngine.getObject().remove(key);
@@ -117,7 +119,7 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
      * @return the integer
      */
     @Operation(summary = "Remove expired trusted devices given an expiration date as a threshold",
-        parameters = @Parameter(name = "date", required = true, in = ParameterIn.QUERY))
+        parameters = @Parameter(name = "date", required = true, in = ParameterIn.QUERY, description = "The expiration date to use"))
     @DeleteMapping(value = "/expire", produces = MediaType.APPLICATION_JSON_VALUE)
     public Integer removeSince(@RequestParam(name = "expiration") final Date date) {
         mfaTrustEngine.getObject().remove(DateTimeUtils.zonedDateTimeOf(date));
@@ -150,7 +152,8 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
      */
     @GetMapping(path = "/export/{username}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
-    @Operation(summary = "Export all device records as a zip file for a given username")
+    @Operation(summary = "Export all device records as a zip file for a given username",
+        parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to look up"))
     public ResponseEntity<Resource> exportUserDevices(@PathVariable("username") final String username) {
         val accounts = mfaTrustEngine.getObject().get(username);
         val resource = CompressionUtils.toZipFile(accounts.stream(),

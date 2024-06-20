@@ -44,7 +44,7 @@ public class CasPersonDirectoryEndpoint extends BaseCasRestActuatorEndpoint {
     @GetMapping("/cache/{username}")
     @Operation(summary = "Display cached attributes in the attribute repository for user. If attributes are found in the cache, they are returned. "
         + "Otherwise, attribute repositories will be contacted to fetch and cache person attributes again",
-        parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH))
+        parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to look up"))
     public PersonAttributes showCachedAttributesFor(@PathVariable("username") final String username) {
         val cachingRepository = getCachingPersonAttributeDao();
         return cachingRepository.getPerson(username);
@@ -57,7 +57,7 @@ public class CasPersonDirectoryEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @DeleteMapping("/cache/{username}")
     @Operation(summary = "Remove cached attributes in the attribute repository for user",
-        parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH))
+        parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to look up"))
     public void removeCachedAttributesFor(@PathVariable("username") final String username) {
         val cachingRepository = getCachingPersonAttributeDao();
         cachingRepository.removeUserAttributes(username);

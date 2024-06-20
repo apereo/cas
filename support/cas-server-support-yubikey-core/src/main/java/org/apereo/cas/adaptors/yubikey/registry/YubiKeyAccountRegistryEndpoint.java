@@ -58,7 +58,8 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasRestActuatorEndpoint 
      * @return the yubi key account
      */
     @GetMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get Yubikey account for username", parameters = @Parameter(name = "username", required = true))
+    @Operation(summary = "Get Yubikey account for username",
+        parameters = @Parameter(name = "username", required = true, description = "The username to look up"))
     public YubiKeyAccount get(@PathVariable final String username) {
         val result = registry.getObject().getAccount(username);
         return result.orElse(null);
@@ -81,7 +82,8 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasRestActuatorEndpoint 
      * @param username the username
      */
     @DeleteMapping(path = "{username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Delete Yubikey account for username", parameters = @Parameter(name = "username", required = true))
+    @Operation(summary = "Delete Yubikey account for username",
+        parameters = @Parameter(name = "username", required = true, description = "The username to delete"))
     public void delete(@PathVariable final String username) {
         registry.getObject().delete(username);
     }
