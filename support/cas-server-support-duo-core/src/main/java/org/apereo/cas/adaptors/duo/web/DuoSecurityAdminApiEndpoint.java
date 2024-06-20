@@ -51,8 +51,8 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @GetMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Fetch Duo Security user account from Duo Admin API", parameters = {
-        @Parameter(name = "username", required = true, in = ParameterIn.PATH),
-        @Parameter(name = "providerId")
+        @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to fetch"),
+        @Parameter(name = "providerId", description = "The multifactor authentication provider id defined in CAS settings")
     })
     public Map<String, DuoSecurityUserAccount> getUser(@PathVariable("username") final String username,
                                                        @RequestParam(required = false) final String providerId) {
