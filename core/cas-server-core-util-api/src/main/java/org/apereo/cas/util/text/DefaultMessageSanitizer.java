@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class DefaultMessageSanitizer implements MessageSanitizer {
     private static final Pattern SENSITIVE_TEXT_PATTERN =
-        Pattern.compile("(psw|pwd|clientSecret|password|token|credential|secret)\\s*=\\s*(['\"]*\\S+\\b['\"]*)");
+        Pattern.compile("(psw|pwd|clientSecret|password|token|credential|secret|secretKey)\\s*=\\s*(['\"]*\\S+\\b['\"]*)");
 
     private static final Boolean CAS_TICKET_ID_SANITIZE_SKIP = Boolean.getBoolean("CAS_TICKET_ID_SANITIZE_SKIP");
 

@@ -479,7 +479,8 @@ exports.doRequest = async (url, method = "GET",
             method: method,
             rejectUnauthorized: false,
             headers: headers,
-            timeout: 15000
+            timeout: 15000,
+            keepAlive: true
         };
         options.agent = new https.Agent(options);
 
