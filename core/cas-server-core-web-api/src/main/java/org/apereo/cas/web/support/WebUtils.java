@@ -41,6 +41,7 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.ExternalContextHolder;
@@ -1859,7 +1860,8 @@ public class WebUtils {
      * @return the http request parameters from request body
      */
     public static Map<String, String> getHttpRequestParametersFromRequestBody(final HttpServletRequest httpServletRequest) {
-        if (HttpMethod.POST.matches(httpServletRequest.getMethod())) {
+        if (HttpMethod.POST.matches(httpServletRequest.getMethod())
+            && StringUtils.equalsIgnoreCase(httpServletRequest.getContentType(), MediaType.APPLICATION_FORM_URLENCODED_VALUE)) {
             try (val is = httpServletRequest.getInputStream()) {
                 if (!is.isFinished()) {
                     val requestBody = IOUtils.toString(is, StandardCharsets.UTF_8);

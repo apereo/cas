@@ -25,7 +25,7 @@ async function normalAuthenticationFlow(context) {
     assert(authData["Attributes"]["group"].includes("sys-control"));
     assert(authData["Attributes"]["group"].includes("sys-super"));
 
-    await cas.sleep(1000);
+    await cas.sleep(2000);
     await cas.gotoLogout(page);
 }
 
@@ -39,7 +39,7 @@ async function staleAuthenticationFlow(context) {
     await cas.log("Checking for page URL...");
     const url = await page.url();
     await cas.logPage(page);
-
+    await cas.sleep(2000);
     await cas.log(`Restarting the flow with ${url}`);
     const page2 = await cas.newPage(context);
     await cas.goto(page2, url);
@@ -51,17 +51,12 @@ async function staleAuthenticationFlow(context) {
     await cas.assertVisibility(page2, "#table_with_attributes");
     const authData = JSON.parse(await cas.innerHTML(page2, "details pre"));
     await cas.log(authData);
-    await cas.sleep(1000);
+    await cas.sleep(2000);
     await cas.goto(page2, "https://localhost:8443/cas/logout");
     await cas.log("Done");
 }
 
 (async () => {
-    const body = {"configuredLevel": "WARN"};
-    await ["org.apereo.cas", "org.apereo.cas.web", "org.apereo.cas.web.flow"].forEach((p) =>
-        cas.doRequest(`https://localhost:8443/cas/actuator/loggers/${p}`, "POST",
-            {"Content-Type": "application/json"}, 204, JSON.stringify(body, undefined, 2)));
-    
     const browser = await cas.newBrowser(cas.browserOptions());
     for (let i = 1; i <= 2; i++) {
         const context = await browser.createBrowserContext();
@@ -77,7 +72,7 @@ async function staleAuthenticationFlow(context) {
             break;
         }
         await context.close();
-        await cas.log("===========================================================");
+        await cas.separator();
     }
 
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));

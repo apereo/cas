@@ -33,6 +33,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -47,6 +48,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.SpringBootAdmin)
 @AutoConfiguration
+@EnableAsync(proxyTargetClass = false)
 public class CasSpringBootAdminAutoConfiguration {
 
     @Configuration(value = "SpringBootAdminClientConfiguration", proxyBeanMethods = false)
