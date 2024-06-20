@@ -32,6 +32,7 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
+import org.springframework.boot.actuate.endpoint.web.annotation.ControllerEndpoint;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.boot.actuate.endpoint.web.annotation.WebEndpoint;
 import org.springframework.core.StandardReflectionParameterNameDiscoverer;
@@ -400,11 +401,20 @@ public class CasDocumentationApplication {
         if (endpoint != null) {
             return Pair.of(endpoint.id(), endpoint.annotationType().getSimpleName());
         }
-        
         LOGGER.debug("[{}] is not an Endpoint. Checking for WebEndpoint...", clazz.getName());
         var webEndpoint = (WebEndpoint) clazz.getAnnotation(WebEndpoint.class);
         if (webEndpoint != null) {
             return Pair.of(webEndpoint.id(), webEndpoint.annotationType().getSimpleName());
+        }
+        LOGGER.debug("[{}] is not an Endpoint. Checking for RestControllerEndpoint...", clazz.getName());
+        var restEndpoint = (RestControllerEndpoint) clazz.getAnnotation(RestControllerEndpoint.class);
+        if (restEndpoint != null) {
+            return Pair.of(restEndpoint.id(), restEndpoint.annotationType().getSimpleName());
+        }
+        LOGGER.debug("[{}] is not an Endpoint. Checking for ControllerEndpoint...", clazz.getName());
+        var ctrlEndpoint = (ControllerEndpoint) clazz.getAnnotation(ControllerEndpoint.class);
+        if (ctrlEndpoint != null) {
+            return Pair.of(ctrlEndpoint.id(), ctrlEndpoint.annotationType().getSimpleName());
         }
         LOGGER.warn("Unable to determine endpoint from [{}]", clazz.getName());
         return null;
@@ -485,7 +495,7 @@ public class CasDocumentationApplication {
             if (!properties.isEmpty()) {
                 var destination = new File(parentPath, endpoint.getKey());
                 if (!destination.mkdirs()) {
-                    LOGGER.debug("Unable to create directory");
+                    LOGGER.debug("Unable to create directory [{}]", destination);
                 }
 
                 var configFile = new File(destination, "config.yml");
@@ -669,7 +679,7 @@ public class CasDocumentationApplication {
             if (!properties.isEmpty()) {
                 var destination = new File(parentPath, endpointId);
                 if (!destination.mkdirs()) {
-                    LOGGER.debug("Unable to create directory");
+                    LOGGER.debug("Unable to create directory [{}]", destination);
                 }
 
                 var configFile = new File(destination, "config.yml");
