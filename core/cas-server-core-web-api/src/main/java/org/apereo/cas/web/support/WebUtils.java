@@ -574,6 +574,7 @@ public class WebUtils {
      */
     public static void putAuthentication(final Authentication authentication, final RequestContext requestContext) {
         putAuthentication(authentication, requestContext.getConversationScope());
+        putAuthentication(authentication, requestContext.getFlowScope());
     }
 
     /**

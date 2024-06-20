@@ -675,7 +675,9 @@ exports.verifyJwt = async (token, secret, options) => {
     await this.log(`Decoding token ${token}`);
     const decoded = JwtOps.verify(token, secret, options, undefined);
     if (options.complete) {
-        await this.logg(`Decoded token header: ${decoded.header}`);
+        await this.log("Decoded token header");
+        await this.logg(decoded.header);
+
         await this.log("Decoded token payload:");
         await this.logg(decoded.payload);
     } else {
@@ -733,7 +735,8 @@ exports.decodeJwt = async (token, complete = false) => {
     assert(token !== undefined, "Token cannot be undefined");
     const decoded = JwtOps.decode(token, {complete: complete});
     if (complete) {
-        await this.logg(`Decoded token header: ${decoded.header}`);
+        await this.log("Decoded token header");
+        await this.logg(decoded.header);
         await this.log("Decoded token payload:");
         await this.logg(decoded.payload);
     } else {

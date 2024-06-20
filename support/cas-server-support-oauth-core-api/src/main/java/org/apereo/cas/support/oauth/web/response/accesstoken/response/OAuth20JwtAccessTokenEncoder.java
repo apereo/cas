@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
@@ -294,6 +295,7 @@ public class OAuth20JwtAccessTokenEncoder {
                     });
                 attributesToRelease.put(OAuth20Constants.X509_CERTIFICATE_DIGEST, originalAttributes.get(OAuth20Constants.X509_CERTIFICATE_DIGEST));
             }
+            attributesToRelease.remove(CasProtocolConstants.PARAMETER_PASSWORD);
             return attributesToRelease;
         }
 
