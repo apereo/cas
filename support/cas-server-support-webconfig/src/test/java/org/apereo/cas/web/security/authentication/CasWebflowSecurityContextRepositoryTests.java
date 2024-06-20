@@ -82,6 +82,7 @@ class CasWebflowSecurityContextRepositoryTests {
             when(repository.parseFlowExecutionKey(anyString())).thenReturn(mock(FlowExecutionKey.class));
             when(repository.getFlowExecution(any(FlowExecutionKey.class))).thenReturn(flowExecution);
             when(executor.getFlowExecutionRepository()).thenReturn(repository);
+            when(executor.getFlowUrlHandler()).thenReturn(new CasDefaultFlowUrlHandler());
             return executor;
         }
     }
