@@ -97,6 +97,7 @@ class CasWebSecurityConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "securityContextRepository")
         public SecurityContextRepository securityContextRepository(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("loginFlowUrlHandler")
             final FlowUrlHandler loginFlowUrlHandler,
             @Qualifier("loginFlowExecutor")
@@ -104,7 +105,7 @@ class CasWebSecurityConfiguration {
             return new DelegatingSecurityContextRepository(
                 new RequestAttributeSecurityContextRepository(),
                 new HttpSessionSecurityContextRepository(),
-                new CasWebflowSecurityContextRepository(loginFlowExecutor, loginFlowUrlHandler)
+                new CasWebflowSecurityContextRepository(applicationContext)
             );
         }
 

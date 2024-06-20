@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.HandlerMapping;
+import org.springframework.webflow.context.servlet.FlowUrlHandler;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.FlowExecutionListener;
@@ -73,23 +74,33 @@ class CasWebflowAccountProfileConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public FlowExecutor accountProfileFlowExecutor(
+        @Qualifier("accountProfileWebflowUrlHandler")
+        final FlowUrlHandler accountProfileWebflowUrlHandler,
         final CasConfigurationProperties casProperties,
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry flowDefinitionRegistry,
         @Qualifier("webflowCipherExecutor") final CipherExecutor webflowCipherExecutor) {
         val factory = new WebflowExecutorFactory(casProperties.getWebflow(),
-            flowDefinitionRegistry, webflowCipherExecutor, FLOW_EXECUTION_LISTENERS);
+            flowDefinitionRegistry, webflowCipherExecutor, FLOW_EXECUTION_LISTENERS,
+            accountProfileWebflowUrlHandler);
         return factory.build();
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
+    public FlowUrlHandler accountProfileWebflowUrlHandler() {
+        return new CasDefaultFlowUrlHandler();
+    }
+
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Bean
     public HandlerAdapter accountProfileWebflowHandlerAdapter(
+        @Qualifier("accountProfileWebflowUrlHandler") final FlowUrlHandler accountProfileWebflowUrlHandler,
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("accountProfileFlowExecutor") final FlowExecutor accountProfileFlowExecutor) {
         val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_ACCOUNT);
         handler.setFlowExecutor(accountProfileFlowExecutor);
-        handler.setFlowUrlHandler(new CasDefaultFlowUrlHandler());
+        handler.setFlowUrlHandler(accountProfileWebflowUrlHandler);
         return handler;
     }
 
