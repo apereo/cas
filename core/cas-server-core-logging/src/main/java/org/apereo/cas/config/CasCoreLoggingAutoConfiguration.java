@@ -52,6 +52,7 @@ public class CasCoreLoggingAutoConfiguration {
                 ticketGrantingTicketCookieGenerator, casProperties);
             val bean = new FilterRegistrationBean<ThreadContextMDCServletFilter>();
             bean.setFilter(filter);
+            bean.setAsyncSupported(true);
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
             bean.setName("threadContextMDCServletFilter");
             bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
