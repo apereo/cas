@@ -98,14 +98,14 @@ public class AmazonSecurityTokenServiceEndpoint extends BaseCasRestActuatorEndpo
      */
     @PostMapping
     @Operation(summary = "Fetch temporary credentials from Amazon Security Token Service", parameters = {
-        @Parameter(name = "duration"),
-        @Parameter(name = "tokenCode"),
-        @Parameter(name = "profile"),
-        @Parameter(name = "serialNumber"),
-        @Parameter(name = "roleArn"),
-        @Parameter(name = "requestBody"),
-        @Parameter(name = "request"),
-        @Parameter(name = "response")
+        @Parameter(name = "duration", description = "Duration of the temporary credentials"),
+        @Parameter(name = "tokenCode", description = "MFA token code"),
+        @Parameter(name = "profile", description = "AWS profile name"),
+        @Parameter(name = "serialNumber", description = "MFA serial number"),
+        @Parameter(name = "roleArn", description = "Role ARN"),
+        @Parameter(name = "requestBody", description = "Request body"),
+        @Parameter(name = "request", description = "Request"),
+        @Parameter(name = "response", description = "Response")
     })
     public ResponseEntity<String> fetchCredentials(@RequestParam(value = "token", required = false) final String tokenCode,
                                                    @RequestParam(required = false) final String profile,

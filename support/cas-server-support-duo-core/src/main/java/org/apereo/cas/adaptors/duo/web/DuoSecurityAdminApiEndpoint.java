@@ -81,9 +81,9 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
      * @return the map
      */
     @Operation(summary = "Create bypass codes using Duo Admin API", parameters = {
-        @Parameter(name = "username", required = true),
-        @Parameter(name = "providerId"),
-        @Parameter(name = "userId")
+        @Parameter(name = "username", required = true, in = ParameterIn.QUERY, description = "The username to create bypass codes for"),
+        @Parameter(name = "providerId", description = "The multifactor authentication provider id defined in CAS settings"),
+        @Parameter(name = "userId", description = "The user identifier, supplied by Duo Security to create bypass codes for")
     })
     @PostMapping(path = "/bypassCodes",
         consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -123,7 +123,7 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @PutMapping(path = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Update Duo Security user account from Duo Admin API", parameters = {
-        @Parameter(name = "username", required = true, in = ParameterIn.PATH),
+        @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to update"),
         @Parameter(name = "providerId", description = "The multifactor authentication provider id defined in CAS settings")
     })
     public ResponseEntity updateUser(@PathVariable("username") final String username,

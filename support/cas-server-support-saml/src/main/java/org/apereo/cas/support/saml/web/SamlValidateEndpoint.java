@@ -105,9 +105,9 @@ public class SamlValidateEndpoint extends BaseCasRestActuatorEndpoint {
         MediaType.APPLICATION_FORM_URLENCODED_VALUE
     })
     @Operation(summary = "Handle validation request and produce saml1 payload.", parameters = {
-        @Parameter(name = "username", required = true),
-        @Parameter(name = "password", required = false),
-        @Parameter(name = "service", required = true)
+        @Parameter(name = "username", required = true, description = "The username"),
+        @Parameter(name = "password", required = false, description = "The password"),
+        @Parameter(name = "service", required = true, description = "The service")
     })
     public ResponseEntity handle(
         final HttpServletRequest request,

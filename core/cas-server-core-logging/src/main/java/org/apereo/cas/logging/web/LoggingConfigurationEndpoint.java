@@ -148,9 +148,9 @@ public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint {
      */
     @WriteOperation
     @Operation(summary = "Update logger level for a logger name", parameters = {
-        @Parameter(name = "loggerName", required = true),
-        @Parameter(name = "loggerLevel", required = true),
-        @Parameter(name = "additive", schema = @Schema(type = "boolean"))
+        @Parameter(name = "loggerName", required = true, description = "The logger name"),
+        @Parameter(name = "loggerLevel", required = true, description = "The logger level"),
+        @Parameter(name = "additive", schema = @Schema(type = "boolean"), description = "Whether logger is additive")
     })
     public void updateLoggerLevel(@Selector final String loggerName,
                                   final String loggerLevel,

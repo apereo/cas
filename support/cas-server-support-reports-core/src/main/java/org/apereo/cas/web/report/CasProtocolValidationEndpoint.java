@@ -97,9 +97,9 @@ public class CasProtocolValidationEndpoint extends BaseCasRestActuatorEndpoint {
         consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     @Operation(summary = "Produce a ticket validation response based on CAS Protocol v3",
         parameters = {
-            @Parameter(name = "username", required = true),
-            @Parameter(name = "password", required = false),
-            @Parameter(name = "service", required = true)
+            @Parameter(name = "username", required = true, description = "The username"),
+            @Parameter(name = "password", required = false, description = "The password"),
+            @Parameter(name = "service", required = true, description = "The service")
         })
     public void p3ServiceValidate(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
         renderValidationView(request, response, V3ServiceValidateController.class);
