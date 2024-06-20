@@ -8,9 +8,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
 import lombok.val;
+import org.springframework.webflow.context.servlet.FlowUrlHandler;
 import org.springframework.webflow.conversation.impl.SessionBindingConversationManager;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.impl.FlowExecutionImplFactory;
+import org.springframework.webflow.execution.FlowExecutionFactory;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.execution.factory.StaticFlowExecutionListenerLoader;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
@@ -35,6 +37,8 @@ public class WebflowExecutorFactory {
 
     private final FlowExecutionListener[] executionListeners;
 
+    private final FlowUrlHandler flowUrlHandler;
+
     /**
      * Build flow executor.
      *
@@ -56,13 +60,12 @@ public class WebflowExecutorFactory {
         val executionFactory = new FlowExecutionImplFactory();
         executionFactory.setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(executionListeners));
 
-        val flowExecutionSnapshotFactory =
-            new SerializedFlowExecutionSnapshotFactory(executionFactory, flowDefinitionRegistry);
+        val flowExecutionSnapshotFactory = new SerializedFlowExecutionSnapshotFactory(executionFactory, flowDefinitionRegistry);
         flowExecutionSnapshotFactory.setCompress(session.isCompress());
 
         val repository = new DefaultFlowExecutionRepository(conversationManager, flowExecutionSnapshotFactory);
         executionFactory.setExecutionKeyFactory(repository);
-        return new CasFlowExecutorImpl(new FlowExecutorImpl(flowDefinitionRegistry, executionFactory, repository), repository);
+        return buildCasFlowExecutor(executionFactory, repository);
     }
 
     private FlowExecutor buildFlowExecutorViaClientFlowExecution() {
@@ -70,11 +73,15 @@ public class WebflowExecutorFactory {
         repository.setFlowDefinitionLocator(flowDefinitionRegistry);
         repository.setTranscoder(getWebflowStateTranscoder());
 
-        val factory = new FlowExecutionImplFactory();
-        factory.setExecutionKeyFactory(repository);
-        repository.setFlowExecutionFactory(factory);
-        factory.setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(executionListeners));
-        return new CasFlowExecutorImpl(new FlowExecutorImpl(flowDefinitionRegistry, factory, repository), repository);
+        val executionFactory = new FlowExecutionImplFactory();
+        executionFactory.setExecutionKeyFactory(repository);
+        repository.setFlowExecutionFactory(executionFactory);
+        executionFactory.setExecutionListenerLoader(new StaticFlowExecutionListenerLoader(executionListeners));
+        return buildCasFlowExecutor(executionFactory, repository);
+    }
+
+    private CasFlowExecutorImpl buildCasFlowExecutor(final FlowExecutionFactory executionFactory, final FlowExecutionRepository repository) {
+        return new CasFlowExecutorImpl(new FlowExecutorImpl(flowDefinitionRegistry, executionFactory, repository), repository, flowUrlHandler);
     }
 
     private Transcoder getWebflowStateTranscoder() {
@@ -89,5 +96,7 @@ public class WebflowExecutorFactory {
         private final FlowExecutorImpl flowExecutor;
 
         private final FlowExecutionRepository flowExecutionRepository;
+
+        private final FlowUrlHandler flowUrlHandler;
     }
 }

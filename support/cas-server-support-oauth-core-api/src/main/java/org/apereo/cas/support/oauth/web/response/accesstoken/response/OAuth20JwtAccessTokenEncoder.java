@@ -1,6 +1,5 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.response;
 
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
@@ -272,25 +271,30 @@ public class OAuth20JwtAccessTokenEncoder {
             val principal = configurationContext.getProfileScopeToAttributesFilter()
                 .filter(accessToken.getService(), activePrincipal, registeredService, accessToken);
 
-            val attributes = principal.getAttributes();
-            if (attributes.containsKey(OAuth20Constants.DPOP_CONFIRMATION)) {
-                CollectionUtils.firstElement(attributes.get(OAuth20Constants.DPOP_CONFIRMATION))
+            val attributesToRelease = new HashMap<>(principal.getAttributes());
+            val originalAttributes = activePrincipal.getAttributes();
+            
+            if (originalAttributes.containsKey(OAuth20Constants.DPOP_CONFIRMATION)) {
+                CollectionUtils.firstElement(originalAttributes.get(OAuth20Constants.DPOP_CONFIRMATION))
                     .ifPresent(conf -> {
                         val confirmation = new JWKThumbprintConfirmation(new Base64URL(conf.toString()));
                         val claim = confirmation.toJWTClaim();
-                        attributes.put(claim.getKey(), List.of(claim.getValue()));
+                        attributesToRelease.put(claim.getKey(), List.of(claim.getValue()));
                     });
+                attributesToRelease.put(OAuth20Constants.DPOP, originalAttributes.get(OAuth20Constants.DPOP));
+                attributesToRelease.put(OAuth20Constants.DPOP_CONFIRMATION, originalAttributes.get(OAuth20Constants.DPOP_CONFIRMATION));
             }
-            if (attributes.containsKey(OAuth20Constants.X509_CERTIFICATE_DIGEST)) {
-                CollectionUtils.firstElement(attributes.get(OAuth20Constants.X509_CERTIFICATE_DIGEST))
+            
+            if (originalAttributes.containsKey(OAuth20Constants.X509_CERTIFICATE_DIGEST)) {
+                CollectionUtils.firstElement(originalAttributes.get(OAuth20Constants.X509_CERTIFICATE_DIGEST))
                     .ifPresent(conf -> {
                         val confirmation = new X509CertificateConfirmation(new Base64URL(conf.toString()));
                         val claim = confirmation.toJWTClaim();
-                        attributes.put(claim.getKey(), List.of(claim.getValue()));
+                        attributesToRelease.put(claim.getKey(), List.of(claim.getValue()));
                     });
+                attributesToRelease.put(OAuth20Constants.X509_CERTIFICATE_DIGEST, originalAttributes.get(OAuth20Constants.X509_CERTIFICATE_DIGEST));
             }
-            attributes.remove(CasProtocolConstants.PARAMETER_PASSWORD);
-            return attributes;
+            return attributesToRelease;
         }
 
         protected Date determineValidUntilDate(final AuthenticationAwareTicket accessToken) {

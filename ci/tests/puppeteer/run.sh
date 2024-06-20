@@ -30,13 +30,13 @@ function printcyan() {
   printf "🔷 ${CYAN}$1${ENDCOLOR}\n"
 }
 function printgreen() {
-  printf "☘️ ${GREEN}$1${ENDCOLOR}\n"
+  printf "☘️  ${GREEN}$1${ENDCOLOR}\n"
 }
 function printyellow() {
-  printf "⚠️ ${YELLOW}$1${ENDCOLOR}\n"
+  printf "⚠️  ${YELLOW}$1${ENDCOLOR}\n"
 }
 function printred() {
-  printf "🔥 ${RED}$1${ENDCOLOR}\n"
+  printf "🔥  ${RED}$1${ENDCOLOR}\n"
 }
 
 function progressbar() {
@@ -746,7 +746,7 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
     fi
   done
 
-  printgreen "\nReady!"
+  printgreen "Ready!"
   if [[ "${INITONLY}" == "false" ]]; then
     readyScript=$(jq -j '.readyScript // empty' < "${config}")
     readyScript="${readyScript//\$\{PWD\}/${PWD}}"

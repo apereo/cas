@@ -108,6 +108,7 @@ import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
+import org.springframework.webflow.context.servlet.FlowUrlHandler;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -684,12 +685,19 @@ class DelegatedAuthenticationWebflowConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
+        public FlowUrlHandler delegatedClientWebflowUrlHandler() {
+            return new CasDefaultFlowUrlHandler();
+        }
+        
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
         public HandlerAdapter delegatedClientRedirectWebflowHandlerAdapter(
+            @Qualifier("delegatedClientWebflowUrlHandler") final FlowUrlHandler delegatedClientWebflowUrlHandler,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("delegatedClientRedirectFlowExecutor") final FlowExecutor delegatedClientRedirectFlowExecutor) {
             val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_DELEGATION_REDIRECT);
             handler.setFlowExecutor(delegatedClientRedirectFlowExecutor);
-            handler.setFlowUrlHandler(new CasDefaultFlowUrlHandler());
+            handler.setFlowUrlHandler(delegatedClientWebflowUrlHandler);
             return handler;
         }
 
@@ -717,11 +725,13 @@ class DelegatedAuthenticationWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public FlowExecutor delegatedClientRedirectFlowExecutor(
+            @Qualifier("delegatedClientWebflowUrlHandler") final FlowUrlHandler delegatedClientWebflowUrlHandler,
             final CasConfigurationProperties casProperties,
             @Qualifier("delegatedClientRedirectFlowRegistry") final FlowDefinitionRegistry delegatedClientRedirectFlowRegistry,
             @Qualifier("webflowCipherExecutor") final CipherExecutor webflowCipherExecutor) {
             val factory = new WebflowExecutorFactory(casProperties.getWebflow(),
-                delegatedClientRedirectFlowRegistry, webflowCipherExecutor, FLOW_EXECUTION_LISTENERS);
+                delegatedClientRedirectFlowRegistry, webflowCipherExecutor, FLOW_EXECUTION_LISTENERS,
+                delegatedClientWebflowUrlHandler);
             return factory.build();
         }
     }

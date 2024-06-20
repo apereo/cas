@@ -4,8 +4,10 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.web.flow.executor.CasFlowExecutor;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,7 +17,6 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails;
 import org.springframework.security.web.context.HttpRequestResponseHolder;
 import org.springframework.security.web.context.SecurityContextRepository;
-import org.springframework.webflow.context.servlet.FlowUrlHandler;
 import org.springframework.webflow.executor.FlowExecutor;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,11 +30,11 @@ import java.util.stream.Collectors;
  * @since 7.1.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class CasWebflowSecurityContextRepository implements SecurityContextRepository {
     private final SecurityContextHolderStrategy securityContextHolderStrategy = SecurityContextHolder.getContextHolderStrategy();
 
-    private final FlowExecutor loginFlowExecutor;
-    private final FlowUrlHandler loginFlowUrlHandler;
+    private final ConfigurableApplicationContext applicationContext;
 
     @Override
     public SecurityContext loadContext(final HttpRequestResponseHolder requestResponseHolder) {
@@ -61,12 +62,25 @@ public class CasWebflowSecurityContextRepository implements SecurityContextRepos
     }
 
     private Authentication getInProgressAuthentication(final HttpServletRequest request) {
-        val flowExecutionRepository = ((CasFlowExecutor) loginFlowExecutor).getFlowExecutionRepository();
-        val execution = loginFlowUrlHandler.getFlowExecutionKey(request);
-        if (StringUtils.isNotBlank(execution)) {
-            val flowExecutionKey = flowExecutionRepository.parseFlowExecutionKey(execution);
-            val flowExecution = flowExecutionRepository.getFlowExecution(flowExecutionKey);
-            return WebUtils.getAuthentication(flowExecution.getConversationScope());
+        val flowExecutors = applicationContext.getBeansOfType(FlowExecutor.class)
+            .values()
+            .stream()
+            .filter(CasFlowExecutor.class::isInstance)
+            .map(CasFlowExecutor.class::cast)
+            .collect(Collectors.toSet());
+        for (val casFlowExecutor : flowExecutors) {
+            val flowExecutionRepository = casFlowExecutor.getFlowExecutionRepository();
+            val execution = casFlowExecutor.getFlowUrlHandler().getFlowExecutionKey(request);
+            if (StringUtils.isNotBlank(execution)) {
+                try {
+                    val flowExecutionKey = flowExecutionRepository.parseFlowExecutionKey(execution);
+                    val flowExecution = flowExecutionRepository.getFlowExecution(flowExecutionKey);
+                    return WebUtils.getAuthentication(flowExecution.getConversationScope());
+                } catch (final Exception e) {
+                    LOGGER.debug("Unable to determine authentication attempt from the webflow context: [{}]", e.getMessage());
+                    LOGGER.trace(e.getMessage(), e);
+                }
+            }
         }
         return null;
     }
