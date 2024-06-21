@@ -235,6 +235,7 @@ layout: null
         *   [Windows Live](/cas/{{ version }}/integration/Delegate-Authentication-WindowsLive.html)
         *   [Wordpress](/cas/{{ version }}/integration/Delegate-Authentication-Wordpress.html)
         *   [Yahoo!](/cas/{{ version }}/integration/Delegate-Authentication-Yahoo.html)
+        *   [Custom](/cas/{{ version }}/integration/Delegate-Authentication-Custom.html)
         *   [SAML2](#delegationsaml2)
             *   [Overview](/cas/{{ version }}/integration/Delegate-Authentication-SAML.html) 
             *   [Metadata Management](/cas/{{ version }}/integration/Delegate-Authentication-SAML-Metadata.html) 
