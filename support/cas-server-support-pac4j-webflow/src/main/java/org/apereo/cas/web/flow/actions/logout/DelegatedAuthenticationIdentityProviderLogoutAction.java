@@ -15,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.opensaml.saml.saml2.core.LogoutRequest;
+import org.pac4j.core.credentials.SessionKeyCredentials;
 import org.pac4j.jee.context.JEEContext;
+import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.saml.credentials.SAML2Credentials;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -68,24 +70,34 @@ public class DelegatedAuthenticationIdentityProviderLogoutAction extends BaseCas
                     request.removeAttribute(SingleLogoutContinuation.class.getName());
                 });
 
+
             if (clientCredential.getCredentials() instanceof final SAML2Credentials saml2Credentials
-                && saml2Credentials.getContext().getMessageContext().getMessage() instanceof final LogoutRequest logoutRequest) {
-                removeSsoSessionsForSessionIndexes(request, response, logoutRequest);
+                    && saml2Credentials.getContext().getMessageContext().getMessage() instanceof final LogoutRequest logoutRequest) {
+                logoutRequest.getSessionIndexes().forEach(sessionIndex -> {
+                    val index = sessionIndex.getValue();
+                    LOGGER.debug("Destroying SSO session for SAML authn delegation / session index: [{}]", index);
+                    removeSsoSessionsForSessionIndex(request, response, "sessionindex", index);
+                });
+            } else if (client instanceof OidcClient
+                    && clientCredential.getCredentials() instanceof final SessionKeyCredentials sessionKeyCredentials) {
+                val sessionKey = sessionKeyCredentials.getSessionKey();
+                LOGGER.debug("Destroying SSO session for OIDC authn delegation / sid: [{}]", sessionKey);
+                removeSsoSessionsForSessionIndex(request, response, "sid", sessionKey);
             }
             return new Event(this, CasWebflowConstants.TRANSITION_ID_DONE);
         }
         return new Event(this, CasWebflowConstants.TRANSITION_ID_PROCEED);
     }
 
-    private void removeSsoSessionsForSessionIndexes(final HttpServletRequest request,
-                                                    final HttpServletResponse response,
-                                                    final LogoutRequest logoutRequest) {
-        logoutRequest.getSessionIndexes().forEach(sessionIndex -> configContext.getTicketRegistry()
-            .getSessionsWithAttributes(Map.of("sessionindex", List.of(Objects.requireNonNull(sessionIndex.getValue()))))
-            .filter(ticket -> !ticket.isExpired())
-            .map(TicketGrantingTicket.class::cast)
-            .findFirst()
-            .ifPresent(ticket -> configContext.getSingleLogoutRequestExecutor().execute(ticket.getId(), request, response)));
-
+    private void removeSsoSessionsForSessionIndex(final HttpServletRequest request,
+                                                  final HttpServletResponse response,
+                                                  final String key,
+                                                  final String value) {
+        configContext.getTicketRegistry()
+                .getSessionsWithAttributes(Map.of(key, List.of(Objects.requireNonNull(value))))
+                .filter(ticket -> !ticket.isExpired())
+                .map(TicketGrantingTicket.class::cast)
+                .findFirst()
+                .ifPresent(ticket -> configContext.getSingleLogoutRequestExecutor().execute(ticket.getId(), request, response));
     }
 }
