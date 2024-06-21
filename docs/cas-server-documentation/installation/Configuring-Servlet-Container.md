@@ -12,7 +12,7 @@ describes how to build and deploy CAS.
 
 ## How Do I Choose?
 
-There are is a wide range of servlet containers and servers on the menu. The selection criteria is outlined below:
+There are wide range of servlet containers and servers on the menu. The selection criteria is outlined below:
 
 - Choose a technology that you are most familiar with and have the skills and patience to troubleshoot, tune and scale for the win. 
 - Choose a technology that does not force your CAS configuration to be tied to any individual 
