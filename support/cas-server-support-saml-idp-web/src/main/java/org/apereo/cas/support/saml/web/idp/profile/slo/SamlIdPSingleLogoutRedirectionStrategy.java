@@ -160,7 +160,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
             : sloService.getResponseLocation();
         LOGGER.debug("Encoding logout response for endpoint [{}] and binding [{}]", location, sloService.getBinding());
         val payload = SerializeSupport.nodeToString(XMLObjectSupport.marshall(logoutResponse));
-        LOGGER.debug("Logout request payload is [{}]", payload);
+        LOGGER.debug("Logout response payload is [{}]", payload);
 
         val message = EncodingUtils.encodeBase64(payload);
         LOGGER.trace("Logout message encoded in base64 is [{}]", message);
