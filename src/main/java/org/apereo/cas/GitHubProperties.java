@@ -52,7 +52,7 @@ public class GitHubProperties {
 
     private long maximumChangedFiles = 40;
 
-    private long staleWorkflowRunInDays = 5;
+    private long staleWorkflowRunInDays = 3;
 
     private long completedSuccessfulWorkflowRunInDays = 1;
 
