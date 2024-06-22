@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import java.util.List;
+
 /**
  * Manages the storage, retrieval, and matching of Services wishing to use CAS
  * and services that have been registered with CAS.
@@ -15,4 +17,11 @@ public interface ChainingServicesManager extends ServicesManager {
      * @param manager - a services manager
      */
     void registerServiceManager(ServicesManager manager);
+
+    /**
+     * Gets services manager.
+     *
+     * @return the services manager
+     */
+    List<ServicesManager> getServiceManagers();
 }

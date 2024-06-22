@@ -21,7 +21,6 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
-import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
@@ -260,8 +259,7 @@ class DelegatedAuthenticationSaml2Configuration {
             return new CasWebSecurityConfigurer<>() {
                 @Override
                 public List<String> getIgnoredEndpoints() {
-                    return List.of(StringUtils.prependIfMissing(DelegatedClientIdentityProviderConfigurationFactory.ENDPOINT_URL_REDIRECT, "/"),
-                        StringUtils.prependIfMissing(DelegatedSaml2ClientMetadataController.BASE_ENDPOINT_SERVICE_PROVIDER, "/"));
+                    return List.of(StringUtils.prependIfMissing(DelegatedSaml2ClientMetadataController.BASE_ENDPOINT_SERVICE_PROVIDER, "/"));
                 }
             };
         }
