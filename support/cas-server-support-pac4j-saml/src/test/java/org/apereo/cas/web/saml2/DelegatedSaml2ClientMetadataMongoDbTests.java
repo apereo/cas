@@ -28,9 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pac4j.saml[0].metadata.service-provider.mongo.password=secret",
     "cas.authn.pac4j.saml[0].metadata.service-provider.mongo.database-name=saml2",
     "cas.authn.pac4j.saml[0].metadata.service-provider.mongo.collection=spmetadata",
-    "cas.authn.pac4j.saml[0].metadata.service-provider.mongo.authentication-database-name=admin",
-
-    "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=src/test/resources/idp-metadata.xml"
+    "cas.authn.pac4j.saml[0].metadata.service-provider.mongo.authentication-database-name=admin"
 })
 @Tag("MongoDb")
 @EnabledIfListeningOnPort(port = 27017)

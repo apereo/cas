@@ -29,9 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.user=postgres",
     "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.password=password",
     "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.driver-class=org.postgresql.Driver",
-    "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.dialect=org.hibernate.dialect.PostgreSQLDialect",
-
-    "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=src/test/resources/idp-metadata.xml"
+    "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.dialect=org.hibernate.dialect.PostgreSQLDialect"
 })
 @EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")

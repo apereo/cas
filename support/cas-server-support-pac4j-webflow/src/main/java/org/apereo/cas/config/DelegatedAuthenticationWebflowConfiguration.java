@@ -38,6 +38,8 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
+import org.apereo.cas.web.CasWebSecurityConfigurer;
+import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
@@ -83,6 +85,7 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieUtils;
 import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -128,6 +131,7 @@ import java.util.stream.Collectors;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication)
 @Configuration(value = "DelegatedAuthenticationWebflowConfiguration", proxyBeanMethods = false)
 class DelegatedAuthenticationWebflowConfiguration {
+    
     @Configuration(value = "DelegatedAuthenticationWebflowErrorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class, WebMvcProperties.class})
     static class DelegatedAuthenticationWebflowErrorConfiguration {
@@ -222,6 +226,18 @@ class DelegatedAuthenticationWebflowConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class DelegatedAuthenticationWebflowClientConfiguration {
 
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "delegatedClientEndpointConfigurer")
+        public CasWebSecurityConfigurer<Void> delegatedClientEndpointConfigurer() {
+            return new CasWebSecurityConfigurer<>() {
+                @Override
+                public List<String> getIgnoredEndpoints() {
+                    return List.of(StringUtils.prependIfMissing(DelegatedClientIdentityProviderConfigurationFactory.ENDPOINT_URL_REDIRECT, "/"));
+                }
+            };
+        }
+        
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "groovyDelegatedClientAuthenticationCredentialResolver")
