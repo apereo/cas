@@ -72,7 +72,6 @@ public class DelegatedSaml2ClientFinishLogoutAction extends BaseCasWebflowAction
                 .map(SAML2Client.class::cast)
                 .ifPresent(client -> {
                     client.init();
-
                     val logoutRequest = DelegationWebflowUtils.getDelegatedAuthenticationLogoutRequest(requestContext,
                         DelegatedAuthenticationClientLogoutRequest.class);
                     Optional.ofNullable(logoutRequest)
