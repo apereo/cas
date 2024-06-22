@@ -24,7 +24,7 @@
     "pino-pretty": "11.2.1",
     "properties-reader": "2.3.0",
     "ps-node": "0.1.6",
-    "puppeteer": "22.11.2",
+    "puppeteer": "22.12.0",
     "puppeteer-loadtest": "2.2.1",
     "qrcode-reader": "1.0.4",
     "request": "2.88.2",
