@@ -2,10 +2,10 @@ Thank you very much for submitting this pull request!
      
 # What happened? 
 
-The pull request submitted here does not contain an adequate description of changes, or a descriptive title to explain the change request in clear detail. 
-Please be sure to describe the changes you made here in detail and include the problem description, an overview of the solution you made, and whether the 
-change-set presents any side-effects as far as you know. This is both for the benefit of the project maintainers as well as anybody else who might later on stumble upon the pull request.
-      
+The pull request submitted here does not contain an adequate description of changes, or a descriptive title to explain the change request in clear detail. Please be sure to describe the changes you made here in detail and include the problem description, an overview of the solution you made, and whether the change-set presents any side-effects as far as you know. This is both for the benefit of the project maintainers as well as anybody else who might later on stumble upon the pull request.
+     
+When you prepare the pull request, please make sure your description of the changes follows the rules stated in the pull request template.
+
 A good template to follow when opening pull requests should follow the below *guidelines*:
 
 ### Problem

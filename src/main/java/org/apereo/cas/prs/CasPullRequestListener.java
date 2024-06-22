@@ -103,14 +103,15 @@ public class CasPullRequestListener implements PullRequestListener {
 
     @SneakyThrows
     private void checkForPullRequestDescription(final PullRequest pr) {
-        val committer = repository.getGitHubProperties().getRepository()
-            .getCommitters().contains(pr.getUser().getLogin());
-        if (!committer && !StringUtils.hasText(pr.getBody()) && !pr.isWorkInProgress() && !pr.isDraft()) {
-            var template = IOUtils.toString(new ClassPathResource("template-no-description.md").getInputStream(), StandardCharsets.UTF_8);
-            log.info("Pull request {} has no valid description", pr);
-            repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
-            repository.addComment(pr, template);
-            repository.close(pr);
+        val committer = repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
+        if (!committer && !pr.isWorkInProgress() && !pr.isDraft()) {
+            if (!StringUtils.hasText(pr.getBody()) || pr.getBody().contains("keep this template as is")) {
+                var template = IOUtils.toString(new ClassPathResource("template-no-description.md").getInputStream(), StandardCharsets.UTF_8);
+                log.info("Pull request {} has no valid description", pr);
+                repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
+                repository.addComment(pr, template);
+                repository.close(pr);
+            }
         }
     }
 
