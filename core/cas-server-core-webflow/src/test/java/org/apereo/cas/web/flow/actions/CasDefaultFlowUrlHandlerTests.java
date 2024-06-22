@@ -25,6 +25,7 @@ class CasDefaultFlowUrlHandlerTests {
     void verifyFlowExecutionKeyInRequestBody() throws Throwable {
         setupRequest("/cas", "/app", "/foo");
         request.setMethod("POST");
+        request.setContentType("application/x-www-form-urlencoded");
         request.setContent("execution=continue".getBytes(StandardCharsets.UTF_8));
         val executionKey = urlHandler.getFlowExecutionKey(request);
         assertEquals("continue", executionKey);

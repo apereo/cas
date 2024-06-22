@@ -84,6 +84,17 @@ This is potentially a breaking change. Make sure to review your configuration an
 [Passwordless authentication](../authentication/Passwordless-Authentication.html) can now support reCAPTCHA to protect against automated abuse, 
 such as credential stuffing attacks.
 
+### SAML2 Delegated Authentication
+
+All functionality and components that allow CAS to route authentication requests to external SAML2 identity providers are now consolidated under a single module.
+This is done to simplify the setup in a more modular way and reduce the number of libraries and dependencies that would be pulled into the build.
+
+Please make sure you review the [SAML2 delegated authentication](../integration/Delegate-Authentication-SAML.html) page and include the correct module in your build.
+
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
+This is potentially a breaking change. Make sure to review your build's dependencies and adjust modules to restore functionality.
+</p></div>
+
 ## Other Stuff
 
 - [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) may prompt the user to proceed to account registration, when no contact information is found.
@@ -112,6 +123,7 @@ such as credential stuffing attacks.
 - Java Melody
 - ErrorProne
 - Twilio
+- Gradle
 - Sentry
 - Jakarta Servlet API
 - Netty

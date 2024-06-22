@@ -17,7 +17,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
@@ -43,7 +42,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.theme.ThemeChangeInterceptor;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -162,31 +160,6 @@ class DelegatedClientAuthenticationActionTests {
 
             assertThrows(UnauthorizedServiceException.class,
                 () -> delegatedAuthenticationAction.execute(context));
-        }
-
-        @Test
-        void verifySaml2LogoutResponse() throws Throwable {
-            val context = MockRequestContext.create(applicationContext);
-            val client = identityProviders.findClient("SAML2Client").get();
-
-            context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
-            context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, client.getName());
-            val webContext = new JEEContext(context.getHttpServletRequest(), new MockHttpServletResponse());
-            context.setMethod(HttpMethod.POST);
-
-            val logoutResponse = getLogoutResponse();
-            context.getHttpServletRequest().setContent(EncodingUtils.encodeBase64(logoutResponse).getBytes(StandardCharsets.UTF_8));
-
-            val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
-            servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
-            context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
-
-
-            val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
-            context.setParameter(DelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
-
-            val event = delegatedAuthenticationAction.execute(context);
-            assertEquals(CasWebflowConstants.TRANSITION_ID_LOGOUT, event.getId());
         }
 
         @Test

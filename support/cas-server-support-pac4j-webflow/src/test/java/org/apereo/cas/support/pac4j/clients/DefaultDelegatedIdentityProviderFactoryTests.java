@@ -1,24 +1,14 @@
 package org.apereo.cas.support.pac4j.clients;
 
-import org.apereo.cas.support.pac4j.authentication.attributes.GroovyAttributeConverter;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.cas.client.CasClient;
-import org.pac4j.core.profile.converter.AttributeConverter;
 import org.pac4j.oauth.client.GitHubClient;
-import org.pac4j.saml.client.SAML2Client;
-import org.pac4j.saml.metadata.DefaultSAML2MetadataSigner;
-import org.pac4j.saml.store.HttpSessionStoreFactory;
-import org.pac4j.saml.store.SAMLMessageStoreFactory;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultDelegatedIdentityProviderFactoryTests}.
@@ -29,6 +19,10 @@ import static org.mockito.Mockito.*;
 @Tag("Delegation")
 class DefaultDelegatedIdentityProviderFactoryTests {
 
+    @TestPropertySource(properties = "cas.custom.properties.delegation-test.enabled=false")
+    abstract static class BaseTests extends BaseDelegatedClientFactoryTests {
+    }
+    
     @Nested
     @TestPropertySource(properties = {
         "cas.authn.pac4j.core.lazy-init=false",
@@ -37,7 +31,7 @@ class DefaultDelegatedIdentityProviderFactoryTests {
         "cas.authn.pac4j.dropbox.id=123456",
         "cas.authn.pac4j.dropbox.secret=secret"
     })
-    class EagerInitialization extends BaseDelegatedClientFactoryTests {
+    class EagerInitialization extends BaseTests {
         @Test
         void verifyEagerInit() throws Throwable {
             val clients1 = List.copyOf(delegatedIdentityProviderFactory.build());
@@ -96,7 +90,7 @@ class DefaultDelegatedIdentityProviderFactoryTests {
 
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    class IdentifiableClients extends BaseDelegatedClientFactoryTests {
+    class IdentifiableClients extends BaseTests {
         @Test
         void verifyFactoryForIdentifiableClients() throws Throwable {
             val clients = delegatedIdentityProviderFactory.build();
@@ -111,7 +105,7 @@ class DefaultDelegatedIdentityProviderFactoryTests {
         "cas.authn.pac4j.github.secret=s3cr3t",
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    class GitHubClients extends BaseDelegatedClientFactoryTests {
+    class GitHubClients extends BaseTests {
         @Test
         void verifyGithubClient() throws Throwable {
             val clients = delegatedIdentityProviderFactory.build();
@@ -127,7 +121,7 @@ class DefaultDelegatedIdentityProviderFactoryTests {
         "cas.authn.pac4j.oauth2[0].secret=s3cr3t",
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    class OAuth20Clients extends BaseDelegatedClientFactoryTests {
+    class OAuth20Clients extends BaseTests {
         @Test
         void verifyFactory() throws Throwable {
             val clients = delegatedIdentityProviderFactory.build();
@@ -144,7 +138,7 @@ class DefaultDelegatedIdentityProviderFactoryTests {
         "cas.authn.pac4j.cas[0].display-name=My CAS",
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    class CasClients extends BaseDelegatedClientFactoryTests {
+    class CasClients extends BaseTests {
         @Test
         void verifyFactoryForCasClientsHavingLoginInDomain() throws Throwable {
             val clients = delegatedIdentityProviderFactory.build();
@@ -168,10 +162,11 @@ class DefaultDelegatedIdentityProviderFactoryTests {
         "cas.authn.pac4j.oidc[0].apple.enabled=true",
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    class AppleClients extends BaseDelegatedClientFactoryTests {
+    class AppleClients extends BaseTests {
         @Test
         void verifyClient() throws Throwable {
             val clients = delegatedIdentityProviderFactory.build();
+            
             assertEquals(1, clients.size());
         }
     }
@@ -208,7 +203,7 @@ class DefaultDelegatedIdentityProviderFactoryTests {
 
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    class OidcClients extends BaseDelegatedClientFactoryTests {
+    class OidcClients extends BaseTests {
         @Test
         void verifyClient() throws Throwable {
             val clients = delegatedIdentityProviderFactory.build();
@@ -224,7 +219,7 @@ class DefaultDelegatedIdentityProviderFactoryTests {
         "cas.authn.pac4j.dropbox.secret=secret",
         "cas.authn.pac4j.core.lazy-init=true"
     })
-    class LazyInitialization extends BaseDelegatedClientFactoryTests {
+    class LazyInitialization extends BaseTests {
         @Test
         void verifyLaziness() throws Throwable {
             val clients1 = List.copyOf(delegatedIdentityProviderFactory.build());
@@ -232,142 +227,6 @@ class DefaultDelegatedIdentityProviderFactoryTests {
             val clients2 = List.copyOf(delegatedIdentityProviderFactory.build());
             assertTrue(clients2.stream().allMatch(c2 -> clients1.stream()
                 .anyMatch(client -> client.hashCode() == c2.hashCode())));
-        }
-    }
-
-    @Nested
-    @TestPropertySource(properties = {
-        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
-        "cas.authn.pac4j.saml[0].keystore-password=1234567890",
-        "cas.authn.pac4j.saml[0].private-key-password=1234567890",
-        "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
-        "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=file:/tmp/sp.xml",
-        "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
-        "cas.authn.pac4j.saml[0].message-store-factory=org.pac4j.saml.store.unknown",
-        "cas.authn.pac4j.core.lazy-init=true"
-    })
-    @Import(SamlMessageStoreTestConfiguration.class)
-    class Saml2ClientsWithCustomMessageStore extends BaseDelegatedClientFactoryTests {
-        @Test
-        void verifyClient() throws Throwable {
-            val clients = delegatedIdentityProviderFactory.build();
-            assertEquals(1, clients.size());
-            val client = (SAML2Client) clients.iterator().next();
-            assertNotNull(client.getConfiguration().getSamlMessageStoreFactory());
-            assertInstanceOf(DefaultSAML2MetadataSigner.class, client.getConfiguration().getMetadataSigner());
-        }
-    }
-
-    @Nested
-    @TestPropertySource(properties = {
-        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
-        "cas.authn.pac4j.saml[0].keystore-password=1234567890",
-        "cas.authn.pac4j.saml[0].private-key-password=1234567890",
-        "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
-        "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=file:/tmp/sp.xml",
-        "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
-        "cas.authn.pac4j.saml[0].message-store-factory=org.pac4j.saml.store.unknown",
-        "cas.authn.pac4j.core.lazy-init=true"
-    })
-    class Saml2ClientsWithUnknownMessageStore extends BaseDelegatedClientFactoryTests {
-        @Test
-        void verifyClient() throws Throwable {
-            val clients = delegatedIdentityProviderFactory.build();
-            assertEquals(1, clients.size());
-        }
-    }
-
-    @Nested
-    @TestPropertySource(properties = {
-        "cas.authn.pac4j.saml[0].saml2-attribute-converter=classpath:/SAMLAttributeConverter.groovy",
-        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
-        "cas.authn.pac4j.saml[0].keystore-password=1234567890",
-        "cas.authn.pac4j.saml[0].private-key-password=1234567890",
-        "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
-        "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=file:/tmp/sp.xml",
-        "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
-        "cas.authn.pac4j.saml[0].metadata-signer-strategy=xmlsec",
-        "cas.authn.pac4j.core.lazy-init=true"
-    })
-    class Saml2ClientsWithGroovyAttributeConverter extends BaseDelegatedClientFactoryTests {
-        @Test
-        void verifyClient() throws Throwable {
-            val saml2clients = delegatedIdentityProviderFactory.build();
-            assertEquals(1, saml2clients.size());
-            val client = (SAML2Client) saml2clients.stream().findFirst().get();
-            assertInstanceOf(GroovyAttributeConverter.class, client.getConfiguration().getSamlAttributeConverter());
-        }
-    }
-
-    @Nested
-    @TestPropertySource(properties = {
-        "cas.authn.pac4j.saml[0].saml2-attribute-converter=org.apereo.cas.support.pac4j.clients.DefaultDelegatedIdentityProviderFactoryTests.CustomAttributeConverterForTest",
-        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
-        "cas.authn.pac4j.saml[0].keystore-password=1234567890",
-        "cas.authn.pac4j.saml[0].private-key-password=1234567890",
-        "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
-        "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=file:/tmp/sp.xml",
-        "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
-        "cas.authn.pac4j.saml[0].metadata-signer-strategy=xmlsec",
-        "cas.authn.pac4j.core.lazy-init=true"
-    })
-    class Saml2ClientsWithCustomAttributeConverter extends BaseDelegatedClientFactoryTests {
-        @Test
-        void verifyClient() throws Throwable {
-
-            val saml2clients = delegatedIdentityProviderFactory.build();
-            assertEquals(1, saml2clients.size());
-
-            val client = (SAML2Client) saml2clients.stream().findFirst().get();
-            assertInstanceOf(CustomAttributeConverterForTest.class, client.getConfiguration().getSamlAttributeConverter());
-        }
-    }
-
-    public static class CustomAttributeConverterForTest implements AttributeConverter {
-        @Override
-        public Object convert(final Object o) {
-            return null;
-        }
-    }
-
-    @TestConfiguration(value = "SamlMessageStoreTestConfiguration", proxyBeanMethods = false)
-    static class SamlMessageStoreTestConfiguration {
-        @Bean
-        public SAMLMessageStoreFactory delegatedSaml2ClientSAMLMessageStoreFactory() {
-            return mock(SAMLMessageStoreFactory.class);
-        }
-    }
-
-    @Nested
-    @TestPropertySource(properties = {
-        "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
-        "cas.authn.pac4j.saml[0].callback-url-type=NONE",
-        "cas.authn.pac4j.saml[0].keystore-password=1234567890",
-        "cas.authn.pac4j.saml[0].private-key-password=1234567890",
-        "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
-        "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=file:/tmp/sp.xml",
-        "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid",
-        "cas.authn.pac4j.saml[0].message-store-factory=org.pac4j.saml.store.HttpSessionStoreFactory",
-        "cas.authn.pac4j.saml[0].name-id-policy-format=transient",
-        "cas.authn.pac4j.saml[0].mapped-attributes[0]=attr1->givenName",
-        "cas.authn.pac4j.saml[0].requested-attributes[0].name=requestedAttribute",
-        "cas.authn.pac4j.saml[0].requested-attributes[0].friendly-name=friendlyRequestedName",
-        "cas.authn.pac4j.saml[0].blocked-signature-signing-algorithms[0]=sha-1",
-        "cas.authn.pac4j.saml[0].signature-algorithms[0]=sha-256",
-        "cas.authn.pac4j.saml[0].signature-reference-digest-methods[0]=sha-256",
-        "cas.authn.pac4j.saml[0].authn-context-class-ref[0]=classRef1",
-        "cas.authn.pac4j.saml[0].assertion-consumer-service-index=1",
-        "cas.authn.pac4j.saml[0].principal-id-attribute=givenName",
-        "cas.authn.pac4j.saml[0].force-keystore-generation=true",
-        "cas.authn.pac4j.core.lazy-init=true"
-    })
-    class Saml2Clients extends BaseDelegatedClientFactoryTests {
-        @Test
-        void verifyClient() throws Throwable {
-            val clients = delegatedIdentityProviderFactory.build();
-            assertEquals(1, clients.size());
-            val client = (SAML2Client) clients.iterator().next();
-            assertInstanceOf(HttpSessionStoreFactory.class, client.getConfiguration().getSamlMessageStoreFactory());
         }
     }
 }

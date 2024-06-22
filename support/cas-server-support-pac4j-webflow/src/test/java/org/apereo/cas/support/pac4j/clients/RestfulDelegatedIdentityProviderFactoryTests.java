@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.config.client.PropertiesConstants;
+import org.pac4j.core.client.IndirectClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -47,12 +48,16 @@ class RestfulDelegatedIdentityProviderFactoryTests {
             PropertiesConstants.GITHUB_SECRET, "secret");
     }
 
+    @TestPropertySource(properties = "cas.custom.properties.delegation-test.enabled=false")
+    abstract static class BaseTests extends BaseDelegatedClientFactoryTests {
+    }
+    
     @Nested
     @TestPropertySource(properties = {
         "cas.authn.pac4j.core.lazy-init=false",
         "cas.authn.pac4j.rest.url=http://localhost:9212"
     })
-    class InvalidStatusCodeTests extends BaseDelegatedClientFactoryTests {
+    class InvalidStatusCodeTests extends BaseTests {
         @Test
         void verifyBadStatusCode() throws Throwable {
             try (val webServer = new MockWebServer(9212, HttpStatus.EXPECTATION_FAILED)) {
@@ -69,7 +74,7 @@ class RestfulDelegatedIdentityProviderFactoryTests {
         "cas.authn.pac4j.core.lazy-init=true",
         "cas.authn.pac4j.rest.url=http://localhost:9212"
     })
-    class DefaultTests extends BaseDelegatedClientFactoryTests {
+    class DefaultTests extends BaseTests {
         @Test
         void verifyAction() throws Throwable {
             val clients = new HashMap<String, Object>();
@@ -103,7 +108,7 @@ class RestfulDelegatedIdentityProviderFactoryTests {
         "cas.authn.pac4j.rest.url=http://localhost:9212",
         "cas.authn.pac4j.rest.type=cas"
     })
-    class CasPropertiesTests extends BaseDelegatedClientFactoryTests {
+    class CasPropertiesTests extends BaseTests {
         @Autowired
         private CasConfigurationProperties casProperties;
 
@@ -124,7 +129,7 @@ class RestfulDelegatedIdentityProviderFactoryTests {
                 var clientsFound = List.copyOf(delegatedIdentityProviderFactory.build());
                 assertNotNull(clientsFound);
                 assertEquals(2, clientsFound.size());
-                assertEquals(casProperties.getServer().getLoginUrl(), clientsFound.getFirst().getCallbackUrl());
+                assertEquals(casProperties.getServer().getLoginUrl(), ((IndirectClient) clientsFound.getFirst()).getCallbackUrl());
 
                 /*
                  * Try the cache once the list is retrieved...

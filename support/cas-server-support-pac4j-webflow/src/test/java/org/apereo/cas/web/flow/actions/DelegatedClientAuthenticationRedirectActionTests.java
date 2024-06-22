@@ -9,7 +9,6 @@ import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -18,8 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockExternalContext;
 import java.util.LinkedHashMap;
@@ -46,6 +43,7 @@ class DelegatedClientAuthenticationRedirectActionTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyRedirect() throws Throwable {
         val context = getMockRequestContext();
@@ -56,21 +54,6 @@ class DelegatedClientAuthenticationRedirectActionTests {
         val external = (MockExternalContext) context.getExternalContext();
         assertNotNull(external.getExternalRedirectUrl());
         assertTrue(external.getExternalRedirectRequested());
-    }
-
-    @Test
-    void verifyPost() throws Throwable {
-        val context = getMockRequestContext();
-        val sessionTicket = getTransientSessionTicket("SAML2ClientPostBinding");
-        context.getFlowScope().put(TransientSessionTicket.class.getName(), sessionTicket);
-        val result = delegatedAuthenticationRedirectToClientAction.execute(context);
-        assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
-        val external = (MockExternalContext) context.getExternalContext();
-        assertFalse(external.getExternalRedirectRequested());
-        assertTrue(external.isResponseComplete());
-        val response = (MockHttpServletResponse) WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
-        assertTrue(MediaType.parseMediaType(response.getContentType()).equalsTypeAndSubtype(MediaType.TEXT_HTML));
-        assertNotNull(response.getContentAsString());
     }
 
     private MockRequestContext getMockRequestContext() throws Exception {

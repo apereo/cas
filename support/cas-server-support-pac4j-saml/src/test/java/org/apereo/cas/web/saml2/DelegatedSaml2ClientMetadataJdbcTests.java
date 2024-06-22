@@ -1,10 +1,8 @@
 package org.apereo.cas.web.saml2;
 
-import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -21,24 +19,20 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@SpringBootTest(classes = {
-    CasDelegatedAuthenticationAutoConfiguration.class,
-    BaseDelegatedAuthenticationTests.SharedTestConfiguration.class
-},
-    properties = {
-        "spring.main.allow-bean-definition-overriding=true",
-        "CasFeatureModule.DelegatedAuthentication.saml-jdbc.enabled=true",
+@SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class, properties = {
+    "spring.main.allow-bean-definition-overriding=true",
+    "CasFeatureModule.DelegatedAuthentication.saml-jdbc.enabled=true",
 
-        "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.auto-commit=true",
-        "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.table-name=sp_metadata",
-        "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.url=jdbc:postgresql://localhost:5432/saml",
-        "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.user=postgres",
-        "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.password=password",
-        "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.driver-class=org.postgresql.Driver",
-        "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.dialect=org.hibernate.dialect.PostgreSQLDialect",
+    "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.auto-commit=true",
+    "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.table-name=sp_metadata",
+    "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.url=jdbc:postgresql://localhost:5432/saml",
+    "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.user=postgres",
+    "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.password=password",
+    "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.driver-class=org.postgresql.Driver",
+    "cas.authn.pac4j.saml[0].metadata.service-provider.jdbc.dialect=org.hibernate.dialect.PostgreSQLDialect",
 
-        "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=src/test/resources/idp-metadata.xml"
-    })
+    "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=src/test/resources/idp-metadata.xml"
+})
 @EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

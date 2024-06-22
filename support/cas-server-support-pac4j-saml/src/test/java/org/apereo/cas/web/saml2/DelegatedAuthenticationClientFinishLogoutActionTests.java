@@ -1,13 +1,12 @@
-package org.apereo.cas.web.flow.actions;
+package org.apereo.cas.web.saml2;
 
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
+import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
-import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
-import org.apereo.cas.web.flow.actions.logout.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.MethodOrderer;
@@ -37,13 +36,13 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("Delegation")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class DelegatedAuthenticationClientFinishLogoutActionTests {
     
     @Autowired
-    @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_FINISH_LOGOUT)
+    @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_SAML2_CLIENT_FINISH_LOGOUT)
     private Action delegatedAuthenticationClientFinishLogoutAction;
 
     @Autowired

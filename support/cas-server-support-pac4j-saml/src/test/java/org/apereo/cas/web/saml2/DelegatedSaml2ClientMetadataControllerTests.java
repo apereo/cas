@@ -1,15 +1,12 @@
 package org.apereo.cas.web.saml2;
 
-import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.webflow.execution.Action;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -18,11 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
-    properties = {
-        "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=/tmp/sp-metadata.xml",
-        "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=src/test/resources/idp-metadata.xml"
-    })
+@SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("SAML2Web")
 class DelegatedSaml2ClientMetadataControllerTests {
     @Autowired

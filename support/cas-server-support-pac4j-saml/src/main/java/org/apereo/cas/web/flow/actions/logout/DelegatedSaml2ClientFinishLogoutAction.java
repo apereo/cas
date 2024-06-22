@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions.logout;
 
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
+import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
@@ -21,7 +22,7 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Optional;
 
 /**
- * This is {@link DelegatedAuthenticationClientFinishLogoutAction}.
+ * This is {@link DelegatedSaml2ClientFinishLogoutAction}.
  * <p>
  * The action takes into account the currently used PAC4J client which is stored
  * in the user profile. If the client is found, its logout action is executed.
@@ -35,7 +36,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebflowAction {
+public class DelegatedSaml2ClientFinishLogoutAction extends BaseCasWebflowAction {
     private final DelegatedIdentityProviders identityProviders;
 
     private final SessionStore sessionStore;
@@ -54,7 +55,9 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebf
                     .filter(SAML2Client.class::isInstance)
                     .map(SAML2Client.class::cast)
                     .ifPresent(client -> FunctionUtils.doAndHandle(__ -> {
-                        LOGGER.debug("Located client from relay-state: [{}]", client);
+                        client.init();
+                        
+                        LOGGER.debug("Located client from relay-state [{}]", client);
                         val callContext = new CallContext(context, sessionStore);
                         client.getCredentialsExtractor().extract(callContext).ifPresent(logoutCredentials -> {
                             val result = client.getLogoutProcessor().processLogout(callContext, logoutCredentials);
@@ -68,6 +71,8 @@ public class DelegatedAuthenticationClientFinishLogoutAction extends BaseCasWebf
                 .filter(SAML2Client.class::isInstance)
                 .map(SAML2Client.class::cast)
                 .ifPresent(client -> {
+                    client.init();
+
                     val logoutRequest = DelegationWebflowUtils.getDelegatedAuthenticationLogoutRequest(requestContext,
                         DelegatedAuthenticationClientLogoutRequest.class);
                     Optional.ofNullable(logoutRequest)

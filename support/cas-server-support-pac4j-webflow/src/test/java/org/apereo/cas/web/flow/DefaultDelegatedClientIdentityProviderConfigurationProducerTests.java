@@ -31,7 +31,7 @@ class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
 
     @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
         properties = "cas.authn.pac4j.cookie.enabled=true")
-    public abstract class BaseDelegatedClientIdentityProviderConfigurationProducerTests {
+    public abstract static class BaseDelegatedClientIdentityProviderConfigurationProducerTests {
         @Autowired
         @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
         protected DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProviderConfigurationProducer;
@@ -68,7 +68,7 @@ class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
         @Test
         void verifyOperation() throws Throwable {
             delegatedAuthenticationCookieGenerator.addCookie(context.getNativeRequest(),
-                context.getNativeResponse(), "SAML2Client");
+                context.getNativeResponse(), "CasClient");
             val results = delegatedClientIdentityProviderConfigurationProducer.produce(requestContext);
             assertFalse(results.isEmpty());
             assertNotNull(DelegationWebflowUtils.getDelegatedAuthenticationProviderPrimary(requestContext));

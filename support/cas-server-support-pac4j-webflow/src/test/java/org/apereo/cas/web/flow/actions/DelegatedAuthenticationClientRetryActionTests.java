@@ -36,7 +36,7 @@ class DelegatedAuthenticationClientRetryActionTests {
     void verifyOperationWithRedirect() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
         context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
-        DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
+        DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "CasClient");
         val result = retryAction.execute(context);
         assertNull(result);
         assertNotNull(context.getHttpServletResponse().getHeaderValue("Location"));
