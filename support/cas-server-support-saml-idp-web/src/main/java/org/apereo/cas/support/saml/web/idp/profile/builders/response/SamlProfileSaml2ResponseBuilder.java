@@ -97,10 +97,6 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                 LOGGER.trace("Built assertion is encrypted, so the response will add it to the encrypted assertions collection");
                 samlResponse.getEncryptedAssertions().add(encrypted);
             } else if (result instanceof final Assertion nonEncryptedAssertion) {
-                customizers.stream()
-                    .sorted(AnnotationAwareOrderComparator.INSTANCE)
-                    .forEach(customizer -> customizer.customizeAssertion(context, this, nonEncryptedAssertion));
-
                 LOGGER.trace("Built assertion is not encrypted, so the response will add it to the assertions collection");
                 samlResponse.getAssertions().add(nonEncryptedAssertion);
             }
