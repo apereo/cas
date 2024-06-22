@@ -313,7 +313,7 @@ while (( "$#" )); do
             saml1)
                 task+="testSAML1 "
                 ;;
-            saml2web)
+            saml2web|samlweb)
                 task+="testSAML2Web "
                 ;;
             saml2)

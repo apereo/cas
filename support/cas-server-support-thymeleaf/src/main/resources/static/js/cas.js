@@ -47,18 +47,6 @@ function requestGeoPosition() {
     }
 }
 
-function supportsCookies() {
-    try {
-        document.cookie = 'testcookie=1';
-        let ret = document.cookie.indexOf('testcookie=') !== -1;
-        document.cookie = 'testcookie=1; expires=Thu, 01-Jan-1970 00:00:01 GMT';
-        return ret;
-    } catch (e) {
-        console.log(e);
-        return false;
-    }
-}
-
 function logGeoLocationError(error) {
     switch (error.code) {
         case error.PERMISSION_DENIED:

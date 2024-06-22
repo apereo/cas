@@ -8,15 +8,12 @@ import org.apereo.cas.configuration.model.support.pac4j.oidc.BasePac4jOidcClient
 import org.apereo.cas.configuration.model.support.pac4j.oidc.Pac4jOidcClientProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
-import org.apereo.cas.support.pac4j.authentication.attributes.GroovyAttributeConverter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.scripting.ScriptingUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import com.github.benmanes.caffeine.cache.Cache;
@@ -26,17 +23,16 @@ import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
+import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.http.callback.NoParameterCallbackUrlResolver;
 import org.pac4j.core.http.callback.PathParameterCallbackUrlResolver;
 import org.pac4j.core.http.callback.QueryParameterCallbackUrlResolver;
-import org.pac4j.core.profile.converter.AttributeConverter;
 import org.pac4j.oauth.client.BitbucketClient;
 import org.pac4j.oauth.client.DropBoxClient;
 import org.pac4j.oauth.client.FacebookClient;
@@ -60,23 +56,15 @@ import org.pac4j.oidc.config.AppleOidcConfiguration;
 import org.pac4j.oidc.config.AzureAd2OidcConfiguration;
 import org.pac4j.oidc.config.KeycloakOidcConfiguration;
 import org.pac4j.oidc.config.OidcConfiguration;
-import org.pac4j.saml.client.SAML2Client;
-import org.pac4j.saml.config.SAML2Configuration;
-import org.pac4j.saml.metadata.DefaultSAML2MetadataSigner;
-import org.pac4j.saml.metadata.SAML2ServiceProviderRequestedAttribute;
-import org.pac4j.saml.store.EmptyStoreFactory;
-import org.pac4j.saml.store.HttpSessionStoreFactory;
-import org.pac4j.saml.store.SAMLMessageStoreFactory;
-import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.security.interfaces.ECPrivateKey;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -100,14 +88,14 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
 
     private final CasSSLContext casSSLContext;
 
-    private final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory;
+    private final Cache<String, Collection<BaseClient>> clientsCache;
 
-    private final Cache<String, Collection<IndirectClient>> clientsCache;
+    private final ConfigurableApplicationContext applicationContext;
 
-    protected abstract Collection<IndirectClient> loadIdentityProviders() throws Exception;
+    protected abstract Collection<BaseClient> loadIdentityProviders() throws Exception;
 
     @Override
-    public final Collection<IndirectClient> build() {
+    public final Collection<BaseClient> build() {
         return lock.tryLock(() -> {
             val core = casProperties.getAuthn().getPac4j().getCore();
             val currentClients = getCachedClients().isEmpty() || !core.isLazyInit() ? loadIdentityProviders() : getCachedClients();
@@ -117,52 +105,57 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
     }
 
     @Override
-    public Collection<IndirectClient> rebuild() {
+    public Collection<BaseClient> rebuild() {
         clientsCache.invalidateAll();
         return build();
     }
 
-    protected Collection<IndirectClient> getCachedClients() {
+    protected Collection<BaseClient> getCachedClients() {
         val cachedClients = clientsCache.getIfPresent(casProperties.getServer().getName());
         return ObjectUtils.defaultIfNull(cachedClients, new ArrayList<>());
     }
 
-    protected void configureClient(final IndirectClient client,
-                                   final Pac4jBaseClientProperties clientProperties,
-                                   final CasConfigurationProperties givenProperties) {
-        val cname = clientProperties.getClientName();
-        if (StringUtils.isNotBlank(cname)) {
-            client.setName(cname);
-        } else {
-            val className = client.getClass().getSimpleName();
-            val genName = className.concat(RandomUtils.randomNumeric(4));
-            client.setName(genName);
-            LOGGER.warn("Client name for [{}] is set to a generated value of [{}]. "
-                + "Consider defining an explicit name for the delegated provider", className, genName);
-        }
-        val customProperties = client.getCustomProperties();
-        customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, clientProperties.getAutoRedirectType());
+    protected BaseClient configureClient(final BaseClient client,
+                                         final Pac4jBaseClientProperties clientProperties,
+                                         final CasConfigurationProperties givenProperties) {
+        if (clientProperties != null) {
+            val cname = clientProperties.getClientName();
+            if (StringUtils.isNotBlank(cname)) {
+                client.setName(cname);
+            } else {
+                val className = client.getClass().getSimpleName();
+                val genName = className.concat(RandomUtils.randomNumeric(4));
+                client.setName(genName);
+                LOGGER.warn("Client name for [{}] is set to a generated value of [{}]. "
+                    + "Consider defining an explicit name for the delegated provider", className, genName);
+            }
+            val customProperties = client.getCustomProperties();
+            customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, clientProperties.getAutoRedirectType());
 
-        FunctionUtils.doIfNotBlank(clientProperties.getPrincipalIdAttribute(),
-            __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, clientProperties.getPrincipalIdAttribute()));
-        FunctionUtils.doIfNotBlank(clientProperties.getCssClass(),
-            __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, clientProperties.getCssClass()));
-        FunctionUtils.doIfNotBlank(clientProperties.getDisplayName(),
-            __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME, clientProperties.getDisplayName()));
-
-        val callbackUrl = StringUtils.defaultIfBlank(clientProperties.getCallbackUrl(), casProperties.getServer().getLoginUrl());
-        client.setCallbackUrl(callbackUrl);
-        LOGGER.trace("Client [{}] will use the callback URL [{}]", client.getName(), callbackUrl);
-
-        switch (clientProperties.getCallbackUrlType()) {
-            case PATH_PARAMETER -> client.setCallbackUrlResolver(new PathParameterCallbackUrlResolver());
-            case NONE -> client.setCallbackUrlResolver(new NoParameterCallbackUrlResolver());
-            case QUERY_PARAMETER -> client.setCallbackUrlResolver(new QueryParameterCallbackUrlResolver());
+            FunctionUtils.doIfNotBlank(clientProperties.getPrincipalIdAttribute(),
+                __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_PRINCIPAL_ATTRIBUTE_ID, clientProperties.getPrincipalIdAttribute()));
+            FunctionUtils.doIfNotBlank(clientProperties.getCssClass(),
+                __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_CSS_CLASS, clientProperties.getCssClass()));
+            FunctionUtils.doIfNotBlank(clientProperties.getDisplayName(),
+                __ -> customProperties.put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_DISPLAY_NAME, clientProperties.getDisplayName()));
+            if (client instanceof final IndirectClient indirectClient) {
+                val callbackUrl = StringUtils.defaultIfBlank(clientProperties.getCallbackUrl(), casProperties.getServer().getLoginUrl());
+                indirectClient.setCallbackUrl(callbackUrl);
+                LOGGER.trace("Client [{}] will use the callback URL [{}]", client.getName(), callbackUrl);
+                val resolver = switch (clientProperties.getCallbackUrlType()) {
+                    case PATH_PARAMETER -> new PathParameterCallbackUrlResolver();
+                    case NONE -> new NoParameterCallbackUrlResolver();
+                    case QUERY_PARAMETER -> new QueryParameterCallbackUrlResolver();
+                };
+                indirectClient.setCallbackUrlResolver(resolver);
+            }
         }
         customizers.forEach(customizer -> customizer.customize(client));
         if (!givenProperties.getAuthn().getPac4j().getCore().isLazyInit()) {
             client.init();
         }
+        LOGGER.debug("Configured external identity provider [{}]", client.getName());
+        return client;
     }
 
     protected Collection<IndirectClient> buildFoursquareIdentityProviders(final CasConfigurationProperties casProperties) {
@@ -263,7 +256,6 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
         }
         return List.of();
     }
-
 
     protected Collection<IndirectClient> buildYahooIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
@@ -485,147 +477,6 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
         return cfg;
     }
 
-    protected Collection<IndirectClient> buildSaml2IdentityProviders(final CasConfigurationProperties casProperties) {
-        val pac4jProperties = casProperties.getAuthn().getPac4j();
-        return pac4jProperties
-            .getSaml()
-            .stream()
-            .filter(saml -> saml.isEnabled()
-                && StringUtils.isNotBlank(saml.getMetadata().getIdentityProviderMetadataPath())
-                && StringUtils.isNotBlank(saml.getServiceProviderEntityId()))
-            .map(saml -> {
-                val keystorePath = SpringExpressionLanguageValueResolver.getInstance().resolve(
-                     StringUtils.defaultIfBlank(saml.getKeystorePath(), Beans.getTempFilePath("samlSpKeystore", ".jks")));
-                val identityProviderMetadataPath = SpringExpressionLanguageValueResolver.getInstance()
-                    .resolve(saml.getMetadata().getIdentityProviderMetadataPath());
-
-                val cfg = new SAML2Configuration(keystorePath, saml.getKeystorePassword(),
-                    saml.getPrivateKeyPassword(), identityProviderMetadataPath);
-                cfg.setForceKeystoreGeneration(saml.isForceKeystoreGeneration());
-
-                FunctionUtils.doIf(saml.getCertificateExpirationDays() > 0,
-                    __ -> cfg.setCertificateExpirationPeriod(Period.ofDays(saml.getCertificateExpirationDays()))).accept(saml);
-                FunctionUtils.doIfNotNull(saml.getResponseBindingType(), cfg::setResponseBindingType);
-                FunctionUtils.doIfNotNull(saml.getCertificateSignatureAlg(), cfg::setCertificateSignatureAlg);
-
-                cfg.setPartialLogoutTreatedAsSuccess(saml.isPartialLogoutAsSuccess());
-                cfg.setResponseDestinationAttributeMandatory(saml.isResponseDestinationMandatory());
-                cfg.setSupportedProtocols(saml.getSupportedProtocols());
-
-                FunctionUtils.doIfNotBlank(saml.getRequestInitiatorUrl(), __ -> cfg.setRequestInitiatorUrl(saml.getRequestInitiatorUrl()));
-                FunctionUtils.doIfNotBlank(saml.getSingleLogoutServiceUrl(), __ -> cfg.setSingleSignOutServiceUrl(saml.getSingleLogoutServiceUrl()));
-                FunctionUtils.doIfNotBlank(saml.getLogoutResponseBindingType(), __ -> cfg.setSpLogoutResponseBindingType(saml.getLogoutResponseBindingType()));
-
-                cfg.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
-                cfg.setMaximumAuthenticationLifetime(Beans.newDuration(saml.getMaximumAuthenticationLifetime()).toSeconds());
-                val serviceProviderEntityId = SpringExpressionLanguageValueResolver.getInstance().resolve(saml.getServiceProviderEntityId());
-                cfg.setServiceProviderEntityId(serviceProviderEntityId);
-
-                val samlSpMetadata = StringUtils.defaultIfBlank(saml.getMetadata().getServiceProvider().getFileSystem().getLocation(),
-                    Beans.getTempFilePath("samlSpMetadata", ".xml"));
-                FunctionUtils.doIfNotNull(samlSpMetadata, location -> {
-                    val resource = ResourceUtils.getRawResourceFrom(location);
-                    cfg.setServiceProviderMetadataResource(resource);
-                });
-
-                cfg.setAuthnRequestBindingType(saml.getDestinationBinding());
-                cfg.setSpLogoutRequestBindingType(saml.getLogoutRequestBinding());
-                cfg.setForceAuth(saml.isForceAuth());
-                cfg.setPassive(saml.isPassive());
-                cfg.setSignMetadata(saml.isSignServiceProviderMetadata());
-                cfg.setMetadataSigner(new DefaultSAML2MetadataSigner(cfg));
-                cfg.setAuthnRequestSigned(saml.isSignAuthnRequest());
-                cfg.setSpLogoutRequestSigned(saml.isSignServiceProviderLogoutRequest());
-                cfg.setAcceptedSkew(Beans.newDuration(saml.getAcceptedSkew()).toSeconds());
-                cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
-                cfg.setHostnameVerifier(casSSLContext.getHostnameVerifier());
-
-                FunctionUtils.doIfNotBlank(saml.getPrincipalIdAttribute(), __ -> cfg.setAttributeAsId(saml.getPrincipalIdAttribute()));
-                FunctionUtils.doIfNotBlank(saml.getNameIdAttribute(), __ -> cfg.setNameIdAttribute(saml.getNameIdAttribute()));
-
-                cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
-                cfg.setWantsResponsesSigned(saml.isWantsResponsesSigned());
-                cfg.setAllSignatureValidationDisabled(saml.isAllSignatureValidationDisabled());
-                cfg.setUseNameQualifier(saml.isUseNameQualifier());
-                cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
-
-                Optional.ofNullable(samlMessageStoreFactory.getIfAvailable())
-                    .ifPresentOrElse(cfg::setSamlMessageStoreFactory, () -> {
-                        FunctionUtils.doIf("EMPTY".equalsIgnoreCase(saml.getMessageStoreFactory()),
-                            ig -> cfg.setSamlMessageStoreFactory(new EmptyStoreFactory())).accept(saml);
-                        FunctionUtils.doIf("SESSION".equalsIgnoreCase(saml.getMessageStoreFactory()),
-                            ig -> cfg.setSamlMessageStoreFactory(new HttpSessionStoreFactory())).accept(saml);
-                        if (saml.getMessageStoreFactory().contains(".")) {
-                            FunctionUtils.doAndHandle(__ -> {
-                                val clazz = ClassUtils.getClass(getClass().getClassLoader(), saml.getMessageStoreFactory());
-                                val factory = (SAMLMessageStoreFactory) clazz.getDeclaredConstructor().newInstance();
-                                cfg.setSamlMessageStoreFactory(factory);
-                            });
-                        }
-                    });
-
-                FunctionUtils.doIf(saml.getAssertionConsumerServiceIndex() >= 0,
-                    __ -> cfg.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex())).accept(saml);
-
-                if (!saml.getAuthnContextClassRef().isEmpty()) {
-                    cfg.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase(Locale.ENGLISH));
-                    cfg.setAuthnContextClassRefs(saml.getAuthnContextClassRef());
-                }
-
-                FunctionUtils.doIfNotBlank(saml.getNameIdPolicyFormat(), __ -> cfg.setNameIdPolicyFormat(saml.getNameIdPolicyFormat()));
-
-                if (!saml.getRequestedAttributes().isEmpty()) {
-                    saml.getRequestedAttributes().stream()
-                        .map(attribute -> new SAML2ServiceProviderRequestedAttribute(attribute.getName(), attribute.getFriendlyName(),
-                            attribute.getNameFormat(), attribute.isRequired()))
-                        .forEach(attribute -> cfg.getRequestedServiceProviderAttributes().add(attribute));
-                }
-
-                if (!saml.getBlockedSignatureSigningAlgorithms().isEmpty()) {
-                    cfg.setBlackListedSignatureSigningAlgorithms(saml.getBlockedSignatureSigningAlgorithms());
-                }
-                if (!saml.getSignatureAlgorithms().isEmpty()) {
-                    cfg.setSignatureAlgorithms(saml.getSignatureAlgorithms());
-                }
-                if (!saml.getSignatureReferenceDigestMethods().isEmpty()) {
-                    cfg.setSignatureReferenceDigestMethods(saml.getSignatureReferenceDigestMethods());
-                }
-
-                FunctionUtils.doIfNotBlank(saml.getSignatureCanonicalizationAlgorithm(),
-                    __ -> cfg.setSignatureCanonicalizationAlgorithm(saml.getSignatureCanonicalizationAlgorithm()));
-                cfg.setProviderName(saml.getProviderName());
-                cfg.setNameIdPolicyAllowCreate(saml.getNameIdPolicyAllowCreate().toBoolean());
-
-                if (StringUtils.isNotBlank(saml.getSaml2AttributeConverter())) {
-                    if (ScriptingUtils.isExternalGroovyScript(saml.getSaml2AttributeConverter())) {
-                        FunctionUtils.doAndHandle(__ -> {
-                            val resource = ResourceUtils.getResourceFrom(saml.getSaml2AttributeConverter());
-                            val script = new WatchableGroovyScriptResource(resource);
-                            cfg.setSamlAttributeConverter(new GroovyAttributeConverter(script));
-                        });
-                    } else {
-                        FunctionUtils.doAndHandle(__ -> {
-                            val clazz = ClassUtils.getClass(getClass().getClassLoader(), saml.getSaml2AttributeConverter());
-                            val converter = (AttributeConverter) clazz.getDeclaredConstructor().newInstance();
-                            cfg.setSamlAttributeConverter(converter);
-                        });
-                    }
-                }
-
-                val mappedAttributes = saml.getMappedAttributes();
-                if (!mappedAttributes.isEmpty()) {
-                    cfg.setMappedAttributes(CollectionUtils.convertDirectedListToMap(mappedAttributes));
-                }
-
-                val client = new SAML2Client(cfg);
-                configureClient(client, saml, casProperties);
-
-                LOGGER.debug("Created delegated client [{}]", client);
-                return client;
-            })
-            .collect(Collectors.toList());
-    }
-
     protected Collection<IndirectClient> buildBitBucketIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val bitbucket = pac4jProperties.getBitbucket();
@@ -661,13 +512,12 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
             .collect(Collectors.toList());
     }
 
-    protected Set<IndirectClient> buildAllIdentityProviders(final CasConfigurationProperties properties) {
-        val newClients = new LinkedHashSet<IndirectClient>();
+    protected Set<BaseClient> buildAllIdentityProviders(final CasConfigurationProperties properties) throws Exception {
+        val newClients = new LinkedHashSet<BaseClient>();
         newClients.addAll(buildCasIdentityProviders(properties));
         newClients.addAll(buildFacebookIdentityProviders(properties));
         newClients.addAll(buildOidcIdentityProviders(properties));
         newClients.addAll(buildOAuth20IdentityProviders(properties));
-        newClients.addAll(buildSaml2IdentityProviders(properties));
         newClients.addAll(buildTwitterIdentityProviders(properties));
         newClients.addAll(buildDropBoxIdentityProviders(properties));
         newClients.addAll(buildFoursquareIdentityProviders(properties));
@@ -680,6 +530,18 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
         newClients.addAll(buildWordpressIdentityProviders(properties));
         newClients.addAll(buildBitBucketIdentityProviders(properties));
         newClients.addAll(buildHiOrgServerIdentityProviders(properties));
+
+        val builders = new ArrayList<>(applicationContext.getBeansOfType(ConfigurableDelegatedClientBuilder.class).values());
+        AnnotationAwareOrderComparator.sort(builders);
+        for (val builder : builders) {
+            val builtClients = builder.build();
+            LOGGER.debug("Builder [{}] provides [{}] clients", builder.getName(), builtClients.size());
+            builtClients.forEach(instance -> {
+                val preparedClient = configureClient(instance.getClient(), instance.getProperties(), properties);
+                newClients.add(preparedClient);
+            });
+        }
+
         return newClients;
     }
 }

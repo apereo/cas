@@ -1,6 +1,5 @@
 package org.apereo.cas.web.saml2;
 
-import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.util.Saml20ObjectBuilder;
@@ -8,7 +7,6 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAsserti
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlIdPResponseCustomizer;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -33,14 +31,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@SpringBootTest(classes = {
-    BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
-    CasDelegatedAuthenticationAutoConfiguration.class
-},
-    properties = {
-        "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=/tmp/sp-metadata.xml",
-        "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=src/test/resources/idp-metadata.xml"
-    })
+@SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("SAML2Web")
 class DelegatedAuthenticationSamlIdPResponseCustomizerTests {
     @Autowired
@@ -50,14 +41,14 @@ class DelegatedAuthenticationSamlIdPResponseCustomizerTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
-    
+
     @Test
     void verifyOperation() throws Throwable {
         val assertion = mock(Assertion.class);
         val authnStatement = mock(AuthnStatement.class);
         val authnContext = mock(AuthnContext.class);
-        val listofAuthorities = new ArrayList<AuthenticatingAuthority>();
-        when(authnContext.getAuthenticatingAuthorities()).thenReturn(listofAuthorities);
+        val listOfAuthorities = new ArrayList<AuthenticatingAuthority>();
+        when(authnContext.getAuthenticatingAuthorities()).thenReturn(listOfAuthorities);
         when(authnStatement.getAuthnContext()).thenReturn(authnContext);
         when(assertion.getAuthnStatements()).thenReturn(List.of(authnStatement));
 
@@ -81,6 +72,6 @@ class DelegatedAuthenticationSamlIdPResponseCustomizerTests {
         when(builder.newSamlObject(any())).thenReturn(authority);
         assertDoesNotThrow(() -> delegatedSaml2IdPResponseCustomizer.customizeAssertion(context, builder, assertion));
         verify(authority, times(1)).setURI(anyString());
-        assertEquals(1, listofAuthorities.size());
+        assertEquals(1, listOfAuthorities.size());
     }
 }

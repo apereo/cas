@@ -27,39 +27,28 @@ dependencies {
     implementation project(":core:cas-server-core-services-authentication")
 
     implementation project(":support:cas-server-support-pac4j-api")
-    implementation project(":support:cas-server-support-saml-core")
-    implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-pac4j-core-clients")
     implementation project(":support:cas-server-support-pac4j-core")
 
     api libraries.pac4joidcoauth
-    api libraries.pac4jsaml
     api libraries.pac4jcore
     api libraries.pac4jcas
-    api libraries.opensaml
-    api libraries.shibutiljavasupport
 
     runtimeOnly libraries.casclient
 
     implementation libraries.nimbus
     implementation libraries.jose4j
-    implementation libraries.apachevelocity
-    implementation libraries.dropwizard
 
-    compileOnly libraries.hazelcast
-    compileOnly libraries.mongo
-
-    testImplementation libraries.hazelcast
     testImplementation libraries.casclient
-    testImplementation libraries.mongo
     testImplementation libraries.ldaptive
-
+    testImplementation libraries.pac4jsaml
+    testImplementation libraries.opensaml
+    testImplementation libraries.shibutiljavasupport
+    
     compileOnly project(":support:cas-server-support-discovery-profile-core")
     compileOnly project(":support:cas-server-support-jpa-util")
     compileOnly project(":support:cas-server-support-ldap-core")
-    compileOnly project(":support:cas-server-support-mongo-core")
-    compileOnly project(":support:cas-server-support-saml-idp-core")
-    compileOnly project(":support:cas-server-support-saml-idp-web")
+
     compileOnly project(":support:cas-server-support-scim-core")
 
     testImplementation project(":core:cas-server-core-authentication")
@@ -76,8 +65,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-mfa")
 
     testImplementation project(":support:cas-server-support-jpa-util")
-    testImplementation project(":support:cas-server-support-mongo-core")
-    testImplementation project(":support:cas-server-support-hazelcast-core")
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-reports")
@@ -87,8 +74,6 @@ dependencies {
     testImplementation project(":support:cas-server-support-scim")
     testImplementation project(":support:cas-server-support-discovery-profile-core")
     testImplementation project(":support:cas-server-support-ldap-core")
-    testImplementation project(":support:cas-server-support-saml-idp-core")
-    testImplementation project(":support:cas-server-support-saml-idp-web")
 
     testImplementation project(path: ":support:cas-server-support-pac4j-core-clients", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")

@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow.actions.logout;
+package org.apereo.cas.support.pac4j.authentication;
 
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;

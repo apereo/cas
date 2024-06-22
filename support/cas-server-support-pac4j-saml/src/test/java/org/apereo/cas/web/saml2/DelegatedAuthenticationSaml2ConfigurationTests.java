@@ -1,10 +1,9 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.saml2;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
-import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.impl.HazelcastInstanceFactory;
 import lombok.val;
@@ -22,7 +21,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link DelegatedAuthenticationSAMLConfigurationTests}.
+ * This is {@link DelegatedAuthenticationSaml2ConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 6.5.0
@@ -30,11 +29,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("CasConfiguration")
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
-    DelegatedAuthenticationSAMLConfigurationTests.SAMLTestConfiguration.class,
-    BaseDelegatedAuthenticationTests.SharedTestConfiguration.class
+    DelegatedAuthenticationSaml2ConfigurationTests.SAMLTestConfiguration.class,
+    BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-class DelegatedAuthenticationSAMLConfigurationTests {
+class DelegatedAuthenticationSaml2ConfigurationTests {
     @Autowired
     @Qualifier(DelegatedIdentityProviderFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)
     private SAMLMessageStoreFactory hazelcastSAMLMessageStoreFactory;

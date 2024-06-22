@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.principal.provision;
 
 import org.apereo.cas.BaseCasCoreTests;
-import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
 import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasScimAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -30,7 +29,6 @@ import static org.mockito.Mockito.*;
 @EnabledIfListeningOnPort(port = 9666)
 @Import({
     CasScimAutoConfiguration.class,
-    CasCoreSamlAutoConfiguration.class,
     CasDelegatedAuthenticationAutoConfiguration.class
 })
 @TestPropertySource(properties = {

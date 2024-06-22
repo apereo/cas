@@ -10,7 +10,9 @@ category: Services
 
 Stores registered service data in a [Amazon S3](https://aws.amazon.com/s3/) buckets. Each service 
 definition is managed inside its own separate bucket and the body of the service definition is managed 
-as a JSON blob, similar to that of [JSON service registry](JSON-Service-Management.html).
+as a JSON blob, similar to that of [JSON service registry](JSON-Service-Management.html). The bucket name
+for each service definition is determined based on the service numeric identifier and its name, which makes it
+**IMPORTANT** for you to ensure that service definitions do not have duplicate values in such fields.
 
 Support is enabled by adding the following module into the overlay:
 

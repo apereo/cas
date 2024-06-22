@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.saml2;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
+import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowManager;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.io.FileUtils;

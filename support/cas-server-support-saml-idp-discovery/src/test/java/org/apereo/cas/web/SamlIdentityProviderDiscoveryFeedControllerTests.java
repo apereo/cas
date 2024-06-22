@@ -8,6 +8,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPo
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.web.saml2.BaseSaml2DelegatedAuthenticationTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("SAML2Web")
 @SpringBootTest(classes = {
-    BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
+    BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class,
     CasSamlIdentityProviderDiscoveryAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)

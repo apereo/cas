@@ -43,7 +43,7 @@ class DelegatedClientIdentityProviderConfigurationProducerTests {
 
         val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
         val policy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
-        policy.setAllowedProviders(List.of("SAML2Client"));
+        policy.setAllowedProviders(List.of("CasClient"));
         policy.setPermitUndefined(false);
 
         accessStrategy.setDelegatedAuthenticationPolicy(policy);

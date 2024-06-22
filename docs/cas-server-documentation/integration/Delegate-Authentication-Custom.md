@@ -50,3 +50,15 @@ please [see this guide](../integration/Delegate-Authentication-Provider-Registra
 [see this guide](../configuration/Configuration-Management-Extensions.html) to learn more about how to 
 register configurations into the CAS runtime.
 
+If you don't wish to build your own factory implementation, there is an easier option that allows you to
+rely on the existing `DelegatedIdentityProviderFactory` and simply build and supply the identity provider instances:
+
+```java
+@Bean
+public ConfigurableDelegatedClientBuilder myClientBuilder() {
+    return new MyDelegatedClientBuilder();
+}
+```
+         
+You may define as many `ConfigurableDelegatedClientBuilder` instance you need. The `DelegatedIdentityProviderFactory` 
+will then automatically pick up the new identity provider instances, configure and initialize them for use with CAS.
