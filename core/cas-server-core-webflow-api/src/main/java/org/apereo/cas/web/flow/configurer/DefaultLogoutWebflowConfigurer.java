@@ -38,6 +38,7 @@ public class DefaultLogoutWebflowConfigurer extends AbstractCasWebflowConfigurer
 
         if (flow != null) {
             val terminateSessionActionState = createTerminateSessionActionState(flow);
+            configureStartActions(flow);
             createLogoutConfirmationView(flow);
             createDoLogoutActionState(flow);
             createFrontLogoutActionState(flow);
@@ -47,6 +48,13 @@ public class DefaultLogoutWebflowConfigurer extends AbstractCasWebflowConfigurer
             configureFlowStartState(flow, terminateSessionActionState);
         }
     }
+
+
+    private void configureStartActions(final Flow flow) {
+        val startActionList = flow.getStartActionList();
+        startActionList.add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INITIAL_FLOW_SETUP));
+    }
+
 
     protected ActionState createTerminateSessionActionState(final Flow flow) {
         val actionState = createActionState(flow, CasWebflowConstants.STATE_ID_TERMINATE_SESSION,
