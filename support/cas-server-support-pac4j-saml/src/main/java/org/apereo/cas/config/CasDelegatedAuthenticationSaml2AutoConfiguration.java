@@ -23,7 +23,8 @@ import org.springframework.context.annotation.Import;
     DelegatedAuthenticationSaml2MongoDbConfiguration.class,
     DelegatedAuthenticationSaml2JdbcConfiguration.class,
     DelegatedAuthenticationSaml2HazelcastConfiguration.class,
-    DelegatedAuthenticationSaml2IdPConfiguration.class
+    DelegatedAuthenticationSaml2IdPConfiguration.class,
+    DelegatedAuthenticationSaml2AmazonS3Configuration.class
 })
 public class CasDelegatedAuthenticationSaml2AutoConfiguration {
 }

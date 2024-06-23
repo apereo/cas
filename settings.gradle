@@ -67,6 +67,7 @@ dependencyResolutionManagement {
                 includeModule("org.nodejs", "node")
             }
         }
+        mavenLocal()
         mavenCentral()
         maven {
             url "https://build.shibboleth.net/maven/snapshots"

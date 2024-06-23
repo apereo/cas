@@ -38,7 +38,9 @@ dependencies {
     compileOnly libraries.hazelcast
     compileOnly libraries.mongo
     compileOnly libraries.ldaptive
+    implementation libraries.awss3
 
+    compileOnly project(":support:cas-server-support-aws")
     compileOnly project(":support:cas-server-support-mongo-core")
     compileOnly project(":support:cas-server-support-saml-idp-core")
     compileOnly project(":support:cas-server-support-saml-idp-web")
@@ -46,6 +48,7 @@ dependencies {
     compileOnly project(":support:cas-server-support-jpa-util")
     compileOnly project(":support:cas-server-support-ldap-core")
 
+    testImplementation libraries.awss3
     testImplementation libraries.jose4j
     testImplementation libraries.mongo
     testImplementation libraries.hazelcast
@@ -75,6 +78,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-thymeleaf")
     testImplementation project(":support:cas-server-support-hazelcast-core")
     testImplementation project(":support:cas-server-support-mongo-core")
+    testImplementation project(":support:cas-server-support-aws")
 
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-pac4j-core-clients", configuration: "tests")
