@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.Builder;
 import lombok.Getter;
@@ -39,4 +40,7 @@ public class ServicesManagerConfigurationContext {
 
     @Nonnull
     private final RegisteredServicesTemplatesManager registeredServicesTemplatesManager;
+
+    @Nonnull
+    private final CasConfigurationProperties casProperties;
 }

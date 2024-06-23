@@ -59,17 +59,19 @@ public abstract class AbstractServicesManager implements ServicesManager {
         this.configurationContext = configurationContext;
 
         this.indexedRegisteredServices = new ConcurrentIndexedCollection<>();
-        configurationContext.getRegisteredServiceLocators()
-            .forEach(locator -> locator.getRegisteredServiceIndexes()
-                .stream()
-                .map(RegisteredServiceQueryIndex::getIndex)
-                .filter(AttributeIndex.class::isInstance)
-                .map(AttributeIndex.class::cast)
-                .forEach(index -> {
-                    LOGGER.debug("Adding registered service index [{}] supplied by [{}]",
-                        index.getAttribute().toString(), locator.getClass().getSimpleName());
-                    indexedRegisteredServices.addIndex(index);
-                }));
+        if (configurationContext.getCasProperties().getServiceRegistry().getCore().isIndexServices()) {
+            configurationContext.getRegisteredServiceLocators()
+                .forEach(locator -> locator.getRegisteredServiceIndexes()
+                    .stream()
+                    .map(RegisteredServiceQueryIndex::getIndex)
+                    .filter(AttributeIndex.class::isInstance)
+                    .map(AttributeIndex.class::cast)
+                    .forEach(index -> {
+                        LOGGER.debug("Adding registered service index [{}] supplied by [{}]",
+                            index.getAttribute().toString(), locator.getClass().getSimpleName());
+                        indexedRegisteredServices.addIndex(index);
+                    }));
+        }
     }
 
     private static Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(
@@ -357,7 +359,10 @@ public abstract class AbstractServicesManager implements ServicesManager {
         val servicesCache = configurationContext.getServicesCache();
         servicesCache.invalidateAll();
         servicesCache.putAll(servicesMap);
-        indexedRegisteredServices.addAll(servicesMap.values());
+        if (configurationContext.getCasProperties().getServiceRegistry().getCore().isIndexServices()) {
+            indexedRegisteredServices.clear();
+            indexedRegisteredServices.addAll(servicesMap.values());
+        }
         return servicesCache.asMap();
     }
 
@@ -419,7 +424,11 @@ public abstract class AbstractServicesManager implements ServicesManager {
     private void cacheRegisteredService(final RegisteredService service) {
         if (configurationContext.getServicesCache().getIfPresent(service.getId()) == null) {
             configurationContext.getServicesCache().put(service.getId(), service);
-            indexedRegisteredServices.add(service);
+
+            if (configurationContext.getCasProperties().getServiceRegistry().getCore().isIndexServices()) {
+                indexedRegisteredServices.removeIf(registeredService -> registeredService.getId() == service.getId());
+                indexedRegisteredServices.add(service);
+            }
         }
     }
 
