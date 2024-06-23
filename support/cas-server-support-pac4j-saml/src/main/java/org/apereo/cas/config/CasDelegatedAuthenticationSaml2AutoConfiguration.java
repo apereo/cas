@@ -18,6 +18,12 @@ import org.springframework.context.annotation.Import;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication, module = "saml")
 @AutoConfiguration
 @ImportAutoConfiguration(CasCoreSamlAutoConfiguration.class)
-@Import(DelegatedAuthenticationSaml2Configuration.class)
+@Import({
+    DelegatedAuthenticationSaml2Configuration.class,
+    DelegatedAuthenticationSaml2MongoDbConfiguration.class,
+    DelegatedAuthenticationSaml2JdbcConfiguration.class,
+    DelegatedAuthenticationSaml2HazelcastConfiguration.class,
+    DelegatedAuthenticationSaml2IdPConfiguration.class
+})
 public class CasDelegatedAuthenticationSaml2AutoConfiguration {
 }
