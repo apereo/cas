@@ -288,6 +288,7 @@ public class CasCoreServicesConfiguration {
             final RegisteredServicesTemplatesManager registeredServicesTemplatesManager,
             @Qualifier(ServiceRegistry.BEAN_NAME)
             final ChainingServiceRegistry serviceRegistry,
+            final CasConfigurationProperties casProperties,
             @Qualifier("servicesManagerCache")
             final Cache<Long, RegisteredService> servicesManagerCache,
             final List<ServicesManagerRegisteredServiceLocator> servicesManagerRegisteredServiceLocators,
@@ -300,6 +301,7 @@ public class CasCoreServicesConfiguration {
                 .applicationContext(applicationContext)
                 .environments(activeProfiles)
                 .servicesCache(servicesManagerCache)
+                .casProperties(casProperties)
                 .registeredServicesTemplatesManager(registeredServicesTemplatesManager)
                 .registeredServiceLocators(servicesManagerRegisteredServiceLocators)
                 .build();
