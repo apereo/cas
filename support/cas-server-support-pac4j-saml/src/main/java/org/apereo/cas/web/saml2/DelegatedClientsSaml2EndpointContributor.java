@@ -28,8 +28,9 @@ public class DelegatedClientsSaml2EndpointContributor implements DelegatedClient
         val configuration = saml2Client.getConfiguration();
         var identityProviderEntityId = configuration.getIdentityProviderEntityId();
         if (StringUtils.isBlank(identityProviderEntityId)) {
-            configuration.getIdentityProviderMetadataResolver().resolve();
-            identityProviderEntityId = configuration.getIdentityProviderMetadataResolver().getEntityId();
+            val identityProviderMetadataResolver = configuration.getIdentityProviderMetadataResolver();
+            identityProviderMetadataResolver.resolve();
+            identityProviderEntityId = identityProviderMetadataResolver.getEntityId();
         }
         return CollectionUtils.wrap(
             "serviceProviderEntityId", configuration.getServiceProviderEntityId(),
