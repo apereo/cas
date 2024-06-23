@@ -11,7 +11,17 @@ If you already have worked out the targeted-at-`master` pull request, preferably
 ```
 master: https://github.com/apereo/cas/pull/$PR_NUMBER
 ```
-   
+            
+`$PR_NUMBER` must be replaced by the actual pull request number that targets the `master` branch.
+
+If your pull request does not apply to the `master` branch, because the change here is no longer needed there or has been replaced by another feature or fix, please update the body of your pull request description here to include the following reference:
+
+```  
+master: https://github.com/apereo/cas/commit/$COMMIT_SHA
+```
+
+`$COMMIT_SHA` must be replaced by the actual commit SHA that represents the change in the `master` branch.
+
 # How to contribute
 
 The recommended contribution strategy is one that would have you start with the `master` branch first. Once the change is accepted and merged, you would then be able to port the change back to the appropriate maintenance branch provided the change fits the scope of the maintenance branch and its tracking release and assuming the branch is still under care, you are more than welcome to move changes across the codebase various branches as much as needed to remove pain and improve.

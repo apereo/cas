@@ -218,7 +218,7 @@ public class CasPullRequestListener implements PullRequestListener {
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
                     var template = IOUtils.toString(new ClassPathResource("template-no-tests.md").getInputStream(), StandardCharsets.UTF_8);
                     template = template.replace("${link}", Memes.NO_TESTS.select());
-                    
+
                     repository.addComment(pr, template);
                     repository.close(pr);
                 }
@@ -381,13 +381,29 @@ public class CasPullRequestListener implements PullRequestListener {
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_PENDING_PORT_FORWARD);
             }
 
-            if (!pr.isDraft() && !pr.isWorkInProgress() && StringUtils.hasText(pr.getBody())
-                && !pr.getBody().contains("master: https://github.com/apereo/cas/pull/")) {
-                repository.removeAllCommentsFrom(pr, "apereocas-bot");
-                repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
-                var template = IOUtils.toString(new ClassPathResource("template-port-forward.md").getInputStream(), StandardCharsets.UTF_8);
-                repository.addComment(pr, template);
-                repository.close(pr);
+            if (!pr.isDraft() && !pr.isWorkInProgress() && StringUtils.hasText(pr.getBody())) {
+                var pattern = Pattern.compile("https://github\\.com/apereo/cas/(pull|commit)/(\\w+)", Pattern.CASE_INSENSITIVE);
+                var matcher = pattern.matcher(pr.getBody());
+
+                var closePullRequest = false;
+                if (!matcher.find()) {
+                    closePullRequest = true;
+                } else {
+                    var type = matcher.group(1);
+                    var number = matcher.group(2);
+                    var result = type.equalsIgnoreCase("pull") ? repository.getPullRequest(number) : repository.getCommit(number);
+                    if (result == null) {
+                        closePullRequest = true;
+                    }
+                }
+
+                if (closePullRequest) {
+                    repository.removeAllCommentsFrom(pr, "apereocas-bot");
+                    repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
+                    var template = IOUtils.toString(new ClassPathResource("template-port-forward.md").getInputStream(), StandardCharsets.UTF_8);
+                    repository.addComment(pr, template);
+                    repository.close(pr);
+                }
             }
         }
     }
