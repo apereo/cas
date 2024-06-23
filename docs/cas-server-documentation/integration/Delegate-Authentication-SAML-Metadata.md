@@ -85,6 +85,22 @@ The table structure and schema needs to be created and must exist prior to CAS s
 CREATE TABLE <table-name> (entityId VARCHAR(512), metadata TEXT)
 ```
 
+### Amazon S3
+
+SAML2 metadata for CAS as the SAML2 service provider may also be managed inside an Amazon S3 bucket. A single bucket is created by default automatically
+that is able to store different objects for each service provider and metadata entity.
+
+To activate this feature, you need to start by including the following module in the overlay:
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-aws" %}
+
+Next, you should activate and turn on the feature:
+
+{% include_cached featuretoggles.html features="DelegatedAuthentication.saml-s3" %}
+
+{% include_cached casproperties.html properties="cas.authn.pac4j.saml[].metadata.service-provider" includes="amazon-s3" %}
+
+
 {% endtab %}
 
 {% endtabs %}
