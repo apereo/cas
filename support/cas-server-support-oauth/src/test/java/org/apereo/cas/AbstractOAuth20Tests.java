@@ -841,20 +841,15 @@ public abstract class AbstractOAuth20Tests {
             plan.registerSerializableClass(MockServiceTicket.class);
         }
     }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         AopAutoConfiguration.class,
         IntegrationAutoConfiguration.class,
-        MailSenderAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        MailSenderAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
-        CasOAuth20AuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
@@ -862,7 +857,6 @@ public abstract class AbstractOAuth20Tests {
         CasThrottlingAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
-        AbstractOAuth20Tests.OAuth20TestConfiguration.class,
         CasThymeleafAutoConfiguration.class,
         CasThemesAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
@@ -873,6 +867,10 @@ public abstract class AbstractOAuth20Tests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasOAuth20AutoConfiguration.class
     })
+    @SpringBootConfiguration
+    @Import({
+        CasOAuth20AuthenticationEventExecutionPlanTestConfiguration.class,
+        AbstractOAuth20Tests.OAuth20TestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 }

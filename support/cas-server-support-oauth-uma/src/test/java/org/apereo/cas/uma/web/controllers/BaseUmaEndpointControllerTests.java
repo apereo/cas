@@ -35,7 +35,7 @@ import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -54,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Import(CasOAuthUmaAutoConfiguration.class)
+@ImportAutoConfiguration(CasOAuthUmaAutoConfiguration.class)
 @TestPropertySource(properties = {
     "spring.main.allow-bean-definition-overriding=true",
     "cas.authn.oauth.uma.requesting-party-token.jwks-file.location=classpath:uma-keystore.jwks"

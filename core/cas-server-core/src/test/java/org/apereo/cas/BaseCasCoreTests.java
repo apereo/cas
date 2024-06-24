@@ -80,11 +80,7 @@ public abstract class BaseCasCoreTests {
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        RefreshAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
-        SharedTestConfiguration.AttributeRepositoryTestConfiguration.class,
+        RefreshAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
@@ -102,6 +98,8 @@ public abstract class BaseCasCoreTests {
         CasCoreValidationAutoConfiguration.class,
         CasCoreAutoConfiguration.class
     })
+    @SpringBootConfiguration
+    @Import(SharedTestConfiguration.AttributeRepositoryTestConfiguration.class)
     public static class SharedTestConfiguration {
 
         @TestConfiguration(value = "PrincipalResolutionTestConfiguration", proxyBeanMethods = false)

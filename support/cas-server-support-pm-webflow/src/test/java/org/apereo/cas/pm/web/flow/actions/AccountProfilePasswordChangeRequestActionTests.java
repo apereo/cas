@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowAccountActions")
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
-@Import(CasCoreWebflowAutoConfiguration.class)
+@ImportAutoConfiguration(CasCoreWebflowAutoConfiguration.class)
 class AccountProfilePasswordChangeRequestActionTests extends BasePasswordManagementActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_PASSWORD_CHANGE_REQUEST)

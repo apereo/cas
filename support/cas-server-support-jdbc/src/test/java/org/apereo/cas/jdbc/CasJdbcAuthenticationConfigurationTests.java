@@ -97,15 +97,11 @@ class CasJdbcAuthenticationConfigurationTests {
         val result = authenticationManager.authenticate(transaction);
         assertNotNull(result);
     }
-
     @ImportAutoConfiguration({
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        WebMvcAutoConfiguration.class,
         CasHibernateJpaAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
@@ -115,10 +111,11 @@ class CasJdbcAuthenticationConfigurationTests {
         CasCoreUtilAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasJdbcAuthenticationAutoConfiguration.class
     })
+    @SpringBootConfiguration
+    @Import(CasRegisteredServicesTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 

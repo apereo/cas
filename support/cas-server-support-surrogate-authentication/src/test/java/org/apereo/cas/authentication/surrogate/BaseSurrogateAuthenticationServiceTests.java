@@ -95,20 +95,15 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
     public String getTestUser() {
         return "casuser";
     }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasSurrogateAuthenticationAutoConfiguration.class,
         CasCoreRestAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
@@ -122,6 +117,8 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class
     })
+    @SpringBootConfiguration
+    @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

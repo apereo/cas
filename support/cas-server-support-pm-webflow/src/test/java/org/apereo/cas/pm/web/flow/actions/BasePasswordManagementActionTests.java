@@ -108,16 +108,12 @@ public abstract class BasePasswordManagementActionTests {
 
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
-
     @ImportAutoConfiguration({
         AopAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         MailSenderValidatorAutoConfiguration.class,
-        RefreshAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        RefreshAutoConfiguration.class,
         CasPasswordManagementAutoConfiguration.class,
         CasPasswordManagementWebflowAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
@@ -133,9 +129,9 @@ public abstract class BasePasswordManagementActionTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
-        CasCoreWebflowAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class
-    })
+        CasCoreWebflowAutoConfiguration.class})
+    @SpringBootConfiguration
+    @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

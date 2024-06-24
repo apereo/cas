@@ -15,7 +15,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("Ignite")
-@Import(CasIgniteTicketRegistryAutoConfiguration.class)
+@ImportAutoConfiguration(CasIgniteTicketRegistryAutoConfiguration.class)
 @TestPropertySource(
     properties = {
         "cas.ticket.registry.ignite.tickets-cache.write-synchronization-mode=FULL_ASYNC",

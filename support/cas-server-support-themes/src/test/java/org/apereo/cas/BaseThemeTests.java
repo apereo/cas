@@ -21,7 +21,6 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.ThemeResolver;
 
 /**
@@ -43,16 +42,12 @@ public abstract class BaseThemeTests {
     public void setup() {
         servicesManager.deleteAll();
     }
-
     @ImportAutoConfiguration({
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         ThymeleafAutoConfiguration.class,
-        RefreshAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        RefreshAutoConfiguration.class,
         CasThemesAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
@@ -64,6 +59,7 @@ public abstract class BaseThemeTests {
         CasCoreAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
+    @SpringBootConfiguration
     public static class SharedTestConfiguration {
     }
 }

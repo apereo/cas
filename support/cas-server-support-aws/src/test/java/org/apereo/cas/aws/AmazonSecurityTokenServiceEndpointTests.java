@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -40,10 +41,10 @@ class AmazonSecurityTokenServiceEndpointTests {
         "cas.authn.mfa.groovy-script.location=classpath:AmazonStsGroovyMfa.groovy",
         "management.endpoint.awsSts.enabled=true"
     })
-    @Import({
+    @Import(CasAuthenticationEventExecutionPlanTestConfiguration.class)
+    @ImportAutoConfiguration({
         CasAmazonCoreAutoConfiguration.class,
-        CasCoreRestAutoConfiguration.class,
-        CasAuthenticationEventExecutionPlanTestConfiguration.class
+        CasCoreRestAutoConfiguration.class
     })
     static class BaseAmazonSecurityTokenServiceEndpointTests extends AbstractCasEndpointTests {
     }
@@ -59,7 +60,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         @Autowired
         @Qualifier("awsSecurityTokenServiceEndpoint")
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
-        
+
         @BeforeEach
         public void beforeEach() {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -114,7 +115,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         @Autowired
         @Qualifier("awsSecurityTokenServiceEndpoint")
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
-        
+
         @BeforeEach
         public void beforeEach() {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -182,7 +183,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         @Autowired
         @Qualifier("awsSecurityTokenServiceEndpoint")
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
-        
+
         @BeforeEach
         public void beforeEach() {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
@@ -213,7 +214,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         @Autowired
         @Qualifier("awsSecurityTokenServiceEndpoint")
         private AmazonSecurityTokenServiceEndpoint awsSecurityTokenServiceEndpoint;
-        
+
         @BeforeEach
         public void beforeEach() {
             ApplicationContextProvider.holdApplicationContext(applicationContext);

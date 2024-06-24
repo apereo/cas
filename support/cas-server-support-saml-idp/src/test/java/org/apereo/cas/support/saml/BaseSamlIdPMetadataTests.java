@@ -24,7 +24,6 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Import;
 
 /**
  * This is {@link BaseSamlIdPMetadataTests}.
@@ -33,16 +32,12 @@ import org.springframework.context.annotation.Import;
  * @since 6.3.0
  */
 public abstract class BaseSamlIdPMetadataTests {
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         AopAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         ObservationAutoConfiguration.class,
-        WebMvcAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        WebMvcAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreMonitorAutoConfiguration.class,
@@ -61,6 +56,7 @@ public abstract class BaseSamlIdPMetadataTests {
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
+    @SpringBootConfiguration
     public static class SharedTestConfiguration {
     }
 }

@@ -88,16 +88,11 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
             return MockSmsSender.INSTANCE;
         }
     }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
-        ElectronicFenceTestConfiguration.class,
+        AopAutoConfiguration.class,
         CasElectronicFenceAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
@@ -117,6 +112,8 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreEventsAutoConfiguration.class
     })
+    @SpringBootConfiguration
+    @Import(ElectronicFenceTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

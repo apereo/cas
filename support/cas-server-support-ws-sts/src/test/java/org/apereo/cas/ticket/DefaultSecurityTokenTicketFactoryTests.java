@@ -9,7 +9,7 @@ import org.apereo.cas.ticket.factory.BaseTicketFactoryTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Tickets")
-@Import({
+@ImportAutoConfiguration({
     CasCoreAutoConfiguration.class,
     CasCoreSamlAutoConfiguration.class,
     CasWsSecuritySecurityTokenAutoConfiguration.class

@@ -64,7 +64,6 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.util.AopTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.Serial;
@@ -702,16 +701,12 @@ public abstract class BaseTicketRegistryTests {
             registry.setCipherExecutor(CipherExecutor.noOp());
         }
     }
-
     @ImportAutoConfiguration({
         ObservationAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         RefreshAutoConfiguration.class,
         IntegrationAutoConfiguration.class,
-        MailSenderAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        MailSenderAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
@@ -726,6 +721,7 @@ public abstract class BaseTicketRegistryTests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class
     })
+    @SpringBootConfiguration
     public static class SharedTestConfiguration {
     }
 

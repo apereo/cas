@@ -21,7 +21,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
  * @since 5.1.0
  */
 @Tag("MongoDb")
-@Import(CasMongoDbTicketRegistryAutoConfiguration.class)
+@ImportAutoConfiguration(CasMongoDbTicketRegistryAutoConfiguration.class)
 @TestPropertySource(properties = {
     "cas.ticket.registry.mongo.database-name=ticket-registry",
     "cas.ticket.registry.mongo.authentication-database-name=admin",

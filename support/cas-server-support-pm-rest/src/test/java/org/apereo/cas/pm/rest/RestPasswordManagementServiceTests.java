@@ -33,7 +33,6 @@ import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfigu
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -53,10 +52,7 @@ class RestPasswordManagementServiceTests {
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        RefreshAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        RefreshAutoConfiguration.class,
         CasRestPasswordManagementAutoConfiguration.class,
         CasPasswordManagementAutoConfiguration.class,
         RestTemplateAutoConfiguration.class,
@@ -70,6 +66,7 @@ class RestPasswordManagementServiceTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
+    @SpringBootConfiguration
     public static class SharedTestConfiguration {
     }
 

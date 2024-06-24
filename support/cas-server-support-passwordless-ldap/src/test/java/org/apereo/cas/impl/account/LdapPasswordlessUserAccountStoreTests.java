@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Tag;
 import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,7 +41,7 @@ class LdapPasswordlessUserAccountStoreTests {
         "cas.authn.passwordless.accounts.ldap.username-attribute=mail",
         "cas.authn.passwordless.accounts.ldap.request-password-attribute=description"
     })
-    @Import(CasLdapPasswordlessAuthenticationAutoConfiguration.class)
+    @ImportAutoConfiguration(CasLdapPasswordlessAuthenticationAutoConfiguration.class)
     abstract static class BaseLdapTests extends BasePasswordlessUserAccountStoreTests {
         @Autowired
         @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)

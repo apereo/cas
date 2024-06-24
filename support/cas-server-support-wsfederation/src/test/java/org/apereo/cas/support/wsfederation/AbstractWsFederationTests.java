@@ -80,18 +80,14 @@ public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
         standardCred.setAttributes(attributes);
         return standardCred;
     }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         SecurityAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
+        AopAutoConfiguration.class,
+        CasWsFederationAuthenticationAutoConfiguration.class})
     @SpringBootConfiguration
-    @Import({
-        CasWsFederationAuthenticationAutoConfiguration.class,
-        AbstractOpenSamlTests.SharedTestConfiguration.class
-    })
+    @Import(AbstractOpenSamlTests.SharedTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 

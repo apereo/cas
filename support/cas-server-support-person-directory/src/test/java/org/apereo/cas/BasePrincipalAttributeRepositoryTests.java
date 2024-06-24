@@ -34,10 +34,7 @@ public abstract class BasePrincipalAttributeRepositoryTests {
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        WebMvcAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
@@ -46,9 +43,9 @@ public abstract class BasePrincipalAttributeRepositoryTests {
         CasCoreServicesAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
-        CasCoreLogoutAutoConfiguration.class,
-        SharedTestConfiguration.AttributeDefinitionsTestConfiguration.class
-    })
+        CasCoreLogoutAutoConfiguration.class})
+    @SpringBootConfiguration
+    @Import(SharedTestConfiguration.AttributeDefinitionsTestConfiguration.class)
     public static class SharedTestConfiguration {
 
         @TestConfiguration(value = "AttributeDefinitionsTestConfiguration", proxyBeanMethods = false)

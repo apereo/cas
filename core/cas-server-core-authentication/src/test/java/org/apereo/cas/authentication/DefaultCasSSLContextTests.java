@@ -16,7 +16,6 @@ import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Import;
 import javax.net.ssl.HttpsURLConnection;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -32,9 +31,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
 class DefaultCasSSLContextTests {
 
-    @ImportAutoConfiguration(RefreshAutoConfiguration.class)
+    @ImportAutoConfiguration({RefreshAutoConfiguration.class, CasCoreWebAutoConfiguration.class})
     @SpringBootConfiguration
-    @Import(CasCoreWebAutoConfiguration.class)
     @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
     public static class SharedTestConfiguration {
         static String contactUrl(final String addr, final CasSSLContext context) throws Exception {

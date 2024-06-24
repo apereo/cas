@@ -31,32 +31,29 @@ import org.springframework.context.annotation.Import;
  * @since 5.3.0
  */
 public abstract class BaseRemoteAddressTests {
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasThemesAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
-        CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasRemoteAuthenticationAutoConfiguration.class
     })
+    @SpringBootConfiguration
+    @Import({CasPersonDirectoryTestConfiguration.class,
+        CasRegisteredServicesTestConfiguration.class,
+        CasAuthenticationEventExecutionPlanTestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 }
