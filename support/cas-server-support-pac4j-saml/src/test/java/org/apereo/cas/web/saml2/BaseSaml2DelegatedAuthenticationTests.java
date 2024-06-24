@@ -74,21 +74,18 @@ public abstract class BaseSaml2DelegatedAuthenticationTests {
             return saml2Config;
         }
     }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         ThymeleafAutoConfiguration.class,
         MockMvcAutoConfiguration.class,
         ErrorMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
+        AopAutoConfiguration.class,
+        CasDelegatedAuthenticationSaml2AutoConfiguration.class
     })
     @SpringBootConfiguration
     @EnableWebMvc
-    @Import({
-        BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
-        CasDelegatedAuthenticationSaml2AutoConfiguration.class
-    })
+    @Import(BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
     public static class SharedTestConfiguration {
 
         @Bean

@@ -83,14 +83,10 @@ public abstract class BaseDuoSecurityTests {
         when(provider.matches(argThat(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER::matches))).thenReturn(true);
         return provider;
     }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasMultifactorAuthnTrustAutoConfiguration.class,
         CasDuoSecurityAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
@@ -103,12 +99,13 @@ public abstract class BaseDuoSecurityTests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class
     })
+    @SpringBootConfiguration
+    @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

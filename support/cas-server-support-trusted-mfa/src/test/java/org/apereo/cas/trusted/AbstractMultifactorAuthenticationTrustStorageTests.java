@@ -119,24 +119,18 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
             disposableBean.destroy();
         }
     }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
-        GeoLocationServiceTestConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
@@ -145,6 +139,8 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasMultifactorAuthnTrustAutoConfiguration.class
     })
+    @SpringBootConfiguration
+    @Import({CasRegisteredServicesTestConfiguration.class, GeoLocationServiceTestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 

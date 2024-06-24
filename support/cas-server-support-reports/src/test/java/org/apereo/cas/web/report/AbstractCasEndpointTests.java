@@ -78,7 +78,6 @@ public abstract class AbstractCasEndpointTests {
             plan.registerAuditTrailManager(new MockAuditTrailManager());
         }
     }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         HealthEndpointAutoConfiguration.class,
@@ -90,15 +89,10 @@ public abstract class AbstractCasEndpointTests {
         DispatcherServletAutoConfiguration.class,
 
         ServletEndpointManagementContextConfiguration.class,
-        WebMvcEndpointManagementContextConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        WebMvcEndpointManagementContextConfiguration.class,
         CasReportsAutoConfiguration.class,
         CasCoreLoggingAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
-        AbstractCasEndpointTests.AuditTestConfiguration.class,
-        CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
@@ -106,7 +100,6 @@ public abstract class AbstractCasEndpointTests {
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
@@ -115,6 +108,10 @@ public abstract class AbstractCasEndpointTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreValidationAutoConfiguration.class
     })
+    @SpringBootConfiguration
+    @Import({AbstractCasEndpointTests.AuditTestConfiguration.class,
+        CasAuthenticationEventExecutionPlanTestConfiguration.class,
+        CasRegisteredServicesTestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 }

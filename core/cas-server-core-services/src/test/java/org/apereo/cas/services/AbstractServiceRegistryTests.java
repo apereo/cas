@@ -38,7 +38,6 @@ import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoC
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Import;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -653,7 +652,6 @@ public abstract class AbstractServiceRegistryTests {
     protected Stream<Class<? extends BaseWebBasedRegisteredService>> getRegisteredServiceTypes() {
         return Stream.of(CasRegisteredService.class);
     }
-
     @ImportAutoConfiguration({
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
@@ -661,10 +659,7 @@ public abstract class AbstractServiceRegistryTests {
         RefreshAutoConfiguration.class,
         ServletWebServerFactoryAutoConfiguration.class,
         DispatcherServletAutoConfiguration.class,
-        EndpointAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        EndpointAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
@@ -675,6 +670,7 @@ public abstract class AbstractServiceRegistryTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class
     })
+    @SpringBootConfiguration
     public static class SharedTestConfiguration {
     }
 

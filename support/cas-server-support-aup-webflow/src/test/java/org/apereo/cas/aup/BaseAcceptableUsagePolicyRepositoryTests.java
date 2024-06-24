@@ -112,32 +112,28 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         return context;
     }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
-        CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasAcceptableUsagePolicyWebflowAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
-        CasCoreLogoutAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class
-    })
+        CasCoreLogoutAutoConfiguration.class})
+    @SpringBootConfiguration
+    @Import({CasRegisteredServicesTestConfiguration.class,
+        CasAuthenticationEventExecutionPlanTestConfiguration.class,
+        CasPersonDirectoryTestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 }

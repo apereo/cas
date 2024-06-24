@@ -119,18 +119,16 @@ public abstract class AbstractOpenSamlTests {
         assertNotNull(this.parserPool.getBuilder());
     }
 
+    @SpringBootConfiguration
+    @Import(CasRegisteredServicesTestConfiguration.class)
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasThymeleafAutoConfiguration.class,
         CasThemesAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasCoreSamlAutoConfiguration.class,
         CasSamlAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,

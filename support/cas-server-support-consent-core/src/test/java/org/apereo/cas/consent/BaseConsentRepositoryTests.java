@@ -111,16 +111,12 @@ public abstract class BaseConsentRepositoryTests {
     protected String getUser() {
         return RandomUtils.randomAlphanumeric(8);
     }
-
     @ImportAutoConfiguration({
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         ServletWebServerFactoryAutoConfiguration.class,
-        DispatcherServletAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        DispatcherServletAutoConfiguration.class,
         CasConsentCoreAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
@@ -131,12 +127,13 @@ public abstract class BaseConsentRepositoryTests {
         CasCoreServicesAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreAutoConfiguration.class
     })
+    @SpringBootConfiguration
+    @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

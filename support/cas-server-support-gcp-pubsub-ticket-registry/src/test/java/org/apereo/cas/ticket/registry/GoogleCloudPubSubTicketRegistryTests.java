@@ -31,6 +31,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -48,8 +49,8 @@ import static org.mockito.Mockito.*;
  * @since 7.0.0
  */
 @Tag("GCP")
-@Import({
-    GoogleCloudPubSubTicketRegistryTests.GoogleCloudTestConfiguration.class,
+@Import(GoogleCloudPubSubTicketRegistryTests.GoogleCloudTestConfiguration.class)
+@ImportAutoConfiguration({
     GcpContextAutoConfiguration.class,
     GcpPubSubAutoConfiguration.class,
     CasGoogleCloudPubSubTicketRegistryAutoConfiguration.class

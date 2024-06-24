@@ -10,7 +10,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.SubflowState;
 import org.springframework.webflow.engine.ViewState;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Import(CasAccountManagementWebflowAutoConfiguration.class)
+@ImportAutoConfiguration(CasAccountManagementWebflowAutoConfiguration.class)
 @Tag("WebflowConfig")
 class AccountManagementWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test

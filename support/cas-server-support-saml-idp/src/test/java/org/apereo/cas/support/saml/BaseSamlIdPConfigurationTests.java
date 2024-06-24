@@ -396,18 +396,13 @@ public abstract class BaseSamlIdPConfigurationTests {
                 .build();
         }
     }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         ObservationAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
-        SamlIdPMetadataTestConfiguration.class,
+        AopAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
@@ -428,6 +423,8 @@ public abstract class BaseSamlIdPConfigurationTests {
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
+    @SpringBootConfiguration
+    @Import(SamlIdPMetadataTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.TransitionableState;
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("DuoSecurity")
 class DuoSecuritySurrogateWebflowConfigurerTests {
 
-    @Import({
+    @ImportAutoConfiguration({
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasSurrogateAuthenticationAutoConfiguration.class,
@@ -41,7 +41,7 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
     }
 
     @Nested
-    @Import(DuoSecuritySurrogateWebflowConfigurerTests.SharedTestConfiguration.class)
+    @ImportAutoConfiguration(DuoSecuritySurrogateWebflowConfigurerTests.SharedTestConfiguration.class)
     class DefaultTests extends BaseWebflowConfigurerTests {
 
         @Test
@@ -59,7 +59,7 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
     }
 
     @Nested
-    @Import({
+    @ImportAutoConfiguration({
         CasDuoSecurityAutoConfiguration.class,
         DuoSecuritySurrogateWebflowConfigurerTests.SharedTestConfiguration.class
     })

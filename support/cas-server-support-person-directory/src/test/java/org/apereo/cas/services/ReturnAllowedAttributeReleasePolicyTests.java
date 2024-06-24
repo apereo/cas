@@ -64,15 +64,10 @@ import static org.mockito.Mockito.*;
 class ReturnAllowedAttributeReleasePolicyTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
-
     @ImportAutoConfiguration({
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
-        RefreshAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
-        ReturnAllowedAttributeReleasePolicyTestConfiguration.class,
+        RefreshAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
@@ -84,6 +79,8 @@ class ReturnAllowedAttributeReleasePolicyTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class
     })
+    @SpringBootConfiguration
+    @Import(ReturnAllowedAttributeReleasePolicyTestConfiguration.class)
     @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
     static class BaseAttributeTests {
     }

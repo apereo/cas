@@ -44,22 +44,15 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasMultifactorAuthnTrustAutoConfiguration.class,
-        
-        CasSimpleMultifactorAuthenticationAutoConfiguration.CasSimpleMultifactorTrustConfiguration.class,
         CasSimpleMultifactorAuthenticationAutoConfiguration.class,
-
         CasCoreLogoutAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
@@ -69,6 +62,8 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
         CasCoreAuditAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
+    @SpringBootConfiguration
+    @Import(CasRegisteredServicesTestConfiguration.class)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SharedTestConfiguration {
     }

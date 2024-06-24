@@ -40,11 +40,7 @@ public abstract class BaseYubiKeyTests {
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
-        YubiKeyTestConfiguration.class,
+        AopAutoConfiguration.class,
         CasMultifactorAuthnTrustAutoConfiguration.class,
         CasYubiKeyAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
@@ -54,7 +50,6 @@ public abstract class BaseYubiKeyTests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
@@ -63,6 +58,8 @@ public abstract class BaseYubiKeyTests {
         CasCoreTicketsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class
     })
+    @SpringBootConfiguration
+    @Import({YubiKeyTestConfiguration.class, CasPersonDirectoryTestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 

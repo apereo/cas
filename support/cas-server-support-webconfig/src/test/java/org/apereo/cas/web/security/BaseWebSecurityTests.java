@@ -30,7 +30,6 @@ import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoC
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Import;
 
 /**
  * This is {@link BaseWebSecurityTests}.
@@ -39,7 +38,6 @@ import org.springframework.context.annotation.Import;
  * @since 6.6.0
  */
 public abstract class BaseWebSecurityTests {
-
     @ImportAutoConfiguration({
         SecurityAutoConfiguration.class,
         UserDetailsServiceAutoConfiguration.class,
@@ -55,10 +53,7 @@ public abstract class BaseWebSecurityTests {
         WebMvcAutoConfiguration.class,
         ServletWebServerFactoryAutoConfiguration.class,
         DispatcherServletAutoConfiguration.class,
-        WebMvcEndpointManagementContextConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        WebMvcEndpointManagementContextConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
@@ -73,6 +68,7 @@ public abstract class BaseWebSecurityTests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasWebAppAutoConfiguration.class
     })
+    @SpringBootConfiguration
     public static class SharedTestConfiguration {
     }
 }

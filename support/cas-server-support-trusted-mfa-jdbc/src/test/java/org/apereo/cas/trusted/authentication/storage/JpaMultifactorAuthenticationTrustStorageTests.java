@@ -11,8 +11,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Daniel Frett
  * @since 5.3.0
  */
-@Import({
+@ImportAutoConfiguration({
     CasJdbcMultifactorAuthnTrustAutoConfiguration.class,
     CasHibernateJpaAutoConfiguration.class
 })

@@ -136,15 +136,11 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         }
         return response;
     }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
@@ -154,10 +150,11 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasThrottlingAutoConfiguration.class
     })
+    @SpringBootConfiguration
+    @Import(CasRegisteredServicesTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

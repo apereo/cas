@@ -92,11 +92,7 @@ public abstract class BaseWebflowConfigurerTests {
         MailSenderValidatorAutoConfiguration.class,
         ObservationAutoConfiguration.class,
         IntegrationAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
-        SharedTestConfiguration.AttributeRepositoryTestConfiguration.class,
+        AopAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
@@ -111,6 +107,8 @@ public abstract class BaseWebflowConfigurerTests {
         CasCoreAuditAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
+    @SpringBootConfiguration
+    @Import(SharedTestConfiguration.AttributeRepositoryTestConfiguration.class)
     public static class SharedTestConfiguration {
 
         @TestConfiguration(value = "AttributeRepositoryTestConfiguration", proxyBeanMethods = false)
