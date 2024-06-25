@@ -2,16 +2,16 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.lock.LockRepository;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -22,6 +22,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Tickets")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseTicketRegistryTests.SharedTestConfiguration.class)
 class DefaultTicketRegistryCleanerTests {
 

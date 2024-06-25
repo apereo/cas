@@ -1,17 +1,17 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.time.Duration;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -23,6 +23,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = CasWebApplicationAutoConfiguration.class)
 @Tag("CasConfiguration")
+@ExtendWith(CasTestExtension.class)
 class CasWebApplicationAutoConfigurationTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

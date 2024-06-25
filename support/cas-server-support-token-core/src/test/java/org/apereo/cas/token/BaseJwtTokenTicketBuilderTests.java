@@ -18,12 +18,14 @@ import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.validation.TicketValidationResult;
 import org.apereo.cas.validation.TicketValidator;
 import lombok.val;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -57,6 +59,7 @@ import static org.mockito.Mockito.*;
     CasCoreLogoutAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class
 })
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseJwtTokenTicketBuilderTests {
     @Autowired
     @Qualifier(TokenTicketBuilder.BEAN_NAME)

@@ -1,12 +1,13 @@
 package org.apereo.cas.tomcat;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.apache.catalina.connector.Connector;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -14,9 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -29,6 +28,7 @@ import static org.mockito.Mockito.*;
 @Tag("WebApp")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
+@ExtendWith(CasTestExtension.class)
 class CasTomcatServletWebServerFactoryCustomizerTests {
     @Autowired
     protected ServerProperties serverProperties;

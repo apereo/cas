@@ -57,7 +57,7 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
         val entityId = getEntityIdFromRequest(context);
         val facade = determineServiceProviderMetadataFacade(context, entityId);
         return facade
-            .map(SamlRegisteredServiceMetadataAdaptor::ssoDescriptor)
+            .map(SamlRegisteredServiceMetadataAdaptor::getSsoDescriptor)
             .map(sso -> sso.getAttributeConsumingServices()
                 .stream()
                 .map(svc -> svc.getRequestedAttributes().stream()
@@ -74,7 +74,7 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
                                                                final RegisteredServiceAttributeReleasePolicyContext context,
                                                                final SamlRegisteredServiceMetadataAdaptor facade) {
         val releaseAttributes = new HashMap<String, List<Object>>();
-        Optional.ofNullable(facade.ssoDescriptor())
+        Optional.ofNullable(facade.getSsoDescriptor())
             .ifPresent(sso -> sso.getAttributeConsumingServices().forEach(svc -> svc.getRequestedAttributes().stream().filter(attr -> {
                 val name = this.useFriendlyName ? attr.getFriendlyName() : attr.getName();
                 LOGGER.debug("Checking for requested attribute [{}] in metadata for [{}]",

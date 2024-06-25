@@ -16,6 +16,8 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
+import org.apereo.cas.test.CasTestExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -48,6 +50,7 @@ import org.springframework.context.ConfigurableApplicationContext;
     CasCoreAuthenticationAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class
 })
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseAcceptableUsagePolicyActionTests {
     @Autowired
     @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)

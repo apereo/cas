@@ -4,12 +4,14 @@ import org.apereo.cas.config.CasTokenCoreAutoConfiguration;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.util.io.pem.PemReader;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoint.jwtTicketSigningPublicKey.enabled=true"
     })
 @Tag("ActuatorEndpoint")
+@ExtendWith(CasTestExtension.class)
 class JwtTokenCipherSigningPublicKeyEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("jwtTokenCipherSigningPublicKeyEndpoint")

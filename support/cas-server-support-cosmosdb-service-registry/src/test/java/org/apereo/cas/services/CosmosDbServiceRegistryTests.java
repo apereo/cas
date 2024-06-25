@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.config.CasCosmosDbServiceRegistryAutoConfiguration;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.Getter;
 import lombok.val;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Azure")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = {
     AbstractServiceRegistryTests.SharedTestConfiguration.class,
     CasCosmosDbServiceRegistryAutoConfiguration.class

@@ -4,9 +4,11 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -27,6 +29,7 @@ import static org.mockito.Mockito.*;
 }, properties = "cas.authn.mfa.core.global-failure-mode=PHANTOM")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("MFA")
+@ExtendWith(CasTestExtension.class)
 class DefaultMultifactorAuthenticationFailureModeEvaluatorTests {
     @Autowired
     private CasConfigurationProperties casProperties;

@@ -1,10 +1,12 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.support.ThrottledSubmission;
 import org.apereo.cas.web.support.ThrottledSubmissionsStore;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -34,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasHazelcastThrottlingAutoConfiguration.class
 })
 @Tag("Hazelcast")
+@ExtendWith(CasTestExtension.class)
 class CasHazelcastThrottlingConfigurationTests {
 
     @Autowired

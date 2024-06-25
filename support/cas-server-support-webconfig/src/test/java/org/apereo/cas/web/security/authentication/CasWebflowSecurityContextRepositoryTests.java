@@ -2,6 +2,7 @@ package org.apereo.cas.web.security.authentication;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.executor.CasFlowExecutor;
@@ -10,6 +11,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,6 +39,7 @@ import static org.mockito.Mockito.*;
     BaseWebSecurityTests.SharedTestConfiguration.class
 })
 @Tag("Webflow")
+@ExtendWith(CasTestExtension.class)
 class CasWebflowSecurityContextRepositoryTests {
     private static final String USERNAME = UUID.randomUUID().toString();
 

@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.monitoring;
 import org.apereo.cas.config.CasCoreMonitorAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.BaseTicketRegistryTests;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import io.micrometer.observation.Observation;
@@ -11,6 +12,7 @@ import io.micrometer.observation.ObservationTextPublisher;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
@@ -35,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseTicketRegistryTests.SharedTestConfiguration.class
 })
 @Tag("Tickets")
+@ExtendWith(CasTestExtension.class)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @AutoConfigureObservability
 class CasCoreTicketsMonitoringConfigurationTests {

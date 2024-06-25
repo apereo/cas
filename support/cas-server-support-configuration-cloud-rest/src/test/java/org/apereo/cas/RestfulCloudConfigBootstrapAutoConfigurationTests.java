@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.config.RestfulCloudConfigBootstrapAutoConfiguration;
 import org.apereo.cas.config.RestfulPropertySourceLocator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -35,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
     RestfulCloudConfigBootstrapAutoConfiguration.class
 })
 @Tag("RestfulApi")
+@ExtendWith(CasTestExtension.class)
 class RestfulCloudConfigBootstrapAutoConfigurationTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
