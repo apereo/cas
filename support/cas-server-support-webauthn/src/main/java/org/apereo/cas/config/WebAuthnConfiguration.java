@@ -99,10 +99,11 @@ import java.util.stream.Collectors;
 class WebAuthnConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.mfa.web-authn.core.enabled").isTrue().evenIfMissing();
 
-    private static final int CACHE_MAX_SIZE = 10_000;
+    private static final int WEBAUTHN_SERVER_CACHE_SIZE = 10_000;
+    private static final int SESSION_MANAGER_CACHE_SIZE = 100;
 
-    private static <K, V> Cache<K, V> newCache() {
-        return Caffeine.newBuilder().maximumSize(CACHE_MAX_SIZE)
+    private static <K, V> Cache<K, V> newCache(final int cacheSize) {
+        return Caffeine.newBuilder().maximumSize(cacheSize)
             .expireAfterAccess(Duration.ofMinutes(5)).build();
     }
 
@@ -178,7 +179,7 @@ class WebAuthnConfiguration {
         public SessionManager webAuthnSessionManager(final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(SessionManager.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(DefaultSessionManager::new)
+                .supply(() -> new DefaultSessionManager(newCache(SESSION_MANAGER_CACHE_SIZE), newCache(SESSION_MANAGER_CACHE_SIZE)))
                 .otherwiseProxy()
                 .get();
         }
@@ -262,7 +263,7 @@ class WebAuthnConfiguration {
                 .appId(appId)
                 .build();
             return new WebAuthnServer(webAuthnCredentialRepository,
-                newCache(), newCache(), relyingParty,
+                newCache(WEBAUTHN_SERVER_CACHE_SIZE), newCache(WEBAUTHN_SERVER_CACHE_SIZE), relyingParty,
                 webAuthnSessionManager, casProperties);
         }
     }
