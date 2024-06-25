@@ -98,7 +98,7 @@ if ("${releaseRepositoryUrl}".contains("oss.sonatype.org")) {
         connectTimeout = java.time.Duration.ofSeconds(120)
         transitionCheckOptions {
             maxRetries.set(60)
-            delayBetween.set(java.time.Duration.ofSeconds(30))
+            delayBetween.set(java.time.Duration.ofSeconds(60))
         }
     }
 }
