@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @ActiveProfiles("dev")
 @Tag("Groovy")
-public class ConfigurationPropertiesLoaderFactoryTests {
+class ConfigurationPropertiesLoaderFactoryTests {
     @Autowired
     @Qualifier(ConfigurationPropertiesLoaderFactory.BEAN_NAME)
     private ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory;

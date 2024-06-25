@@ -117,7 +117,7 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }

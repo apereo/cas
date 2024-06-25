@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 @EnableWebSecurity
 @Tag("Web")
-public class DashboardControllerTests {
+class DashboardControllerTests {
     @Autowired
     private WebApplicationContext webApplicationContext;
 

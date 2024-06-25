@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("OIDC")
-public class OidcOfflineAccessScopeAttributeReleasePolicyTests {
+class OidcOfflineAccessScopeAttributeReleasePolicyTests {
     @Test
     void verifyOperation() throws Throwable {
         val policy = new OidcOfflineAccessScopeAttributeReleasePolicy();

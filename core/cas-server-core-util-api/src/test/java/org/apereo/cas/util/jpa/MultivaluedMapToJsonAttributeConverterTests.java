@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("JDBC")
-public class MultivaluedMapToJsonAttributeConverterTests {
+class MultivaluedMapToJsonAttributeConverterTests {
 
     @Test
     void verifyOperation() throws Exception {

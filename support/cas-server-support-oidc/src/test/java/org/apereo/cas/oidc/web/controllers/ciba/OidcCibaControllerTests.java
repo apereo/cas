@@ -54,7 +54,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "cas.authn.oidc.ciba.verification.mail.text=URL is ${verificationUrl}"
 })
 @EnabledIfListeningOnPort(port = 25000)
-public class OidcCibaControllerTests extends AbstractOidcTests {
+class OidcCibaControllerTests extends AbstractOidcTests {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();

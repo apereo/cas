@@ -51,7 +51,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
         CasCoreCookieAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

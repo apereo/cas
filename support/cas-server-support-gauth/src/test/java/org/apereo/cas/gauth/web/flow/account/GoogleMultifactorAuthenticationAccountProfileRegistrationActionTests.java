@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = "CasFeatureModule.AccountManagement.enabled=true")
 @Tag("WebflowMfaActions")
-public class GoogleMultifactorAuthenticationAccountProfileRegistrationActionTests {
+class GoogleMultifactorAuthenticationAccountProfileRegistrationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_ACCOUNT_PROFILE_GOOGLE_MFA_REGISTRATION)
     private Action googleAccountProfileRegistrationAction;

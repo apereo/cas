@@ -32,11 +32,6 @@ import org.springframework.context.annotation.Import;
  */
 public abstract class BaseThymeleafTests {
     @ImportAutoConfiguration({
-        MailSenderAutoConfiguration.class,
-        AopAutoConfiguration.class,
-        ThymeleafAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        RefreshAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
@@ -50,10 +45,16 @@ public abstract class BaseThymeleafTests {
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasThemesAutoConfiguration.class,
-        CasThymeleafAutoConfiguration.class
+        CasThymeleafAutoConfiguration.class,
+        MailSenderAutoConfiguration.class,
+        AopAutoConfiguration.class,
+        ThymeleafAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
+        RefreshAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }
+

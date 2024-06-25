@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Delegation")
-public class DelegatedProfileTerminationHandlerTests {
+class DelegatedProfileTerminationHandlerTests {
     @Autowired
     @Qualifier("delegatedProfileTerminationHandler")
     private SessionTerminationHandler delegatedProfileTerminationHandler;

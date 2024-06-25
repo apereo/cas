@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("SAML")
-public class OpenSamlConfigurationPropertiesSourceTests {
+class OpenSamlConfigurationPropertiesSourceTests {
     @Test
     void verifyOperation() {
         val source = ConfigurationService.getConfigurationProperties();

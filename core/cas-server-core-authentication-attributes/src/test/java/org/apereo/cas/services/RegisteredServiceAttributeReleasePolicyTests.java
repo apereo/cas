@@ -81,7 +81,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
         WebMvcAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
-    public class DefaultTests {
+    class DefaultTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 
@@ -352,7 +352,7 @@ class RegisteredServiceAttributeReleasePolicyTests {
         WebMvcAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
-    public class AttributeRepositoryTests {
+    class AttributeRepositoryTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 

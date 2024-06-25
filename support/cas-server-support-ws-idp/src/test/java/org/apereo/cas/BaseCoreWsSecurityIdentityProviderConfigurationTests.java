@@ -80,7 +80,7 @@ public abstract class BaseCoreWsSecurityIdentityProviderConfigurationTests {
         CasWsSecurityIdentityProviderAutoConfiguration.class,
         CasWsSecuritySecurityTokenAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import({CasRegisteredServicesTestConfiguration.class, CasPersonDirectoryTestConfiguration.class})
     public static class SharedTestConfiguration {
     }

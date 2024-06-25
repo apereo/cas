@@ -4,11 +4,13 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
+import org.apereo.cas.test.CasTestExtension;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.impl.HazelcastInstanceFactory;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     DelegatedAuthenticationSaml2ConfigurationTests.SAMLTestConfiguration.class,
     BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class
 })
+@ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class DelegatedAuthenticationSaml2ConfigurationTests {
     @Autowired

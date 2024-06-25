@@ -112,7 +112,7 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreEventsAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import(ElectronicFenceTestConfiguration.class)
     public static class SharedTestConfiguration {
     }

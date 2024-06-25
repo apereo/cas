@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.logout.slo.SingleLogoutContinuation;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedAuthenticationClientsTestConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
@@ -14,6 +15,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.SessionIndex;
@@ -46,6 +48,7 @@ import static org.mockito.Mockito.*;
     DelegatedAuthenticationClientsTestConfiguration.class,
     BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class
 })
+@ExtendWith(CasTestExtension.class)
 class DelegatedAuthenticationIdentityProviderLogoutActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_IDP_LOGOUT)

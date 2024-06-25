@@ -235,8 +235,6 @@ tasks.withType(Test).configureEach {
     forkEvery = 2000
     maxParallelForks = 8
     
-    systemProperty("spring.main.banner-mode", "off")
-    
     failFast = true
 
     def list = []

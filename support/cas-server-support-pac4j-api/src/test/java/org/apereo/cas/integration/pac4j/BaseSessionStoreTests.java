@@ -46,7 +46,7 @@ public abstract class BaseSessionStoreTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }

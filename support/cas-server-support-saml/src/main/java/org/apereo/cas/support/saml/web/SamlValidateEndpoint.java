@@ -94,7 +94,7 @@ public class SamlValidateEndpoint extends BaseCasRestActuatorEndpoint {
      * @return the map
      * @throws Throwable the throwable
      */
-    @PostMapping (produces = {
+    @PostMapping(produces = {
         MediaType.TEXT_XML_VALUE,
         MediaType.APPLICATION_XML_VALUE,
         MediaType.APPLICATION_JSON_VALUE

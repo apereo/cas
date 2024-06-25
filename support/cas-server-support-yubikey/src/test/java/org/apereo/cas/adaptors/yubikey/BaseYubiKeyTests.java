@@ -58,7 +58,7 @@ public abstract class BaseYubiKeyTests {
         CasCoreTicketsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import({YubiKeyTestConfiguration.class, CasPersonDirectoryTestConfiguration.class})
     public static class SharedTestConfiguration {
     }

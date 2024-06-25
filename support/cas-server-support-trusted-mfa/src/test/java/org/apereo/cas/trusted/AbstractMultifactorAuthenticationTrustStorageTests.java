@@ -139,7 +139,7 @@ public abstract class AbstractMultifactorAuthenticationTrustStorageTests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasMultifactorAuthnTrustAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import({CasRegisteredServicesTestConfiguration.class, GeoLocationServiceTestConfiguration.class})
     public static class SharedTestConfiguration {
     }

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Cipher")
 @SpringBootTest(classes = BaseInterruptFlowActionTests.SharedTestConfiguration.class)
-public class InterruptTrackingCookieCipherExecutorTests {
+class InterruptTrackingCookieCipherExecutorTests {
     @Autowired
     @Qualifier("interruptCookieCipherExecutor")
     private PropertyBoundCipherExecutor interruptCookieCipherExecutor;

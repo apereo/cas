@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
 @Tag("Audits")
 @SpringBootTest(classes = BaseAuditConfigurationTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DefaultAuditPrincipalResolverTests {
+class DefaultAuditPrincipalResolverTests {
     @Autowired
     @Qualifier("auditablePrincipalResolver")
     private PrincipalResolver auditablePrincipalResolver;

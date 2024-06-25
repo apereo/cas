@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.remote.cookie.crypto.signing.key=zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w"
     })
 @Tag("AuthenticationHandler")
-public class RemoteCookieAuthenticationHandlerTests {
+class RemoteCookieAuthenticationHandlerTests {
     @Autowired
     @Qualifier("remoteCookieAuthenticationHandler")
     private AuthenticationHandler remoteCookieAuthenticationHandler;

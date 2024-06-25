@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @TestPropertySource(properties = "cas.authn.adaptive.risk.ip.enabled=true")
 @Tag("WebflowConfig")
-public class RiskAuthenticationVerificationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class RiskAuthenticationVerificationWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier("riskVerificationFlowRegistry")
     private FlowDefinitionRegistry riskVerificationFlowRegistry;

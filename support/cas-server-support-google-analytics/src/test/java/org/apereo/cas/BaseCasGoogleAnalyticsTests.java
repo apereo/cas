@@ -47,7 +47,7 @@ public abstract class BaseCasGoogleAnalyticsTests {
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import({CasPersonDirectoryTestConfiguration.class, CasRegisteredServicesTestConfiguration.class})
     public static class SharedTestConfiguration {
     }

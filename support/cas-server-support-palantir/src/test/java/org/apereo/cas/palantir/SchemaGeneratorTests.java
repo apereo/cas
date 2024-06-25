@@ -36,7 +36,7 @@ import static org.junit.jupiter.params.provider.Arguments.*;
  * @since 7.0.0
  */
 @Tag("Simple")
-public class SchemaGeneratorTests {
+class SchemaGeneratorTests {
     @ParameterizedTest
     @MethodSource("getTestParameters")
     void verifyOperation(final Class mainClass, final List excluded, final Resource schemaResource) throws Exception {

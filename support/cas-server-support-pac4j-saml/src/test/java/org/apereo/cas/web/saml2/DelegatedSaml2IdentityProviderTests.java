@@ -2,10 +2,12 @@ package org.apereo.cas.web.saml2;
 
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.support.pac4j.authentication.attributes.GroovyAttributeConverter;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.profile.converter.AttributeConverter;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.metadata.DefaultSAML2MetadataSigner;
@@ -31,9 +33,8 @@ import static org.mockito.Mockito.*;
 @Tag("SAML2Web")
 public class DelegatedSaml2IdentityProviderTests {
 
-    @SpringBootTest(
-        classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class,
-        properties = "cas.custom.properties.delegation-test.enabled=false")
+    @SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class, properties = "cas.custom.properties.delegation-test.enabled=false")
+    @ExtendWith(CasTestExtension.class)
     abstract static class BaseTests {
         @Autowired
         @Qualifier("pac4jDelegatedClientFactory")

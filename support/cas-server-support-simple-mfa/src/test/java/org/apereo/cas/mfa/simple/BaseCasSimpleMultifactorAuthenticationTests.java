@@ -62,7 +62,7 @@ public abstract class BaseCasSimpleMultifactorAuthenticationTests {
         CasCoreAuditAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import(CasRegisteredServicesTestConfiguration.class)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public static class SharedTestConfiguration {

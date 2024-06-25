@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 @Tag("WebflowConfig")
 @Import(CasWebflowMonitoringTests.FlowExecutorTestConfiguration.class)
 @ImportAutoConfiguration(CasCoreMonitorAutoConfiguration.class)
-public class CasWebflowMonitoringTests extends BaseWebflowConfigurerTests {
+class CasWebflowMonitoringTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier("testFlowExecutor")
     private FlowExecutor testFlowExecutor;

@@ -37,11 +37,11 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
         CasSurrogateAuthenticationAutoConfiguration.class,
         CasSurrogateAuthenticationWebflowAutoConfiguration.class
     })
-    public static class SharedTestConfiguration {
+    public static class SharedTestAutoConfiguration {
     }
 
     @Nested
-    @ImportAutoConfiguration(DuoSecuritySurrogateWebflowConfigurerTests.SharedTestConfiguration.class)
+    @ImportAutoConfiguration(SharedTestAutoConfiguration.class)
     class DefaultTests extends BaseWebflowConfigurerTests {
 
         @Test
@@ -61,7 +61,7 @@ class DuoSecuritySurrogateWebflowConfigurerTests {
     @Nested
     @ImportAutoConfiguration({
         CasDuoSecurityAutoConfiguration.class,
-        DuoSecuritySurrogateWebflowConfigurerTests.SharedTestConfiguration.class
+        SharedTestAutoConfiguration.class
     })
     @TestPropertySource(properties = {
         "cas.authn.mfa.duo[0].duo-secret-key=aGKL0OndjtknbnVOWaFKosbbinNFEKXHxgXCJEBz",

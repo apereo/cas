@@ -55,7 +55,9 @@ import static org.mockito.Mockito.*;
     CasCoreTicketsAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
-    CasOAuth20AutoConfiguration.class,
+    CasOAuth20AutoConfiguration.class
+})
+@Import({
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     MemcachedTicketRegistryTests.MemcachedTicketRegistryTestConfiguration.class
 })

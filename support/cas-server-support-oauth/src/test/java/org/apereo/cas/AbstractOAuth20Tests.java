@@ -59,6 +59,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Acc
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -89,6 +90,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hc.core5.http.HttpStatus;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.HttpConstants;
@@ -145,10 +147,9 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = AbstractOAuth20Tests.SharedTestConfiguration.class,
     properties = {
-        "spring.main.allow-bean-definition-overriding=true",
-
         "cas.audit.engine.audit-format=JSON",
         "cas.audit.slf4j.use-single-line=true",
 
@@ -867,7 +868,7 @@ public abstract class AbstractOAuth20Tests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasOAuth20AutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import({
         CasOAuth20AuthenticationEventExecutionPlanTestConfiguration.class,
         AbstractOAuth20Tests.OAuth20TestConfiguration.class})

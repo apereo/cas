@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Attributes")
-public class DefaultAttributeRepositoryResolverTests {
+class DefaultAttributeRepositoryResolverTests {
 
     @Nested
     @SpringBootTest(classes = {

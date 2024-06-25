@@ -3,11 +3,13 @@ package org.apereo.cas.web.view;
 import org.apereo.cas.BaseThymeleafTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.validation.CasProtocolViewFactory;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mustache.MustacheAutoConfiguration;
@@ -33,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseThymeleafTests.SharedTestConfiguration.class
 })
 @Tag("Web")
+@ExtendWith(CasTestExtension.class)
 class CasMustacheViewTests {
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -71,4 +74,6 @@ class CasMustacheViewTests {
         assertDoesNotThrow(() -> view.render(model, new MockHttpServletRequest(), response));
         assertNotNull(response.getContentAsString());
     }
+
+
 }

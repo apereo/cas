@@ -48,7 +48,7 @@ public abstract class BaseInterruptFlowActionTests {
         CasInterruptAutoConfiguration.class,
         CasInterruptWebflowAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import(CasAuthenticationEventExecutionPlanTestConfiguration.class)
     public static class SharedTestConfiguration {
     }

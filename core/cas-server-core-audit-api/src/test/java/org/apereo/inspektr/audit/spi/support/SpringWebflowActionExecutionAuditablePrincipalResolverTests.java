@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  * @since 7.0.0
  */
 @Tag("Audits")
-public class SpringWebflowActionExecutionAuditablePrincipalResolverTests {
+class SpringWebflowActionExecutionAuditablePrincipalResolverTests {
     @ParameterizedTest
     @MethodSource("contextProvider")
     void verifyOperation(final Supplier<MockRequestContext> contextSupplier) {

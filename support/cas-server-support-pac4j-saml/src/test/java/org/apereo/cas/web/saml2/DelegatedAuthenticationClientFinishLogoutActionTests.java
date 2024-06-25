@@ -3,6 +3,7 @@ package org.apereo.cas.web.saml2;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.credentials.extractor.CredentialsExtractor;
 import org.pac4j.core.exception.http.FoundAction;
 import org.pac4j.core.logout.processor.LogoutProcessor;
@@ -38,6 +40,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("Delegation")
+@ExtendWith(CasTestExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class DelegatedAuthenticationClientFinishLogoutActionTests {
     

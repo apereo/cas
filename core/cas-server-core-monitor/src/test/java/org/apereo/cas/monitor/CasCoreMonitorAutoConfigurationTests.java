@@ -107,7 +107,7 @@ class CasCoreMonitorAutoConfigurationTests {
         CasCoreAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

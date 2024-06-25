@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ImportAutoConfiguration({CasOidcJwksJpaAutoConfiguration.class, CasHibernateJpaAutoConfiguration.class})
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
-public class OidcJpaJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
+class OidcJpaJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
     @Test
     public void verifyOperation() throws Throwable {
         val resource1 = oidcJsonWebKeystoreGeneratorService.generate();

@@ -25,6 +25,8 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasReportsAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -59,6 +61,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ExtendWith(CasTestExtension.class)
 public abstract class AbstractCasEndpointTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
@@ -108,7 +111,7 @@ public abstract class AbstractCasEndpointTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreValidationAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import({AbstractCasEndpointTests.AuditTestConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasRegisteredServicesTestConfiguration.class})

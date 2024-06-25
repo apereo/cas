@@ -203,7 +203,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
         CasCoreWebflowAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import({CasPersonDirectoryTestConfiguration.class, CasAuthenticationEventExecutionPlanTestConfiguration.class})
     public static class SharedTestConfiguration {
     }

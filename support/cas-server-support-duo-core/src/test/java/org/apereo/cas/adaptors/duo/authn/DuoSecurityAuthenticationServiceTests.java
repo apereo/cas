@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = "cas.http-client.host-name-verifier=none")
 @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
 @Tag("DuoSecurity")
-public class DuoSecurityAuthenticationServiceTests {
+class DuoSecurityAuthenticationServiceTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 

@@ -50,7 +50,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.mfa.duo[0].duo-api-host=https://localhost:${random.int[3000,9999]}",
         "cas.authn.mfa.duo[0].passwordless-authentication-enabled=true"
     })
-public class DuoSecurityPasswordlessUserAccountStoreTests {
+class DuoSecurityPasswordlessUserAccountStoreTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

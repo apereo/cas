@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
     JpaPersistenceUnitProviderTests.JpaTestConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class JpaPersistenceUnitProviderTests {
+class JpaPersistenceUnitProviderTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

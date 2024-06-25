@@ -38,7 +38,7 @@ dependencies {
     compileOnly libraries.hazelcast
     compileOnly libraries.mongo
     compileOnly libraries.ldaptive
-    implementation libraries.awss3
+    compileOnly libraries.awss3
 
     compileOnly project(":support:cas-server-support-aws")
     compileOnly project(":support:cas-server-support-mongo-core")

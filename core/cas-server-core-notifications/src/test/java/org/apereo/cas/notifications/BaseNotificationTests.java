@@ -28,7 +28,7 @@ public abstract class BaseNotificationTests {
         CasCoreUtilAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

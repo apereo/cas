@@ -65,126 +65,126 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
                     .resolve(saml.getMetadata().getIdentityProviderMetadataPath());
                 LOGGER.debug("Creating SAML2 identity provider [{}] with identity provider metadata [{}]", saml.getClientName(), identityProviderMetadataPath);
                 
-                val cfg = new SAML2Configuration(keystorePath, saml.getKeystorePassword(),
+                val configuration = new SAML2Configuration(keystorePath, saml.getKeystorePassword(),
                     saml.getPrivateKeyPassword(), identityProviderMetadataPath);
-                cfg.setForceKeystoreGeneration(saml.isForceKeystoreGeneration());
+                configuration.setForceKeystoreGeneration(saml.isForceKeystoreGeneration());
 
                 FunctionUtils.doIf(saml.getCertificateExpirationDays() > 0,
-                    __ -> cfg.setCertificateExpirationPeriod(Period.ofDays(saml.getCertificateExpirationDays()))).accept(saml);
-                FunctionUtils.doIfNotNull(saml.getResponseBindingType(), cfg::setResponseBindingType);
-                FunctionUtils.doIfNotNull(saml.getCertificateSignatureAlg(), cfg::setCertificateSignatureAlg);
+                    __ -> configuration.setCertificateExpirationPeriod(Period.ofDays(saml.getCertificateExpirationDays()))).accept(saml);
+                FunctionUtils.doIfNotNull(saml.getResponseBindingType(), configuration::setResponseBindingType);
+                FunctionUtils.doIfNotNull(saml.getCertificateSignatureAlg(), configuration::setCertificateSignatureAlg);
 
-                cfg.setPartialLogoutTreatedAsSuccess(saml.isPartialLogoutAsSuccess());
-                cfg.setResponseDestinationAttributeMandatory(saml.isResponseDestinationMandatory());
-                cfg.setSupportedProtocols(saml.getSupportedProtocols());
+                configuration.setPartialLogoutTreatedAsSuccess(saml.isPartialLogoutAsSuccess());
+                configuration.setResponseDestinationAttributeMandatory(saml.isResponseDestinationMandatory());
+                configuration.setSupportedProtocols(saml.getSupportedProtocols());
 
-                FunctionUtils.doIfNotBlank(saml.getRequestInitiatorUrl(), __ -> cfg.setRequestInitiatorUrl(saml.getRequestInitiatorUrl()));
-                FunctionUtils.doIfNotBlank(saml.getSingleLogoutServiceUrl(), __ -> cfg.setSingleSignOutServiceUrl(saml.getSingleLogoutServiceUrl()));
-                FunctionUtils.doIfNotBlank(saml.getLogoutResponseBindingType(), __ -> cfg.setSpLogoutResponseBindingType(saml.getLogoutResponseBindingType()));
+                FunctionUtils.doIfNotBlank(saml.getRequestInitiatorUrl(), __ -> configuration.setRequestInitiatorUrl(saml.getRequestInitiatorUrl()));
+                FunctionUtils.doIfNotBlank(saml.getSingleLogoutServiceUrl(), __ -> configuration.setSingleSignOutServiceUrl(saml.getSingleLogoutServiceUrl()));
+                FunctionUtils.doIfNotBlank(saml.getLogoutResponseBindingType(), __ -> configuration.setSpLogoutResponseBindingType(saml.getLogoutResponseBindingType()));
 
-                cfg.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
-                cfg.setMaximumAuthenticationLifetime(Beans.newDuration(saml.getMaximumAuthenticationLifetime()).toSeconds());
+                configuration.setCertificateNameToAppend(StringUtils.defaultIfBlank(saml.getCertificateNameToAppend(), saml.getClientName()));
+                configuration.setMaximumAuthenticationLifetime(Beans.newDuration(saml.getMaximumAuthenticationLifetime()).toSeconds());
                 val serviceProviderEntityId = SpringExpressionLanguageValueResolver.getInstance().resolve(saml.getServiceProviderEntityId());
-                cfg.setServiceProviderEntityId(serviceProviderEntityId);
+                configuration.setServiceProviderEntityId(serviceProviderEntityId);
 
                 val samlSpMetadata = StringUtils.defaultIfBlank(saml.getMetadata().getServiceProvider().getFileSystem().getLocation(),
                     Beans.getTempFilePath("samlSpMetadata", ".xml"));
                 FunctionUtils.doIfNotNull(samlSpMetadata, location -> {
                     val resource = ResourceUtils.getRawResourceFrom(location);
                     LOGGER.debug("Service provider metadata is located at [{}] with entity id [{}]", resource, serviceProviderEntityId);
-                    cfg.setServiceProviderMetadataResource(resource);
+                    configuration.setServiceProviderMetadataResource(resource);
                 });
 
-                cfg.setAuthnRequestBindingType(saml.getDestinationBinding());
-                cfg.setSpLogoutRequestBindingType(saml.getLogoutRequestBinding());
-                cfg.setForceAuth(saml.isForceAuth());
-                cfg.setPassive(saml.isPassive());
-                cfg.setSignMetadata(saml.isSignServiceProviderMetadata());
-                cfg.setMetadataSigner(new DefaultSAML2MetadataSigner(cfg));
-                cfg.setAuthnRequestSigned(saml.isSignAuthnRequest());
-                cfg.setSpLogoutRequestSigned(saml.isSignServiceProviderLogoutRequest());
-                cfg.setAcceptedSkew(Beans.newDuration(saml.getAcceptedSkew()).toSeconds());
-                cfg.setSslSocketFactory(casSslContext.getSslContext().getSocketFactory());
-                cfg.setHostnameVerifier(casSslContext.getHostnameVerifier());
+                configuration.setAuthnRequestBindingType(saml.getDestinationBinding());
+                configuration.setSpLogoutRequestBindingType(saml.getLogoutRequestBinding());
+                configuration.setForceAuth(saml.isForceAuth());
+                configuration.setPassive(saml.isPassive());
+                configuration.setSignMetadata(saml.isSignServiceProviderMetadata());
+                configuration.setMetadataSigner(new DefaultSAML2MetadataSigner(configuration));
+                configuration.setAuthnRequestSigned(saml.isSignAuthnRequest());
+                configuration.setSpLogoutRequestSigned(saml.isSignServiceProviderLogoutRequest());
+                configuration.setAcceptedSkew(Beans.newDuration(saml.getAcceptedSkew()).toSeconds());
+                configuration.setSslSocketFactory(casSslContext.getSslContext().getSocketFactory());
+                configuration.setHostnameVerifier(casSslContext.getHostnameVerifier());
 
-                FunctionUtils.doIfNotBlank(saml.getPrincipalIdAttribute(), __ -> cfg.setAttributeAsId(saml.getPrincipalIdAttribute()));
-                FunctionUtils.doIfNotBlank(saml.getNameIdAttribute(), __ -> cfg.setNameIdAttribute(saml.getNameIdAttribute()));
+                FunctionUtils.doIfNotBlank(saml.getPrincipalIdAttribute(), __ -> configuration.setAttributeAsId(saml.getPrincipalIdAttribute()));
+                FunctionUtils.doIfNotBlank(saml.getNameIdAttribute(), __ -> configuration.setNameIdAttribute(saml.getNameIdAttribute()));
 
-                cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
-                cfg.setWantsResponsesSigned(saml.isWantsResponsesSigned());
-                cfg.setAllSignatureValidationDisabled(saml.isAllSignatureValidationDisabled());
-                cfg.setUseNameQualifier(saml.isUseNameQualifier());
-                cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
+                configuration.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
+                configuration.setWantsResponsesSigned(saml.isWantsResponsesSigned());
+                configuration.setAllSignatureValidationDisabled(saml.isAllSignatureValidationDisabled());
+                configuration.setUseNameQualifier(saml.isUseNameQualifier());
+                configuration.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
 
                 Optional.ofNullable(samlMessageStoreFactory.getIfAvailable())
-                    .ifPresentOrElse(cfg::setSamlMessageStoreFactory, () -> {
+                    .ifPresentOrElse(configuration::setSamlMessageStoreFactory, () -> {
                         FunctionUtils.doIf("EMPTY".equalsIgnoreCase(saml.getMessageStoreFactory()),
-                            ig -> cfg.setSamlMessageStoreFactory(new EmptyStoreFactory())).accept(saml);
+                            ig -> configuration.setSamlMessageStoreFactory(new EmptyStoreFactory())).accept(saml);
                         FunctionUtils.doIf("SESSION".equalsIgnoreCase(saml.getMessageStoreFactory()),
-                            ig -> cfg.setSamlMessageStoreFactory(new HttpSessionStoreFactory())).accept(saml);
+                            ig -> configuration.setSamlMessageStoreFactory(new HttpSessionStoreFactory())).accept(saml);
                         if (saml.getMessageStoreFactory().contains(".")) {
                             FunctionUtils.doAndHandle(__ -> {
                                 val clazz = ClassUtils.getClass(getClass().getClassLoader(), saml.getMessageStoreFactory());
                                 val factory = (SAMLMessageStoreFactory) clazz.getDeclaredConstructor().newInstance();
-                                cfg.setSamlMessageStoreFactory(factory);
+                                configuration.setSamlMessageStoreFactory(factory);
                             });
                         }
                     });
 
                 FunctionUtils.doIf(saml.getAssertionConsumerServiceIndex() >= 0,
-                    __ -> cfg.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex())).accept(saml);
+                    __ -> configuration.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex())).accept(saml);
 
                 if (!saml.getAuthnContextClassRef().isEmpty()) {
-                    cfg.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase(Locale.ENGLISH));
-                    cfg.setAuthnContextClassRefs(saml.getAuthnContextClassRef());
+                    configuration.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase(Locale.ENGLISH));
+                    configuration.setAuthnContextClassRefs(saml.getAuthnContextClassRef());
                 }
 
-                FunctionUtils.doIfNotBlank(saml.getNameIdPolicyFormat(), __ -> cfg.setNameIdPolicyFormat(saml.getNameIdPolicyFormat()));
+                FunctionUtils.doIfNotBlank(saml.getNameIdPolicyFormat(), __ -> configuration.setNameIdPolicyFormat(saml.getNameIdPolicyFormat()));
 
                 if (!saml.getRequestedAttributes().isEmpty()) {
                     saml.getRequestedAttributes().stream()
                         .map(attribute -> new SAML2ServiceProviderRequestedAttribute(attribute.getName(), attribute.getFriendlyName(),
                             attribute.getNameFormat(), attribute.isRequired()))
-                        .forEach(attribute -> cfg.getRequestedServiceProviderAttributes().add(attribute));
+                        .forEach(attribute -> configuration.getRequestedServiceProviderAttributes().add(attribute));
                 }
 
                 if (!saml.getBlockedSignatureSigningAlgorithms().isEmpty()) {
-                    cfg.setBlackListedSignatureSigningAlgorithms(saml.getBlockedSignatureSigningAlgorithms());
+                    configuration.setBlackListedSignatureSigningAlgorithms(saml.getBlockedSignatureSigningAlgorithms());
                 }
                 if (!saml.getSignatureAlgorithms().isEmpty()) {
-                    cfg.setSignatureAlgorithms(saml.getSignatureAlgorithms());
+                    configuration.setSignatureAlgorithms(saml.getSignatureAlgorithms());
                 }
                 if (!saml.getSignatureReferenceDigestMethods().isEmpty()) {
-                    cfg.setSignatureReferenceDigestMethods(saml.getSignatureReferenceDigestMethods());
+                    configuration.setSignatureReferenceDigestMethods(saml.getSignatureReferenceDigestMethods());
                 }
 
                 FunctionUtils.doIfNotBlank(saml.getSignatureCanonicalizationAlgorithm(),
-                    __ -> cfg.setSignatureCanonicalizationAlgorithm(saml.getSignatureCanonicalizationAlgorithm()));
-                cfg.setProviderName(saml.getProviderName());
-                cfg.setNameIdPolicyAllowCreate(saml.getNameIdPolicyAllowCreate().toBoolean());
+                    __ -> configuration.setSignatureCanonicalizationAlgorithm(saml.getSignatureCanonicalizationAlgorithm()));
+                configuration.setProviderName(saml.getProviderName());
+                configuration.setNameIdPolicyAllowCreate(saml.getNameIdPolicyAllowCreate().toBoolean());
 
                 if (StringUtils.isNotBlank(saml.getSaml2AttributeConverter())) {
                     if (ScriptingUtils.isExternalGroovyScript(saml.getSaml2AttributeConverter())) {
                         FunctionUtils.doAndHandle(__ -> {
                             val resource = ResourceUtils.getResourceFrom(saml.getSaml2AttributeConverter());
                             val script = new WatchableGroovyScriptResource(resource);
-                            cfg.setSamlAttributeConverter(new GroovyAttributeConverter(script));
+                            configuration.setSamlAttributeConverter(new GroovyAttributeConverter(script));
                         });
                     } else {
                         FunctionUtils.doAndHandle(__ -> {
                             val clazz = ClassUtils.getClass(getClass().getClassLoader(), saml.getSaml2AttributeConverter());
                             val converter = (AttributeConverter) clazz.getDeclaredConstructor().newInstance();
-                            cfg.setSamlAttributeConverter(converter);
+                            configuration.setSamlAttributeConverter(converter);
                         });
                     }
                 }
 
                 val mappedAttributes = saml.getMappedAttributes();
                 if (!mappedAttributes.isEmpty()) {
-                    cfg.setMappedAttributes(CollectionUtils.convertDirectedListToMap(mappedAttributes));
+                    configuration.setMappedAttributes(CollectionUtils.convertDirectedListToMap(mappedAttributes));
                 }
 
-                val client = new SAML2Client(cfg);
+                val client = new SAML2Client(configuration);
                 LOGGER.debug("Created SAML2 delegated client [{}]", client);
                 return new ConfigurableDelegatedClient(client, saml);
             })

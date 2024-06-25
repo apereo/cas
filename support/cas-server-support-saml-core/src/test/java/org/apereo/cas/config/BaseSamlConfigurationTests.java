@@ -31,7 +31,7 @@ public abstract class BaseSamlConfigurationTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

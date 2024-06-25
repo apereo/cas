@@ -68,7 +68,7 @@ public abstract class BaseWebSecurityTests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasWebAppAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

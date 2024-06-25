@@ -70,7 +70,7 @@ class DynamoDbTicketRegistryFacilitatorTests {
     @Nested
     @EnabledIfListeningOnPort(port = 8000)
     @TestPropertySource(properties = "cas.ticket.registry.dynamo-db.billing-mode=PAY_PER_REQUEST")
-    public class DynamoDbTicketRegistryFacilitatorBillingModePayPerRequestTests
+    class DynamoDbTicketRegistryFacilitatorBillingModePayPerRequestTests
         extends BaseDynamoDbTicketRegistryFacilitatorTests {
         @Test
         void verifyCreateTableWithOnDemandBilling() throws Throwable {

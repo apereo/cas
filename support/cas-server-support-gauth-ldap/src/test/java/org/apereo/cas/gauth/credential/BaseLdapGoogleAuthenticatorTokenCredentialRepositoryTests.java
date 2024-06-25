@@ -69,7 +69,7 @@ public abstract class BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests 
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class
 
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

@@ -17,10 +17,12 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -53,8 +55,6 @@ import java.util.Set;
  */
 @SpringBootTest(classes = BaseWebflowConfigurerTests.SharedTestConfiguration.class)
 @TestPropertySource(properties = {
-    "spring.main.allow-bean-definition-overriding=true",
-
     "cas.tgc.crypto.alg=" + ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256,
     "cas.tgc.crypto.encryption.key=u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w",
     "cas.tgc.crypto.signing.key=zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w",
@@ -63,6 +63,7 @@ import java.util.Set;
     "cas.webflow.crypto.signing.key=oZeAR5pEXsolruu4OQYsQKxf-FCvFzSsKlsVaKmfIl6pNzoPm6zPW94NRS1af7vT-0bb3DpPBeksvBXjloEsiA"
 })
 @AutoConfigureObservability
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseWebflowConfigurerTests {
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
@@ -107,7 +108,7 @@ public abstract class BaseWebflowConfigurerTests {
         CasCoreAuditAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import(SharedTestConfiguration.AttributeRepositoryTestConfiguration.class)
     public static class SharedTestConfiguration {
 

@@ -1,10 +1,12 @@
 package org.apereo.cas.web.flow.authentication;
 
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,10 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @SpringBootTest(classes = BaseWebflowConfigurerTests.SharedTestConfiguration.class)
-@TestPropertySource(properties = {
-    "spring.main.allow-bean-definition-overriding=true",
-    "cas.authn.errors.groovy.location=classpath:GroovyCasWebflowAuthenticationExceptionHandler.groovy"
-})
+@ExtendWith(CasTestExtension.class)
+@TestPropertySource(properties = "cas.authn.errors.groovy.location=classpath:GroovyCasWebflowAuthenticationExceptionHandler.groovy")
 @Tag("Groovy")
 class GroovyCasWebflowAuthenticationExceptionHandlerTests {
     @Autowired
