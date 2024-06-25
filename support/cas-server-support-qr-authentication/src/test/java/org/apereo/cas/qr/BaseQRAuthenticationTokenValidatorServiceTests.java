@@ -50,7 +50,7 @@ public abstract class BaseQRAuthenticationTokenValidatorServiceTests {
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import(CasRegisteredServicesTestConfiguration.class)
     public static class SharedTestConfiguration {
     }

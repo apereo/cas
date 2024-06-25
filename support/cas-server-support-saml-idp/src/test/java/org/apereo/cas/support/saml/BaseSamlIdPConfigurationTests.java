@@ -423,7 +423,7 @@ public abstract class BaseSamlIdPConfigurationTests {
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import(SamlIdPMetadataTestConfiguration.class)
     public static class SharedTestConfiguration {
     }

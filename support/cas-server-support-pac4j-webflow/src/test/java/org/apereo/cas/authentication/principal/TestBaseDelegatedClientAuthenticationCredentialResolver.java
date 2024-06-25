@@ -22,7 +22,9 @@ public class TestBaseDelegatedClientAuthenticationCredentialResolver extends Bas
     @Override
     public List<DelegatedAuthenticationCandidateProfile> resolve(final RequestContext context,
                                                                  final ClientCredential credentials) {
-        val profile = resolveUserProfile(context, credentials).get();
+        val profile = resolveUserProfile(context, credentials)
+            .orElseThrow(() -> new IllegalArgumentException("Unable to resolve user profile"));
+        
         val p1 = DelegatedAuthenticationCandidateProfile.builder()
             .attributes(profile.getAttributes())
             .id(profile.getId())

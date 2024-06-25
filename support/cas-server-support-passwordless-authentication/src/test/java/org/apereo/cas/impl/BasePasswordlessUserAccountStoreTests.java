@@ -55,7 +55,7 @@ public abstract class BasePasswordlessUserAccountStoreTests {
         CasCoreCookieAutoConfiguration.class,
         CasThemesAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }

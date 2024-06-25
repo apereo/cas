@@ -2,10 +2,12 @@ package org.apereo.cas.support.oauth.logout;
 
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.logout.LogoutExecutionPlan;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +37,13 @@ import static org.mockito.Mockito.*;
     properties = {
         "cas.authn.attribute-repository.stub.attributes.uid=cas",
         "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
-        "spring.main.allow-bean-definition-overriding=true",
         "cas.authn.oauth.session-replication.replicate-sessions=true",
         "cas.ticket.track-descendant-tickets=false"
     })
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @Tag("OAuth")
+@ExtendWith(CasTestExtension.class)
 class OAuth20LogoutReplicateSessionTests {
 
     @Autowired

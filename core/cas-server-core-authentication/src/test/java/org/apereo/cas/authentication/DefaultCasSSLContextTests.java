@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultCasSSLContextTests {
 
     @ImportAutoConfiguration({RefreshAutoConfiguration.class, CasCoreWebAutoConfiguration.class})
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
     public static class SharedTestConfiguration {
         static String contactUrl(final String addr, final CasSSLContext context) throws Exception {

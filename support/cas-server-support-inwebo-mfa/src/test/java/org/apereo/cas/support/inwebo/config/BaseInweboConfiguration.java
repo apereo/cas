@@ -38,7 +38,7 @@ public class BaseInweboConfiguration {
         WebMvcAutoConfiguration.class,
         RefreshAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import({
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,

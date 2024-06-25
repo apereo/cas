@@ -6,10 +6,12 @@ import org.apereo.cas.support.saml.util.Saml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAssertionContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlIdPResponseCustomizer;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AuthenticatingAuthority;
 import org.opensaml.saml.saml2.core.AuthnContext;
@@ -33,6 +35,7 @@ import static org.mockito.Mockito.*;
  */
 @SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("SAML2Web")
+@ExtendWith(CasTestExtension.class)
 class DelegatedAuthenticationSamlIdPResponseCustomizerTests {
     @Autowired
     @Qualifier("delegatedSaml2IdPResponseCustomizer")

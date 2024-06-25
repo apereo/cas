@@ -2,6 +2,7 @@ package org.apereo.cas.web.saml2;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.ClientCredential;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -11,6 +12,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.SessionIndex;
@@ -39,11 +41,11 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-@SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class,
-    properties = "cas.authn.pac4j.core.session-replication.replicate-sessions=false")
+@ExtendWith(CasTestExtension.class)
+@SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class, properties = "cas.authn.pac4j.core.session-replication.replicate-sessions=false")
 @Tag("Delegation")
 public class DelegatedSaml2ClientLogoutActionTests {
-    
+
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_SAML2_CLIENT_LOGOUT)
     private Action delegatedSaml2ClientLogoutAction;
@@ -67,7 +69,7 @@ public class DelegatedSaml2ClientLogoutActionTests {
         val ticket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(),
             authentication, NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.addTicket(ticket);
-        
+
         val context = MockRequestContext.create(applicationContext);
         context.setMethod(HttpMethod.POST);
         val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
@@ -76,7 +78,7 @@ public class DelegatedSaml2ClientLogoutActionTests {
         profile.setId(UUID.randomUUID().toString());
         profile.setClientName("SAML2Client");
         manager.save(true, profile, false);
-        
+
         val saml2MessageContext = new SAML2MessageContext(new CallContext(webContext, delegatedClientDistributedSessionStore));
         val messageContext = new MessageContext();
         val logoutRequest = mock(LogoutRequest.class);

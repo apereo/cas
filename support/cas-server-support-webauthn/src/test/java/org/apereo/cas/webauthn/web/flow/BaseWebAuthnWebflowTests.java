@@ -54,7 +54,7 @@ public abstract class BaseWebAuthnWebflowTests {
         CasSupportActionsAutoConfiguration.class,
         CasWebAuthnAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }

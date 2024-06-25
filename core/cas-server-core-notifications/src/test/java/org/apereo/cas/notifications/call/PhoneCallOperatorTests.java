@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
     BaseNotificationTests.SharedTestConfiguration.class
 })
 @Tag("SMS")
-public class PhoneCallOperatorTests {
+class PhoneCallOperatorTests {
     @Autowired
     @Qualifier(CommunicationsManager.BEAN_NAME)
     private CommunicationsManager communicationsManager;

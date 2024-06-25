@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
  * @since 7.0.0
  */
 @Tag("Audits")
-public class AllAuditActionResolverTests extends BaseAuditResolverTests {
+class AllAuditActionResolverTests extends BaseAuditResolverTests {
     @Test
     void verifyBoolean() throws Throwable {
         val audit = getAuditAnnotation();

@@ -43,7 +43,7 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
         RefreshAutoConfiguration.class
     })
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public class DefaultTests {
+    class DefaultTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 

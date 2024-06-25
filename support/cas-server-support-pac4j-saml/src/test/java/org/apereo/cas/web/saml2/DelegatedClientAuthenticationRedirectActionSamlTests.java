@@ -4,6 +4,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
@@ -12,6 +13,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.client.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,6 +36,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Delegation")
 @SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 class DelegatedClientAuthenticationRedirectActionSamlTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_REDIRECT)

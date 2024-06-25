@@ -42,6 +42,7 @@ public abstract class BaseThemeTests {
     public void setup() {
         servicesManager.deleteAll();
     }
+    
     @ImportAutoConfiguration({
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
@@ -59,7 +60,7 @@ public abstract class BaseThemeTests {
         CasCoreAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

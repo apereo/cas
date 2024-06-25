@@ -31,7 +31,7 @@ public abstract class BaseAutoConfigurationTests {
         CasCoreTicketsAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

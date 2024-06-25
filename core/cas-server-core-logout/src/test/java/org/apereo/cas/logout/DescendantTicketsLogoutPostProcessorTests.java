@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = CasCoreLogoutAutoConfigurationTests.SharedTestConfiguration.class,
     properties = "cas.ticket.track-descendant-tickets=true")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DescendantTicketsLogoutPostProcessorTests {
+class DescendantTicketsLogoutPostProcessorTests {
     @Autowired
     @Qualifier("descendantTicketsLogoutPostProcessor")
     private LogoutPostProcessor descendantTicketsLogoutPostProcessor;

@@ -86,7 +86,7 @@ public abstract class BaseLdapAuthenticationHandlerTests {
         return "password";
     }
 
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @ImportAutoConfiguration({
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,

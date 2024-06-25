@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @TestPropertySource(properties = "cas.authn.adaptive.risk.ip.enabled=true")
 @Tag("WebflowActions")
-public class RiskAuthenticationCheckTokenActionTests extends BaseWebflowConfigurerTests {
+class RiskAuthenticationCheckTokenActionTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_RISK_AUTHENTICATION_TOKEN_CHECK)
     private Action riskCheckAction;

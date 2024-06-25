@@ -1,10 +1,12 @@
 package org.apereo.cas.web.saml2;
 
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
@@ -23,8 +25,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class,
-properties = "cas.authn.pac4j.core.session-replication.replicate-sessions=false")
+    properties = "cas.authn.pac4j.core.session-replication.replicate-sessions=false")
 @Tag("Delegation")
 public class DelegatedSaml2ClientTerminateSessionActionTests {
     @Autowired
@@ -37,7 +40,7 @@ public class DelegatedSaml2ClientTerminateSessionActionTests {
     @Autowired
     @Qualifier("delegatedClientDistributedSessionStore")
     private SessionStore delegatedClientDistributedSessionStore;
-    
+
     @Test
     void verifyOperation() throws Exception {
         val context = MockRequestContext.create(applicationContext);
@@ -51,5 +54,5 @@ public class DelegatedSaml2ClientTerminateSessionActionTests {
         val relayState = delegatedClientDistributedSessionStore.get(webContext, SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE);
         assertEquals("SAML2Client", relayState.orElseThrow().toString());
     }
-    
+
 }

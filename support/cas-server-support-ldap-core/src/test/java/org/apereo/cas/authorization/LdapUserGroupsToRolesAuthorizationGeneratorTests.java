@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnabledIfListeningOnPort(port = 10389)
 @Tag("LdapAttributes")
-class LdapUserGroupsToRolesAuthorizationGeneratorTests {
+public class LdapUserGroupsToRolesAuthorizationGeneratorTests {
 
     @BeforeAll
     public static void setup() throws Exception {

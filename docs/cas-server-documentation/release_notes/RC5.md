@@ -95,6 +95,18 @@ Please make sure you review the [SAML2 delegated authentication](../integration/
 This is potentially a breaking change. Make sure to review your build's dependencies and adjust modules to restore functionality.
 </p></div>
 
+### OpenID Connect Delegated Authentication
+
+Similar to the above entry, all functionality and components that allow CAS to route authentication requests to external OAuth or OIDC identity providers are now consolidated under a single module.
+This is done to simplify the setup in a more modular way and reduce the number of libraries and dependencies that would be pulled into the build.
+
+Please make sure you review the notes referenced [here](../integration/Delegate-Authentication-OAuth20.html) or [here](../integration/Delegate-Authentication-Generic-OpenID-Connect.html) 
+and include the correct module in your build. Note that this change affects any external identity provider, (such as GitHub, Facebook, Apple, etc), that uses the OAuth2 or OpenID Connect protocol.
+
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
+This is potentially a breaking change. Make sure to review your build's dependencies and adjust modules to restore functionality.
+</p></div>
+
 ## Other Stuff
 
 - [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) may prompt the user to proceed to account registration, when no contact information is found.

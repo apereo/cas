@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("Attributes")
-public class CachingPersonAttributeDaoTests {
+class CachingPersonAttributeDaoTests {
     private static final String DEFAULT_ATTR = "uid";
 
     private ComplexPersonAttributeDao stubDao;

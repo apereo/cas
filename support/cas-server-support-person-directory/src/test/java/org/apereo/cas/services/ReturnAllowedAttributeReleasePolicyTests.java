@@ -79,7 +79,7 @@ class ReturnAllowedAttributeReleasePolicyTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import(ReturnAllowedAttributeReleasePolicyTestConfiguration.class)
     @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
     static class BaseAttributeTests {

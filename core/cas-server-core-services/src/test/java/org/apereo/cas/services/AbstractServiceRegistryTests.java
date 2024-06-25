@@ -670,7 +670,7 @@ public abstract class AbstractServiceRegistryTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 

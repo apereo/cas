@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("WebApp")
-public class CasEurekaDiscoveryClientTests {
+class CasEurekaDiscoveryClientTests {
     @SpringBootTest(classes = {
         CasCoreWebAutoConfiguration.class,
         CasEurekaDiscoveryClientAutoConfiguration.class,

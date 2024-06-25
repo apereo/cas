@@ -44,7 +44,7 @@ public abstract class BasePrincipalAttributeRepositoryTests {
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class})
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import(SharedTestConfiguration.AttributeDefinitionsTestConfiguration.class)
     public static class SharedTestConfiguration {
 

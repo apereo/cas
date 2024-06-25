@@ -101,6 +101,7 @@ jobs:
           - CheckSpringConfigurationFactories
           - CheckMissingTestTagAnnotation
           - CheckEnforceLombokAnnotations
+          - CheckImportAutoConfiguration
           - CheckRequiredModuleAnnotationReferences
           - CheckMixingSpringBeanWithDependencyInjection
           - CheckMissingPuppeteerConfig

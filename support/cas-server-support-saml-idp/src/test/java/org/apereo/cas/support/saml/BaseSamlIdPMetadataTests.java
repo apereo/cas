@@ -56,7 +56,7 @@ public abstract class BaseSamlIdPMetadataTests {
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

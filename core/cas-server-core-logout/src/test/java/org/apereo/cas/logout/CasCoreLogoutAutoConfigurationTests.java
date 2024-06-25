@@ -92,7 +92,7 @@ class CasCoreLogoutAutoConfigurationTests {
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

@@ -11,9 +11,7 @@ import jakarta.xml.bind.annotation.*;
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "loginQueryReturn"
-})
+@XmlType(name = "", propOrder = "loginQueryReturn")
 @XmlRootElement(name = "loginQueryResponse")
 public class LoginQueryResponse {
 

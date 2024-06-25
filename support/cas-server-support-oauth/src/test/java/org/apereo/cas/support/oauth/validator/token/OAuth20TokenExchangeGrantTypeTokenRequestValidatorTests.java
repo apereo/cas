@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("OAuth")
-public class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOAuth20Tests {
+class OAuth20TokenExchangeGrantTypeTokenRequestValidatorTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauthTokenExchangeGrantTypeTokenRequestValidator")
     private OAuth20TokenRequestValidator validator;

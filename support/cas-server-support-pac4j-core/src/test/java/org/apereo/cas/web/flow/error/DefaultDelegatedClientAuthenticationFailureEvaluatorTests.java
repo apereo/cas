@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  * @since 7.1.0
  */
 @Tag("Delegation")
-public class DefaultDelegatedClientAuthenticationFailureEvaluatorTests {
+class DefaultDelegatedClientAuthenticationFailureEvaluatorTests {
 
     @Test
     public void verifyThrottling() {

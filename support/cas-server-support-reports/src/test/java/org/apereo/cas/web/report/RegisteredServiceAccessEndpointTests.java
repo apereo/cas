@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "management.endpoints.web.exposure.include=*"
     },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class RegisteredServiceAccessEndpointTests extends AbstractCasEndpointTests {
+class RegisteredServiceAccessEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("mockMvc")
     private MockMvc mockMvc;

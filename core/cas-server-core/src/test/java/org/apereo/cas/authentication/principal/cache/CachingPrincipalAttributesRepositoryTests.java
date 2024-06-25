@@ -80,7 +80,7 @@ class CachingPrincipalAttributesRepositoryTests {
         WebMvcAutoConfiguration.class,
         CachingPrincipalAttributesRepositoryTests.CacheTestConfiguration.class
     })
-    public class MergingTests {
+    class MergingTests {
         private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
             .defaultTypingEnabled(true).build().toObjectMapper();
 

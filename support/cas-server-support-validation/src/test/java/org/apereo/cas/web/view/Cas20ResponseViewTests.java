@@ -54,9 +54,11 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 
-@Import(Cas20ResponseViewTests.Cas20ResponseViewTestConfiguration.class)
-@ImportAutoConfiguration({
+@Import({
     CasPersonDirectoryTestConfiguration.class,
+    Cas20ResponseViewTests.Cas20ResponseViewTestConfiguration.class
+})
+@ImportAutoConfiguration({
     CasThymeleafAutoConfiguration.class,
     CasValidationAutoConfiguration.class
 })

@@ -132,7 +132,7 @@ public abstract class BaseConsentRepositoryTests {
         CasCoreAuditAutoConfiguration.class,
         CasCoreAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }

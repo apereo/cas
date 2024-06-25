@@ -2,14 +2,13 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientSessionManager;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,14 +20,9 @@ import org.pac4j.core.client.Client;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.redirect.RedirectionActionBuilder;
 import org.pac4j.jee.context.JEEContext;
-import org.pac4j.oauth.client.OAuth10Client;
-import org.pac4j.oauth.client.OAuth20Client;
-import org.pac4j.oidc.client.OidcClient;
-import org.pac4j.saml.client.SAML2Client;
-import org.pac4j.saml.state.SAML2StateGenerator;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.execution.RequestContext;
-
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
@@ -45,12 +39,6 @@ import java.util.stream.Collectors;
 @Getter
 public class DefaultDelegatedClientAuthenticationWebflowManager implements DelegatedClientAuthenticationWebflowManager {
 
-    private static final String OIDC_CLIENT_ID_SESSION_KEY = "OIDC_CLIENT_ID";
-
-    private static final String OAUTH20_CLIENT_ID_SESSION_KEY = "OAUTH20_CLIENT_ID";
-
-    private static final String OAUTH10_CLIENT_ID_SESSION_KEY = "OAUTH10_CLIENT_ID";
-
     private static final String CAS_CLIENT_ID_SESSION_KEY = "CAS_CLIENT_ID";
 
     private final DelegatedClientAuthenticationConfigurationContext configContext;
@@ -61,20 +49,13 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
         val ticket = storeDelegatedClientAuthenticationRequest(webContext, requestContext, client);
         rememberSelectedClientIfNecessary(webContext, client);
 
-        if (client instanceof final SAML2Client instance) {
-            trackSessionIdForSAML2Client(webContext, ticket, instance);
-        }
-        if (client instanceof final OAuth20Client instance) {
-            trackSessionIdForOAuth20Client(webContext, instance, ticket);
-        }
-        if (client instanceof final OidcClient instance) {
-            trackSessionIdForOidcClient(webContext, instance, ticket);
-        }
         if (client instanceof final CasClient instance) {
             trackSessionIdForCasClient(webContext, ticket, instance);
-        }
-        if (client instanceof OAuth10Client) {
-            trackSessionIdForOAuth10Client(webContext, ticket);
+        } else {
+            val builders = getDelegatedClientSessionManagers(client);
+            for (val builder : builders) {
+                builder.trackIdentifier(webContext, ticket, client);
+            }
         }
         return ticket;
     }
@@ -90,67 +71,10 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
         }));
         return service;
     }
-
-    /**
-     * Track session id for oauth10 client.
-     *
-     * @param webContext the web context
-     * @param ticket     the ticket
-     */
-    protected void trackSessionIdForOAuth10Client(final WebContext webContext,
-                                                  final TransientSessionTicket ticket) {
-        configContext.getSessionStore().set(webContext, OAUTH10_CLIENT_ID_SESSION_KEY, ticket.getId());
-    }
-
-    /**
-     * Track session id for cas client.
-     *
-     * @param webContext the web context
-     * @param ticket     the ticket
-     * @param casClient  the cas client
-     */
+    
     protected void trackSessionIdForCasClient(final WebContext webContext, final TransientSessionTicket ticket,
                                               final CasClient casClient) {
         configContext.getSessionStore().set(webContext, CAS_CLIENT_ID_SESSION_KEY, ticket.getId());
-    }
-
-    /**
-     * Track session id for oidc client.
-     *
-     * @param webContext the web context
-     * @param client     the client
-     * @param ticket     the ticket
-     */
-    protected void trackSessionIdForOidcClient(final WebContext webContext, final OidcClient client,
-                                               final TransientSessionTicket ticket) {
-        configContext.getSessionStore().set(webContext, OIDC_CLIENT_ID_SESSION_KEY, ticket.getId());
-    }
-
-    /**
-     * Track session id for oauth20 client.
-     *
-     * @param webContext the web context
-     * @param client     the client
-     * @param ticket     the ticket
-     */
-    protected void trackSessionIdForOAuth20Client(final WebContext webContext,
-                                                  final OAuth20Client client,
-                                                  final TransientSessionTicket ticket) {
-        configContext.getSessionStore().set(webContext, OAUTH20_CLIENT_ID_SESSION_KEY, ticket.getId());
-    }
-
-    /**
-     * Track session id for client.
-     *
-     * @param webContext  the web context
-     * @param ticket      the ticket
-     * @param saml2Client the saml 2 client
-     */
-    protected void trackSessionIdForSAML2Client(final WebContext webContext,
-                                                final TransientSessionTicket ticket,
-                                                final SAML2Client saml2Client) {
-        configContext.getSessionStore().set(webContext,
-            SAML2StateGenerator.SAML_RELAY_STATE_ATTRIBUTE, ticket.getId());
     }
 
     protected TransientSessionTicket storeDelegatedClientAuthenticationRequest(
@@ -189,6 +113,17 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
             .collect(Collectors.toList());
     }
 
+    private List<DelegatedClientSessionManager> getDelegatedClientSessionManagers(final Client client) {
+        val builders = new ArrayList<>(configContext.getApplicationContext()
+            .getBeansOfType(DelegatedClientSessionManager.class)
+            .values()
+            .stream()
+            .filter(builder -> builder.supports(client))
+            .toList());
+        AnnotationAwareOrderComparator.sort(builders);
+        return builders;
+    }
+    
     protected void rememberSelectedClientIfNecessary(final JEEContext webContext, final Client client) {
         val cookieProps = configContext.getCasProperties().getAuthn().getPac4j().getCookie();
         if (cookieProps.isEnabled()) {
@@ -237,26 +172,23 @@ public class DefaultDelegatedClientAuthenticationWebflowManager implements Deleg
     }
 
     protected String getDelegatedClientId(final WebContext webContext, final Client client) {
-        var clientId = webContext.getRequestParameter(PARAMETER_CLIENT_ID)
-            .map(String::valueOf).orElse(StringUtils.EMPTY);
-        if (StringUtils.isBlank(clientId)) {
-            if (client instanceof SAML2Client) {
-                LOGGER.debug("Client identifier could not found in request parameters. Looking at relay-state for the SAML2 client");
-                clientId = webContext.getRequestParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE)
-                    .map(String::valueOf).orElse(StringUtils.EMPTY);
-            }
-        }
-
-        clientId = getDelegatedClientIdFromSessionStore(webContext, client, clientId, OAuth20Client.class, OAUTH20_CLIENT_ID_SESSION_KEY);
-        clientId = getDelegatedClientIdFromSessionStore(webContext, client, clientId, OidcClient.class, OIDC_CLIENT_ID_SESSION_KEY);
-        clientId = getDelegatedClientIdFromSessionStore(webContext, client, clientId, OAuth10Client.class, OAUTH10_CLIENT_ID_SESSION_KEY);
+        var clientId = webContext.getRequestParameter(PARAMETER_CLIENT_ID).map(String::valueOf).orElse(StringUtils.EMPTY);
         clientId = getDelegatedClientIdFromSessionStore(webContext, client, clientId, CasClient.class, CAS_CLIENT_ID_SESSION_KEY);
 
+        if (StringUtils.isBlank(clientId) && client != null) {
+            val builders = getDelegatedClientSessionManagers(client);
+            val iterator = builders.iterator();
+            while (StringUtils.isBlank(clientId) && iterator.hasNext()) {
+                val builder = iterator.next();
+                clientId = builder.retrieveIdentifier(webContext, client);
+            }
+        }
         LOGGER.debug("Located delegated client identifier [{}]", clientId);
         return clientId;
     }
 
-    protected String getDelegatedClientIdFromSessionStore(final WebContext webContext, final Client client, final String clientId,
+    protected String getDelegatedClientIdFromSessionStore(final WebContext webContext, final Client client,
+                                                          final String clientId,
                                                           final Class clientClass, final String key) {
         if (StringUtils.isBlank(clientId) && client != null && clientClass.isAssignableFrom(client.getClass())) {
             LOGGER.debug("Client identifier could not be found in request parameters. Looking at session store for the [{}] client", clientClass);

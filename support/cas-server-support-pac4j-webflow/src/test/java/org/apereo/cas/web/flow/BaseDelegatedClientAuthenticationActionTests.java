@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.MockRequestContext;
@@ -16,6 +17,7 @@ import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Slf4j
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseDelegatedClientAuthenticationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION)

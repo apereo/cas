@@ -54,7 +54,7 @@ public abstract class BaseRadiusMultifactorAuthenticationTests {
         CasRadiusMultifactorAuthenticationAutoConfiguration.RadiusMultifactorTrustConfiguration.class,
         CasRadiusMultifactorAuthenticationAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }

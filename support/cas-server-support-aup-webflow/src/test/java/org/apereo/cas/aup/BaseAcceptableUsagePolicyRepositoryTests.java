@@ -130,7 +130,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         CasCoreAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class})
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import({CasRegisteredServicesTestConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasPersonDirectoryTestConfiguration.class})

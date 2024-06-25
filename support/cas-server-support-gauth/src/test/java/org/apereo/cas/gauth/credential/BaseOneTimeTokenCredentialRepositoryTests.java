@@ -230,7 +230,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
         CasCoreUtilAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

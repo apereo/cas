@@ -36,7 +36,7 @@ abstract class BasePalantirTests {
         CasPersonDirectoryAutoConfiguration.class,
         CasPalantirAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

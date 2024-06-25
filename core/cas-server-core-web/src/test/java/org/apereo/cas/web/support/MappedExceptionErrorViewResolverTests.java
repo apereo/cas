@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     WebMvcAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class
 })
-public class MappedExceptionErrorViewResolverTests {
+class MappedExceptionErrorViewResolverTests {
     @Autowired
     @Qualifier("defaultMappedExceptionErrorViewResolver")
     private ErrorViewResolver defaultMappedExceptionErrorViewResolver;

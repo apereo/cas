@@ -16,6 +16,7 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -54,6 +55,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -93,6 +95,7 @@ import static org.junit.jupiter.api.Assumptions.*;
         "cas.ticket.tgt.core.only-track-most-recent-session=false",
         "cas.ticket.registry.cleaner.schedule.enabled=false"
     })
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 1;
@@ -721,7 +724,7 @@ public abstract class BaseTicketRegistryTests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("OAuthToken")
-public class OAuth20AccessTokenCompactorTests extends AbstractOAuth20Tests {
+class OAuth20AccessTokenCompactorTests extends AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauth20AccessTokenTicketCompactor")
     private TicketCompactor<OAuth20AccessToken> oauth20AccessTokenTicketCompactor;

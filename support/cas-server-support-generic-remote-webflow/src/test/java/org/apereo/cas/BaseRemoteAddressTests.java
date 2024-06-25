@@ -50,7 +50,7 @@ public abstract class BaseRemoteAddressTests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasRemoteAuthenticationAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import({CasPersonDirectoryTestConfiguration.class,
         CasRegisteredServicesTestConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class})

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Audits")
-public class ClientInfoTests {
+class ClientInfoTests {
     @Test
     void verifyClientInfoCreation() throws Throwable {
         try {

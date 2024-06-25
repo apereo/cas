@@ -83,7 +83,7 @@ public abstract class BaseSaml2DelegatedAuthenticationTests {
         AopAutoConfiguration.class,
         CasDelegatedAuthenticationSaml2AutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @EnableWebMvc
     @Import(BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
     public static class SharedTestConfiguration {

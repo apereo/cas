@@ -23,14 +23,14 @@ class DelegatedClientAuthenticationMetaDataPopulatorTests {
     void verifySupports() throws Throwable {
         val populator = new DelegatedClientAuthenticationMetaDataPopulator();
         val clientCreds = new ClientCredential(
-            new UsernamePasswordCredentials("casuser", "pa$$"), "FacebookClient");
+            new UsernamePasswordCredentials("casuser", "pa$$"), "CasClient");
         assertTrue(populator.supports(clientCreds));
     }
 
     @Test
     void verifyProfileWithCreds() throws Throwable {
         val populator = new DelegatedClientAuthenticationMetaDataPopulator();
-        val clientCreds = new ClientCredential("FacebookClient", new CommonProfile());
+        val clientCreds = new ClientCredential("CasClient", new CommonProfile());
         assertNotNull(clientCreds.getUserProfile());
         assertNotNull(clientCreds.getId());
         assertTrue(populator.supports(clientCreds));
@@ -40,7 +40,7 @@ class DelegatedClientAuthenticationMetaDataPopulatorTests {
     void verifyAttribute() throws Throwable {
         val populator = new DelegatedClientAuthenticationMetaDataPopulator();
         val credentials = new ClientCredential(
-            new UsernamePasswordCredentials("casuser", "pa$$"), "FacebookClient");
+            new UsernamePasswordCredentials("casuser", "pa$$"), "CasClient");
         val builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
         populator.populateAttributes(builder, CoreAuthenticationTestUtils.getAuthenticationTransactionFactory().newTransaction(credentials));
         val auth = builder.build();

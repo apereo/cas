@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("Attributes")
-public class MergingPersonAttributeDaoImplTests {
+class MergingPersonAttributeDaoImplTests {
     private static final String QUERY_ATTR = "username";
 
     private StubPersonAttributeDao sourceNull;

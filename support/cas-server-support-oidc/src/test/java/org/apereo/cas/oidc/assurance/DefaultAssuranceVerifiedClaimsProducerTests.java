@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("OIDC")
-public class DefaultAssuranceVerifiedClaimsProducerTests {
+class DefaultAssuranceVerifiedClaimsProducerTests {
 
     @TestPropertySource(properties = "cas.authn.oidc.identity-assurance.verification-source.location=classpath:assurance/id-1.json")
     abstract class BaseTests extends AbstractOidcTests {

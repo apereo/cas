@@ -36,7 +36,7 @@ public abstract class BaseCasJmxTests {
         CasCoreAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

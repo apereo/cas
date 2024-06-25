@@ -40,10 +40,6 @@ import org.springframework.context.annotation.Import;
  */
 public abstract class BaseSurrogateAuthenticationTests {
     @ImportAutoConfiguration({
-        WebMvcAutoConfiguration.class,
-        MailSenderAutoConfiguration.class,
-        AopAutoConfiguration.class,
-        RefreshAutoConfiguration.class,
         CasSurrogateAuthenticationAutoConfiguration.class,
         CasSurrogateAuthenticationWebflowAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
@@ -61,9 +57,13 @@ public abstract class BaseSurrogateAuthenticationTests {
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreSamlAutoConfiguration.class,
-        CasDelegatedAuthenticationAutoConfiguration.class
+        CasDelegatedAuthenticationAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
+        MailSenderAutoConfiguration.class,
+        AopAutoConfiguration.class,
+        RefreshAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import({AuthenticationTestConfiguration.class, CasPersonDirectoryTestConfiguration.class})
     public static class SharedTestConfiguration {
     }

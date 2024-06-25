@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "management.endpoint.ticketRegistry.enabled=true")
 @Tag("ActuatorEndpoint")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class TicketRegistryEndpointTests extends AbstractCasEndpointTests {
+class TicketRegistryEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("ticketRegistryEndpoint")
     private TicketRegistryEndpoint ticketRegistryEndpoint;

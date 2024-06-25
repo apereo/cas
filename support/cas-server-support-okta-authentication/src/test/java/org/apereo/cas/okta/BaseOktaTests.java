@@ -48,7 +48,7 @@ public abstract class BaseOktaTests {
         CasCoreCookieAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class})
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import({CasRegisteredServicesTestConfiguration.class, CasAuthenticationEventExecutionPlanTestConfiguration.class})
     public static class SharedTestConfiguration {
     }

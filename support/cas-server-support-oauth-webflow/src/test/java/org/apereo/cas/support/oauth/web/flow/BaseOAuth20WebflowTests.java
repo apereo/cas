@@ -31,7 +31,7 @@ public abstract class BaseOAuth20WebflowTests {
         CasCoreAutoConfiguration.class,
         CasOAuth20AutoConfiguration.class,
         CasOAuth20WebflowAutoConfiguration.class})
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
     public static class SharedTestConfiguration {
     }

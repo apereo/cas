@@ -40,7 +40,7 @@ public abstract class BaseX509Tests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

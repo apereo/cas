@@ -23,7 +23,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiresModule(name = "cas-server-support-pac4j-webflow")
+@RequiresModule(name = "cas-server-support-pac4j-oidc")
 @Getter
 @Setter
 @Accessors(chain = true)

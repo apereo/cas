@@ -6,6 +6,7 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.RandomUtils;
@@ -19,6 +20,7 @@ import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.common.messaging.context.SAMLMetadataContext;
 import org.opensaml.saml.common.messaging.context.SAMLPeerEntityContext;
@@ -33,12 +35,6 @@ import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.session.JEESessionStore;
-import org.pac4j.oauth.client.OAuth10Client;
-import org.pac4j.oauth.client.OAuth20Client;
-import org.pac4j.oauth.config.OAuth10Configuration;
-import org.pac4j.oauth.config.OAuth20Configuration;
-import org.pac4j.oidc.client.OidcClient;
-import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.pac4j.saml.context.SAML2MessageContext;
@@ -63,6 +59,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.pac4j.core.session-replication.cookie.crypto.alg=" + ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256,
@@ -103,48 +100,7 @@ class DefaultDelegatedClientAuthenticationWebflowManagerTests {
             .setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
         context = new JEEContext(requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
     }
-
-    @Test
-    void verifyOidcStoreOperation() throws Throwable {
-        val config = new OidcConfiguration();
-        config.setClientId(UUID.randomUUID().toString());
-        config.setSecret(UUID.randomUUID().toString());
-        val client = new OidcClient(config);
-        client.setConfiguration(config);
-        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
-        assertNotNull(ticketRegistry.getTicket(ticket.getId()));
-        val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
-        assertNotNull(service);
-        assertNull(ticketRegistry.getTicket(ticket.getId()));
-    }
-
-    @Test
-    void verifyOAuth2StoreOperation() throws Throwable {
-        val config = new OAuth20Configuration();
-        config.setKey(UUID.randomUUID().toString());
-        config.setSecret(UUID.randomUUID().toString());
-        val client = new OAuth20Client();
-        client.setConfiguration(config);
-        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
-        assertNotNull(ticketRegistry.getTicket(ticket.getId()));
-        val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
-        assertNotNull(service);
-        assertNull(ticketRegistry.getTicket(ticket.getId()));
-    }
-
-    @Test
-    void verifyOAuth1StoreOperation() throws Throwable {
-        val config = new OAuth10Configuration();
-        config.setKey(UUID.randomUUID().toString());
-        config.setSecret(UUID.randomUUID().toString());
-        val client = new OAuth10Client();
-        client.setConfiguration(config);
-        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
-        assertNotNull(ticketRegistry.getTicket(ticket.getId()));
-        val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
-        assertNotNull(service);
-        assertNull(ticketRegistry.getTicket(ticket.getId()));
-    }
+    
 
     @Test
     void verifyCasStoreOperation() throws Throwable {

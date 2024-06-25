@@ -2,9 +2,11 @@ package org.apereo.cas.web.saml2;
 
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientsEndpointContributor;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.client.BaseClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Delegation")
 @SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 public class DelegatedClientsSaml2EndpointContributorTests {
     @Autowired
     @Qualifier("delegatedClientsSaml2EndpointContributor")

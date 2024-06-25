@@ -5,6 +5,7 @@ import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClientLogoutRequest;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
@@ -16,6 +17,7 @@ import lombok.val;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes =
-    BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
+@ExtendWith(CasTestExtension.class)
+@SpringBootTest(classes =BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("Delegation")
 class DelegatedAuthenticationClientLogoutActionTests {
     @Autowired

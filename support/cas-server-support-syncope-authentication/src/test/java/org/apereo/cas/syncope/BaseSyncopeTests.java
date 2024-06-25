@@ -117,7 +117,7 @@ public abstract class BaseSyncopeTests {
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class})
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import({CasRegisteredServicesTestConfiguration.class, CasAuthenticationEventExecutionPlanTestConfiguration.class})
     public static class SharedTestConfiguration {
     }

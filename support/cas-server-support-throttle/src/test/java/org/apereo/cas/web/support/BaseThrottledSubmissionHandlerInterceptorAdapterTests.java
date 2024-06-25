@@ -153,7 +153,7 @@ public abstract class BaseThrottledSubmissionHandlerInterceptorAdapterTests {
         CasCoreAuditAutoConfiguration.class,
         CasThrottlingAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import(CasRegisteredServicesTestConfiguration.class)
     public static class SharedTestConfiguration {
     }

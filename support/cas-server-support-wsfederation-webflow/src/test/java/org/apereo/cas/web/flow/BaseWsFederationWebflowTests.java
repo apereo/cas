@@ -53,7 +53,7 @@ class BaseWsFederationWebflowTests {
         CasWsFederationAuthenticationAutoConfiguration.class,
         CasWsFederationAuthenticationWebflowAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import({CasRegisteredServicesTestConfiguration.class, CasPersonDirectoryTestConfiguration.class})
     public static class SharedTestConfiguration {
     }

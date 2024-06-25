@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -9,6 +10,7 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,9 +28,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Delegation")
 class DelegatedAuthenticationGenerateClientsActionTests {
 
-    @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
-        properties = "cas.authn.pac4j.core.discovery-selection.selection-type=MENU")
+    @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class, properties = "cas.authn.pac4j.core.discovery-selection.selection-type=MENU")
     @Nested
+    @ExtendWith(CasTestExtension.class)
     class MenuSelectionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CREATE_CLIENTS)
@@ -58,9 +60,9 @@ class DelegatedAuthenticationGenerateClientsActionTests {
         return MockRequestContext.create().withUserAgent("Mozilla/5.0 (Windows NT 10.0; WOW64");
     }
 
-    @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
-        properties = "cas.authn.pac4j.core.discovery-selection.selection-type=DYNAMIC")
+    @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class, properties = "cas.authn.pac4j.core.discovery-selection.selection-type=DYNAMIC")
     @Nested
+    @ExtendWith(CasTestExtension.class)
     class DynamicSelectionTests {
         @Autowired
         @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CREATE_CLIENTS)

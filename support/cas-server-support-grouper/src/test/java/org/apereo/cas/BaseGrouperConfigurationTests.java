@@ -57,7 +57,7 @@ public abstract class BaseGrouperConfigurationTests {
         CasPersonDirectoryAutoConfiguration.class,
         CasGrouperAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import({CasRegisteredServicesTestConfiguration.class, GrouperTestConfiguration.class})
     public static class SharedTestConfiguration {
     }

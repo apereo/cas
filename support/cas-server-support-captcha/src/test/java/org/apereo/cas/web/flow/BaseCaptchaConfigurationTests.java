@@ -51,7 +51,7 @@ public abstract class BaseCaptchaConfigurationTests {
         CasThemesAutoConfiguration.class
 
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }

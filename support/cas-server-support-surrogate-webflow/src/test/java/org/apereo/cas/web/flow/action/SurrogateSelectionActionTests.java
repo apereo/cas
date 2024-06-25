@@ -3,12 +3,14 @@ package org.apereo.cas.web.flow.action;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,8 +28,8 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("WebflowActions")
-@SpringBootTest(classes = BaseSurrogateAuthenticationTests.SharedTestConfiguration.class,
-    properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
+@SpringBootTest(classes = BaseSurrogateAuthenticationTests.SharedTestConfiguration.class, properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
+@ExtendWith(CasTestExtension.class)
 class SurrogateSelectionActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_SELECT_SURROGATE_ACTION)

@@ -41,12 +41,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  */
 public abstract class BaseDelegatedAuthenticationTests {
     @ImportAutoConfiguration({
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        ThymeleafAutoConfiguration.class,
-        MockMvcAutoConfiguration.class,
-        ErrorMvcAutoConfiguration.class,
-        AopAutoConfiguration.class,
         CasDelegatedAuthenticationAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
@@ -62,9 +56,15 @@ public abstract class BaseDelegatedAuthenticationTests {
         CasCoreCookieAutoConfiguration.class,
         CasThymeleafAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-        CasCoreAuditAutoConfiguration.class
+        CasCoreAuditAutoConfiguration.class,
+        RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
+        ThymeleafAutoConfiguration.class,
+        MockMvcAutoConfiguration.class,
+        ErrorMvcAutoConfiguration.class,
+        AopAutoConfiguration.class
     })
-    @SpringBootConfiguration
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @EnableWebMvc
     @Import({DelegatedAuthenticationWebflowTestConfiguration.class, DelegatedAuthenticationClientsTestConfiguration.class})
     public static class SharedTestConfiguration {

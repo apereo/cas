@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpRequestUtils;
@@ -9,6 +10,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Delegation")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 class DelegatedClientAuthenticationStoreWebflowStateActionTests {
     @Autowired

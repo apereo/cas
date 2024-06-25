@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("RegisteredService")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class ChainingRegisteredServiceAttributeReleaseActivationCriteriaTests {
+class ChainingRegisteredServiceAttributeReleaseActivationCriteriaTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 

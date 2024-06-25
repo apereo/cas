@@ -7,6 +7,7 @@ import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.pac4j.authentication.clients.ConfigurableDelegatedClientBuilder;
+import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientSessionManager;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientsEndpointContributor;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -18,12 +19,14 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.DelegatedAuthenticationSaml2WebflowConfigurer;
+import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import org.apereo.cas.web.flow.actions.logout.DelegatedSaml2ClientFinishLogoutAction;
 import org.apereo.cas.web.flow.actions.logout.DelegatedSaml2ClientLogoutAction;
 import org.apereo.cas.web.flow.actions.logout.DelegatedSaml2ClientTerminateSessionAction;
 import org.apereo.cas.web.saml2.DelegatedClientSaml2Builder;
+import org.apereo.cas.web.saml2.DelegatedClientSaml2SessionManager;
 import org.apereo.cas.web.saml2.DelegatedClientsSaml2EndpointContributor;
 import org.apereo.cas.web.saml2.DelegatedSaml2ClientMetadataController;
 import org.apache.commons.lang3.StringUtils;
@@ -53,12 +56,7 @@ import java.util.List;
 @Configuration(value = "DelegatedAuthenticationSaml2Configuration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class DelegatedAuthenticationSaml2Configuration {
-
-
-
-
-
-
+    
     @Configuration(value = "DelegatedAuthenticationSAMLWebConfiguration", proxyBeanMethods = false)
     static class DelegatedAuthenticationSAMLWebConfiguration {
         
@@ -189,6 +187,15 @@ class DelegatedAuthenticationSaml2Configuration {
             @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext,
             final CasConfigurationProperties casProperties) {
             return new DelegatedClientSaml2Builder(casSslContext, samlMessageStoreFactory, casProperties);
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "delegatedClientSaml2SessionManager")
+        public DelegatedClientSessionManager delegatedClientSaml2SessionManager(
+            @Qualifier(DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
+            final ObjectProvider<DelegatedClientAuthenticationConfigurationContext> contextProvider) {
+            return new DelegatedClientSaml2SessionManager(contextProvider);
         }
     }
 }

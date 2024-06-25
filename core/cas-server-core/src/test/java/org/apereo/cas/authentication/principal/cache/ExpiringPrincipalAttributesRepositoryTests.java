@@ -75,7 +75,7 @@ class ExpiringPrincipalAttributesRepositoryTests {
         WebMvcAutoConfiguration.class,
         ExpiringPrincipalAttributesRepositoryTests.CacheTestConfiguration.class
     })
-    public class CachingTests {
+    class CachingTests {
 
         @Autowired
         private ConfigurableApplicationContext applicationContext;

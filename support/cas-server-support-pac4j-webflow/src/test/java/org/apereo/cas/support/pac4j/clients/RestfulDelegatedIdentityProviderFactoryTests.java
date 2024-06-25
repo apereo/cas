@@ -115,9 +115,6 @@ class RestfulDelegatedIdentityProviderFactoryTests {
         @Test
         void verifyAction() throws Throwable {
             val clients = new HashMap<String, Object>();
-            clients.put("cas.authn.pac4j.github.client-name", "name");
-            clients.put("cas.authn.pac4j.github.id", "id");
-            clients.put("cas.authn.pac4j.github.secret", "qazxsedc");
             clients.put("cas.authn.pac4j.cas[0].login-url", "https://localhost:8444/cas/login");
             clients.put("cas.authn.pac4j.cas[0].protocol", "CAS30");
 
@@ -128,7 +125,7 @@ class RestfulDelegatedIdentityProviderFactoryTests {
 
                 var clientsFound = List.copyOf(delegatedIdentityProviderFactory.build());
                 assertNotNull(clientsFound);
-                assertEquals(2, clientsFound.size());
+                assertEquals(1, clientsFound.size());
                 assertEquals(casProperties.getServer().getLoginUrl(), ((IndirectClient) clientsFound.getFirst()).getCallbackUrl());
 
                 /*
@@ -136,7 +133,7 @@ class RestfulDelegatedIdentityProviderFactoryTests {
                  */
                 clientsFound = List.copyOf(delegatedIdentityProviderFactory.build());
                 assertNotNull(clientsFound);
-                assertEquals(2, clientsFound.size());
+                assertEquals(1, clientsFound.size());
             }
         }
     }
