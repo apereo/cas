@@ -10,7 +10,6 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowManager;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
@@ -60,7 +59,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @ExtendWith(CasTestExtension.class)
-@SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
+@SpringBootTest(
+    classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.pac4j.core.session-replication.cookie.crypto.alg=" + ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256,
         "cas.authn.pac4j.core.session-replication.cookie.crypto.encryption.key=3RXtt06xYUAli7uU-Z915ZGe0MRBFw3uDjWgOEf1GT8",
