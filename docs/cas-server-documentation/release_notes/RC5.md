@@ -55,6 +55,20 @@ The collection of end-to-end [browser tests based via Puppeteer](../../developer
 and scenarios. At the moment, total number of jobs stands at approximately `482` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
+  
+Furthermore, the following docker images used for integration testing are now upgraded:
+
+- Localstack
+- Apereo CAS
+- DynamoDb
+- Elastic APM
+- GCP
+- Grouper
+- InfluxDb
+- Kafka
+- MariaDb
+- PostgreSQL
+- Redis
 
 ### CAS Initializr SBOM Support
 
