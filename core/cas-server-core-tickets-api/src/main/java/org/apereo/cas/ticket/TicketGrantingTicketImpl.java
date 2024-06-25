@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
@@ -55,7 +56,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     /**
      * The services associated to this ticket.
      */
-    private Map<String, Service> services = new HashMap<>(0);
+    private Map<String, Service> services = new ConcurrentHashMap<>(0);
 
     /**
      * The {@link TicketGrantingTicket} this is associated with.
