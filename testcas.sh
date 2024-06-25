@@ -99,6 +99,10 @@ while (( "$#" )); do
         flags+=" -DtestLoggingEvents=$2 "
         shift 2
         ;;
+    --offline)
+        flags+=" --offline "
+        shift
+        ;;
     --no-watch)
         flags+=" --no-watch-fs "
         shift

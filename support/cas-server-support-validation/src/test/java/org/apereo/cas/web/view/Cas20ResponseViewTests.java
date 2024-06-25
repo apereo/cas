@@ -53,7 +53,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
-
 @Import({
     CasPersonDirectoryTestConfiguration.class,
     Cas20ResponseViewTests.Cas20ResponseViewTestConfiguration.class

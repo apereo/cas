@@ -8,6 +8,7 @@ import org.apereo.cas.config.CasRedisCoreAutoConfiguration;
 import org.apereo.cas.config.CasRedisTicketRegistryAutoConfiguration;
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -36,6 +37,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -326,6 +328,7 @@ class RedisServerTicketRegistryTests {
             "cas.ticket.registry.redis.pool.enabled=true",
             "cas.ticket.registry.redis.crypto.enabled=true"
         })
+    @ExtendWith(CasTestExtension.class)
     class RecentSessionsTests {
         @Autowired
         @Qualifier(TicketRegistry.BEAN_NAME)
@@ -357,6 +360,7 @@ class RedisServerTicketRegistryTests {
             "cas.ticket.registry.redis.port=6379",
             "cas.ticket.registry.redis.crypto.enabled=false"
     })
+    @ExtendWith(CasTestExtension.class)
     class TrackAllSessionsTests {
         @Autowired
         @Qualifier(TicketRegistry.BEAN_NAME)
@@ -398,6 +402,7 @@ class RedisServerTicketRegistryTests {
             "cas.ticket.registry.redis.host=localhost",
             "cas.ticket.registry.redis.port=6379"
     })
+    @ExtendWith(CasTestExtension.class)
     class ConcurrentAddTicketGrantingTicketTests {
         @Autowired
         @Qualifier(TicketRegistry.BEAN_NAME)
@@ -462,6 +467,7 @@ class RedisServerTicketRegistryTests {
             "cas.ticket.registry.redis.host=localhost",
             "cas.ticket.registry.redis.port=6379"
     })
+    @ExtendWith(CasTestExtension.class)
     class ConcurrentAddProxyTicketTests {
         @Autowired
         @Qualifier(TicketRegistry.BEAN_NAME)
