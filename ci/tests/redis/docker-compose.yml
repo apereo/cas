@@ -28,7 +28,7 @@ services:
     ports:
       - "16389:6379"
   sentinel_1:
-    image: bitnami/redis-sentinel:7.2.4
+    image: bitnami/redis-sentinel:7.2.5
     container_name: redis_sentinel_1
     ports:
       - "26379:26379"
