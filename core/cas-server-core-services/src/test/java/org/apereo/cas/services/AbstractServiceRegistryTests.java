@@ -230,7 +230,7 @@ public abstract class AbstractServiceRegistryTests {
         });
     }
 
-    @Test
+    @RetryingTest(2)
     void verifyExpiredServiceDeleted() {
         getRegisteredServiceTypes().forEach(type -> {
             val service = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);

@@ -1,6 +1,5 @@
 {
-  "dependencies": "pac4j-webflow",
-
+  "dependencies": "pac4j-webflow,pac4j-oidc",
   "properties": [
 
     "--cas.server.name=https://localhost:8443",

@@ -19,8 +19,12 @@ dependencies {
     implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-saml-idp-core")
 
+    implementation libraries.opensaml
     implementation libraries.shibutiljavasupport
+    implementation libraries.apachevelocity
 
+    testImplementation libraries.pac4jsaml
+    
     testImplementation project(path: ":support:cas-server-support-saml-idp", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-saml-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-saml-idp-core", configuration: "tests")
