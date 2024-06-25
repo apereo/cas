@@ -34,24 +34,16 @@ class RestfulDelegatedIdentityProviderFactoryTests {
 
     private static Map<String, String> getProperties() {
         return Map.of(
-            PropertiesConstants.SAML_IDENTITY_PROVIDER_METADATA_PATH, "file:/path/to/idp.xml",
-            PropertiesConstants.SAML_KEYSTORE_PATH, "file:/path/to/keystore.jks",
-            PropertiesConstants.SAML_KEYSTORE_PASSWORD, "p@$$w0rd",
-            PropertiesConstants.SAML_PRIVATE_KEY_PASSWORD, "p@$$w0rd",
-            PropertiesConstants.SAML_SERVICE_PROVIDER_ENTITY_ID, "example-entity-id",
-            PropertiesConstants.SAML_SERVICE_PROVIDER_METADATA_PATH, "file:/path/to/sp.xml",
-
             PropertiesConstants.CAS_PROTOCOL + ".1", "CAS20",
             PropertiesConstants.CAS_LOGIN_URL + ".1", "https://example.com/cas/login",
-
-            PropertiesConstants.GITHUB_ID, "id",
-            PropertiesConstants.GITHUB_SECRET, "secret");
+            PropertiesConstants.CAS_PROTOCOL + ".2", "CAS30",
+            PropertiesConstants.CAS_LOGIN_URL + ".2", "https://example.com/cas/login");
     }
 
     @TestPropertySource(properties = "cas.custom.properties.delegation-test.enabled=false")
     abstract static class BaseTests extends BaseDelegatedClientFactoryTests {
     }
-    
+
     @Nested
     @TestPropertySource(properties = {
         "cas.authn.pac4j.core.lazy-init=false",
@@ -88,14 +80,14 @@ class RestfulDelegatedIdentityProviderFactoryTests {
 
                 var clientsFound = delegatedIdentityProviderFactory.build();
                 assertNotNull(clientsFound);
-                assertEquals(3, clientsFound.size());
+                assertEquals(2, clientsFound.size());
 
                 /*
                  * Try the cache once the list is retrieved...
                  */
                 clientsFound = delegatedIdentityProviderFactory.build();
                 assertNotNull(clientsFound);
-                assertEquals(3, clientsFound.size());
+                assertEquals(2, clientsFound.size());
             }
         }
     }

@@ -3,7 +3,6 @@ package org.apereo.cas.authentication.principal.ldap;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.DelegatedClientAuthenticationCredentialResolver;
-import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.RandomUtils;
@@ -40,18 +39,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Ldap")
 @EnabledIfListeningOnPort(port = 10389)
 @ExtendWith(CasTestExtension.class)
-@SpringBootTest(classes = {
-    CasDelegatedAuthenticationAutoConfiguration.class,
-    BaseDelegatedAuthenticationTests.SharedTestConfiguration.class
-}, properties = {
-    "cas.authn.pac4j.profile-selection.ldap[0].ldap-url=ldap://localhost:10389",
-    "cas.authn.pac4j.profile-selection.ldap[0].base-dn=ou=people,dc=example,dc=org",
-    "cas.authn.pac4j.profile-selection.ldap[0].search-filter=uid={0}",
-    "cas.authn.pac4j.profile-selection.ldap[0].bind-dn=cn=Directory Manager",
-    "cas.authn.pac4j.profile-selection.ldap[0].bind-credential=password",
-    "cas.authn.pac4j.profile-selection.ldap[0].profile-id-attribute=cn",
-    "cas.authn.pac4j.profile-selection.ldap[0].attributes=sn,givenName,uid,mail,cn"
-})
+@SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
+    properties = {
+        "cas.authn.pac4j.profile-selection.ldap[0].ldap-url=ldap://localhost:10389",
+        "cas.authn.pac4j.profile-selection.ldap[0].base-dn=ou=people,dc=example,dc=org",
+        "cas.authn.pac4j.profile-selection.ldap[0].search-filter=uid={0}",
+        "cas.authn.pac4j.profile-selection.ldap[0].bind-dn=cn=Directory Manager",
+        "cas.authn.pac4j.profile-selection.ldap[0].bind-credential=password",
+        "cas.authn.pac4j.profile-selection.ldap[0].profile-id-attribute=cn",
+        "cas.authn.pac4j.profile-selection.ldap[0].attributes=sn,givenName,uid,mail,cn"
+    })
 class LdapDelegatedClientAuthenticationCredentialResolverTests {
     private static final String USER = RandomUtils.randomAlphabetic(10);
 
@@ -80,9 +77,9 @@ class LdapDelegatedClientAuthenticationCredentialResolverTests {
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
         context.setRequestAttribute(Credentials.class.getName(), "caspac4j");
-        
+
         val credentials = new TokenCredentials(USER);
-        val clientCredential = new ClientCredential(credentials, "CasClient");
+        val clientCredential = new ClientCredential(credentials, "FakeClient");
         assertTrue(ldapDelegatedClientAuthenticationCredentialResolver.supports(clientCredential));
         val results = ldapDelegatedClientAuthenticationCredentialResolver.resolve(context, clientCredential);
         assertEquals(1, results.size());

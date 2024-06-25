@@ -204,6 +204,8 @@ processAot {
     list.add("--add-opens")
     list.add("java.base/java.util=ALL-UNNAMED")
     list.add("--add-opens")
+    list.add("java.base/java.util.concurrent=ALL-UNNAMED")
+    list.add("--add-opens")
     list.add("java.base/java.time=ALL-UNNAMED")
     list.add("--add-opens")
     list.add("java.base/java.net=ALL-UNNAMED")

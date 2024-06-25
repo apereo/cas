@@ -132,6 +132,8 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         list.add("--add-opens")
         list.add("java.base/java.lang=ALL-UNNAMED")
         list.add("--add-opens")
+        list.add("java.base/java.util.concurrent=ALL-UNNAMED")
+        list.add("--add-opens")
         list.add("java.base/java.util=ALL-UNNAMED")
         list.add("--add-opens")
         list.add("java.base/java.time=ALL-UNNAMED")

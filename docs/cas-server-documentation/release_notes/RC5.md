@@ -121,6 +121,11 @@ and include the correct module in your build. Note that this change affects any 
 This is potentially a breaking change. Make sure to review your build's dependencies and adjust modules to restore functionality.
 </p></div>
 
+### SAML2 Delegated Authentication Metadata
+
+CAS is now able to store and manage its SAML2 service provider metadata via [Amazon S3 buckets](../integration/Delegate-Authentication-SAML-Metadata.html). 
+This feature is relevant only when [SAML2 delegated authentication](../integration/Delegate-Authentication-SAML.html) is turned on.
+
 ## Other Stuff
 
 - [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) may prompt the user to proceed to account registration, when no contact information is found.
@@ -129,6 +134,7 @@ This is potentially a breaking change. Make sure to review your build's dependen
 - Docker Swarm support for Hazelcast has been removed from the CAS codebase. 
 - Claims that are collected in a JWT Access Token are now forced to pass through attribute release policies assigned to the application definition.
 - WebAuthn registration endpoint is now able to detect and track an authenticated request using the CAS in-progress authentication attempt. 
+- Internal data structures used to index registered service definitions for better querying and searching should now prevent duplicate service definitions.
 
 ## Library Upgrades
 
@@ -154,5 +160,6 @@ This is potentially a breaking change. Make sure to review your build's dependen
 - Jakarta Servlet API
 - Netty
 - Amazon SDK
+- Pac4j
 - Micrometer
 - Apache Tomcat
