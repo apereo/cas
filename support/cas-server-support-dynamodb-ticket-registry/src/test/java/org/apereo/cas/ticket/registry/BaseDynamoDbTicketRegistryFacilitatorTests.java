@@ -11,6 +11,8 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasDynamoDbCoreAutoConfiguration;
 import org.apereo.cas.config.CasDynamoDbTicketRegistryAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -45,6 +47,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
         "cas.ticket.registry.dynamo-db.local-instance=true",
         "cas.ticket.registry.dynamo-db.region=us-east-1"
     })
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseDynamoDbTicketRegistryFacilitatorTests {
 
     static {

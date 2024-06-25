@@ -4,10 +4,12 @@ import org.apereo.cas.config.CasServicesStreamingAutoConfiguration;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -27,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasServicesStreamingAutoConfiguration.class
 }, properties = "cas.service-registry.stream.core.enabled=true")
 @Tag("RegisteredService")
+@ExtendWith(CasTestExtension.class)
 class CasServicesRegistryStreamingEventListenerTests {
     @Autowired
     @Qualifier("casServicesRegistryStreamingEventListener")

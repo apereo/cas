@@ -31,6 +31,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -41,6 +42,7 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -72,6 +74,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseOAuth20AuthenticatorTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableRetry
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseOAuth20AuthenticatorTests {
     @Autowired
     protected ConfigurableApplicationContext applicationContext;

@@ -124,7 +124,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
 
     protected boolean signSamlResponseFor(final SamlProfileBuilderContext context) {
         return context.getRegisteredService().getSignResponses().isTrue()
-            || SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().entityDescriptor(),
+            || SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().getEntityDescriptor(),
             List.of(MetadataEntityAttributeQuery.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_SIGN_RESPONSES.getName(),
                 Attribute.URI_REFERENCE, List.of(Boolean.TRUE.toString()))));
     }

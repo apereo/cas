@@ -3,8 +3,10 @@ package org.apereo.cas.support.events.listener;
 import org.apereo.cas.config.CasCoreCloudBusEventsConfigEnvironmentAutoConfiguration;
 import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -27,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("CasConfiguration")
+@ExtendWith(CasTestExtension.class)
 class CasCloudBusConfigurationEventListenerTests {
     @Autowired
     @Qualifier("casCloudBusConfigurationEventListener")

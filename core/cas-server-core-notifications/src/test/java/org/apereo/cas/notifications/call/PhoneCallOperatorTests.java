@@ -3,10 +3,12 @@ package org.apereo.cas.notifications.call;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.notifications.BaseNotificationTests;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +29,7 @@ import static org.mockito.Mockito.*;
     BaseNotificationTests.SharedTestConfiguration.class
 })
 @Tag("SMS")
+@ExtendWith(CasTestExtension.class)
 class PhoneCallOperatorTests {
     @Autowired
     @Qualifier(CommunicationsManager.BEAN_NAME)

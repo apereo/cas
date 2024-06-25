@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDaoFilte
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesCoreProperties;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -18,6 +19,7 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,6 +47,7 @@ import static org.mockito.Mockito.*;
  * @since 4.1
  */
 @Tag("Attributes")
+@ExtendWith(CasTestExtension.class)
 class CachingPrincipalAttributesRepositoryTests {
     private static final String MAIL = "mail";
 

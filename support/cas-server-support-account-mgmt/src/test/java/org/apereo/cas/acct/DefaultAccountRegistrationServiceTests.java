@@ -3,6 +3,7 @@ package org.apereo.cas.acct;
 import org.apereo.cas.acct.provision.AccountRegistrationProvisioner;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -12,6 +13,7 @@ import org.jose4j.jwt.NumericDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -28,6 +30,7 @@ import static org.mockito.Mockito.*;
  * @since 6.5.0
  */
 @Tag("Simple")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,

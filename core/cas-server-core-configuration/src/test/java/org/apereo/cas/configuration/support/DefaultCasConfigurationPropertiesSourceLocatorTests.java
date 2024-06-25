@@ -5,9 +5,11 @@ import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreStandaloneBootstrapAutoConfiguration;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
     }
 )
 @Tag("CasConfiguration")
+@ExtendWith(CasTestExtension.class)
 class DefaultCasConfigurationPropertiesSourceLocatorTests {
     static {
         System.setProperty("spring.application.name", "cas");

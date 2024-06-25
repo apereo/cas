@@ -16,6 +16,7 @@ import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationServ
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +46,7 @@ import static org.mockito.Mockito.*;
  */
 @ExtendWith(MockitoExtension.class)
 @Tag("Impersonation")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class SurrogatePrincipalResolverTests {

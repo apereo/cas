@@ -6,12 +6,14 @@ import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.notifications.mail.EmailMessageBodyBuilder;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
 import org.apereo.cas.notifications.sms.SmsRequest;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -33,6 +35,7 @@ import static org.mockito.Mockito.*;
     "spring.mail.port=25000"
 })
 @Tag("Mail")
+@ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 25000)
 class DefaultCommunicationsManagerTests {
     @Autowired

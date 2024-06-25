@@ -2,22 +2,20 @@ package org.apereo.cas.monitor;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
-
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-
 import javax.sql.DataSource;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -27,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.5.1
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("JDBC")
 class JdbcDataSourceHealthIndicatorTests {

@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasAmazonS3ServiceRegistryAutoConfiguration;
 import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import lombok.val;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,6 +37,7 @@ import static org.mockito.Mockito.*;
 })
 @EnabledIfListeningOnPort(port = 4566)
 @Tag("AmazonWebServices")
+@ExtendWith(CasTestExtension.class)
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AmazonS3ServiceRegistryTests extends AbstractServiceRegistryTests {

@@ -3,6 +3,7 @@ package org.apereo.cas.gauth.web.flow;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.gauth.BaseGoogleAuthenticatorTests;
 import org.apereo.cas.gauth.credential.GoogleAuthenticatorTokenCredential;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.MockRequestContext;
@@ -12,6 +13,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("WebflowMfaActions")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseGoogleAuthenticatorTests.SharedTestConfiguration.class)
 class GoogleAuthenticatorValidateSelectedRegistrationActionTests {
 

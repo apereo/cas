@@ -1,9 +1,11 @@
 package org.apereo.cas.qr.web;
 
 import org.apereo.cas.qr.BaseQRAuthenticationTokenValidatorServiceTests;
+import org.apereo.cas.test.CasTestExtension;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoint.qrDevices.enabled=true",
         "management.endpoints.web.exposure.include=*"
     })
+@ExtendWith(CasTestExtension.class)
 class QRAuthenticationDeviceRepositoryEndpointTests {
     @Autowired
     @Qualifier("qrAuthenticationDeviceRepositoryEndpoint")

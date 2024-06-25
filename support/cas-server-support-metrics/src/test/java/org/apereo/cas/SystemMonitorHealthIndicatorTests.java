@@ -2,9 +2,11 @@ package org.apereo.cas;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.SystemMonitorHealthIndicator;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Metrics")
+@ExtendWith(CasTestExtension.class)
 class SystemMonitorHealthIndicatorTests {
 
     @Autowired

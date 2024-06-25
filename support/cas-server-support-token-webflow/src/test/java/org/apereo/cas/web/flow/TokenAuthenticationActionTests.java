@@ -9,6 +9,7 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
@@ -22,6 +23,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
@@ -44,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasTokenAuthenticationWebflowAutoConfiguration.class
 })
 @Tag("WebflowAuthenticationActions")
+@ExtendWith(CasTestExtension.class)
 class TokenAuthenticationActionTests extends AbstractCentralAuthenticationServiceTests {
     private static final RandomStringGenerator RANDOM_STRING_GENERATOR = new DefaultRandomStringGenerator();
 

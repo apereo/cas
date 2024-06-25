@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -20,6 +21,7 @@ import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.Status;
@@ -37,6 +39,7 @@ import static org.mockito.Mockito.*;
  * @since 3.5.0
  */
 @Tag("Metrics")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = CasCoreMonitorAutoConfigurationTests.SharedTestConfiguration.class,
     properties = "cas.ticket.tgt.core.only-track-most-recent-session=true")
 @EnableConfigurationProperties(CasConfigurationProperties.class)

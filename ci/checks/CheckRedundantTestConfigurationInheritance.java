@@ -18,10 +18,31 @@ import java.util.regex.Pattern;
 public class CheckRedundantTestConfigurationInheritance {
     public static void main(final String[] args) throws Exception {
         var patternBootTestClasses = Pattern.compile("@SpringBootTest\\(classes\\s*=\\s*\\{(.*?)\\}", Pattern.DOTALL);
+        var patternBootTestClass = Pattern.compile("@SpringBootTest\\(classes\\s*=\\s*(.*)");
         var importedTestClasses = Pattern.compile("@Import\\(\\{(.*?)\\}\\)", Pattern.DOTALL);
-
         checkPattern(args[0], patternBootTestClasses);
         checkDuplicateTestConfiguration(args[0], patternBootTestClasses, importedTestClasses);
+        checkCasTestExtension(args[0], patternBootTestClasses, patternBootTestClass);
+    }
+    
+    private static void checkCasTestExtension(final String arg, final Pattern... patternBootTestClasses) throws Exception {
+        var failBuild = new AtomicBoolean(false);
+        Files.walk(Paths.get(arg))
+            .filter(file -> Files.isRegularFile(file) && file.toFile().getName().endsWith("Tests.java"))
+            .forEach(file -> {
+                var text = readFile(file);
+                Arrays.stream(patternBootTestClasses)
+                    .forEach(pattern -> {
+                        var matcher = pattern.matcher(text);
+                        if (matcher.find() && !text.contains("CasTestExtension")) {
+                            print("Class %s must be annotated with @ExtendWith(CasTestExtension.class)", file.toFile().getName());
+                            failBuild.set(true);
+                        }
+                    });
+            });
+        if (failBuild.get()) {
+            System.exit(1);
+        }
     }
 
     protected static void checkDuplicateTestConfiguration(final String arg, final Pattern... patterns) throws Exception {

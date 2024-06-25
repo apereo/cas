@@ -1,12 +1,14 @@
 package org.apereo.cas.acct;
 
 import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import lombok.val;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("Cipher")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = {
     BaseWebflowConfigurerTests.SharedTestConfiguration.class,
     CasAccountManagementWebflowAutoConfiguration.class

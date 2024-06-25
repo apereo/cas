@@ -3,9 +3,11 @@ package org.apereo.cas.web.support;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.CasJdbcAuditAutoConfiguration;
 import org.apereo.cas.config.CasJdbcThrottlingAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,6 +46,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 })
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MySQL")
+@ExtendWith(CasTestExtension.class)
 @Getter
 class MySQLJdbcThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
     @Autowired

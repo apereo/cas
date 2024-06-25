@@ -1,17 +1,17 @@
 package org.apereo.cas.gauth.credential;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.Credential;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -34,6 +34,7 @@ import java.nio.charset.StandardCharsets;
     })
 @EnableScheduling
 @Tag("LdapRepository")
+@ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 11636)
 class OpenLdapGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests {
 

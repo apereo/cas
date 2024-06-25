@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.config.CasMongoDbServiceRegistryAutoConfiguration;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.service-registry.mongo.drop-collection=true"
     })
 @Tag("MongoDb")
+@ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 27017)
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

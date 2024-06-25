@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration;
 
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -25,6 +27,7 @@ import java.nio.charset.StandardCharsets;
     AopAutoConfiguration.class
 })
 @Tag("CasConfiguration")
+@ExtendWith(CasTestExtension.class)
 class CasConfigurationWatchServiceTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

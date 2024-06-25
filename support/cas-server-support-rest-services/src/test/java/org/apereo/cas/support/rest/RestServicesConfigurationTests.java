@@ -11,8 +11,10 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRestServicesAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -45,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.rest.services.attribute-value=attr-v"
 })
 @Tag("CasConfiguration")
+@ExtendWith(CasTestExtension.class)
 class RestServicesConfigurationTests {
     @Autowired
     @Qualifier("registeredServiceResourceRestController")

@@ -2,10 +2,12 @@ package org.apereo.cas.audit;
 
 import org.apereo.cas.audit.spi.BaseAuditConfigurationTests;
 import org.apereo.cas.config.CasSupportMongoDbAuditAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +33,7 @@ import org.springframework.boot.test.context.SpringBootTest;
         "cas.audit.mongo.authentication-database-name=admin"
     })
 @Tag("MongoDb")
+@ExtendWith(CasTestExtension.class)
 @Getter
 @EnabledIfListeningOnPort(port = 27017)
 class MongoDbAuditTrailManagerTests extends BaseAuditConfigurationTests {

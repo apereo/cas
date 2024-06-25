@@ -3,14 +3,15 @@ package org.apereo.cas.gua.impl;
 import org.apereo.cas.AbstractGraphicalAuthenticationTests;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
 import org.ldaptive.ConnectionFactory;
@@ -20,10 +21,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
-
 import java.util.List;
 import java.util.Locale;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -33,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("LdapAuthentication")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = AbstractGraphicalAuthenticationTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.gua.ldap.base-dn=dc=example,dc=org",

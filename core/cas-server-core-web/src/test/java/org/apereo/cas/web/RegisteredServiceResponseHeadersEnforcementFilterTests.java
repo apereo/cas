@@ -20,6 +20,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnforcementFilter;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.DirectObjectProvider;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.apereo.cas.web.support.filters.ResponseHeadersEnforcementFilter;
@@ -28,6 +29,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -51,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("RegisteredService")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,

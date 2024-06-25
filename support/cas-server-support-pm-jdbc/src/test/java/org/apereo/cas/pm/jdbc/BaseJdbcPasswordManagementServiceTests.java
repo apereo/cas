@@ -15,6 +15,8 @@ import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.test.CasTestExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -62,6 +64,7 @@ import javax.sql.DataSource;
     "cas.authn.pm.jdbc.sql-change-password=UPDATE pm_table_accounts SET password=? WHERE userid=?"
 })
 @EnableTransactionManagement(proxyTargetClass = false)
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseJdbcPasswordManagementServiceTests {
     @Autowired
     @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)

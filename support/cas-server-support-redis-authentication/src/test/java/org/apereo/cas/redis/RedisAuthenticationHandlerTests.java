@@ -15,6 +15,7 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasRedisAuthenticationAutoConfiguration;
 import org.apereo.cas.redis.core.CasRedisTemplate;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -22,6 +23,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -63,6 +65,7 @@ import static org.mockito.Mockito.*;
 })
 @EnableScheduling
 @Tag("Redis")
+@ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 6379)
 class RedisAuthenticationHandlerTests {
 

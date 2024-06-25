@@ -126,7 +126,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
         var signAssertions = (context.getRegisteredService().getSignAssertions() == TriStateBoolean.UNDEFINED && context.getAdaptor().isWantAssertionsSigned())
                              || context.getRegisteredService().getSignAssertions().isTrue();
         if (!signAssertions) {
-            signAssertions = SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().entityDescriptor(),
+            signAssertions = SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().getEntityDescriptor(),
                 List.of(MetadataEntityAttributeQuery.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_SIGN_ASSERTIONS.getName(),
                     Attribute.URI_REFERENCE, List.of(Boolean.TRUE.toString()))));
         }

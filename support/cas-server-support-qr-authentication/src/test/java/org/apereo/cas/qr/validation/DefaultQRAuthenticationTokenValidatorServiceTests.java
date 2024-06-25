@@ -6,19 +6,19 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.qr.BaseQRAuthenticationTokenValidatorServiceTests;
 import org.apereo.cas.qr.QRAuthenticationConstants;
 import org.apereo.cas.qr.authentication.QRAuthenticationDeviceRepository;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DateTimeUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.time.Clock;
 import java.time.LocalDate;
 import java.util.List;
@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -36,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Authentication")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class,
     properties = "cas.authn.qr.json.location=file:${java.io.tmpdir}/cas-qr-devices.json")
 class DefaultQRAuthenticationTokenValidatorServiceTests {

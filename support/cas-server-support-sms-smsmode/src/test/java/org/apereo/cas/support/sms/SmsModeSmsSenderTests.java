@@ -3,10 +3,12 @@ package org.apereo.cas.support.sms;
 import org.apereo.cas.config.CasSmsModeSmsAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.sms.SmsSender;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -31,6 +33,7 @@ import static org.springframework.http.HttpStatus.*;
 },
     properties = "cas.sms-provider.sms-mode.url=http://localhost:${random.int[4000,9999]}")
 @Tag("SMS")
+@ExtendWith(CasTestExtension.class)
 class SmsModeSmsSenderTests {
     @Autowired
     @Qualifier(SmsSender.BEAN_NAME)

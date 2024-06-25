@@ -7,6 +7,7 @@ import org.apereo.cas.adaptors.duo.authn.UniversalPromptDuoSecurityAuthenticatio
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.http.HttpClient;
@@ -19,6 +20,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,7 @@ import static org.mockito.Mockito.*;
     properties = "cas.http-client.host-name-verifier=none")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("DuoSecurity")
+@ExtendWith(CasTestExtension.class)
 @Execution(ExecutionMode.SAME_THREAD)
 class DuoSecurityAdminApiEndpointTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

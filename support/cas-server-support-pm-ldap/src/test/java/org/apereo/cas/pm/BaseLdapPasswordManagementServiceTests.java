@@ -11,6 +11,8 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasLdapPasswordManagementAutoConfiguration;
 import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -38,6 +40,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreLogoutAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class
 })
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseLdapPasswordManagementServiceTests {
     @Autowired
     @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
