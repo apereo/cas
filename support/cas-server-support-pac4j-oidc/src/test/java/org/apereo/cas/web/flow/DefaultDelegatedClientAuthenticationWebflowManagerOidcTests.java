@@ -14,9 +14,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.jee.context.JEEContext;
-import org.pac4j.oauth.client.OAuth10Client;
 import org.pac4j.oauth.client.OAuth20Client;
-import org.pac4j.oauth.config.OAuth10Configuration;
 import org.pac4j.oauth.config.OAuth20Configuration;
 import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.oidc.config.OidcConfiguration;
@@ -91,20 +89,6 @@ class DefaultDelegatedClientAuthenticationWebflowManagerOidcTests {
         config.setKey(UUID.randomUUID().toString());
         config.setSecret(UUID.randomUUID().toString());
         val client = new OAuth20Client();
-        client.setConfiguration(config);
-        val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
-        assertNotNull(ticketRegistry.getTicket(ticket.getId()));
-        val service = delegatedClientAuthenticationWebflowManager.retrieve(requestContext, context, client);
-        assertNotNull(service);
-        assertNull(ticketRegistry.getTicket(ticket.getId()));
-    }
-
-    @Test
-    void verifyOAuth1StoreOperation() throws Throwable {
-        val config = new OAuth10Configuration();
-        config.setKey(UUID.randomUUID().toString());
-        config.setSecret(UUID.randomUUID().toString());
-        val client = new OAuth10Client();
         client.setConfiguration(config);
         val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, context, client);
         assertNotNull(ticketRegistry.getTicket(ticket.getId()));
