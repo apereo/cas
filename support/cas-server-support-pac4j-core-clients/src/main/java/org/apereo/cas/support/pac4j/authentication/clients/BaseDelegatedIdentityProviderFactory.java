@@ -147,7 +147,7 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
         val builders = new ArrayList<>(applicationContext.getBeansOfType(ConfigurableDelegatedClientBuilder.class).values());
         AnnotationAwareOrderComparator.sort(builders);
         for (val builder : builders) {
-            val builtClients = builder.build();
+            val builtClients = builder.build(properties);
             LOGGER.debug("Builder [{}] provides [{}] clients", builder.getName(), builtClients.size());
             builtClients.forEach(instance -> {
                 val preparedClient = configureClient(instance.getClient(), instance.getProperties(), properties);

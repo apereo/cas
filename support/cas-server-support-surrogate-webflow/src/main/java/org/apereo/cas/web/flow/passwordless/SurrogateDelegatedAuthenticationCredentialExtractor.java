@@ -33,11 +33,14 @@ public class SurrogateDelegatedAuthenticationCredentialExtractor extends Default
     @Override
     protected Optional<ClientCredential> buildClientCredential(final BaseClient client, final RequestContext requestContext, final Credentials credential) {
         val clientCredential = super.buildClientCredential(client, requestContext, credential);
-        val passwordlessRequest = Optional.ofNullable(PasswordlessWebflowUtils.getPasswordlessAuthenticationRequest(requestContext, PasswordlessAuthenticationRequest.class));
-        if (clientCredential.isPresent() && passwordlessRequest.isPresent()) {
-            val surrogateUsername = passwordlessRequest.get().getUsername();
-            clientCredential.get().getCredentialMetadata().addTrait(new SurrogateCredentialTrait(surrogateUsername));
-            return clientCredential;
+        val passwordlessRequestResult = Optional.ofNullable(PasswordlessWebflowUtils.getPasswordlessAuthenticationRequest(requestContext, PasswordlessAuthenticationRequest.class));
+        if (clientCredential.isPresent() && passwordlessRequestResult.isPresent()) {
+            val passwordlessRequest = passwordlessRequestResult.get();
+            if (passwordlessRequest.getProperties().containsKey(SurrogatePasswordlessAuthenticationRequestParser.PROPORTY_SURROGATE_USERNAME)) {
+                val surrogateUsername = passwordlessRequest.getProperties().get(SurrogatePasswordlessAuthenticationRequestParser.PROPORTY_SURROGATE_USERNAME);
+                clientCredential.get().getCredentialMetadata().addTrait(new SurrogateCredentialTrait(surrogateUsername));
+                return clientCredential;
+            }
         }
         return Optional.empty();
     }

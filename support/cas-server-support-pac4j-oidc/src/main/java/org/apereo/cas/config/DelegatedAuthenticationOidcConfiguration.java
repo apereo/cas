@@ -42,9 +42,8 @@ class DelegatedAuthenticationOidcConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "delegatedOidcClientBuilder")
     public ConfigurableDelegatedClientBuilder delegatedOidcClientBuilder(
-        @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext,
-        final CasConfigurationProperties casProperties) {
-        return new DelegatedClientOidcBuilder(casSslContext, casProperties);
+        @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext) {
+        return new DelegatedClientOidcBuilder(casSslContext);
     }
 
     @Bean

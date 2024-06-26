@@ -43,14 +43,13 @@ import java.util.stream.Collectors;
 public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientBuilder {
     private final CasSSLContext casSslContext;
     private final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory;
-    private final CasConfigurationProperties casProperties;
 
     @Override
-    public List<ConfigurableDelegatedClient> build() {
-        return buildSaml2IdentityProviders();
+    public List<ConfigurableDelegatedClient> build(final CasConfigurationProperties casProperties) {
+        return buildSaml2IdentityProviders(casProperties);
     }
 
-    protected List<ConfigurableDelegatedClient> buildSaml2IdentityProviders() {
+    protected List<ConfigurableDelegatedClient> buildSaml2IdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         return pac4jProperties
             .getSaml()

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.authentication.clients;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import java.util.List;
 
 /**
@@ -26,5 +27,5 @@ public interface ConfigurableDelegatedClientBuilder {
      * @return the list
      * @throws Exception the exception
      */
-    List<ConfigurableDelegatedClient> build() throws Exception;
+    List<ConfigurableDelegatedClient> build(CasConfigurationProperties casProperties) throws Exception;
 }

@@ -111,7 +111,7 @@ public class DelegatedSaml2ClientMetadataController {
         headers.setContentType(MediaType.APPLICATION_XML);
         saml2Client.init();
         val identityProviderMetadataResolver = saml2Client.getIdentityProviderMetadataResolver();
-        identityProviderMetadataResolver.resolve();
+        identityProviderMetadataResolver.resolve(true);
         val entity = identityProviderMetadataResolver.getEntityDescriptorElement();
         val metadata = SamlUtils.transformSamlObject(openSamlConfigBean, entity).toString();
         return new ResponseEntity<>(metadata, headers, HttpStatus.OK);

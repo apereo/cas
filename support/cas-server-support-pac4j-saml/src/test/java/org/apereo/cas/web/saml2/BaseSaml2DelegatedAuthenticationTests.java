@@ -2,6 +2,7 @@ package org.apereo.cas.web.saml2;
 
 import org.apereo.cas.authentication.principal.ClientCustomPropertyConstants;
 import org.apereo.cas.config.CasDelegatedAuthenticationSaml2AutoConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.support.pac4j.authentication.clients.ConfigurableDelegatedClient;
 import org.apereo.cas.support.pac4j.authentication.clients.ConfigurableDelegatedClientBuilder;
@@ -38,7 +39,7 @@ public abstract class BaseSaml2DelegatedAuthenticationTests {
     private static final class Saml2TestClientsBuilder implements ConfigurableDelegatedClientBuilder {
 
         @Override
-        public List<ConfigurableDelegatedClient> build() throws Exception {
+        public List<ConfigurableDelegatedClient> build(final CasConfigurationProperties casProperties) throws Exception {
             val saml2Config = getSAML2Configuration();
             val saml2Client = new SAML2Client(saml2Config);
             saml2Client.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, DelegationAutoRedirectTypes.CLIENT);

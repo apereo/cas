@@ -53,9 +53,11 @@ class SurrogateDelegatedAuthenticationCredentialExtractorTests {
         val client = mock(BaseClient.class);
 
         val uid = UUID.randomUUID().toString();
-        val passwordlessRequest = PasswordlessAuthenticationRequest.builder()
+        val passwordlessRequest = PasswordlessAuthenticationRequest
+            .builder()
             .properties(Map.of(SurrogatePasswordlessAuthenticationRequestParser.PROPORTY_SURROGATE_USERNAME, "cassurrogate"))
-            .username(uid).build();
+            .username(uid)
+            .build();
         PasswordlessWebflowUtils.putPasswordlessAuthenticationRequest(context, passwordlessRequest);
 
         val tokenCredentials = new TokenCredentials(uid);
@@ -64,8 +66,9 @@ class SurrogateDelegatedAuthenticationCredentialExtractorTests {
 
         val credentials = delegatedAuthenticationCredentialExtractor.extract(client, context).get();
         assertNotNull(credentials);
-        assertTrue(credentials.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class).isPresent());
-
+        val trait = credentials.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class);
+        assertTrue(trait.isPresent());
+        assertEquals("cassurrogate", trait.get().getSurrogateUsername());
         when(client.getCredentials(any())).thenReturn(Optional.empty());
         assertTrue(delegatedAuthenticationCredentialExtractor.extract(client, context).isEmpty());
     }
