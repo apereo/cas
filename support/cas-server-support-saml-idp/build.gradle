@@ -53,7 +53,8 @@ dependencies {
     implementation libraries.pac4jcore
     implementation libraries.shibutiljavasupport
     implementation libraries.jose4j
-    
+    compileOnly libraries.pac4jsaml
+
     testImplementation libraries.pac4joidcoauth
     testImplementation libraries.pac4jsaml
 
