@@ -6,13 +6,13 @@ idna==3.7
 greenlet==3.0.3
 Jinja2==3.1.4
 itsdangerous==2.2.0
-locust==2.29.0
+locust==2.29.1
 MarkupSafe==2.1.5
 msgpack-python==0.5.6
 pyzmq==26.0.3
 pip==24.1
 six==1.16.0
-setuptools==70.1.0
+setuptools==70.1.1
 requests==2.32.3
 Werkzeug==3.0.3
 urllib3==2.2.2
