@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -12,7 +11,6 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.Optional;
 
 /**
@@ -30,7 +28,7 @@ public class DefaultDelegatedAuthenticationCredentialExtractor implements Delega
     public Optional<ClientCredential> extract(final BaseClient client, final RequestContext requestContext) {
         LOGGER.debug("Fetching credentials from delegated client [{}]", client);
         val credentials = getCredentialsFromDelegatedClient(requestContext, client);
-        if (credentials.isPresent())  {
+        if (credentials.isPresent()) {
             val clientCredentialResult = buildClientCredential(client, requestContext, credentials.get());
             clientCredentialResult.ifPresent(clientCredential -> WebUtils.putCredential(requestContext, clientCredential));
             return clientCredentialResult;
