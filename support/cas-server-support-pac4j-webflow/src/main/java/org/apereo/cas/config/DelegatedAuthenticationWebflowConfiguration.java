@@ -567,34 +567,55 @@ class DelegatedAuthenticationWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = DelegatedClientAuthenticationConfigurationContext.BEAN_NAME)
         public DelegatedClientAuthenticationConfigurationContext delegatedClientAuthenticationConfigurationContext(
-            @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME) final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_DELEGATED_AUTHENTICATION_ACCESS) final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
-            @Qualifier("serviceTicketRequestWebflowEventResolver") final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
-            @Qualifier("initialAuthenticationAttemptWebflowEventResolver") final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
-            @Qualifier("adaptiveAuthenticationPolicy") final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
+            @Qualifier(SingleLogoutRequestExecutor.BEAN_NAME)
+            final SingleLogoutRequestExecutor defaultSingleLogoutRequestExecutor,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_DELEGATED_AUTHENTICATION_ACCESS)
+            final AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
+            @Qualifier("serviceTicketRequestWebflowEventResolver")
+            final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
+            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
+            @Qualifier("adaptiveAuthenticationPolicy")
+            final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy,
             final CasConfigurationProperties casProperties,
-            @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier(DelegatedIdentityProviders.BEAN_NAME) final DelegatedIdentityProviders identityProviders,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ServicesManager servicesManager,
+            @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
+            final DelegatedIdentityProviders identityProviders,
             @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
             final DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProviderConfigurationProducer,
             @Qualifier("delegatedClientIdentityProviderConfigurationPostProcessor")
             final DelegatedClientIdentityProviderConfigurationPostProcessor delegatedClientIdentityProviderConfigurationPostProcessor,
-            @Qualifier("delegatedClientDistributedSessionCookieGenerator") final CasCookieBuilder delegatedClientDistributedSessionCookieGenerator,
-            @Qualifier(CentralAuthenticationService.BEAN_NAME) final CentralAuthenticationService centralAuthenticationService,
-            @Qualifier("pac4jDelegatedClientNameExtractor") final DelegatedClientNameExtractor pac4jDelegatedClientNameExtractor,
-            @Qualifier(AuthenticationSystemSupport.BEAN_NAME) final AuthenticationSystemSupport authenticationSystemSupport,
-            @Qualifier(ArgumentExtractor.BEAN_NAME) final ArgumentExtractor argumentExtractor,
-            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
-            @Qualifier("delegatedClientDistributedSessionStore") final SessionStore delegatedClientDistributedSessionStore,
-            @Qualifier(TicketFactory.BEAN_NAME) final TicketFactory ticketFactory,
-            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS) final AuditableExecution registeredServiceAccessStrategyEnforcer,
-            @Qualifier("delegatedClientIdentityProviderRedirectionStrategy") final DelegatedClientIdentityProviderRedirectionStrategy delegatedClientIdentityProviderRedirectionStrategy,
-            @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME) final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy,
-            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME) final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-            @Qualifier("delegatedAuthenticationCookieGenerator") final CasCookieBuilder delegatedAuthenticationCookieGenerator,
-            @Qualifier("delegatedAuthenticationCredentialExtractor") final DelegatedAuthenticationCredentialExtractor delegatedAuthenticationCredentialExtractor,
+            @Qualifier("delegatedClientDistributedSessionCookieGenerator")
+            final CasCookieBuilder delegatedClientDistributedSessionCookieGenerator,
+            @Qualifier(CentralAuthenticationService.BEAN_NAME)
+            final CentralAuthenticationService centralAuthenticationService,
+            @Qualifier("pac4jDelegatedClientNameExtractor")
+            final DelegatedClientNameExtractor pac4jDelegatedClientNameExtractor,
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
+            final AuthenticationSystemSupport authenticationSystemSupport,
+            @Qualifier(ArgumentExtractor.BEAN_NAME)
+            final ArgumentExtractor argumentExtractor,
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
+            @Qualifier("delegatedClientDistributedSessionStore")
+            final SessionStore delegatedClientDistributedSessionStore,
+            @Qualifier(TicketFactory.BEAN_NAME)
+            final TicketFactory ticketFactory,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
+            final AuditableExecution registeredServiceAccessStrategyEnforcer,
+            @Qualifier("delegatedClientIdentityProviderRedirectionStrategy")
+            final DelegatedClientIdentityProviderRedirectionStrategy delegatedClientIdentityProviderRedirectionStrategy,
+            @Qualifier(SingleSignOnParticipationStrategy.BEAN_NAME)
+            final SingleSignOnParticipationStrategy webflowSingleSignOnParticipationStrategy,
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
+            final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+            @Qualifier("delegatedAuthenticationCookieGenerator")
+            final CasCookieBuilder delegatedAuthenticationCookieGenerator,
+            final ObjectProvider<List<DelegatedAuthenticationCredentialExtractor>> delegatedAuthenticationCredentialExtractors,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(LogoutExecutionPlan.BEAN_NAME) final LogoutExecutionPlan logoutExecutionPlan,
+            @Qualifier(LogoutExecutionPlan.BEAN_NAME)
+            final LogoutExecutionPlan logoutExecutionPlan,
             final ObjectProvider<List<DelegatedClientAuthenticationRequestCustomizer>> customizersProvider,
             final ObjectProvider<List<DelegatedClientIdentityProviderAuthorizer>> delegatedClientAuthorizers) {
 
@@ -610,8 +631,14 @@ class DelegatedAuthenticationWebflowConfiguration {
                 .filter(BeanSupplier::isNotProxy)
                 .collect(Collectors.toList());
 
-            return DelegatedClientAuthenticationConfigurationContext.builder()
-                .credentialExtractor(delegatedAuthenticationCredentialExtractor)
+            val extractors = delegatedAuthenticationCredentialExtractors.getObject()
+                .stream()
+                .filter(BeanSupplier::isNotProxy)
+                .toList();
+            
+            return DelegatedClientAuthenticationConfigurationContext
+                .builder()
+                .credentialExtractors(extractors)
                 .initialAuthenticationAttemptWebflowEventResolver(initialAuthenticationAttemptWebflowEventResolver)
                 .serviceTicketRequestWebflowEventResolver(serviceTicketRequestWebflowEventResolver)
                 .adaptiveAuthenticationPolicy(adaptiveAuthenticationPolicy)

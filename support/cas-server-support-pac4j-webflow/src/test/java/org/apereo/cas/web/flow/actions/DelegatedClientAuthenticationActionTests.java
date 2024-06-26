@@ -82,7 +82,7 @@ class DelegatedClientAuthenticationActionTests {
             servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));
             context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
 
-            val client = identityProviders.findClient("FakeClient").get();
+            val client = identityProviders.findClient("FakeClient").orElseThrow();
             val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
             val ticket = delegatedClientAuthenticationWebflowManager.store(context, webContext, client);
             context.setParameter(DelegatedClientAuthenticationWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
