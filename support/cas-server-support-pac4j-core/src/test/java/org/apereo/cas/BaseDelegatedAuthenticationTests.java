@@ -9,8 +9,11 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -38,6 +41,7 @@ import org.springframework.context.ConfigurableApplicationContext;
         CasCoreUtilAutoConfiguration.class
     },
     properties = "cas.authn.pac4j.cookie.enabled=true")
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseDelegatedAuthenticationTests {
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
@@ -52,4 +56,8 @@ public abstract class BaseDelegatedAuthenticationTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     protected TicketRegistry ticketRegistry;
+
+    @Autowired
+    @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
+    protected DelegatedIdentityProviders identityProviders;
 }

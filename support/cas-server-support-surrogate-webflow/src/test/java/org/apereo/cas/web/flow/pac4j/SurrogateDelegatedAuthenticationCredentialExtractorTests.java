@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(CasTestExtension.class)
 class SurrogateDelegatedAuthenticationCredentialExtractorTests {
     @Autowired
-    @Qualifier("delegatedAuthenticationCredentialExtractor")
+    @Qualifier("surrogateDelegatedPasswordlessAuthenticationCredentialExtractor")
     private DelegatedAuthenticationCredentialExtractor delegatedAuthenticationCredentialExtractor;
 
     @Autowired
