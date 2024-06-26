@@ -28,6 +28,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * This is {@link CasCoreTicketComponentSerializationConfiguration}.
  *
@@ -46,6 +48,7 @@ class CasCoreTicketComponentSerializationConfiguration {
             plan.registerSerializableClass(RememberMeDelegatingExpirationPolicy.class);
 
             plan.registerSerializableClass(TicketGrantingTicketImpl.class);
+            plan.registerSerializableClass(ConcurrentHashMap.class);
             plan.registerSerializableClass(ServiceTicketImpl.class);
             plan.registerSerializableClass(ProxyGrantingTicketImpl.class);
             plan.registerSerializableClass(ProxyTicketImpl.class);
