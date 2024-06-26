@@ -267,6 +267,8 @@ tasks.withType(Test).configureEach {
     list.add("--add-opens")
     list.add("java.base/java.util.concurrent=ALL-UNNAMED")
     list.add("--add-opens")
+    list.add("java.base/java.util.concurrent.locks=ALL-UNNAMED")
+    list.add("--add-opens")
     list.add("java.base/java.net=ALL-UNNAMED")
     list.add("--add-opens")
     list.add("java.base/java.nio=ALL-UNNAMED")
