@@ -663,12 +663,12 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             LOGGER.warn("Flow registry is not configured and/or initialized correctly.");
             return null;
         }
-        val found = Arrays.asList(registry.getFlowDefinitionIds()).contains(id);
+        val found = List.of(registry.getFlowDefinitionIds()).contains(id);
         if (found) {
             return (Flow) registry.getFlowDefinition(id);
         }
-        LOGGER.warn("Could not find flow definition [{}]. Available flow definition ids are [{}]",
-            id, registry.getFlowDefinitionIds());
+        LOGGER.debug("[{}] could not find flow definition [{}]. Available flow definition ids are [{}]",
+            getName(), id, registry.getFlowDefinitionIds());
         return null;
     }
 

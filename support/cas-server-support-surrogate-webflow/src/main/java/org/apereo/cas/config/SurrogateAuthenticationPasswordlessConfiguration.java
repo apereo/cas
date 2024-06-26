@@ -63,7 +63,7 @@ class SurrogateAuthenticationPasswordlessConfiguration {
 
     @Configuration(value = "SurrogateAuthenticationDelegationPasswordlessConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    @ConditionalOnClass(DelegatedAuthenticationCredentialExtractor.class)
+    @ConditionalOnClass(CasDelegatedAuthenticationAutoConfiguration.class)
     @ConditionalOnFeatureEnabled(feature = {
         CasFeatureModule.FeatureCatalog.PasswordlessAuthn,
         CasFeatureModule.FeatureCatalog.DelegatedAuthentication,
