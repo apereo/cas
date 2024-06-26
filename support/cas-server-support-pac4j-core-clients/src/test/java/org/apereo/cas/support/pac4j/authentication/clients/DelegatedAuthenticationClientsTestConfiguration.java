@@ -37,7 +37,7 @@ public class DelegatedAuthenticationClientsTestConfiguration {
     @Bean
     @ConditionalOnProperty(name = "cas.custom.properties.delegation-test.enabled", havingValue = "true", matchIfMissing = true)
     public ConfigurableDelegatedClientBuilder testDelegatedIdentityProvidersBuilder() throws Exception {
-        return () -> {
+        return casProperties -> {
             val casClient = new CasClient(new CasConfiguration("https://sso.example.org/cas/login"));
             casClient.setCallbackUrl("http://callback.example.org");
             casClient.getCustomProperties().put(ClientCustomPropertyConstants.CLIENT_CUSTOM_PROPERTY_AUTO_REDIRECT_TYPE, DelegationAutoRedirectTypes.SERVER);

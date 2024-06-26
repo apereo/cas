@@ -61,30 +61,29 @@ import java.util.stream.Collectors;
 public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBuilder {
 
     private final CasSSLContext casSslContext;
-    private final CasConfigurationProperties casProperties;
 
     @Override
-    public List<ConfigurableDelegatedClient> build() throws Exception {
+    public List<ConfigurableDelegatedClient> build(final CasConfigurationProperties casProperties) throws Exception {
         val newClients = new ArrayList<ConfigurableDelegatedClient>();
-        newClients.addAll(buildFacebookIdentityProviders());
-        newClients.addAll(buildOidcIdentityProviders());
-        newClients.addAll(buildOAuth20IdentityProviders());
-        newClients.addAll(buildTwitterIdentityProviders());
-        newClients.addAll(buildDropBoxIdentityProviders());
-        newClients.addAll(buildFoursquareIdentityProviders());
-        newClients.addAll(buildGitHubIdentityProviders());
-        newClients.addAll(buildGoogleIdentityProviders());
-        newClients.addAll(buildWindowsLiveIdentityProviders());
-        newClients.addAll(buildYahooIdentityProviders());
-        newClients.addAll(buildLinkedInIdentityProviders());
-        newClients.addAll(buildPaypalIdentityProviders());
-        newClients.addAll(buildWordpressIdentityProviders());
-        newClients.addAll(buildBitBucketIdentityProviders());
-        newClients.addAll(buildHiOrgServerIdentityProviders());
+        newClients.addAll(buildFacebookIdentityProviders(casProperties));
+        newClients.addAll(buildOidcIdentityProviders(casProperties));
+        newClients.addAll(buildOAuth20IdentityProviders(casProperties));
+        newClients.addAll(buildTwitterIdentityProviders(casProperties));
+        newClients.addAll(buildDropBoxIdentityProviders(casProperties));
+        newClients.addAll(buildFoursquareIdentityProviders(casProperties));
+        newClients.addAll(buildGitHubIdentityProviders(casProperties));
+        newClients.addAll(buildGoogleIdentityProviders(casProperties));
+        newClients.addAll(buildWindowsLiveIdentityProviders(casProperties));
+        newClients.addAll(buildYahooIdentityProviders(casProperties));
+        newClients.addAll(buildLinkedInIdentityProviders(casProperties));
+        newClients.addAll(buildPaypalIdentityProviders(casProperties));
+        newClients.addAll(buildWordpressIdentityProviders(casProperties));
+        newClients.addAll(buildBitBucketIdentityProviders(casProperties));
+        newClients.addAll(buildHiOrgServerIdentityProviders(casProperties));
         return newClients;
     }
 
-    protected Collection<ConfigurableDelegatedClient> buildFoursquareIdentityProviders() {
+    protected Collection<ConfigurableDelegatedClient> buildFoursquareIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val foursquare = pac4jProperties.getFoursquare();
         if (foursquare.isEnabled() && StringUtils.isNotBlank(foursquare.getId()) && StringUtils.isNotBlank(foursquare.getSecret())) {
@@ -95,7 +94,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         return List.of();
     }
 
-    protected Collection<ConfigurableDelegatedClient> buildGoogleIdentityProviders() {
+    protected Collection<ConfigurableDelegatedClient> buildGoogleIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val google = pac4jProperties.getGoogle();
         if (google.isEnabled() && StringUtils.isNotBlank(google.getId()) && StringUtils.isNotBlank(google.getSecret())) {
@@ -109,7 +108,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         return List.of();
     }
 
-    protected Collection<ConfigurableDelegatedClient> buildFacebookIdentityProviders() {
+    protected Collection<ConfigurableDelegatedClient> buildFacebookIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val fb = pac4jProperties.getFacebook();
         if (fb.isEnabled() && StringUtils.isNotBlank(fb.getId()) && StringUtils.isNotBlank(fb.getSecret())) {
@@ -122,7 +121,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         return List.of();
     }
 
-    protected Collection<ConfigurableDelegatedClient> buildLinkedInIdentityProviders() {
+    protected Collection<ConfigurableDelegatedClient> buildLinkedInIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val ln = pac4jProperties.getLinkedIn();
         if (ln.isEnabled() && StringUtils.isNotBlank(ln.getId()) && StringUtils.isNotBlank(ln.getSecret())) {
@@ -134,7 +133,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         return List.of();
     }
 
-    protected Collection<ConfigurableDelegatedClient> buildGitHubIdentityProviders() {
+    protected Collection<ConfigurableDelegatedClient> buildGitHubIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val github = pac4jProperties.getGithub();
         if (github.isEnabled() && StringUtils.isNotBlank(github.getId()) && StringUtils.isNotBlank(github.getSecret())) {
@@ -146,7 +145,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         return List.of();
     }
 
-    protected Collection<ConfigurableDelegatedClient> buildDropBoxIdentityProviders() {
+    protected Collection<ConfigurableDelegatedClient> buildDropBoxIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val db = pac4jProperties.getDropbox();
         if (db.isEnabled() && StringUtils.isNotBlank(db.getId()) && StringUtils.isNotBlank(db.getSecret())) {
@@ -157,7 +156,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         return List.of();
     }
 
-    protected Collection<ConfigurableDelegatedClient> buildWindowsLiveIdentityProviders() {
+    protected Collection<ConfigurableDelegatedClient> buildWindowsLiveIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val live = pac4jProperties.getWindowsLive();
         if (live.isEnabled() && StringUtils.isNotBlank(live.getId()) && StringUtils.isNotBlank(live.getSecret())) {
@@ -168,7 +167,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         return List.of();
     }
 
-    protected Collection<ConfigurableDelegatedClient> buildYahooIdentityProviders() {
+    protected Collection<ConfigurableDelegatedClient> buildYahooIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val yahoo = pac4jProperties.getYahoo();
         if (yahoo.isEnabled() && StringUtils.isNotBlank(yahoo.getId()) && StringUtils.isNotBlank(yahoo.getSecret())) {
@@ -179,7 +178,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         return List.of();
     }
 
-    protected Collection<ConfigurableDelegatedClient> buildHiOrgServerIdentityProviders() {
+    protected Collection<ConfigurableDelegatedClient> buildHiOrgServerIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val hiOrgServer = pac4jProperties.getHiOrgServer();
         if (hiOrgServer.isEnabled() && StringUtils.isNotBlank(hiOrgServer.getId()) && StringUtils.isNotBlank(hiOrgServer.getSecret())) {
@@ -194,7 +193,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         return List.of();
     }
 
-    protected Collection<ConfigurableDelegatedClient> buildOAuth20IdentityProviders() {
+    protected Collection<ConfigurableDelegatedClient> buildOAuth20IdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         return pac4jProperties
             .getOauth2()
@@ -224,7 +223,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
             .collect(Collectors.toList());
     }
 
-    protected Collection<ConfigurableDelegatedClient> buildOidcIdentityProviders() {
+    protected Collection<ConfigurableDelegatedClient> buildOidcIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         return pac4jProperties
             .getOidc()
@@ -234,7 +233,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
             .collect(Collectors.toList());
     }
 
-    protected Collection<ConfigurableDelegatedClient> buildWordpressIdentityProviders() {
+    protected Collection<ConfigurableDelegatedClient> buildWordpressIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val wp = pac4jProperties.getWordpress();
         if (wp.isEnabled() && StringUtils.isNotBlank(wp.getId()) && StringUtils.isNotBlank(wp.getSecret())) {
@@ -246,7 +245,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         return List.of();
     }
 
-    protected Collection<ConfigurableDelegatedClient> buildTwitterIdentityProviders() {
+    protected Collection<ConfigurableDelegatedClient> buildTwitterIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val twitter = pac4jProperties.getTwitter();
         if (twitter.isEnabled() && StringUtils.isNotBlank(twitter.getId()) && StringUtils.isNotBlank(twitter.getSecret())) {
@@ -306,7 +305,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         return null;
     }
 
-    protected Collection<ConfigurableDelegatedClient> buildPaypalIdentityProviders() {
+    protected Collection<ConfigurableDelegatedClient> buildPaypalIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val paypal = pac4jProperties.getPaypal();
         if (paypal.isEnabled() && StringUtils.isNotBlank(paypal.getId()) && StringUtils.isNotBlank(paypal.getSecret())) {
@@ -370,7 +369,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         return cfg;
     }
 
-    protected Collection<ConfigurableDelegatedClient> buildBitBucketIdentityProviders() {
+    protected Collection<ConfigurableDelegatedClient> buildBitBucketIdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
         val bitbucket = pac4jProperties.getBitbucket();
         if (bitbucket.isEnabled() && StringUtils.isNotBlank(bitbucket.getId()) && StringUtils.isNotBlank(bitbucket.getSecret())) {

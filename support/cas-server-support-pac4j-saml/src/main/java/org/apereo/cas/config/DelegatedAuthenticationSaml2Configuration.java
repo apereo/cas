@@ -184,9 +184,8 @@ class DelegatedAuthenticationSaml2Configuration {
         public ConfigurableDelegatedClientBuilder delegatedSaml2ClientBuilder(
             @Qualifier(DelegatedIdentityProviderFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)
             final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory,
-            @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext,
-            final CasConfigurationProperties casProperties) {
-            return new DelegatedClientSaml2Builder(casSslContext, samlMessageStoreFactory, casProperties);
+            @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext) {
+            return new DelegatedClientSaml2Builder(casSslContext, samlMessageStoreFactory);
         }
 
         @Bean

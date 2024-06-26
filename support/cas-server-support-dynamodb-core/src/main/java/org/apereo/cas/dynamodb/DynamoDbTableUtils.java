@@ -169,15 +169,17 @@ public class DynamoDbTableUtils {
     public static void enableTimeToLiveOnTable(final DynamoDbClient dynamoDbClient,
                                                final String tableName,
                                                final String ttlAttributeName) {
-        val ttlSpec = TimeToLiveSpecification.builder()
-            .attributeName(ttlAttributeName)
-            .enabled(true)
-            .build();
-        val request = UpdateTimeToLiveRequest.builder()
-            .tableName(tableName)
-            .timeToLiveSpecification(ttlSpec)
-            .build();
-        dynamoDbClient.updateTimeToLive(request);
+        FunctionUtils.doAndHandle(__ -> {
+            val ttlSpec = TimeToLiveSpecification.builder()
+                .attributeName(ttlAttributeName)
+                .enabled(true)
+                .build();
+            val request = UpdateTimeToLiveRequest.builder()
+                .tableName(tableName)
+                .timeToLiveSpecification(ttlSpec)
+                .build();
+            dynamoDbClient.updateTimeToLive(request);
+        });
     }
 
     /**
