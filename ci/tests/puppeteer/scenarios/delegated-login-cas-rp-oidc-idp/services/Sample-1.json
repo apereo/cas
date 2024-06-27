@@ -1,12 +1,14 @@
 {
   "@class":"org.apereo.cas.services.CasRegisteredService",
   "id":605,
-  "serviceId":"https://apereo.github.io",
+  "serviceId": "^https://localhost:9859/anything/cas",
   "name":"Sample",
   "evaluationOrder":605,
   "attributeReleasePolicy" : {
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
-    "authorizedToReleaseAuthenticationAttributes": false,
-    "allowedAttributes" : [ "java.util.ArrayList", [ "email", "name", "preferred_username", "department", "cas_role" ] ]
+    "authorizedToReleaseAuthenticationAttributes": true,
+    "allowedAttributes" : [ "java.util.ArrayList", [
+      "sid", "access_token", "refresh_token", "email", "name", "preferred_username", "department", "cas_role" ]
+    ]
   }
 }
