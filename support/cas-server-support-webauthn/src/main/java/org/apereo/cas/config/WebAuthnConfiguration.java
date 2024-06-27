@@ -215,7 +215,10 @@ class WebAuthnConfiguration {
 
         private final WebAuthnCredentialRepository repository;
 
-        @Scheduled(initialDelayString = "${cas.authn.mfa.web-authn.cleaner.schedule.start-delay:PT20S}",
+        @Scheduled(
+            cron = "${cas.authn.mfa.web-authn.cleaner.schedule.cron-expression:}",
+            zone = "${cas.authn.mfa.web-authn.cleaner.schedule.cron-time-zone:}",
+            initialDelayString = "${cas.authn.mfa.web-authn.cleaner.schedule.start-delay:PT20S}",
             fixedDelayString = "${cas.authn.mfa.web-authn.cleaner.schedule.repeat-interval:PT5M}")
         @Override
         public void clean() {

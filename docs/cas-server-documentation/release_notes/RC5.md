@@ -135,6 +135,7 @@ This feature is relevant only when [SAML2 delegated authentication](../integrati
 - Claims that are collected in a JWT Access Token are now forced to pass through attribute release policies assigned to the application definition.
 - WebAuthn registration endpoint is now able to detect and track an authenticated request using the CAS in-progress authentication attempt. 
 - Internal data structures used to index registered service definitions for better querying and searching should now prevent duplicate service definitions.
+- Background jobs such as the ticket registry cleaner or service registry loaders can now be scheduled via cron expressions.
 
 ## Library Upgrades
 

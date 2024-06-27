@@ -89,7 +89,10 @@ class CasCoreTicketsSchedulingConfiguration {
     static class TicketRegistryCleanerScheduler implements Runnable {
         private final TicketRegistryCleaner ticketRegistryCleaner;
 
-        @Scheduled(initialDelayString = "${cas.ticket.registry.cleaner.schedule.start-delay:PT30S}",
+        @Scheduled(
+            cron = "${cas.ticket.registry.cleaner.schedule.cron-expression:}",
+            zone = "${cas.ticket.registry.cleaner.schedule.cron-time-zone:}",
+            initialDelayString = "${cas.ticket.registry.cleaner.schedule.start-delay:PT30S}",
             fixedDelayString = "${cas.ticket.registry.cleaner.schedule.repeat-interval:PT120S}")
         @Override
         public void run() {
