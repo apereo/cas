@@ -1,6 +1,7 @@
 package org.apereo.cas.zookeeper;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
@@ -13,6 +14,7 @@ import org.apache.zookeeper.ZooDefs;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -47,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("ZooKeeper")
+@ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 2181)
 @EnableRetry
 class ZooKeeperCloudConfigBootstrapConfigurationTests {

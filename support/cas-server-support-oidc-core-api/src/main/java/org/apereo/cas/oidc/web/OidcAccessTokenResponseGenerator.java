@@ -1,8 +1,7 @@
 package org.apereo.cas.oidc.web;
 
-import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
-import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -13,13 +12,11 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Def
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.idtoken.IdTokenGenerationContext;
-import org.apereo.cas.ticket.idtoken.IdTokenGeneratorService;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -31,19 +28,10 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @Slf4j
-public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenResponseGenerator {
-    protected final IdTokenGeneratorService idTokenGenerator;
+public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenResponseGenerator<OidcConfigurationContext> {
 
-    private final OidcIssuerService oidcIssuerService;
-
-    public OidcAccessTokenResponseGenerator(final IdTokenGeneratorService idTokenGenerator,
-                                            final JwtBuilder jwtBuilder,
-                                            final TicketRegistry ticketRegistry,
-                                            final CasConfigurationProperties casProperties,
-                                            final OidcIssuerService oidcIssuerService) {
-        super(jwtBuilder, ticketRegistry, casProperties);
-        this.idTokenGenerator = idTokenGenerator;
-        this.oidcIssuerService = oidcIssuerService;
+    public OidcAccessTokenResponseGenerator(final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+        super(oidcConfigurationContext);
     }
 
     @Override
@@ -52,9 +40,8 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
         val oidcRegisteredService = Optional.ofNullable(result.getRegisteredService())
             .filter(OidcRegisteredService.class::isInstance)
             .map(OidcRegisteredService.class::cast);
-        val oidcIssuer = oidcIssuerService.determineIssuer(oidcRegisteredService);
-        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(accessTokenJwtBuilder, result,
-            accessToken, oidcIssuer, casProperties);
+        val oidcIssuer = configurationContext.getObject().getIssuerService().determineIssuer(oidcRegisteredService);
+        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext.getObject(), result, accessToken, oidcIssuer);
         return cipher.encode(accessToken.getId(), new Object[]{accessToken, result});
     }
 
@@ -101,7 +88,7 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
                 .registeredService((OAuthRegisteredService) result.getRegisteredService())
                 .refreshToken(resolveToken(refreshToken, OAuth20RefreshToken.class))
                 .build();
-            val idTokenGenerated = idTokenGenerator.generate(idTokenContext);
+            val idTokenGenerated = configurationContext.getObject().getIdTokenGeneratorService().generate(idTokenContext);
             if (idTokenGenerated != null) {
                 val idToken = idTokenGenerated.token();
                 LOGGER.debug("Generated ID token [{}]", idToken);

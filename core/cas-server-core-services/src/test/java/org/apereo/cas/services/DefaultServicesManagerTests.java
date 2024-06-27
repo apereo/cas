@@ -2,16 +2,21 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.config.BaseAutoConfigurationTests;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.Ordered;
+import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,6 +27,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("RegisteredService")
+@ExtendWith(CasTestExtension.class)
 @Execution(ExecutionMode.SAME_THREAD)
 class DefaultServicesManagerTests {
 
@@ -166,4 +172,33 @@ class DefaultServicesManagerTests {
         }
     }
 
+    @Nested
+    @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class)
+    class IndexableTests {
+        @Autowired
+        @Qualifier(ServicesManager.BEAN_NAME)
+        private ChainingServicesManager servicesManager;
+        
+        @Test
+        void verifyOperation() throws Throwable {
+            val indexedServicesManager = (IndexableServicesManager) servicesManager.getServiceManagers().get(0);
+            indexedServicesManager.clearIndexedServices();
+            assertEquals(0, indexedServicesManager.countIndexedServices());
+
+            val registeredService = new CasRegisteredService();
+            registeredService.setId(RandomUtils.nextLong());
+            registeredService.setName(UUID.randomUUID().toString());
+            registeredService.setServiceId(registeredService.getName());
+            indexedServicesManager.save(registeredService);
+
+            registeredService.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(List.of("one", "two")));
+            indexedServicesManager.save(registeredService);
+
+            registeredService.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(List.of("A", "B")));
+            indexedServicesManager.save(registeredService);
+
+            assertEquals(1, indexedServicesManager.countIndexedServices());
+            assertTrue(indexedServicesManager.findIndexedServiceBy(registeredService.getId()).isPresent());
+        }
+    }
 }

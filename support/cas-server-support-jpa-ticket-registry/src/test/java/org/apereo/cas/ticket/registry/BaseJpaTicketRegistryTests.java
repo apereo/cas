@@ -28,6 +28,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.integration.IntegrationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
@@ -146,10 +147,10 @@ public abstract class BaseJpaTicketRegistryTests extends BaseTicketRegistryTests
             .count(1L).type(TicketGrantingTicket.PREFIX).decode(true).build()).size());
     }
 
-    @Import({
+    @Import(BaseTicketRegistryTests.SharedTestConfiguration.class)
+    @ImportAutoConfiguration({
         CasJpaTicketRegistryAutoConfiguration.class,
         CasHibernateJpaAutoConfiguration.class,
-        BaseTicketRegistryTests.SharedTestConfiguration.class,
         CasWsSecuritySecurityTokenAutoConfiguration.class,
         CasCoreSamlAutoConfiguration.class,
         CasOAuth20AutoConfiguration.class

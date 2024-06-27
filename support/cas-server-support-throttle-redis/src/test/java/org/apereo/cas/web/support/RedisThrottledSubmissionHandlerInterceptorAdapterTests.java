@@ -2,9 +2,11 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.config.CasRedisThrottlingAutoConfiguration;
 import org.apereo.cas.config.CasSupportRedisAuditAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @since 6.0.0
  */
 @Tag("Redis")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = {
     CasRedisThrottlingAutoConfiguration.class,
     CasSupportRedisAuditAutoConfiguration.class,

@@ -6,7 +6,7 @@ const cas = require("../../cas.js");
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
 
-    const redirectUri = "https%3A%2F%2Fapereo.github.io";
+    const redirectUri = "https://localhost:9859/anything/cas";
     const url = `https://localhost:8443/cas/oauth2.0/authorize?response_type=code&redirect_uri=${redirectUri}&client_id=client&scope=profile&state=9qa3`;
     
     await cas.goto(page, url);
@@ -48,7 +48,11 @@ const cas = require("../../cas.js");
             const result = res.data;
             assert(result.id === "casuser");
             assert(result.client_id === "client");
-            assert(result.service === "https://apereo.github.io");
+            assert(result.service === redirectUri);
+            assert(result.attributes.oauthClientId === "client");
+            assert(result.attributes.organization === "apereo");
+            assert(result.attributes.email === "casuser@apereo.org");
+            assert(result.attributes.username === "casuser");
         }, (error) => {
             throw error;
         });

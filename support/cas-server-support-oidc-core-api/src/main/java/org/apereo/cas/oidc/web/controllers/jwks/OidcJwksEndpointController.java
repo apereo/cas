@@ -11,7 +11,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
@@ -61,11 +59,11 @@ public class OidcJwksEndpointController extends BaseOidcController {
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.JWKS_URL,
         "/**/" + OidcConstants.JWKS_URL
     }, produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Produces the collection of keys from the keystore", parameters = @Parameter(name = "state", description = "Filter keys by their state name", required = false))
+    @Operation(summary = "Produces the collection of keys from the keystore",
+        parameters = @Parameter(name = "state", description = "Filter keys by their state name", required = false))
     public ResponseEntity handleRequestInternal(final HttpServletRequest request,
-                                                        final HttpServletResponse response,
-                                                        @RequestParam(value = "state", required = false)
-                                                        final String state) {
+                                                final HttpServletResponse response,
+                                                @RequestParam(value = "state", required = false) final String state) {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.JWKS_URL)) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");

@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Redis")
-@Import(CasRedisMultifactorAuthenticationTrustAutoConfiguration.class)
+@ImportAutoConfiguration(CasRedisMultifactorAuthenticationTrustAutoConfiguration.class)
 @TestPropertySource(
     properties = {
         "cas.authn.mfa.trusted.redis.host=localhost",

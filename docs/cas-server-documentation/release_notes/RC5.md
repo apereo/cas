@@ -55,12 +55,31 @@ The collection of end-to-end [browser tests based via Puppeteer](../../developer
 and scenarios. At the moment, total number of jobs stands at approximately `482` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
+  
+Furthermore, the following docker images used for integration testing are now upgraded:
+
+- Localstack
+- Apereo CAS
+- DynamoDb
+- Elastic APM
+- GCP
+- Grouper
+- InfluxDb
+- Kafka
+- MariaDb
+- PostgreSQL
+- Redis
 
 ### CAS Initializr SBOM Support
 
 CAS Initializr is now modified to generate a Software Bill of Materials (SBOM) using the CycloneDX format. This SBOM can be used to
 track and manage the open-source components used in your CAS deployment and may be examined via the `sbom` actuator endpoint.
-  
+   
+### Cloudflare Turnstile
+
+Cloudflare Turnstile is a free tool to replace CAPTCHAs and delivers frustration-free, CAPTCHA-free web experiences 
+to website visitors. CAS now supports Cloudflare Turnstile as a [CAPTCHA option](../integration/Configuring-Google-reCAPTCHA.html).
+
 ### Encryption Algorithm
 
 The default content encryption algorithm for crypto operations has now switched from `A128CBC-HS256` to `A256CBC-HS512`, which requires a larger key size for better security.
@@ -70,12 +89,52 @@ To continue using your existing keys, you would need to instruct CAS to use the 
 cas.[path-to-configuration-key].crypto.alg=A128CBC-HS256
 ```
 
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
+This is potentially a breaking change. Make sure to review your configuration and adjust settings accordingly.
+</p></div>
+
+### Passwordless Authentication with reCAPTCHA
+
+[Passwordless authentication](../authentication/Passwordless-Authentication.html) can now support reCAPTCHA to protect against automated abuse, 
+such as credential stuffing attacks.
+
+### SAML2 Delegated Authentication
+
+All functionality and components that allow CAS to route authentication requests to external SAML2 identity providers are now consolidated under a single module.
+This is done to simplify the setup in a more modular way and reduce the number of libraries and dependencies that would be pulled into the build.
+
+Please make sure you review the [SAML2 delegated authentication](../integration/Delegate-Authentication-SAML.html) page and include the correct module in your build.
+
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
+This is potentially a breaking change. Make sure to review your build's dependencies and adjust modules to restore functionality.
+</p></div>
+
+### OpenID Connect Delegated Authentication
+
+Similar to the above entry, all functionality and components that allow CAS to route authentication requests to external OAuth or OIDC identity providers are now consolidated under a single module.
+This is done to simplify the setup in a more modular way and reduce the number of libraries and dependencies that would be pulled into the build.
+
+Please make sure you review the notes referenced [here](../integration/Delegate-Authentication-OAuth20.html) or [here](../integration/Delegate-Authentication-Generic-OpenID-Connect.html) 
+and include the correct module in your build. Note that this change affects any external identity provider, (such as GitHub, Facebook, Apple, etc), that uses the OAuth2 or OpenID Connect protocol.
+
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
+This is potentially a breaking change. Make sure to review your build's dependencies and adjust modules to restore functionality.
+</p></div>
+
+### SAML2 Delegated Authentication Metadata
+
+CAS is now able to store and manage its SAML2 service provider metadata via [Amazon S3 buckets](../integration/Delegate-Authentication-SAML-Metadata.html). 
+This feature is relevant only when [SAML2 delegated authentication](../integration/Delegate-Authentication-SAML.html) is turned on.
+
 ## Other Stuff
 
 - [Simple Multifactor Authentication](../mfa/Simple-Multifactor-Authentication.html) may prompt the user to proceed to account registration, when no contact information is found.
 - ID token `jti` claims in [OpenID Connect](../authentication/OIDC-Authentication.html) are no longer plain ticket (granting-ticket) identifiers but are instead digested using `SHA-512`.
 - The `ticketRegistry` [actuator endpoint](../ticketing/Configuring-Ticketing-Components.html) now offers the ability to run the ticket registry cleaner task on-demand.
 - Docker Swarm support for Hazelcast has been removed from the CAS codebase. 
+- Claims that are collected in a JWT Access Token are now forced to pass through attribute release policies assigned to the application definition.
+- WebAuthn registration endpoint is now able to detect and track an authenticated request using the CAS in-progress authentication attempt. 
+- Internal data structures used to index registered service definitions for better querying and searching should now prevent duplicate service definitions.
 
 ## Library Upgrades
 
@@ -88,8 +147,19 @@ cas.[path-to-configuration-key].crypto.alg=A128CBC-HS256
 - Spring Cloud
 - Google Cloud
 - Spring Boot Admin
+- Spring Integration
+- Spring Security
+- Spring Data
 - Nimbus JOSE JWT
+- Spring Session
 - Java Melody
 - ErrorProne
 - Twilio
+- Gradle
 - Sentry
+- Jakarta Servlet API
+- Netty
+- Amazon SDK
+- Pac4j
+- Micrometer
+- Apache Tomcat

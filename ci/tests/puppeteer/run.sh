@@ -30,13 +30,13 @@ function printcyan() {
   printf "🔷 ${CYAN}$1${ENDCOLOR}\n"
 }
 function printgreen() {
-  printf "☘️ ${GREEN}$1${ENDCOLOR}\n"
+  printf "☘️  ${GREEN}$1${ENDCOLOR}\n"
 }
 function printyellow() {
-  printf "⚠️ ${YELLOW}$1${ENDCOLOR}\n"
+  printf "⚠️  ${YELLOW}$1${ENDCOLOR}\n"
 }
 function printred() {
-  printf "🔥 ${RED}$1${ENDCOLOR}\n"
+  printf "🔥  ${RED}$1${ENDCOLOR}\n"
 }
 
 function progressbar() {
@@ -460,7 +460,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
 
   rm -rf ${targetArtifact}
   BUILD_COMMAND=$(printf '%s' \
-      "./gradlew ${BUILD_TASKS} -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc --build-cache --configure-on-demand --parallel \
+      "./gradlew ${BUILD_TASKS} -DskipSpringBootDevTools=true -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc --build-cache --configure-on-demand --parallel \
       ${BUILD_SCRIPT} ${DAEMON} -DskipBootifulLaunchScript=true -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS}")
   printcyan "Executing build command in the ${BUILD_SPAWN}:\n\n${BUILD_COMMAND}"
 
@@ -672,10 +672,13 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
       if [[ "${NATIVE_RUN}" == "true" ]]; then
         printcyan "Launching CAS instance #${c} under port ${serverPort} from ${targetArtifact}"
         ${targetArtifact} -Dcom.sun.net.ssl.checkRevocation=false \
-          -Dlog.console.stacktraces=true -DaotSpringActiveProfiles=none \
+          -Dlog.console.stacktraces=true \
+          -DaotSpringActiveProfiles=none \
           --spring.main.lazy-initialization=false \
+          --spring.devtools.restart.enabled=false \
           --management.endpoints.web.discovery.enabled=true \
-          --server.port=${serverPort} --spring.profiles.active=none  \
+          --server.port=${serverPort} \
+          --spring.profiles.active=none  \
           --server.ssl.key-store="$keystore" ${properties} &
       elif [[ "${buildDockerImage}" == "true" ]]; then
         printcyan "Launching Docker image cas-${scenarioName}:latest"
@@ -714,6 +717,7 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
           --server.port=${serverPort} \
           --spring.main.lazy-initialization=false \
           --spring.profiles.active=none \
+          --spring.devtools.restart.enabled=false \
           --management.endpoints.web.discovery.enabled=true \
           --server.ssl.key-store="$keystore" \
           --cas.audit.engine.enabled=true \
@@ -746,7 +750,7 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
     fi
   done
 
-  printgreen "\nReady!"
+  printgreen "Ready!"
   if [[ "${INITONLY}" == "false" ]]; then
     readyScript=$(jq -j '.readyScript // empty' < "${config}")
     readyScript="${readyScript//\$\{PWD\}/${PWD}}"

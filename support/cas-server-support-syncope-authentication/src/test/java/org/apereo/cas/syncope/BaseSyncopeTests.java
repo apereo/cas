@@ -96,15 +96,11 @@ public abstract class BaseSyncopeTests {
 
         return user;
     }
-
     @ImportAutoConfiguration({
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        RefreshAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        RefreshAutoConfiguration.class,
         CasSyncopeAutoConfiguration.class,
 
         CasCoreAutoConfiguration.class,
@@ -120,10 +116,9 @@ public abstract class BaseSyncopeTests {
         CasCoreUtilAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
-        CasCoreNotificationsAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
-        CasAuthenticationEventExecutionPlanTestConfiguration.class
-    })
+        CasCoreNotificationsAutoConfiguration.class})
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import({CasRegisteredServicesTestConfiguration.class, CasAuthenticationEventExecutionPlanTestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 }

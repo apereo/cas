@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.BaseRemoteAddressTests;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -8,6 +9,7 @@ import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 
 @Tag("WebflowActions")
+@ExtendWith(CasTestExtension.class)
 class RemoteAuthenticationNonInteractiveCredentialsActionTests {
     @Nested
     @SpringBootTest(classes = BaseRemoteAddressTests.SharedTestConfiguration.class,

@@ -6,21 +6,21 @@ import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.serialization.SerializationUtils;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -39,6 +38,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("RegisteredService")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class RegisteredServiceRegexAttributeFilterTests {
 

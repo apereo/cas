@@ -16,11 +16,13 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
@@ -65,6 +67,7 @@ import static org.mockito.Mockito.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Authentication")
+@ExtendWith(CasTestExtension.class)
 @AutoConfigureObservability
 class AuthenticationAttributeReleasePolicyTests {
     @Autowired

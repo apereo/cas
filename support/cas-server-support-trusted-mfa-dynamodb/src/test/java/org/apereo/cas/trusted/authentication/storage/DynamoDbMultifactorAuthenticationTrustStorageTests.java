@@ -8,7 +8,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import software.amazon.awssdk.core.SdkSystemSetting;
 import java.time.ZoneOffset;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Import(CasDynamoDbMultifactorAuthenticationTrustAutoConfiguration.class)
+@ImportAutoConfiguration(CasDynamoDbMultifactorAuthenticationTrustAutoConfiguration.class)
 @TestPropertySource(properties = {
     "cas.authn.mfa.trusted.dynamo-db.endpoint=http://localhost:8000",
     "cas.authn.mfa.trusted.dynamo-db.drop-tables-on-startup=true",

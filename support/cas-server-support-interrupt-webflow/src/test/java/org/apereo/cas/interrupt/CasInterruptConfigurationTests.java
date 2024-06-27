@@ -2,8 +2,10 @@ package org.apereo.cas.interrupt;
 
 import org.apereo.cas.config.CasInterruptAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -31,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("CasConfiguration")
+@ExtendWith(CasTestExtension.class)
 class CasInterruptConfigurationTests {
     @Autowired
     @Qualifier("interruptInquirer")

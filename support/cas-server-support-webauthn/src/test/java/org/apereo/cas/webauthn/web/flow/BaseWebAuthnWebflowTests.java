@@ -36,10 +36,7 @@ public abstract class BaseWebAuthnWebflowTests {
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         SecurityAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
@@ -53,11 +50,12 @@ public abstract class BaseWebAuthnWebflowTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
         CasMultifactorAuthnTrustAutoConfiguration.class,
         CasSupportActionsAutoConfiguration.class,
         CasWebAuthnAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

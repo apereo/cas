@@ -15,7 +15,7 @@ async function registerGoogleAuthenticatorAccount() {
 }
 
 async function deleteGoogleAuthenticatorAccounts() {
-    await cas.doRequest("https://localhost:8443/cas/actuator/gauthCredentialRepository");
+    await cas.doRequest("https://localhost:8443/cas/actuator/gauthCredentialRepository", "DELETE");
 }
 
 async function passwordResetFlowMfaWithoutRegisteredDevice(browser) {
@@ -35,6 +35,7 @@ async function passwordResetFlowMfaWithoutRegisteredDevice(browser) {
         await cas.waitForNavigation(page);
         await cas.sleep(1000);
         await cas.screenshot(page);
+        await cas.sleep(1000);
         await cas.assertInnerTextStartsWith(page, "#fm1 section div.alert p", "Your MFA provider has denied your attempt");
 
         await registerGoogleAuthenticatorAccount();

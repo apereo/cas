@@ -76,10 +76,10 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @Operation(summary = "Handle and produce a list of services from registry")
     @GetMapping(produces = {
+        MediaType.APPLICATION_JSON_VALUE,
         MEDIA_TYPE_SPRING_BOOT_V2_JSON,
         MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-        MediaType.APPLICATION_JSON_VALUE,
         MEDIA_TYPE_CAS_YAML
     })
     public ResponseEntity<String> handle() throws Exception {
@@ -95,10 +95,10 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @Operation(summary = "Fetch service either by numeric id or service id pattern")
     @GetMapping(path = "{id}", produces = {
+        MediaType.APPLICATION_JSON_VALUE,
         MEDIA_TYPE_SPRING_BOOT_V2_JSON,
         MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-        MediaType.APPLICATION_JSON_VALUE,
         MEDIA_TYPE_CAS_YAML
     })
     public ResponseEntity<String> fetchService(@PathVariable final String id) throws Exception {
@@ -120,10 +120,10 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @Operation(summary = "Fetch services by their type")
     @GetMapping(path = "type/{type}", produces = {
+        MediaType.APPLICATION_JSON_VALUE,
         MEDIA_TYPE_SPRING_BOOT_V2_JSON,
         MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-        MediaType.APPLICATION_JSON_VALUE,
         MEDIA_TYPE_CAS_YAML
     })
     public ResponseEntity<String> fetchServicesByType(@PathVariable final String type) throws Exception {
@@ -143,10 +143,10 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     @DeleteMapping(path = "{id}",
         consumes = {
             MediaType.APPLICATION_OCTET_STREAM_VALUE,
+            MediaType.APPLICATION_JSON_VALUE,
             MEDIA_TYPE_SPRING_BOOT_V2_JSON,
             MEDIA_TYPE_SPRING_BOOT_V3_JSON,
-            MEDIA_TYPE_CAS_YAML,
-            MediaType.APPLICATION_JSON_VALUE
+            MEDIA_TYPE_CAS_YAML
         })
     public ResponseEntity<String> deleteService(@PathVariable final String id) throws Exception {
         if (NumberUtils.isDigits(id)) {
@@ -175,12 +175,16 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @PostMapping(path = "/import", consumes = {
         MediaType.APPLICATION_OCTET_STREAM_VALUE,
+        MediaType.APPLICATION_JSON_VALUE,
         MEDIA_TYPE_SPRING_BOOT_V2_JSON,
         MEDIA_TYPE_SPRING_BOOT_V3_JSON,
-        MEDIA_TYPE_CAS_YAML,
-        MediaType.APPLICATION_JSON_VALUE
-    }, produces = {MEDIA_TYPE_SPRING_BOOT_V2_JSON, MEDIA_TYPE_SPRING_BOOT_V3_JSON,
-        MEDIA_TYPE_CAS_YAML, MediaType.APPLICATION_JSON_VALUE})
+        MEDIA_TYPE_CAS_YAML
+    }, produces = {
+        MediaType.APPLICATION_JSON_VALUE,
+        MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+        MEDIA_TYPE_SPRING_BOOT_V3_JSON,
+        MEDIA_TYPE_CAS_YAML
+    })
     @Operation(summary = "Import registered services as a JSON document or a zip file")
     public ResponseEntity<RegisteredService> importService(final HttpServletRequest request) throws Exception {
         val contentType = request.getContentType();

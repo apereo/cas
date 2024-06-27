@@ -1,5 +1,5 @@
 {
-  "dependencies": "pac4j-webflow,mongo-core",
+  "dependencies": "pac4j-webflow,mongo-core,pac4j-saml",
   "conditions": {
     "docker": "true"
   },

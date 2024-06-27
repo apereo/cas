@@ -2,15 +2,12 @@ package org.apereo.cas.support.pac4j.authentication.clients;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import com.github.benmanes.caffeine.cache.Cache;
 import org.jooq.lambda.Unchecked;
-import org.pac4j.core.client.IndirectClient;
-import org.pac4j.saml.client.SAML2Client;
-import org.pac4j.saml.store.SAMLMessageStoreFactory;
+import org.pac4j.core.client.BaseClient;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.ObjectProvider;
-
+import org.springframework.context.ConfigurableApplicationContext;
+import java.io.Closeable;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -26,13 +23,13 @@ public class DefaultDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
         final CasConfigurationProperties casProperties,
         final Collection<DelegatedClientFactoryCustomizer> customizers,
         final CasSSLContext casSSLContext,
-        final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory,
-        final Cache<String, Collection<IndirectClient>> clientsCache) {
-        super(casProperties, customizers, casSSLContext, samlMessageStoreFactory, clientsCache);
+        final Cache<String, Collection<BaseClient>> clientsCache,
+        final ConfigurableApplicationContext applicationContext) {
+        super(casProperties, customizers, casSSLContext, clientsCache, applicationContext);
     }
 
     @Override
-    protected Collection<IndirectClient> loadIdentityProviders() {
+    protected Collection<BaseClient> loadIdentityProviders() throws Exception {
         return buildAllIdentityProviders(casProperties);
     }
 
@@ -40,8 +37,8 @@ public class DefaultDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
     public void destroy() {
         Optional.ofNullable(getCachedClients())
             .stream()
-            .filter(SAML2Client.class::isInstance)
-            .map(SAML2Client.class::cast)
-            .forEach(Unchecked.consumer(SAML2Client::destroy));
+            .filter(Closeable.class::isInstance)
+            .map(Closeable.class::cast)
+            .forEach(Unchecked.consumer(Closeable::close));
     }
 }

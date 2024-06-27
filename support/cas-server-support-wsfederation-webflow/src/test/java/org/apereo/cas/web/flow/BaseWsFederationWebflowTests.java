@@ -36,28 +36,25 @@ class BaseWsFederationWebflowTests {
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreSamlAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasWsFederationAuthenticationAutoConfiguration.class,
         CasWsFederationAuthenticationWebflowAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import({CasRegisteredServicesTestConfiguration.class, CasPersonDirectoryTestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 }

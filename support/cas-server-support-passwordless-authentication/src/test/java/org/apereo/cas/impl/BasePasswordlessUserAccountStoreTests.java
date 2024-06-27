@@ -16,6 +16,8 @@ import org.apereo.cas.config.CasPasswordlessAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -34,22 +36,19 @@ import org.springframework.context.annotation.Import;
  */
 @SpringBootTest(classes = BasePasswordlessUserAccountStoreTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ExtendWith(CasTestExtension.class)
 public abstract class BasePasswordlessUserAccountStoreTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasPasswordlessAuthenticationAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
@@ -59,6 +58,8 @@ public abstract class BasePasswordlessUserAccountStoreTests {
         CasCoreCookieAutoConfiguration.class,
         CasThemesAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

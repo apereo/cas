@@ -21,6 +21,7 @@ import org.opensaml.saml.saml2.core.Issuer;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -37,8 +38,8 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Import({
-    BaseSamlIdPWebflowTests.SamlIdPMetadataTestConfiguration.class,
+@Import(BaseSamlIdPWebflowTests.SamlIdPMetadataTestConfiguration.class)
+@ImportAutoConfiguration({
     CasCoreSamlAutoConfiguration.class,
     CasSamlIdPAutoConfiguration.class
 })

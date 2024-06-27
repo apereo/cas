@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Import;
 
 /**
  * This is {@link BaseSamlConfigurationTests}.
@@ -19,10 +18,7 @@ public abstract class BaseSamlConfigurationTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
@@ -35,6 +31,7 @@ public abstract class BaseSamlConfigurationTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

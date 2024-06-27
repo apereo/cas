@@ -13,7 +13,7 @@ function printgreen() {
   printf "${GREEN}$1${ENDCOLOR}%n"
 }
 
-jmeterVersion=5.6.2
+jmeterVersion=5.6.3
 gradle="./gradlew "
 gradleBuild=""
 gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel --max-workers=8 --no-configuration-cache "

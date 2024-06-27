@@ -11,7 +11,7 @@ import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.engine.ActionState;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-@Import({
+@ImportAutoConfiguration({
     CasPasswordManagementAutoConfiguration.class,
     CasPasswordManagementWebflowAutoConfiguration.class
 })

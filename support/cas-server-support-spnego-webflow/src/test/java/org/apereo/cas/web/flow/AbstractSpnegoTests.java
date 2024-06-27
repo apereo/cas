@@ -15,6 +15,8 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasSpnegoAutoConfiguration;
 import org.apereo.cas.config.CasSpnegoWebflowAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
@@ -53,6 +55,7 @@ import org.springframework.webflow.execution.Action;
     "cas.authn.spnego.system.kerberos-conf=classpath:kerb5.conf",
     "cas.authn.spnego.system.login-conf=classpath:jaas.conf"
 })
+@ExtendWith(CasTestExtension.class)
 public abstract class AbstractSpnegoTests {
 
     @Autowired

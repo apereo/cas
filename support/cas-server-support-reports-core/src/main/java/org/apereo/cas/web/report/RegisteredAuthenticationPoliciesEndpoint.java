@@ -45,7 +45,7 @@ public class RegisteredAuthenticationPoliciesEndpoint extends BaseCasActuatorEnd
      * @return the web async task
      */
     @ReadOperation(produces = {
-        MEDIA_TYPE_SPRING_BOOT_V2_JSON, MEDIA_TYPE_CAS_YAML, MediaType.APPLICATION_JSON_VALUE})
+        MediaType.APPLICATION_JSON_VALUE, MEDIA_TYPE_SPRING_BOOT_V2_JSON, MEDIA_TYPE_CAS_YAML})
     @Operation(summary = "Get available authentication policies")
     public Collection<AuthenticationPolicyDetails> handle() {
         return this.authenticationEventExecutionPlan.getObject().getAuthenticationPolicies()
@@ -62,8 +62,8 @@ public class RegisteredAuthenticationPoliciesEndpoint extends BaseCasActuatorEnd
      * @return the authentication policy
      */
     @ReadOperation(produces = {
-        MEDIA_TYPE_SPRING_BOOT_V2_JSON, MEDIA_TYPE_CAS_YAML, MediaType.APPLICATION_JSON_VALUE})
-    @Operation(summary = "Get available authentication policy by name", parameters = @Parameter(name = "name", required = true))
+        MediaType.APPLICATION_JSON_VALUE, MEDIA_TYPE_SPRING_BOOT_V2_JSON, MEDIA_TYPE_CAS_YAML})
+    @Operation(summary = "Get available authentication policy by name", parameters = @Parameter(name = "name", required = true, description = "The name of the policy to fetch"))
     public AuthenticationPolicyDetails fetchPolicy(@Selector final String name) {
         return this.authenticationEventExecutionPlan.getObject().getAuthenticationPolicies()
             .stream()

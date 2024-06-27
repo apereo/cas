@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.BaseSamlConfigurationTests;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.InetAddressUtils;
@@ -12,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.xerces.xs.XSObject;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.opensaml.core.xml.schema.XSBase64Binary;
 import org.opensaml.core.xml.schema.XSBoolean;
 import org.opensaml.core.xml.schema.XSDateTime;
@@ -39,6 +41,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("SAMLResponse")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseSamlConfigurationTests.SharedTestConfiguration.class)
 class NonInflatingSaml20ObjectBuilderTests {
     @Autowired

@@ -6,6 +6,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.DelegatedClientIdentityProviderAuthorizer;
@@ -13,6 +14,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.6.0
  */
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("Delegation")
 class DefaultDelegatedClientIdentityProviderAuthorizerTests {
@@ -52,7 +55,7 @@ class DefaultDelegatedClientIdentityProviderAuthorizerTests {
 
     @Test
     void verifyClientNameFromAuth() throws Throwable {
-        val client = identityProviders.findClient("FacebookClient").get();
+        val client = identityProviders.findClient("CasClient").get();
         val authn = RegisteredServiceTestUtils.getAuthentication("casuser",
             Map.of(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, List.of(client.getName())));
 
@@ -74,7 +77,7 @@ class DefaultDelegatedClientIdentityProviderAuthorizerTests {
 
     private void verifyAuthzForService(final HttpServletRequest request,
                                        final RequestContext requestContext) throws Throwable {
-        val client = identityProviders.findClient("FacebookClient").get();
+        val client = identityProviders.findClient("CasClient").get();
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         assertTrue(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, null, request));
         assertFalse(delegatedClientIdentityProviderAuthorizer.isDelegatedClientAuthorizedForService(client, service, request));

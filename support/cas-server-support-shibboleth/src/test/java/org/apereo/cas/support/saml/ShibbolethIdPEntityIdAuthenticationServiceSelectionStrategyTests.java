@@ -14,10 +14,12 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasShibbolethIdPAutoConfiguration;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -53,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasShibbolethIdPAutoConfiguration.class
 }, properties = "cas.authn.shib-idp.server-url=https://sso.shibboleth.org/idp/Authn/External")
 @Tag("SAML")
+@ExtendWith(CasTestExtension.class)
 class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
     @Autowired
     @Qualifier("shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy")

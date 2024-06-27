@@ -13,6 +13,7 @@ import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
@@ -21,6 +22,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.ResourceAccessMode;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +63,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class
 })
 @Tag("Events")
+@ExtendWith(CasTestExtension.class)
 @ResourceLock(value = "casEventRepository", mode = ResourceAccessMode.READ_WRITE)
 class CasAuthenticationEventListenerTests {
     private static final String REMOTE_ADDR_IP = "123.456.789.010";
@@ -266,7 +269,7 @@ class CasAuthenticationEventListenerTests {
     }
 
     @TestConfiguration(value = "EventTestConfiguration", proxyBeanMethods = false)
-    @EnableAsync
+    @EnableAsync(proxyTargetClass = false)
     static class EventTestConfiguration implements AsyncConfigurer {
         @Bean
         public CasEventRepository casEventRepository() {

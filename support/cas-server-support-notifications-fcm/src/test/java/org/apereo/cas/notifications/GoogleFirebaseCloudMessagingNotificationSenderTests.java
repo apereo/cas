@@ -3,6 +3,7 @@ package org.apereo.cas.notifications;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasGoogleFirebaseCloudMessagingAutoConfiguration;
 import org.apereo.cas.notifications.push.NotificationSender;
+import org.apereo.cas.test.CasTestExtension;
 import com.google.common.io.Files;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -10,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.google-firebase-messaging.registration-token-attribute-name=registrationToken"
 })
 @Tag("Simple")
+@ExtendWith(CasTestExtension.class)
 class GoogleFirebaseCloudMessagingNotificationSenderTests {
 
     @Autowired

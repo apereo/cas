@@ -20,8 +20,10 @@ import org.apereo.cas.config.CasThrottlingAutoConfiguration;
 import org.apereo.cas.config.CasX509CertificateExtractorAutoConfiguration;
 import org.apereo.cas.config.CasX509RestAutoConfiguration;
 import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
+import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -60,6 +62,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = "cas.rest.x509.tls-client-auth=true")
 @Tag("X509")
+@ExtendWith(CasTestExtension.class)
 class X509RestConfigurationTests {
     @Autowired
     @Qualifier("x509RestMultipartBody")

@@ -50,7 +50,7 @@ public class DelegatedClientAuthenticationConfigurationContext {
 
     private final DelegatedIdentityProviders identityProviders;
 
-    private final DelegatedAuthenticationCredentialExtractor credentialExtractor;
+    private final List<DelegatedAuthenticationCredentialExtractor> credentialExtractors;
 
     private final ServicesManager servicesManager;
 

@@ -2,10 +2,11 @@ package org.apereo.cas.web.security.authentication;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.ActuatorEndpointProperties;
-
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,9 +15,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("WebApp")
 class IpAddressAuthorizationManagerTests {

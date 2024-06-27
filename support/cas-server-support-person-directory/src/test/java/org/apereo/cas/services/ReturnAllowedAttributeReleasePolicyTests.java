@@ -15,6 +15,7 @@ import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -61,18 +63,14 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Attributes")
 @Execution(ExecutionMode.SAME_THREAD)
+@ExtendWith(CasTestExtension.class)
 class ReturnAllowedAttributeReleasePolicyTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
-
     @ImportAutoConfiguration({
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
-        RefreshAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
-        ReturnAllowedAttributeReleasePolicyTestConfiguration.class,
+        RefreshAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
@@ -84,6 +82,8 @@ class ReturnAllowedAttributeReleasePolicyTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import(ReturnAllowedAttributeReleasePolicyTestConfiguration.class)
     @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
     static class BaseAttributeTests {
     }

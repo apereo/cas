@@ -26,7 +26,9 @@ import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFac
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -66,6 +68,7 @@ import java.util.List;
     CasCoreWebflowAutoConfiguration.class,
     CasCoreCookieAutoConfiguration.class
 })
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseTicketResourceEntityResponseFactoryTests {
     @Autowired
     @Qualifier("ticketGrantingTicketResourceEntityResponseFactory")

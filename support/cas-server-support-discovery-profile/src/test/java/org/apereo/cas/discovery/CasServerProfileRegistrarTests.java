@@ -12,9 +12,11 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasDiscoveryProfileAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -49,6 +51,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.ldap[0].principal-attribute-list=sn,cn"
     })
 @Tag("Simple")
+@ExtendWith(CasTestExtension.class)
 class CasServerProfileRegistrarTests {
     @Autowired
     @Qualifier(CasServerProfileRegistrar.BEAN_NAME)

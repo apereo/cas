@@ -3,10 +3,12 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.config.CasPac4jCoreAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.SessionTerminationHandler;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,7 +30,8 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Delegation")
-public class DelegatedProfileTerminationHandlerTests {
+@ExtendWith(CasTestExtension.class)
+class DelegatedProfileTerminationHandlerTests {
     @Autowired
     @Qualifier("delegatedProfileTerminationHandler")
     private SessionTerminationHandler delegatedProfileTerminationHandler;

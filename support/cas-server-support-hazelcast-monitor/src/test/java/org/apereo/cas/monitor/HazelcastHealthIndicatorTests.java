@@ -11,10 +11,12 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasHazelcastMonitorAutoConfiguration;
 import org.apereo.cas.config.CasHazelcastTicketRegistryAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import com.hazelcast.internal.memory.MemoryStats;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -52,6 +54,7 @@ import static org.mockito.Mockito.*;
 },
     properties = "cas.ticket.registry.hazelcast.cluster.instance-name=testlocalmonitor")
 @Tag("Hazelcast")
+@ExtendWith(CasTestExtension.class)
 class HazelcastHealthIndicatorTests {
     @Autowired
     @Qualifier("hazelcastHealthIndicator")

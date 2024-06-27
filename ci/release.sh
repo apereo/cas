@@ -16,18 +16,18 @@ function printred() {
 }
 
 function clean {
-  ./gradlew clean --parallel --no-configuration-cache
+  ./gradlew clean --parallel --no-configuration-cache --no-daemon
 }
 
 function build {
     printgreen "Creating OpenRewrite recipe for ${casVersion}..."
     ./gradlew createOpenRewriteRecipe
-        git diff --quiet
-        git status
-        git add "**/rewrite/*.yml" && git commit -m "Generated OpenRewrite recipe for ${casVersion}"
+    git diff --quiet
+    git status
+    git add "**/rewrite/*.yml" && git commit -am "Generated OpenRewrite recipe for ${casVersion}"
 
     printgreen "Building CAS. Please be patient as this might take a while..."
-    ./gradlew assemble -x test -x check --parallel --no-watch-fs --no-configuration-cache \
+    ./gradlew assemble -x test -x check --parallel --no-watch-fs --no-daemon --no-configuration-cache \
         -DskipAot=true -DpublishReleases=true -DrepositoryUsername="$1" -DrepositoryPassword="$2"
     if [ $? -ne 0 ]; then
         printred "Building CAS failed."
@@ -64,7 +64,7 @@ function publish {
     fi
     printgreen "Publishing CAS releases. This might take a while..."
     ./gradlew publishToSonatype closeAndReleaseStagingRepository \
-      --no-build-cache --no-parallel --no-watch-fs --no-configuration-cache -DskipAot=true -DpublishReleases=true \
+      --no-build-cache --no-parallel --no-daemon --no-watch-fs --no-configuration-cache -DskipAot=true -DpublishReleases=true \
       -DrepositoryUsername="$1" -DrepositoryPassword="$2" -DpublishReleases=true \
       -Dorg.gradle.internal.http.socketTimeout=640000 \
       -Dorg.gradle.internal.http.connectionTimeout=640000 \
@@ -122,7 +122,7 @@ fi
 
 echo -e "\n"
 echo "***************************************************************"
-echo "Welcome to the release process for Apereo CAS ${casVersion}"
+printgreen "Welcome to the release process for Apereo CAS ${casVersion}"
 echo -n $(java -version)
 echo "***************************************************************"
 echo -e "Make sure the following criteria is met for non-SNAPSHOT versions:\n"
@@ -158,6 +158,12 @@ else
   else
     selection="1"
   fi
+fi
+
+if [[ -z $username || -z $password ]]; then
+  printred "Repository username and password are missing."
+  printred "Make sure the following environment variables are defined: REPOSITORY_USER and REPOSITORY_PWD"
+  exit 1
 fi
 
 case "$selection" in

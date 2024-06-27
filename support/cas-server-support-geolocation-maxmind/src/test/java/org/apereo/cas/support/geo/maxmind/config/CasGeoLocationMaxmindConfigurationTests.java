@@ -3,8 +3,10 @@ package org.apereo.cas.support.geo.maxmind.config;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.config.CasGeoLocationAutoConfiguration;
 import org.apereo.cas.config.CasGeoLocationMaxmindAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasGeoLocationMaxmindAutoConfiguration.class
 })
 @Tag("GeoLocation")
+@ExtendWith(CasTestExtension.class)
 class CasGeoLocationMaxmindConfigurationTests {
     @Autowired
     @Qualifier(GeoLocationService.BEAN_NAME)

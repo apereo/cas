@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = "management.endpoint.personDirectory.enabled=true")
 @Import(CasPersonDirectoryEndpointTests.CasPersonDirectoryTestConfiguration.class)
 @Tag("ActuatorEndpoint")
-public class CasPersonDirectoryEndpointTests extends AbstractCasEndpointTests {
+class CasPersonDirectoryEndpointTests extends AbstractCasEndpointTests {
     private static PersonAttributes PERSON = new SimplePersonAttributes("casuser", Map.of("phone", List.of("123456789")));
 
     @Autowired

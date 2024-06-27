@@ -13,9 +13,11 @@ import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -47,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.groovy.location=classpath:/GroovyPasswordMgmt.groovy"
 })
 @Tag("Groovy")
+@ExtendWith(CasTestExtension.class)
 class GroovyResourcePasswordManagementServiceTests {
 
     @Autowired

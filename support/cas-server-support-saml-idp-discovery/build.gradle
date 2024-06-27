@@ -28,6 +28,7 @@ dependencies {
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-pac4j-api")
+    implementation project(":support:cas-server-support-pac4j-saml")
     implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-saml-mdui-core")
     implementation project(":support:cas-server-support-saml-idp-core")
@@ -66,5 +67,6 @@ dependencies {
 
     testImplementation project(path: ":support:cas-server-support-person-directory-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-pac4j-webflow", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-pac4j-saml", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-pac4j-core-clients", configuration: "tests")
 }

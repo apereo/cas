@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.authn.oidc.identity-assurance.verification-source.location=classpath:assurance/id-1.json")
-public class AssuranceVerificationJsonSourceTests extends AbstractOidcTests {
+class AssuranceVerificationJsonSourceTests extends AbstractOidcTests {
     @Autowired
     @Qualifier(AssuranceVerificationSource.BEAN_NAME)
     private AssuranceVerificationSource assuranceVerificationSource;

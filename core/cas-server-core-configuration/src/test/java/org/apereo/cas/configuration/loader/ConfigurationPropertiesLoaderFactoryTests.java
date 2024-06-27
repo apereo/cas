@@ -3,9 +3,11 @@ package org.apereo.cas.configuration.loader;
 import org.apereo.cas.config.CasCoreConfigurationWatchAutoConfiguration;
 import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreStandaloneBootstrapAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @ActiveProfiles("dev")
 @Tag("Groovy")
-public class ConfigurationPropertiesLoaderFactoryTests {
+@ExtendWith(CasTestExtension.class)
+class ConfigurationPropertiesLoaderFactoryTests {
     @Autowired
     @Qualifier(ConfigurationPropertiesLoaderFactory.BEAN_NAME)
     private ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory;

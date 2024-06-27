@@ -12,4 +12,6 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration")
     implementation project(":core:cas-server-core-events")
+    
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

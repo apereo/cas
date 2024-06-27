@@ -1,5 +1,5 @@
 {
-  "dependencies": "reports,amqp-ticket-registry,pac4j-webflow",
+  "dependencies": "reports,amqp-ticket-registry,pac4j-webflow,pac4j-saml",
 
   "conditions": {
     "docker": "true"

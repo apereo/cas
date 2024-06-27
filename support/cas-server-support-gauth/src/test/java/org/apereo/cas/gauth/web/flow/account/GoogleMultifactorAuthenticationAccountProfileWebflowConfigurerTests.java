@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @Import(BaseGoogleAuthenticatorTests.SharedTestConfiguration.class)
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
-public class GoogleMultifactorAuthenticationAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class GoogleMultifactorAuthenticationAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Autowired
     @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
     protected FlowDefinitionRegistry flowDefinitionRegistry;

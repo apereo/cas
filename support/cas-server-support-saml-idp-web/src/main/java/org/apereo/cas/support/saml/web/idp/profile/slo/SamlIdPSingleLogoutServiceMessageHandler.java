@@ -115,7 +115,7 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
         HttpResponse response = null;
         try {
             val logoutRequest = (LogoutRequest) logoutMessage.getMessage();
-            LOGGER.trace("Sending logout request for binding [{}]", binding);
+            LOGGER.debug("Sending logout request for binding [{}]", binding);
             if (SAMLConstants.SAML2_REDIRECT_BINDING_URI.equalsIgnoreCase(binding)) {
                 val encoder = new SamlIdPHttpRedirectDeflateEncoder(msg.getUrl().toExternalForm(), logoutRequest);
                 encoder.doEncode();
@@ -129,10 +129,10 @@ public class SamlIdPSingleLogoutServiceMessageHandler extends BaseSingleLogoutSe
                 response = HttpUtils.execute(exec);
             } else {
                 val payload = SerializeSupport.nodeToString(XMLObjectSupport.marshall(logoutRequest));
-                LOGGER.trace("Logout request payload is [{}]", payload);
+                LOGGER.debug("Logout request payload is [{}]", payload);
 
                 val message = EncodingUtils.encodeBase64(payload.getBytes(StandardCharsets.UTF_8), false);
-                LOGGER.trace("Logout message encoded in base64 is [{}]", message);
+                LOGGER.debug("Logout message encoded in base64 is [{}]", message);
 
                 val exec = HttpExecutionRequest.builder()
                     .method(HttpMethod.POST)

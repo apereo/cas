@@ -17,6 +17,7 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -24,6 +25,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -60,6 +62,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasAuthenticationEventExecutionPlanTestConfiguration.class
 })
 @Tag("WebflowAuthenticationActions")
+@ExtendWith(CasTestExtension.class)
 class BasicAuthenticationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_BASIC_AUTHENTICATION)

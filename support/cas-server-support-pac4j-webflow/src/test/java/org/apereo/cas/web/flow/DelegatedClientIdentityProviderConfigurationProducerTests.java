@@ -4,12 +4,14 @@ import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("Delegation")
+@ExtendWith(CasTestExtension.class)
 class DelegatedClientIdentityProviderConfigurationProducerTests {
     @Autowired
     @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
@@ -43,7 +46,7 @@ class DelegatedClientIdentityProviderConfigurationProducerTests {
 
         val accessStrategy = new DefaultRegisteredServiceAccessStrategy();
         val policy = new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
-        policy.setAllowedProviders(List.of("SAML2Client"));
+        policy.setAllowedProviders(List.of("CasClient"));
         policy.setPermitUndefined(false);
 
         accessStrategy.setDelegatedAuthenticationPolicy(policy);

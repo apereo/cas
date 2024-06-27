@@ -4,9 +4,11 @@ import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.CasJpaEventsAutoConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -31,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @Getter
 @Tag("JDBC")
+@ExtendWith(CasTestExtension.class)
 class JpaCasEventRepositoryTests extends AbstractCasEventRepositoryTests {
     @Autowired
     @Qualifier(CasEventRepository.BEAN_NAME)

@@ -9,10 +9,12 @@ import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasSurrogateAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.flow.action.BaseSurrogateAuthenticationTests;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.client.BaseClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,8 +35,8 @@ import static org.mockito.Mockito.*;
     CasSurrogateAuthenticationWebflowAutoConfiguration.class,
     CasDelegatedAuthenticationAutoConfiguration.class,
     BaseSurrogateAuthenticationTests.SharedTestConfiguration.class
-},
-    properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
+}, properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
+@ExtendWith(CasTestExtension.class)
 class SurrogateDelegatedAuthenticationPreProcessorTests {
     @Autowired
     @Qualifier("surrogateDelegatedAuthenticationPreProcessor")
@@ -50,7 +52,7 @@ class SurrogateDelegatedAuthenticationPreProcessorTests {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
         servicesManager.save(registeredService);
 
-        
+
         val credential = new BasicIdentifiableCredential("casuser");
         credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("cassurrogate"));
         val surrogatePrincipal = surrogateDelegatedAuthenticationPreProcessor.process(RegisteredServiceTestUtils.getPrincipal("casuser"),

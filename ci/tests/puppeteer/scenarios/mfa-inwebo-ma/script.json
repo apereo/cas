@@ -1,8 +1,9 @@
 {
   "dependencies": "inwebo-mfa",
-
   "properties": [
     "--logging.level.org.apereo.cas=info",
+    
+    "--cas.http-web-request.header.content-security-policy=object-src 'none';",
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",

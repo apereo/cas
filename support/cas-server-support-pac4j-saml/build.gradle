@@ -1,0 +1,95 @@
+description = "Apereo CAS Delegated Authentication SAML2 Support Using Pac4J"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            category: "Delegated Authentication",
+            title: "Delegated (Proxy) Authentication",
+            aliases: ["pac4jsaml", "saml2external"]
+    ]
+}
+dependencies {
+    api project(":api:cas-server-core-api")
+    
+    implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-logout-api")
+    implementation project(":core:cas-server-core-cookie-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-authentication-mfa-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-services-api")
+    
+    implementation project(":support:cas-server-support-saml-core-api")
+    implementation project(":support:cas-server-support-saml-core")
+    implementation project(":support:cas-server-support-pac4j-api")
+    implementation project(":support:cas-server-support-pac4j-core-clients")
+    implementation project(":support:cas-server-support-pac4j-core")
+    implementation project(":support:cas-server-support-pac4j-webflow")
+
+    implementation libraries.pac4jsaml
+    implementation libraries.pac4jcore
+    implementation libraries.opensaml
+    implementation libraries.dropwizard
+    implementation libraries.shibutiljavasupport
+    implementation libraries.apachevelocity
+
+    compileOnly libraries.hazelcast
+    compileOnly libraries.mongo
+    compileOnly libraries.ldaptive
+    compileOnly libraries.awss3
+
+    compileOnly project(":support:cas-server-support-aws")
+    compileOnly project(":support:cas-server-support-mongo-core")
+    compileOnly project(":support:cas-server-support-saml-idp-core")
+    compileOnly project(":support:cas-server-support-saml-idp-web")
+    compileOnly project(":support:cas-server-support-discovery-profile-core")
+    compileOnly project(":support:cas-server-support-jpa-util")
+    compileOnly project(":support:cas-server-support-ldap-core")
+
+    testImplementation libraries.awss3
+    testImplementation libraries.jose4j
+    testImplementation libraries.mongo
+    testImplementation libraries.hazelcast
+
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-logging")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
+
+    testImplementation project(":support:cas-server-support-jpa-util")
+    testImplementation project(":support:cas-server-support-jdbc-drivers")
+    testImplementation project(":support:cas-server-support-saml-idp-core")
+    testImplementation project(":support:cas-server-support-saml-idp-web")
+    testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-reports")
+    testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-thymeleaf")
+    testImplementation project(":support:cas-server-support-hazelcast-core")
+    testImplementation project(":support:cas-server-support-mongo-core")
+    testImplementation project(":support:cas-server-support-aws")
+
+    testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-pac4j-core-clients", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-pac4j-webflow", configuration: "tests")
+
+    testImplementation project(path: ":core:cas-server-core-audit-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
+}

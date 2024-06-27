@@ -16,6 +16,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import java.util.List;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableTransactionManagement(proxyTargetClass = false)
 @EnableScheduling
+@EnableAsync(proxyTargetClass = false)
 @NoArgsConstructor
 public class CasWebApplication {
 

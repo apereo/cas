@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.http.SimpleHttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1.0
  */
 @Tag("FileSystem")
+@ExtendWith(CasTestExtension.class)
 @Slf4j
 class FileTrustStoreSslSocketFactoryTests {
 

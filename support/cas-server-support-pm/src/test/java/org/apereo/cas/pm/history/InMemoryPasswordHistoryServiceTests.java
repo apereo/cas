@@ -12,9 +12,11 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
 import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -46,6 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.history.core.enabled=true"
 })
 @Tag("PasswordOps")
+@ExtendWith(CasTestExtension.class)
 class InMemoryPasswordHistoryServiceTests {
     @Autowired
     @Qualifier(PasswordHistoryService.BEAN_NAME)

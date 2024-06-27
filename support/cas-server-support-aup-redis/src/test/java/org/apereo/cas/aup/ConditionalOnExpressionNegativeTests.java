@@ -2,9 +2,11 @@ package org.apereo.cas.aup;
 
 import org.apereo.cas.config.CasAcceptableUsagePolicyRedisAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("Redis")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = {
     BaseAcceptableUsagePolicyRepositoryTests.SharedTestConfiguration.class,
     CasAcceptableUsagePolicyRedisAutoConfiguration.class

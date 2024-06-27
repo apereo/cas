@@ -5,7 +5,7 @@ import org.apereo.cas.config.CasConsentWebflowAutoConfiguration;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.webflow.engine.Flow;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Import({
+@ImportAutoConfiguration({
     CasConsentCoreAutoConfiguration.class,
     CasConsentWebflowAutoConfiguration.class
 })

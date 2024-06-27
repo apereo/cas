@@ -2,10 +2,12 @@ package org.apereo.cas.monitor;
 
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasLdapMonitorAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ListFactoryBean;
@@ -32,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.monitor.ldap[0].name=LDAP"
     })
 @Tag("Ldap")
+@ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 10389)
 class PooledLdapConnectionFactoryHealthIndicatorTests {
     @Autowired

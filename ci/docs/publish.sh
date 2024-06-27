@@ -12,7 +12,7 @@ function printgreen() {
   printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
 }
 function printyellow() {
-  printf "⚠️ ${YELLOW}$1${ENDCOLOR}\n"
+  printf "⚠️  ${YELLOW}$1${ENDCOLOR}\n"
 }
 
 function validateProjectDocumentation() {
@@ -340,7 +340,7 @@ if [[ ${buildDocs} == "true" ]]; then
   printgreen "Installing documentation dependencies...\n"
   bundle config set force_ruby_platform true
   bundle install
-  printgreen "\nBuilding documentation site for $branchVersion with data at $PWD/gh-pages/_data"
+  printgreen "Building documentation site for $branchVersion with data at $PWD/gh-pages/_data"
   echo -n "Starting at " && date
   jekyll --version
 
@@ -395,7 +395,7 @@ cd "$PWD/gh-pages" || exit
 if [[ $clone == "true" ]]; then
   rm -Rf .jekyll-cache .jekyll-metadata .sass-cache "$branchVersion/build"
   rm -Rf "$branchVersion/build"
-  printgreen "\nConfiguring git repository settings...\n"
+  printgreen "Configuring git repository settings...\n"
   rm -Rf .git
   git init
   git config init.defaultBranch master

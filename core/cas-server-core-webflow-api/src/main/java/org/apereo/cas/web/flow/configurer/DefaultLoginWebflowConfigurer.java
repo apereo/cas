@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.configurer;
 
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
 import org.apereo.cas.authentication.credential.RememberMeUsernamePasswordCredential;
@@ -82,8 +83,8 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
 
     protected void createLoginFormView(final Flow flow) {
         val propertiesToBind = Map.of(
-            "username", Map.of("required", "true"),
-            "password", Map.of("converter", StringToCharArrayConverter.ID),
+            CasProtocolConstants.PARAMETER_USERNAME, Map.of("required", "true"),
+            CasProtocolConstants.PARAMETER_PASSWORD, Map.of("converter", StringToCharArrayConverter.ID),
             "source", Map.of("required", "true"));
         val binder = createStateBinderConfiguration(propertiesToBind);
         casProperties.getView().getCustomLoginFormFields()

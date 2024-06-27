@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("GeoLocation")
 @EnabledIfEnvironmentVariable(named = "AZURE_MAPS_SUBSCRIPTION_ID", matches = ".+")
 @EnabledIfEnvironmentVariable(named = "AZURE_MAPS_CLIENT_ID", matches = ".+")
-public class AzureMapsGeoLocationServiceTests {
+class AzureMapsGeoLocationServiceTests {
     @Autowired
     @Qualifier(GeoLocationService.BEAN_NAME)
     private GeoLocationService geoLocationService;

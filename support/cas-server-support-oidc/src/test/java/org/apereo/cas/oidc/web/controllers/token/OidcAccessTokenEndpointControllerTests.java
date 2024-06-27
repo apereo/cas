@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -63,7 +63,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class OidcAccessTokenEndpointControllerTests {
 
     @Nested
-    @Import(CasWebAppAutoConfiguration.class)
+    @ImportAutoConfiguration(CasWebAppAutoConfiguration.class)
     @TestPropertySource(properties = "cas.authn.oidc.core.accepted-issuers-pattern=.*")
     class MvcTests extends AbstractOidcTests {
         private MockMvc mvc;
@@ -190,7 +190,6 @@ class OidcAccessTokenEndpointControllerTests {
             val expirationTime = expirationPolicy.getIdleExpirationTime(ticketGrantingTicket);
             val lastTimeUsed = ticketGrantingTicket.getLastTimeUsed();
             
-
             ticketRegistry.addTicket(ticketGrantingTicket);
             val code = addCode(ticketGrantingTicket, registeredService);
             val result = mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)

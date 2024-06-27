@@ -15,6 +15,7 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasGoogleAuthenticatorAutoConfiguration;
 import org.apereo.cas.config.CasGoogleAuthenticatorDynamoDbAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
@@ -22,6 +23,7 @@ import lombok.val;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("DynamoDb")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = {
     CasGoogleAuthenticatorDynamoDbAutoConfiguration.class,
     CasCoreMultifactorAuthenticationAutoConfiguration.class,

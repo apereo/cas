@@ -19,11 +19,13 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
 import lombok.val;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -62,6 +64,7 @@ import java.util.Map;
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreAuditAutoConfiguration.class
 })
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseJdbcAcceptableUsagePolicyRepositoryTests extends BaseAcceptableUsagePolicyRepositoryTests {
     @Autowired
     @Qualifier("acceptableUsagePolicyDataSource")

@@ -2,7 +2,7 @@
 
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
-export DOCKER_IMAGE="amazon/dynamodb-local:2.4.0"
+export DOCKER_IMAGE="amazon/dynamodb-local:2.5.2"
 echo "Running DynamoDb docker image..."
 docker stop dynamodb-server || true && docker rm dynamodb-server || true
 docker run --rm -d -p 8000:8000 --name "dynamodb-server" ${DOCKER_IMAGE}

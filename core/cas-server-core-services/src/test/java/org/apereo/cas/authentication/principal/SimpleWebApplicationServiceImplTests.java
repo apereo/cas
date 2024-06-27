@@ -4,6 +4,7 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.config.BaseAutoConfigurationTests;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.SimpleUrlValidator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +12,7 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.1
  */
 @Tag("Authentication")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseAutoConfigurationTests.SharedTestConfiguration.class)
 class SimpleWebApplicationServiceImplTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "simpleWebApplicationServiceImpl.json");

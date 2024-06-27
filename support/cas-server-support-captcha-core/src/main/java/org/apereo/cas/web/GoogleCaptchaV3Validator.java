@@ -2,7 +2,7 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 
-import jakarta.servlet.http.HttpServletRequest;
+import lombok.Getter;
 
 /**
  * This is {@link GoogleCaptchaV3Validator}.
@@ -17,12 +17,10 @@ public class GoogleCaptchaV3Validator extends BaseCaptchaValidator {
      */
     public static final String REQUEST_PARAM_RECAPTCHA_TOKEN = "g-recaptcha-token";
 
+    @Getter
+    private final String recaptchaResponseParameterName = REQUEST_PARAM_RECAPTCHA_TOKEN;
+    
     public GoogleCaptchaV3Validator(final GoogleRecaptchaProperties recaptchaProperties) {
         super(recaptchaProperties);
-    }
-
-    @Override
-    public String getRecaptchaResponse(final HttpServletRequest request) {
-        return request.getParameter(REQUEST_PARAM_RECAPTCHA_TOKEN);
     }
 }

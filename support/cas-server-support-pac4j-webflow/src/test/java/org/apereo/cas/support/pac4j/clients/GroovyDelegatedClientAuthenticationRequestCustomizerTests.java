@@ -3,12 +3,14 @@ package org.apereo.cas.support.pac4j.clients;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.context.WebContext;
@@ -31,6 +33,7 @@ import static org.springframework.core.Ordered.*;
 @Tag("Groovy")
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
     properties = "cas.authn.pac4j.core.groovy-authentication-request-customizer.location=classpath:/AuthnRequestCustomizer.groovy")
+@ExtendWith(CasTestExtension.class)
 class GroovyDelegatedClientAuthenticationRequestCustomizerTests {
     protected WebContext context;
 

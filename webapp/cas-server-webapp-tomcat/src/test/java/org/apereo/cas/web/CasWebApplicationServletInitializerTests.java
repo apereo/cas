@@ -1,10 +1,12 @@
 package org.apereo.cas.web;
 
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockServletContext;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,10 +17,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.4.0
  */
 @Tag("WebApp")
+@ExtendWith(CasTestExtension.class)
 class CasWebApplicationServletInitializerTests {
 
     static {
-        System.setProperty("spring.main.allow-bean-definition-overriding", "true");
         System.setProperty("server.port", "8899");
     }
 

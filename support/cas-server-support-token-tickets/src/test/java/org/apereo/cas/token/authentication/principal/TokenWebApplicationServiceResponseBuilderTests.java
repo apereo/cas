@@ -23,6 +23,7 @@ import org.apereo.cas.config.CasTokenCoreAutoConfiguration;
 import org.apereo.cas.config.CasTokenTicketsAutoConfiguration;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
 import com.nimbusds.jwt.JWTParser;
@@ -31,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
@@ -72,6 +74,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @Tag("Authentication")
+@ExtendWith(CasTestExtension.class)
 class TokenWebApplicationServiceResponseBuilderTests {
     @Autowired
     @Qualifier("webApplicationServiceResponseBuilder")

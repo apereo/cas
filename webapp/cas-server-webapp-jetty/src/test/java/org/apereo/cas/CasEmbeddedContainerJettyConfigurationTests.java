@@ -1,9 +1,11 @@
 package org.apereo.cas;
 
 import org.apereo.cas.config.CasEmbeddedContainerJettyAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
@@ -32,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @Getter
 @Tag("WebApp")
+@ExtendWith(CasTestExtension.class)
 public class CasEmbeddedContainerJettyConfigurationTests {
     @Autowired
     @Qualifier("casJettyServerCustomizer")

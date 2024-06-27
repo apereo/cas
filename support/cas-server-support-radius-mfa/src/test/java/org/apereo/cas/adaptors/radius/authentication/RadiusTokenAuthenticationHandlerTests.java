@@ -4,9 +4,9 @@ import org.apereo.cas.adaptors.radius.web.flow.BaseRadiusMultifactorAuthenticati
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import net.jradius.dictionary.Attr_State;
 import net.jradius.packet.attribute.value.StringValue;
@@ -14,15 +14,14 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import javax.security.auth.login.FailedLoginException;
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -39,6 +38,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.mfa.radius.client.inet-address=localhost"
     })
 @Tag("Radius")
+@ExtendWith(CasTestExtension.class)
 @EnabledOnOs(OS.LINUX)
 class RadiusTokenAuthenticationHandlerTests {
 

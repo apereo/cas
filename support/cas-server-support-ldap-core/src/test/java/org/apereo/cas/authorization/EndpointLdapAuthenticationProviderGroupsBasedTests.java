@@ -1,11 +1,13 @@
 package org.apereo.cas.authorization;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -40,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.monitor.endpoints.ldap.bind-credential=password"
     })
 @Tag("LdapAuthentication")
+@ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class EndpointLdapAuthenticationProviderGroupsBasedTests extends BaseEndpointLdapAuthenticationProviderTests {
 

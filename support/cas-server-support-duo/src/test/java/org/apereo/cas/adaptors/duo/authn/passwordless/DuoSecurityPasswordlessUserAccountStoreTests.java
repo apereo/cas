@@ -5,6 +5,7 @@ import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.config.CasPasswordlessAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -14,6 +15,7 @@ import com.duosecurity.Client;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -35,6 +37,7 @@ import static org.mockito.Mockito.*;
  * @since 7.1.0
  */
 @Tag("DuoSecurity")
+@ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @SpringBootTest(classes = {
     DuoSecurityPasswordlessUserAccountStoreTests.DuoSecurityTestConfiguration.class,
@@ -50,7 +53,7 @@ import static org.mockito.Mockito.*;
         "cas.authn.mfa.duo[0].duo-api-host=https://localhost:${random.int[3000,9999]}",
         "cas.authn.mfa.duo[0].passwordless-authentication-enabled=true"
     })
-public class DuoSecurityPasswordlessUserAccountStoreTests {
+class DuoSecurityPasswordlessUserAccountStoreTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 

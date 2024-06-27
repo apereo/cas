@@ -5,12 +5,14 @@ import org.apereo.cas.support.saml.BaseSamlIdPMetadataTests;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnabledIfListeningOnPort(port = 4566)
 @Tag("AmazonWebServices")
+@ExtendWith(CasTestExtension.class)
 class AmazonS3SamlRegisteredServiceMetadataResolverTests {
     @Autowired
     @Qualifier("amazonS3SamlRegisteredServiceMetadataResolver")

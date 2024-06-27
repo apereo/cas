@@ -17,12 +17,14 @@ import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -33,7 +35,6 @@ import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfigu
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -48,15 +49,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("RestfulApi")
+@ExtendWith(CasTestExtension.class)
 class RestPasswordManagementServiceTests {
     @ImportAutoConfiguration({
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        RefreshAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        RefreshAutoConfiguration.class,
         CasRestPasswordManagementAutoConfiguration.class,
         CasPasswordManagementAutoConfiguration.class,
         RestTemplateAutoConfiguration.class,
@@ -70,6 +69,7 @@ class RestPasswordManagementServiceTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 

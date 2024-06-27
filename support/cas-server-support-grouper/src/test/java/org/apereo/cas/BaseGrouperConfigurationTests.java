@@ -41,10 +41,7 @@ public abstract class BaseGrouperConfigurationTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
@@ -53,15 +50,15 @@ public abstract class BaseGrouperConfigurationTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
-        GrouperTestConfiguration.class,
         CasGrouperAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import({CasRegisteredServicesTestConfiguration.class, GrouperTestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 

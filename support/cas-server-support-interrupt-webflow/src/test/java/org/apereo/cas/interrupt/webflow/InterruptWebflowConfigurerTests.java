@@ -27,9 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class InterruptWebflowConfigurerTests {
     @ImportAutoConfiguration({
         AopAutoConfiguration.class,
-        RefreshAutoConfiguration.class
-    })
-    @Import({
+        RefreshAutoConfiguration.class,
         CasInterruptAutoConfiguration.class,
         CasInterruptWebflowAutoConfiguration.class
     })

@@ -10,6 +10,7 @@ import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlIdPResponseCustomizer;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.Statement;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -102,6 +104,12 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
         val assertion = newAssertion(statements, issuerId, ZonedDateTime.now(ZoneOffset.UTC), id);
         assertion.setSubject(samlProfileSamlSubjectBuilder.build(context));
         assertion.setConditions(samlProfileSamlConditionsBuilder.build(context));
+
+        val customizers = openSamlConfigBean.getApplicationContext()
+            .getBeansOfType(SamlIdPResponseCustomizer.class).values();
+        customizers.stream()
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .forEach(customizer -> customizer.customizeAssertion(context, this, assertion));
         signAssertion(assertion, context);
         return assertion;
     }
@@ -118,7 +126,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
         var signAssertions = (context.getRegisteredService().getSignAssertions() == TriStateBoolean.UNDEFINED && context.getAdaptor().isWantAssertionsSigned())
                              || context.getRegisteredService().getSignAssertions().isTrue();
         if (!signAssertions) {
-            signAssertions = SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().entityDescriptor(),
+            signAssertions = SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().getEntityDescriptor(),
                 List.of(MetadataEntityAttributeQuery.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_SIGN_ASSERTIONS.getName(),
                     Attribute.URI_REFERENCE, List.of(Boolean.TRUE.toString()))));
         }

@@ -1,5 +1,5 @@
 {
-  "dependencies": "pac4j-webflow,jdbc,mongo-ticket-registry",
+  "dependencies": "pac4j-webflow,jdbc,mongo-ticket-registry,pac4j-oidc",
   "conditions": {
     "docker": "true"
   },

@@ -70,7 +70,7 @@ class UniversalPromptDuoSecurityAuthenticationServiceTests {
         val duoClient = mock(Client.class);
         val token = new Token();
         token.setAud("aud");
-        token.setIat(123456D);
+        token.setIat(123456.00D);
         token.setExp(123456);
         token.setAuth_time(123456789);
         token.setIss("issuer");

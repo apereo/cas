@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import java.util.UUID;
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @Getter
 @Tag("JDBC")
-@Import({
+@ImportAutoConfiguration({
     CasHibernateJpaAutoConfiguration.class,
     CasJpaPasswordlessAuthenticationAutoConfiguration.class
 })

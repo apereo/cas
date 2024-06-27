@@ -28,10 +28,12 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.val;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -64,6 +66,7 @@ import java.util.Set;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseCasCoreTests {
 
     @Autowired
@@ -80,18 +83,12 @@ public abstract class BaseCasCoreTests {
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        RefreshAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
-        SharedTestConfiguration.AttributeRepositoryTestConfiguration.class,
+        RefreshAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
-        CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
@@ -101,6 +98,12 @@ public abstract class BaseCasCoreTests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreValidationAutoConfiguration.class,
         CasCoreAutoConfiguration.class
+    })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import({
+        CasRegisteredServicesTestConfiguration.class,
+        CasAuthenticationEventExecutionPlanTestConfiguration.class,
+        SharedTestConfiguration.AttributeRepositoryTestConfiguration.class
     })
     public static class SharedTestConfiguration {
 

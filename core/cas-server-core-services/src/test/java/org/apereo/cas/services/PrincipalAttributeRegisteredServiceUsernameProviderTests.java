@@ -2,25 +2,24 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 4.1.0
  */
 @Tag("RegisteredService")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = {
     CasCoreUtilAutoConfiguration.class,
     RefreshAutoConfiguration.class

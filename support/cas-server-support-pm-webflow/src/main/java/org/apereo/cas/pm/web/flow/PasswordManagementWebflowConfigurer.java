@@ -256,7 +256,10 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             val attrMapping = createFlowMapping("flowScope." + CasWebflowConstants.ATTRIBUTE_SERVICE, CasWebflowConstants.ATTRIBUTE_SERVICE);
             val attrMappings = CollectionUtils.wrapList(attrMapping);
             customizers.forEach(c -> c.getWebflowAttributeMappings()
-                .forEach(key -> attrMappings.add(createFlowMapping("flowScope." + key, key))));
+                .forEach(key -> {
+                    attrMappings.add(createFlowMapping("flowScope." + key, key));
+                    attrMappings.add(createFlowMapping("conversationScope." + key, key));
+                }));
             val attributeMapper = createFlowInputMapper(attrMappings);
             val subflowMapper = createSubflowAttributeMapper(attributeMapper, null);
             subflowState.setAttributeMapper(subflowMapper);

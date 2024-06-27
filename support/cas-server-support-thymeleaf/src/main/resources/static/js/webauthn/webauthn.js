@@ -325,12 +325,14 @@ function getRegisterRequest(urls,
                             displayName,
                             credentialNickname,
                             requireResidentKey = false) {
+    let execution = document.getElementById('execution').value;
     return fetch(urls.register, {
         body: new URLSearchParams({
             username,
             displayName,
             credentialNickname,
             requireResidentKey,
+            execution: execution,
             sessionToken: session.sessionToken || null,
         }),
         headers: {

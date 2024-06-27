@@ -2,7 +2,6 @@ package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -12,7 +11,6 @@ import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.Optional;
 
 /**
@@ -30,16 +28,17 @@ public class DefaultDelegatedAuthenticationCredentialExtractor implements Delega
     public Optional<ClientCredential> extract(final BaseClient client, final RequestContext requestContext) {
         LOGGER.debug("Fetching credentials from delegated client [{}]", client);
         val credentials = getCredentialsFromDelegatedClient(requestContext, client);
-        return credentials.map(cc -> {
-            val clientCredential = buildClientCredential(client, requestContext, cc);
-            WebUtils.putCredential(requestContext, clientCredential);
-            return clientCredential;
-        });
+        if (credentials.isPresent()) {
+            val clientCredentialResult = buildClientCredential(client, requestContext, credentials.get());
+            clientCredentialResult.ifPresent(clientCredential -> WebUtils.putCredential(requestContext, clientCredential));
+            return clientCredentialResult;
+        }
+        return Optional.empty();
     }
 
-    protected ClientCredential buildClientCredential(final BaseClient client, final RequestContext requestContext, final Credentials credentials) {
+    protected Optional<ClientCredential> buildClientCredential(final BaseClient client, final RequestContext requestContext, final Credentials credentials) {
         LOGGER.info("Credentials are successfully authenticated using the delegated client [{}]", client.getName());
-        return new ClientCredential(credentials, client.getName());
+        return Optional.of(new ClientCredential(credentials, client.getName()));
     }
 
     protected Optional<Credentials> getCredentialsFromDelegatedClient(final RequestContext requestContext, final BaseClient client) {
@@ -49,7 +48,7 @@ public class DefaultDelegatedAuthenticationCredentialExtractor implements Delega
             val webContext = new JEEContext(request, response);
             val callContext = new CallContext(webContext, this.sessionStore);
             return client.getCredentials(callContext)
-                .map(cc -> client.validateCredentials(callContext, cc))
+                .map(clientCredentials -> client.validateCredentials(callContext, clientCredentials))
                 .filter(Optional::isPresent)
                 .map(Optional::get);
         }, e -> Optional.<Credentials>empty()).get();

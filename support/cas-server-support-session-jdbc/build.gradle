@@ -18,4 +18,6 @@ dependencies {
     
     implementation libraries.springsession
     implementation libraries.springsessionjdbc
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.config.CasGoogleCloudFirestoreServiceRegistryAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.spring.autoconfigure.core.GcpContextAutoConfiguration;
@@ -10,6 +11,7 @@ import com.google.cloud.spring.core.GcpProjectIdProvider;
 import com.google.firestore.v1.FirestoreGrpc;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +29,7 @@ import static org.mockito.Mockito.*;
  */
 @Getter
 @Tag("GCP")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = {
     GoogleCloudFirestoreServiceRegistryTests.GoogleCloudFirestoreTestConfiguration.class,
     CasGoogleCloudFirestoreServiceRegistryAutoConfiguration.class,

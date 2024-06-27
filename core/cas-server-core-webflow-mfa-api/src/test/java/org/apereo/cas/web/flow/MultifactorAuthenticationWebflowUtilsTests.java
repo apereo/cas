@@ -2,12 +2,14 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.flow.util.MultifactorAuthenticationWebflowUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("Webflow")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     MultifactorAuthenticationWebflowUtilsTests.MultifactorAuthenticationTestConfiguration.class

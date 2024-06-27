@@ -3,9 +3,11 @@ package org.apereo.cas.notifications.push;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.notifications.BaseNotificationTests;
 import org.apereo.cas.notifications.sms.SmsSender;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +29,7 @@ import static org.mockito.Mockito.*;
     DefaultNotificationSenderTests.DefaultNotificationSenderTestConfiguration.class
 })
 @Tag("Simple")
+@ExtendWith(CasTestExtension.class)
 class DefaultNotificationSenderTests {
     @Autowired
     @Qualifier("notificationSender")

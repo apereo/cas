@@ -10,9 +10,11 @@ import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
@@ -47,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.core.password-policy-pattern=^Th!.+{8,10}"
 })
 @Tag("PasswordOps")
+@ExtendWith(CasTestExtension.class)
 class DefaultPasswordValidationServiceTests {
     @Autowired
     @Qualifier(PasswordValidationService.BEAN_NAME)

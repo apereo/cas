@@ -34,6 +34,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
@@ -48,13 +49,15 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  * @deprecated Since 7.0.0
  */
-@Import({
+@ImportAutoConfiguration({
     CasMemcachedTicketRegistryAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
-    CasOAuth20AutoConfiguration.class,
+    CasOAuth20AutoConfiguration.class
+})
+@Import({
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     MemcachedTicketRegistryTests.MemcachedTicketRegistryTestConfiguration.class
 })

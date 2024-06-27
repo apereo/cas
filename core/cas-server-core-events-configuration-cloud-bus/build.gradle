@@ -6,4 +6,6 @@ dependencies {
 
     implementation libraries.springintegrationamqp
     implementation libraries.springcloudbus
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

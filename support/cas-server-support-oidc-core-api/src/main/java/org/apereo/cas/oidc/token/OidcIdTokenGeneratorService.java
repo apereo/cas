@@ -348,9 +348,8 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                                            final OidcRegisteredService registeredService,
                                            final JwtClaims claims) throws Throwable {
         val oidcIssuer = getConfigurationContext().getIssuerService().determineIssuer(Optional.of(registeredService));
-        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(getConfigurationContext().getAccessTokenJwtBuilder(),
-            registeredService, accessToken, accessToken.getService(), oidcIssuer,
-            getConfigurationContext().getCasProperties());
+        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(getConfigurationContext(),
+            registeredService, accessToken, oidcIssuer);
         val encodedAccessToken = cipher.encode(accessToken.getId());
         val jsonWebKey = getConfigurationContext().getIdTokenSigningAndEncryptionService()
             .getJsonWebKeySigningKey(Optional.of(registeredService));

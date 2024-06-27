@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("RegisteredService")
-public class GroovyRegisteredServiceAttributeReleaseActivationCriteriaTests {
+class GroovyRegisteredServiceAttributeReleaseActivationCriteriaTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
