@@ -49,7 +49,10 @@ const cas = require("../../cas.js");
         "sid": sid,
         "aud": "kc-client",
         "sub": "casuser",
-        "client_id": "caskeycloak"
+        "client_id": "caskeycloak",
+        "events": {
+            "http://schemas.openid.net/event/backchannel-logout": {}
+        }
     }, privateKey, "HS512");
     const logoutUrl = `https://localhost:8443/cas/login?logout_token=${jwt}&client_name=Keycloak`;
 

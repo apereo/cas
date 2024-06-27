@@ -148,4 +148,10 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
      * Example might be {@code client_secret_basic,client_secret_post,client_secret_jwt}.
      */
     private String supportedClientAuthenticationMethods;
+
+    /**
+     * Controls whether the logout token submitted as a JWT should be validated
+     * for the correct signature, etc.
+     */
+    private boolean validateLogoutToken = true;
 }
