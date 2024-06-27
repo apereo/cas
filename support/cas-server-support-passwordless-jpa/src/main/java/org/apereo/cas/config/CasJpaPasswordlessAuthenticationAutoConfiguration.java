@@ -143,7 +143,10 @@ public class CasJpaPasswordlessAuthenticationAutoConfiguration {
         private final PasswordlessTokenRepository repository;
 
         @Override
-        @Scheduled(initialDelayString = "${cas.authn.passwordless.tokens.jpa.cleaner.schedule.start-delay:PT30S}",
+        @Scheduled(
+            zone = "${cas.authn.passwordless.tokens.jpa.cleaner.schedule.cron-time-zone:}",
+            cron = "${cas.authn.passwordless.tokens.jpa.cleaner.schedule.cron-expression:}",
+            initialDelayString = "${cas.authn.passwordless.tokens.jpa.cleaner.schedule.start-delay:PT30S}",
             fixedDelayString = "${cas.authn.passwordless.tokens.jpa.cleaner.schedule.repeat-interval:PT35S}")
         public void clean() {
             lock.tryLock(__ -> repository.clean());

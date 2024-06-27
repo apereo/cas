@@ -59,4 +59,20 @@ public class SchedulingProperties implements CasFeatureModule, Serializable {
      */
     @DurationCapable
     private String repeatInterval = "PT2M";
+
+    /**
+     * A cron-like expression, extending the usual UN*X definition to include triggers
+     * on the second, minute, hour, day of month, month, and day of week.
+     * For example, {@code 0 * * * * MON-FRI} means once per minute on weekdays (at the top of the minute - the 0th second)
+     * or {@code 0 0 0 * * *} means every day at midnight.
+     * * Note that when cron expressions are defined, the start delay and repeat interval settings are must be
+     * removed and set to blank.
+     */
+    private String cronExpression;
+
+    /**
+     * A time zone for which the cron expression will be resolved.
+     * By default, this attribute is empty (i.e. the scheduler's time zone will be used).
+     */
+    private String cronTimeZone;
 }

@@ -128,7 +128,10 @@ public class CasMongoDbPasswordlessAuthenticationAutoConfiguration {
         private final PasswordlessTokenRepository repository;
 
         @Override
-        @Scheduled(initialDelayString = "${cas.authn.passwordless.tokens.mongo.cleaner.schedule.start-delay:PT30S}",
+        @Scheduled(
+            cron = "${cas.authn.passwordless.tokens.mongo.cleaner.schedule.cron-expression:}",
+            zone = "${cas.authn.passwordless.tokens.mongo.cleaner.schedule.cron-time-zone:}",
+            initialDelayString = "${cas.authn.passwordless.tokens.mongo.cleaner.schedule.start-delay:PT30S}",
             fixedDelayString = "${cas.authn.passwordless.tokens.mongo.cleaner.schedule.repeat-interval:PT35S}")
         public void clean() {
             lock.tryLock(__ -> repository.clean());
