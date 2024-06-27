@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.util.NamedObject;
 import org.springframework.core.Ordered;
 
 /**
@@ -21,7 +21,7 @@ import org.springframework.core.Ordered;
  * @since 5.1.0
  */
 @FunctionalInterface
-public interface AuthenticationEventExecutionPlanConfigurer extends Ordered {
+public interface AuthenticationEventExecutionPlanConfigurer extends Ordered, NamedObject {
 
     /**
      * configure the plan.
@@ -30,14 +30,6 @@ public interface AuthenticationEventExecutionPlanConfigurer extends Ordered {
      */
     void configureAuthenticationExecutionPlan(AuthenticationEventExecutionPlan plan) throws Exception;
 
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return StringUtils.defaultIfBlank(this.getClass().getSimpleName(), "Default");
-    }
 
     @Override
     default int getOrder() {

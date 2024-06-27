@@ -28,6 +28,7 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -144,17 +145,22 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
 
     protected Set<BaseClient> buildAllIdentityProviders(final CasConfigurationProperties properties) throws Exception {
         val newClients = new LinkedHashSet<BaseClient>(buildCasIdentityProviders(properties));
-        val builders = new ArrayList<>(applicationContext.getBeansOfType(ConfigurableDelegatedClientBuilder.class).values());
-        AnnotationAwareOrderComparator.sort(builders);
+        val builders = getDelegatedClientBuilders();
         for (val builder : builders) {
             val builtClients = builder.build(properties);
             LOGGER.debug("Builder [{}] provides [{}] clients", builder.getName(), builtClients.size());
             builtClients.forEach(instance -> {
                 val preparedClient = configureClient(instance.getClient(), instance.getProperties(), properties);
-                newClients.add(preparedClient);
+                newClients.add(builder.configure(preparedClient, instance.getProperties(), properties));
             });
         }
 
         return newClients;
+    }
+
+    private List<ConfigurableDelegatedClientBuilder> getDelegatedClientBuilders() {
+        val builders = new ArrayList<>(applicationContext.getBeansOfType(ConfigurableDelegatedClientBuilder.class).values());
+        AnnotationAwareOrderComparator.sort(builders);
+        return builders;
     }
 }

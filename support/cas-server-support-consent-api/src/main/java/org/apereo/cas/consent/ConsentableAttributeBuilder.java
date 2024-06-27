@@ -1,5 +1,6 @@
 package org.apereo.cas.consent;
 
+import org.apereo.cas.util.NamedObject;
 import org.springframework.core.Ordered;
 
 /**
@@ -9,7 +10,7 @@ import org.springframework.core.Ordered;
  * @since 6.2.0
  */
 @FunctionalInterface
-public interface ConsentableAttributeBuilder extends Ordered {
+public interface ConsentableAttributeBuilder extends Ordered, NamedObject {
     /**
      * No op consentable attribute builder.
      *
@@ -30,14 +31,5 @@ public interface ConsentableAttributeBuilder extends Ordered {
     @Override
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
-    }
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
     }
 }

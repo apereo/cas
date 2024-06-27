@@ -1,6 +1,9 @@
 package org.apereo.cas.support.pac4j.authentication.clients;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
+import org.apereo.cas.util.NamedObject;
+import org.pac4j.core.client.BaseClient;
 import java.util.List;
 
 /**
@@ -10,16 +13,8 @@ import java.util.List;
  * @since 7.1.0
  */
 @FunctionalInterface
-public interface ConfigurableDelegatedClientBuilder {
+public interface ConfigurableDelegatedClientBuilder extends NamedObject {
 
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
     
     /**
      * Supply list of clients.
@@ -28,4 +23,18 @@ public interface ConfigurableDelegatedClientBuilder {
      * @throws Exception the exception
      */
     List<ConfigurableDelegatedClient> build(CasConfigurationProperties casProperties) throws Exception;
+
+    /**
+     * Configure base client.
+     *
+     * @param client   the prepared client
+     * @param clientProperties the client properties
+     * @param properties       the properties
+     * @return the base client
+     */
+    default BaseClient configure(final BaseClient client,
+                                 final Pac4jBaseClientProperties clientProperties,
+                                 final CasConfigurationProperties properties) {
+        return client;
+    }
 }

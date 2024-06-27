@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.util.NamedObject;
 import org.springframework.binding.expression.Expression;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -33,7 +34,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public interface CasWebflowConfigurer extends Ordered {
+public interface CasWebflowConfigurer extends Ordered, NamedObject {
 
     /**
      * Flow id for risk-based authentication's verification.
@@ -408,16 +409,6 @@ public interface CasWebflowConfigurer extends Ordered {
      * @return the flow
      */
     Flow buildFlow(String id);
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
-
 
     /**
      * Create state default transition.

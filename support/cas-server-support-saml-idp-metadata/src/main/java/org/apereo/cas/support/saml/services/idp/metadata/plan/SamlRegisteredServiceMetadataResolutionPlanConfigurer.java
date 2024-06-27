@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.plan;
 
+import org.apereo.cas.util.NamedObject;
+
 /**
  * This is {@link SamlRegisteredServiceMetadataResolutionPlanConfigurer}, to be implemented
  * by modules that wish to register serializable classes into the plan.
@@ -8,20 +10,11 @@ package org.apereo.cas.support.saml.services.idp.metadata.plan;
  * @since 5.2.0
  */
 @FunctionalInterface
-public interface SamlRegisteredServiceMetadataResolutionPlanConfigurer {
+public interface SamlRegisteredServiceMetadataResolutionPlanConfigurer extends NamedObject {
     /**
      * configure the plan.
      *
      * @param plan the plan
      */
     void configureMetadataResolutionPlan(SamlRegisteredServiceMetadataResolutionPlan plan);
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
 }

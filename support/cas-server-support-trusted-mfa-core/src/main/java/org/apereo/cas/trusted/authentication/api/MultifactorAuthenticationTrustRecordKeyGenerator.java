@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.authentication.api;
 
+import org.apereo.cas.util.NamedObject;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 
@@ -10,7 +11,7 @@ import com.google.common.collect.Iterables;
  * @since 5.0.0
  */
 @FunctionalInterface
-public interface MultifactorAuthenticationTrustRecordKeyGenerator {
+public interface MultifactorAuthenticationTrustRecordKeyGenerator extends NamedObject {
     /**
      * Generate.
      *
@@ -19,14 +20,6 @@ public interface MultifactorAuthenticationTrustRecordKeyGenerator {
      */
     String generate(MultifactorAuthenticationTrustRecord record);
 
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
 
     /**
      * Gets principal from record key.

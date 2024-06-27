@@ -1,6 +1,7 @@
 package org.apereo.cas.support.pac4j.authentication.clients;
 
 import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.util.NamedObject;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.context.WebContext;
 
@@ -10,15 +11,7 @@ import org.pac4j.core.context.WebContext;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-public interface DelegatedClientSessionManager {
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
+public interface DelegatedClientSessionManager extends NamedObject {
 
     /**
      * Supports the client instance.

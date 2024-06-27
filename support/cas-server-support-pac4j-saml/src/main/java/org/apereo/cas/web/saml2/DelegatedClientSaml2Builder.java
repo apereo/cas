@@ -2,6 +2,7 @@ package org.apereo.cas.web.saml2;
 
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.pac4j.authentication.attributes.GroovyAttributeConverter;
 import org.apereo.cas.support.pac4j.authentication.clients.ConfigurableDelegatedClient;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.profile.converter.AttributeConverter;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
@@ -62,7 +64,8 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
                     StringUtils.defaultIfBlank(saml.getKeystorePath(), Beans.getTempFilePath("samlSpKeystore", ".jks")));
                 val identityProviderMetadataPath = SpringExpressionLanguageValueResolver.getInstance()
                     .resolve(saml.getMetadata().getIdentityProviderMetadataPath());
-                LOGGER.debug("Creating SAML2 identity provider [{}] with identity provider metadata [{}]", saml.getClientName(), identityProviderMetadataPath);
+                LOGGER.debug("Creating SAML2 identity provider [{}] with identity provider metadata [{}]",
+                    saml.getClientName(), identityProviderMetadataPath);
                 
                 val configuration = new SAML2Configuration(keystorePath, saml.getKeystorePassword(),
                     saml.getPrivateKeyPassword(), identityProviderMetadataPath);
@@ -188,5 +191,14 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
                 return new ConfigurableDelegatedClient(client, saml);
             })
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public BaseClient configure(final BaseClient client, final Pac4jBaseClientProperties clientProperties,
+                                final CasConfigurationProperties properties) {
+        if (client instanceof final SAML2Client saml2Client && saml2Client.isInitialized()) {
+            saml2Client.getIdentityProviderMetadataResolver().resolve(true);
+        }
+        return client;
     }
 }
