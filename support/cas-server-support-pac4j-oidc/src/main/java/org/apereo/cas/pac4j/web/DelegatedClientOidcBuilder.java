@@ -342,7 +342,8 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
         cfg.setAllowUnsignedIdTokens(oidc.isAllowUnsignedIdTokens());
         cfg.setIncludeAccessTokenClaimsInProfile(oidc.isIncludeAccessTokenClaims());
         cfg.setExpireSessionWithToken(oidc.isExpireSessionWithToken());
-
+        cfg.setLogoutValidation(oidc.isValidateLogoutToken());
+        
         FunctionUtils.doIfNotBlank(oidc.getSupportedClientAuthenticationMethods(), methods -> {
             val clientMethods = org.springframework.util.StringUtils.commaDelimitedListToSet(methods)
                 .stream()
