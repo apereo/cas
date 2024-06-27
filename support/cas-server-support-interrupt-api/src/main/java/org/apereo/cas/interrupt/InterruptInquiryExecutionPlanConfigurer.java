@@ -1,5 +1,7 @@
 package org.apereo.cas.interrupt;
 
+import org.apereo.cas.util.NamedObject;
+
 /**
  * This is {@link InterruptInquiryExecutionPlanConfigurer}.
  *
@@ -7,20 +9,11 @@ package org.apereo.cas.interrupt;
  * @since 6.0.0
  */
 @FunctionalInterface
-public interface InterruptInquiryExecutionPlanConfigurer {
+public interface InterruptInquiryExecutionPlanConfigurer extends NamedObject {
     /**
      * Configure interrupt inquiry execution plan.
      *
      * @param plan the plan
      */
     void configureInterruptInquiryExecutionPlan(InterruptInquiryExecutionPlan plan);
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
 }

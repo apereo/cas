@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import org.apereo.cas.util.NamedObject;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.Action;
 
@@ -10,18 +11,9 @@ import org.springframework.webflow.execution.Action;
  * @since 7.0.0
  */
 @FunctionalInterface
-public interface MultifactorAuthenticationTrustedDeviceProviderAction extends Action, Ordered {
+public interface MultifactorAuthenticationTrustedDeviceProviderAction extends Action, Ordered, NamedObject {
     @Override
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
-    }
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
     }
 }

@@ -2,6 +2,7 @@ package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.NamedObject;
 
 import org.springframework.core.Ordered;
 
@@ -19,7 +20,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public interface SingleLogoutServiceLogoutUrlBuilder extends Ordered {
+public interface SingleLogoutServiceLogoutUrlBuilder extends Ordered, NamedObject {
 
     /**
      * Determine logout url collection.
@@ -45,15 +46,6 @@ public interface SingleLogoutServiceLogoutUrlBuilder extends Ordered {
                                                            final WebApplicationService singleLogoutService,
                                                            final Optional<HttpServletRequest> httpRequest) {
         return new ArrayList<>(0);
-    }
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getName();
     }
 
     /**

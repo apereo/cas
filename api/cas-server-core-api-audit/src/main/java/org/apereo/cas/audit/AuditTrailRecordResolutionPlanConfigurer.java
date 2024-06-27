@@ -1,5 +1,6 @@
 package org.apereo.cas.audit;
 
+import org.apereo.cas.util.NamedObject;
 import org.springframework.core.Ordered;
 
 /**
@@ -9,7 +10,7 @@ import org.springframework.core.Ordered;
  * @since 5.3.0
  */
 @FunctionalInterface
-public interface AuditTrailRecordResolutionPlanConfigurer extends Ordered {
+public interface AuditTrailRecordResolutionPlanConfigurer extends Ordered, NamedObject {
 
     /**
      * Configure audit trail resolution plan.
@@ -17,15 +18,6 @@ public interface AuditTrailRecordResolutionPlanConfigurer extends Ordered {
      * @param plan the plan
      */
     void configureAuditTrailRecordResolutionPlan(AuditTrailRecordResolutionPlan plan);
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
 
     @Override
     default int getOrder() {

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.NamedObject;
 
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.RequestContext;
@@ -15,7 +16,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.2.0
  */
 @FunctionalInterface
-public interface InterruptInquirer extends Ordered {
+public interface InterruptInquirer extends Ordered, NamedObject {
 
     /**
      * Inquire interrupt response.
@@ -34,9 +35,5 @@ public interface InterruptInquirer extends Ordered {
     @Override
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
-    }
-
-    default String getName() {
-        return this.getClass().getSimpleName();
     }
 }

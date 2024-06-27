@@ -150,15 +150,28 @@ public class DelegatedSaml2IdentityProviderTests {
         "cas.authn.pac4j.saml[0].assertion-consumer-service-index=1",
         "cas.authn.pac4j.saml[0].principal-id-attribute=givenName",
         "cas.authn.pac4j.saml[0].force-keystore-generation=true",
-        "cas.authn.pac4j.core.lazy-init=true"
+
+        "cas.authn.pac4j.saml[1].message-store-factory=org.pac4j.saml.store.HttpSessionStoreFactory",
+        "cas.authn.pac4j.saml[1].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
+        "cas.authn.pac4j.saml[1].keystore-password=2234567890",
+        "cas.authn.pac4j.saml[1].private-key-password=2234567890",
+        "cas.authn.pac4j.saml[1].metadata.identity-provider-metadata-path=https://idp.unicon.net/idp/shibboleth",
+        "cas.authn.pac4j.saml[1].metadata.service-provider.file-system.location=file:/tmp/sp2.xml",
+        "cas.authn.pac4j.saml[1].service-provider-entity-id=test-entityid2",
+
+        "cas.authn.pac4j.core.lazy-init=false"
     })
     class Saml2Clients extends BaseTests {
         @Test
         void verifyClient() throws Throwable {
             val clients = delegatedIdentityProviderFactory.build();
-            assertEquals(1, clients.size());
-            val client = (SAML2Client) clients.iterator().next();
-            assertInstanceOf(HttpSessionStoreFactory.class, client.getConfiguration().getSamlMessageStoreFactory());
+            assertEquals(2, clients.size());
+            clients.forEach(client -> {
+                val saml2Client = (SAML2Client) client;
+                assertTrue(saml2Client.isInitialized());
+                assertInstanceOf(HttpSessionStoreFactory.class, saml2Client.getConfiguration().getSamlMessageStoreFactory());
+                assertNotNull(saml2Client.getIdentityProviderMetadataResolver().getEntityId());
+            });
         }
     }
 

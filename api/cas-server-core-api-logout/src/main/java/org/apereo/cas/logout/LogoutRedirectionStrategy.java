@@ -1,5 +1,6 @@
 package org.apereo.cas.logout;
 
+import org.apereo.cas.util.NamedObject;
 import org.springframework.core.Ordered;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
  * @since 6.3.0
  */
 @FunctionalInterface
-public interface LogoutRedirectionStrategy extends Ordered {
+public interface LogoutRedirectionStrategy extends Ordered, NamedObject {
     /**
      * Default order value of th redirection strategy.
      */
@@ -42,13 +43,4 @@ public interface LogoutRedirectionStrategy extends Ordered {
      * @throws Exception the exception
      */
     LogoutRedirectionResponse handle(HttpServletRequest request, HttpServletResponse response) throws Exception;
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return this.getClass().getSimpleName();
-    }
 }
