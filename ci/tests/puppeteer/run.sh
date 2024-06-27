@@ -362,6 +362,11 @@ if [[ "${DISABLE_LINTER}" == "false" ]]; then
     printred "Please run: npx eslint --fix ${scriptPath}"
     exit 1
   fi
+  echo ./scenarios/"${SCENARIO}"/script.json jq > /dev/null
+  if [ $? -ne 0 ]; then
+      printred "Found linting errors in scenario configuration; unable to run the scenario [${scenarioName}]"
+      exit 1
+    fi
   popd || exit 1
 fi
 

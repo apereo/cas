@@ -33,7 +33,7 @@ public class DelegatedAuthenticationOidcWebflowConfigurer extends AbstractCasWeb
         val flow = getLoginFlow();
         if (flow != null) {
             val state = getState(flow, CasWebflowConstants.STATE_ID_DELEGATED_AUTHENTICATION_IDP_LOGOUT, ActionState.class);
-            state.getActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_OIDC_CLIENT_LOGOUT));
+            state.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_OIDC_CLIENT_LOGOUT));
         }
     }
 }

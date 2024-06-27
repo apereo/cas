@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.logout.slo.SingleLogoutContinuation;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationFailureEvaluator;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
@@ -144,6 +145,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
             FunctionUtils.doIf(LOGGER.isDebugEnabled(),
                 o -> LOGGER.debug(e.getMessage(), e), o -> LOGGER.info(e.getMessage())).accept(e);
             val continuation = SingleLogoutContinuation.builder();
+            clientCredential.ifPresent(cc -> continuation.context(CollectionUtils.wrap(ClientCredential.class.getName(), cc)));
             if (e instanceof final AutomaticFormPostAction formPostAction) {
                 continuation.method(HttpMethod.POST).url(formPostAction.getUrl()).data(formPostAction.getData());
             }
@@ -210,9 +212,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
         return new Event(this, CasWebflowConstants.TRANSITION_ID_SELECT);
     }
 
-    private Event getLogoutEvent(final HttpAction e) {
+    private Event getLogoutEvent(final HttpAction action) {
         return new Event(this, CasWebflowConstants.TRANSITION_ID_LOGOUT,
-            new LocalAttributeMap<>("action", e));
+            new LocalAttributeMap<>("action", action));
     }
 
     private Event getFinalEvent() {

@@ -75,6 +75,7 @@ ci/tests/perf/saml/md/*
 ci/tests/cassandra/security/**
 ci/tests/k3d/install.sh
 ci/tests/k3d/get_helm.sh
+ci/tests/oidc/keycloak/server.*
 support/cas-server-support-palantir/src/main/resources/static/assets
 cas/lib
 *.jsa
