@@ -1,6 +1,7 @@
 package org.apereo.cas.audit;
 
 import org.apereo.cas.config.CasSupportRestAuditAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -13,6 +14,7 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -43,6 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.audit.rest.asynchronous=false"
 })
 @Tag("RestfulApi")
+@ExtendWith(CasTestExtension.class)
 @Getter
 class RestAuditTrailManagerTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

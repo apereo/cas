@@ -58,7 +58,7 @@ class MaxmindDatabaseGeoLocationServiceTests {
     }
 
     private static CityResponse getCityResponse() {
-        val location = new Location(10, 100, 40D, 70D, 1, 1, "UTC");
+        val location = new Location(10, 100, 40.0D, 70.0D, 1, 1, "UTC");
         return new CityResponse(new City(), new Continent(), new Country(),
             location, new MaxMind(), new Postal(),
             new Country(), new RepresentedCountry(), new ArrayList<>(), new Traits());
@@ -102,7 +102,7 @@ class MaxmindDatabaseGeoLocationServiceTests {
             .withCountryDatabaseReader(country);
         val response = service.locate("127.0.0.1");
         assertNotNull(response);
-        val response2 = service.locate(100D, 100D);
+        val response2 = service.locate(100.0D, 100.0D);
         assertNull(response2);
     }
 

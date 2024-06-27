@@ -50,7 +50,7 @@ public class RedisTicketRegistryCacheEndpoint extends BaseCasRestActuatorEndpoin
     @Operation(summary = "Invalidate and remove the provided ticket from the Redis first-level in-memory CAS cache. "
                          + "The ticket entity is not removed from the Redis instance itself. Invalidating the ticket entity "
                          + "will force CAS to re-fetch the ticket from Redis and ignore/discard its own cached copy, if any.",
-        parameters = @Parameter(name = "ticketId"))
+        parameters = @Parameter(name = "ticketId", required = true, description = "The ticket id to invalidate"))
     public ResponseEntity invalidateTicket(
         @PathVariable
         final String ticketId) {
@@ -72,7 +72,7 @@ public class RedisTicketRegistryCacheEndpoint extends BaseCasRestActuatorEndpoin
      */
     @GetMapping(value = "{ticketId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Fetch the ticket entity from the Redis first-level in-memory CAS cache.",
-        parameters = @Parameter(name = "ticketId"))
+        parameters = @Parameter(name = "ticketId", required = true, description = "The ticket id to fetch"))
     public ResponseEntity fetchTicket(
         @PathVariable
         final String ticketId) {

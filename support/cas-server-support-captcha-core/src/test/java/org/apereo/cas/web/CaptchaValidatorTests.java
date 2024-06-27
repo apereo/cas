@@ -3,19 +3,15 @@ package org.apereo.cas.web;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpStatus;
-
-import java.nio.charset.StandardCharsets;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.springframework.mock.web.MockHttpServletRequest;
 import java.util.Map;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -32,12 +28,15 @@ class CaptchaValidatorTests {
     @Test
     void verifyLowScore() throws Throwable {
         val secret = UUID.randomUUID().toString();
-        val props = new GoogleRecaptchaProperties().setScore(1).setSecret(secret).setVerifyUrl("http://localhost:8812");
-        val validator = new GoogleCaptchaV2Validator(props);
+        val props = new GoogleRecaptchaProperties()
+            .setScore(1)
+            .setSecret(secret)
+            .setVersion(GoogleRecaptchaProperties.RecaptchaVersions.GOOGLE_RECAPTCHA_V2)
+            .setVerifyUrl("http://localhost:8812");
+        val validator = CaptchaValidator.getInstance(props);
 
-        val entity = MAPPER.writeValueAsString(Map.of("score", .5));
-        try (val webServer = new MockWebServer(8812,
-            new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
+        val entity = MAPPER.writeValueAsString(Map.of("score", 0.5));
+        try (val webServer = new MockWebServer(8812, entity)) {
             webServer.start();
             val response = UUID.randomUUID().toString();
             assertFalse(validator.validate(response, "Mozilla/5.0"));
@@ -47,14 +46,14 @@ class CaptchaValidatorTests {
     @Test
     void verifySuccess() throws Throwable {
         val props = new GoogleRecaptchaProperties()
-            .setScore(.1)
+            .setScore(0.1)
             .setSecret(UUID.randomUUID().toString())
+            .setVersion(GoogleRecaptchaProperties.RecaptchaVersions.GOOGLE_RECAPTCHA_V2)
             .setVerifyUrl("http://localhost:8812");
-        val validator = new GoogleCaptchaV2Validator(props);
+        val validator = CaptchaValidator.getInstance(props);
 
-        val entity = MAPPER.writeValueAsString(Map.of("score", .5, "success", true));
-        try (val webServer = new MockWebServer(8812,
-            new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
+        val entity = MAPPER.writeValueAsString(Map.of("score", 0.5, "success", true));
+        try (val webServer = new MockWebServer(8812, entity)) {
             webServer.start();
             val response = UUID.randomUUID().toString();
             assertTrue(validator.validate(response, "Mozilla/5.0"));
@@ -64,28 +63,31 @@ class CaptchaValidatorTests {
     @Test
     void verifyBadResponse() throws Throwable {
         val secret = UUID.randomUUID().toString();
-        val props = new GoogleRecaptchaProperties().setScore(1).setSecret(secret).setVerifyUrl("http://localhost:8812");
-        val validator = new GoogleCaptchaV2Validator(props);
-        try (val webServer = new MockWebServer(8812,
-            new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
+        val props = new GoogleRecaptchaProperties().setScore(0.1)
+            .setVersion(GoogleRecaptchaProperties.RecaptchaVersions.GOOGLE_RECAPTCHA_V2)
+            .setSecret(secret).setVerifyUrl("http://localhost:8812");
+        val validator = CaptchaValidator.getInstance(props);
+        try (val webServer = new MockWebServer(8812)) {
             webServer.start();
             val response = UUID.randomUUID().toString();
             assertFalse(validator.validate(response, "Mozilla/5.0"));
         }
     }
 
-    @Test
-    void verifyInstance() throws Throwable {
-        assertNotNull(CaptchaValidator.getInstance(new GoogleRecaptchaProperties()
-            .setVersion(GoogleRecaptchaProperties.RecaptchaVersions.GOOGLE_RECAPTCHA_V2)
-            .setVerifyUrl("http://localhost:8812")));
+    @ParameterizedTest
+    @EnumSource(GoogleRecaptchaProperties.RecaptchaVersions.class)
+    void verifyInstance(final GoogleRecaptchaProperties.RecaptchaVersions version) throws Throwable {
+        val googleRecaptcha = new GoogleRecaptchaProperties()
+            .setSiteKey(UUID.randomUUID().toString())
+            .setSecret(UUID.randomUUID().toString())
+            .setVersion(version).setVerifyUrl("http://localhost:8812");
+        val validator = CaptchaValidator.getInstance(googleRecaptcha);
+        assertNotNull(validator);
+        assertNotNull(validator.getRecaptchaResponseParameterName());
 
-        assertNotNull(CaptchaValidator.getInstance(new GoogleRecaptchaProperties()
-            .setVersion(GoogleRecaptchaProperties.RecaptchaVersions.GOOGLE_RECAPTCHA_V3)
-            .setVerifyUrl("http://localhost:8812")));
-
-        assertNotNull(CaptchaValidator.getInstance(new GoogleRecaptchaProperties()
-            .setVersion(GoogleRecaptchaProperties.RecaptchaVersions.HCAPTCHA)
-            .setVerifyUrl("http://localhost:8812")));
+        val request = new MockHttpServletRequest();
+        val captchaResponse = UUID.randomUUID().toString();
+        request.addParameter(validator.getRecaptchaResponseParameterName(), captchaResponse);
+        assertNotNull(validator.getRecaptchaResponse(request));
     }
 }

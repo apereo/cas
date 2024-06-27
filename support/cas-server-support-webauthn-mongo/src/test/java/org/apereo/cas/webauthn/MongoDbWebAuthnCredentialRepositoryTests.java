@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -35,7 +35,7 @@ import org.springframework.test.context.TestPropertySource;
 @Tag("MongoDbMFA")
 @Getter
 @EnabledIfListeningOnPort(port = 27017)
-@Import(CasMongoDbWebAuthnAutoConfiguration.class)
+@ImportAutoConfiguration(CasMongoDbWebAuthnAutoConfiguration.class)
 class MongoDbWebAuthnCredentialRepositoryTests extends BaseWebAuthnCredentialRepositoryTests {
     @Autowired
     @Qualifier("mongoWebAuthnTemplate")

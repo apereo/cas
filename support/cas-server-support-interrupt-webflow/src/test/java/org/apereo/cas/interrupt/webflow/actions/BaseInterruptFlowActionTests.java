@@ -31,14 +31,10 @@ import org.springframework.context.annotation.Import;
 public abstract class BaseInterruptFlowActionTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        WebMvcAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
-        CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
@@ -52,6 +48,8 @@ public abstract class BaseInterruptFlowActionTests {
         CasInterruptAutoConfiguration.class,
         CasInterruptWebflowAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import(CasAuthenticationEventExecutionPlanTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

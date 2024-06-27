@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  * @since 7.0.0
  */
 @Tag("Audits")
-public class AllAuditResourceResolverTests extends BaseAuditResolverTests {
+class AllAuditResourceResolverTests extends BaseAuditResolverTests {
     @ParameterizedTest
     @EnumSource(AuditTrailManager.AuditFormats.class)
     void verifyFirstParameter(final AuditTrailManager.AuditFormats format) {

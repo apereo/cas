@@ -1,7 +1,6 @@
 package org.apereo.cas.pac4j.client;
 
-import org.pac4j.core.client.IndirectClient;
-
+import org.pac4j.core.client.BaseClient;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,14 +21,14 @@ public interface DelegatedIdentityProviderFactory {
      *
      * @return the set
      */
-    Collection<IndirectClient> build();
+    Collection<BaseClient> build();
 
     /**
      * Rebuild collection and invalidate the cached entries, if any.
      *
      * @return the collection
      */
-    Collection<IndirectClient> rebuild();
+    Collection<BaseClient> rebuild();
 
     /**
      * Factory that produces static list of clients.
@@ -41,12 +40,12 @@ public interface DelegatedIdentityProviderFactory {
         return new DelegatedIdentityProviderFactory() {
 
             @Override
-            public Collection<IndirectClient> build() {
+            public Collection<BaseClient> build() {
                 return clients;
             }
 
             @Override
-            public Collection<IndirectClient> rebuild() {
+            public Collection<BaseClient> rebuild() {
                 return clients;
             }
         };

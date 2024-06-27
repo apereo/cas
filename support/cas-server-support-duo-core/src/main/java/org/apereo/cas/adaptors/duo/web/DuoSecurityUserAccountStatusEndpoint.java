@@ -47,8 +47,8 @@ public class DuoSecurityUserAccountStatusEndpoint extends BaseCasActuatorEndpoin
      */
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Fetch Duo Security user account status", parameters = {
-        @Parameter(name = "username", required = true),
-        @Parameter(name = "providerId")
+        @Parameter(name = "username", required = true, description = "The username to fetch"),
+        @Parameter(name = "providerId", description = "The multifactor authentication provider id defined in CAS settings")
     })
     public Map<?, ?> fetchAccountStatus(@Selector final String username, @Nullable final String providerId) {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();

@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticatio
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapPasswordPolicyProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.LdapConnectionFactory;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -15,6 +16,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DerefAliases;
 import org.ldaptive.LdapAttribute;
@@ -49,6 +51,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("Ldap")
+@ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 10389)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,

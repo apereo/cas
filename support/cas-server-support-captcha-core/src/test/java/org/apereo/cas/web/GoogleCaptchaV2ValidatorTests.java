@@ -22,7 +22,7 @@ class GoogleCaptchaV2ValidatorTests {
     @Test
     void verifyOperation() throws Throwable {
         val props = new GoogleRecaptchaProperties()
-            .setScore(.1)
+            .setScore(0.1)
             .setSecret(UUID.randomUUID().toString())
             .setVerifyUrl("http://localhost:8812");
         val validator = new GoogleCaptchaV2Validator(props);

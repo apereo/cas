@@ -1,11 +1,13 @@
 package org.apereo.cas.pac4j.discovery;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultDelegatedAuthenticationDynamicDiscoveryProviderLocatorTests {
 
     @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
+    @ExtendWith(CasTestExtension.class)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @TestPropertySource(properties = {
         "cas.authn.pac4j.core.discovery-selection.selection-type=DYNAMIC",

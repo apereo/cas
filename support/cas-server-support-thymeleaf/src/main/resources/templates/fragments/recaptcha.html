@@ -36,9 +36,7 @@
                 <script type="text/javascript" th:inline="javascript">
                     grecaptcha.ready(() => {
                         grecaptcha.execute(/*[[${recaptchaSiteKey}]]*/, { action: 'login' })
-                            .then(token => {
-                                $('#g-recaptcha-token').val(token);
-                            });
+                            .then(token => $("#g-recaptcha-token").val(token));
                     });
                 </script>
             </span>
@@ -47,6 +45,13 @@
                 <script src="https://hcaptcha.com/1/api.js" async defer></script>
                 <section id="hcaptchaSection" class="form-group">
                     <div class="h-captcha" th:attr="data-sitekey=${recaptchaSiteKey}"></div>
+                </section>
+            </span>
+
+            <span th:if="${recaptchaSiteKey != null AND #strings.equalsIgnoreCase(recaptchaVersion, 'TURNSTILE')}" th:remove="tag">
+                <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+                <section id="turnstileSection" class="form-group">
+                    <div class="cf-turnstile" th:attr="data-sitekey=${recaptchaSiteKey}"></div>
                 </section>
             </span>
         </div>

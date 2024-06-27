@@ -26,7 +26,9 @@ import org.apereo.cas.impl.mock.MockTicketGrantingTicketCreatedEventProducer;
 import org.apereo.cas.notifications.sms.MockSmsSender;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -51,6 +53,7 @@ import javax.net.ssl.HttpsURLConnection;
  */
 @SpringBootTest(classes = BaseAuthenticationRequestRiskCalculatorTests.SharedTestConfiguration.class)
 @EnableScheduling
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseAuthenticationRequestRiskCalculatorTests {
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
@@ -88,16 +91,11 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
             return MockSmsSender.INSTANCE;
         }
     }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
-        ElectronicFenceTestConfiguration.class,
+        AopAutoConfiguration.class,
         CasElectronicFenceAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
@@ -117,6 +115,8 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreEventsAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import(ElectronicFenceTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

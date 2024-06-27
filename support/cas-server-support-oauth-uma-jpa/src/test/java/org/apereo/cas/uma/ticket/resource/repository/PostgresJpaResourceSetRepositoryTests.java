@@ -11,7 +11,7 @@ import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import java.util.LinkedHashMap;
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnabledIfListeningOnPort(port = 5432)
 @Tag("Postgres")
-@Import({
+@ImportAutoConfiguration({
     CasOAuthUmaJpaAutoConfiguration.class,
     CasHibernateJpaAutoConfiguration.class
 })

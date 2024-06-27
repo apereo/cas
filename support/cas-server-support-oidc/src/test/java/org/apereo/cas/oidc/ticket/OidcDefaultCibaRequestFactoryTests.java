@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("OIDC")
-public class OidcDefaultCibaRequestFactoryTests extends AbstractOidcTests {
+class OidcDefaultCibaRequestFactoryTests extends AbstractOidcTests {
     @Test
     void verifyOperation() throws Throwable {
         val cibaRequestContext = CibaRequestContext.builder()

@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
  * @since 7.0.0
  */
 @Tag("Webflow")
-public class DynamicTargetStateResolverTests {
+class DynamicTargetStateResolverTests {
     @Test
     void verifyOperation() throws Exception {
         val context = MockRequestContext.create();

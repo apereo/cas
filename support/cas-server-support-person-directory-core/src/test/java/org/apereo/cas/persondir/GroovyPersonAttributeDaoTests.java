@@ -4,9 +4,11 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.GroovyPrincipalAttributesProperties;
 import org.apereo.cas.persondir.groovy.GroovyPersonAttributeDao;
 import org.apereo.cas.persondir.groovy.InternalGroovyScriptDao;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Groovy")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class GroovyPersonAttributeDaoTests {
     @Autowired

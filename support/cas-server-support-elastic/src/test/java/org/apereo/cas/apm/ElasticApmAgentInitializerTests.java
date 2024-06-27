@@ -3,12 +3,14 @@ package org.apereo.cas.apm;
 import org.apereo.cas.config.CasElasticApmAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.Monitorable;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.app.ApplicationEntrypointInitializer;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -40,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 8800)
 @EnableAspectJAutoProxy
 @Tag("Elastic")
+@ExtendWith(CasTestExtension.class)
 @AutoConfigureObservability
 class ElasticApmAgentInitializerTests {
     static {

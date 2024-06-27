@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaPropert
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.RegexUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.support.WebUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -47,7 +49,7 @@ public class DefaultCaptchaActivationStrategy implements CaptchaActivationStrate
                     .map(ClientInfo::getClientIpAddress).orElse(StringUtils.EMPTY).trim();
                 LOGGER.trace("Checking for activation of captcha defined for service [{}] based on IP address [{}]", registeredService, ip);
                 val ipPattern = RegisteredServiceProperties.CAPTCHA_IP_ADDRESS_PATTERN.getPropertyValues(registeredService, Set.class);
-                val result = ipPattern.stream().anyMatch(pattern -> RegexUtils.find(pattern.toString().trim(), ip));
+                val result = Objects.requireNonNull(ipPattern).stream().anyMatch(pattern -> RegexUtils.find(pattern.toString().trim(), ip));
                 return evaluateResult(result, properties);
             }
 
@@ -62,8 +64,8 @@ public class DefaultCaptchaActivationStrategy implements CaptchaActivationStrate
             val activate = RegexUtils.find(properties.getActivateForIpAddressPattern(), ip);
             return evaluateResult(activate, properties);
         }
-
-        LOGGER.trace("Checking for activation of captcha defined under site key [{}]", properties.getSiteKey());
+        val siteKey = SpringExpressionLanguageValueResolver.getInstance().resolve(properties.getSiteKey());
+        LOGGER.trace("Checking for activation of captcha defined under site key [{}]", siteKey);
         return evaluateResult(properties.isEnabled(), properties);
     }
 }

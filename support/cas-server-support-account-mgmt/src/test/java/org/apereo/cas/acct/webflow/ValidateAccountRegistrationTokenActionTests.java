@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Mail")
 @EnabledIfListeningOnPort(port = 25000)
-@Import({
+@ImportAutoConfiguration({
     CasCoreTicketsAutoConfiguration.class,
     CasAccountManagementWebflowAutoConfiguration.class
 })

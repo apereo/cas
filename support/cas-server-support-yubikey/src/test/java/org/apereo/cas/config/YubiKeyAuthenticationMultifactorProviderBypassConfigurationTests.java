@@ -2,13 +2,13 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.yubikey.BaseYubiKeyTests;
 import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
-
+import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.yubikey.bypass.rest.url=http://localhost:8080/bypass"
     })
 @Tag("MFATrigger")
+@ExtendWith(CasTestExtension.class)
 class YubiKeyAuthenticationMultifactorProviderBypassConfigurationTests {
     @Autowired
     @Qualifier("yubikeyBypassEvaluator")

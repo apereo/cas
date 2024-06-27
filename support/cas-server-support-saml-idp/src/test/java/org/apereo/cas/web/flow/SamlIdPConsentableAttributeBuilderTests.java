@@ -11,7 +11,7 @@ import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.XSURI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import java.io.Serializable;
 import java.util.UUID;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("SAMLResponse")
-@Import(CasConsentCoreAutoConfiguration.class)
+@ImportAutoConfiguration(CasConsentCoreAutoConfiguration.class)
 @TestPropertySource(properties = "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/basic-definitions.json")
 class SamlIdPConsentableAttributeBuilderTests extends BaseSamlIdPWebflowTests {
     private static final String VALUE = UUID.randomUUID().toString();

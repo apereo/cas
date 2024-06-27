@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import org.pac4j.core.client.BaseClient;
+import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Optional;
@@ -12,14 +13,28 @@ import java.util.Optional;
  * @since 7.0.0
  */
 @FunctionalInterface
-public interface DelegatedAuthenticationCredentialExtractor {
+public interface DelegatedAuthenticationCredentialExtractor extends Ordered {
 
     /**
      * Extract client credential.
      *
-     * @param client     the client
-     * @param webContext the web context
+     * @param client         the client
+     * @param requestContext the web context
      * @return the client credential
      */
-    Optional<ClientCredential> extract(BaseClient client, RequestContext webContext);
+    Optional<ClientCredential> extract(BaseClient client, RequestContext requestContext);
+
+    @Override
+    default int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
+    }
+
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    default String getName() {
+        return getClass().getSimpleName();
+    }
 }

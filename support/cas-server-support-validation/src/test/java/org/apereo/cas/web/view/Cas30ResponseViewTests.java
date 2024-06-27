@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -59,7 +59,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.clearpass.cache-credential=true",
     "cas.clearpass.crypto.enabled=false"
 })
-@Import({
+@ImportAutoConfiguration({
     CasThymeleafAutoConfiguration.class,
     CasValidationAutoConfiguration.class
 })

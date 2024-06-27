@@ -10,15 +10,10 @@ dependencies {
 
     api project(":api:cas-server-core-api")
     
-    implementation libraries.pac4joidcoauth
-    implementation libraries.pac4jsaml
     implementation libraries.pac4jcore
     implementation libraries.pac4jcas
     implementation libraries.nimbus
-    implementation libraries.opensaml
-    implementation libraries.dropwizard
-    implementation libraries.shibutiljavasupport
-    
+
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-services-authentication")
@@ -39,8 +34,6 @@ dependencies {
     testImplementation project(":support:cas-server-support-reports")
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-thymeleaf")
-
-    testImplementation project(":support:cas-server-support-hazelcast-core")
     
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
 

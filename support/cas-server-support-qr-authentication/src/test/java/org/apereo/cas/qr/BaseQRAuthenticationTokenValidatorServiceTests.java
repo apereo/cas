@@ -33,10 +33,7 @@ public abstract class BaseQRAuthenticationTokenValidatorServiceTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasQRAuthenticationAutoConfiguration.class,
         CasTokenCoreAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
@@ -48,12 +45,13 @@ public abstract class BaseQRAuthenticationTokenValidatorServiceTests {
         CasCoreAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import(CasRegisteredServicesTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

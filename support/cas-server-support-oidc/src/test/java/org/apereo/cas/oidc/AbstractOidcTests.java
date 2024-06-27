@@ -62,6 +62,7 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFac
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.TicketFactory;
@@ -92,6 +93,7 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -130,11 +132,11 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = AbstractOidcTests.SharedTestConfiguration.class,
     properties = {
         "spring.threads.virtual.enabled=true",
 
-        "spring.main.allow-bean-definition-overriding=true",
         "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",
 
         "cas.audit.slf4j.use-single-line=true",
@@ -545,6 +547,7 @@ public abstract class AbstractOidcTests {
         return cibaRequestId;
     }
 
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         SecurityAutoConfiguration.class,
@@ -555,10 +558,7 @@ public abstract class AbstractOidcTests {
         ServletWebServerFactoryAutoConfiguration.class,
         DispatcherServletAutoConfiguration.class,
         IntegrationAutoConfiguration.class,
-        MailSenderAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        MailSenderAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
@@ -568,8 +568,6 @@ public abstract class AbstractOidcTests {
         CasCoreTicketsAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasThemesAutoConfiguration.class,
         CasThymeleafAutoConfiguration.class,
@@ -580,6 +578,10 @@ public abstract class AbstractOidcTests {
         CasOidcAutoConfiguration.class,
         CasOAuth20AutoConfiguration.class,
         CasWebAppAutoConfiguration.class
+    })
+    @Import({
+        CasRegisteredServicesTestConfiguration.class,
+        CasPersonDirectoryTestConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

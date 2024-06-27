@@ -4,9 +4,11 @@ import org.apereo.cas.config.CasSentryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.monitor.NotMonitorable;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -38,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy
 @Tag("Simple")
+@ExtendWith(CasTestExtension.class)
 @AutoConfigureObservability
 class SentryMonitoringAspectTests {
 

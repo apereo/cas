@@ -16,6 +16,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -34,8 +35,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = "management.endpoint.casValidate.enabled=true")
 @Tag("ActuatorEndpoint")
-@Import({
-    CasProtocolValidationEndpointTests.AuthenticationTestConfiguration.class,
+@Import(CasProtocolValidationEndpointTests.AuthenticationTestConfiguration.class)
+@ImportAutoConfiguration({
     CasThymeleafAutoConfiguration.class,
     CasValidationAutoConfiguration.class
 })

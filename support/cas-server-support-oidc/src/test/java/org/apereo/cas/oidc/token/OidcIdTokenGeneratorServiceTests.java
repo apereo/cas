@@ -458,8 +458,8 @@ class OidcIdTokenGeneratorServiceTests {
             assertEquals(issuer, claims.getIssuer());
 
             val hash = claims.getClaimValue(OidcConstants.CLAIM_AT_HASH, String.class);
-            val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(oidcAccessTokenJwtBuilder,
-                registeredService, accessToken, accessToken.getService(), issuer, casProperties);
+            val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(oidcConfigurationContext,
+                registeredService, accessToken, issuer);
             val encodedAccessToken = cipher.encode(accessToken.getId());
             val newHash = OAuth20TokenHashGenerator.builder()
                 .token(encodedAccessToken)

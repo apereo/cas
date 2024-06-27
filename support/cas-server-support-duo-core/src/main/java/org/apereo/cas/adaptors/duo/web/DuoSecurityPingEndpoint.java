@@ -44,7 +44,8 @@ public class DuoSecurityPingEndpoint extends BaseCasActuatorEndpoint {
      * @return the map
      */
     @ReadOperation(produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Ping Duo Security given the provider id", parameters = @Parameter(name = "providerId"))
+    @Operation(summary = "Ping Duo Security given the provider id",
+        parameters = @Parameter(name = "providerId", description = "The multifactor authentication provider id defined in CAS settings"))
     public Map<?, ?> pingDuo(@Nullable final String providerId) {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();
         val results = new LinkedHashMap<>();

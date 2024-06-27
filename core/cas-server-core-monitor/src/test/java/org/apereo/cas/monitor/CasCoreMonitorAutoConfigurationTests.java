@@ -28,7 +28,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Import;
 import java.util.concurrent.atomic.AtomicBoolean;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -90,7 +89,6 @@ class CasCoreMonitorAutoConfigurationTests {
         defaultExecutableObserver.run(new MonitorableTask("verifyObservabilityRunner"), () -> result.set(true));
         assertTrue(result.get());
     }
-
     @ImportAutoConfiguration({
         MetricsAutoConfiguration.class,
         ObservationAutoConfiguration.class,
@@ -98,10 +96,7 @@ class CasCoreMonitorAutoConfigurationTests {
         MetricsEndpointAutoConfiguration.class,
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreMonitorAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
@@ -112,6 +107,7 @@ class CasCoreMonitorAutoConfigurationTests {
         CasCoreAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

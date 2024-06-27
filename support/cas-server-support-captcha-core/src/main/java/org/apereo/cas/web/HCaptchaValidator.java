@@ -2,7 +2,7 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 
-import jakarta.servlet.http.HttpServletRequest;
+import lombok.Getter;
 
 /**
  * This is {@link HCaptchaValidator}.
@@ -15,13 +15,11 @@ public class HCaptchaValidator extends BaseCaptchaValidator {
      * Recaptcha token as a request parameter.
      */
     public static final String REQUEST_PARAM_HCAPTCHA_RESPONSE = "h-captcha-response";
+
+    @Getter
+    private final String recaptchaResponseParameterName = REQUEST_PARAM_HCAPTCHA_RESPONSE;
     
     public HCaptchaValidator(final GoogleRecaptchaProperties recaptchaProperties) {
         super(recaptchaProperties);
-    }
-
-    @Override
-    public String getRecaptchaResponse(final HttpServletRequest request) {
-        return request.getParameter(REQUEST_PARAM_HCAPTCHA_RESPONSE);
     }
 }

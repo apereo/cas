@@ -59,15 +59,11 @@ public abstract class BaseCoreWsSecurityIdentityProviderConfigurationTests {
 
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasCoreSamlAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
@@ -76,9 +72,7 @@ public abstract class BaseCoreWsSecurityIdentityProviderConfigurationTests {
         CasCoreUtilAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
@@ -86,6 +80,8 @@ public abstract class BaseCoreWsSecurityIdentityProviderConfigurationTests {
         CasWsSecurityIdentityProviderAutoConfiguration.class,
         CasWsSecuritySecurityTokenAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import({CasRegisteredServicesTestConfiguration.class, CasPersonDirectoryTestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 }

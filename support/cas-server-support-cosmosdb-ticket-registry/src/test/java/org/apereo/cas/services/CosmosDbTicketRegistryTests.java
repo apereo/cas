@@ -21,7 +21,7 @@ import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Azure")
-@Import(CasCosmosDbTicketRegistryAutoConfiguration.class)
+@ImportAutoConfiguration(CasCosmosDbTicketRegistryAutoConfiguration.class)
 @TestPropertySource(properties = {
     "cas.tgc.crypto.enabled=false",
     "cas.http-client.host-name-verifier=none",

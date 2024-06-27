@@ -3,11 +3,13 @@ package org.apereo.cas.gauth.credential;
 import org.apereo.cas.config.CasGoogleAuthenticatorJpaAutoConfiguration;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableScheduling
 @Getter
 @Tag("JDBCMFA")
+@ExtendWith(CasTestExtension.class)
 class JpaGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseOneTimeTokenCredentialRepositoryTests {
     @Autowired(required = false)
     @Qualifier("googleAuthenticatorAccountRegistry")

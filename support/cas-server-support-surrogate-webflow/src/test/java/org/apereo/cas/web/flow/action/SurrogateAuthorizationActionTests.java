@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.SurrogateRegisteredServiceAccessStrategy;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -12,6 +13,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("WebflowActions")
-@SpringBootTest(classes = BaseSurrogateAuthenticationTests.SharedTestConfiguration.class,
-    properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
+@SpringBootTest(classes = BaseSurrogateAuthenticationTests.SharedTestConfiguration.class, properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
+@ExtendWith(CasTestExtension.class)
 class SurrogateAuthorizationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_SURROGATE_AUTHORIZATION_CHECK)
@@ -37,7 +39,7 @@ class SurrogateAuthorizationActionTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
-    
+
     @Test
     void verifyAuthorized() throws Throwable {
         val context = MockRequestContext.create(applicationContext);

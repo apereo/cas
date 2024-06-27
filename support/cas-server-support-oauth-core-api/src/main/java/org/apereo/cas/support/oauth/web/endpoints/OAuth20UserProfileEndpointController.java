@@ -109,10 +109,11 @@ public class OAuth20UserProfileEndpointController<T extends OAuth20Configuration
     protected void updateAccessTokenUsage(final OAuth20AccessToken accessTokenTicket) throws Exception {
         if (!accessTokenTicket.isStateless()) {
             accessTokenTicket.update();
+            val ticketRegistry = getConfigurationContext().getTicketRegistry();
             if (accessTokenTicket.isExpired()) {
-                getConfigurationContext().getTicketRegistry().deleteTicket(accessTokenTicket.getId());
+                ticketRegistry.deleteTicket(accessTokenTicket.getId());
             } else {
-                getConfigurationContext().getTicketRegistry().updateTicket(accessTokenTicket);
+                ticketRegistry.updateTicket(accessTokenTicket);
             }
         }
     }

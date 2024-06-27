@@ -54,12 +54,11 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
-import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.session.SessionStore;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.jee.context.session.JEESessionStore;
-import org.pac4j.saml.store.SAMLMessageStoreFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -237,7 +236,7 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactoryCache")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public Cache<String, Collection<IndirectClient>> pac4jDelegatedClientFactoryCache(
+        public Cache<String, Collection<BaseClient>> pac4jDelegatedClientFactoryCache(
             final CasConfigurationProperties casProperties) {
             val core = casProperties.getAuthn().getPac4j().getCore();
             return Caffeine.newBuilder()
@@ -250,10 +249,9 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
         @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public DelegatedIdentityProviderFactory pac4jDelegatedClientFactory(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("pac4jDelegatedClientFactoryCache")
-            final Cache<String, Collection<IndirectClient>> clientsCache,
-            @Qualifier(DelegatedIdentityProviderFactory.BEAN_NAME_SAML2_CLIENT_MESSAGE_FACTORY)
-            final ObjectProvider<SAMLMessageStoreFactory> samlMessageStoreFactory,
+            final Cache<String, Collection<BaseClient>> clientsCache,
             final CasConfigurationProperties casProperties,
             final ObjectProvider<List<DelegatedClientFactoryCustomizer>> customizerList,
             @Qualifier(CasSSLContext.BEAN_NAME)
@@ -267,11 +265,11 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
                 .orElseGet(() -> new ArrayList<>(0));
 
             if (StringUtils.isNotBlank(casProperties.getAuthn().getPac4j().getRest().getUrl())) {
-                return new RestfulDelegatedIdentityProviderFactory(customizers, casSslContext,
-                    casProperties, samlMessageStoreFactory, clientsCache);
+                return new RestfulDelegatedIdentityProviderFactory(customizers,
+                    casSslContext, casProperties, clientsCache, applicationContext);
             }
             return new DefaultDelegatedIdentityProviderFactory(casProperties,
-                customizers, casSslContext, samlMessageStoreFactory, clientsCache);
+                customizers, casSslContext, clientsCache, applicationContext);
         }
     }
 

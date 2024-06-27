@@ -14,7 +14,6 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Import;
 
 /**
  * This is {@link BasePalantirTests}.
@@ -26,10 +25,7 @@ abstract class BasePalantirTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        ServletWebServerFactoryAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        ServletWebServerFactoryAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
@@ -40,6 +36,7 @@ abstract class BasePalantirTests {
         CasPersonDirectoryAutoConfiguration.class,
         CasPalantirAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

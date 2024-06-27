@@ -3,6 +3,7 @@ package org.apereo.cas.services.web;
 import org.apereo.cas.BaseThemeTests;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.support.WebUtils;
@@ -12,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import java.io.File;
@@ -34,6 +36,7 @@ class RegisteredServiceThemeResolverTests {
             "cas.theme.default-theme-name=example"
         })
     @Nested
+    @ExtendWith(CasTestExtension.class)
     class ExternalThemeTests extends BaseThemeTests {
         @Test
         void verifyCustomSource() throws Throwable {
@@ -50,9 +53,9 @@ class RegisteredServiceThemeResolverTests {
         }
     }
 
-    @SpringBootTest(classes = BaseThemeTests.SharedTestConfiguration.class,
-        properties = "cas.theme.default-theme-name=example")
+    @SpringBootTest(classes = BaseThemeTests.SharedTestConfiguration.class, properties = "cas.theme.default-theme-name=example")
     @Nested
+    @ExtendWith(CasTestExtension.class)
     class ExampleThemeTests extends BaseThemeTests {
         @Test
         void verifyNoAccess() throws Throwable {

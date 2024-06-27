@@ -14,6 +14,7 @@ import org.apereo.cas.notifications.sms.MockSmsSender;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -21,6 +22,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -67,6 +69,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.service-registry.mail.text=Service ${service} has expired in CAS service registry"
 })
 @Tag("Mail")
+@ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 25000)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class RegisteredServicesEventListenerTests {

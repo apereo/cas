@@ -8,6 +8,13 @@ category: Authentication
 
 # SAML2 Delegated Authentication
 
+CAS can be configured to route the authentication requests to one or more external SAML2 identity providers. 
+Support is enabled by including the following dependency in the WAR overlay:
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-pac4j-saml" %}
+
+## Configuration
+
 {% include_cached casproperties.html properties="cas.authn.pac4j.saml" excludes=".metadata" %}
 
 ## Metadata Management
@@ -56,6 +63,11 @@ Please [see this guide](Delegate-Authentication-SAML-Discovery.html).
 To enable additional logging, modify the logging configuration file to add the following:
 
 ```xml
+<Logger name="org.pac4j" level="debug" additivity="false">
+    <AppenderRef ref="casConsole"/>
+    <AppenderRef ref="casFile"/>
+</Logger>
+
 <Logger name="org.opensaml" level="debug" additivity="false">
     <AppenderRef ref="casConsole"/>
     <AppenderRef ref="casFile"/>

@@ -15,8 +15,10 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasGenericAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -54,6 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.reject.users=one,two,three"
 })
 @Tag("CasConfiguration")
+@ExtendWith(CasTestExtension.class)
 class ConfigurationTests {
     @Autowired
     @Qualifier("fileAuthenticationHandler")

@@ -3,11 +3,13 @@ package org.apereo.cas.adaptors.yubikey.registry;
 import org.apereo.cas.adaptors.yubikey.BaseYubiKeyTests;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.ResourceAccessMode;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoint.yubikeyAccountRepository.enabled=true"
     })
 @Tag("MFAProvider")
+@ExtendWith(CasTestExtension.class)
 @ResourceLock(value = "yubiKeyAccountRegistry", mode = ResourceAccessMode.READ_WRITE)
 class YubiKeyAccountRegistryEndpointTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

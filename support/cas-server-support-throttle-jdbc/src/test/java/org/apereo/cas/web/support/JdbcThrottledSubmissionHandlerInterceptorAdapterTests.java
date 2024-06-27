@@ -3,12 +3,14 @@ package org.apereo.cas.web.support;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.CasJdbcAuditAutoConfiguration;
 import org.apereo.cas.config.CasJdbcThrottlingAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.Getter;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Getter
 @Tag("JDBC")
+@ExtendWith(CasTestExtension.class)
 class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired

@@ -2,10 +2,12 @@ package org.apereo.cas.support.sms;
 
 import org.apereo.cas.config.CasClickatellSmsAutoConfiguration;
 import org.apereo.cas.notifications.sms.SmsSender;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,7 @@ import static org.springframework.http.HttpStatus.*;
     "cas.sms-provider.clickatell.token=DEMO_TOKEN"
 })
 @Tag("SMS")
+@ExtendWith(CasTestExtension.class)
 @Execution(ExecutionMode.SAME_THREAD)
 class ClickatellSmsSenderTests {
     @Autowired

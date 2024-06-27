@@ -9,7 +9,7 @@ import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("MongoDbMFA")
-@Import(CasMongoDbMultifactorAuthenticationTrustAutoConfiguration.class)
+@ImportAutoConfiguration(CasMongoDbMultifactorAuthenticationTrustAutoConfiguration.class)
 @TestPropertySource(
     properties = {
         "cas.authn.mfa.trusted.mongo.database-name=mfa-trusted",

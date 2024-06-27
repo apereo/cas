@@ -5,11 +5,13 @@ import org.apereo.cas.services.AbstractServiceRegistryTests;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredServiceDefinition;
 import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Getter
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseLdapServiceRegistryTests extends AbstractServiceRegistryTests {
 
     @Autowired

@@ -2,12 +2,12 @@ package org.apereo.cas.webauthn.web;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.webauthn.WebAuthnUtils;
 import org.apereo.cas.webauthn.storage.WebAuthnCredentialRepository;
 import org.apereo.cas.webauthn.web.flow.BaseWebAuthnWebflowTests;
-
 import com.yubico.data.CredentialRegistration;
 import com.yubico.webauthn.RegisteredCredential;
 import com.yubico.webauthn.data.ByteArray;
@@ -15,17 +15,16 @@ import com.yubico.webauthn.data.UserIdentity;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -40,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "management.endpoint.webAuthnDevices.enabled=true"
     })
 @Tag("MFAProvider")
+@ExtendWith(CasTestExtension.class)
 class WebAuthnRegisteredDevicesEndpointTests {
     @Autowired
     @Qualifier("webAuthnRegisteredDevicesEndpoint")

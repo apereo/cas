@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,6 +40,8 @@ import java.util.stream.Stream;
 @Getter
 public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer
     implements CasMultifactorWebflowConfigurer {
+
+    private static final Set<String> SCOPES = Set.of("flowScope", "conversationScope");
 
     private static final String LOG_MESSAGE_TRANSITION_ID = "Locating transition id [{}] to process multifactor authentication for state [{}]...";
 
@@ -104,16 +107,21 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
                 registerMultifactorProviderAvailableAction(mfaFlow, targetStateId);
                 registerMultifactorProviderFailureAction(flow, mfaFlow);
                 registerMultifactorFlowExceptionHandlers(mfaFlow);
-                
+
                 val subflowState = createSubflowState(flow, providerId, providerId);
                 val subflowMappings = getDefaultAttributeMappings()
-                    .map(attr -> createFlowMapping("flowScope." + attr, attr))
+                    .map(attr -> SCOPES
+                        .stream()
+                        .map(scope -> createFlowMapping(scope + '.' + attr, attr))
+                        .collect(Collectors.toList()))
+                    .flatMap(List::stream)
                     .collect(Collectors.toList());
+
                 subflowMappings.add(createFlowMapping("flowScope." + CasWebflowConstants.VAR_ID_CREDENTIAL,
                     "parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL)));
 
                 multifactorAuthenticationFlowCustomizers.forEach(customizer -> customizer.getWebflowAttributeMappings()
-                    .forEach(key -> subflowMappings.add(createFlowMapping("flowScope." + key, key))));
+                    .forEach(key -> SCOPES.forEach(scope -> subflowMappings.add(createFlowMapping(scope + '.' + key, key)))));
                 val inputMapper = createFlowInputMapper(subflowMappings);
                 val subflowMapper = createSubflowAttributeMapper(inputMapper, null);
                 subflowState.setAttributeMapper(subflowMapper);
@@ -123,9 +131,9 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
                     .collect(Collectors.toList());
                 flowMappings.add(createFlowMapping("parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL),
                     "flowScope.parent" + StringUtils.capitalize(CasWebflowConstants.VAR_ID_CREDENTIAL)));
-                
+
                 multifactorAuthenticationFlowCustomizers.forEach(customizer -> customizer.getWebflowAttributeMappings()
-                    .forEach(key -> flowMappings.add(createFlowMapping(key, "flowScope." + key))));
+                    .forEach(key -> SCOPES.forEach(scope -> flowMappings.add(createFlowMapping(key, scope + '.' + key)))));
                 createFlowInputMapper(flowMappings, mfaFlow);
 
                 val states = getCandidateStatesForMultifactorAuthentication();

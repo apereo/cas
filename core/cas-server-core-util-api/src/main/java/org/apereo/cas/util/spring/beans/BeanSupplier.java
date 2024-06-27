@@ -272,8 +272,8 @@ public interface BeanSupplier<T> extends Supplier<T> {
 
             TYPES_AND_VALUES.put(Optional.class, Optional.empty());
 
-            TYPES_AND_VALUES.put(double.class, 0D);
-            TYPES_AND_VALUES.put(Double.class, 0D);
+            TYPES_AND_VALUES.put(double.class, 0.0D);
+            TYPES_AND_VALUES.put(Double.class, 0.0D);
             TYPES_AND_VALUES.put(long.class, 0L);
             TYPES_AND_VALUES.put(Long.class, 0L);
             TYPES_AND_VALUES.put(int.class, 0);

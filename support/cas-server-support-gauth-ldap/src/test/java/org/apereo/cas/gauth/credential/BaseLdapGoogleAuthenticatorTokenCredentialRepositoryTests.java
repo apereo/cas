@@ -27,7 +27,6 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Import;
 
 /**
  * This is {@link BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests}.
@@ -48,14 +47,10 @@ public abstract class BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests 
     public void cleanUp() {
         getRegistry().deleteAll();
     }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasGoogleAuthenticatorLdapAutoConfiguration.class,
         CasOneTimeTokenAuthenticationAutoConfiguration.class,
         CasGoogleAuthenticatorAutoConfiguration.class,
@@ -74,6 +69,7 @@ public abstract class BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests 
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class
 
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

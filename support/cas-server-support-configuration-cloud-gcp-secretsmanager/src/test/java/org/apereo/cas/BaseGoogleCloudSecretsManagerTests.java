@@ -2,8 +2,10 @@ package org.apereo.cas;
 
 import org.apereo.cas.config.GoogleCloudSecretsManagerCloudConfigBootstrapAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import com.google.api.gax.core.CredentialsProvider;
 import com.google.api.gax.core.NoCredentialsProvider;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration;
@@ -33,6 +35,7 @@ import org.springframework.core.env.Environment;
     "spring.cloud.gcp.secretmanager.project-id=project-12345"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseGoogleCloudSecretsManagerTests {
     @Autowired
     @Qualifier("googleCloudSecretsManagerPropertySourceLocator")

@@ -14,4 +14,6 @@ dependencies {
     implementation libraries.springsession
     implementation libraries.springsessionredis
     implementation libraries.redis
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

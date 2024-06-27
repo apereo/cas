@@ -258,7 +258,12 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
 
     protected Optional<ClientCredential> populateContextWithClientCredential(final BaseClient client,
                                                                              final RequestContext requestContext) {
-        return configContext.getCredentialExtractor().extract(client, requestContext);
+        return configContext.getCredentialExtractors()
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .map(extractor -> extractor.extract(client, requestContext))
+            .flatMap(Optional::stream)
+            .findFirst();
     }
 
     protected BaseClient findDelegatedClientByName(final String clientName) {

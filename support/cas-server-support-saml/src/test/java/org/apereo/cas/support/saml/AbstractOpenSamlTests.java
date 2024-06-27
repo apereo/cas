@@ -23,8 +23,10 @@ import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasValidationAutoConfiguration;
 import org.apereo.cas.services.RegisteredServicesTemplatesManager;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import net.shibboleth.shared.xml.ParserPool;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.core.xml.io.MarshallerFactory;
@@ -49,8 +51,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
-@SpringBootTest(classes = AbstractOpenSamlTests.SharedTestConfiguration.class,
-    properties = "spring.main.allow-bean-definition-overriding=true")
+@ExtendWith(CasTestExtension.class)
+@SpringBootTest(classes = AbstractOpenSamlTests.SharedTestConfiguration.class)
 public abstract class AbstractOpenSamlTests {
     protected static final String SAML_REQUEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
         + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
@@ -119,18 +121,16 @@ public abstract class AbstractOpenSamlTests {
         assertNotNull(this.parserPool.getBuilder());
     }
 
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import(CasRegisteredServicesTestConfiguration.class)
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasThymeleafAutoConfiguration.class,
         CasThemesAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasCoreSamlAutoConfiguration.class,
         CasSamlAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,

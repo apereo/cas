@@ -67,7 +67,8 @@ public class AttributeConsentReportEndpoint extends BaseCasRestActuatorEndpoint 
      * @return the collection
      */
     @GetMapping(path = "{principal}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get consent decisions for principal", parameters = @Parameter(name = "principal", required = true))
+    @Operation(summary = "Get consent decisions for principal",
+        parameters = @Parameter(name = "principal", required = true, description = "The principal to look up"))
     public Collection<Map<String, Object>> consentDecisions(
         @PathVariable
         final String principal) {
@@ -137,7 +138,8 @@ public class AttributeConsentReportEndpoint extends BaseCasRestActuatorEndpoint 
      */
     @DeleteMapping(path = "{principal}/{decisionId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Delete a consent decision for principal using a decision id",
-        parameters = {@Parameter(name = "principal", required = true), @Parameter(name = "decisionId", required = true)})
+        parameters = {@Parameter(name = "principal", required = true, description = "The principal id to look up"),
+            @Parameter(name = "decisionId", required = true, description = "The decision id to delete")})
     public boolean revokeConsents(
         @PathVariable
         final String principal,
@@ -154,7 +156,7 @@ public class AttributeConsentReportEndpoint extends BaseCasRestActuatorEndpoint 
      * @return true/false
      */
     @DeleteMapping(path = "{principal}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Delete consent decisions for principal", parameters = @Parameter(name = "principal"))
+    @Operation(summary = "Delete consent decisions for principal", parameters = @Parameter(name = "principal", required = true, description = "The principal id to look up"))
     public boolean revokeAllConsents(
         @PathVariable
         final String principal) throws Throwable {

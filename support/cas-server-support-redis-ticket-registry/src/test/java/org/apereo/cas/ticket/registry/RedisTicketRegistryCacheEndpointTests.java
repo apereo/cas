@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.ticket.registry.core.enable-locking=false"
 })
 @Tag("ActuatorEndpoint")
-@Import({
+@ImportAutoConfiguration({
     CasRedisCoreAutoConfiguration.class,
     CasRedisTicketRegistryAutoConfiguration.class
 })

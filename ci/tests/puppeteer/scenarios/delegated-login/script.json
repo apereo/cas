@@ -1,9 +1,8 @@
 {
-  "dependencies": "pac4j-webflow",
+  "dependencies": "pac4j-webflow,pac4j-oidc",
   "conditions": {
     "docker": "true"
   },
-
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",

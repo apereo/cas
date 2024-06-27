@@ -45,7 +45,6 @@ class DetermineMultifactorPasswordlessAuthenticationActionTests {
         BaseWebflowConfigurerTests.SharedTestConfiguration.class
     })
     @TestPropertySource(properties = {
-        "spring.main.allow-bean-definition-overriding=true",
         "cas.authn.passwordless.accounts.simple.casuser=casuser@example.org",
         "cas.authn.passwordless.core.multifactor-authentication-activated=true"
     })

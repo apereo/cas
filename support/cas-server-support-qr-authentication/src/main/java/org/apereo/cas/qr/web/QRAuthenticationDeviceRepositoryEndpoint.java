@@ -38,7 +38,7 @@ public class QRAuthenticationDeviceRepositoryEndpoint extends BaseCasActuatorEnd
      * @return the collection
      */
     @ReadOperation
-    @Operation(summary = "Get registered and authorized devices for the principal", parameters = @Parameter(name = "principal", required = true))
+    @Operation(summary = "Get registered and authorized devices for the principal", parameters = @Parameter(name = "principal", required = true, description = "The principal to look up"))
     public Collection<String> devices(@Selector final String principal) {
         return repository.getObject().getAuthorizedDevicesFor(principal);
     }
@@ -49,7 +49,7 @@ public class QRAuthenticationDeviceRepositoryEndpoint extends BaseCasActuatorEnd
      * @param deviceId the device id
      */
     @DeleteOperation
-    @Operation(summary = "Remove authorized device using the device id", parameters = @Parameter(name = "deviceId", required = true))
+    @Operation(summary = "Remove authorized device using the device id", parameters = @Parameter(name = "deviceId", required = true, description = "The device id to remove"))
     public void removeDevice(@Selector final String deviceId) {
         repository.getObject().removeDevice(deviceId);
     }
@@ -63,8 +63,8 @@ public class QRAuthenticationDeviceRepositoryEndpoint extends BaseCasActuatorEnd
     @WriteOperation
     @Operation(summary = "Register device using the principal id and device id",
         parameters = {
-            @Parameter(name = "principal", required = true),
-            @Parameter(name = "deviceId", required = true)
+            @Parameter(name = "principal", required = true, description = "The principal to register the device for"),
+            @Parameter(name = "deviceId", required = true, description = "The device id to register")
         })
     public void registerDevice(@Selector final String principal, @Selector final String deviceId) {
         repository.getObject().authorizeDeviceFor(principal, deviceId);

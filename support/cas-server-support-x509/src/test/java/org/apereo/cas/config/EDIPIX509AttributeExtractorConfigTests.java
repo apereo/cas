@@ -3,20 +3,19 @@ package org.apereo.cas.config;
 import org.apereo.cas.adaptors.x509.BaseX509Tests;
 import org.apereo.cas.adaptors.x509.authentication.principal.EDIPIX509AttributeExtractor;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509AttributeExtractor;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.ResourceUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.x509.cn-edipi.extract-edipi-as-attribute=true"
     })
 @Tag("X509")
+@ExtendWith(CasTestExtension.class)
 class EDIPIX509AttributeExtractorConfigTests {
 
     @Autowired

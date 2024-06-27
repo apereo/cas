@@ -4,6 +4,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
@@ -11,6 +12,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,9 +28,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@SpringBootTest(classes = BaseOAuth20WebflowTests.SharedTestConfiguration.class,
-    properties = "spring.main.allow-bean-definition-overriding=true")
+@SpringBootTest(classes = BaseOAuth20WebflowTests.SharedTestConfiguration.class)
 @Tag("OAuthWeb")
+@ExtendWith(CasTestExtension.class)
 class OAuth20RegisteredServiceUIActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_OAUTH20_REGISTERED_SERVICE_UI)
