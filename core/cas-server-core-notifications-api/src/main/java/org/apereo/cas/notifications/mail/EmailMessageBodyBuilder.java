@@ -9,6 +9,7 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import groovy.text.GStringTemplateEngine;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +43,7 @@ public class EmailMessageBodyBuilder implements Supplier<String> {
     private final EmailProperties properties;
 
     @Builder.Default
+    @Getter
     private final Map<String, Object> parameters = new LinkedHashMap<>();
 
     @Builder.Default
