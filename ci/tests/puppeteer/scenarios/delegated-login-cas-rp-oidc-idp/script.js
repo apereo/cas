@@ -42,12 +42,17 @@ const cas = require("../../cas.js");
     await cas.separator();
 
     const sid = authenticationSuccess.attributes.sid[0];
+    /**
+     * This logout token is not signed with a private key from the identity provider
+     * but we have turned off the logout token validation here to demonstrate the change.
+     */
     const privateKey = "enTHR15K28p0N6f404HaC9Vp1cfIBgQiHhmbgBiO7UHEnSiNJudxtDhPQNFjFQtOVSjEYu0pr5yxEeBAiO6IlA";
     const jwt = await cas.createJwt({
         "jti": "THJZGsQDP26OuwQn",
         "iss": "https://localhost:8989/realms/cas",
         "sid": sid,
-        "aud": "kc-client",
+        "exp": 185542587100,
+        "aud": "kc_client",
         "sub": "casuser",
         "client_id": "caskeycloak",
         "events": {
