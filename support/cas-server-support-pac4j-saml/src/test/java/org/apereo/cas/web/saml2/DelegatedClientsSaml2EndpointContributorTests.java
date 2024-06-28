@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Delegation")
 @SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class)
 @ExtendWith(CasTestExtension.class)
-public class DelegatedClientsSaml2EndpointContributorTests {
+class DelegatedClientsSaml2EndpointContributorTests {
     @Autowired
     @Qualifier("delegatedClientsSaml2EndpointContributor")
     private DelegatedClientsEndpointContributor delegatedClientsSaml2EndpointContributor;

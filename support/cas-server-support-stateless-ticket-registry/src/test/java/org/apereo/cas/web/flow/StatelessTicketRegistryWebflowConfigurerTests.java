@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ImportAutoConfiguration(CasStatelessTicketRegistryAutoConfiguration.class)
 @Tag("WebflowConfig")
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
-public class StatelessTicketRegistryWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class StatelessTicketRegistryWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     void verifyOperation() throws Throwable {
         val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);

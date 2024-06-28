@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("OIDC")
-public class CibaPollTokenDeliveryHandlerTests extends AbstractOidcTests {
+class CibaPollTokenDeliveryHandlerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcCibaPollTokenDeliveryHandler")
     private CibaTokenDeliveryHandler oidcCibaPollTokenDeliveryHandler;

@@ -43,7 +43,7 @@ import static org.junit.jupiter.params.provider.Arguments.*;
  */
 @Tag("CAS")
 @ImportAutoConfiguration(CasStatelessTicketRegistryAutoConfiguration.class)
-public class StatelessTicketManagementTests extends AbstractCentralAuthenticationServiceTests {
+class StatelessTicketManagementTests extends AbstractCentralAuthenticationServiceTests {
     @Autowired
     @Qualifier("statelessTicketRegistryCipherExecutor")
     private CipherExecutor statelessTicketRegistryCipherExecutor;

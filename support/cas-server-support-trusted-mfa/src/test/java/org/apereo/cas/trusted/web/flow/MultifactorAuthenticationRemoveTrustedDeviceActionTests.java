@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = AbstractMultifactorAuthenticationTrustStorageTests.SharedTestConfiguration.class,
     properties = "CasFeatureModule.AccountManagement.enabled=true")
-public class MultifactorAuthenticationRemoveTrustedDeviceActionTests {
+class MultifactorAuthenticationRemoveTrustedDeviceActionTests {
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_MFA_SET_TRUST_ACTION)

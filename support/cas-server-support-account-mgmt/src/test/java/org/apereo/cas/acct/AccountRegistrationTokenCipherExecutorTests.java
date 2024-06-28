@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.account-registration.core.crypto.encryption.key=XHRK-X9JJewbKoPTzfi31702ipvmVfvG-GMbFPhmhrw",
     "cas.account-registration.core.crypto.signing.key=GM4TNYuqZL0Kgf5dgsPniJYnHA0fo_91uMBOmja0JDsDETPtQ56j_tFj7Jau-152sFKP83cPxChF6I9ExzAzMw"
 })
-public class AccountRegistrationTokenCipherExecutorTests {
+class AccountRegistrationTokenCipherExecutorTests {
     @Autowired
     @Qualifier("accountMgmtCipherExecutor")
     private CipherExecutor accountMgmtCipherExecutor;

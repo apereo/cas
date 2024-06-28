@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class,
     properties = "cas.authn.pac4j.core.session-replication.replicate-sessions=false")
 @Tag("Delegation")
-public class DelegatedSaml2ClientTerminateSessionActionTests {
+class DelegatedSaml2ClientTerminateSessionActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_SAML2_TERMINATE_SESSION)
     private Action delegatedSaml2ClientTerminateSessionAction;

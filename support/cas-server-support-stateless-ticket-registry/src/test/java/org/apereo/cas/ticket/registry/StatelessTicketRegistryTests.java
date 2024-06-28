@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.ticket.registry.stateless.crypto.signing.key=classpath:/private.key",
     "cas.ticket.registry.stateless.crypto.encryption.key=classpath:/public.key"
 })
-public class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
+class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;

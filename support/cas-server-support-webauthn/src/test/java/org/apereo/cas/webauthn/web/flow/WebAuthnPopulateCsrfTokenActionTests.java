@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowMfaActions")
 @ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class)
-public class WebAuthnPopulateCsrfTokenActionTests {
+class WebAuthnPopulateCsrfTokenActionTests {
     @Autowired
     @Qualifier("webAuthnPopulateCsrfTokenAction")
     private Action webAuthnPopulateCsrfTokenAction;

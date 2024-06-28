@@ -33,7 +33,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @Tag("MongoDb")
 @ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MongoSessionConfigurationTests {
+class MongoSessionConfigurationTests {
     @Test
     public void verifyOperation() throws Exception {
     }

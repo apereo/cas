@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowMfaConfig")
 @ExtendWith(CasTestExtension.class)
 @Execution(ExecutionMode.SAME_THREAD)
-public class MultifactorAuthenticationTrustProviderSelectionCriteriaTests extends AbstractMultifactorAuthenticationTrustStorageTests {
+class MultifactorAuthenticationTrustProviderSelectionCriteriaTests extends AbstractMultifactorAuthenticationTrustStorageTests {
     @Autowired
     @Qualifier("mfaTrustProviderSelectionCriteria")
     private MultifactorProviderSelectionCriteria mfaTrustProviderSelectionCriteria;

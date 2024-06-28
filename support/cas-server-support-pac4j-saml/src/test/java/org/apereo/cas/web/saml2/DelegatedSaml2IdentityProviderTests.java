@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
  */
 
 @Tag("SAML2Web")
-public class DelegatedSaml2IdentityProviderTests {
+class DelegatedSaml2IdentityProviderTests {
 
     @SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class, properties = "cas.custom.properties.delegation-test.enabled=false")
     @ExtendWith(CasTestExtension.class)

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Delegation")
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @ExtendWith(CasTestExtension.class)
-public class DefaultDelegatedAuthenticationCredentialExtractorTests {
+class DefaultDelegatedAuthenticationCredentialExtractorTests {
     @Autowired
     @Qualifier("delegatedAuthenticationCredentialExtractor")
     private DelegatedAuthenticationCredentialExtractor delegatedAuthenticationCredentialExtractor;

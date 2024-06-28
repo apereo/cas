@@ -48,7 +48,7 @@ import static org.mockito.Mockito.*;
 @Tag("DuoSecurity")
 @ExtendWith(CasTestExtension.class)
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
-public class DuoSecurityMultifactorAuthenticationDeviceProviderActionTests {
+class DuoSecurityMultifactorAuthenticationDeviceProviderActionTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 

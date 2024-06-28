@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 7.1.0
  */
 @Tag("OIDC")
-public class OidcCibaResponseAuditResourceResolverTests extends AbstractOidcTests {
+class OidcCibaResponseAuditResourceResolverTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcCibaResponseResourceResolver")
     private AuditResourceResolver oidcCibaResponseResourceResolver;
