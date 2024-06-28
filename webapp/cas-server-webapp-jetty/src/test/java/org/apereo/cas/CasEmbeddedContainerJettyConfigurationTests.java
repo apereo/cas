@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Getter
 @Tag("WebApp")
 @ExtendWith(CasTestExtension.class)
-public class CasEmbeddedContainerJettyConfigurationTests {
+class CasEmbeddedContainerJettyConfigurationTests {
     @Autowired
     @Qualifier("casJettyServerCustomizer")
     private JettyServerCustomizer casJettyServerCustomizer;

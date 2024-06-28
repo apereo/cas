@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     MultifactorAuthenticationWebflowUtilsTests.MultifactorAuthenticationTestConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MultifactorAuthenticationWebflowUtilsTests {
+class MultifactorAuthenticationWebflowUtilsTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;

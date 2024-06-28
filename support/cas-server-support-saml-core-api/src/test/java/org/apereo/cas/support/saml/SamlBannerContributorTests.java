@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("WebApp")
-public class SamlBannerContributorTests {
+class SamlBannerContributorTests {
     @Test
     void verifyAction() throws Throwable {
         val banner = new SamlBannerContributor();

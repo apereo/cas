@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.core.enabled=true",
     "CasFeatureModule.AccountManagement.enabled=true"
 })
-public class PasswordManagementMultifactorTrustWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class PasswordManagementMultifactorTrustWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     void verifyOperation() throws Exception {
         val requestContext = MockRequestContext.create(applicationContext);

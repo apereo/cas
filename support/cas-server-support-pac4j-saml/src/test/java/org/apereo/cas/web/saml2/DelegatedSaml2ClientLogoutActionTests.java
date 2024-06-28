@@ -44,7 +44,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class, properties = "cas.authn.pac4j.core.session-replication.replicate-sessions=false")
 @Tag("Delegation")
-public class DelegatedSaml2ClientLogoutActionTests {
+class DelegatedSaml2ClientLogoutActionTests {
 
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_SAML2_CLIENT_LOGOUT)

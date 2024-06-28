@@ -35,7 +35,7 @@ import static org.junit.jupiter.params.provider.Arguments.*;
  * @since 7.1.0
  */
 @Tag("OIDC")
-public class AccessTokenCibaGrantRequestExtractorTests extends AbstractOidcTests {
+class AccessTokenCibaGrantRequestExtractorTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcCibaAccessTokenGrantRequestExtractor")
     private AccessTokenGrantRequestExtractor oidcCibaAccessTokenGrantRequestExtractor;

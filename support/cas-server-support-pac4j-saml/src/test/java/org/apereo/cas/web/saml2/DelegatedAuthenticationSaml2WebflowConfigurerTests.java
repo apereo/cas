@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Import(BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("WebflowConfig")
-public class DelegatedAuthenticationSaml2WebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class DelegatedAuthenticationSaml2WebflowConfigurerTests extends BaseWebflowConfigurerTests {
 
     @Test
     void verifyOperation() throws Throwable {

@@ -20,6 +20,7 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -92,7 +93,7 @@ class CasSimpleMultifactorSendEmail {
     }
 
     protected EmailMessageRequest prepareEmailMessageRequest(final RequestContext requestContext,
-                                                             final EmailMessageBodyBuilder body,
+                                                             final EmailMessageBodyBuilder bodyBuilder,
                                                              final Principal principal,
                                                              final String attribute) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
@@ -103,7 +104,8 @@ class CasSimpleMultifactorSendEmail {
             .locale(locale.orElseGet(Locale::getDefault))
             .principal(principal)
             .attribute(SpringExpressionLanguageValueResolver.getInstance().resolve(attribute))
-            .body(body.get())
+            .body(bodyBuilder.get())
+            .context(bodyBuilder.getParameters())
             .build();
     }
 
@@ -113,16 +115,21 @@ class CasSimpleMultifactorSendEmail {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val locale = Optional.ofNullable(RequestContextUtils.getLocaleResolver(request))
             .map(resolver -> resolver.resolveLocale(request));
-        val parameters = CoreAuthenticationUtils.convertAttributeValuesToObjects(principal.getAttributes());
-        val token = tokenTicket.getId();
-        val tokenWithoutPrefix = token.substring(CasSimpleMultifactorAuthenticationTicket.PREFIX.length() + 1);
-        parameters.put("token", token);
-        parameters.put("tokenWithoutPrefix", tokenWithoutPrefix);
+        val parameters = buildEmailBodyParameters(principal, tokenTicket);
         return EmailMessageBodyBuilder.builder()
             .properties(properties.getMail())
             .locale(locale)
             .parameters(parameters)
             .build();
+    }
+
+    protected Map<String, Object> buildEmailBodyParameters(final Principal principal, final Ticket tokenTicket) {
+        val parameters = CoreAuthenticationUtils.convertAttributeValuesToObjects(principal.getAttributes());
+        val token = tokenTicket.getId();
+        val tokenWithoutPrefix = token.substring(CasSimpleMultifactorAuthenticationTicket.PREFIX.length() + 1);
+        parameters.put("token", token);
+        parameters.put("tokenWithoutPrefix", tokenWithoutPrefix);
+        return parameters;
     }
 
     record EmailCommunicationResults(List<EmailCommunicationResult> results) {

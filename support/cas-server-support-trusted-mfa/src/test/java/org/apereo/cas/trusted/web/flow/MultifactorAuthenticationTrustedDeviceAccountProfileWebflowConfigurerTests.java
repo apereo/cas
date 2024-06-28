@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("WebflowConfig")
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
 @ImportAutoConfiguration(CasMultifactorAuthnTrustAutoConfiguration.class)
-public class MultifactorAuthenticationTrustedDeviceAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class MultifactorAuthenticationTrustedDeviceAccountProfileWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     void verifyOperation() throws Throwable {
         val accountFlow = (Flow) this.loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_ACCOUNT);

@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Delegation")
 @SpringBootTest(classes = BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class, properties = "cas.authn.pac4j.core.session-replication.replicate-sessions=false")
 @ExtendWith(CasTestExtension.class)
-public class DelegatedClientSaml2SessionManagerTests {
+class DelegatedClientSaml2SessionManagerTests {
 
     @Autowired
     @Qualifier("delegatedClientSaml2SessionManager")
