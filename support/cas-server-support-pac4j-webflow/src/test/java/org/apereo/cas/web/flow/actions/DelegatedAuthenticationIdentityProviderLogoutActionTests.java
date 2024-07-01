@@ -18,6 +18,8 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.SessionIndex;
 import org.pac4j.core.context.CallContext;
+import org.pac4j.core.credentials.SessionKeyCredentials;
+import org.pac4j.core.logout.LogoutType;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.saml.context.SAML2MessageContext;
@@ -88,6 +90,22 @@ class DelegatedAuthenticationIdentityProviderLogoutActionTests {
         context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
 
         val tgt = prepCredential(context, UUID.randomUUID().toString(), "SAML2Client");
+        assertEquals(CasWebflowConstants.TRANSITION_ID_DONE, action.execute(context).getId());
+        assertNull(configurationContext.getTicketRegistry().getTicket(tgt.getId()));
+    }
+
+    @Test
+    void verifyPostBackChannelOidcLogoutOperation() throws Throwable {
+        val context = MockRequestContext.create(applicationContext);
+        context.setMethod(HttpMethod.POST);
+        context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "OidcClient");
+
+        val sessionIdx = UUID.randomUUID().toString();
+        val clientCredentials = new ClientCredential(new SessionKeyCredentials(LogoutType.BACK, sessionIdx), "OidcClient");
+        val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString(), clientCredentials, Map.of("sid", List.of(sessionIdx)));
+        configurationContext.getTicketRegistry().addTicket(tgt);
+        WebUtils.putCredential(context, clientCredentials);
+
         assertEquals(CasWebflowConstants.TRANSITION_ID_DONE, action.execute(context).getId());
         assertNull(configurationContext.getTicketRegistry().getTicket(tgt.getId()));
     }
