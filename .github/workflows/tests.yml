@@ -1,7 +1,7 @@
 name: Unit & Integration Tests
 
 env:
-  JAVA_OPTS: "-Xms512m -Xmx8048m -Xss512m -XX:ReservedCodeCacheSize=512m -server"
+  JAVA_OPTS: "-Xms512m -Xmx8048m -Xss512m -XX:ReservedCodeCacheSize=512m -server --add-opens java.base/java.util=ALL-UNNAMED"
   TERM: xterm-256color
   GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
