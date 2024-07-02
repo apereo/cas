@@ -6,6 +6,7 @@ import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -638,7 +639,7 @@ public abstract class AbstractServiceRegistryTests {
 
     protected abstract ServiceRegistry getNewServiceRegistry() throws Exception;
 
-    protected void initializeServiceRegistry() throws Exception {
+    protected void initializeServiceRegistry() {
     }
 
     protected void tearDownServiceRegistry() throws Exception {
@@ -661,6 +662,7 @@ public abstract class AbstractServiceRegistryTests {
         DispatcherServletAutoConfiguration.class,
         EndpointAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,

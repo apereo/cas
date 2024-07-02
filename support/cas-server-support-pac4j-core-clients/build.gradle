@@ -1,19 +1,22 @@
 description = "Apereo CAS Delegated Authentication Support Using Pac4J"
 dependencies {
+    api project(":api:cas-server-core-api")
+
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
-    
-    implementation project(":support:cas-server-support-pac4j-api")
 
-    api project(":api:cas-server-core-api")
+    implementation project(":support:cas-server-support-pac4j-api")
     
     implementation libraries.pac4jcore
     implementation libraries.pac4jcas
     implementation libraries.nimbus
 
+    compileOnly project(":core:cas-server-core-scripting")
+
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-services-authentication")

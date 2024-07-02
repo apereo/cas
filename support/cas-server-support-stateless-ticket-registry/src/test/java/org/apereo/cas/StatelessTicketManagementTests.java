@@ -100,7 +100,7 @@ class StatelessTicketManagementTests extends AbstractCentralAuthenticationServic
         }
     }
 
-    static Stream<Arguments> ticketProvider() throws Exception {
+    static Stream<Arguments> ticketProvider() {
         val service = RegisteredServiceTestUtils.getService("eduPersonTest");
         val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
         val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), authentication, NeverExpiresExpirationPolicy.INSTANCE);

@@ -12,12 +12,11 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -27,11 +26,9 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.Ordered;
-
 import jakarta.persistence.Transient;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,7 +53,7 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implement
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
-    private Map<String, ExecutableCompiledGroovyScript> scriptCache = new ConcurrentHashMap<>(0);
+    private Map<String, ExecutableCompiledScript> scriptCache = new ConcurrentHashMap<>(0);
 
     @Override
     public Optional<MultifactorAuthenticationProvider> isActivated(final Authentication authentication,
@@ -96,7 +93,8 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implement
                 try {
                     val scriptPath = SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group());
                     val resource = ResourceUtils.getResourceFrom(scriptPath);
-                    val script = new WatchableGroovyScriptResource(resource);
+                    val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+                    val script = scriptFactory.fromResource(resource);
                     scriptCache.put(mfaScript, script);
                     LOGGER.trace("Caching multifactor authentication trigger script as script resource [{}]", resource);
                 } catch (final Exception e) {

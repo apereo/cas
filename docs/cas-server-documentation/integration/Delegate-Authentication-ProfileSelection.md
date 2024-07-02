@@ -60,6 +60,8 @@ The following parameters are passed to the script:
 | `userProfile`       | Points to the *resolved* user profile from the identity provider in exchange for the credential. |
 | `logger`            | The object responsible for issuing log messages such as `logger.info(...)`.                      |
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
 
 {% tab delegatedauthnprofileselection Custom %}

@@ -23,9 +23,8 @@ import org.apereo.cas.persondir.ActiveDirectoryLdapEntryHandler;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
-import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.google.common.collect.Multimap;
@@ -353,15 +352,16 @@ public class LdapUtils {
         if (ResourceUtils.doesResourceExist(filterQuery)) {
             ApplicationContextProvider.getScriptResourceCacheManager()
                 .ifPresentOrElse(cacheMgr -> FunctionUtils.doUnchecked(__ -> {
-                    val cacheKey = ScriptResourceCacheManager.computeKey(filterQuery);
-                    var script = (ExecutableCompiledGroovyScript) null;
+                    val cacheKey = cacheMgr.computeKey(filterQuery);
+                    var script = (ExecutableCompiledScript) null;
                     if (cacheMgr.containsKey(cacheKey)) {
                         script = cacheMgr.get(cacheKey);
                         LOGGER.trace("Located cached groovy script [{}] for key [{}]", script, cacheKey);
                     } else {
                         val resource = Unchecked.supplier(() -> ResourceUtils.getRawResourceFrom(filterQuery)).get();
                         LOGGER.trace("Groovy script [{}] for key [{}] is not cached", resource, cacheKey);
-                        script = new WatchableGroovyScriptResource(resource);
+                        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+                        script = scriptFactory.fromResource(resource);
                         cacheMgr.put(cacheKey, script);
                         LOGGER.trace("Cached groovy script [{}] for key [{}]", script, cacheKey);
                     }

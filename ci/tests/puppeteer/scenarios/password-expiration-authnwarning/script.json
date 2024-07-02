@@ -1,5 +1,5 @@
 {
-  "dependencies": "pm-webflow",
+  "dependencies": "pm-webflow,scripting",
 
   "properties": [
     "--cas.authn.pm.core.enabled=true",

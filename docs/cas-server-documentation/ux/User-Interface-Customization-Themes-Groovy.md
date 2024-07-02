@@ -45,3 +45,5 @@ Returning `null` or blank will have CAS switch to the default theme. The followi
 | `queryStrings`      | Textual representation of all query strings found in the request, if any.   |
 | `headers`           | `Map` of all request headers and their values found in the request, if any. |
 | `logger`            | The object responsible for issuing log messages such as `logger.info(...)`. |
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).

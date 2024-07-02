@@ -76,6 +76,8 @@ profiles {
 cas.common.setting="value"
 ``` 
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 You can also use a dedicated configuration file to directly feed a collection of properties
 to CAS in form of a file or classpath resource. This is specially useful in cases
 where a bare CAS server is deployed in the cloud without

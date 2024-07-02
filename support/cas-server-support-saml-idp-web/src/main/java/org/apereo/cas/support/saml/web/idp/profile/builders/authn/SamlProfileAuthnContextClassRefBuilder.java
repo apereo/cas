@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderCo
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -89,7 +90,8 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
         if (StringUtils.isNotBlank(requiredClass)) {
             LOGGER.debug("Using [{}] as indicated by SAML registered service [{}]",
                 requiredClass, context.getRegisteredService().getName());
-            if (ScriptingUtils.isGroovyScript(requiredClass) || ScriptingUtils.isInlineGroovyScript(requiredClass)) {
+            val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+            if (scriptFactory.isPresent() && (ScriptingUtils.isGroovyScript(requiredClass) || ScriptingUtils.isInlineGroovyScript(requiredClass))) {
                 return buildScriptedAuthnContextClassRef(context, requiredClass);
             }
             return requiredClass;

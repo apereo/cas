@@ -2,6 +2,7 @@ package org.apereo.cas.util.scripting;
 
 import org.apereo.cas.configuration.model.core.cache.ExpiringSimpleCacheProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
@@ -19,17 +20,17 @@ import java.util.Set;
  * @since 6.3.0
  */
 @Slf4j
-public class GroovyScriptResourceCacheManager implements ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> {
+public class GroovyScriptResourceCacheManager implements ScriptResourceCacheManager<String, ExecutableCompiledScript> {
     private final CasReentrantLock lock = new CasReentrantLock();
 
-    private final Cache<String, ExecutableCompiledGroovyScript> cache;
+    private final Cache<String, ExecutableCompiledScript> cache;
 
     public GroovyScriptResourceCacheManager(final ExpiringSimpleCacheProperties properties) {
         this.cache = Beans.newCacheBuilder(properties).build();
     }
 
     @Override
-    public ExecutableCompiledGroovyScript get(final String key) {
+    public ExecutableCompiledScript get(final String key) {
         return lock.tryLock(() -> cache.getIfPresent(key));
     }
 
@@ -40,8 +41,8 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
 
     @Override
     @CanIgnoreReturnValue
-    public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> put(
-        final String key, final ExecutableCompiledGroovyScript value) {
+    public ScriptResourceCacheManager<String, ExecutableCompiledScript> put(
+        final String key, final ExecutableCompiledScript value) {
         return lock.tryLock(() -> {
             this.cache.put(key, value);
             return this;
@@ -50,7 +51,7 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
 
     @Override
     @CanIgnoreReturnValue
-    public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> remove(final String key) {
+    public ScriptResourceCacheManager<String, ExecutableCompiledScript> remove(final String key) {
         return lock.tryLock(() -> {
             this.cache.invalidate(key);
             return this;
@@ -73,13 +74,13 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
     }
 
     @Override
-    public ExecutableCompiledGroovyScript resolveScriptableResource(
+    public ExecutableCompiledScript resolveScriptableResource(
         final String scriptResource,
         final String... keys) {
 
-        val cacheKey = ScriptResourceCacheManager.computeKey(keys);
+        val cacheKey = computeKey(keys);
         LOGGER.trace("Constructed cache key [{}] for keys [{}] mapped as groovy script", cacheKey, keys);
-        var script = (ExecutableCompiledGroovyScript) null;
+        var script = (ExecutableCompiledScript) null;
         if (containsKey(cacheKey)) {
             script = get(cacheKey);
             LOGGER.trace("Located cached groovy script [{}] for key [{}]", script, cacheKey);
@@ -107,5 +108,11 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
             }
         }
         return script;
+    }
+
+    @Override
+    public String computeKey(final String... keys) {
+        val rawKey = String.join(":", keys);
+        return DigestUtils.sha256(rawKey);
     }
 }

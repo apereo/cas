@@ -1,5 +1,5 @@
 {
-  "dependencies": "x509-webflow,ldap,person-directory",
+  "dependencies": "x509-webflow,ldap,person-directory,scripting",
   "conditions": {
     "docker": "true"
   },

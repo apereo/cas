@@ -1,5 +1,5 @@
 {
-  "dependencies": "geolocation,simple-mfa",
+  "dependencies": "geolocation,simple-mfa,scripting",
   "conditions": {
     "docker": "true"
   },

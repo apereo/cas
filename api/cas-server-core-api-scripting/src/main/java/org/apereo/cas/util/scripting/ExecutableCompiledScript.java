@@ -3,12 +3,12 @@ package org.apereo.cas.util.scripting;
 import java.util.Map;
 
 /**
- * This is {@link ExecutableCompiledGroovyScript}.
+ * This is {@link ExecutableCompiledScript}.
  *
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-public interface ExecutableCompiledGroovyScript extends AutoCloseable {
+public interface ExecutableCompiledScript extends AutoCloseable {
 
     /**
      * Execute t.

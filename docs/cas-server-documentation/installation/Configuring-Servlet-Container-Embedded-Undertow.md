@@ -7,6 +7,6 @@ category: Installation
 
 # Undertow - Embedded Servlet Container Configuration
 
-{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-webapp-undertow" optional="true" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-webapp-undertow" bundled="true" %}
 
 {% include_cached casproperties.html thirdPartyStartsWith="server.undertow" %}

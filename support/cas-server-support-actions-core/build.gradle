@@ -21,8 +21,11 @@ dependencies {
     
     implementation project(":support:cas-server-support-geolocation")
 
+    compileOnly project(":core:cas-server-core-scripting")
+    
     testImplementation project(":support:cas-server-support-person-directory")
 
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-tickets")

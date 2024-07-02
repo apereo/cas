@@ -3,24 +3,22 @@ package org.apereo.cas.util;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.scripting.ScriptingUtils;
-
 import groovy.lang.Script;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.Objects;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -60,7 +58,7 @@ class ScriptingUtilsTests {
 
     @Test
     void verifyGroovyExecutionFails() throws Throwable {
-        var result = ScriptingUtils.executeGroovyShellScript(mock(Script.class), CollectionUtils.wrap("name", "casuser"), String.class);
+        var result = ScriptingUtils.executeGroovyShellScript(Mockito.mock(Script.class), CollectionUtils.wrap("name", "casuser"), String.class);
         assertNull(result);
 
         result = ScriptingUtils.executeGroovyScript(mock(Resource.class), "someMethod", String.class);

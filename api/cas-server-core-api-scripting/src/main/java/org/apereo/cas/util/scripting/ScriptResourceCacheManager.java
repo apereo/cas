@@ -1,11 +1,7 @@
 package org.apereo.cas.util.scripting;
 
-import org.apereo.cas.util.DigestUtils;
-
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
-
 import java.util.Set;
 
 /**
@@ -14,24 +10,13 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-public interface ScriptResourceCacheManager<K extends String, V extends ExecutableCompiledGroovyScript>
+public interface ScriptResourceCacheManager<K extends String, V extends ExecutableCompiledScript>
     extends AutoCloseable, DisposableBean {
 
     /**
      * Bean name for script resource cache manager.
      */
     String BEAN_NAME = "scriptResourceCacheManager";
-
-    /**
-     * Compute key.
-     *
-     * @param keys the keys
-     * @return the key
-     */
-    static String computeKey(final String... keys) {
-        val rawKey = String.join(":", keys);
-        return DigestUtils.sha256(rawKey);
-    }
 
     /**
      * Get item.
@@ -106,6 +91,13 @@ public interface ScriptResourceCacheManager<K extends String, V extends Executab
      * @param keys           the keys
      * @return the executable compiled groovy script
      */
-    ExecutableCompiledGroovyScript resolveScriptableResource(String scriptResource, String... keys);
+    ExecutableCompiledScript resolveScriptableResource(String scriptResource, String... keys);
 
+    /**
+     * Compute key.
+     *
+     * @param keys the keys
+     * @return the string
+     */
+    String computeKey(String... keys);
 }

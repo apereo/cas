@@ -105,6 +105,8 @@ The parameters passed to the script are as follows:
 Note that the execution result of the script *MUST* ensure that attributes are collected into a `Map`
 where the attribute name, the key, is a simple `String` and the attribute value is transformed into a collection.
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 ## Handling CAS Logout
 
 An optional step, the `casLogoutView.html` can be modified to place a link to ADFS's logout page.

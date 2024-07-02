@@ -82,6 +82,8 @@ response status back to the relying party.
 
 {% include_cached casproperties.html properties="cas.authn.oidc.webfinger.user-info.groovy" %}
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 ### REST UserInfo Repository
 
 The REST repository allows the CAS server to reach to a remote REST 

@@ -7,8 +7,8 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.Resource;
@@ -21,7 +21,7 @@ import org.springframework.core.io.Resource;
  */
 @Slf4j
 public class GroovyAuthenticationHandler extends AbstractAuthenticationHandler {
-    private final WatchableGroovyScriptResource watchableScript;
+    private final ExecutableCompiledScript watchableScript;
 
     public GroovyAuthenticationHandler(final String name,
                                        final ServicesManager servicesManager,
@@ -29,7 +29,8 @@ public class GroovyAuthenticationHandler extends AbstractAuthenticationHandler {
                                        final Resource groovyResource,
                                        final Integer order) {
         super(name, servicesManager, principalFactory, order);
-        this.watchableScript = new WatchableGroovyScriptResource(groovyResource);
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        this.watchableScript = scriptFactory.fromResource(groovyResource);
     }
 
     @Override

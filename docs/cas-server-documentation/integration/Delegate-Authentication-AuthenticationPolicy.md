@@ -43,6 +43,8 @@ The following fields are supported for the authentication policy:
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.core" %}
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 ## Auto Redirection
 
 [See this guide](Delegate-Authentication-Redirection.html) for better details.

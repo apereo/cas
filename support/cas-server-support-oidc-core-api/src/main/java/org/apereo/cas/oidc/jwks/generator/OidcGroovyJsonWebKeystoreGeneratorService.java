@@ -1,7 +1,7 @@
 package org.apereo.cas.oidc.jwks.generator;
 
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKeySet;
@@ -9,7 +9,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
@@ -22,10 +21,11 @@ import java.util.Optional;
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class OidcGroovyJsonWebKeystoreGeneratorService implements OidcJsonWebKeystoreGeneratorService {
-    private final WatchableGroovyScriptResource watchableScript;
+    private final ExecutableCompiledScript watchableScript;
 
-    public OidcGroovyJsonWebKeystoreGeneratorService(final Resource watchableScript) {
-        this.watchableScript = new WatchableGroovyScriptResource(watchableScript);
+    public OidcGroovyJsonWebKeystoreGeneratorService(final Resource groovyResource) {
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        this.watchableScript = scriptFactory.fromResource(groovyResource);
     }
 
     @Override

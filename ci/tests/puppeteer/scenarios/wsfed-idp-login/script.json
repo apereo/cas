@@ -1,6 +1,5 @@
 {
-  "dependencies": "ws-idp",
-
+  "dependencies": "ws-idp,scripting",
   "properties": [
     "--cas.authn.attribute-repository.stub.attributes.cn=CAS",
     "--cas.authn.attribute-repository.stub.attributes.givenName=casuser",

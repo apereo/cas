@@ -41,6 +41,8 @@ Embed the groovy script directly inside the service configuration.
 Note that the `uid` attribute in the above example is resolved internally as a multivalued attribute, as should all attributes when fetched by CAS. So
 the above example uses the `[0]` syntax to fetch the first value of the attribute.
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
 
 {% tab groovyprincipalid External %}
@@ -71,6 +73,8 @@ return "newPrincipalId"
 ```
 
 The configuration of this component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% endtab %} 
 

@@ -1,10 +1,11 @@
 package org.apereo.inspektr.audit.support;
 
 import org.apereo.inspektr.audit.AuditActionContext;
-import groovy.text.GStringTemplateEngine;
-import groovy.text.Template;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.springframework.context.ApplicationContext;
 import java.io.File;
 import java.util.HashMap;
@@ -17,15 +18,11 @@ import java.util.HashMap;
  * @since 7.0.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class GroovyAuditTrailManager extends Slf4jLoggingAuditTrailManager {
-    private final Template groovyTemplate;
+    private final File groovyTemplate;
     private final ApplicationContext applicationContext;
-
-    public GroovyAuditTrailManager(final File groovyTemplate, final ApplicationContext applicationContext) throws Exception {
-        this.groovyTemplate = new GStringTemplateEngine().createTemplate(groovyTemplate);
-        this.applicationContext = applicationContext;
-    }
-
+    
     @Override
     protected String toString(final AuditActionContext auditActionContext) {
         val map = new HashMap<String, Object>(auditActionContext.getClientInfo().getHeaders());
@@ -33,6 +30,11 @@ public class GroovyAuditTrailManager extends Slf4jLoggingAuditTrailManager {
         map.putAll(getMappedAuditActionContext(auditActionContext));
         map.put("applicationContext", applicationContext);
         map.put("logger", LOGGER);
-        return groovyTemplate.make(map).toString();
+
+        return FunctionUtils.doUnchecked(() -> {
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            return scriptFactory.createTemplate(groovyTemplate, map);
+        });
+
     }
 }

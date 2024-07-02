@@ -101,6 +101,8 @@ groovy { return 'This is your email message!' }
 
 The script bindings prior to execution are prepared with a collection of parameters appropriate for that feature.   
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
 
 {% endtabs %}

@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.DefaultPrincipalAttributesRepositoryCache;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
@@ -82,7 +83,8 @@ class RegisteredServiceAttributeReleasePolicyTests {
         CommonTestConfiguration.class,
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        CasCoreUtilAutoConfiguration.class
+        CasCoreUtilAutoConfiguration.class,
+    CasCoreScriptingAutoConfiguration.class
     })
     class DefaultTests {
         @Autowired
@@ -353,7 +355,8 @@ class RegisteredServiceAttributeReleasePolicyTests {
         AttributeRepositoryTests.AttributeRepositoryTestConfiguration.class,
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        CasCoreUtilAutoConfiguration.class
+        CasCoreUtilAutoConfiguration.class,
+    CasCoreScriptingAutoConfiguration.class
     })
     class AttributeRepositoryTests {
         @Autowired

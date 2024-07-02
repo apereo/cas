@@ -4,8 +4,8 @@ import org.apereo.cas.config.CasCoreConfigurationWatchAutoConfiguration;
 import org.apereo.cas.config.CasCoreEnvironmentBootstrapAutoConfiguration;
 import org.apereo.cas.config.CasCoreStandaloneBootstrapAutoConfiguration;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
-import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -62,16 +62,13 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
     private InitializingBean casConfigurationWatchService;
 
     @Autowired
-    private ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory;
-
-    @Autowired
     private Environment environment;
 
     @Autowired
     private ResourceLoader resourceLoader;
 
     @Test
-    void verifyLocator() throws Throwable {
+    void verifyLocator() {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
         assertInstanceOf(CompositePropertySource.class, source);
 
@@ -83,7 +80,7 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
     }
 
     @Test
-    void verifyPriority() throws Throwable {
+    void verifyPriority() {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
         assertInstanceOf(CompositePropertySource.class, source);
         val composite = (CompositePropertySource) source;
@@ -96,8 +93,8 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
     }
 
     @Test
-    void verifyNoneProfile() throws Throwable {
-        val mockEnv =new MockEnvironment();
+    void verifyNoneProfile() {
+        val mockEnv = new MockEnvironment();
         mockEnv.setActiveProfiles(CasConfigurationPropertiesSourceLocator.PROFILE_NONE);
         val source = CasConfigurationPropertiesSourceLocator.getStandaloneProfileConfigurationDirectory(mockEnv);
         assertNull(source);
@@ -105,7 +102,7 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
 
 
     @Test
-    void verifyGroovySlurper() throws Throwable {
+    void verifyGroovySlurper() {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
         assertInstanceOf(CompositePropertySource.class, source);
         val composite = (CompositePropertySource) source;
@@ -114,14 +111,19 @@ class DefaultCasConfigurationPropertiesSourceLocatorTests {
     }
 
     @Test
-    void verifyYamlLoaderThrows() throws Throwable {
-        val loader = configurationPropertiesLoaderFactory.getLoader(
-            resourceLoader.getResource("classpath:/badyaml.yml"), "test");
-        assertThrows(YAMLException.class, loader::load);
+    void verifyYamlLoaderThrows() {
+        val resource = resourceLoader.getResource("classpath:/badyaml.yml");
+        val configurationLoaders = CasConfigurationPropertiesSourceLocator.getConfigurationPropertiesLoaders();
+        val foundLoader = configurationLoaders
+            .stream()
+            .filter(loader -> loader.supports(resource))
+            .findFirst()
+            .orElseThrow();
+        assertThrows(YAMLException.class, () -> foundLoader.load(resource, environment, "test", CipherExecutor.noOpOfStringToString()));
     }
 
     @Test
-    void verifySystemPropertiesOverrideCasConfiguration() throws Throwable {
+    void verifySystemPropertiesOverrideCasConfiguration() {
         val source = casCoreBootstrapPropertySourceLocator.locate(environment);
         assertInstanceOf(CompositePropertySource.class, source);
 

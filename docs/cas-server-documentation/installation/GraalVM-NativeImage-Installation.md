@@ -41,10 +41,7 @@ The AOT process, integrated directly into the CAS build, will typically generate
   - Serialization hints (`serialization-config.json`)
   - Java Proxy Hints (`proxy-config.json`)
   - JNI Hints (`jni-config.json`)
-
-During Spring AOT processing CAS is started up to the point that bean definitions are available. 
-Bean instances are not created during the AOT processing phase.
-
+  
 Note that Hint files that are put under `src/main/resources/META-INF/native-image` are automatically picked up by Graal VM native image tool.
 Generated hint files can typicallt be found in `build/generated/aotResources`.
 
@@ -92,7 +89,7 @@ provide support for native images. Additionally, the following scenarios are uns
 and maneuvering to function:
    
 - Apache Log4j does not support native images; [Logback](../logging/Logging-Logback.html) is used instead by default.      
-- All capabilities and features that load, parse and execute [Groovy scripts](../integration/Apache-Groovy-Scripting.html), or load dynamic code constructs.
+- All capabilities and features that load, parse and execute [Apache Groovy scripts](../integration/Apache-Groovy-Scripting.html), or load dynamic code constructs.
 - Libraries and dependencies written in Groovy or other dynamic languages will be extremely challenging to support.
 - All capabilities and features that load CAS configuration properties from external sources that are backed by Spring Cloud.
 - Refresh scope and dynamically refreshing the application context is not supported with CAS native images.

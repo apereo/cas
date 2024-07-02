@@ -1,5 +1,5 @@
 {
-  "dependencies": "pac4j-webflow,saml-idp,pac4j-saml",
+  "dependencies": "pac4j-webflow,saml-idp,pac4j-saml,scripting",
   "conditions": {
     "docker": "true"
   },

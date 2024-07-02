@@ -10,8 +10,8 @@ import org.apereo.cas.support.pac4j.authentication.clients.ConfigurableDelegated
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.scripting.ScriptingUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +53,7 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
 
     protected List<ConfigurableDelegatedClient> buildSaml2IdentityProviders(final CasConfigurationProperties casProperties) {
         val pac4jProperties = casProperties.getAuthn().getPac4j();
+        val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
         return pac4jProperties
             .getSaml()
             .stream()
@@ -166,10 +167,10 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
                 configuration.setNameIdPolicyAllowCreate(saml.getNameIdPolicyAllowCreate().toBoolean());
 
                 if (StringUtils.isNotBlank(saml.getSaml2AttributeConverter())) {
-                    if (ScriptingUtils.isExternalGroovyScript(saml.getSaml2AttributeConverter())) {
+                    if (scriptFactory.isPresent() && ScriptingUtils.isExternalGroovyScript(saml.getSaml2AttributeConverter())) {
                         FunctionUtils.doAndHandle(__ -> {
                             val resource = ResourceUtils.getResourceFrom(saml.getSaml2AttributeConverter());
-                            val script = new WatchableGroovyScriptResource(resource);
+                            val script = scriptFactory.get().fromResource(resource);
                             configuration.setSamlAttributeConverter(new GroovyAttributeConverter(script));
                         });
                     } else {

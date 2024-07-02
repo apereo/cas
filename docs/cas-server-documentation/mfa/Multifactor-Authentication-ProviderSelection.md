@@ -46,6 +46,9 @@ decides on a different multifactor authentication provider, or the same
 provider instance is configured multiple times with many instances.
 
 Provider selection may also be carried out using Groovy scripting strategies more dynamically. 
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 The following example should serve as an outline of how to select multifactor providers based on a Groovy script:
 
 ```groovy
@@ -68,6 +71,8 @@ The parameters passed are as follows:
 | `principal`           | The object representing the authenticated principal along with its attributes.                           |
 | `providersCollection` | The object representing the collection of candidate multifactor providers qualified for the transaction. |
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.                              |
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 ## User Selection Menu
 

@@ -4,7 +4,8 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
@@ -19,12 +20,14 @@ import java.util.Optional;
  */
 @Slf4j
 public class GroovySurrogateAuthenticationService extends BaseSurrogateAuthenticationService implements DisposableBean {
-    private final WatchableGroovyScriptResource watchableScript;
+    private final ExecutableCompiledScript watchableScript;
 
     public GroovySurrogateAuthenticationService(final ServicesManager servicesManager,
                                                 final CasConfigurationProperties casProperties) {
         super(servicesManager, casProperties);
-        this.watchableScript = new WatchableGroovyScriptResource(casProperties.getAuthn().getSurrogate().getGroovy().getLocation());
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        val groovyResource = casProperties.getAuthn().getSurrogate().getGroovy().getLocation();
+        this.watchableScript = scriptFactory.fromResource(groovyResource);
     }
 
     @Override

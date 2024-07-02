@@ -423,7 +423,6 @@ subprojects {
         api libraries.jackson
         api libraries.httpclient
         api libraries.quartz
-        api libraries.groovy
         api libraries.caffein
         api libraries.springcloud
         api libraries.springboot

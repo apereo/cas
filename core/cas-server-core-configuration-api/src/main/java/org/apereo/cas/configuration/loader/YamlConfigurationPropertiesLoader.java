@@ -3,13 +3,15 @@ package org.apereo.cas.configuration.loader;
 import org.apereo.cas.configuration.CasCoreConfigurationUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.Resource;
 import org.yaml.snakeyaml.error.YAMLException;
-
+import java.util.Locale;
 import java.util.Properties;
 
 /**
@@ -19,38 +21,35 @@ import java.util.Properties;
  * @since 6.0.0
  */
 @Slf4j
+@NoArgsConstructor
 public class YamlConfigurationPropertiesLoader extends BaseConfigurationPropertiesLoader {
-    public YamlConfigurationPropertiesLoader(final CipherExecutor<String, String> configurationCipherExecutor,
-                                             final String name, final Resource resource) {
-        super(configurationCipherExecutor, name, resource);
-    }
 
-
-    /**
-     * Load property source.
-     * <p>
-     * It is important that failure to parse yaml is logged or the server is likely to die and
-     * message may not be logged by global handler, making problem identification difficult.
-     *
-     * @return the property source
-     */
     @Override
-    public PropertySource load() {
-        val props = new Properties();
-        if (ResourceUtils.doesResourceExist(getResource())) {
+    public PropertySource load(final Resource resource,
+                               final Environment environment,
+                               final String name,
+                               final CipherExecutor<String, String> configurationCipherExecutor) {
+        val properties = new Properties();
+        if (ResourceUtils.doesResourceExist(resource)) {
             try {
-                val pp = CasCoreConfigurationUtils.loadYamlProperties(getResource());
-                if (pp.isEmpty()) {
-                    LOGGER.debug("No properties were located inside [{}]", getResource());
+                val yamlProperties = CasCoreConfigurationUtils.loadYamlProperties(resource);
+                if (yamlProperties.isEmpty()) {
+                    LOGGER.debug("No properties were located inside [{}]", resource);
                 } else {
-                    LOGGER.info("Found settings [{}] in YAML file [{}]", pp.keySet(), getResource());
-                    props.putAll(decryptProperties(pp));
+                    LOGGER.info("Found settings [{}] in YAML file [{}]", yamlProperties.keySet(), resource);
+                    properties.putAll(decryptProperties(configurationCipherExecutor, yamlProperties));
                 }
             } catch (final YAMLException e) {
-                LOGGER.warn("Error parsing yaml configuration in [{}]: [{}]", getResource(), e.getMessage());
+                LOGGER.warn("Error parsing yaml configuration in [{}]: [{}]", resource, e.getMessage());
                 throw e;
             }
         }
-        return finalizeProperties(props);
+        return finalizeProperties(name, properties);
+    }
+
+    @Override
+    public boolean supports(final Resource resource) {
+        val filename = StringUtils.defaultString(resource.getFilename()).toLowerCase(Locale.ENGLISH);
+        return filename.endsWith(".yaml") || filename.endsWith(".yml");
     }
 }

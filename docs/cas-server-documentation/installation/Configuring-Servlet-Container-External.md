@@ -11,7 +11,7 @@ A CAS deployment may be deployed to any number of external servlet containers. T
 the servlet specification `6.0.0` at a minimum. In these scenarios, the following vanilla CAS web application
 may be used, in the [WAR Overlay](WAR-Overlay-Installation.html) :
 
-{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-webapp" optional="true" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-webapp" bundled="true" %}
 
 While there is no official project support, the following containers should be compatible with a CAS deployment:
 

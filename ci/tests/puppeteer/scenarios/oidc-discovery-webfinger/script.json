@@ -1,5 +1,5 @@
 {
-  "dependencies": "oidc",
+  "dependencies": "oidc,scripting",
   "conditions": {
     "docker": "true"
   },

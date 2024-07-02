@@ -90,7 +90,7 @@ class DefaultAuditPrincipalResolverTests {
         assertEquals(PrincipalResolver.UNKNOWN_USER, auditablePrincipalResolver.resolveFrom(jp, new Object()));
     }
 
-    public static Stream<Arguments> getAuditReturnValueParameters() throws Throwable {
+    public static Stream<Arguments> getAuditReturnValueParameters() {
         val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
         val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), authentication, NeverExpiresExpirationPolicy.INSTANCE);
         val authenticationResult = CoreAuthenticationTestUtils.getAuthenticationResult(authentication);

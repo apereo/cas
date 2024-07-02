@@ -4,7 +4,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -70,7 +70,7 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
         return context.getPrincipal().getId();
     }
 
-    private static Object fetchAttributeValueFromScript(final ExecutableCompiledGroovyScript script,
+    private static Object fetchAttributeValueFromScript(final ExecutableCompiledScript script,
                                                         final Principal principal, final Service service) throws Throwable {
         val args = CollectionUtils.<String, Object>wrap("attributes", principal.getAttributes(),
             "id", principal.getId(),

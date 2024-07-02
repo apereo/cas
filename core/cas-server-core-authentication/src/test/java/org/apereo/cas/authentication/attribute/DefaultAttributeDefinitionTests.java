@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.attribute;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
@@ -30,12 +31,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class
+    CasCoreUtilAutoConfiguration.class,
+    CasCoreScriptingAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class DefaultAttributeDefinitionTests {
 
-    private static AttributeDefinitionResolutionContext getAttributeDefinitionResolutionContext() throws Throwable {
+    private static AttributeDefinitionResolutionContext getAttributeDefinitionResolutionContext() {
         return AttributeDefinitionResolutionContext.builder()
             .attributeValues(List.of("v1", "v2"))
             .scope("example.org")

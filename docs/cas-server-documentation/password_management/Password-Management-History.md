@@ -58,6 +58,8 @@ The `request` parameter encapsulates a `PasswordChangeRequest` object, carrying 
 
 {% include_cached casproperties.html properties="cas.authn.pm.history.groovy" %}
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
 
 {% tab passwordhistory Custom %}

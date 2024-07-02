@@ -1,5 +1,5 @@
 {
-  "dependencies": "yubikey,gauth",
+  "dependencies": "yubikey,gauth,scripting",
 
   "properties": [
     

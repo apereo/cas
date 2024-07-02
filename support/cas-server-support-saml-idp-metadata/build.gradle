@@ -1,5 +1,6 @@
 description = "Apereo CAS SAML Identity Provider Metadata Support"
 dependencies {
+    api project(":api:cas-server-core-api-scripting")
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-webflow")
 
@@ -25,6 +26,9 @@ dependencies {
 
     implementation libraries.shibutiljavasupport
 
+    compileOnly project(":core:cas-server-core-scripting")
+
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-authentication")

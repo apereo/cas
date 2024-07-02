@@ -23,7 +23,7 @@ import org.springframework.core.io.Resource;
 @Getter
 @ToString(of = "resource")
 @Accessors(chain = true)
-public class WatchableGroovyScriptResource implements ExecutableCompiledGroovyScript {
+public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
     private final CasReentrantLock lock = new CasReentrantLock();
 
     private final Resource resource;

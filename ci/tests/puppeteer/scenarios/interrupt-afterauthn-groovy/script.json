@@ -1,5 +1,5 @@
 {
-  "dependencies": "generic,interrupt-webflow",
+  "dependencies": "generic,interrupt-webflow,scripting",
   "properties": [
 
     "--cas.server.name=https://localhost:8443",

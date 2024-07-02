@@ -21,6 +21,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
+    
     implementation project(":support:cas-server-support-trusted-mfa-core")
 
     compileOnly project(":support:cas-server-support-trusted-mfa")
@@ -30,6 +31,7 @@ dependencies {
 
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-rest")
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-authentication")

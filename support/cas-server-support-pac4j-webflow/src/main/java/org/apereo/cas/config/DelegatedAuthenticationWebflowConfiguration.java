@@ -33,7 +33,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -287,7 +287,9 @@ class DelegatedAuthenticationWebflowConfiguration {
                 .and(CasRuntimeHintsRegistrar::notInNativeImage)
                 .supply(() -> {
                     val resource = casProperties.getAuthn().getPac4j().getCore().getGroovyProviderPostProcessor().getLocation();
-                    return new DelegatedClientIdentityProviderConfigurationGroovyPostProcessor(new WatchableGroovyScriptResource(resource));
+                    val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+                    return new DelegatedClientIdentityProviderConfigurationGroovyPostProcessor(
+                        scriptFactory.fromResource(resource));
                 })
                 .otherwise(DelegatedClientIdentityProviderConfigurationPostProcessor::noOp)
                 .get();
@@ -312,8 +314,11 @@ class DelegatedAuthenticationWebflowConfiguration {
             val chain = new ChainingDelegatedClientIdentityProviderRedirectionStrategy();
             val strategy = casProperties.getAuthn().getPac4j().getCore().getGroovyRedirectionStrategy();
             FunctionUtils.doIfNotNull(strategy.getLocation(),
-                resource -> chain.addStrategy(new GroovyDelegatedClientIdentityProviderRedirectionStrategy(servicesManager,
-                    new WatchableGroovyScriptResource(resource), applicationContext)));
+                resource -> {
+                    val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+                    chain.addStrategy(new GroovyDelegatedClientIdentityProviderRedirectionStrategy(servicesManager,
+                        scriptFactory.fromResource(resource), applicationContext));
+                });
             chain.addStrategy(new DefaultDelegatedClientIdentityProviderRedirectionStrategy(servicesManager,
                 delegatedAuthenticationCookieGenerator, casProperties, applicationContext));
             return chain;
@@ -339,14 +344,13 @@ class DelegatedAuthenticationWebflowConfiguration {
                     .given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val groovy = casProperties.getAuthn().getPac4j().getCore().getGroovyAuthenticationRequestCustomizer();
-                    val script = new WatchableGroovyScriptResource(groovy.getLocation());
+                    val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+                    val script = scriptFactory.fromResource(groovy.getLocation());
                     return new GroovyDelegatedClientAuthenticationRequestCustomizer(script, applicationContext);
                 })
                 .otherwiseProxy()
                 .get();
         }
-
-
     }
 
     @Configuration(value = "DelegatedAuthenticationWebflowActionsConfiguration", proxyBeanMethods = false)

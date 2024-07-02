@@ -2,8 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecutionResult;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,7 +17,7 @@ import org.springframework.beans.factory.DisposableBean;
 @RequiredArgsConstructor
 @Slf4j
 public class GroovyRegisteredServiceAccessStrategyEnforcer implements RegisteredServiceAccessStrategyEnforcer, DisposableBean {
-    private final WatchableGroovyScriptResource script;
+    private final ExecutableCompiledScript script;
 
     @Override
     public AuditableExecutionResult execute(final AuditableContext context) throws Throwable {

@@ -163,6 +163,9 @@ and the overall set of resolved principal attributes must already have found an 
   }
 }
 ```
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
 
 {% tab accessstrategy Rejected Attributes %}

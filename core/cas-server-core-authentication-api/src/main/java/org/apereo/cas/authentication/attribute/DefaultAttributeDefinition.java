@@ -6,7 +6,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -142,7 +142,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
             });
     }
 
-    private static List<Object> fetchAttributeValueFromScript(final ExecutableCompiledGroovyScript scriptToExec,
+    private static List<Object> fetchAttributeValueFromScript(final ExecutableCompiledScript scriptToExec,
                                                               final String attributeKey,
                                                               final List<Object> currentValues,
                                                               final AttributeDefinitionResolutionContext context) throws Throwable {
