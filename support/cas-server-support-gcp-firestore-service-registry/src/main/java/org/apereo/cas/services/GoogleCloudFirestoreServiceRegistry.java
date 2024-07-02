@@ -46,7 +46,7 @@ public class GoogleCloudFirestoreServiceRegistry extends AbstractServiceRegistry
                 registeredService.setId(registeredService.hashCode());
             }
             invokeServiceRegistryListenerPreSave(registeredService);
-            LOGGER.debug("Saved registered service: [{}]", registeredService);
+            LOGGER.debug("Saving registered service: [{}]", registeredService);
             val writeResult = firestore.collection(collectionName)
                 .document(String.valueOf(registeredService.getId()))
                 .set(Map.of("json", serializer.toString(registeredService)))
