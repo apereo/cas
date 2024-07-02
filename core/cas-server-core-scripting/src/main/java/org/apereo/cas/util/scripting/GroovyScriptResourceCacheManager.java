@@ -101,7 +101,7 @@ public class GroovyScriptResourceCacheManager implements ScriptResourceCacheMana
                             resourceToUse = matcher.group(1);
                         }
                     }
-                    script = new GroovyShellScript(resourceToUse);
+                    script = scriptFactory.fromScript(resourceToUse);
                 }
                 LOGGER.trace("Groovy script [{}] for key [{}] is not cached", scriptResource, cacheKey);
                 put(cacheKey, script);

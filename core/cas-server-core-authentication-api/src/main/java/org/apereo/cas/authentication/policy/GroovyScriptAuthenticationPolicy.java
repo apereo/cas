@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.util.Assert;
 import jakarta.persistence.Transient;
 import java.io.Serial;
 import java.io.Serializable;
@@ -78,12 +79,15 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
 
     @Override
     public boolean shouldResumeOnFailure(final Throwable failure) {
-        return Unchecked.supplier(() -> {
+        val supplier = Unchecked.supplier(() -> {
             initializeWatchableScriptIfNeeded();
             val args = CollectionUtils.wrap("failure", failure, "logger", LOGGER);
             executableScript.setBinding(args);
             return executableScript.execute("shouldResumeOnFailure", Boolean.class, args.values().toArray());
-        }).get();
+        });
+        val result = supplier.get();
+        Assert.notNull(result, "Authentication policy result cannot be null");
+        return result;
     }
 
     private void initializeWatchableScriptIfNeeded() throws Exception {

@@ -14,7 +14,6 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
-import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -85,15 +84,15 @@ public class ScriptedRegisteredServiceMultifactorAuthenticationTrigger implement
             val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(mfaScript);
             val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(mfaScript);
 
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
             if (matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {
-                val script = new GroovyShellScript(matcherInline.group(1));
+                val script = scriptFactory.fromScript(matcherInline.group(1));
                 scriptCache.put(mfaScript, script);
                 LOGGER.trace("Caching multifactor authentication trigger script as an executable shell script");
             } else if (matcherFile.find()) {
                 try {
                     val scriptPath = SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group());
                     val resource = ResourceUtils.getResourceFrom(scriptPath);
-                    val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
                     val script = scriptFactory.fromResource(resource);
                     scriptCache.put(mfaScript, script);
                     LOGGER.trace("Caching multifactor authentication trigger script as script resource [{}]", resource);

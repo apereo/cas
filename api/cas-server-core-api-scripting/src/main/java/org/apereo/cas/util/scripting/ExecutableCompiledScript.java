@@ -1,5 +1,6 @@
 package org.apereo.cas.util.scripting;
 
+import org.springframework.core.io.Resource;
 import java.util.Map;
 
 /**
@@ -71,4 +72,18 @@ public interface ExecutableCompiledScript extends AutoCloseable {
     default ExecutableCompiledScript setFailOnError(final boolean failOnError) {
         return this;
     }
+
+    /**
+     * Gets compiled script.
+     *
+     * @return the compiled script
+     */
+    Object getCompiledScript();
+
+    /**
+     * Gets resource.
+     *
+     * @return the resource
+     */
+    Resource getResource();
 }

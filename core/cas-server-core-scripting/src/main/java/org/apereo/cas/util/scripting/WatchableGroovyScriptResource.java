@@ -30,7 +30,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
 
     private FileWatcherService watcherService;
 
-    private GroovyObject groovyScript;
+    private GroovyObject compiledScript;
 
     @Setter
     private boolean failOnError = true;
@@ -76,8 +76,8 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
         return lock.tryLock(() -> {
             try {
                 LOGGER.trace("Beginning to execute script [{}]", this);
-                return groovyScript != null
-                    ? ScriptingUtils.executeGroovyScript(this.groovyScript, args, clazz, failOnError)
+                return compiledScript != null
+                    ? ScriptingUtils.executeGroovyScript(this.compiledScript, args, clazz, failOnError)
                     : null;
             } finally {
                 LOGGER.trace("Completed script execution [{}]", this);
@@ -100,8 +100,8 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
         return lock.tryLock(() -> {
             try {
                 LOGGER.trace("Beginning to execute script [{}]", this);
-                return groovyScript != null
-                    ? ScriptingUtils.executeGroovyScript(groovyScript, methodName, args, clazz, failOnError)
+                return compiledScript != null
+                    ? ScriptingUtils.executeGroovyScript(compiledScript, methodName, args, clazz, failOnError)
                     : null;
             } finally {
                 LOGGER.trace("Completed script execution [{}]", this);
@@ -118,6 +118,6 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
     }
 
     private void compileScriptResource(final Resource script) {
-        this.groovyScript = ScriptingUtils.parseGroovyScript(script, failOnError);
+        this.compiledScript = ScriptingUtils.parseGroovyScript(script, failOnError);
     }
 }

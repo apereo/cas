@@ -19,7 +19,7 @@ public class GroovyExecutableCompiledScriptFactory implements ExecutableCompiled
     }
 
     @Override
-    public String createTemplate(final String contents, final Map<String, ?> templateParams) throws Exception{
+    public String createTemplate(final String contents, final Map<String, ?> templateParams) throws Exception {
         val engine = new GStringTemplateEngine();
         val template = engine.createTemplate(contents).make(templateParams);
         return template.toString();
@@ -30,5 +30,10 @@ public class GroovyExecutableCompiledScriptFactory implements ExecutableCompiled
         val engine = new GStringTemplateEngine();
         val template = engine.createTemplate(templateFile).make(templateParams);
         return template.toString();
+    }
+
+    @Override
+    public ExecutableCompiledScript fromScript(final String script) {
+        return new GroovyShellScript(script);
     }
 }

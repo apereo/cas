@@ -4,7 +4,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
-import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -88,7 +87,8 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
         val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(attribute);
         if (matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {
             val inlineGroovy = matcherInline.group(1);
-            try (val executableScript = new GroovyShellScript(inlineGroovy)) {
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            try (val executableScript = scriptFactory.fromScript(inlineGroovy)) {
                 val args = CollectionUtils.<String, Object>wrap(
                     "context", context,
                     "attributes", resolvedAttributes,

@@ -73,11 +73,7 @@ class GroovyScriptAuthenticationPolicyTests {
 
     @Test
     void verifyBadFile() throws Throwable {
-        val script = """
-            def shouldResumeOnFailure(Object[] args) { def failure = args[0]\s
-             return failure != null\s
-            }""";
-        val p = new GroovyScriptAuthenticationPolicy(script);
-        assertThrows(IllegalArgumentException.class, () -> p.shouldResumeOnFailure(new RuntimeException()));
+        val policy = new GroovyScriptAuthenticationPolicy("unknown-file");
+        assertThrows(IllegalArgumentException.class, () -> policy.shouldResumeOnFailure(new RuntimeException()));
     }
 }

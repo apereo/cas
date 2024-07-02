@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
-import org.apereo.cas.util.scripting.GroovyShellScript;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -37,7 +36,8 @@ class GroovyScriptWebflowActionTests {
     @Test
     void verifyShellScript() throws Throwable {
         val context = MockRequestContext.create();
-        val script = new GroovyShellScript("return new org.springframework.webflow.execution.Event(this, 'result')");
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        val script = scriptFactory.fromScript("return new org.springframework.webflow.execution.Event(this, 'result')");
         val results = new GroovyScriptWebflowAction(script, applicationContext, casProperties);
         val result = results.execute(context);
         assertNotNull(result);
