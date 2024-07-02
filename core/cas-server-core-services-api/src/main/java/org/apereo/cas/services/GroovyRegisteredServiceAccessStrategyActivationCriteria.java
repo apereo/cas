@@ -5,12 +5,11 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -20,10 +19,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.Transient;
-
 import java.io.Serial;
 
 /**
@@ -51,7 +48,7 @@ public class GroovyRegisteredServiceAccessStrategyActivationCriteria implements 
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
-    private transient ExecutableCompiledGroovyScript executableScript;
+    private transient ExecutableCompiledScript executableScript;
 
     @Override
     public boolean shouldActivate(final RegisteredServiceAccessStrategyRequest request) throws Throwable {

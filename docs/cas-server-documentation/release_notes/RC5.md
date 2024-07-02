@@ -125,6 +125,22 @@ This is potentially a breaking change. Make sure to review your build's dependen
 
 CAS is now able to store and manage its SAML2 service provider metadata via [Amazon S3 buckets](../integration/Delegate-Authentication-SAML-Metadata.html). 
 This feature is relevant only when [SAML2 delegated authentication](../integration/Delegate-Authentication-SAML.html) is turned on.
+    
+### Apache Groovy & Scripting
+                                                                    
+Apache Groovy support, that backs all scripting functionality in CAS, is now extracted and moved into its 
+[own dedicated module](../integration/Apache-Groovy-Scripting.html). This means that any sort of feature or functionality
+that intends to evaluate and execute a *script* of some sort, such as triggering multifactor authentication or releasing attributes, etc 
+would need to include the relevant module in the build. 
+
+<div class="alert alert-warning">:warning: <strong>Pay Attention!</strong><p>
+If you are using Apache Groovy or scripting functionality in your build, this is a breaking change. Make sure 
+to review the CAS documentation and adjust the dependencies in your CAS build to restore functionality.
+</p></div>
+
+This extraction is done to reduce the final size of the vanilla CAS web application by about `9MB`. In addition to a leaner binary artifact, 
+this will also remove unnecessary optional libraries out of the CAS build, leading to fewer false CVEs, faster startup times and quicker builds
+particularly when it comes to [Graal VM native images](../installation/GraalVM-NativeImage-Installation.html).
 
 ## Other Stuff
 

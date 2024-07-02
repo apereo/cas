@@ -19,8 +19,9 @@ dependencies {
     implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")
 
+    compileOnly project(":core:cas-server-core-scripting")
     compileOnly project(":support:cas-server-support-consent-api")
-
+    
     implementation project(":support:cas-server-support-pac4j-api")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-core-api")
@@ -31,13 +32,14 @@ dependencies {
     implementation libraries.shibutiljavasupport
     implementation libraries.springsecurityweb
     implementation libraries.pac4jcore
-    
+
     compileOnly libraries.pac4jsaml
 
     testImplementation libraries.pac4jsaml
 
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-scripting")
 
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

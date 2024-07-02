@@ -1,5 +1,5 @@
 {
-  "dependencies": "saml-idp,reports,monitor,sentry",
+  "dependencies": "saml-idp,reports,monitor,sentry,scripting",
   "conditions": {
     "docker": "true"
   },

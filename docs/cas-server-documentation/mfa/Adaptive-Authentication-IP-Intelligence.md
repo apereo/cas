@@ -36,6 +36,8 @@ header `clientIpAddress` under a `GET` request. The expected result status codes
 
 {% tab ipintelops Groovy %}
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 The client IP address may be examined using a Groovy script whose outline should match the following:
 
 ```groovy
@@ -57,6 +59,8 @@ def run(Object[] args) {
 ```
 
 {% include_cached casproperties.html properties="cas.authn.adaptive.ip-intel.groovy" %}
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% endtab %}
 

@@ -20,7 +20,7 @@ import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
@@ -405,7 +405,7 @@ public class CasSupportActionsAutoConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_REDIRECT_UNAUTHORIZED_SERVICE_URL)
         public Action redirectUnauthorizedServiceUrlAction(
             @Qualifier(ScriptResourceCacheManager.BEAN_NAME)
-            final ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> cacheManager,
+            final ScriptResourceCacheManager<String, ExecutableCompiledScript> cacheManager,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(ServicesManager.BEAN_NAME)

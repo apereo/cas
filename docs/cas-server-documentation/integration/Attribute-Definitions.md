@@ -263,6 +263,8 @@ defined and on a successful match, the linked construct will be evaluated to det
 For example, if the resolved set of attributes are `memberships=[m1, m2, m3, m4, m9]`,
 the final values of `memberships` would be [`admins`,`users`] which would then be released under the name `affiliations`.
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
 
 {% tab attrdefinitions Flattened %}

@@ -65,7 +65,7 @@ class AuthenticatedLdapAuthenticationHandlerTests {
     @Nested
     class WithUnknownCustomPrincipalIdFailing extends BaseLdapAuthenticationHandlerTests {
         @Override
-        void verifyAuthenticateSuccess() throws Throwable {
+        void verifyAuthenticateSuccess() {
             assertThrows(LoginException.class, super::verifyAuthenticateSuccess);
         }
     }

@@ -22,6 +22,8 @@ dependencies {
 
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
 
+    testImplementation project(":core:cas-server-core-scripting")
+    
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-web-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

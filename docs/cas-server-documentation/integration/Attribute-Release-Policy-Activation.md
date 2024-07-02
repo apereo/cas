@@ -96,6 +96,7 @@ The following parameters are passed to the script:
 | `context` | The object that carries the attribute release execution context.            |
 | `logger`  | The object responsible for issuing log messages such as `logger.info(...)`. |
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 You may also do the same sort of thing with an inline Groovy script:
 
@@ -115,6 +116,8 @@ You may also do the same sort of thing with an inline Groovy script:
   }
 }
 ```
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% endtab %}
 

@@ -4,7 +4,8 @@ import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.ws.idp.WSFederationClaims;
@@ -92,18 +93,22 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                                                      final List<Object> attributeValue,
                                                      final Map<String, List<Object>> resolvedAttributes,
                                                      final Map<String, List<Object>> attributesToRelease) {
-        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(mappedAttributeName);
-        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(mappedAttributeName);
+        val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
 
-        if (matcherInline.find()) {
-            val inlineGroovy = matcherInline.group(1);
-            fetchAttributeValueAsInlineGroovyScript(attributeName, resolvedAttributes, attributesToRelease, inlineGroovy);
-        } else if (matcherFile.find()) {
-            val file = matcherFile.group();
-            fetchAttributeValueFromExternalGroovyScript(attributeName, resolvedAttributes, attributesToRelease, file);
-        } else {
-            mapSimpleSingleAttributeDefinition(attributeName, mappedAttributeName, attributeValue, attributesToRelease);
+        if (scriptFactory.isPresent()) {
+            val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(mappedAttributeName);
+            val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(mappedAttributeName);
+            if (matcherInline.find()) {
+                val inlineGroovy = matcherInline.group(1);
+                fetchAttributeValueAsInlineGroovyScript(attributeName, resolvedAttributes, attributesToRelease, inlineGroovy);
+            } else if (matcherFile.find()) {
+                val file = matcherFile.group();
+                fetchAttributeValueFromExternalGroovyScript(attributeName, resolvedAttributes, attributesToRelease, file);
+            } else {
+                mapSimpleSingleAttributeDefinition(attributeName, mappedAttributeName, attributeValue, attributesToRelease);
+            }
         }
+        mapSimpleSingleAttributeDefinition(attributeName, mappedAttributeName, attributeValue, attributesToRelease);
     }
 
     private static void fetchAttributeValueFromExternalGroovyScript(final String attributeName,
@@ -138,7 +143,7 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
                 });
     }
 
-    private static void fetchAttributeValueFromScript(final ExecutableCompiledGroovyScript script,
+    private static void fetchAttributeValueFromScript(final ExecutableCompiledScript script,
                                                       final String attributeName,
                                                       final Map<String, List<Object>> resolvedAttributes,
                                                       final Map<String, List<Object>> attributesToRelease) {

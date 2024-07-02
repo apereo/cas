@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication.adaptive.intel;
 
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.webflow.execution.RequestContext;
@@ -15,12 +15,13 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 public class GroovyIPAddressIntelligenceService extends BaseIPAddressIntelligenceService {
-    private final WatchableGroovyScriptResource watchableScript;
+    private final ExecutableCompiledScript watchableScript;
 
     public GroovyIPAddressIntelligenceService(final AdaptiveAuthenticationProperties adaptiveAuthenticationProperties) {
         super(adaptiveAuthenticationProperties);
         val groovyScript = adaptiveAuthenticationProperties.getIpIntel().getGroovy().getLocation();
-        this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        this.watchableScript = scriptFactory.fromResource(groovyScript);
     }
 
     @Override

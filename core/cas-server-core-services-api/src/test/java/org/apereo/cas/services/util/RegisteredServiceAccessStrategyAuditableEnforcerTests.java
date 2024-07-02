@@ -52,13 +52,13 @@ class RegisteredServiceAccessStrategyAuditableEnforcerTests {
         return CoreAuthenticationTestUtils.getService("serviceid");
     }
 
-    private static Authentication createAuthentication() throws Throwable {
+    private static Authentication createAuthentication() {
         val attributes = CoreAuthenticationTestUtils.getAttributes();
         attributes.put("attribute", "value");
         return CoreAuthenticationTestUtils.getAuthentication("principal", attributes);
     }
 
-    private static TicketGrantingTicket createTicketGrantingTicket() throws Throwable {
+    private static TicketGrantingTicket createTicketGrantingTicket() {
         val mock = mock(TicketGrantingTicket.class);
         val authentication = createAuthentication();
         when(mock.getAuthentication()).thenReturn(authentication);
@@ -74,7 +74,7 @@ class RegisteredServiceAccessStrategyAuditableEnforcerTests {
         return mock;
     }
 
-    private static AuthenticationResult createAuthenticationResult() throws Throwable {
+    private static AuthenticationResult createAuthenticationResult() {
         val authentication = createAuthentication();
         return CoreAuthenticationTestUtils.getAuthenticationResult(authentication);
     }

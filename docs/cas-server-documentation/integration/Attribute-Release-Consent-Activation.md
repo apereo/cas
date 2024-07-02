@@ -90,3 +90,5 @@ The following parameters are passed to the script:
 | `logger`            | The object responsible for issuing log messages such as `logger.info(...)`.         |
 
 The script is expected to return either `true` or `false` to determine whether or not consent is required.
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).

@@ -37,6 +37,8 @@ It is not expected for the script to return a value. The following parameters ar
 | `client`      | The `Client` configuration responsible for the exchange between CAS and the identity provider. |
 | `logger`      | The object responsible for issuing log messages such as `logger.info(...)`.                    |
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
 
 {% tab delegatedauthnprov REST %}

@@ -65,8 +65,7 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationTrigger implem
 
         val principal = authentication.getPrincipal();
         val args = new Object[]{service, principal, providers, LOGGER};
-        val predicate = ScriptingUtils.getObjectInstanceFromGroovyResource(predicateResource,
-            PREDICATE_CTOR_PARAMETERS, args, Predicate.class);
+        val predicate = ScriptingUtils.getObjectInstanceFromGroovyResource(predicateResource, PREDICATE_CTOR_PARAMETERS, args, Predicate.class);
 
         if (predicate == null) {
             LOGGER.debug("No multifactor authentication provider is determined by the predicate");

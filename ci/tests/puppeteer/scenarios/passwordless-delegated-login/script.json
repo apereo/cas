@@ -1,5 +1,5 @@
 {
-  "dependencies": "passwordless-webflow,pac4j-webflow,reports,saml-idp-discovery,pac4j-saml",
+  "dependencies": "passwordless-webflow,pac4j-webflow,reports,saml-idp-discovery,pac4j-saml,scripting",
   "conditions": {
     "docker": "true"
   },

@@ -3,13 +3,12 @@ package org.apereo.cas.impl.account;
 import org.apereo.cas.api.PasswordlessAuthenticationRequest;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.Resource;
-
 import java.util.Optional;
 
 /**
@@ -22,10 +21,11 @@ import java.util.Optional;
 @Slf4j
 public class GroovyPasswordlessUserAccountStore implements PasswordlessUserAccountStore {
 
-    private final WatchableGroovyScriptResource watchableScript;
+    private final ExecutableCompiledScript watchableScript;
 
     public GroovyPasswordlessUserAccountStore(final Resource groovyScript) {
-        this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        this.watchableScript = scriptFactory.fromResource(groovyScript);
     }
 
     @Override

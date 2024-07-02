@@ -57,6 +57,8 @@ dynamically on the fly and return back a `Map<String, List<Object>>` of results:
 }
 ```
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
 
 {% endtabs %}

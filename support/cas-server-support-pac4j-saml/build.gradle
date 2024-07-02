@@ -28,6 +28,8 @@ dependencies {
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-pac4j-webflow")
 
+    compileOnly project(":core:cas-server-core-scripting")
+
     implementation libraries.pac4jsaml
     implementation libraries.pac4jcore
     implementation libraries.opensaml
@@ -53,6 +55,7 @@ dependencies {
     testImplementation libraries.mongo
     testImplementation libraries.hazelcast
 
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-services-authentication")

@@ -27,3 +27,5 @@ The parameters passed are as follows:
 | `logger`             | Logger object used to issue log messages where needed.                        |
 
 {% include_cached casproperties.html properties="cas.webflow.login-decorator.groovy" %}
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).

@@ -1,5 +1,5 @@
 {
-  "dependencies": "core",
+  "dependencies": "scripting",
   "properties": [
 
     "--cas.server.name=https://localhost:8443",

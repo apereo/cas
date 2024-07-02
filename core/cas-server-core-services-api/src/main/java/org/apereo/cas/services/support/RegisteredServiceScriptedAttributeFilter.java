@@ -5,12 +5,11 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -22,10 +21,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.Transient;
-
 import java.io.Serial;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +52,7 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
-    private transient ExecutableCompiledGroovyScript executableScript;
+    private transient ExecutableCompiledScript executableScript;
 
     @JsonCreator
     public RegisteredServiceScriptedAttributeFilter(@JsonProperty("order") final int order,

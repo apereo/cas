@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.dao;
 
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasEventsInMemoryRepositoryAutoConfiguration;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
@@ -24,6 +25,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
+    CasCoreScriptingAutoConfiguration.class,
     CasEventsInMemoryRepositoryAutoConfiguration.class
 })
 @Getter

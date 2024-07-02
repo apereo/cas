@@ -47,7 +47,7 @@ class BeanContainerTests {
         val destroyed = new AtomicInteger(0);
         val answer = new Answer() {
             @Override
-            public Object answer(final InvocationOnMock invocation) throws Throwable {
+            public Object answer(final InvocationOnMock invocation) {
                 destroyed.incrementAndGet();
                 return null;
             }

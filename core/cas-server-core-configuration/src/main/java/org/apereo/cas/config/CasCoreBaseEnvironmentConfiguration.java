@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.CommaSeparatedStringToThrowablesConverter;
 import org.apereo.cas.configuration.StandaloneConfigurationFilePropertiesSourceLocator;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -60,15 +59,6 @@ class CasCoreBaseEnvironmentConfiguration {
             final Environment environment) {
             return new CasConfigurationJasyptCipherExecutor(environment);
         }
-
-        @ConditionalOnMissingBean(name = ConfigurationPropertiesLoaderFactory.BEAN_NAME)
-        @Bean
-        public static ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory(
-            @Qualifier("casConfigurationCipherExecutor")
-            final CipherExecutor<String, String> casConfigurationCipherExecutor,
-            final Environment environment) {
-            return new ConfigurationPropertiesLoaderFactory(casConfigurationCipherExecutor, environment);
-        }
     }
 
     @Configuration(value = "CasCoreEnvironmentLocatorConfiguration", proxyBeanMethods = false)
@@ -78,9 +68,9 @@ class CasCoreBaseEnvironmentConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "standaloneConfigurationFilePropertiesSourceLocator")
         public static CasConfigurationPropertiesSourceLocator standaloneConfigurationFilePropertiesSourceLocator(
-            @Qualifier(ConfigurationPropertiesLoaderFactory.BEAN_NAME)
-            final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory) {
-            return new StandaloneConfigurationFilePropertiesSourceLocator(configurationPropertiesLoaderFactory);
+            @Qualifier("casConfigurationCipherExecutor")
+            final CipherExecutor<String, String> casConfigurationCipherExecutor) {
+            return new StandaloneConfigurationFilePropertiesSourceLocator(casConfigurationCipherExecutor);
         }
     }
 }

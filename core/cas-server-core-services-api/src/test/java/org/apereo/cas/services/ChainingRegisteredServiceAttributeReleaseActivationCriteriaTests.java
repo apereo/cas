@@ -73,7 +73,7 @@ class ChainingRegisteredServiceAttributeReleaseActivationCriteriaTests {
         assertTrue(getAttributesFromPolicy(chain));
     }
 
-    private boolean getAttributesFromPolicy(final RegisteredServiceAttributeReleaseActivationCriteria policy) throws Throwable {
+    private boolean getAttributesFromPolicy(final RegisteredServiceAttributeReleaseActivationCriteria policy) {
         val context = RegisteredServiceAttributeReleasePolicyContext.builder()
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
             .service(CoreAuthenticationTestUtils.getService())

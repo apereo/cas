@@ -1,5 +1,5 @@
 {
-  "dependencies": "interrupt-webflow",
+  "dependencies": "interrupt-webflow,scripting",
   "properties": [
     "--cas.interrupt.core.trigger-mode=AFTER_SSO",
     "--cas.interrupt.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/interrupt.groovy",

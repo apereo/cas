@@ -23,8 +23,6 @@ dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-mfa")
 
-
-    
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-web")
@@ -39,7 +37,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-authentication-mfa")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core")
-    
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-validation")
     testImplementation project(":core:cas-server-core-services-registry")
     testImplementation project(":core:cas-server-core-webflow")

@@ -5,14 +5,12 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import jakarta.servlet.http.HttpServletRequest;
-
 import java.io.Serial;
 
 /**
@@ -26,14 +24,15 @@ public class GroovyMultifactorAuthenticationProviderBypassEvaluator extends Base
     @Serial
     private static final long serialVersionUID = -4909072898415688377L;
 
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final ExecutableCompiledScript watchableScript;
 
     public GroovyMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassProperties bypassProperties,
                                                                   final String providerId,
                                                                   final ConfigurableApplicationContext applicationContext) {
         super(providerId, applicationContext);
         val groovyScript = bypassProperties.getGroovy().getLocation();
-        this.watchableScript = new WatchableGroovyScriptResource(groovyScript);
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        this.watchableScript = scriptFactory.fromResource(groovyScript);
     }
 
     @Override
@@ -45,7 +44,7 @@ public class GroovyMultifactorAuthenticationProviderBypassEvaluator extends Base
             val principal = resolvePrincipal(authentication.getPrincipal());
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
                          + "service [{}] and provider [{}] via Groovy script [{}]",
-                principal.getId(), registeredService, provider, watchableScript.getResource());
+                principal.getId(), registeredService, provider, watchableScript);
             val args = new Object[]{authentication, principal, registeredService, provider, LOGGER, request};
             return watchableScript.execute(args, Boolean.class);
         }, e -> true).get();

@@ -4,9 +4,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.DefaultCasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -21,7 +20,6 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.io.ResourceLoader;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -75,9 +73,9 @@ class CasCoreBaseStandaloneConfiguration {
         @ConditionalOnMissingBean(name = "casConfigurationPropertiesSourceLocator")
         @Bean
         public static CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator(
-            @Qualifier(ConfigurationPropertiesLoaderFactory.BEAN_NAME)
-            final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory) {
-            return new DefaultCasConfigurationPropertiesSourceLocator(configurationPropertiesLoaderFactory);
+            @Qualifier("casConfigurationCipherExecutor")
+            final CipherExecutor<String, String> casConfigurationCipherExecutor) {
+            return new DefaultCasConfigurationPropertiesSourceLocator(casConfigurationCipherExecutor);
         }
     }
 }

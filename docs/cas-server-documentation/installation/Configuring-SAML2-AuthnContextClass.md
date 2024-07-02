@@ -62,6 +62,8 @@ def run(final Object... args) {
 }
 ```
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
 
 {% tab saml2authnctx Embedded Groovy %}
@@ -78,6 +80,8 @@ Similar to the external Groovy script option, except the script is embedded insi
   "requiredAuthenticationContextClass": "groovy { return 'https://refeds.org/profile/mfa' } "
 }
 ```
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% endtab %}
 

@@ -1,8 +1,7 @@
 package org.apereo.cas.configuration;
 
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
-import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
-
+import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -13,7 +12,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.ResourceLoader;
-
 import java.io.File;
 import java.util.Map;
 import java.util.Optional;
@@ -28,7 +26,7 @@ import java.util.Optional;
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
 public class StandaloneConfigurationFilePropertiesSourceLocator implements CasConfigurationPropertiesSourceLocator {
-    private final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory;
+    private final CipherExecutor<String, String> casConfigurationCipherExecutor;
 
     @Override
     public Optional<PropertySource<?>> locate(final Environment environment, final ResourceLoader resourceLoader) {
@@ -36,16 +34,24 @@ public class StandaloneConfigurationFilePropertiesSourceLocator implements CasCo
         val configFile = CasConfigurationPropertiesSourceLocator.getStandaloneProfileConfigurationFile(environment);
         LOGGER.info("Loading standalone configuration properties from [{}]", configFile);
         if (configFile != null) {
-            val sourceStandalone = loadSettingsFromStandaloneConfigFile(configFile);
+            val sourceStandalone = loadSettingsFromStandaloneConfigFile(environment, configFile);
             compositePropertySource.addPropertySource(sourceStandalone);
             return Optional.of(compositePropertySource);
         }
         return Optional.empty();
     }
 
-    private PropertySource<Map<String, Object>> loadSettingsFromStandaloneConfigFile(final File configFile) {
-        return configurationPropertiesLoaderFactory
-            .getLoader(new FileSystemResource(configFile), "standaloneConfigurationFileProperties")
-            .load();
+    private PropertySource<Map<String, Object>> loadSettingsFromStandaloneConfigFile(
+        final Environment environment,
+        final File configFile) {
+        val configurationLoaders = CasConfigurationPropertiesSourceLocator.getConfigurationPropertiesLoaders();
+        val resource = new FileSystemResource(configFile);
+        val foundLoader = configurationLoaders
+            .stream()
+            .filter(loader -> loader.supports(resource))
+            .findFirst()
+            .orElseThrow();
+
+        return foundLoader.load(resource, environment, "standaloneConfigurationFileProperties", casConfigurationCipherExecutor);
     }
 }

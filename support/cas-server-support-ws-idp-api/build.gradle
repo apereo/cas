@@ -11,7 +11,10 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-authentication-attributes")
+    
+    compileOnly project(":core:cas-server-core-scripting")
 
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-util")

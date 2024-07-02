@@ -3,11 +3,10 @@ package org.apereo.cas.notifications.mail;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import groovy.text.GStringTemplateEngine;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -19,7 +18,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.jooq.lambda.Unchecked;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -69,26 +67,29 @@ public class EmailMessageBodyBuilder implements Supplier<String> {
             return StringUtils.EMPTY;
         }
         try {
-            if (ScriptingUtils.isExternalGroovyScript(properties.getText()) || ScriptingUtils.isInlineGroovyScript(properties.getText())) {
-                val cacheMgr = ApplicationContextProvider.getScriptResourceCacheManager().get();
-                val script = cacheMgr.resolveScriptableResource(properties.getText(), properties.getText());
-                val args = ScriptingUtils.isInlineGroovyScript(properties.getText())
-                    ? new HashMap<>(this.parameters)
-                    : CollectionUtils.<String, Object>wrap("parameters", this.parameters);
-                args.put("logger", LOGGER);
-                locale.ifPresent(loc -> args.put("locale", loc));
-                script.setBinding(args);
-                return script.execute(args.values().toArray(), String.class);
+            val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+
+            if (scriptFactory.isPresent()) {
+                if (ScriptingUtils.isExternalGroovyScript(properties.getText()) || ScriptingUtils.isInlineGroovyScript(properties.getText())) {
+                    val cacheMgr = ApplicationContextProvider.getScriptResourceCacheManager().get();
+                    val script = cacheMgr.resolveScriptableResource(properties.getText(), properties.getText());
+                    val args = ScriptingUtils.isInlineGroovyScript(properties.getText())
+                        ? new HashMap<>(this.parameters)
+                        : CollectionUtils.<String, Object>wrap("parameters", this.parameters);
+                    args.put("logger", LOGGER);
+                    locale.ifPresent(loc -> args.put("locale", loc));
+                    script.setBinding(args);
+                    return script.execute(args.values().toArray(), String.class);
+                }
             }
+
             val templateFile = determineEmailTemplateFile();
             LOGGER.debug("Using email template file at [{}]", templateFile);
             val contents = FileUtils.readFileToString(templateFile, StandardCharsets.UTF_8);
-            if (templateFile.getName().endsWith(".gtemplate")) {
-                val engine = new GStringTemplateEngine();
+            if (templateFile.getName().endsWith(".gtemplate") && scriptFactory.isPresent()) {
                 val templateParams = new LinkedHashMap<>(this.parameters);
                 locale.ifPresent(loc -> templateParams.put("locale", loc));
-                val template = engine.createTemplate(contents).make(templateParams);
-                return template.toString();
+                return scriptFactory.get().createTemplate(contents, templateParams);
             }
 
             return formatEmailBody(contents);

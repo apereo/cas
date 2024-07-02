@@ -233,6 +233,8 @@ An inline groovy filter allows you to embed the script directly in the service d
 }
 ```
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 ### External Groovy
 
 An external groovy filter allows you to define the script in file located outside of the CAS web application.
@@ -275,6 +277,7 @@ The parameters passed are as follows:
 | `attributes` | A `Map` of current  attributes resolved from sources.                       |
 | `logger`     | The object responsible for issuing log messages such as `logger.info(...)`. |
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% endtab %}
 

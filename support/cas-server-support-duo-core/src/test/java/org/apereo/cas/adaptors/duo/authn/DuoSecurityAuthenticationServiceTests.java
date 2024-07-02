@@ -210,7 +210,7 @@ class DuoSecurityAuthenticationServiceTests {
         }
 
         @Override
-        protected DuoSecurityAuthenticationResult authenticateInternal(final Credential credential) throws Exception {
+        protected DuoSecurityAuthenticationResult authenticateInternal(final Credential credential) {
             return null;
         }
     }

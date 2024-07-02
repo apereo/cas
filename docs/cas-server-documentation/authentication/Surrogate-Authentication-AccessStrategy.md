@@ -87,6 +87,8 @@ The parameters passed are as follows:
 | `logger`              | The object responsible for issuing log messages such as `logger.info(...)`. |
 
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
           
 {% endtabs %}

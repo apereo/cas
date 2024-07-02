@@ -25,7 +25,7 @@ import org.apereo.cas.authentication.mfa.trigger.TimedMultifactorAuthenticationT
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -331,7 +331,8 @@ public class CasCoreMultifactorAuthenticationWebflowAutoConfiguration {
                     .exists().given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val groovyScript = casProperties.getAuthn().getMfa().getGroovyScript().getLocation();
-                    val watchableScript = new WatchableGroovyScriptResource(groovyScript);
+                    val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+                    val watchableScript = scriptFactory.fromResource(groovyScript);
                     return new GroovyScriptMultifactorAuthenticationTrigger(watchableScript, applicationContext,
                         multifactorAuthenticationProviderResolver, multifactorAuthenticationProviderSelector);
                 })

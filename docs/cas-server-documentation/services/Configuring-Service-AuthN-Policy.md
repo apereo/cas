@@ -166,7 +166,8 @@ Maps to the `Groovy` [authentication policy](../authentication/Configuring-Authe
 }
 ```
 
-The `script` attribute can either be an inline Groovy script or a reference to an external file. 
+The `script` attribute can either be an inline Groovy script or a reference to an external file.
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 ### REST
 

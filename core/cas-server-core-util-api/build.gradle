@@ -10,6 +10,7 @@ dependencies {
     api project(":api:cas-server-core-api-web")
     api project(":api:cas-server-core-api-webflow")
     api project(":api:cas-server-core-api-services")
+    api project(":api:cas-server-core-api-scripting")
 
     implementation libraries.jasypt
     implementation libraries.jose4j
@@ -18,7 +19,7 @@ dependencies {
     implementation libraries.oshi
     implementation libraries.apachevelocity
     implementation libraries.springsecurityweb
-
+    
     testImplementation libraries.nimbus
 }
 

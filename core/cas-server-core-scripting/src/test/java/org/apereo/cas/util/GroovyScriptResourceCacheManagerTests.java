@@ -1,8 +1,11 @@
-package org.apereo.cas.util.scripting;
+package org.apereo.cas.util;
 
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Tag;
@@ -31,19 +34,21 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class
+    CasCoreScriptingAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class GroovyScriptResourceCacheManagerTests {
     @Autowired
     @Qualifier(ScriptResourceCacheManager.BEAN_NAME)
-    private ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> cacheManager;
+    private ScriptResourceCacheManager<String, ExecutableCompiledScript> cacheManager;
 
     @Test
     void verifyOperation() throws Throwable {
         val file = File.createTempFile("scripted", ".groovy");
         FileUtils.writeStringToFile(file, "println 'hello'", StandardCharsets.UTF_8);
-        val resource = new WatchableGroovyScriptResource(new FileSystemResource(file));
+
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        val resource = scriptFactory.fromResource(new FileSystemResource(file));
 
         val id = UUID.randomUUID().toString();
         assertNull(cacheManager.get(id));

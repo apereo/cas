@@ -241,7 +241,7 @@ public class MockWebServer implements Closeable {
         this.worker.setResourceSupplier(null);
     }
 
-    public void responseBodyJson(final Object body) throws Exception {
+    public void responseBodyJson(final Object body) {
         try {
             val data = toJsonString(body);
             responseBody(data);

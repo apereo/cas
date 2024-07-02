@@ -5,8 +5,8 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.scripting.ScriptingUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
@@ -51,7 +51,7 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
-    private transient WatchableGroovyScriptResource executableScript;
+    private transient ExecutableCompiledScript executableScript;
 
     @Override
     public AuthenticationPolicyExecutionResult isSatisfiedBy(
@@ -88,12 +88,9 @@ public class GroovyScriptAuthenticationPolicy extends BaseAuthenticationPolicy {
 
     private void initializeWatchableScriptIfNeeded() throws Exception {
         if (this.executableScript == null) {
-            val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(script);
-            if (!matcherFile.find()) {
-                throw new IllegalArgumentException("Unable to locate groovy script file at " + script);
-            }
             val resource = ResourceUtils.getRawResourceFrom(script);
-            this.executableScript = new WatchableGroovyScriptResource(resource);
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            this.executableScript = scriptFactory.fromResource(resource);
         }
     }
 

@@ -7,9 +7,9 @@ import groovy.lang.GroovyRuntimeException;
 import groovy.lang.Script;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +22,8 @@ import java.util.Map;
 @Getter
 @Slf4j
 @RequiredArgsConstructor
-public class GroovyShellScript implements ExecutableCompiledGroovyScript {
+@ToString(of = "script")
+public class GroovyShellScript implements ExecutableCompiledScript {
     private static final ThreadLocal<Map<String, Object>> BINDING_THREAD_LOCAL = new ThreadLocal<>();
 
     private final CasReentrantLock lock = new CasReentrantLock();
@@ -79,12 +80,5 @@ public class GroovyShellScript implements ExecutableCompiledGroovyScript {
     @Override
     public void setBinding(final Map<String, Object> args) {
         BINDING_THREAD_LOCAL.set(new HashMap<>(args));
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-            .append("script", script)
-            .toString();
     }
 }

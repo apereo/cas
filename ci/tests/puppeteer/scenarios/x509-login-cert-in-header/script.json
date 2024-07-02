@@ -1,5 +1,5 @@
 {
-  "dependencies": "x509-webflow,json-service-registry",
+  "dependencies": "x509-webflow,json-service-registry,scripting",
   "conditions": {
     "docker": "true"
   },

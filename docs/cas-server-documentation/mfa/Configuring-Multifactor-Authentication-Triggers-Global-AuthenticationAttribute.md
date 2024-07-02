@@ -24,6 +24,8 @@ is generally useful when the underlying authentication engine signals CAS to per
 This signal may be captured by CAS as an attribute that is part of the authentication event metadata which can then trigger
 additional multifactor authentication events.
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 An example of this scenario would be the "Access Challenge response" produced by RADIUS servers.
 
 {% include_cached casproperties.html properties="cas.authn.mfa.triggers.authentication" %}

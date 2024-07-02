@@ -60,7 +60,7 @@ public abstract class BaseCasShellCommandTests {
     @Qualifier("shell")
     protected Shell shell;
 
-    protected Object runShellCommand(final InputProvider inputProvider) throws Exception {
+    protected Object runShellCommand(final InputProvider inputProvider) {
         val method = ReflectionUtils.findMethod(shell.getClass(), "evaluate", Input.class);
         assertDoesNotThrow(() -> Objects.requireNonNull(method).trySetAccessible());
         return assertDoesNotThrow(() -> ReflectionUtils.invokeMethod(Objects.requireNonNull(method), shell, inputProvider.readInput()));

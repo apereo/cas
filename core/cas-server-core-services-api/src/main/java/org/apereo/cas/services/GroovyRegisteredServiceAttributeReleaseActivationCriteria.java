@@ -5,10 +5,10 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -48,7 +48,7 @@ public class GroovyRegisteredServiceAttributeReleaseActivationCriteria implement
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
-    private transient ExecutableCompiledGroovyScript executableScript;
+    private transient ExecutableCompiledScript executableScript;
 
     @Override
     public boolean shouldActivate(final RegisteredServiceAttributeReleasePolicyContext context) {
@@ -70,7 +70,8 @@ public class GroovyRegisteredServiceAttributeReleaseActivationCriteria implement
         if (matcherFile.find()) {
             val script = SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group());
             val resource = FunctionUtils.doUnchecked(() -> ResourceUtils.getRawResourceFrom(script));
-            this.executableScript = new WatchableGroovyScriptResource(resource);
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            this.executableScript = scriptFactory.fromResource(resource);
         }
         val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(groovyScript);
         if (matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {

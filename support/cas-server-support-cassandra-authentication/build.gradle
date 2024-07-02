@@ -42,5 +42,5 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-validation-api")
     testImplementation project(":core:cas-server-core")
-
+    testImplementation project(":core:cas-server-core-scripting")
 }

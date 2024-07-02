@@ -107,6 +107,8 @@ def run(Object... args) {
 }
 ```
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 <div class="alert alert-info">:information_source: <strong>Usage Warning</strong><p>Activating this mode is not without cost,
 as CAS needs to evaluate the script, compile and run it for subsequent executions. While the compiled
 script is cached and should help with execution performance, as a general rule, you should avoid opting
