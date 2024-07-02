@@ -138,7 +138,7 @@ If you are using Apache Groovy or scripting functionality in your build, this is
 to review the CAS documentation and adjust the dependencies in your CAS build to restore functionality.
 </p></div>
 
-This extraction is done to reduce the final size of the vanilla CAS web application by about `9MB`. In addition to a leaner binary artifact, 
+This extraction is done to reduce the final size of the vanilla CAS web application by about `11MB`. In addition to a leaner binary artifact, 
 this will also remove unnecessary optional libraries out of the CAS build, leading to fewer false CVEs, faster startup times and quicker builds
 particularly when it comes to [Graal VM native images](../installation/GraalVM-NativeImage-Installation.html).
 

@@ -100,7 +100,8 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
 
         registerSerializableSpringProxy(hints, ServiceRegistryInitializerEventListener.class);
 
-        registerSerializationHints(hints, BaseRegisteredService.class,
+        registerSerializationHints(hints,
+            BaseRegisteredService.class,
             BaseWebBasedRegisteredService.class,
             CasRegisteredService.class,
 
@@ -129,7 +130,6 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             RefuseRegisteredServiceProxyPolicy.class,
             DefaultRegisteredServiceAccessStrategy.class,
             ChainingRegisteredServiceAccessStrategy.class,
-            GroovyRegisteredServiceAccessStrategy.class,
             RemoteEndpointServiceAccessStrategy.class,
             TimeBasedRegisteredServiceAccessStrategy.class,
             DefaultRegisteredServiceProxyGrantingTicketExpirationPolicy.class,
@@ -140,7 +140,6 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             AnonymousRegisteredServiceUsernameAttributeProvider.class,
             BaseRegisteredServiceUsernameAttributeProvider.class,
             StaticRegisteredServiceUsernameProvider.class,
-            GroovyRegisteredServiceUsernameProvider.class,
             DefaultRegisteredServiceUsernameProvider.class,
             DefaultRegisteredServiceWebflowInterruptPolicy.class,
             RegisteredServiceRegexAttributeFilter.class,
@@ -151,17 +150,13 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             AttributeBasedRegisteredServiceAccessStrategyActivationCriteria.class,
             AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria.class,
             AttributeBasedRegisteredServiceSingleSignOnParticipationPolicy.class,
-            GroovyRegisteredServiceAttributeReleaseActivationCriteria.class,
-            GroovyRegisteredServiceAccessStrategyActivationCriteria.class,
-            GroovyRegisteredServiceSingleSignOnParticipationPolicy.class,
-
+            
             ChainingAttributeReleasePolicy.class,
             DenyAllAttributeReleasePolicy.class,
             ReturnAllowedAttributeReleasePolicy.class,
             ReturnAllAttributeReleasePolicy.class,
             ReturnStaticAttributeReleasePolicy.class,
             ReturnMappedAttributeReleasePolicy.class,
-            GroovyScriptAttributeReleasePolicy.class,
             ReturnRestfulAttributeReleasePolicy.class,
             PatternMatchingAttributeReleasePolicy.class,
             PatternMatchingAttributeReleasePolicy.Rule.class,
@@ -178,10 +173,21 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
 
             AllAuthenticationHandlersRegisteredServiceAuthenticationPolicyCriteria.class,
             AnyAuthenticationHandlerRegisteredServiceAuthenticationPolicyCriteria.class,
-            GroovyRegisteredServiceAuthenticationPolicyCriteria.class,
             NotPreventedRegisteredServiceAuthenticationPolicyCriteria.class,
-            RestfulRegisteredServiceAuthenticationPolicyCriteria.class);
+            RestfulRegisteredServiceAuthenticationPolicyCriteria.class
+        );
 
+        if (isGroovyPresent(classLoader)) {
+            registerSerializationHints(hints, List.of(
+                GroovyRegisteredServiceAccessStrategy.class,
+                GroovyRegisteredServiceUsernameProvider.class,
+                GroovyRegisteredServiceAttributeReleaseActivationCriteria.class,
+                GroovyRegisteredServiceAccessStrategyActivationCriteria.class,
+                GroovyRegisteredServiceSingleSignOnParticipationPolicy.class,
+                GroovyScriptAttributeReleasePolicy.class,
+                GroovyRegisteredServiceAuthenticationPolicyCriteria.class
+            ));
+        }
         registerReflectionHintsForDeclaredAndPublicElements(hints, List.of(
             UnauthorizedServiceException.class,
             RegisteredServiceQuery.class,

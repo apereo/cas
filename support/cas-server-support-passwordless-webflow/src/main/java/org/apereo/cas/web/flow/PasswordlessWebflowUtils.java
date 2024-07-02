@@ -123,7 +123,7 @@ public class PasswordlessWebflowUtils {
      * Is passwordless captcha enabled.
      *
      * @param requestContext the request context
-     * @return the boolean
+     * @return true/false
      */
     public static boolean isPasswordlessCaptchaEnabled(final RequestContext requestContext) {
         val enabled = Objects.requireNonNullElse(requestContext.getFlowScope().getBoolean("passwordlessCaptchaEnabled", Boolean.FALSE), Boolean.FALSE);
