@@ -17,8 +17,7 @@ dependencies {
     implementation project(":core:cas-server-core-services-api")
 
     implementation libraries.googlecloudfirestore
-
-
+    
     testImplementation project(":support:cas-server-support-oauth-core-api")
 
     testImplementation project(":core:cas-server-core-authentication-api")
@@ -33,7 +32,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-logout")
-
+    testImplementation project(":core:cas-server-core-scripting")
+    
     testImplementation project(":support:cas-server-support-oauth-services")
     testImplementation project(":support:cas-server-support-saml-idp-core")
     testImplementation project(":support:cas-server-support-oidc-services")

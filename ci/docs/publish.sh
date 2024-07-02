@@ -64,10 +64,10 @@ while (("$#")); do
     propFilter=$2
     shift 2
     printgreen "Generating documentation for property filter: ${propFilter}\n"
-    serve=true
+    serve=false
     
     audit=false
-    proofRead=false
+    proofRead=true
     actuators=false 
     thirdParty=false
     serviceProps=false
@@ -76,7 +76,7 @@ while (("$#")); do
     buildFeatures=false
     shellCommands=false
     dependencyVersions=false
-    userinterface=true
+    userinterface=false
     ;;
   --branch)
     branchVersion=$2

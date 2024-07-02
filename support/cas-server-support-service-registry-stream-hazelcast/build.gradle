@@ -19,6 +19,7 @@ dependencies {
     implementation project(":support:cas-server-support-hazelcast-core")
     implementation project(":support:cas-server-support-service-registry-stream")
 
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-notifications")
 

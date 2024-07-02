@@ -7,6 +7,7 @@ import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import lombok.val;
+import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,9 +38,13 @@ public class GroovyExecutableCompiledScriptFactoryTests {
     private ScriptResourceCacheManager<String, ExecutableCompiledScript> scriptResourceCacheManager;
 
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() throws Throwable {
         assertNotNull(scriptResourceCacheManager);
         val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
         assertNotNull(scriptFactory);
+        try (val script = scriptFactory.fromScript("return 1L")) {
+            val result = script.execute(ArrayUtils.EMPTY_OBJECT_ARRAY, Long.class);
+            assertEquals(1, result);
+        }
     }
 }

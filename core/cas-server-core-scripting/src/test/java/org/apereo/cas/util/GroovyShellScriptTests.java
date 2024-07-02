@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
-import org.apereo.cas.util.scripting.GroovyShellScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +49,8 @@ class GroovyShellScriptTests {
                         return attributes['identifier'] as List
                     }
                     """;
-            val shellScript = new GroovyShellScript(script.stripIndent());
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            val shellScript = scriptFactory.fromScript(script.stripIndent());
 
             val attributes1 = new HashMap<String, Object>();
             attributes1.put("entitlement", List.of("admin"));
@@ -72,7 +74,8 @@ class GroovyShellScriptTests {
                     }
                     """;
 
-            val shellScript = new GroovyShellScript(script.stripIndent());
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            val shellScript = scriptFactory.fromScript(script.stripIndent());
 
             val attributes1 = new HashMap<String, Object>();
             attributes1.put("entitlement", List.of("admin"));
@@ -117,18 +120,20 @@ class GroovyShellScriptTests {
     class DefaultTests {
         @Test
         void verifyExec() {
-            try (val shell = new GroovyShellScript("println 'test'")) {
-                assertNull(shell.getGroovyScript());
-                assertNotNull(shell.getScript());
-
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            try (val shell = scriptFactory.fromScript("println 'test'")) {
+                assertNotNull(shell.getResource());
+                assertNull(shell.getCompiledScript());
                 assertDoesNotThrow(() -> shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY));
+                assertNotNull(shell.getCompiledScript());
                 assertNotNull(shell.toString());
             }
         }
 
         @Test
         void verifyUnknownBadScript() {
-            try (val shell = new GroovyShellScript("###$$@@@!!!***&&&")) {
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            try (val shell = scriptFactory.fromScript("###$$@@@!!!***&&&")) {
                 assertDoesNotThrow(() -> {
                     shell.execute(ArrayUtils.EMPTY_OBJECT_ARRAY);
                     shell.execute("run", Void.class, ArrayUtils.EMPTY_OBJECT_ARRAY);
@@ -140,7 +145,7 @@ class GroovyShellScriptTests {
     @RequiredArgsConstructor
     private static final class RunnableScript implements Runnable {
         private final Map<String, Object> attributes;
-        private final GroovyShellScript shellScript;
+        private final ExecutableCompiledScript shellScript;
         private final Object expectedAttribute;
 
         @Override

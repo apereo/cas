@@ -4,7 +4,7 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyRequest;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.apereo.cas.util.scripting.GroovyShellScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 
 import lombok.Builder;
@@ -160,11 +160,13 @@ public class RegisteredServiceAccessStrategyEvaluator implements Function<Regist
         val requiredValues = requiredAttributes.get(attributeName);
         val availableValues = CollectionUtils.toCollection(request.getAttributes().get(attributeName));
 
+        val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+        
         val results = new ArrayList<>();
         for (val requiredValue : requiredValues) {
             val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(requiredValue);
-            if (matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {
-                try (val executableScript = new GroovyShellScript(matcherInline.group(1))) {
+            if (scriptFactory.isPresent() && matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {
+                try (val executableScript = scriptFactory.get().fromScript(matcherInline.group(1))) {
                     val args = CollectionUtils.<String, Object>wrap(
                         "principalId", request.getPrincipalId(),
                         "currentValues", availableValues,

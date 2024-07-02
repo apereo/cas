@@ -7,7 +7,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
-import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -82,7 +81,7 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
                 });
                 this.executableScript = scriptFactory.fromResource(resource);
             } else if (matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {
-                this.executableScript = new GroovyShellScript(matcherInline.group(1));
+                this.executableScript = scriptFactory.fromScript(matcherInline.group(1));
             }
         }
     }

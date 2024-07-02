@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +32,7 @@ public class GroovyShellScript implements ExecutableCompiledScript {
     private final CasReentrantLock lock = new CasReentrantLock();
     private final String script;
 
-    private Script groovyScript;
+    private Script compiledScript;
 
     @Override
     public <T> T execute(final Object[] args, final Class<T> clazz) throws Throwable {
@@ -47,23 +50,23 @@ public class GroovyShellScript implements ExecutableCompiledScript {
             try {
                 LOGGER.trace("Beginning to execute script [{}]", this);
                 val binding = BINDING_THREAD_LOCAL.get();
-                if (groovyScript == null) {
-                    groovyScript = ScriptingUtils.parseGroovyShellScript(binding, script);
+                if (compiledScript == null) {
+                    compiledScript = ScriptingUtils.parseGroovyShellScript(binding, script);
                 }
                 if (binding != null && !binding.isEmpty()) {
                     LOGGER.trace("Setting binding [{}]", binding);
-                    groovyScript.setBinding(new Binding(binding));
+                    compiledScript.setBinding(new Binding(binding));
                 }
-                LOGGER.trace("Current binding [{}]", groovyScript.getBinding());
-                val result = ScriptingUtils.executeGroovyShellScript(groovyScript, clazz);
+                LOGGER.trace("Current binding [{}]", compiledScript.getBinding());
+                val result = ScriptingUtils.executeGroovyShellScript(compiledScript, clazz);
                 LOGGER.debug("Groovy script [{}] returns result [{}]", this, result);
                 return result;
             } catch (final GroovyRuntimeException e) {
                 LoggingUtils.error(LOGGER, e);
             } finally {
                 BINDING_THREAD_LOCAL.remove();
-                if (groovyScript != null) {
-                    groovyScript.setBinding(new Binding(Map.of()));
+                if (compiledScript != null) {
+                    compiledScript.setBinding(new Binding(Map.of()));
                 }
                 LOGGER.trace("Completed script execution [{}]", this);
                 lock.unlock();
@@ -80,5 +83,10 @@ public class GroovyShellScript implements ExecutableCompiledScript {
     @Override
     public void setBinding(final Map<String, Object> args) {
         BINDING_THREAD_LOCAL.set(new HashMap<>(args));
+    }
+
+    @Override
+    public Resource getResource() {
+        return new ByteArrayResource(script.getBytes(StandardCharsets.UTF_8));
     }
 }

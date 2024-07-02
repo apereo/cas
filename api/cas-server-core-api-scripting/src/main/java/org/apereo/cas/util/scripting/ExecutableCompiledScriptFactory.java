@@ -34,6 +34,14 @@ public interface ExecutableCompiledScriptFactory {
     }
 
     /**
+     * From shell script.
+     *
+     * @param script the script
+     * @return the executable compiled script
+     */
+    ExecutableCompiledScript fromScript(String script);
+    
+    /**
      * Create template string.
      *
      * @param contents       the contents
