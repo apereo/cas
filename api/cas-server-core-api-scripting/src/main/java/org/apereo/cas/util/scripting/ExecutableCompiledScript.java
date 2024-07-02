@@ -61,4 +61,14 @@ public interface ExecutableCompiledScript extends AutoCloseable {
     @Override
     default void close() {
     }
+
+    /**
+     * Sets fail on error.
+     *
+     * @param failOnError the fail on error
+     * @return the fail on error
+     */
+    default ExecutableCompiledScript setFailOnError(final boolean failOnError) {
+        return this;
+    }
 }

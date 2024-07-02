@@ -32,7 +32,7 @@ public interface CasConfigurationPropertiesLoader extends NamedObject {
      * Supports this resource.
      *
      * @param resource the resource
-     * @return the boolean
+     * @return true/false
      */
     boolean supports(Resource resource);
 }

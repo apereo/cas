@@ -79,7 +79,7 @@ public interface CommunicationsManager {
      * Sms multiple requests.
      *
      * @param requests the requests
-     * @return the boolean
+     * @return true/false
      * @throws Throwable the throwable
      */
     default boolean sms(final List<SmsRequest> requests) throws Throwable {

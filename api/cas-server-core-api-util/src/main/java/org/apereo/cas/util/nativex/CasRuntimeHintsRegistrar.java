@@ -15,6 +15,7 @@ import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.aot.hint.TypeReference;
 import org.springframework.core.DecoratingProxy;
+import org.springframework.util.ClassUtils;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -371,6 +372,38 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
         return filteredResults;
     }
 
+    /**
+     * Is type present?.
+     *
+     * @param classLoader the class loader
+     * @param typeName    the type name
+     * @return true/false
+     */
+    default boolean isTypePresent(final ClassLoader classLoader, final Class typeName) {
+        return isTypePresent(classLoader, typeName.getTypeName());
+    }
+
+    /**
+     * Is type present?
+     *
+     * @param classLoader the class loader
+     * @param typeName    the type name
+     * @return true/false
+     */
+    default boolean isTypePresent(final ClassLoader classLoader, final String typeName) {
+        return ClassUtils.isPresent(typeName, classLoader);
+    }
+
+    /**
+     * Is groovy present?
+     *
+     * @param classLoader the class loader
+     * @return true/false
+     */
+    default boolean isGroovyPresent(final ClassLoader classLoader) {
+        return isTypePresent(classLoader, "groovy.lang.GroovyObject");
+    }
+    
     /**
      * Determine if code is executing or being aot-processed in a GraalVM native image.
      *
