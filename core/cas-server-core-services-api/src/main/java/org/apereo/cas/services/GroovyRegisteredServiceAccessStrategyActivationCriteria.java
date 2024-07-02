@@ -6,9 +6,9 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -64,11 +64,12 @@ public class GroovyRegisteredServiceAccessStrategyActivationCriteria implements 
 
     @PostLoad
     private void initializeWatchableScriptIfNeeded() {
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
         val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(groovyScript);
         if (matcherFile.find()) {
             val script = SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group());
             val resource = FunctionUtils.doUnchecked(() -> ResourceUtils.getRawResourceFrom(script));
-            this.executableScript = new WatchableGroovyScriptResource(resource);
+            this.executableScript = scriptFactory.fromResource(resource);
         }
         val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(groovyScript);
         if (matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {

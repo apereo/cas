@@ -6,9 +6,9 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.scripting.GroovyShellScript;
 import org.apereo.cas.util.scripting.ScriptingUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -73,13 +73,14 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
             val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(script);
             val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(script);
 
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
             if (matcherFile.find()) {
                 val resource = FunctionUtils.doUnchecked(() -> {
                     val scriptFile = SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group(2));
                     LOGGER.debug("Loading attribute filter groovy script from [{}]", scriptFile);
                     return ResourceUtils.getRawResourceFrom(scriptFile);
                 });
-                this.executableScript = new WatchableGroovyScriptResource(resource);
+                this.executableScript = scriptFactory.fromResource(resource);
             } else if (matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {
                 this.executableScript = new GroovyShellScript(matcherInline.group(1));
             }
