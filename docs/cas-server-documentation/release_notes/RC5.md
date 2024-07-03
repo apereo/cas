@@ -128,7 +128,7 @@ This feature is relevant only when [SAML2 delegated authentication](../integrati
     
 ### Apache Groovy & Scripting
                                                                     
-Apache Groovy support, that backs all scripting functionality in CAS, is now extracted and moved into its 
+Apache Groovy support, that backs **ALL** scripting functionality in CAS, is now extracted and moved into its 
 [own dedicated module](../integration/Apache-Groovy-Scripting.html). This means that any sort of feature or functionality
 that intends to evaluate and execute a *script* of some sort, such as triggering multifactor authentication or releasing attributes, etc 
 would need to include the relevant module in the build. 

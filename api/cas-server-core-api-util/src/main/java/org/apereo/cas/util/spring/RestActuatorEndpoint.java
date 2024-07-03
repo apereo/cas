@@ -1,6 +1,5 @@
 package org.apereo.cas.util.spring;
 
-import org.springframework.boot.actuate.endpoint.annotation.DiscovererEndpointFilter;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.FilteredEndpoint;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,13 +25,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Endpoint
-@FilteredEndpoint(RestActuatorEndpoint.RestActuatorEndpointFilter.class)
+@FilteredEndpoint(RestActuatorEndpointFilter.class)
 @ResponseBody
 public @interface RestActuatorEndpoint {
-
-    class RestActuatorEndpointFilter extends DiscovererEndpointFilter {
-        RestActuatorEndpointFilter() {
-            super(RestActuatorEndpointDiscoverer.class);
-        }
-    }
 }

@@ -12,7 +12,6 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")
 
-    compileOnly project(":core:cas-server-core-scripting")
 
     testImplementation project(":core:cas-server-core-scripting")
     

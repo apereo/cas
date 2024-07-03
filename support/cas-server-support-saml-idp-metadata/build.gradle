@@ -26,7 +26,6 @@ dependencies {
 
     implementation libraries.shibutiljavasupport
 
-    compileOnly project(":core:cas-server-core-scripting")
 
     testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-web")

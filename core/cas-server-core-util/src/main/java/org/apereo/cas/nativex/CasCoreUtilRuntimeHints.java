@@ -7,6 +7,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
+import org.apereo.cas.util.spring.RestActuatorEndpointFilter;
 import org.apereo.cas.util.thread.Cleanable;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import lombok.val;
@@ -171,7 +172,8 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
                 EventListenerMethodProcessor.class,
                 DefaultEventListenerFactory.class,
                 AutowiredAnnotationBeanPostProcessor.class,
-                CommonAnnotationBeanPostProcessor.class
+                CommonAnnotationBeanPostProcessor.class,
+                RestActuatorEndpointFilter.class
             ));
 
         registerReflectionHintsForTypes(hints,

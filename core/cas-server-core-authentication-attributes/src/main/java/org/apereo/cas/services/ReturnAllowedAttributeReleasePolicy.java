@@ -4,7 +4,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
-import org.apereo.cas.util.scripting.ScriptingUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -58,7 +57,7 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
         val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
         return getAllowedAttributes()
             .stream()
-            .filter(key -> scriptFactory.isEmpty() || !ScriptingUtils.isInlineGroovyScript(key))
+            .filter(key -> scriptFactory.isEmpty() || !scriptFactory.get().isInlineScript(key))
             .collect(Collectors.toList());
     }
 
@@ -84,11 +83,10 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
     private static Map<String, List<Object>> executeInlineGroovyScript(final RegisteredServiceAttributeReleasePolicyContext context,
                                                                        final Map<String, List<Object>> resolvedAttributes,
                                                                        final String attribute) {
-        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(attribute);
-        if (matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {
-            val inlineGroovy = matcherInline.group(1);
-            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
-            try (val executableScript = scriptFactory.fromScript(inlineGroovy)) {
+        val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+        if (scriptFactory.isPresent() && scriptFactory.get().isInlineScript(attribute) && CasRuntimeHintsRegistrar.notInNativeImage()) {
+            val inlineGroovy = scriptFactory.get().getInlineScript(attribute).orElseThrow();
+            try (val executableScript = scriptFactory.get().fromScript(inlineGroovy)) {
                 val args = CollectionUtils.<String, Object>wrap(
                     "context", context,
                     "attributes", resolvedAttributes,

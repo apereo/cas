@@ -5,8 +5,7 @@ dependencies {
     
     api project(":api:cas-server-core-api-throttle")
 
-    compileOnly project(":core:cas-server-core-scripting")
-    
+
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-configuration-api")

@@ -54,8 +54,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      * System property set to true during spring AOT processing phase.
      */
     String SYSTEM_PROPERTY_SPRING_AOT_PROCESSING = "spring.aot.processing";
-
-
+    
     /**
      * Register spring proxies.
      *
