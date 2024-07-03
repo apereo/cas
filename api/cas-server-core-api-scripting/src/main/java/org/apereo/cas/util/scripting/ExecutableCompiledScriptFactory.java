@@ -85,4 +85,40 @@ public interface ExecutableCompiledScriptFactory {
                 Examine your build and make sure you have a dependency on the CAS module that provides the factory implementation.
                 """));
     }
+
+    /**
+     * Is inline script boolean.
+     *
+     * @param input the input
+     * @return the boolean
+     */
+    default boolean isInlineScript(final String input) {
+        return getInlineScript(input).isPresent();
+    }
+
+    /**
+     * Is external script boolean.
+     *
+     * @param input the input
+     * @return the boolean
+     */
+    default boolean isExternalScript(final String input) {
+        return getExternalScript(input).isPresent();
+    }
+
+    /**
+     * Gets inline script.
+     *
+     * @param input the input
+     * @return the inline script
+     */
+    Optional<String> getInlineScript(String input);
+
+    /**
+     * Gets external script.
+     *
+     * @param input the input
+     * @return the external script
+     */
+    Optional<String> getExternalScript(String input);
 }

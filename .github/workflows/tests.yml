@@ -129,7 +129,7 @@ jobs:
           timeout_minutes: ${{ env.RETRY_MINUTES }}
           shell: bash
           command: |
-            ./testcas.sh --no-watch --category ${{ matrix.category }}
+            ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED
             [[ $? -eq 0 ]] && ./testcas.sh --no-watch --with-coverage
       - name: Check Coverage Report
         run: |

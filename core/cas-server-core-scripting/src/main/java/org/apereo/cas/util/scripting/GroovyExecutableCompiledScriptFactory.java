@@ -5,6 +5,7 @@ import lombok.val;
 import org.springframework.core.io.Resource;
 import java.io.File;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link GroovyExecutableCompiledScriptFactory}.
@@ -30,6 +31,18 @@ public class GroovyExecutableCompiledScriptFactory implements ExecutableCompiled
         val engine = new GStringTemplateEngine();
         val template = engine.createTemplate(templateFile).make(templateParams);
         return template.toString();
+    }
+
+    @Override
+    public Optional<String> getInlineScript(final String input) {
+        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(input);
+        return matcherInline.find() ? Optional.of(matcherInline.group(1)) : Optional.empty();
+    }
+
+    @Override
+    public Optional<String> getExternalScript(final String input) {
+        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(input);
+        return matcherFile.find() ? Optional.of(matcherFile.group()) : Optional.empty();
     }
 
     @Override

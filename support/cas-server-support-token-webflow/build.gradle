@@ -32,6 +32,7 @@ dependencies {
     implementation libraries.nimbus
 
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-monitor")
