@@ -71,7 +71,7 @@ public class GroovyRegisteredServiceSingleSignOnParticipationPolicy implements R
         val scriptFactoryInstance = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
         if (scriptFactoryInstance.isExternalScript(groovyScript)) {
             val script = SpringExpressionLanguageValueResolver.getInstance().resolve(
-                scriptFactoryInstance.getInlineScript(groovyScript).orElseThrow()
+                scriptFactoryInstance.getExternalScript(groovyScript).orElseThrow()
             );
             val resource = FunctionUtils.doUnchecked(() -> ResourceUtils.getRawResourceFrom(script));
             this.executableScript = scriptFactoryInstance.fromResource(resource);
