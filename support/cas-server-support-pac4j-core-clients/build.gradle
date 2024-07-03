@@ -14,7 +14,6 @@ dependencies {
     implementation libraries.pac4jcas
     implementation libraries.nimbus
 
-    compileOnly project(":core:cas-server-core-scripting")
 
     testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-services")

@@ -1,6 +1,7 @@
 package org.apereo.cas.notifications;
 
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
@@ -26,6 +27,7 @@ public abstract class BaseNotificationTests {
         WebMvcAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)

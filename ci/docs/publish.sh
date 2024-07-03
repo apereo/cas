@@ -345,7 +345,7 @@ if [[ ${buildDocs} == "true" ]]; then
   jekyll --version
 
   if [[ "${CI}" == "true" ]]; then
-    while sleep 30; do echo -e '\n=====[ Build is still running ]====='; done &
+    while sleep 30; do echo -e "\n=====[ Build is still running: $(date +'%Y-%m-%d %H:%M:%S') ]====="; done &
     sleeppid=$!
   fi
 
