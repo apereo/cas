@@ -117,8 +117,10 @@ class DuoSecurityMultifactorProviderBypassConfiguration {
                 val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
                 duoProps.stream()
                     .filter(duo -> duo.getBypass().getGroovy().getLocation() != null)
-                    .forEach(duo -> bypass.addMultifactorAuthenticationProviderBypassEvaluator(
-                        new GroovyMultifactorAuthenticationProviderBypassEvaluator(duo.getBypass(), duo.getId(), applicationContext)));
+                    .forEach(duo -> {
+                        val bypassInstance = new GroovyMultifactorAuthenticationProviderBypassEvaluator(duo.getBypass(), duo.getId(), applicationContext);
+                        bypass.addMultifactorAuthenticationProviderBypassEvaluator(bypassInstance);
+                    });
                 if (bypass.isEmpty()) {
                     return new NeverAllowMultifactorAuthenticationProviderBypassEvaluator(applicationContext);
                 }

@@ -12,6 +12,8 @@ import org.apereo.cas.authentication.bypass.RegisteredServicePrincipalAttributeM
 import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
@@ -111,9 +113,17 @@ class GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration {
     public MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorGroovyMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
-        val gauth = casProperties.getAuthn().getMfa().getGauth();
-        val props = gauth.getBypass();
-        return new GroovyMultifactorAuthenticationProviderBypassEvaluator(props, gauth.getId(), applicationContext);
+
+        return BeanSupplier.of(MultifactorAuthenticationProviderBypassEvaluator.class)
+            .when(BeanCondition.on("cas.authn.mfa.gauth.bypass.groovy.location").exists().given(applicationContext.getEnvironment()))
+            .supply(() -> {
+                val gauth = casProperties.getAuthn().getMfa().getGauth();
+                val props = gauth.getBypass();
+                return new GroovyMultifactorAuthenticationProviderBypassEvaluator(props, gauth.getId(), applicationContext);
+            })
+            .otherwiseProxy()
+            .get();
+        
     }
 
     @ConditionalOnMissingBean(name = "googleAuthenticatorHttpRequestMultifactorAuthenticationProviderBypass")
