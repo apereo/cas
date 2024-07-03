@@ -64,11 +64,11 @@ while (("$#")); do
     propFilter=$2
     shift 2
     printgreen "Generating documentation for property filter: ${propFilter}\n"
-    serve=false
+    serve=true
+    proofRead=false
     
     audit=false
-    proofRead=true
-    actuators=false 
+    actuators=false
     thirdParty=false
     serviceProps=false
     publishDocs=false

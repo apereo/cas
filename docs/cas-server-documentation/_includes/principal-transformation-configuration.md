@@ -17,5 +17,4 @@ String run(final Object... args) {
 }
 ```
 
-To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
-
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide]({{ baseUrl }}/integration/Apache-Groovy-Scripting.html).

@@ -7,6 +7,7 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
@@ -224,22 +225,25 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
                                                    final List<Object> currentValues,
                                                    final AttributeDefinitionResolutionContext context) throws Throwable {
         LOGGER.trace("Locating attribute value via script for definition [{}]", this);
-        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(getScript());
 
-        if (matcherInline.find()) {
-            return fetchAttributeValueAsInlineGroovyScript(attributeKey, currentValues, matcherInline.group(1), context);
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        
+        if (scriptFactory.isInlineScript(getScript())) {
+            val input = scriptFactory.getInlineScript(getScript()).orElseThrow();
+            return fetchAttributeValueAsInlineGroovyScript(attributeKey, currentValues, input, context);
         }
 
         val scriptDefinition = SpringExpressionLanguageValueResolver.getInstance().resolve(getScript());
-        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(scriptDefinition);
-        if (matcherFile.find()) {
-            return fetchAttributeValueFromExternalGroovyScript(attributeKey, currentValues, matcherFile.group(), context);
+        if (scriptFactory.isExternalScript(scriptDefinition)) {
+            val input = scriptFactory.getExternalScript(scriptDefinition).orElseThrow();
+            return fetchAttributeValueFromExternalGroovyScript(attributeKey, currentValues, input, context);
         }
 
         return new ArrayList<>(0);
     }
 
-    private static String getScriptedPatternedValue(final Object currentValue, final String patternedValue,
+    private static String getScriptedPatternedValue(final Object currentValue,
+                                                    final String patternedValue,
                                                     final AttributeDefinitionResolutionContext context) {
         val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(patternedValue);
         if (matcherInline.find()) {

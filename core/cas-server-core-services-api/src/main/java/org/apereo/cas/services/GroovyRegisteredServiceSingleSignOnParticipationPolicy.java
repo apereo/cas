@@ -8,7 +8,6 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
-import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -69,16 +68,17 @@ public class GroovyRegisteredServiceSingleSignOnParticipationPolicy implements R
 
     @PostLoad
     private void initializeWatchableScriptIfNeeded() {
-        val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(groovyScript);
-        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
-        if (matcherFile.find()) {
-            val script = SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group());
+        val scriptFactoryInstance = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        if (scriptFactoryInstance.isExternalScript(groovyScript)) {
+            val script = SpringExpressionLanguageValueResolver.getInstance().resolve(
+                scriptFactoryInstance.getInlineScript(groovyScript).orElseThrow()
+            );
             val resource = FunctionUtils.doUnchecked(() -> ResourceUtils.getRawResourceFrom(script));
-            this.executableScript = scriptFactory.fromResource(resource);
+            this.executableScript = scriptFactoryInstance.fromResource(resource);
         }
-        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(groovyScript);
-        if (matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {
-            this.executableScript = scriptFactory.fromScript(matcherInline.group(1));
+        if (scriptFactoryInstance.isInlineScript(groovyScript) && CasRuntimeHintsRegistrar.notInNativeImage()) {
+            val script = scriptFactoryInstance.getInlineScript(groovyScript).orElseThrow();
+            this.executableScript = scriptFactoryInstance.fromScript(script);
         }
     }
 }

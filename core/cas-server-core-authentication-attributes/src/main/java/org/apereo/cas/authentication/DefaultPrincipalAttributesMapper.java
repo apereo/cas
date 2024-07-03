@@ -4,7 +4,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
-import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -88,16 +87,15 @@ public class DefaultPrincipalAttributesMapper implements PrincipalAttributesMapp
 
     @Override
     public Map<String, List<Object>> map(final AttributeMappingRequest request) {
-        val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
-        if (scriptFactory.isPresent()) {
-            val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(request.getMappedAttributeName());
-            if (matcherInline.find()) {
-                val inlineGroovy = matcherInline.group(1);
+        val scriptFactoryInstance = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+        if (scriptFactoryInstance.isPresent()) {
+            val scriptFactory = scriptFactoryInstance.get();
+            if (scriptFactory.isInlineScript(request.getMappedAttributeName())) {
+                val inlineGroovy = scriptFactory.getInlineScript(request.getMappedAttributeName()).orElseThrow();
                 return fetchAttributeValueAsInlineGroovyScript(request.getAttributeName(), request.getResolvedAttributes(), inlineGroovy);
             }
-            val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(request.getMappedAttributeName());
-            if (matcherFile.find()) {
-                val file = matcherFile.group();
+            if (scriptFactory.isExternalScript(request.getMappedAttributeName())) {
+                val file = scriptFactory.getExternalScript(request.getMappedAttributeName()).orElseThrow();
                 return fetchAttributeValueFromExternalGroovyScript(request.getAttributeName(), request.getResolvedAttributes(), file);
             }
         }
