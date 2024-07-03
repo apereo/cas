@@ -31,8 +31,8 @@ public class GroovyMultifactorAuthenticationProviderBypassEvaluator extends Base
                                                                   final ConfigurableApplicationContext applicationContext) {
         super(providerId, applicationContext);
         val groovyScript = bypassProperties.getGroovy().getLocation();
-        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
-        this.watchableScript = scriptFactory.fromResource(groovyScript);
+        val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+        this.watchableScript = scriptFactory.map(factory -> factory.fromResource(groovyScript)).orElse(null);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class GroovyMultifactorAuthenticationProviderBypassEvaluator extends Base
                                                                           final RegisteredService registeredService,
                                                                           final MultifactorAuthenticationProvider provider,
                                                                           final HttpServletRequest request) {
-        return FunctionUtils.doAndHandle(() -> {
+        return watchableScript != null && FunctionUtils.doAndHandle(() -> {
             val principal = resolvePrincipal(authentication.getPrincipal());
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
                          + "service [{}] and provider [{}] via Groovy script [{}]",
