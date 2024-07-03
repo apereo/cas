@@ -1,5 +1,5 @@
 {
-  "dependencies": "core,reports",
+  "dependencies": "scripting,reports",
   "server": "jetty",
   "requirements": {
     "cds": {
