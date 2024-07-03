@@ -8,7 +8,6 @@ import org.apereo.cas.authentication.mfa.MultifactorAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
-import org.apereo.cas.util.scripting.ScriptingUtils;
 import lombok.val;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -28,7 +27,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("GroovyAuthentication")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@SetSystemProperty(key = ScriptingUtils.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC, value = "true")
+@SetSystemProperty(key = ExecutableCompiledScriptFactory.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC, value = "true")
 class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
     @Order(1)

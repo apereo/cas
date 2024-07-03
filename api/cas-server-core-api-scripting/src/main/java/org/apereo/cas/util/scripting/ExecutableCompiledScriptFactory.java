@@ -14,6 +14,10 @@ import java.util.ServiceLoader;
  * @since 7.1.0
  */
 public interface ExecutableCompiledScriptFactory {
+    /**
+     * System property to indicate groovy compilation must be static.
+     */
+    String SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC = "org.apereo.cas.groovy.compile.static";
 
     /**
      * From resource executable compiled script.
