@@ -43,16 +43,14 @@ import java.util.regex.Pattern;
 @Slf4j
 @UtilityClass
 public class ScriptingUtils {
-    /**
-     * System property to indicate groovy compilation must be static.
-     */
-    public static final String SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC = "org.apereo.cas.groovy.compile.static";
 
     private static final CompilerConfiguration GROOVY_COMPILER_CONFIG;
 
     static {
         GROOVY_COMPILER_CONFIG = new CompilerConfiguration();
-        if (CasRuntimeHintsRegistrar.inNativeImage() || BooleanUtils.toBoolean(System.getProperty(SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC))) {
+        
+        val isStaticCompilation = BooleanUtils.toBoolean(System.getProperty(ExecutableCompiledScriptFactory.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC));
+        if (CasRuntimeHintsRegistrar.inNativeImage() || isStaticCompilation) {
             GROOVY_COMPILER_CONFIG.addCompilationCustomizers(new ASTTransformationCustomizer(CompileStatic.class));
         }
         val imports = new ImportCustomizer();

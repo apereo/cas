@@ -2,7 +2,6 @@ package org.apereo.cas.util;
 
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
-import org.apereo.cas.util.scripting.ScriptingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -33,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class GroovyShellScriptTests {
 
     @Nested
-    @SetSystemProperty(key = ScriptingUtils.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC, value = "true")
+    @SetSystemProperty(key = ExecutableCompiledScriptFactory.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC, value = "true")
     class StaticCompilationTests {
         @Test
         void verifyOperation() throws Exception {
@@ -61,7 +60,7 @@ class GroovyShellScriptTests {
     }
 
     @Nested
-    @ClearSystemProperty(key = ScriptingUtils.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC)
+    @ClearSystemProperty(key = ExecutableCompiledScriptFactory.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC)
     class ConcurrentTests {
         @Test
         void verifyOperation() {
@@ -116,7 +115,7 @@ class GroovyShellScriptTests {
     }
 
     @Nested
-    @ClearSystemProperty(key = ScriptingUtils.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC)
+    @ClearSystemProperty(key = ExecutableCompiledScriptFactory.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC)
     class DefaultTests {
         @Test
         void verifyExec() {

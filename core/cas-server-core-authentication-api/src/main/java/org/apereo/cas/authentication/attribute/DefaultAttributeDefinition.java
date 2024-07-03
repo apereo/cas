@@ -8,7 +8,6 @@ import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
-import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -245,8 +244,9 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     private static String getScriptedPatternedValue(final Object currentValue,
                                                     final String patternedValue,
                                                     final AttributeDefinitionResolutionContext context) {
-        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(patternedValue);
-        if (matcherInline.find()) {
+
+        val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+        if (scriptFactory.isPresent() && scriptFactory.get().isInlineScript(patternedValue)) {
             return ApplicationContextProvider.getScriptResourceCacheManager()
                 .map(cacheManager -> FunctionUtils.doUnchecked(() -> {
                     val script = cacheManager.resolveScriptableResource(patternedValue);
