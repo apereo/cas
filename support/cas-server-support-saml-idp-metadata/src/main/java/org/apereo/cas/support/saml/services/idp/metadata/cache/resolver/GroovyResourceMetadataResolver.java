@@ -51,8 +51,8 @@ public class GroovyResourceMetadataResolver extends BaseSamlRegisteredServiceMet
     @Override
     public boolean supports(final SamlRegisteredService service) {
         val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
-        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
-        return scriptFactory.isExternalScript(metadataLocation);
+        val scriptFactoryInstance = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+        return scriptFactoryInstance.isPresent() && scriptFactoryInstance.get().isExternalScript(metadataLocation);
     }
 
     @Override

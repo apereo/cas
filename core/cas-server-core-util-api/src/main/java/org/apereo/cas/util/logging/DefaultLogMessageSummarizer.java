@@ -14,7 +14,7 @@ import java.util.Arrays;
  */
 public class DefaultLogMessageSummarizer implements LogMessageSummarizer {
 
-    private static final int LINES_TO_SUMMARIZE = 3;
+    private static final int LINES_TO_SUMMARIZE = 4;
 
     @Override
     public boolean shouldSummarize(final Logger logger) {

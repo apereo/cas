@@ -110,10 +110,8 @@ public interface ExecutableCompiledScriptFactory {
      */
     static ExecutableCompiledScriptFactory getExecutableCompiledScriptFactory() {
         return findExecutableCompiledScriptFactory()
-            .orElseThrow(() -> new IllegalArgumentException("""
-                No executable compiled script factory is found.
-                Examine your build and make sure you have included the CAS dependency/module that provides the script factory implementation.
-                """.stripLeading().stripIndent()));
+            .orElseThrow(() -> new IllegalArgumentException("No executable compiled script factory is found. "
+                + "Examine your build and make sure you have included the CAS dependency/module that provides the script factory implementation."));
     }
 
     /**

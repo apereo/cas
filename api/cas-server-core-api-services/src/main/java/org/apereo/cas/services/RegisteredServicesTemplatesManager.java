@@ -20,4 +20,13 @@ public interface RegisteredServicesTemplatesManager {
      * @param registeredService the registered service
      */
     RegisteredService apply(RegisteredService registeredService);
+
+    /**
+     * No op registered services templates manager.
+     *
+     * @return the registered services templates manager
+     */
+    static RegisteredServicesTemplatesManager noOp() {
+        return service -> service;
+    }
 }

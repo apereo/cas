@@ -332,8 +332,15 @@ class CasCoreServicesConfiguration {
         public RegisteredServicesTemplatesManager registeredServicesTemplatesManager(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
-            return new DefaultRegisteredServicesTemplatesManager(casProperties.getServiceRegistry(),
-                new RegisteredServiceJsonSerializer(applicationContext));
+            return BeanSupplier.of(RegisteredServicesTemplatesManager.class)
+                .when(BeanCondition.on("cas.service-registry.templates.directory.location").exists().given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
+                    return new DefaultRegisteredServicesTemplatesManager(casProperties.getServiceRegistry(), registeredServiceSerializer);
+                })
+                .otherwise(RegisteredServicesTemplatesManager::noOp)
+                .get();
+            
         }
 
         @ConditionalOnMissingBean(name = ServicesManager.BEAN_NAME)

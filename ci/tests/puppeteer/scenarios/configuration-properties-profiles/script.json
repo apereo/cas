@@ -1,6 +1,5 @@
 {
-  "dependencies": "core",
-
+  "dependencies": "scripting",
   "properties": [
     "--management.endpoints.enabled-by-default=true",
     "--management.endpoints.web.exposure.include=*",

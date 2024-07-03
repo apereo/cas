@@ -45,7 +45,10 @@ templateFileName = templateName + ".json"
 ## Configuration
 
 {% include_cached casproperties.html properties="cas.service-registry.templates" %}
- 
+    
+Please note that processing template service definitions requires scripting. To prepare CAS to support and 
+integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 ## Examples
 
 Consider the following base template service definition, stored in a `AllLibraryApplications.json` file, 
