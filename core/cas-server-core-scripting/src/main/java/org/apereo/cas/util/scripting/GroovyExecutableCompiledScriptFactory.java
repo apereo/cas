@@ -1,9 +1,11 @@
 package org.apereo.cas.util.scripting;
 
+import groovy.lang.GroovyClassLoader;
 import groovy.text.GStringTemplateEngine;
 import lombok.val;
 import org.springframework.core.io.Resource;
 import java.io.File;
+import java.net.URLClassLoader;
 import java.util.Map;
 import java.util.Optional;
 
@@ -34,6 +36,19 @@ public class GroovyExecutableCompiledScriptFactory implements ExecutableCompiled
     }
 
     @Override
+    public <T> T newObjectInstance(final String classText, final Class<T> expectedType) throws Exception {
+        try (val classLoader = (GroovyClassLoader) newClassLoader()) {
+            val clz = classLoader.parseClass(classText);
+            return expectedType.cast(clz.getDeclaredConstructor().newInstance());
+        }
+    }
+
+    @Override
+    public <T> T newObjectInstance(final Resource resource, final Class[] ctorParameters, final Object[] args, final Class<T> clazz) {
+        return ScriptingUtils.getObjectInstanceFromGroovyResource(resource, ctorParameters, args, clazz);
+    }
+
+    @Override
     public Optional<String> getInlineScript(final String input) {
         val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(input);
         return matcherInline.find() ? Optional.of(matcherInline.group(1)) : Optional.empty();
@@ -48,5 +63,10 @@ public class GroovyExecutableCompiledScriptFactory implements ExecutableCompiled
     @Override
     public ExecutableCompiledScript fromScript(final String script) {
         return new GroovyShellScript(script);
+    }
+
+    @Override
+    public URLClassLoader newClassLoader() {
+        return ScriptingUtils.newGroovyClassLoader();
     }
 }

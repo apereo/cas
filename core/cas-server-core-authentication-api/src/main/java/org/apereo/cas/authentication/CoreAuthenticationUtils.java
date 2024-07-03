@@ -30,7 +30,7 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalAttribute
 import org.apereo.cas.configuration.model.core.authentication.policy.BaseAuthenticationPolicyProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.validation.Assertion;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
@@ -238,14 +238,13 @@ public class CoreAuthenticationUtils {
             if (StringUtils.isBlank(selectionCriteria)) {
                 return credential -> true;
             }
-            if (selectionCriteria.endsWith(".groovy") && CasRuntimeHintsRegistrar.notInNativeImage()) {
+            val scriptFactoryInstance = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+            if (scriptFactoryInstance.isPresent() && scriptFactoryInstance.get().isExternalScript(selectionCriteria) && CasRuntimeHintsRegistrar.notInNativeImage()) {
                 val loader = new DefaultResourceLoader();
                 val resource = loader.getResource(selectionCriteria);
                 val script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
-                try (val classLoader = ScriptingUtils.newGroovyClassLoader()) {
-                    val clz = classLoader.parseClass(script);
-                    return (Predicate<Credential>) clz.getDeclaredConstructor().newInstance();
-                }
+                val scriptFactory = scriptFactoryInstance.get();
+                return scriptFactory.newObjectInstance(script, Predicate.class);
             }
             val predicateClazz = ClassUtils.getClass(selectionCriteria);
             return (Predicate<Credential>) predicateClazz.getDeclaredConstructor().newInstance();

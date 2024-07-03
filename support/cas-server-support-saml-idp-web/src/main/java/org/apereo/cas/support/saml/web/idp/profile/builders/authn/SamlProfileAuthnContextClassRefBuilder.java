@@ -9,7 +9,6 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
-import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
@@ -91,7 +90,7 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
             LOGGER.debug("Using [{}] as indicated by SAML registered service [{}]",
                 requiredClass, context.getRegisteredService().getName());
             val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
-            if (scriptFactory.isPresent() && (ScriptingUtils.isGroovyScript(requiredClass) || ScriptingUtils.isInlineGroovyScript(requiredClass))) {
+            if (scriptFactory.isPresent() && scriptFactory.get().isScript(requiredClass)) {
                 return buildScriptedAuthnContextClassRef(context, requiredClass);
             }
             return requiredClass;
@@ -138,7 +137,7 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
     protected String buildDefaultAuthenticationContextClass(final String defClass,
                                                             final SamlProfileBuilderContext context) {
         val contextValues = CollectionUtils.toCollection(context.getAuthenticatedAssertion()
-            .get().getAttributes().get(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute()));
+            .orElseThrow().getAttributes().get(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute()));
         val definedContexts = CollectionUtils.convertDirectedListToMap(
             casProperties.getAuthn().getSamlIdp().getCore().getContext().getAuthenticationContextClassMappings());
         return definedContexts.entrySet()

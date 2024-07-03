@@ -1,7 +1,7 @@
 package org.apereo.cas.hibernate;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
-import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -40,15 +40,19 @@ public class CasHibernatePhysicalNamingStrategy extends CamelCaseToUnderscoresNa
         LOGGER.trace("Locating physical table name for [{}] based on configured table names [{}]", tableName, tableNames);
         if (tableNames.containsKey(tableName)) {
             val physicalName = tableNames.get(tableName);
-            
-            if (ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory().isPresent()) {
-                if (ScriptingUtils.isExternalGroovyScript(physicalName)) {
+
+            val scriptFactoryInstance = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+            if (scriptFactoryInstance.isPresent()) {
+                if (scriptFactoryInstance.get().isExternalScript(physicalName)) {
                     LOGGER.trace("Executing script [{}] to determine physical table name for [{}]", physicalName, tableName);
-                    val scriptResource = applicationContext.getResource(physicalName);
-                    val args = new Object[]{name, jdbcEnvironment, applicationContext, LOGGER};
-                    val identifier = ScriptingUtils.executeGroovyScript(scriptResource, args, Identifier.class, true);
-                    LOGGER.trace("Determine table physical name from script [{}] to be [{}]", scriptResource, identifier);
-                    return identifier;
+                    return FunctionUtils.doUnchecked(() -> {
+                        val scriptResource = applicationContext.getResource(physicalName);
+                        val args = new Object[]{name, jdbcEnvironment, applicationContext, LOGGER};
+                        val script = scriptFactoryInstance.get().fromResource(scriptResource);
+                        val identifier = script.execute(args, Identifier.class, true);
+                        LOGGER.trace("Determine table physical name from script [{}] to be [{}]", scriptResource, identifier);
+                        return identifier;
+                    });
                 }
             }
             LOGGER.trace("Located physical table name [{}] for [{}]", physicalName, tableName);

@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
-import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Builder;
@@ -67,13 +66,14 @@ public class EmailMessageBodyBuilder implements Supplier<String> {
             return StringUtils.EMPTY;
         }
         try {
-            val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+            val scriptFactoryInstance = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
 
-            if (scriptFactory.isPresent()) {
-                if (ScriptingUtils.isExternalGroovyScript(properties.getText()) || ScriptingUtils.isInlineGroovyScript(properties.getText())) {
-                    val cacheMgr = ApplicationContextProvider.getScriptResourceCacheManager().get();
+            if (scriptFactoryInstance.isPresent()) {
+                val scriptFactory = scriptFactoryInstance.get();
+                if (scriptFactory.isScript(properties.getText())) {
+                    val cacheMgr = ApplicationContextProvider.getScriptResourceCacheManager().orElseThrow();
                     val script = cacheMgr.resolveScriptableResource(properties.getText(), properties.getText());
-                    val args = ScriptingUtils.isInlineGroovyScript(properties.getText())
+                    val args = scriptFactory.isInlineScript(properties.getText())
                         ? new HashMap<>(this.parameters)
                         : CollectionUtils.<String, Object>wrap("parameters", this.parameters);
                     args.put("logger", LOGGER);
@@ -86,10 +86,10 @@ public class EmailMessageBodyBuilder implements Supplier<String> {
             val templateFile = determineEmailTemplateFile();
             LOGGER.debug("Using email template file at [{}]", templateFile);
             val contents = FileUtils.readFileToString(templateFile, StandardCharsets.UTF_8);
-            if (templateFile.getName().endsWith(".gtemplate") && scriptFactory.isPresent()) {
+            if (templateFile.getName().endsWith(".gtemplate") && scriptFactoryInstance.isPresent()) {
                 val templateParams = new LinkedHashMap<>(this.parameters);
                 locale.ifPresent(loc -> templateParams.put("locale", loc));
-                return scriptFactory.get().createTemplate(contents, templateParams);
+                return scriptFactoryInstance.get().createTemplate(contents, templateParams);
             }
 
             return formatEmailBody(contents);

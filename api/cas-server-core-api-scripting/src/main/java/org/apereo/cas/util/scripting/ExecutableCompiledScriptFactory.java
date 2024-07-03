@@ -2,6 +2,7 @@ package org.apereo.cas.util.scripting;
 
 import org.springframework.core.io.Resource;
 import java.io.File;
+import java.net.URLClassLoader;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
@@ -62,6 +63,31 @@ public interface ExecutableCompiledScriptFactory {
     String createTemplate(File contents, Map<String, ?> templateParams) throws Exception;
 
     /**
+     * New object instance t.
+     *
+     * @param <T>            the type parameter
+     * @param script         the script
+     * @param clazz the predicate class
+     * @return the t
+     * @throws Exception the exception
+     */
+    <T> T newObjectInstance(String script, Class<T> clazz) throws Exception;
+
+    /**
+     * New object instance t.
+     *
+     * @param <T>            the type parameter
+     * @param resource       the resource
+     * @param ctorParameters the ctor parameters
+     * @param args           the args
+     * @param clazz          the clazz
+     * @return the t
+     */
+    <T> T newObjectInstance(Resource resource, Class[] ctorParameters,
+                             Object[] args, Class<T> clazz);
+    
+
+    /**
      * Find executable compiled script factory.
      *
      * @return the optional
@@ -82,8 +108,8 @@ public interface ExecutableCompiledScriptFactory {
         return findExecutableCompiledScriptFactory()
             .orElseThrow(() -> new IllegalArgumentException("""
                 No executable compiled script factory is found.
-                Examine your build and make sure you have a dependency on the CAS module that provides the factory implementation.
-                """));
+                Examine your build and make sure you have included the CAS dependency/module that provides the script factory implementation.
+                """.stripLeading().stripIndent()));
     }
 
     /**
@@ -107,6 +133,16 @@ public interface ExecutableCompiledScriptFactory {
     }
 
     /**
+     * Is script?.
+     *
+     * @param text the text
+     * @return true/false
+     */
+    default boolean isScript(final String text) {
+        return isExternalScript(text) || isInlineScript(text);
+    }
+    
+    /**
      * Gets inline script.
      *
      * @param input the input
@@ -121,4 +157,11 @@ public interface ExecutableCompiledScriptFactory {
      * @return the external script
      */
     Optional<String> getExternalScript(String input);
+
+    /**
+     * New class loader.
+     *
+     * @return the class loader
+     */
+    URLClassLoader newClassLoader();
 }
