@@ -1,5 +1,5 @@
 {
-  "dependencies": "simple-mfa,trusted-mfa-jdbc",
+  "dependencies": "simple-mfa,trusted-mfa-jdbc,scripting",
   "conditions": {
     "docker": "true"
   },
