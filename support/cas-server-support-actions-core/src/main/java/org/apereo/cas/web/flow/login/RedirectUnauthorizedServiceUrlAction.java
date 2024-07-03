@@ -4,7 +4,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
-import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
@@ -37,7 +36,7 @@ public class RedirectUnauthorizedServiceUrlAction extends BaseCasWebflowAction {
         val url = redirectUrl.toString();
 
         val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
-        if (scriptFactory.isPresent() && ScriptingUtils.isGroovyScript(url)) {
+        if (scriptFactory.isPresent() && scriptFactory.get().isScript(url)) {
             redirectUrl = FunctionUtils.doUnchecked(() -> {
                 val registeredService = WebUtils.getRegisteredService(requestContext);
                 val authentication = WebUtils.getAuthentication(requestContext);

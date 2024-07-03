@@ -11,7 +11,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
-import org.apereo.cas.util.scripting.ScriptingUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -167,7 +166,7 @@ public class DelegatedClientSaml2Builder implements ConfigurableDelegatedClientB
                 configuration.setNameIdPolicyAllowCreate(saml.getNameIdPolicyAllowCreate().toBoolean());
 
                 if (StringUtils.isNotBlank(saml.getSaml2AttributeConverter())) {
-                    if (scriptFactory.isPresent() && ScriptingUtils.isExternalGroovyScript(saml.getSaml2AttributeConverter())) {
+                    if (scriptFactory.isPresent() && scriptFactory.get().isExternalScript(saml.getSaml2AttributeConverter())) {
                         FunctionUtils.doAndHandle(__ -> {
                             val resource = ResourceUtils.getResourceFrom(saml.getSaml2AttributeConverter());
                             val script = scriptFactory.get().fromResource(resource);

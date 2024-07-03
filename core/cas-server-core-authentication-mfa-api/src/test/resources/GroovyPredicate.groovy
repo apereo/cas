@@ -1,7 +1,5 @@
 import groovy.transform.TupleConstructor
-import org.apereo.cas.authentication.principal.Principal
-import org.apereo.cas.authentication.principal.Service
-
+import org.apereo.cas.authentication.principal.*
 import java.util.function.Predicate
 
 @TupleConstructor

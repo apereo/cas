@@ -4,9 +4,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicyContext;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,9 +77,10 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
             val mappedAttr = mappedClaimResult.get();
             LOGGER.trace("Attribute [{}] is mapped to claim [{}]", mappedAttr, claim);
 
-            val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(mappedAttr);
-            if (matcherInline.find()) {
-                val script = matcherInline.group(1);
+            val scriptFactoryInstance = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+            
+            if (scriptFactoryInstance.isPresent() && scriptFactoryInstance.get().isInlineScript(mappedAttr)) {
+                val script = scriptFactoryInstance.get().getInlineScript(mappedAttr).orElseThrow();
                 LOGGER.trace("Locating attribute value via script [{}] for definition [{}]", script, claim);
                 try (val cacheManager = ApplicationContextProvider.getScriptResourceCacheManager()
                     .orElseThrow(() -> new IllegalArgumentException("No groovy script cache manager is available to execute claim mappings"))) {

@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -65,8 +65,8 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationTrigger implem
 
         val principal = authentication.getPrincipal();
         val args = new Object[]{service, principal, providers, LOGGER};
-        val predicate = ScriptingUtils.getObjectInstanceFromGroovyResource(predicateResource, PREDICATE_CTOR_PARAMETERS, args, Predicate.class);
-
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        val predicate = scriptFactory.newObjectInstance(predicateResource, PREDICATE_CTOR_PARAMETERS, args, Predicate.class);
         if (predicate == null) {
             LOGGER.debug("No multifactor authentication provider is determined by the predicate");
             return Optional.empty();
