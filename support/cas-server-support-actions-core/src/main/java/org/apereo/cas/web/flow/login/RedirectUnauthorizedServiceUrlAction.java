@@ -3,10 +3,9 @@ package org.apereo.cas.web.flow.login;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
-import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.Getter;
@@ -32,10 +31,8 @@ public class RedirectUnauthorizedServiceUrlAction extends BaseCasWebflowAction {
 
     private final ApplicationContext applicationContext;
 
-    private final ScriptResourceCacheManager<String, ExecutableCompiledScript> scriptResourceCacheManager;
-
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) {
+    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         var redirectUrl = determineUnauthorizedServiceRedirectUrl(requestContext);
         val url = redirectUrl.toString();
 
@@ -49,6 +46,7 @@ public class RedirectUnauthorizedServiceUrlAction extends BaseCasWebflowAction {
                     "requestContext", requestContext,
                     "applicationContext", applicationContext,
                     "logger", LOGGER);
+                val scriptResourceCacheManager = ApplicationContextProvider.getScriptResourceCacheManager().orElseThrow();
                 val scriptToExec = scriptResourceCacheManager.resolveScriptableResource(url);
                 scriptToExec.setBinding(args);
                 return scriptToExec.execute(args.values().toArray(), URI.class);

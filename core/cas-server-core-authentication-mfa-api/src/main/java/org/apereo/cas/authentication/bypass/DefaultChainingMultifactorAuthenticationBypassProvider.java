@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -108,7 +109,7 @@ public class DefaultChainingMultifactorAuthenticationBypassProvider implements C
      */
     @Override
     public void addMultifactorAuthenticationProviderBypassEvaluator(final MultifactorAuthenticationProviderBypassEvaluator bypass) {
-        if (!bypass.isEmpty()) {
+        if (BeanSupplier.isNotProxy(bypass) && !bypass.isEmpty()) {
             this.multifactorAuthenticationProviderBypassEvaluators.add(bypass);
         }
     }
