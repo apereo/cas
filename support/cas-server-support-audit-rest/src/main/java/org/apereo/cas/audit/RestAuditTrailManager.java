@@ -39,12 +39,13 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private final AuditActionContextJsonSerializer serializer = new AuditActionContextJsonSerializer();
+    private final AuditActionContextJsonSerializer serializer;
 
     private final AuditRestProperties properties;
 
-    public RestAuditTrailManager(final AuditRestProperties properties) {
+    public RestAuditTrailManager(final AuditActionContextJsonSerializer serializer, final AuditRestProperties properties) {
         super(properties.isAsynchronous());
+        this.serializer = serializer;
         this.properties = properties;
     }
 

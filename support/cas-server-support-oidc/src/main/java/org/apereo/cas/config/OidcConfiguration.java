@@ -956,8 +956,9 @@ class OidcConfiguration {
         @ConditionalOnMissingBean(name = "clientRegistrationRequestSerializer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer() {
-            return new OidcClientRegistrationRequestSerializer();
+        public StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer(
+            final ConfigurableApplicationContext applicationContext) {
+            return new OidcClientRegistrationRequestSerializer(applicationContext);
         }
 
         @Bean

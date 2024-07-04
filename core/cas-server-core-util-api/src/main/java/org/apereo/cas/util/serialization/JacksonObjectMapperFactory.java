@@ -1,6 +1,7 @@
 package org.apereo.cas.util.serialization;
 
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -32,13 +33,13 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.io.Serial;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
 /**
@@ -78,18 +79,28 @@ public class JacksonObjectMapperFactory {
     private final JsonFactory jsonFactory;
 
     /**
-     * Configure an existing mapper.
+     * Produce an object mapper for YAML serialization/de-serialization.
      *
-     * @param applicationContext the application context
-     * @param objectMapper       the mapper
+     * @return the object mapper
      */
-    public static void configure(
-        final ConfigurableApplicationContext applicationContext,
-        final ObjectMapper objectMapper) {
+    public ObjectMapper toObjectMapper() {
+        val mapper = determineMapperInstance();
+        val objectMapper = initialize(mapper);
+        
+        val allCustomizers = getObjectMapperCustomizers();
+        configureInjectableValues(allCustomizers, objectMapper);
+        configureObjectMapperModules(objectMapper);
+        allCustomizers.forEach(customizer -> customizer.customize(objectMapper));
+        
+        return objectMapper;
+    }
+
+    private static void configureObjectMapperModules(final ObjectMapper objectMapper) {
         objectMapper.registerModule(new JavaTimeModule());
-        val serializers = new ArrayList<>(applicationContext.getBeansOfType(JacksonObjectMapperCustomizer.class).values());
-        AnnotationAwareOrderComparator.sort(serializers);
-        val injectedValues = (Map) serializers
+    }
+
+    private static void configureInjectableValues(final List<JacksonObjectMapperCustomizer> allCustomizers, final ObjectMapper objectMapper) {
+        val injectedValues = (Map) allCustomizers
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .map(JacksonObjectMapperCustomizer::getInjectableValues)
@@ -98,14 +109,20 @@ public class JacksonObjectMapperFactory {
         objectMapper.setInjectableValues(new JacksonInjectableValueSupplier(() -> injectedValues));
     }
 
-    /**
-     * Produce an object mapper for YAML serialization/de-serialization.
-     *
-     * @return the object mapper
-     */
-    public ObjectMapper toObjectMapper() {
-        val mapper = determineMapperInstance();
-        return initialize(mapper);
+    private static List<JacksonObjectMapperCustomizer> getObjectMapperCustomizers() {
+        val customizers = ServiceLoader.load(JacksonObjectMapperCustomizer.class)
+            .stream()
+            .map(ServiceLoader.Provider::get)
+            .filter(BeanSupplier::isNotProxy)
+            .collect(Collectors.toList());
+
+        val applicationContext = ApplicationContextProvider.getApplicationContext();
+        if (applicationContext != null) {
+            val customizerBeans = applicationContext.getBeansOfType(JacksonObjectMapperCustomizer.class).values();
+            customizers.addAll(customizerBeans);
+        }
+        AnnotationAwareOrderComparator.sort(customizers);
+        return customizers;
     }
 
     /**

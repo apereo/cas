@@ -14,6 +14,7 @@ import org.apereo.cas.ticket.serialization.serializers.TransientSessionTicketStr
 import org.apereo.cas.util.serialization.StringSerializer;
 
 import lombok.Getter;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,18 +29,18 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DefaultTicketSerializationExecutionPlan implements TicketSerializationExecutionPlan {
     private final Map<String, StringSerializer<? extends Ticket>> ticketSerializers = new ConcurrentHashMap<>();
 
-    public DefaultTicketSerializationExecutionPlan() {
-        registerTicketSerializer(new EncodedTicketStringSerializer());
-        registerTicketSerializer(new ProxyGrantingTicketStringSerializer());
-        registerTicketSerializer(new ProxyTicketStringSerializer());
-        registerTicketSerializer(new ServiceTicketStringSerializer());
-        registerTicketSerializer(new TicketGrantingTicketStringSerializer());
-        registerTicketSerializer(new TransientSessionTicketStringSerializer());
+    public DefaultTicketSerializationExecutionPlan(final ConfigurableApplicationContext applicationContext) {
+        registerTicketSerializer(new EncodedTicketStringSerializer(applicationContext));
+        registerTicketSerializer(new ProxyGrantingTicketStringSerializer(applicationContext));
+        registerTicketSerializer(new ProxyTicketStringSerializer(applicationContext));
+        registerTicketSerializer(new ServiceTicketStringSerializer(applicationContext));
+        registerTicketSerializer(new TicketGrantingTicketStringSerializer(applicationContext));
+        registerTicketSerializer(new TransientSessionTicketStringSerializer(applicationContext));
 
-        registerTicketSerializer(TicketGrantingTicket.class.getName(), new TicketGrantingTicketStringSerializer());
-        registerTicketSerializer(ServiceTicket.class.getName(), new ServiceTicketStringSerializer());
-        registerTicketSerializer(ProxyTicket.class.getName(), new ProxyTicketStringSerializer());
-        registerTicketSerializer(ProxyGrantingTicket.class.getName(), new ProxyGrantingTicketStringSerializer());
+        registerTicketSerializer(TicketGrantingTicket.class.getName(), new TicketGrantingTicketStringSerializer(applicationContext));
+        registerTicketSerializer(ServiceTicket.class.getName(), new ServiceTicketStringSerializer(applicationContext));
+        registerTicketSerializer(ProxyTicket.class.getName(), new ProxyTicketStringSerializer(applicationContext));
+        registerTicketSerializer(ProxyGrantingTicket.class.getName(), new ProxyGrantingTicketStringSerializer(applicationContext));
     }
 
     @Override

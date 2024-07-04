@@ -34,6 +34,7 @@ import org.apereo.cas.gauth.web.flow.account.GoogleMultifactorAuthenticationAcco
 import org.apereo.cas.gauth.web.flow.account.GoogleMultifactorAuthenticationAccountProfileRegistrationAction;
 import org.apereo.cas.gauth.web.flow.account.GoogleMultifactorAuthenticationAccountProfileWebflowConfigurer;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccountCipherExecutor;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccountSerializer;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialDeviceManager;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialValidator;
@@ -55,7 +56,6 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.DefaultMultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
-
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
@@ -80,7 +80,6 @@ import org.springframework.core.Ordered;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -298,6 +297,7 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("googleAuthenticatorInstance")
             final IGoogleAuthenticator googleAuthenticatorInstance,
@@ -308,7 +308,9 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             val gauth = casProperties.getAuthn().getMfa().getGauth();
             if (gauth.getJson().getLocation() != null) {
                 return new JsonGoogleAuthenticatorTokenCredentialRepository(gauth.getJson().getLocation(),
-                    googleAuthenticatorInstance, googleAuthenticatorAccountCipherExecutor, googleAuthenticatorScratchCodesCipherExecutor);
+                    googleAuthenticatorInstance, googleAuthenticatorAccountCipherExecutor,
+                    googleAuthenticatorScratchCodesCipherExecutor,
+                    new OneTimeTokenAccountSerializer(applicationContext));
             }
             if (StringUtils.isNotBlank(gauth.getRest().getUrl())) {
                 return new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance,

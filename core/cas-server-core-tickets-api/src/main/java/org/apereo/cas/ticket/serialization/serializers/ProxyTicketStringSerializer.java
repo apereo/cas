@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.serialization.serializers;
 import org.apereo.cas.ticket.ProxyTicketImpl;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 
+import org.springframework.context.ConfigurableApplicationContext;
 import java.io.Serial;
 
 /**
@@ -15,8 +16,8 @@ public class ProxyTicketStringSerializer extends AbstractJacksonBackedStringSeri
     @Serial
     private static final long serialVersionUID = -6343596853082798477L;
 
-    public ProxyTicketStringSerializer() {
-        super(MINIMAL_PRETTY_PRINTER);
+    public ProxyTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
+        super(MINIMAL_PRETTY_PRINTER, applicationContext);
     }
 
     @Override

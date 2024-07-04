@@ -1,6 +1,7 @@
 package org.apereo.cas.support.wsfederation.web;
 
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.io.Serial;
 import java.util.Map;
 
@@ -14,8 +15,8 @@ public class WsFederationServerStateSerializer extends AbstractJacksonBackedStri
     @Serial
     private static final long serialVersionUID = -1152522695984638020L;
 
-    public WsFederationServerStateSerializer() {
-        super(MINIMAL_PRETTY_PRINTER);
+    public WsFederationServerStateSerializer(final ConfigurableApplicationContext applicationContext) {
+        super(MINIMAL_PRETTY_PRINTER, applicationContext);
     }
 
     @Override

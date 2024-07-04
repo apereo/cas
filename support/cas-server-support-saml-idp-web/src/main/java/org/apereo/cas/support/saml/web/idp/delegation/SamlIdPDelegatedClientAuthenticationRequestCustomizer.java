@@ -82,9 +82,16 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
         LOGGER.debug("Scoped identity providers are [{}] to examine against client [{}]", providerList, client.getName());
         if (supports(client, webContext)) {
             val saml2Client = (SAML2Client) client;
-            LOGGER.debug("Comparing delegated SAML2 identity provider [{}] against scoped identity providers [{}]",
-                saml2Client.getIdentityProviderResolvedEntityId(), providerList);
-            val authorized = providerList.isEmpty() || providerList.contains(saml2Client.getIdentityProviderResolvedEntityId());
+            saml2Client.init();
+            val configuration = saml2Client.getConfiguration();
+            var identityProviderEntityId = configuration.getIdentityProviderEntityId();
+            if (org.apache.commons.lang3.StringUtils.isBlank(identityProviderEntityId)) {
+                val identityProviderMetadataResolver = configuration.getIdentityProviderMetadataResolver();
+                identityProviderMetadataResolver.resolve();
+                identityProviderEntityId = identityProviderMetadataResolver.getEntityId();
+            }
+            LOGGER.debug("Comparing delegated SAML2 identity provider [{}] against scoped identity providers [{}]", identityProviderEntityId, providerList);
+            val authorized = providerList.isEmpty() || providerList.contains(identityProviderEntityId);
             if (!authorized) {
                 val registeredService = servicesManager.findServiceBy(currentService);
                 val delegatedAuthenticationPolicy = registeredService != null ? registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy() : null;
