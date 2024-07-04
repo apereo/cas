@@ -217,7 +217,7 @@ Certain number of characters are left at the trailing end of the ticket id to as
 
 By default, logged stacktraces are summarized and only the first few lines of the stacktrace
 are displayed in the output to reduce noise. If you wish to see the full stacktrace and disable the summary mode, you can consider changing the log level
-for the appropriate package to `DEBUG`. This behavior can be replaced and customized via your implementatation of the `LogMessageSummarizer`, 
+for the appropriate package to `DEBUG`. This behavior can be replaced and customized via your implementation of the `LogMessageSummarizer`, 
 that should be registered with CAS using the Java ServiceLoader API. In doing so and at a minimum, you need to 
 create a `src/main/resources/META-INF/services/org.apereo.cas.util.LogMessageSummarizer` file with the following contents:
 

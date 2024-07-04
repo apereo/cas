@@ -46,15 +46,15 @@ public class SpringExpressionLanguageValueResolver implements Function {
     private final StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
 
     protected SpringExpressionLanguageValueResolver() {
-        val properties = System.getProperties();
-        evaluationContext.setVariable("systemProperties", properties);
-        evaluationContext.setVariable("sysProps", properties);
+        val systemProperties = System.getProperties();
+        evaluationContext.setVariable("systemProperties", systemProperties);
+        evaluationContext.setVariable("sysProps", systemProperties);
 
-        val environment = System.getenv();
-        evaluationContext.setVariable("environmentVars", environment);
-        evaluationContext.setVariable("environmentVariables", environment);
-        evaluationContext.setVariable("envVars", environment);
-        evaluationContext.setVariable("env", environment);
+        val environmentVariables = System.getenv();
+        evaluationContext.setVariable("environmentVars", environmentVariables);
+        evaluationContext.setVariable("environmentVariables", environmentVariables);
+        evaluationContext.setVariable("envVars", environmentVariables);
+        evaluationContext.setVariable("env", environmentVariables);
 
         evaluationContext.setVariable("tempDir", FileUtils.getTempDirectoryPath());
         evaluationContext.setVariable("zoneId", ZoneId.systemDefault().getId());
