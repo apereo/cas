@@ -82,16 +82,7 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
         LOGGER.debug("Scoped identity providers are [{}] to examine against client [{}]", providerList, client.getName());
         if (supports(client, webContext)) {
             val saml2Client = (SAML2Client) client;
-            saml2Client.init();
-            val configuration = saml2Client.getConfiguration();
-            var identityProviderEntityId = configuration.getIdentityProviderEntityId();
-            if (org.apache.commons.lang3.StringUtils.isBlank(identityProviderEntityId)) {
-                val identityProviderMetadataResolver = configuration.getIdentityProviderMetadataResolver();
-                identityProviderMetadataResolver.resolve();
-                identityProviderEntityId = identityProviderMetadataResolver.getEntityId();
-            }
-            LOGGER.debug("Comparing delegated SAML2 identity provider [{}] against scoped identity providers [{}]", identityProviderEntityId, providerList);
-            val authorized = providerList.isEmpty() || providerList.contains(identityProviderEntityId);
+            val authorized = providerList.isEmpty() || providerList.contains(getIdentityProviderEntityId(saml2Client));
             if (!authorized) {
                 val registeredService = servicesManager.findServiceBy(currentService);
                 val delegatedAuthenticationPolicy = registeredService != null ? registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy() : null;
@@ -139,5 +130,18 @@ public class SamlIdPDelegatedClientAuthenticationRequestCustomizer implements De
     protected void customizeForceAuthnRequest(final IndirectClient client, final WebContext webContext,
                                               final AuthnRequest authnRequest) {
         webContext.setRequestAttribute(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true);
+    }
+
+    protected String getIdentityProviderEntityId(final SAML2Client saml2Client) {
+        saml2Client.init();
+        val configuration = saml2Client.getConfiguration();
+        var identityProviderEntityId = configuration.getIdentityProviderEntityId();
+        if (org.apache.commons.lang3.StringUtils.isBlank(identityProviderEntityId)) {
+            val identityProviderMetadataResolver = configuration.getIdentityProviderMetadataResolver();
+            identityProviderMetadataResolver.resolve(true);
+            identityProviderEntityId = identityProviderMetadataResolver.getEntityId();
+        }
+        LOGGER.debug("Resolved SAML2 identity provider entity id as [{}]", identityProviderEntityId);
+        return identityProviderEntityId;
     }
 }
