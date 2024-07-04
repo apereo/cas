@@ -1,9 +1,11 @@
 package org.apereo.cas.util.serialization;
 
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.http.MediaType;
 
 import java.io.ByteArrayInputStream;
@@ -21,6 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Utility")
+@ExtendWith(CasTestExtension.class)
 class StringSerializerTests {
     @Test
     void verifyOperation() throws Throwable {

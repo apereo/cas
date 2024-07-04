@@ -277,7 +277,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void checkSaveMethodWithNonExistentServiceAndNoAttributes() {
+    void checkSaveMethodWithNonExistentServiceAndNoAttributes() {
         getRegisteredServiceTypes().forEach(type -> {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
             val r2 = serviceRegistry.save(r);
@@ -289,7 +289,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void checkSaveMethodWithDelegatedAuthnPolicy() {
+    void checkSaveMethodWithDelegatedAuthnPolicy() {
         getRegisteredServiceTypes().forEach(type -> {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
             val strategy = new DefaultRegisteredServiceAccessStrategy();
@@ -303,7 +303,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void execSaveWithAuthnMethodPolicy() {
+    void execSaveWithAuthnMethodPolicy() {
         getRegisteredServiceTypes().forEach(type -> {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
             val policy = new DefaultRegisteredServiceMultifactorPolicy();
@@ -322,7 +322,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void execSaveMethodWithDefaultUsernameAttribute() {
+    void execSaveMethodWithDefaultUsernameAttribute() {
         getRegisteredServiceTypes().forEach(type -> {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
             r.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
@@ -333,7 +333,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void execSaveMethodWithConsentPolicy() {
+    void execSaveMethodWithConsentPolicy() {
         getRegisteredServiceTypes().forEach(type -> {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
             val policy = new ReturnAllAttributeReleasePolicy();
@@ -347,7 +347,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void ensureSaveMethodWithDefaultPrincipalAttribute() {
+    void ensureSaveMethodWithDefaultPrincipalAttribute() {
         getRegisteredServiceTypes().forEach(type -> {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
 
@@ -511,7 +511,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void checkForAuthorizationStrategy() {
+    void checkForAuthorizationStrategy() {
         getRegisteredServiceTypes().forEach(type -> {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
             val authz = new DefaultRegisteredServiceAccessStrategy(false, false);
@@ -559,7 +559,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void serializePublicKeyForServiceAndVerify() {
+    void serializePublicKeyForServiceAndVerify() {
         getRegisteredServiceTypes().forEach(type -> {
             val publicKey = new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA");
             val registeredService = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
@@ -605,7 +605,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void persistCustomServiceProperties() {
+    void persistCustomServiceProperties() {
         getRegisteredServiceTypes().forEach(type -> {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
             val properties = new HashMap<String, RegisteredServiceProperty>();

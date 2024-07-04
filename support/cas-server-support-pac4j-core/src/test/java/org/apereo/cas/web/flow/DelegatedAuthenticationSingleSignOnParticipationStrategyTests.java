@@ -135,7 +135,7 @@ class DelegatedAuthenticationSingleSignOnParticipationStrategyTests extends Base
     }
 
     @Test
-    public void verifyTgtIsExpired() throws Exception {
+    void verifyTgtIsExpired() throws Exception {
         val context = MockRequestContext.create(applicationContext);
         val svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), Map.of());
         val strategy = getSingleSignOnStrategy(svc);

@@ -1,9 +1,11 @@
 package org.apereo.cas.util.serialization;
 
+import org.apereo.cas.test.CasTestExtension;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.Ordered;
@@ -18,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Utility")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 class JacksonObjectMapperCustomizerTests {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
