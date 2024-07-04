@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class DefaultDelegatedClientAuthenticationFailureEvaluatorTests {
 
     @Test
-    public void verifyThrottling() {
+    void verifyThrottling() {
         val evaluator = new DefaultDelegatedClientAuthenticationFailureEvaluator(
                 mock(DelegatedClientAuthenticationConfigurationContext.class));
         val optModelAndView = evaluator.evaluate(new MockHttpServletRequest(), HttpStatus.LOCKED.value());

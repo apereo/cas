@@ -35,6 +35,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class MongoSessionConfigurationTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
     }
 }
