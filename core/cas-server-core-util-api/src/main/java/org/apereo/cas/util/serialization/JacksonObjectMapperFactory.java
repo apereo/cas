@@ -99,13 +99,14 @@ public class JacksonObjectMapperFactory {
         objectMapper.registerModule(new JavaTimeModule());
     }
 
-    private static void configureInjectableValues(final List<JacksonObjectMapperCustomizer> allCustomizers, final ObjectMapper objectMapper) {
+    private void configureInjectableValues(final List<JacksonObjectMapperCustomizer> allCustomizers, final ObjectMapper objectMapper) {
         val injectedValues = (Map) allCustomizers
             .stream()
             .filter(BeanSupplier::isNotProxy)
             .map(JacksonObjectMapperCustomizer::getInjectableValues)
             .flatMap(entry -> entry.entrySet().stream())
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        injectedValues.putAll(this.injectableValues);
         objectMapper.setInjectableValues(new JacksonInjectableValueSupplier(() -> injectedValues));
     }
 
@@ -150,7 +151,7 @@ public class JacksonObjectMapperFactory {
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, isWriteDatesAsTimestamps())
             .build();
 
-        obm.setInjectableValues(new JacksonInjectableValueSupplier(this::getInjectableValues))
+        obm
             .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT)
             .setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
             .setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC)
