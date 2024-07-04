@@ -105,7 +105,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
     @Operation(summary = "Export accounts as a zip file")
     public ResponseEntity<Resource> exportAccounts() {
         val accounts = repository.getObject().load();
-        val serializer = new GoogleAuthenticatorAccountSerializer();
+        val serializer = new GoogleAuthenticatorAccountSerializer(applicationContext);
         val resource = CompressionUtils.toZipFile(accounts.stream(),
             Unchecked.function(entry -> {
                 val acct = (GoogleAuthenticatorAccount) entry;
@@ -132,7 +132,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
     public ResponseEntity importAccount(final HttpServletRequest request) throws Exception {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.trace("Submitted account: [{}]", requestBody);
-        val serializer = new GoogleAuthenticatorAccountSerializer();
+        val serializer = new GoogleAuthenticatorAccountSerializer(applicationContext);
         val account = serializer.from(requestBody);
         LOGGER.trace("Storing account: [{}]", account);
         repository.getObject().save(account);

@@ -81,7 +81,8 @@ public class DelegatedClientsEndpoint extends BaseCasActuatorEndpoint {
     }
     
     protected Map<String, String> fetchCasConfiguration(final CasConfiguration configuration) {
-        return CollectionUtils.wrap("protocol", configuration.getProtocol(),
+        return CollectionUtils.wrap(
+            "protocol", configuration.getProtocol(),
             "loginUrl", configuration.getLoginUrl());
     }
 }

@@ -3,6 +3,7 @@ package org.apereo.cas.support.pac4j;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -14,10 +15,16 @@ import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import lombok.val;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.oidc.credentials.OidcCredentials;
 import org.pac4j.oidc.profile.OidcProfile;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
@@ -30,15 +37,27 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("Delegation")
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 class DelegatedClientSerializationTests {
-    private static final AbstractJacksonBackedStringSerializer TST_SERIALIZER = new TransientSessionTicketStringSerializer();
-    private static final AbstractJacksonBackedStringSerializer TGT_SERIALIZER = new TicketGrantingTicketStringSerializer();
-
     private static final String ID_TOKEN = """
         eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJpc3MiOiJodHRwczovL2p3dC1pZHAuZXhhbX
         BsZS5jb20iLCJzdWIiOiJtYWlsdG86cGVyc29uQGV4YW1wbGUuY29tIiwibmJmIjoxNDQwMTEyMDE1LCJleHAiOjE0NDAxMTU2
         MTUsImlhdCI6MTQ0MDExMjAxNSwianRpIjoiaWQxMjM0NTYiLCJ0eXAiOiJodHRwczovL2V4YW1wbGUuY29tL3JlZ2lzdGVyIn0.""";
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
+    private AbstractJacksonBackedStringSerializer tstSerializer;
+    private AbstractJacksonBackedStringSerializer tgtSerializer;
+
+
+    @BeforeEach
+    public void beforeEach() {
+        tstSerializer = new TransientSessionTicketStringSerializer(applicationContext);
+        tgtSerializer = new TicketGrantingTicketStringSerializer(applicationContext);
+    }
+    
     @Test
     public void verifyOperation() throws Exception {
         val jwt = new PlainJWT(new JWTClaimsSet.Builder()
@@ -55,8 +74,8 @@ class DelegatedClientSerializationTests {
         val ticket = new TransientSessionTicketImpl(UUID.randomUUID().toString(),
             NeverExpiresExpirationPolicy.INSTANCE, RegisteredServiceTestUtils.getService(),
             Map.of("profiles", oidcProfile));
-        val content = TST_SERIALIZER.toString(ticket);
-        assertSame(TST_SERIALIZER.getTypeToSerialize(), TST_SERIALIZER.from(content).getClass());
+        val content = tstSerializer.toString(ticket);
+        assertSame(tstSerializer.getTypeToSerialize(), tstSerializer.from(content).getClass());
     }
 
     @Test
@@ -78,7 +97,7 @@ class DelegatedClientSerializationTests {
         val ticket = new TicketGrantingTicketImpl(
             UUID.randomUUID().toString(),
             auth, NeverExpiresExpirationPolicy.INSTANCE);
-        val content = TGT_SERIALIZER.toString(ticket);
-        assertSame(TGT_SERIALIZER.getTypeToSerialize(), TGT_SERIALIZER.from(content).getClass());
+        val content = tgtSerializer.toString(ticket);
+        assertSame(tgtSerializer.getTypeToSerialize(), tgtSerializer.from(content).getClass());
     }
 }

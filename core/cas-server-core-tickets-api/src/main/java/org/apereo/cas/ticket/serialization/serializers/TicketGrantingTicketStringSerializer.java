@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.serialization.serializers;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 
+import org.springframework.context.ConfigurableApplicationContext;
 import java.io.Serial;
 
 /**
@@ -15,8 +16,8 @@ public class TicketGrantingTicketStringSerializer extends AbstractJacksonBackedS
     @Serial
     private static final long serialVersionUID = 1527874389457723545L;
 
-    public TicketGrantingTicketStringSerializer() {
-        super(MINIMAL_PRETTY_PRINTER);
+    public TicketGrantingTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
+        super(MINIMAL_PRETTY_PRINTER, applicationContext);
     }
 
     @Override

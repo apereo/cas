@@ -178,11 +178,12 @@ class CasSimpleMultifactorAuthenticationConfiguration {
     static class CasSimpleMultifactorAuthenticationTicketSerializationConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public TicketSerializationExecutionPlanConfigurer casSimpleMultifactorAuthenticationTicketSerializationExecutionPlanConfigurer() {
+        public TicketSerializationExecutionPlanConfigurer casSimpleMultifactorAuthenticationTicketSerializationExecutionPlanConfigurer(
+            final ConfigurableApplicationContext applicationContext) {
             return plan -> {
-                plan.registerTicketSerializer(new CasSimpleMultifactorAuthenticationTicketStringSerializer());
+                plan.registerTicketSerializer(new CasSimpleMultifactorAuthenticationTicketStringSerializer(applicationContext));
                 plan.registerTicketSerializer(CasSimpleMultifactorAuthenticationTicket.class.getName(),
-                    new CasSimpleMultifactorAuthenticationTicketStringSerializer());
+                    new CasSimpleMultifactorAuthenticationTicketStringSerializer(applicationContext));
             };
         }
 
@@ -191,8 +192,8 @@ class CasSimpleMultifactorAuthenticationConfiguration {
             @Serial
             private static final long serialVersionUID = -2198623586274810263L;
 
-            CasSimpleMultifactorAuthenticationTicketStringSerializer() {
-                super(MINIMAL_PRETTY_PRINTER);
+            CasSimpleMultifactorAuthenticationTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
+                super(MINIMAL_PRETTY_PRINTER, applicationContext);
             }
 
             @Override

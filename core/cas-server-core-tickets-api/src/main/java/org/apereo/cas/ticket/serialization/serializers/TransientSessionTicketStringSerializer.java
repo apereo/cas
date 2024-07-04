@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.serialization.serializers;
 import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 
+import org.springframework.context.ConfigurableApplicationContext;
 import java.io.Serial;
 
 /**
@@ -15,8 +16,8 @@ public class TransientSessionTicketStringSerializer extends AbstractJacksonBacke
     @Serial
     private static final long serialVersionUID = 8959617299162115085L;
 
-    public TransientSessionTicketStringSerializer() {
-        super(MINIMAL_PRETTY_PRINTER);
+    public TransientSessionTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
+        super(MINIMAL_PRETTY_PRINTER, applicationContext);
     }
 
     @Override
