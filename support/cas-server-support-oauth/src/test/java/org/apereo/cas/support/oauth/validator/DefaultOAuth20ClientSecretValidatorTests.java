@@ -9,6 +9,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("OAuth")
+@TestPropertySource(properties = "app.custom.secret=T0ps3cr3t#")
 class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
     @Test
     void verifyClientSecretCheck() throws Throwable {
@@ -49,6 +51,16 @@ class DefaultOAuth20ClientSecretValidatorTests extends AbstractOAuth20Tests {
         val registeredService = new OAuthRegisteredService();
         registeredService.setClientId("clientid");
         registeredService.setClientSecret(secret);
+        val result = oauth20ClientSecretValidator.validate(registeredService, secret);
+        assertTrue(result);
+    }
+
+    @Test
+    void verifyClientSecretFromEnvironment() throws Throwable {
+        val secret = applicationContext.getEnvironment().getProperty("app.custom.secret");
+        val registeredService = new OAuthRegisteredService();
+        registeredService.setClientId("clientid");
+        registeredService.setClientSecret("${#applicationContext.get().environment.getProperty('app.custom.secret')}");
         val result = oauth20ClientSecretValidator.validate(registeredService, secret);
         assertTrue(result);
     }

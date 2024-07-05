@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.validator;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,8 @@ public class DefaultOAuth20ClientSecretValidator implements OAuth20ClientSecretV
             return true;
         }
         val clientSecretDecoded = EncodingUtils.urlDecode(clientSecret);
-        val definedSecret = cipherExecutor.decode(registeredService.getClientSecret(), new Object[]{registeredService});
+        val clientSecretAssigned = SpringExpressionLanguageValueResolver.getInstance().resolve(registeredService.getClientSecret());
+        val definedSecret = cipherExecutor.decode(clientSecretAssigned, new Object[]{registeredService});
         if (!StringUtils.equals(definedSecret, clientSecretDecoded)) {
             LOGGER.error("Wrong client secret for service: [{}]. If you intend to use PKCE, note that it does not require a client secret and "
                        + "requests generally must not specify a client secret to CAS.\nFurthermore, you must make sure "
