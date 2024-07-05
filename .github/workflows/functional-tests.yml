@@ -3,8 +3,8 @@ name: Functional Tests
 ##########################################################################
 
 env:
-  JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
-  GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  JAVA_OPTS: "-Xms512m -Xmx8048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  GRADLE_OPTS: "-Xms512m -Xmx8048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GH_PACKAGE_REGISTRY_USER: ${{ secrets.GH_PACKAGE_REGISTRY_USER }}
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
@@ -16,6 +16,9 @@ env:
   DUO_SECURITY_UNIVERSAL_PROMPT_SKEY: ${{ secrets.DUO_SECURITY_UNIVERSAL_PROMPT_SKEY }}
   DUO_SECURITY_UNIVERSAL_PROMPT_IKEY: ${{ secrets.DUO_SECURITY_UNIVERSAL_PROMPT_IKEY }}
   DUO_SECURITY_API_HOST: ${{ secrets.DUO_SECURITY_API_HOST }}
+  GOOGLE_OAUTH2_CLIENT_ID: ${{ secrets.GOOGLE_OAUTH2_CLIENT_ID }}
+  GOOGLE_OAUTH2_CLIENT_SECRET: ${{ secrets.GOOGLE_OAUTH2_CLIENT_SECRET }}
+  GOOGLE_CASUSER_PASSWORD: ${{ secrets.GOOGLE_CASUSER_PASSWORD }}
   ADFS_HOST: ${{ secrets.ADFS_HOST }}
   ADFS_RELYING_PARTY_ID: ${{ secrets.ADFS_RELYING_PARTY_ID }}
   ADFS_USERNAME: ${{ secrets.ADFS_USERNAME }}
