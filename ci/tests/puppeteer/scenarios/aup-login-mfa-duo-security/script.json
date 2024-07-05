@@ -16,7 +16,7 @@
 
     "--cas.authn.mfa.triggers.global.global-provider-id=mfa-duo",
 
-    "--logging.level.org.apereo.cas=info",
+
 
     "--cas.authn.mfa.duo[0].duo-secret-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_SKEY']}",
     "--cas.authn.mfa.duo[0].duo-integration-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_IKEY']}",

@@ -9,7 +9,7 @@
   ],
   "properties": [
     "--cas.jdbc.show-sql=false",
-    "--logging.level.org.apereo.cas=info",
+
     "--logging.level.org.hibernate=info",
     "--logging.level.org.springframework.orm=info",
 

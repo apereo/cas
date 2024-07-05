@@ -2,7 +2,7 @@
   "dependencies": "yubikey,gauth",
 
   "properties": [
-    "--logging.level.org.apereo.cas=info",
+
     "--logging.level.org.springframework.webflow=info",
 
     "--cas.authn.mfa.yubikey.client-id=18420",

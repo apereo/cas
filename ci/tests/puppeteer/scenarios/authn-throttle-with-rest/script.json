@@ -9,7 +9,7 @@
     "--cas.authn.throttle.schedule.start-delay=PT1S",
     "--cas.authn.throttle.schedule.repeat-interval=PT2S",
 
-    "--logging.level.org.apereo.cas=info",
+
     
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",

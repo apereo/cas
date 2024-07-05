@@ -20,9 +20,7 @@
     "--cas.authn.pac4j.saml[0].logout-request-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST",
     "--cas.authn.pac4j.saml[0].client-name=SAML2Client",
 
-    "--cas.service-registry.core.init-from-json=true",
-    
-    "--logging.level.org.apereo.cas=info"
+    "--cas.service-registry.core.init-from-json=true"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

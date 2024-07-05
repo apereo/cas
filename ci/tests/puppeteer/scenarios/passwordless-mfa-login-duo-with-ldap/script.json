@@ -29,9 +29,7 @@
     "--cas.authn.mfa.duo[0].duo-api-host=${#environmentVars['DUO_SECURITY_API_HOST']}",
 
     "--spring.mail.host=localhost",
-    "--spring.mail.port=25000",
-    
-    "--logging.level.org.apereo.cas=debug"
+    "--spring.mail.port=25000"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
   "SPRING_APPLICATION_JSON": {

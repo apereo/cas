@@ -5,7 +5,7 @@
     "docker": "true"
   },
   "properties": [
-    "--logging.level.org.apereo.cas=info",
+
     "--logging.level.org.springframework.webflow=debug",
     
     "--cas.server.name=https://localhost:8443",

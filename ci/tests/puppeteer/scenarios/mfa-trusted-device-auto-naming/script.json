@@ -18,9 +18,7 @@
 
     "--cas.authn.mfa.trusted.crypto.alg=A128CBC-HS256",
     "--cas.authn.mfa.trusted.crypto.encryption.key=7U2haahe2ldSKJa3zv7-4Sirg_Natui3dbb-hNBYgOw",
-    "--cas.authn.mfa.trusted.crypto.signing.key=osgd4FIwmfhYBBE0sv1qaBqQ0hnFSWbTiGDNjcwkfSZN1k4MjC_8g3pkUhOgUkg-Z1OCwWzSmr2xNr3tbZ8PwA",
-    
-    "--logging.level.org.apereo.cas=info"
+    "--cas.authn.mfa.trusted.crypto.signing.key=osgd4FIwmfhYBBE0sv1qaBqQ0hnFSWbTiGDNjcwkfSZN1k4MjC_8g3pkUhOgUkg-Z1OCwWzSmr2xNr3tbZ8PwA"
   ]
 }
 

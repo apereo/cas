@@ -12,7 +12,7 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-    "--logging.level.org.apereo.cas=info",
+
 
     "--cas.ticket.st.time-to-kill-in-seconds=30",
     

@@ -4,7 +4,7 @@
     "docker": "true"
   },
   "properties": [
-    "--logging.level.org.apereo.cas=info",
+
     
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",

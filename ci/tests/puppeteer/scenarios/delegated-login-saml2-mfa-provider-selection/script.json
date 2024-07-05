@@ -24,9 +24,7 @@
     "--cas.authn.mfa.gauth.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
     
     "--cas.authn.mfa.triggers.global.global-provider-id=mfa-gauth,mfa-yubikey",
-    "--cas.authn.mfa.core.provider-selection.provider-selection-enabled=true",
-
-    "--logging.level.org.apereo.cas=info"
+    "--cas.authn.mfa.core.provider-selection.provider-selection-enabled=true"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }
