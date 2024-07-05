@@ -14,7 +14,7 @@
 
     "--cas.service-registry.core.init-from-json=true",
 
-    "--logging.level.org.apereo.cas=info",
+
     "--cas.http-client.host-name-verifier=none",
 
     "--cas.authn.pac4j.profile-selection.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/GroovyProfileSelection.groovy",

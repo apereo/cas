@@ -20,7 +20,7 @@
 
     "--cas.authn.accept.users=casscimuser::Mellon",
 
-    "--logging.level.org.apereo.cas=info",
+
     "--cas.http-client.host-name-verifier=none"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"

@@ -21,7 +21,7 @@
     "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
 
-    "--logging.level.org.apereo.cas=info",
+
     
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",

@@ -11,7 +11,7 @@
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
 
-    "--logging.level.org.apereo.cas=info",
+
 
     "--cas.http-client.host-name-verifier=none",
     

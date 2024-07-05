@@ -6,7 +6,7 @@
   },
 
   "properties": [
-    "--logging.level.org.apereo.cas=info",
+
     "--logging.level.org.springframework.webflow=warn",
 
     "--cas.server.name=https://localhost:8443",

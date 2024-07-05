@@ -1,7 +1,7 @@
 {
   "dependencies": "inwebo-mfa",
   "properties": [
-    "--logging.level.org.apereo.cas=info",
+
     
     "--cas.http-web-request.header.content-security-policy=object-src 'none';",
 

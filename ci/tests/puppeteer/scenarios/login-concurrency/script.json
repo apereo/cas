@@ -4,7 +4,7 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-    "--logging.level.org.apereo.cas=info",
+
     "--logging.level.PROTOCOL_MESSAGE=off",
 
     "--cas.authn.accept.users=casuser::Mellon,casadmin::Mellon",

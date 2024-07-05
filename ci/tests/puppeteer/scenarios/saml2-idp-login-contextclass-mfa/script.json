@@ -16,7 +16,7 @@
 
     "--cas.authn.accept.name=STATIC",
 
-    "--logging.level.org.apereo.cas=info",
+
     "--cas.http-client.host-name-verifier=none",
 
     "--cas.authn.mfa.gauth.crypto.enabled=false",

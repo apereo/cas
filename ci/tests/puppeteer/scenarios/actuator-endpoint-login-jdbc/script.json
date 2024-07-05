@@ -12,7 +12,7 @@
     "--cas.monitor.endpoints.endpoint.health.access=AUTHENTICATED",
     
     "--logging.level.org.springframework.security=debug",
-    "--logging.level.org.apereo.cas=info",
+
 
     "--cas.monitor.endpoints.jdbc.password-encoder.type=DEFAULT",
     "--cas.monitor.endpoints.jdbc.password-encoder.encoding-algorithm=SHA-256",

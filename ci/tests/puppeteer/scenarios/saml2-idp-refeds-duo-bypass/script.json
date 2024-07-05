@@ -18,7 +18,7 @@
     "--cas.authn.accept.name=STATIC",
     "--cas.authn.accept.users=duobypass::Mellon",
 
-    "--logging.level.org.apereo.cas=info",
+
     
     "--cas.authn.mfa.duo[0].account-status-enabled=true",
     

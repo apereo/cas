@@ -6,7 +6,7 @@
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.authn.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
     "--cas.authn.accept.enabled=false",
-    "--logging.level.org.apereo.cas=info",
+
     "--logging.level.org.springframework.webflow=info"
   ]
 }
