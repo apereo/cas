@@ -204,8 +204,8 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
             .map(oauth -> {
                 val client = new GenericOAuth20Client();
                 client.setProfileId(StringUtils.defaultIfBlank(oauth.getPrincipalIdAttribute(), pac4jProperties.getCore().getPrincipalIdAttribute()));
-                client.setKey(oauth.getId());
-                client.setSecret(oauth.getSecret());
+                client.setKey(SpringExpressionLanguageValueResolver.getInstance().resolve(oauth.getId()));
+                client.setSecret(SpringExpressionLanguageValueResolver.getInstance().resolve(oauth.getSecret()));
                 client.setProfileAttrs(oauth.getProfileAttrs());
                 client.setProfileUrl(oauth.getProfileUrl());
                 client.setProfileVerb(Verb.valueOf(oauth.getProfileVerb().toUpperCase(Locale.ENGLISH)));

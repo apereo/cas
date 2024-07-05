@@ -19,8 +19,7 @@
 
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
-
-
+    
     "--cas.http-client.host-name-verifier=none",
     
     "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
