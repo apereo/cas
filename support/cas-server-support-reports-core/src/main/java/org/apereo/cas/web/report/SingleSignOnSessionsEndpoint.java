@@ -370,14 +370,17 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
     }
 
     private Stream<? extends Ticket> getNonExpiredTicketGrantingTickets(final long from, final long count) {
-        var tickets = ticketRegistryProvider.getObject().getTickets(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired());
+        var ticketsStream = ticketRegistryProvider
+            .getObject()
+            .stream()
+            .filter(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired());
         if (from > 0) {
-            tickets = tickets.skip(from);
+            ticketsStream = ticketsStream.skip(from);
         }
         if (count > 0) {
-            tickets = tickets.limit(count);
+            ticketsStream = ticketsStream.limit(count);
         }
-        return tickets;
+        return ticketsStream;
     }
 
 }

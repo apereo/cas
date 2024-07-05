@@ -219,7 +219,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             });
     }
 
-
     @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
         return redisKeyGeneratorFactory.getRedisKeyGenerator(Principal.class.getName())

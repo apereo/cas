@@ -154,22 +154,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
 
     @Override
     public Collection<? extends Ticket> getTickets() {
-        return ticketCatalog.findAll()
-            .stream()
-            .map(metadata -> getTicketMapInstanceByMetadata(metadata).values())
-            .flatMap(tickets -> {
-                if (properties.getPageSize() > 0) {
-                    return tickets.stream()
-                        .limit(properties.getPageSize())
-                        .map(HazelcastTicketDocument::getTicket).toList()
-                        .stream();
-                }
-                return tickets
-                    .stream()
-                    .map(HazelcastTicketDocument::getTicket);
-            })
-            .map(this::decodeTicket)
-            .collect(Collectors.toSet());
+        return stream().collect(Collectors.toSet());
     }
 
     @Override
@@ -249,6 +234,24 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         return super.getSessionsFor(principalId);
     }
 
+    @Override
+    public Stream<? extends Ticket> stream() {
+        return ticketCatalog
+            .findAll()
+            .stream()
+            .map(metadata -> getTicketMapInstanceByMetadata(metadata).values())
+            .flatMap(tickets -> {
+                var resultStream = tickets
+                    .stream()
+                    .map(HazelcastTicketDocument::getTicket);
+                if (properties.getPageSize() > 0) {
+                    resultStream = resultStream.limit(properties.getPageSize());
+                }
+                return resultStream;
+            })
+            .map(this::decodeTicket);
+    }
+    
     /**
      * Make sure we shutdown HazelCast when the context is destroyed.
      */
