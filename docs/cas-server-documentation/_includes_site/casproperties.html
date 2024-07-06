@@ -62,14 +62,14 @@ class='nav nav-tabs nav-tabs-properties' id="navPillsMenus{{ casPropertiesRandom
        id="linkRequiredProperties{{ casPropertiesRandomNumber }}"
        data-bs-toggle='tab'
        {% if forcePropertyTabsOnClick == "true" %}onclick="javascript:enablePropertiesTab{{ casPropertiesRandomNumber }}(this);" {% endif %}
-    href='#requiredProperties{{ casPropertiesRandomNumber }}'>Required</a>
+    href='#requiredProperties{{ casPropertiesRandomNumber }}'><i class="fa fa-hand-point-right px-1"></i>Required</a>
 </li>
 <li class='nav-item property-tab'>
     <a class='nav-link'
        id="linkOptionalProperties{{ casPropertiesRandomNumber }}"
        data-bs-toggle='tab'
        {% if forcePropertyTabsOnClick == "true" %}onclick="javascript:enablePropertiesTab{{ casPropertiesRandomNumber }}(this);" {% endif %}
-    href='#optionalProperties{{ casPropertiesRandomNumber }}'>Optional</a>
+    href='#optionalProperties{{ casPropertiesRandomNumber }}'><i class="fa fa-hand-spock px-1"></i>Optional</a>
 </li>
 
 <li class='nav-item property-tab' id='navSigningEncryptionProperties{{ casPropertiesRandomNumber }}'>
@@ -77,7 +77,7 @@ class='nav nav-tabs nav-tabs-properties' id="navPillsMenus{{ casPropertiesRandom
        id="linkSigningEncryption{{ casPropertiesRandomNumber }}"
        data-bs-toggle='tab'
        {% if forcePropertyTabsOnClick == "true" %}onclick="javascript:enablePropertiesTab{{ casPropertiesRandomNumber }}(this);" {% endif %}
-    href='#signingEncryptionProperties{{ casPropertiesRandomNumber }}'>Signing & Encryption</a>
+    href='#signingEncryptionProperties{{ casPropertiesRandomNumber }}'><i class="fa fa-user-secret px-1"></i>Signing & Encryption</a>
 </li>
 
 <li class='nav-item property-tab' id='navRdbmsProperties{{ casPropertiesRandomNumber }}'>
@@ -85,7 +85,7 @@ class='nav nav-tabs nav-tabs-properties' id="navPillsMenus{{ casPropertiesRandom
        id="linkRdbms{{ casPropertiesRandomNumber }}"
        data-bs-toggle='tab'
        {% if forcePropertyTabsOnClick == "true" %}onclick="javascript:enablePropertiesTab{{ casPropertiesRandomNumber }}(this);" {% endif %}
-    href='#rdbmsProperties{{ casPropertiesRandomNumber }}'>Hibernate & JDBC</a>
+    href='#rdbmsProperties{{ casPropertiesRandomNumber }}'><i class="fa fa-database px-1"></i>Hibernate & JDBC</a>
 </li>
 
 <li class='nav-item property-tab' id='navEmailProperties{{ casPropertiesRandomNumber }}'>
@@ -93,7 +93,7 @@ class='nav nav-tabs nav-tabs-properties' id="navPillsMenus{{ casPropertiesRandom
        id="linkEmail{{ casPropertiesRandomNumber }}"
        data-bs-toggle='tab'
        {% if forcePropertyTabsOnClick == "true" %}onclick="javascript:enablePropertiesTab{{ casPropertiesRandomNumber }}(this);" {% endif %}
-    href='#emailProperties{{ casPropertiesRandomNumber }}'>Email Servers</a>
+    href='#emailProperties{{ casPropertiesRandomNumber }}'><i class="fa fa-envelope px-1"></i>Email Servers</a>
 </li>
 
 <li class='nav-item property-tab' id='navGroovyProperties{{ casPropertiesRandomNumber }}'>
@@ -101,7 +101,7 @@ class='nav nav-tabs nav-tabs-properties' id="navPillsMenus{{ casPropertiesRandom
        id="linkGroovy{{ casPropertiesRandomNumber }}"
        data-bs-toggle='tab'
        {% if forcePropertyTabsOnClick == "true" %}onclick="javascript:enablePropertiesTab{{ casPropertiesRandomNumber }}(this);" {% endif %}
-    href='#groovyProperties{{ casPropertiesRandomNumber }}'>Groovy Scripting</a>
+    href='#groovyProperties{{ casPropertiesRandomNumber }}'><i class="fa fa-laptop-code px-1"></i>Groovy Scripting</a>
 </li>
 
 <li class='nav-item property-tab' id='navLdapProperties{{ casPropertiesRandomNumber }}'>
@@ -109,7 +109,7 @@ class='nav nav-tabs nav-tabs-properties' id="navPillsMenus{{ casPropertiesRandom
        id="linkLdap{{ casPropertiesRandomNumber }}"
        data-bs-toggle='tab'
        {% if forcePropertyTabsOnClick == "true" %}onclick="javascript:enablePropertiesTab{{ casPropertiesRandomNumber }}(this);" {% endif %}
-    href='#ldapProperties{{ casPropertiesRandomNumber }}'>LDAP & Active Directory</a>
+    href='#ldapProperties{{ casPropertiesRandomNumber }}'><i class="fa fa-server px-1"></i>LDAP & Active Directory</a>
 </li>
 
 <li class='nav-item property-tab' id='navAuthnPredicateProperties{{ casPropertiesRandomNumber }}'>
@@ -117,7 +117,7 @@ class='nav nav-tabs nav-tabs-properties' id="navPillsMenus{{ casPropertiesRandom
        id="linkAuthnPredicate{{ casPropertiesRandomNumber }}"
        data-bs-toggle='tab'
        {% if forcePropertyTabsOnClick == "true" %}onclick="javascript:enablePropertiesTab{{ casPropertiesRandomNumber }}(this);" {% endif %}
-    href='#authnPredicateProperties{{ casPropertiesRandomNumber }}'>Authentication</a>
+    href='#authnPredicateProperties{{ casPropertiesRandomNumber }}'><i class="fa fa-user-check px-1"></i>Authentication</a>
 </li>
 
 <li class='nav-item property-tab' id='navPasswordEncoderProperties{{ casPropertiesRandomNumber }}'>
@@ -125,7 +125,7 @@ class='nav nav-tabs nav-tabs-properties' id="navPillsMenus{{ casPropertiesRandom
        id="linkPasswordEncoder{{ casPropertiesRandomNumber }}"
        data-bs-toggle='tab'
        {% if forcePropertyTabsOnClick == "true" %}onclick="javascript:enablePropertiesTab{{ casPropertiesRandomNumber }}(this);" {% endif %}
-    href='#passwordEncoderProperties{{ casPropertiesRandomNumber }}'>Password Encoding</a>
+    href='#passwordEncoderProperties{{ casPropertiesRandomNumber }}'><i class="fa fa-key px-1">Password Encoding</a>
 </li>
 
 <li class='nav-item property-tab' id='navPrincipalTransformationProperties{{ casPropertiesRandomNumber }}'>
@@ -133,7 +133,7 @@ class='nav nav-tabs nav-tabs-properties' id="navPillsMenus{{ casPropertiesRandom
        id="linkPrincipalTransformation{{ casPropertiesRandomNumber }}"
        data-bs-toggle='tab'
        onclick="javascript:enablePropertiesTab{{ casPropertiesRandomNumber }}(this);"
-       href='#principalTransformationProperties{{ casPropertiesRandomNumber }}'>Principal Transformation</a>
+       href='#principalTransformationProperties{{ casPropertiesRandomNumber }}'><i class="fa fa-person-booth px-1"></i>Principal Transformation</a>
 </li>
 
 <li class='nav-item property-tab' id='navPasswordPolicyProperties{{ casPropertiesRandomNumber }}'>
@@ -141,7 +141,7 @@ class='nav nav-tabs nav-tabs-properties' id="navPillsMenus{{ casPropertiesRandom
        id="linkPasswordPolicy{{ casPropertiesRandomNumber }}"
        data-bs-toggle='tab'
        onclick="javascript:enablePropertiesTab{{ casPropertiesRandomNumber }}(this);"
-       href='#passwordPolicyProperties{{ casPropertiesRandomNumber }}'>Password Policy</a>
+       href='#passwordPolicyProperties{{ casPropertiesRandomNumber }}'><i class="fa fa-lock px-1">Password Policy</a>
 </li>
 
 {%- if thirdParty.size > 0 or thirdPartyExactMatch.size > 0 or thirdPartyStartsWith.size > 0 -%}
@@ -160,7 +160,7 @@ class='nav nav-tabs nav-tabs-properties' id="navPillsMenus{{ casPropertiesRandom
        onclick="javascript:enablePropertiesTab{{ casPropertiesRandomNumber }}(this);"
        id="linkNotes{{ casPropertiesRandomNumber }}"
        data-bs-toggle='tab'
-       href='#notes{{ casPropertiesRandomNumber }}'>Notes</a>
+       href='#notes{{ casPropertiesRandomNumber }}'><i class="fa fa-newspaper px-1"></i> Notes</a>
 </li>
 {%- endunless -%}
 </ul>
