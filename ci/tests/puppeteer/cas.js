@@ -397,7 +397,7 @@ exports.newPage = async (browser) => {
             } else if (message.type() === "error") {
                 this.logr(`Console ${message.type()}: ${message.text()}`);
             } else {
-                this.logg(`Console ${message.type()}: ${message.text()}`);
+                this.log(`Console ${message.type()}: ${message.text()}`);
             }
         })
         .on("pageerror", ({message}) => this.logr(`Console: ${message}`));
