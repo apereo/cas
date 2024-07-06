@@ -48,7 +48,7 @@ tied to the `txn` claim which at least consists of the following details:
 - The authentication method employed under `authn_methods`
 - The generated ID token itself
 
-<div class="alert alert-info"><strong>ID Token</strong><p>The generated ID token that shows up in the
+<div class="alert alert-info">:information_source: <strong>ID Token</strong><p>The generated ID token that shows up in the
 CAS audit logs is NOT unpacked to display and/or log claims in plain-text mode. The ID token is displayed as-is,
 and may be signed and or encrypted depending on the relying party configuration.</p></div>
 
