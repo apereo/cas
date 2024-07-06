@@ -40,7 +40,7 @@ The above features do come with a number of caveats and limitations. See below.
 - [OpenID Connect Protocol](../protocol/OIDC-Protocol.html) is supported with the following exceptions: 
   - [DPoP](../authentication/OIDC-Authentication-DPoP.html)
 
-<div class="alert alert-info"><strong>:information_source: What About...?</strong><p>
+<div class="alert alert-info">:information_source: <strong>What About...?</strong><p>
 Remember that not all CAS modules and features that interact with the ticket registry to create, update, fetch or remove tickets are supported.
 The objective is to start with a small batch of most common features and capabilities and iteratively grow and improve. If you do find something that 
 might be missing or acts dysfunctional, please investigate, isolate, verify and consider contributing a fix.
@@ -57,7 +57,7 @@ might be missing or acts dysfunctional, please investigate, isolate, verify and 
 The stateless ticket registry may not be a suitable solution for all deployment scenarios and its use and adoption does require a number of
 compromises and security trade-offs. The following is a list of limitations and caveats that one should be aware of:
 
-<div class="alert alert-info"><strong>:information_source: Life Advice</strong><p>
+<div class="alert alert-info">:information_source: <strong>Life Advice</strong><p>
 Depending on your point of view, any one of the caveats noted above could be argued as a minor lapse in security. Lessened security constraints 
 around generated tickets or the inability to manage one's single sign-on session remotely, etc might be a deal breaker for you. Needless to say, 
 you should examine and understand the security trade-offs carefully before you decide to use this option, or any option for that matter.
