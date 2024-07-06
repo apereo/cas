@@ -48,8 +48,6 @@
     "--cas.authn.attribute-repository.jdbc[0].attributes.department=department",
     "--cas.authn.attribute-repository.jdbc[0].attributes.role=cas_role",
 
-
-
     "--cas.ticket.registry.mongo.database-name=ticket-registry",
     "--cas.ticket.registry.mongo.authentication-database-name=admin",
     "--cas.ticket.registry.mongo.host=localhost",

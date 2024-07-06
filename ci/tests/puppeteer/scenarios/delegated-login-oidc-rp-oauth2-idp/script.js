@@ -15,23 +15,15 @@ const cas = require("../../cas.js");
 
         await cas.goto(page, url);
 
-        await cas.assertVisibility(page, "li #GOOGLE");
-        await cas.click(page, "li #GOOGLE");
+        await cas.assertVisibility(page, "li #KEYCLOAK");
+        await cas.click(page, "li #KEYCLOAK");
         await cas.waitForNavigation(page);
 
         await cas.sleep(3000);
         await cas.screenshot(page);
 
-        const password = process.env.GOOGLE_CASUSER_PASSWORD;
-        await cas.type(page, "input#identifierId", "apereocasuser@gmail.com");
-        await cas.pressEnter(page);
-        await cas.sleep(5000);
-        await cas.type(page, "input[type='password']", password, true);
-        await cas.pressEnter(page);
-        await cas.sleep(7000);
-        await cas.screenshot(page);
-        await cas.click(page, "button#submit_approve_access");
-        await cas.sleep(7000);
+        await cas.loginWith(page, "caskeycloak", "r2RlZXz6f2h5");
+        await cas.sleep(1000);
 
         const result = new URL(page.url());
         await cas.log(result.searchParams.toString());

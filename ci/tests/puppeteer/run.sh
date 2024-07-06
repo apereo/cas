@@ -75,7 +75,7 @@ function sleepfor() {
 }
 
 casVersion=($(cat "$PWD"/gradle.properties | grep "version" | cut -d= -f2))
-echo -n "Running Puppeteer tests for Apereo CAS Server: " && printcyan "${casVersion}"
+echo -e -n "Running Puppeteer tests for Apereo CAS Server: ${casVersion}\n"
 
 DEBUG_PORT="5000"
 DEBUG_SUSPEND="n"
@@ -704,9 +704,9 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
           printgreen "The scenario ${scenarioName} will run with CDS"
           rm -rf ${PWD}/cas 2>/dev/null
           printcyan "Extracting CAS to ${PWD}/cas"
-          java -Djarmode=tools -jar "$PWD"/cas.${projectType} extract
+          java -Djarmode=tools -jar "$PWD"/cas.${projectType} extract >/dev/null 2>&1
           printcyan "Launching CAS from ${PWD}/cas/cas.${projectType} to perform a training run"
-          java -XX:ArchiveClassesAtExit=${PWD}/cas/cas.jsa -Dspring.context.exit=onRefresh -jar ${PWD}/cas/cas.${projectType}
+          java -XX:ArchiveClassesAtExit=${PWD}/cas/cas.jsa -Dspring.context.exit=onRefresh -jar ${PWD}/cas/cas.${projectType} >/dev/null 2>&1
           printcyan "Generated archive cache file ${PWD}/cas/cas.jsa"
           runArgs="${runArgs} -XX:SharedArchiveFile=${PWD}/cas/cas.jsa"
           casArtifactToRun="${PWD}/cas/cas.${projectType}"
