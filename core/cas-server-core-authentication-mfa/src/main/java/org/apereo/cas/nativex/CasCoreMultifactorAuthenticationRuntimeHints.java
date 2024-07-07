@@ -2,6 +2,7 @@ package org.apereo.cas.nativex;
 
 import org.apereo.cas.authentication.ChainingMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTrigger;
+import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 
 import org.springframework.aot.hint.RuntimeHints;
@@ -17,6 +18,9 @@ public class CasCoreMultifactorAuthenticationRuntimeHints implements CasRuntimeH
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         registerProxyHints(hints, MultifactorAuthenticationTrigger.class, ChainingMultifactorAuthenticationProvider.class);
-        registerReflectionHints(hints, List.of(ChainingMultifactorAuthenticationProvider.class));
+        registerReflectionHints(hints, List.of(
+            ChainingMultifactorAuthenticationProvider.class,
+            MultifactorAuthenticationProviderBypassEvaluator.class
+        ));
     }
 }
