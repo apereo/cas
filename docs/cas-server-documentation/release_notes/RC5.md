@@ -69,6 +69,7 @@ Furthermore, the following docker images used for integration testing are now up
 - MariaDb
 - PostgreSQL
 - Redis
+- MySQL
 
 ### CAS Initializr SBOM Support
 
