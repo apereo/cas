@@ -125,7 +125,7 @@ class='nav nav-tabs nav-tabs-properties' id="navPillsMenus{{ casPropertiesRandom
        id="linkPasswordEncoder{{ casPropertiesRandomNumber }}"
        data-bs-toggle='tab'
        {% if forcePropertyTabsOnClick == "true" %}onclick="javascript:enablePropertiesTab{{ casPropertiesRandomNumber }}(this);" {% endif %}
-    href='#passwordEncoderProperties{{ casPropertiesRandomNumber }}'><i class="fa fa-key px-1">Password Encoding</a>
+    href='#passwordEncoderProperties{{ casPropertiesRandomNumber }}'><i class="fa fa-key px-1"></i>Password Encoding</a>
 </li>
 
 <li class='nav-item property-tab' id='navPrincipalTransformationProperties{{ casPropertiesRandomNumber }}'>
@@ -141,7 +141,7 @@ class='nav nav-tabs nav-tabs-properties' id="navPillsMenus{{ casPropertiesRandom
        id="linkPasswordPolicy{{ casPropertiesRandomNumber }}"
        data-bs-toggle='tab'
        onclick="javascript:enablePropertiesTab{{ casPropertiesRandomNumber }}(this);"
-       href='#passwordPolicyProperties{{ casPropertiesRandomNumber }}'><i class="fa fa-lock px-1">Password Policy</a>
+       href='#passwordPolicyProperties{{ casPropertiesRandomNumber }}'><i class="fa fa-lock px-1"></i>Password Policy</a>
 </li>
 
 {%- if thirdParty.size > 0 or thirdPartyExactMatch.size > 0 or thirdPartyStartsWith.size > 0 -%}

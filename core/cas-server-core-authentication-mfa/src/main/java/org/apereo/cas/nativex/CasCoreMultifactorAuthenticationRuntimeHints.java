@@ -17,10 +17,13 @@ import java.util.List;
 public class CasCoreMultifactorAuthenticationRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        registerProxyHints(hints, MultifactorAuthenticationTrigger.class, ChainingMultifactorAuthenticationProvider.class);
-        registerReflectionHints(hints, List.of(
+        registerProxyHints(hints,
+            MultifactorAuthenticationTrigger.class,
             ChainingMultifactorAuthenticationProvider.class,
             MultifactorAuthenticationProviderBypassEvaluator.class
+        );
+        registerReflectionHints(hints, List.of(
+            ChainingMultifactorAuthenticationProvider.class
         ));
     }
 }
