@@ -67,7 +67,7 @@ localized template file is not found.
 
 {% endtab %}
 
-{% tab emailmessagebody Groovy %}
+{% tab emailmessagebody <i class="fa fa-file-code px-1">Groovy %}
 
 The configuration setting for the email message body can also point to an external Groovy script
 to build the contents of the message body dynamically. The script may be designed as:

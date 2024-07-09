@@ -33,7 +33,7 @@ using the [attribute definition store](Attribute-Definitions.html).
 
 {% endtab %}
 
-{% tab attrreleaseallowed Groovy %}
+{% tab attrreleaseallowed <i class="fa fa-code px-1"></i>Groovy %}
 
 Allowed attributes may also contain inline Groovy script that would be tasked to build attributes
 dynamically on the fly and return back a `Map<String, List<Object>>` of results:

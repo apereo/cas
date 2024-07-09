@@ -15,7 +15,7 @@ external/guest accounts with their equivalent found in the authentication source
       
 {% tabs delegatedauthnprov %}
 
-{% tab delegatedauthnprov Groovy %}
+{% tab delegatedauthnprov <i class="fa fa-file-code px-1">Groovy %}
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.provisioning.groovy" %}
 

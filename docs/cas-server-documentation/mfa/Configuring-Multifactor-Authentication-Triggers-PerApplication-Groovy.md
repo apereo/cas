@@ -28,7 +28,7 @@ or the identifier of the multifactor provider that should be considered for acti
          
 {% tabs groovymfaperapp %}
 
-{% tab groovymfaperapp File %}
+{% tab groovymfaperapp <i class="fa fa-file-code px-1"></i>File %}
 
 The script may be defined in the service definition using its full path:
 
@@ -62,7 +62,7 @@ To prepare CAS to support and integrate with Apache Groovy, please [review this 
 
 {% endtab %}
 
-{% tab groovymfaperapp Inline %}
+{% tab groovymfaperapp <i class="fa fa-pencil px-1"></i>Inline %}
 
 The script may be embedded directly in the service definition, as such:
 

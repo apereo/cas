@@ -228,7 +228,7 @@ carrying the results of previous merge attempts and will also ignore unknown tem
 
 {% endtab %}
 
-{% tab svctmpls Groovy Templates %}
+{% tab svctmpls <i class="fa fa-file-code px-1">Groovy Templates %}
 
 Service template definitions can be as designed Groovy templates, able to generate text and other constructs dynamically.
 The template framework in Groovy uses JSP style `<% %>` script and `<%= %>` expression syntax or 

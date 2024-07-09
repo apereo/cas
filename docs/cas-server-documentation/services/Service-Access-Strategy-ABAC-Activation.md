@@ -51,7 +51,7 @@ Note that if the access strategy fails to activate and must remain inactive, the
 
 {% endtab %}
 
-{% tab abacconditions Groovy %}
+{% tab abacconditions <i class="fa fa-code px-1">Groovy %}
 
 You can decide whether the access strategy should be activated using a Groovy script, that may be defined either inline
 or outsourced to an external Groovy script.
@@ -125,7 +125,7 @@ To prepare CAS to support and integrate with Apache Groovy, please [review this 
 
 {% endtab %}
 
-{% tab abacconditions Chaining %}
+{% tab abacconditions <i class="fa fa-link px-1">Chaining %}
 
 You can also combine multiple activation criteria using a chaining setup:
 

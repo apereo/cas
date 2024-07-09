@@ -175,7 +175,7 @@ released as `urn:oid:1.3.6.1.4.1.5923.1.1.1.6` with a friendly name of `eduPerso
 
 {% endtab %}
 
-{% tab attrdefinitions Embedded Script %}
+{% tab attrdefinitions <i class="fa fa-pencil px-1"></i>Embedded Script %}
 Same use case as above, except the attribute value be additional processed by an embedded Groovy script
 
 ```json 
@@ -197,7 +197,7 @@ the final values of `eduPersonPrincipalName` would be [`Hi, casuser`]
 released as `urn:oid:1.3.6.1.4.1.5923.1.1.1.6` with a friendly name of `eduPersonPrincipalName`.
 {% endtab %}
 
-{% tab attrdefinitions External Script %}
+{% tab attrdefinitions <i class="fa fa-file-code px-1"></i>External Script %}
 Same use case as above, except the attribute value be additionally processed by an external Groovy script:
 
 ```json 

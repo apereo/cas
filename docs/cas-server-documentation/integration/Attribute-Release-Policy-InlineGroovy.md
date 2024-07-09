@@ -17,7 +17,7 @@ for and designing complicated scripts.</p></div>
 
 {% tabs groovyinline %}
 
-{% tab groovyinline Basic %}
+{% tab groovyinline <i class="fa fa-pencil px-1"></i>Basic %}
 
 As an example, if you currently have resolved a `uid` attribute with a value of `piper`, you could then consider the following:
 
@@ -48,7 +48,7 @@ To prepare CAS to support and integrate with Apache Groovy, please [review this 
 
 {% endtab %}
 
-{% tab groovyinline Complex %}
+{% tab groovyinline <i class="fa fa-gears px-1"></i>Complex %}
               
 This is a more complicated example of an inline Groovy script that calculates the value for the `memberOf` attribute. 
 You will notice the Groovy script is defined as a multiline string that is directly mapped to the attribute.

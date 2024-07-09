@@ -108,7 +108,7 @@ Each provider should have its own dedicated settings and properties that would a
   
 {% tabs bypassproviders %}
 
-{% tab bypassproviders Groovy %}
+{% tab bypassproviders <i class="fa fa-file-code px-1">Groovy %}
 
 Multifactor authentication bypass may be determined using a Groovy script of your
 own design. The outcome of the script, if `true` indicates that multifactor
