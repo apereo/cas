@@ -28,7 +28,7 @@ specific attributes from LDAP for each profile and the ability to specify the at
 
 {% endtab %}
 
-{% tab delegatedauthnprofileselection Groovy %}
+{% tab delegatedauthnprofileselection <i class="fa fa-file-code px-1">Groovy %}
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.profile-selection.groovy" %}
 

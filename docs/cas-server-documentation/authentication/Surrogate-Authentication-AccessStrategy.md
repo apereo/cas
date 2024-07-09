@@ -41,7 +41,7 @@ A sample service definition follows:
 
 {% endtab %}
 
-{% tab impersonationaccess Groovy %}
+{% tab impersonationaccess <i class="fa fa-file-code px-1">Groovy %}
 
 Decide whether the primary user is allowed to go through impersonation via
 an external Groovy script. A sample service file follows:

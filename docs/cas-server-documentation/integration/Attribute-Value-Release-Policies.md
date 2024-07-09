@@ -205,7 +205,7 @@ and `marathon101`, the filter will produce values `courseA-athon101` and `course
 {% endtab %}
 
 
-{% tab attrvaluefilters Groovy %}
+{% tab attrvaluefilters <i class="fa fa-code px-1"></i>Groovy %}
 
 Attribute value filtering may also be carried out using an inline or external Groovy script.
 Scripts have access to the current resolved attributes via `attributes` and a `logger`.

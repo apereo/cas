@@ -19,7 +19,7 @@ Groovy scripts whether inlined or external will receive and have access to the f
 
 {% tabs groovyprincipalid %}
 
-{% tab groovyprincipalid Inline %}
+{% tab groovyprincipalid <i class="fa fa-pencil px-1"></i> Inline %}
 
 Embed the groovy script directly inside the service configuration.
 
@@ -45,7 +45,7 @@ To prepare CAS to support and integrate with Apache Groovy, please [review this 
 
 {% endtab %}
 
-{% tab groovyprincipalid External %}
+{% tab groovyprincipalid <i class="fa fa-file-code px-1"></i> External %}
 
 Reference the groovy script as an external resource outside the service configuration.
 The script must return a single `String` value.

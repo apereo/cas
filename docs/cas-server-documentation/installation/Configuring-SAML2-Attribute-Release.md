@@ -99,7 +99,7 @@ the authenticated principal id is used. You can also control whether the final g
 
 {% endtab %}
 
-{% tab saml2attrrel Groovy %}
+{% tab saml2attrrel <i class="fa fa-file-code px-1">Groovy %}
 
 This policy allows a Groovy script to calculate the collection of released attributes.
 
@@ -310,7 +310,7 @@ SAML2 authentication request inside its `Scoping` element matches the defined pa
 
 {% endtab %}
 
-{% tab saml2attrrel Anonymous Access %}
+{% tab saml2attrrel <i class="fa fa-user-secret px-1">Anonymous Access %}
 
 A specific attribute release policy is available to release the [attribute bundles](https://refeds.org/category/anonymous)
 to service providers that contain the entity attribute value `https://refeds.org/category/anonymous`:

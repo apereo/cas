@@ -34,7 +34,7 @@ header `clientIpAddress` under a `GET` request. The expected result status codes
 
 {% endtab %}
 
-{% tab ipintelops Groovy %}
+{% tab ipintelops <i class="fa fa-file-code px-1">Groovy %}
 
 To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
