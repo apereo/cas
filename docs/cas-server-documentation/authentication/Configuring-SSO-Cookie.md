@@ -93,7 +93,7 @@ The parameters that may be passed are as follows:
 
 {% endtab %}
 
-{% tab samesitecookie <i class="fa fa-java px-1"></i>Java %}
+{% tab samesitecookie <i class="fa-brands fa-java px-1"></i>Java %}
 
 The cookie setting in CAS configuration may point to a Java class using its FQDN 
 that is tasked to generate the `SameAttribute` cookie attribute.

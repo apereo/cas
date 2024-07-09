@@ -28,7 +28,7 @@ to consider authentication requests from unknown ip addresses suspicious for the
 
 {% endtab %}
 
-{% tab adaptiveriskcalc <i class="fa fa-chrome px-1"></i>Browser User Agent %}
+{% tab adaptiveriskcalc <i class="fa-brands fa-chrome px-1"></i>Browser User Agent %}
 
 This calculator looks into past authentication events that match the client's `user-agent` string. It is applicable if you wish
 to consider authentication requests from unknown browsers suspicious for the user. The story here is:
