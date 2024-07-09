@@ -40,7 +40,7 @@ Additional interrupt triggers are listed below.
 
 {% tabs interrupttriggers %}
 
-{% tab interrupttriggers <i class="fa fa-person px-1">Principal Attribute %}
+{% tab interrupttriggers <i class="fa fa-person px-1"></i>Principal Attribute %}
       
 Interrupt triggers per application can be triggered based on the principal attributes. If the defined attribute name
 exists and can produce a value to match the defined attribute value, interrupt may be triggered.
@@ -70,7 +70,7 @@ These fields support the [Spring Expression Language](../configuration/Configura
 
 {% endtab %}
 
-{% tab interrupttriggers <i class="fa fa-code px-1">Groovy Script %}
+{% tab interrupttriggers <i class="fa fa-code px-1"></i>Groovy Script %}
 
 Interrupt triggers per application can be triggered based on the outcome of an external or inline Groovy script. The script
 should return a boolean value, i.e. `true` or `false` to indicate whether interrupt should be triggered.
