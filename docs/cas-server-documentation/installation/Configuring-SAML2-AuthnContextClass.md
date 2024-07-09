@@ -31,7 +31,7 @@ Always use the specified authentication context class in the final response.
 
 {% endtab %}
 
-{% tab saml2authnctx <i class="fa fa-file-code px-1">External Groovy %}
+{% tab saml2authnctx <i class="fa fa-file-code px-1"></i>External Groovy %}
 
 You can always manipulate the authentication context class in more dynamic ways using a Groovy script:
 
@@ -66,7 +66,7 @@ To prepare CAS to support and integrate with Apache Groovy, please [review this 
 
 {% endtab %}
 
-{% tab saml2authnctx <i class="fa fa-pencil px-1">Embedded Groovy %}
+{% tab saml2authnctx <i class="fa fa-pencil px-1"></i>Embedded Groovy %}
 
 Similar to the external Groovy script option, except the script is embedded inside the service definition:
 

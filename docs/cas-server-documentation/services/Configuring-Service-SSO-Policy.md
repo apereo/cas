@@ -88,7 +88,7 @@ the user for credentials and ignore the existing session.
 
 {% endtab %}
 
-{% tab ssoservicepolicy <i class="fa fa-clock px-1">Last Used Time %}
+{% tab ssoservicepolicy <i class="fa fa-clock px-1"></i>Last Used Time %}
 
 Honor the existing single sign-on session, if any, if the last time an SSO session was used is at most `5` seconds old. Otherwise, challenge the
 user for credentials and ignore the existing session.

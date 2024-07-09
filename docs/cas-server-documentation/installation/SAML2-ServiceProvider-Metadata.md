@@ -102,7 +102,7 @@ verify the XML signature of the metadata. It is not sufficient to request the me
 
 {% endtab %}
 
-{% tab metadata <i class="fa fa-file px-1">File %}
+{% tab metadata <i class="fa fa-file px-1"></i>File %}
     
 Metadata files for SAML2 service providers can be found on the file system directly: 
 
@@ -120,7 +120,7 @@ Multiple locations may be comma-separated.
 
 {% endtab %}
 
-{% tab metadata <i class="fa fa-folder px-1">Directory %}
+{% tab metadata <i class="fa fa-folder px-1"></i>Directory %}
 
 This option fetches metadata from a local directory source as needed. You are responsible 
 for populating the directory with metadata files, which may be done while CAS is running. 

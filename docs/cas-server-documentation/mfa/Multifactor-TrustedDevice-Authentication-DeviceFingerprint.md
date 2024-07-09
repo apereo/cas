@@ -45,13 +45,13 @@ allowed to [ask and process geodata](../authentication/Configuring-Authenticatio
 
 {% endtab %}
 
-{% tab devicefingerprint <i class="fa fa-chrome px-1">Browser %}
+{% tab devicefingerprint <i class="fa fa-chrome px-1"></i>Browser %}
 
 {% include_cached casproperties.html properties="cas.authn.mfa.trusted.device-fingerprint.browser" %}
 
 {% endtab %}
 
-{% tab devicefingerprint <i class="fa fa-globe px-1">GeoLocation %}
+{% tab devicefingerprint <i class="fa fa-globe px-1"></i>GeoLocation %}
 
 {% include_cached casproperties.html properties="cas.authn.mfa.trusted.device-fingerprint.geolocation" %}
 

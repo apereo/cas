@@ -121,7 +121,7 @@ To prepare CAS to support and integrate with Apache Groovy, please [review this 
 
 {% endtab %}
 
-{% tab attrreleaseconditions <i class="fa fa-link px-1">Chaining %}
+{% tab attrreleaseconditions <i class="fa fa-link px-1"></i>Chaining %}
 
 You can also combine multiple activation criteria using a chaining setup:
 

@@ -20,7 +20,7 @@ options may also provide their own support for password history.
  
 {% tabs passwordhistory %}
 
-{% tab passwordhistory <i class="fa fa-file-code px-1">Groovy %}
+{% tab passwordhistory <i class="fa fa-file-code px-1"></i>Groovy %}
 
 Password history tracking, once enabled, can be handed off to an external Groovy script as such:
 
