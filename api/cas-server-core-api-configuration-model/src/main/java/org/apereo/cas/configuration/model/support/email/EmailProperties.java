@@ -3,14 +3,12 @@ package org.apereo.cas.configuration.model.support.email;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -102,17 +100,26 @@ public class EmailProperties implements Serializable {
     /**
      * Indicate whether the message body
      * should be evaluated as HTML text.
+     * The application of this setting depends on the email provider implementation
+     * and may not be fully supported everywhere. This is typically relevant for the default
+     * {@link org.springframework.mail.javamail.JavaMailSender}.
      */
     private boolean html;
 
     /**
      * Set whether to validate all addresses which get passed to this helper.
+     * The application of this setting depends on the email provider implementation
+     * and may not be fully supported everywhere. This is typically relevant for the default
+     * {@link org.springframework.mail.javamail.JavaMailSender}.
      */
     private boolean validateAddresses;
 
     /**
      * Set the priority ({@code X-Priority} header) of the message.
      * Values: {@code 1 (Highest)}, {@code 2 (High)}, {@code 3 (Normal)}, {@code 4 (Low)}, {@code 5 (Lowest)}.
+     * The application of this setting depends on the email provider implementation
+     * and may not be fully supported everywhere. This is typically relevant for the default
+     * {@link org.springframework.mail.javamail.JavaMailSender}.
      */
     private int priority = 1;
 

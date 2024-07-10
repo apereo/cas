@@ -34,7 +34,7 @@ constructed using the following strategies.
      
 {% tabs emailmessagebody %}
 
-{% tab emailmessagebody Default %}
+{% tab emailmessagebody <i class="fa fa-envelope px-1"></i>Default %}
 
 By default, the body of the email message that is defined in the CAS configuration is
 formatted using special placeholders for variables that are marked as `${...}`. Such variables
@@ -42,7 +42,7 @@ are substituted at runtime with the appropriate values available to the feature 
 
 {% endtab %}
 
-{% tab emailmessagebody Template File %}
+{% tab emailmessagebody <i class="fa fa-file px-1"></i>Template File %}
 
 The configuration setting for the email message body can also accept a path to an external file (i.e. `HTML`).
 The contents of the file are processed for placeholder variables and values using the same default strategy.
@@ -111,8 +111,9 @@ To prepare CAS to support and integrate with Apache Groovy, please [review this 
 
 The following approaches may be used to send emails.
 
-| Option   | Reference                                                   |
-|----------|-------------------------------------------------------------|
-| Default  | [See this page](Sending-Email-Configuration-Default.html).  |
-| SendGrid | [See this page](Sending-Email-Configuration-SendGrid.html). |
-| Custom   | [See this page](Sending-Email-Configuration-Custom.html).   |
+| Option     | Reference                                                    |
+|------------|--------------------------------------------------------------|
+| Default    | [See this page](Sending-Email-Configuration-Default.html).   |
+| SendGrid   | [See this page](Sending-Email-Configuration-SendGrid.html).  |
+| Amazon SES | [See this page](Sending-Email-Configuration-AmazonSES.html). |
+| Custom     | [See this page](Sending-Email-Configuration-Custom.html).    |
