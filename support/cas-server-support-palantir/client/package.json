@@ -18,7 +18,7 @@
     "@jsonforms/react": "^3.1.0",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.12.3",
-    "@mui/x-date-pickers": "^6.3.1",
+    "@mui/x-date-pickers": "^7.0.0",
     "@reduxjs/toolkit": "^2.0.0",
     "@stoplight/json-ref-resolver": "^3.1.6",
     "ace-builds": "^1.27.0",
