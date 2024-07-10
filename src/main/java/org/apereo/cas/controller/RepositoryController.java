@@ -83,6 +83,20 @@ public class RepositoryController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping(value = "/repo/pulls/{prNumber}/close", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({"ROLE_ADMIN"})
+    public ResponseEntity closePullRequest(@PathVariable final String prNumber) throws Exception {
+        val pullRequest = repository.getPullRequest(prNumber);
+        if (pullRequest == null) {
+            return ResponseEntity.notFound().build();
+        }
+        repository.removeAllCommentsFrom(pullRequest, "apereocas-bot");
+        repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
+        repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_PROPOSAL_DECLINED);
+        repository.close(pullRequest);
+        return ResponseEntity.ok(pullRequest);
+    }
+
 
     @GetMapping(value = "/repo/pulls", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({"ROLE_ADMIN"})
