@@ -142,6 +142,10 @@ to review the CAS documentation and adjust the dependencies in your CAS build to
 This extraction is done to reduce the final size of the vanilla CAS web application by about `11MB`. In addition to a leaner binary artifact, 
 this will also remove unnecessary optional libraries out of the CAS build, leading to fewer false CVEs, faster startup times and quicker builds
 particularly when it comes to [Graal VM native images](../installation/GraalVM-NativeImage-Installation.html).
+ 
+## Amazon Simple Email Service
+
+When it comes to sending emails, CAS is now able to support [Amazon Simple Email Service](../notifications/Sending-Email-Configuration-AmazonSES.html).
 
 ## Other Stuff
 
@@ -153,6 +157,7 @@ particularly when it comes to [Graal VM native images](../installation/GraalVM-N
 - WebAuthn registration endpoint is now able to detect and track an authenticated request using the CAS in-progress authentication attempt. 
 - Internal data structures used to index registered service definitions for better querying and searching should now prevent duplicate service definitions.
 - Background jobs such as the ticket registry cleaner or service registry loaders can now be scheduled via cron expressions.
+- Many small improvements and bug fixes in CAS documentation to remove typos and correct references.
 
 ## Library Upgrades
 
