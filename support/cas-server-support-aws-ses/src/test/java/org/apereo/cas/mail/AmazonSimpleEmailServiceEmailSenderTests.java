@@ -50,8 +50,8 @@ import static org.awaitility.Awaitility.*;
 }, properties = {
     "cas.email-provider.ses.endpoint=http://127.0.0.1:4566",
     "cas.email-provider.ses.region=us-east-1",
-    "cas.email-provider.ses.credential-access-key=AKIARVP6JEGZUU7GD44R",
-    "cas.email-provider.ses.credential-secret-key=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"
+    "cas.email-provider.ses.credential-access-key=test",
+    "cas.email-provider.ses.credential-secret-key=test"
 })
 @Tag("Mail")
 @ExtendWith(CasTestExtension.class)
