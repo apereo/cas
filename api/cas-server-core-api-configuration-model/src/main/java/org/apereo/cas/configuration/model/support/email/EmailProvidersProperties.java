@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.support.email;
 
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.sms.AmazonSnsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
