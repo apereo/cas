@@ -29,4 +29,10 @@ public class EmailProvidersProperties implements CasFeatureModule, Serializable 
     @NestedConfigurationProperty
     private AmazonSesProperties ses = new AmazonSesProperties();
 
+    /**
+     * Mailjet settings.
+     */
+    @NestedConfigurationProperty
+    private MailjetProperties mailjet = new MailjetProperties();
+    
 }

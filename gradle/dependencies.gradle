@@ -1103,6 +1103,16 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
+        mailjet          : [
+                dependencies.create("com.mailjet:mailjet-client:$mailjetVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                }
+        ],
         jsonschema                  : [
                 dependencies.create("com.github.victools:jsonschema-generator:${jsonSchemaVersion}") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")

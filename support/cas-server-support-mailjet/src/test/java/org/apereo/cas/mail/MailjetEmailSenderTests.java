@@ -1,13 +1,19 @@
 package org.apereo.cas.mail;
 
-import org.apereo.cas.config.CasAmazonSimpleEmailServiceAutoConfiguration;
+/**
+ * This is {@link org.apereo.cas.mail.MailjetEmailSenderTests}.
+ *
+ * @author Misagh Moayyed
+ * @since 7.1.0
+ */
+
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasMailjetEmailSenderAutoConfiguration;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.notifications.mail.EmailMessageRequest;
 import org.apereo.cas.notifications.mail.EmailSender;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
-import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -24,7 +30,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link AmazonSimpleEmailServiceEmailSenderTests}.
+ * This is {@link MailjetEmailSenderTests}.
  *
  * @author Misagh Moayyed
  * @since 7.1.0
@@ -33,18 +39,16 @@ import static org.junit.jupiter.api.Assertions.*;
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
-    CasAmazonSimpleEmailServiceAutoConfiguration.class
+    CasMailjetEmailSenderAutoConfiguration.class
 }, properties = {
-    "cas.email-provider.ses.endpoint=http://127.0.0.1:4566",
-    "cas.email-provider.ses.region=us-east-1",
-    "cas.email-provider.ses.credential-access-key=test",
-    "cas.email-provider.ses.credential-secret-key=test"
+    "cas.email-provider.mailjet.sandbox-mode=true",
+    "cas.email-provider.mailjet.api-key=1234567890",
+    "cas.email-provider.mailjet.secret-key=1234567890"
 })
-@EnabledIfListeningOnPort(port = 4566)
-@Tag("AmazonWebServices")
+@Tag("Mail")
 @ExtendWith(CasTestExtension.class)
 @Getter
-public class AmazonSimpleEmailServiceEmailSenderTests {
+public class MailjetEmailSenderTests {
     @Autowired
     @Qualifier(EmailSender.BEAN_NAME)
     private EmailSender emailSender;
@@ -53,16 +57,16 @@ public class AmazonSimpleEmailServiceEmailSenderTests {
     void verifyOperation() throws Exception {
         assertNotNull(emailSender);
         val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
-            Map.of("email", List.of("hello@example.com")));
+            Map.of("email", List.of("example@gmail.com")));
         val emailRequest = EmailMessageRequest.builder()
             .locale(Locale.GERMANY)
             .body("This is the email body")
             .emailProperties(new EmailProperties()
                 .setSubject("This is the subject")
-                .setFrom("hello@example.com"))
+                .setFrom("person@gmail.com"))
             .attribute("email")
             .principal(principal)
             .build();
-        assertTrue(emailSender.send(emailRequest).isSuccess());
+        assertFalse(emailSender.send(emailRequest).isSuccess());
     }
 }

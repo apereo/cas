@@ -143,9 +143,10 @@ This extraction is done to reduce the final size of the vanilla CAS web applicat
 this will also remove unnecessary optional libraries out of the CAS build, leading to fewer false CVEs, faster startup times and quicker builds
 particularly when it comes to [Graal VM native images](../installation/GraalVM-NativeImage-Installation.html).
  
-## Amazon Simple Email Service
+## Email Providers
 
-When it comes to sending emails, CAS is now able to support [Amazon Simple Email Service](../notifications/Sending-Email-Configuration-AmazonSES.html).
+When it comes to sending emails, CAS is now able to support [Amazon Simple Email Service](../notifications/Sending-Email-Configuration-AmazonSES.html)
+and [Mailjet](../notifications/Sending-Email-Configuration-Mailjet.html).
 
 ## Other Stuff
 

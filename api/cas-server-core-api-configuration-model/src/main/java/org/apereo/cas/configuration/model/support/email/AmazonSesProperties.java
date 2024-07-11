@@ -18,7 +18,7 @@ import java.io.Serial;
 @Setter
 @RequiresModule(name = "cas-server-support-aws-ses", automated = true)
 @Accessors(chain = true)
-@JsonFilter("SimpleEmailProperties")
+@JsonFilter("AmazonSesProperties")
 public class AmazonSesProperties extends BaseAmazonWebServicesProperties {
     @Serial
     private static final long serialVersionUID = -1202529110472766098L;
