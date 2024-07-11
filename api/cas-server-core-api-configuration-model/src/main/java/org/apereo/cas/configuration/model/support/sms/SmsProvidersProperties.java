@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.sms;
 
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.model.support.email.MailjetProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -60,6 +61,12 @@ public class SmsProvidersProperties implements CasFeatureModule, Serializable {
      */
     @NestedConfigurationProperty
     private NexmoProperties nexmo = new NexmoProperties();
+
+    /**
+     * Mailjet settings.
+     */
+    @NestedConfigurationProperty
+    private MailjetProperties mailjet = new MailjetProperties();
 
     /**
      * Groovy script for sending sms notifications.
