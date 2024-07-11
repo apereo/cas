@@ -11,14 +11,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.10.8",
-    "@emotion/styled": "^11.10.8",
+    "@emotion/react": "11.10.8",
+    "@emotion/styled": "11.10.8",
     "@jsonforms/core": "next",
     "@jsonforms/material-renderers": "^3.1.0",
     "@jsonforms/react": "^3.1.0",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.12.3",
-    "@mui/x-date-pickers": "^7.0.0",
+    "@mui/x-date-pickers": "^6.3.1",
     "@reduxjs/toolkit": "^2.0.0",
     "@stoplight/json-ref-resolver": "^3.1.6",
     "ace-builds": "^1.27.0",
@@ -28,7 +28,7 @@
     "node-fetch": "^3.3.2",
     "notistack": "^3.0.1",
     "react": "^18.2.0",
-    "react-ace": "^12.0.0",
+    "react-ace": "^11.0.0",
     "react-dom": "^18.2.0",
     "react-redux": "^9.0.0",
     "react-router-dom": "^6.11.1",
@@ -36,14 +36,14 @@
     "yarn": "^1.22.19"
   },
   "devDependencies": {
-    "@types/react": "^18.0.38",
-    "@types/react-dom": "^18.0.11",
-    "@vitejs/plugin-react": "^4.2.1",
-    "eslint": "^9.0.0",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-react-refresh": "^0.4.5",
-    "vite": "^5.0.13",
-    "vite-plugin-node-polyfills": "^0.22.0"
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "@vitejs/plugin-react": "4.3.1",
+    "eslint": "^8.5.7",
+    "eslint-plugin-react": "7.34.3",
+    "eslint-plugin-react-hooks": "4.6.2",
+    "eslint-plugin-react-refresh": "0.4.8",
+    "vite": "5.3.3",
+    "vite-plugin-node-polyfills": "0.22.0"
   }
 }
