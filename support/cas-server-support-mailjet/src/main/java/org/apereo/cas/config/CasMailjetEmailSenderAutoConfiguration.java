@@ -2,21 +2,10 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.mail.MailjetEmailSender;
-import org.apereo.cas.notifications.mail.EmailSender;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-import com.mailjet.client.ClientOptions;
-import com.mailjet.client.MailjetClient;
-import lombok.val;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.HierarchicalMessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.context.annotation.Import;
 
 /**
  * This is {@link CasMailjetEmailSenderAutoConfiguration}.
@@ -27,29 +16,9 @@ import org.springframework.context.annotation.ScopedProxyMode;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Notifications, module = "mailjet")
 @AutoConfiguration
+@Import({
+    MailjetEmailConfiguration.class,
+    MailjetSmsConfiguration.class
+})
 public class CasMailjetEmailSenderAutoConfiguration {
-
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "mailjetClient")
-    @Bean
-    public MailjetClient mailjetClient(final CasConfigurationProperties casProperties) {
-        val resolver = SpringExpressionLanguageValueResolver.getInstance();
-        val options = ClientOptions.builder()
-            .apiKey(resolver.resolve(casProperties.getEmailProvider().getMailjet().getApiKey()))
-            .apiSecretKey(resolver.resolve(casProperties.getEmailProvider().getMailjet().getSecretKey()))
-            .bearerAccessToken(resolver.resolve(casProperties.getEmailProvider().getMailjet().getBearerAccessToken()))
-            .build();
-        return new MailjetClient(options);
-    }
-
-    @Bean
-    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "mailjetEmailSender")
-    public EmailSender emailSender(
-        @Qualifier("mailjetClient") final MailjetClient mailjetClient,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("messageSource") final HierarchicalMessageSource messageSource) {
-        return new MailjetEmailSender(mailjetClient, messageSource, casProperties);
-    }
-
 }

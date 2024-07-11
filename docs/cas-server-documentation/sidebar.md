@@ -808,6 +808,7 @@ layout: null
         *   [Groovy](/cas/{{ version }}/notifications/SMS-Messaging-Configuration-Groovy.html)
         *   [REST](/cas/{{ version }}/notifications/SMS-Messaging-Configuration-REST.html)
         *   [Twilio](/cas/{{ version }}/notifications/SMS-Messaging-Configuration-Twilio.html)
+        *   [Mailjet](/cas/{{ version }}/notifications/SMS-Messaging-Configuration-Mailjet.html)
         *   [TextMagic](/cas/{{ version }}/notifications/SMS-Messaging-Configuration-TextMagic.html)
         *   [Clickatell](/cas/{{ version }}/notifications/SMS-Messaging-Configuration-Clickatell.html)
         *   [SmsMode](/cas/{{ version }}/notifications/SMS-Messaging-Configuration-SmsMode.html)

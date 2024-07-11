@@ -25,6 +25,7 @@ compile-time. See below on how to customize or override the default behavior wit
 | Groovy     | [See this guide](SMS-Messaging-Configuration-Groovy.html).     |
 | REST       | [See this guide](SMS-Messaging-Configuration-REST.html).       |
 | Twilio     | [See this guide](SMS-Messaging-Configuration-Twilio.html).     |
+| Mailjet    | [See this guide](SMS-Messaging-Configuration-Mailjet.html).    |
 | TextMagic  | [See this guide](SMS-Messaging-Configuration-TextMagic.html).  |
 | Clickatell | [See this guide](SMS-Messaging-Configuration-Clickatell.html). |
 | SmsMode    | [See this guide](SMS-Messaging-Configuration-SmsMode.html).    |

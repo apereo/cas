@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.email;
 
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
@@ -28,19 +29,23 @@ public class MailjetProperties implements Serializable {
      * API key used to authenticate to the mailjet service.
      */
     @ExpressionLanguageCapable
+    @RequiredProperty
     private String apiKey;
 
     /**
      * Secret key used to authenticate to the mailjet service.
      */
     @ExpressionLanguageCapable
+    @RequiredProperty
     private String secretKey;
 
 
     /**
      * Bearer access token used to authenticate to the mailjet service.
+     * Mainly requires for the SMS integration.
      */
     @ExpressionLanguageCapable
+    @RequiredProperty
     private String bearerAccessToken;
     /**
      * Indicates whether the mailjet integration should be run in sandbox mode.
