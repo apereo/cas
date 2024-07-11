@@ -8,7 +8,6 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.mailjet.client.ClientOptions;
 import com.mailjet.client.MailjetClient;
-import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

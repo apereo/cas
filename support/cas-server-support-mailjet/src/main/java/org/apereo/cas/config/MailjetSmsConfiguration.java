@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.email.MailjetProperties;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.sms.MailjetSmsSender;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
