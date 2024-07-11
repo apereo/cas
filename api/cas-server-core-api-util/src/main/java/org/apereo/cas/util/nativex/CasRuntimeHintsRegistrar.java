@@ -343,6 +343,26 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
         registerReflectionHints(hints, entries, memberCategories);
         return this;
     }
+
+    /**
+     * Find subclasses of class.
+     *
+     * @param superClass the super class
+     * @return the collection
+     */
+    default Collection<Class> findSubclassesOf(final Class superClass) {
+        return findSubclassesInPackage(superClass, "org.apereo.cas");
+    }
+
+    /**
+     * Find subclasses in class package.
+     *
+     * @param superClass the super class
+     * @return the collection
+     */
+    default Collection<Class> findSubclassesInClassPackage(final Class superClass) {
+        return findSubclassesInPackage(superClass, superClass.getPackageName());
+    }
     
     /**
      * Find subclasses in packages and exclude tests.

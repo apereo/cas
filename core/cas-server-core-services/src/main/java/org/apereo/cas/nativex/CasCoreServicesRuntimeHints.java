@@ -56,6 +56,7 @@ import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexMatchingRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
+import org.apereo.cas.services.RegisteredServicePasswordlessPolicy;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
 import org.apereo.cas.services.RemoteEndpointServiceAccessStrategy;
 import org.apereo.cas.services.RestfulRegisteredServiceAuthenticationPolicyCriteria;
@@ -79,6 +80,7 @@ import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilt
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilter;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import lombok.val;
 import org.springframework.aot.hint.RuntimeHints;
 import java.util.List;
 
@@ -150,7 +152,7 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             AttributeBasedRegisteredServiceAccessStrategyActivationCriteria.class,
             AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria.class,
             AttributeBasedRegisteredServiceSingleSignOnParticipationPolicy.class,
-            
+
             ChainingAttributeReleasePolicy.class,
             DenyAllAttributeReleasePolicy.class,
             ReturnAllowedAttributeReleasePolicy.class,
@@ -194,5 +196,9 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             RegisteredServiceQueryIndex.class,
             CasRegisteredService.class
         ));
+
+        val classes = findSubclassesOf(RegisteredServicePasswordlessPolicy.class);
+        registerSerializationHints(hints, classes);
+        registerReflectionHints(hints, classes);
     }
 }
