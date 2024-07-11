@@ -116,4 +116,5 @@ The following approaches may be used to send emails.
 | Default    | [See this page](Sending-Email-Configuration-Default.html).   |
 | SendGrid   | [See this page](Sending-Email-Configuration-SendGrid.html).  |
 | Amazon SES | [See this page](Sending-Email-Configuration-AmazonSES.html). |
+| Mailjet    | [See this page](Sending-Email-Configuration-Mailjet.html).   |
 | Custom     | [See this page](Sending-Email-Configuration-Custom.html).    |
