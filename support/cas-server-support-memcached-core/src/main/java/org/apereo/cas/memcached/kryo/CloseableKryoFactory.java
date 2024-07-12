@@ -71,6 +71,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.regex.Pattern;
@@ -190,6 +191,7 @@ public class CloseableKryoFactory implements FactoryBean<CloseableKryo> {
         kryo.register(LinkedList.class);
         kryo.register(HashMap.class);
         kryo.register(LinkedHashMap.class);
+        kryo.register(ConcurrentHashMap.class);
         kryo.register(LinkedHashSet.class);
         kryo.register(ConcurrentSkipListSet.class);
         kryo.register(ConcurrentSkipListMap.class, new DefaultSerializers.ConcurrentSkipListMapSerializer());
