@@ -41,7 +41,26 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release.
 
+### Graal VM Native Images
+
+A CAS server installation and deployment process can be tuned to build and run
+as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html).
+The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) have selectively switched
+to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
+
+### Testing Strategy
+
+The collection of end-to-end [browser tests based via Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately `485` distinct scenarios. The overall
+test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
+are now configured to run with parallelism enabled.
+
 ## Other Stuff
+
+- Many small improvements and bug fixes in CAS documentation to remove typos and correct references.
 
 ## Library Upgrades
 
+- Spring
+- Spring Cloud
+- Pac4j
