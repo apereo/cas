@@ -1,14 +1,12 @@
 {
-  "dependencies": "pac4j-webflow",
+  "dependencies": "pac4j-webflow,pac4j-cas",
   "conditions": {
     "docker": "true"
   },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-
-
-
+    
     "--cas.authn.pac4j.core.session-replication.replicate-sessions=true",
 
     "--cas.service-registry.core.init-from-json=true",

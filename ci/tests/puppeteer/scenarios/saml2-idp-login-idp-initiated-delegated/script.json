@@ -1,5 +1,5 @@
 {
-  "dependencies": "saml-idp,pac4j-webflow,scripting",
+  "dependencies": "saml-idp,pac4j-webflow,scripting,pac4j-cas",
   "conditions": {
     "docker": "true"
   },
@@ -10,9 +10,7 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
-
-
-
+    
     "--cas.http-client.host-name-verifier=none",
     
     "--cas.authn.pac4j.core.groovy-redirection-strategy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/Redirect.groovy",

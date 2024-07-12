@@ -8,16 +8,12 @@ import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.pac4j.cas.client.CasClient;
-import org.pac4j.cas.config.CasConfiguration;
-import org.pac4j.cas.config.CasProtocol;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.http.callback.NoParameterCallbackUrlResolver;
@@ -30,8 +26,6 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link BaseDelegatedIdentityProviderFactory}.
@@ -42,21 +36,21 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedIdentityProviderFactory {
-    private static final Pattern PATTERN_LOGIN_URL = Pattern.compile('/' + CasWebflowConfigurer.FLOW_ID_LOGIN + '$');
 
     protected final CasConfigurationProperties casProperties;
 
+    protected final Collection<DelegatedClientFactoryCustomizer> customizers;
+
+    protected final CasSSLContext casSSLContext;
+
+    protected final Cache<String, Collection<BaseClient>> clientsCache;
+
+    protected final ConfigurableApplicationContext applicationContext;
+    
     private final CasReentrantLock lock = new CasReentrantLock();
 
-    private final Collection<DelegatedClientFactoryCustomizer> customizers;
-
-    private final CasSSLContext casSSLContext;
-
-    private final Cache<String, Collection<BaseClient>> clientsCache;
-
-    private final ConfigurableApplicationContext applicationContext;
-
     protected abstract Collection<BaseClient> loadIdentityProviders() throws Exception;
+
 
     @Override
     public final Collection<BaseClient> build() {
@@ -122,29 +116,8 @@ public abstract class BaseDelegatedIdentityProviderFactory implements DelegatedI
         return client;
     }
     
-    protected Collection<IndirectClient> buildCasIdentityProviders(final CasConfigurationProperties casProperties) {
-        val pac4jProperties = casProperties.getAuthn().getPac4j();
-        return pac4jProperties
-            .getCas()
-            .stream()
-            .filter(cas -> cas.isEnabled() && StringUtils.isNotBlank(cas.getLoginUrl()))
-            .map(cas -> {
-                val cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol()));
-                val prefix = PATTERN_LOGIN_URL.matcher(cas.getLoginUrl()).replaceFirst("/");
-                cfg.setPrefixUrl(StringUtils.appendIfMissing(prefix, "/"));
-                cfg.setHostnameVerifier(casSSLContext.getHostnameVerifier());
-                cfg.setSslSocketFactory(casSSLContext.getSslContext().getSocketFactory());
-
-                val client = new CasClient(cfg);
-                configureClient(client, cas, casProperties);
-                LOGGER.debug("Created client [{}]", client);
-                return client;
-            })
-            .collect(Collectors.toList());
-    }
-
     protected Set<BaseClient> buildAllIdentityProviders(final CasConfigurationProperties properties) throws Exception {
-        val newClients = new LinkedHashSet<BaseClient>(buildCasIdentityProviders(properties));
+        val newClients = new LinkedHashSet<BaseClient>();
         val builders = getDelegatedClientBuilders();
         for (val builder : builders) {
             val builtClients = builder.build(properties);

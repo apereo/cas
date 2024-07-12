@@ -1,5 +1,5 @@
 {
-  "dependencies": "pac4j-webflow,pac4j-oidc",
+  "dependencies": "pac4j-webflow,pac4j-oidc,pac4j-cas",
   "conditions": {
     "docker": "true"
   },

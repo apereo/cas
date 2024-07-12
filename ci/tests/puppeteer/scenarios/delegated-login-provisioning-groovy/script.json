@@ -1,12 +1,10 @@
 {
-  "dependencies": "pac4j-webflow,scripting",
+  "dependencies": "pac4j-webflow,scripting,pac4j-cas",
   "conditions": {
     "docker": "true"
   },
 
   "properties": [
-
-    
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
 

@@ -29,18 +29,15 @@ dependencies {
     implementation project(":support:cas-server-support-pac4j-api")
     implementation project(":support:cas-server-support-pac4j-core-clients")
     implementation project(":support:cas-server-support-pac4j-core")
-    
-    api libraries.pac4jcore
-    api libraries.pac4jcas
 
-    runtimeOnly libraries.casclient
-
-    testImplementation libraries.casclient
+    implementation libraries.pac4jcore
     
     compileOnly project(":support:cas-server-support-discovery-profile-core")
     compileOnly project(":support:cas-server-support-scim-core")
     compileOnly project(":support:cas-server-support-ldap-core")
 
+    testImplementation libraries.pac4jcas
+    
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")

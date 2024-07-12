@@ -1,6 +1,5 @@
 {
-  "dependencies": "discovery-profile,oidc,pac4j-webflow,simple-mfa",
-
+  "dependencies": "discovery-profile,oidc,pac4j-webflow,simple-mfa,pac4j-cas",
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
