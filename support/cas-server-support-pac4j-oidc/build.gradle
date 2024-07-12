@@ -3,8 +3,8 @@ ext {
     publishMetadata = true
     projectMetadata = [
             category: "Delegated Authentication",
-            title: "Delegated (Proxy) Authentication",
-            aliases: ["pac4joidc", "oidcexternal"]
+            title: "OAuth2/OIDC Delegated (Proxy) Authentication",
+            aliases: ["pac4joidc", "oidcexternal", "pac4joauth"]
     ]
 }
 dependencies {

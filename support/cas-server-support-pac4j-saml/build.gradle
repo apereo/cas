@@ -3,7 +3,7 @@ ext {
     publishMetadata = true
     projectMetadata = [
             category: "Delegated Authentication",
-            title: "Delegated (Proxy) Authentication",
+            title: "SAML2 Delegated (Proxy) Authentication",
             aliases: ["pac4jsaml", "saml2external"]
     ]
 }
@@ -53,6 +53,7 @@ dependencies {
     testImplementation libraries.jose4j
     testImplementation libraries.mongo
     testImplementation libraries.hazelcast
+    testImplementation libraries.pac4jcas
 
     testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-services")

@@ -24,7 +24,7 @@ import org.opensaml.saml.saml2.core.IDPEntry;
 import org.opensaml.saml.saml2.core.IDPList;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.opensaml.saml.saml2.core.Scoping;
-import org.pac4j.cas.client.CasClient;
+import org.pac4j.http.client.indirect.FormClient;
 import org.pac4j.jee.context.JEEContext;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
@@ -116,7 +116,7 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
         setAuthnRequestFor(webContext, saml2Client.getIdentityProviderResolvedEntityId());
         assertTrue(customizer.isAuthorized(webContext, saml2Client, webApplicationService));
         assertDoesNotThrow(() -> customizer.customize(saml2Client, webContext));
-        assertTrue(customizer.isAuthorized(webContext, new CasClient(), webApplicationService));
+        assertTrue(customizer.isAuthorized(webContext, new FormClient(), webApplicationService));
     }
 
     private void storeRequest(final AuthnRequest authnRequest, final JEEContext webContext) throws Exception {

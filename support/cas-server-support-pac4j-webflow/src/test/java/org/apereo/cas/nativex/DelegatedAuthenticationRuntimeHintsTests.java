@@ -3,7 +3,7 @@ package org.apereo.cas.nativex;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.cas.profile.CasProfile;
+import org.pac4j.core.profile.CommonProfile;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,6 +20,6 @@ class DelegatedAuthenticationRuntimeHintsTests {
     void verifyHints() throws Throwable {
         val hints = new RuntimeHints();
         new DelegatedAuthenticationRuntimeHints().registerHints(hints, getClass().getClassLoader());
-        assertTrue(RuntimeHintsPredicates.serialization().onType(CasProfile.class).test(hints));
+        assertTrue(RuntimeHintsPredicates.serialization().onType(CommonProfile.class).test(hints));
     }
 }

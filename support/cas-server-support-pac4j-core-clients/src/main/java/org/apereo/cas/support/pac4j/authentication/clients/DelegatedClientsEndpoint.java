@@ -2,13 +2,10 @@ package org.apereo.cas.support.pac4j.authentication.clients;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.pac4j.cas.client.CasClient;
-import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.BaseClient;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
@@ -17,7 +14,6 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TreeMap;
 
 /**
@@ -67,22 +63,13 @@ public class DelegatedClientsEndpoint extends BaseCasActuatorEndpoint {
     private Map<String, Map<String, String>> buildClientMap(final Collection<BaseClient> currentClients) {
         val clientsMap = new TreeMap<String, Map<String, String>>();
         currentClients.forEach(client -> {
-            if (Objects.requireNonNull(client) instanceof final CasClient instance) {
-                clientsMap.put(client.getName(), fetchCasConfiguration(instance.getConfiguration()));
-            } else {
-                delegatedClientsEndpointContributors.ifAvailable(contributors ->
-                    contributors
-                        .stream()
-                        .filter(contributor -> contributor.supports(client))
-                        .forEach(contributor -> clientsMap.put(client.getName(), contributor.contribute(client))));
-            }
+            delegatedClientsEndpointContributors.ifAvailable(contributors ->
+                contributors
+                    .stream()
+                    .filter(contributor -> contributor.supports(client))
+                    .forEach(contributor -> clientsMap.put(client.getName(), contributor.contribute(client))));
+
         });
         return clientsMap;
-    }
-    
-    protected Map<String, String> fetchCasConfiguration(final CasConfiguration configuration) {
-        return CollectionUtils.wrap(
-            "protocol", configuration.getProtocol(),
-            "loginUrl", configuration.getLoginUrl());
     }
 }

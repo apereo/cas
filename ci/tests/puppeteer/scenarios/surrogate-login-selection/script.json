@@ -1,5 +1,5 @@
 {
-  "dependencies": "surrogate-webflow,pac4j-webflow",
+  "dependencies": "surrogate-webflow,pac4j-webflow,pac4j-cas",
   "conditions": {
     "docker": "true"
   },

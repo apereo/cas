@@ -1,5 +1,5 @@
 {
-  "dependencies": "pac4j-webflow,scripting",
+  "dependencies": "pac4j-webflow,scripting,pac4j-cas",
   "conditions": {
     "docker": "true"
   },
@@ -13,8 +13,7 @@
     "--cas.authn.attribute-repository.stub.attributes.preferred_username=casuser",
 
     "--cas.service-registry.core.init-from-json=true",
-
-
+    
     "--cas.http-client.host-name-verifier=none",
 
     "--cas.authn.pac4j.profile-selection.groovy.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/GroovyProfileSelection.groovy",

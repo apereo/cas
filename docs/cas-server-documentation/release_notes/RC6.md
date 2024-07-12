@@ -41,6 +41,17 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release.
 
+### CAS Delegated Authentication
+
+All functionality and components that allow CAS to route authentication requests to external CAS identity providers are now consolidated under a single module.
+This is done to simplify the setup in a more modular way and reduce the number of libraries and dependencies that would be pulled into the build.
+
+Please make sure you review the [CAS delegated authentication](../integration/Delegate-Authentication-CAS.html) page and include the correct module in your build.
+
+<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
+This is potentially a breaking change. Make sure to review your build's dependencies and adjust modules to restore functionality.
+</p></div>
+
 ### Graal VM Native Images
 
 A CAS server installation and deployment process can be tuned to build and run
