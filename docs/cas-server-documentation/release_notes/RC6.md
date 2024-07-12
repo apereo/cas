@@ -63,4 +63,5 @@ are now configured to run with parallelism enabled.
 
 - Spring
 - Spring Cloud
+- Spring Boot
 - Pac4j

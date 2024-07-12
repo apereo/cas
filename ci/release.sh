@@ -8,7 +8,7 @@ ENDCOLOR="\e[0m"
 casVersion=(`cat ./gradle.properties | grep "version" | cut -d= -f2`)
 
 function printgreen() {
-  printf "✅ ${GREEN}$1${ENDCOLOR}\n"
+  printf "☘️ ${GREEN}$1${ENDCOLOR}\n"
 }
 
 function printred() {
