@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -29,9 +31,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Delegation")
 class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
 
-    @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
-        properties = "cas.authn.pac4j.cookie.enabled=true")
-    public abstract class BaseDelegatedClientIdentityProviderConfigurationProducerTests {
+    @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class, properties = "cas.authn.pac4j.cookie.enabled=true")
+    @ExtendWith(CasTestExtension.class)
+    public abstract static class BaseDelegatedClientIdentityProviderConfigurationProducerTests {
         @Autowired
         @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
         protected DelegatedClientIdentityProviderConfigurationProducer delegatedClientIdentityProviderConfigurationProducer;
@@ -68,7 +70,7 @@ class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
         @Test
         void verifyOperation() throws Throwable {
             delegatedAuthenticationCookieGenerator.addCookie(context.getNativeRequest(),
-                context.getNativeResponse(), "SAML2Client");
+                context.getNativeResponse(), "CasClient");
             val results = delegatedClientIdentityProviderConfigurationProducer.produce(requestContext);
             assertFalse(results.isEmpty());
             assertNotNull(DelegationWebflowUtils.getDelegatedAuthenticationProviderPrimary(requestContext));
@@ -85,6 +87,7 @@ class DefaultDelegatedClientIdentityProviderConfigurationProducerTests {
     }
 
     @Nested
+    @TestPropertySource(properties = "cas.authn.pac4j.core.discovery-selection.selection-type=MENU")
     class MenuSelectionTests extends BaseDelegatedClientIdentityProviderConfigurationProducerTests {
     }
 

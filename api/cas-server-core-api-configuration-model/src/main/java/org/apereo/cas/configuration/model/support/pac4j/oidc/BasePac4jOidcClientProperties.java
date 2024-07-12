@@ -23,7 +23,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiresModule(name = "cas-server-support-pac4j-webflow")
+@RequiresModule(name = "cas-server-support-pac4j-oidc")
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -148,4 +148,10 @@ public abstract class BasePac4jOidcClientProperties extends Pac4jIdentifiableCli
      * Example might be {@code client_secret_basic,client_secret_post,client_secret_jwt}.
      */
     private String supportedClientAuthenticationMethods;
+
+    /**
+     * Controls whether the logout token submitted as a JWT should be validated
+     * for the correct signature, etc.
+     */
+    private boolean validateLogoutToken = true;
 }

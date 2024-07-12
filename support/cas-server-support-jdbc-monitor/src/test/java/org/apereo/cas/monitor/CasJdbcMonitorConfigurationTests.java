@@ -2,8 +2,10 @@ package org.apereo.cas.monitor;
 
 import org.apereo.cas.config.CasJdbcMonitorAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -26,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("JDBC")
+@ExtendWith(CasTestExtension.class)
 class CasJdbcMonitorConfigurationTests {
 
     @Autowired

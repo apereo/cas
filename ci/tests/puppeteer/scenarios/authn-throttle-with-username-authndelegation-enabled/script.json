@@ -5,8 +5,6 @@
     "--cas.authn.throttle.core.username-parameter=username",
     "--cas.authn.throttle.failure.threshold=1",
     "--cas.authn.throttle.failure.range-seconds=10",
-    "--cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",
-
-    "--logging.level.org.apereo.cas=info"
+    "--cas.authn.throttle.failure.code=AUTHENTICATION_FAILED"
   ]
 }

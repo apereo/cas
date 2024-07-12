@@ -1,6 +1,6 @@
 package org.apereo.cas.throttle;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.util.NamedObject;
 
 /**
  * This is {@link AuthenticationThrottlingExecutionPlanConfigurer}.
@@ -9,20 +9,12 @@ import org.apache.commons.lang3.StringUtils;
  * @since 5.3.0
  */
 @FunctionalInterface
-public interface AuthenticationThrottlingExecutionPlanConfigurer {
+public interface AuthenticationThrottlingExecutionPlanConfigurer extends NamedObject {
     /**
      * Configure authentication throttling execution plan.
      *
      * @param plan the plan
      */
     void configureAuthenticationThrottlingExecutionPlan(AuthenticationThrottlingExecutionPlan plan);
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return StringUtils.defaultIfBlank(this.getClass().getSimpleName(), "Default");
-    }
+    
 }

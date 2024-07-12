@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -22,9 +23,11 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -58,6 +61,7 @@ import org.springframework.webflow.execution.Action;
         "cas.authn.pm.reset.security-questions-enabled=true"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ExtendWith(CasTestExtension.class)
 public abstract class BasePasswordManagementActionTests {
     @Autowired
     protected CasConfigurationProperties casProperties;
@@ -108,16 +112,12 @@ public abstract class BasePasswordManagementActionTests {
 
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
-
     @ImportAutoConfiguration({
         AopAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         MailSenderValidatorAutoConfiguration.class,
-        RefreshAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        RefreshAutoConfiguration.class,
         CasPasswordManagementAutoConfiguration.class,
         CasPasswordManagementWebflowAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
@@ -134,8 +134,10 @@ public abstract class BasePasswordManagementActionTests {
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class
+        CasCoreScriptingAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

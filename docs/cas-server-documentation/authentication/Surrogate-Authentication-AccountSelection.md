@@ -45,7 +45,7 @@ will need to provide your own password of course.
 
 {% endtab %}
 
-{% tab impersonationoptions Principal Attribute %}
+{% tab impersonationoptions <i class="fa fa-person px-1"></i>Principal Attribute %}
 
 This option is similar to the *Wildcard* strategy, except that the impersonation logic is based off of a predefined principal attribute
 that is resolved and whose value(s) matches a certain regular expression pattern. That is, CAS can be configured to look for a specific attribute

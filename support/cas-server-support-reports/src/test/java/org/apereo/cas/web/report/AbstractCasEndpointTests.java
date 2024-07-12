@@ -14,6 +14,7 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -25,6 +26,8 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasReportsAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -59,6 +62,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ExtendWith(CasTestExtension.class)
 public abstract class AbstractCasEndpointTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
@@ -78,7 +82,6 @@ public abstract class AbstractCasEndpointTests {
             plan.registerAuditTrailManager(new MockAuditTrailManager());
         }
     }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         HealthEndpointAutoConfiguration.class,
@@ -90,23 +93,18 @@ public abstract class AbstractCasEndpointTests {
         DispatcherServletAutoConfiguration.class,
 
         ServletEndpointManagementContextConfiguration.class,
-        WebMvcEndpointManagementContextConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        WebMvcEndpointManagementContextConfiguration.class,
         CasReportsAutoConfiguration.class,
         CasCoreLoggingAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
-        AbstractCasEndpointTests.AuditTestConfiguration.class,
-        CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
@@ -115,6 +113,10 @@ public abstract class AbstractCasEndpointTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreValidationAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import({AbstractCasEndpointTests.AuditTestConfiguration.class,
+        CasAuthenticationEventExecutionPlanTestConfiguration.class,
+        CasRegisteredServicesTestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 }

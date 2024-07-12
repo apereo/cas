@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -30,6 +31,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
@@ -40,6 +43,7 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -71,6 +75,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = BaseOAuth20AuthenticatorTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableRetry
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseOAuth20AuthenticatorTests {
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
@@ -82,6 +87,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
     @Autowired
     @Qualifier(CentralAuthenticationService.BEAN_NAME)
     protected CentralAuthenticationService centralAuthenticationService;
+    
     @Autowired
     @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
     protected AuthenticationSystemSupport authenticationSystemSupport;
@@ -105,6 +111,10 @@ public abstract class BaseOAuth20AuthenticatorTests {
     @Autowired
     @Qualifier("oauthClientAuthenticator")
     protected Authenticator oauthClientAuthenticator;
+
+    @Autowired
+    @Qualifier("oauth20ConfigurationContext")
+    protected OAuth20ConfigurationContext configurationContext;
 
     @Autowired
     @Qualifier(OAuth20ClientSecretValidator.BEAN_NAME)
@@ -176,19 +186,15 @@ public abstract class BaseOAuth20AuthenticatorTests {
 
         servicesManager.save(service, serviceWithoutSecret, serviceWithoutSecret2, serviceJwtAccessToken, serviceWithAttributesMapping);
     }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         AopAutoConfiguration.class,
         IntegrationAutoConfiguration.class,
-        MailSenderAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        MailSenderAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
@@ -198,11 +204,12 @@ public abstract class BaseOAuth20AuthenticatorTests {
         CasCoreWebAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-        CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasOAuth20AutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import({CasPersonDirectoryTestConfiguration.class, CasAuthenticationEventExecutionPlanTestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 

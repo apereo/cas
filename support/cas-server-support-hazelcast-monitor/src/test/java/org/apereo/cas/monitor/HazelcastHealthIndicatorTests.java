@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -11,10 +12,12 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasHazelcastMonitorAutoConfiguration;
 import org.apereo.cas.config.CasHazelcastTicketRegistryAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import com.hazelcast.internal.memory.MemoryStats;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -42,6 +45,7 @@ import static org.mockito.Mockito.*;
     CasHazelcastMonitorAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
+    CasCoreScriptingAutoConfiguration.class,
     CasPersonDirectoryAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
@@ -52,6 +56,7 @@ import static org.mockito.Mockito.*;
 },
     properties = "cas.ticket.registry.hazelcast.cluster.instance-name=testlocalmonitor")
 @Tag("Hazelcast")
+@ExtendWith(CasTestExtension.class)
 class HazelcastHealthIndicatorTests {
     @Autowired
     @Qualifier("hazelcastHealthIndicator")

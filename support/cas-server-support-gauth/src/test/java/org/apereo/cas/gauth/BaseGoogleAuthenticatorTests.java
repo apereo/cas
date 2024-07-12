@@ -8,6 +8,7 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -31,18 +32,13 @@ import org.springframework.context.annotation.Import;
  * @since 6.2.0
  */
 public abstract class BaseGoogleAuthenticatorTests {
-    
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasOneTimeTokenAuthenticationAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
@@ -53,6 +49,7 @@ public abstract class BaseGoogleAuthenticatorTests {
         CasCoreWebAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
 
         CasMultifactorAuthnTrustAutoConfiguration.class,
@@ -60,6 +57,8 @@ public abstract class BaseGoogleAuthenticatorTests {
         CasGoogleAuthenticatorAutoConfiguration.GoogleAuthenticatorMultifactorTrustConfiguration.class,
         CasGoogleAuthenticatorAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

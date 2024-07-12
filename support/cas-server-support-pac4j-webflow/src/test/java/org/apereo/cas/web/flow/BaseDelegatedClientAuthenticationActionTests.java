@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.MockRequestContext;
@@ -16,6 +17,7 @@ import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.util.Pac4jConstants;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +34,6 @@ import org.springframework.webflow.engine.support.BeanFactoryVariableValueFactor
 import org.springframework.webflow.execution.Action;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.Locale;
 import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Slf4j
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseDelegatedClientAuthenticationActionTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION)
@@ -73,20 +74,7 @@ public abstract class BaseDelegatedClientAuthenticationActionTests {
     @Autowired
     @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
     protected DelegatedIdentityProviders identityProviders;
-
-    protected String getLogoutResponse() {
-        return "<samlp:LogoutResponse xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
-            + "xmlns:saml=\"urn:oasis:names:tc:SAML:2.0:assertion\" "
-            + "ID=\"_6c3737282f007720e736f0f4028feed8cb9b40291c\" Version=\"2.0\" "
-            + "IssueInstant=\"" + ZonedDateTime.now(ZoneOffset.UTC) + "\" "
-            + "Destination=\"http://callback.example.org?client_name=SAML2Client\" "
-            + "InResponseTo=\"ONELOGIN_21df91a89767879fc0f7df6a1490c6000c81644d\">"
-            + "  <saml:Issuer>https://cas.example.org/idp</saml:Issuer>"
-            + "  <samlp:Status>"
-            + "    <samlp:StatusCode Value=\"urn:oasis:names:tc:SAML:2.0:status:Success\"/>"
-            + "  </samlp:Status>"
-            + "</samlp:LogoutResponse>";
-    }
+    
 
     protected void assertStartAuthentication(final Service service) throws Throwable {
         val requestContext = MockRequestContext.create(applicationContext);
@@ -106,7 +94,7 @@ public abstract class BaseDelegatedClientAuthenticationActionTests {
             WebUtils.putServiceIntoFlowScope(requestContext, service);
         }
 
-        val client = identityProviders.findClient("SAML2Client").orElseThrow();
+        val client = identityProviders.findClient("CasClient").orElseThrow();
         val webContext = new JEEContext(requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse());
 
         val ticket = delegatedClientAuthenticationWebflowManager.store(requestContext, webContext, client);

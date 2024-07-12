@@ -3,11 +3,13 @@ package org.apereo.cas.adaptors.radius;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -23,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.2.0
  */
 @Tag("Radius")
+@ExtendWith(CasTestExtension.class)
 @EnabledOnOs(OS.LINUX)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,

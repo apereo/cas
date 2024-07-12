@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("AuthenticationMetadata")
 class RememberMeAuthenticationMetaDataPopulatorTests {
 
-    private static AuthenticationBuilder newBuilder(final Credential credential, final RememberMeAuthenticationProperties properties) throws Throwable {
+    private static AuthenticationBuilder newBuilder(final Credential credential, final RememberMeAuthenticationProperties properties) {
         val meta = new UsernamePasswordCredential();
         val populator = new RememberMeAuthenticationMetaDataPopulator(properties);
         val handler = new SimpleTestUsernamePasswordAuthenticationHandler();

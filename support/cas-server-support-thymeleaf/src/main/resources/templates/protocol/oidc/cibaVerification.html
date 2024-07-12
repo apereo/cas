@@ -95,9 +95,7 @@
                 </div>
                 <br/>
                 <div class="d-flex">
-                    <button id="confirmButton" name="confirmButton" class="mdc-button mdc-button--raised me-2" accesskey="c" type="submit">
-                        <span class="mdc-button__label" th:text="#{screen.welcome.button.confirm}">Confirm</span>
-                    </button>
+                    <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.confirm', id='confirmButton')}"/>
                 </div>
                 <input type="hidden" id="loginCsrfToken" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <input type="hidden" name="cibaRequestId" th:value="${cibaRequest.id}"/>

@@ -7,7 +7,6 @@ import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Import;
 
 /**
  * This is {@link BaseAutoConfigurationTests}.
@@ -21,12 +20,10 @@ public abstract class BaseAutoConfigurationTests {
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        ObservationAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        ObservationAutoConfiguration.class,
         CasCoreMonitorAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
@@ -35,6 +32,7 @@ public abstract class BaseAutoConfigurationTests {
         CasCoreTicketsAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 }

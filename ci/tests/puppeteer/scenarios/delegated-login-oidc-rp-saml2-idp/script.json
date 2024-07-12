@@ -1,5 +1,5 @@
 {
-  "dependencies": "oidc,pac4j-webflow",
+  "dependencies": "oidc,pac4j-webflow,,pac4j-saml",
   "conditions": {
     "docker": "true"
   },
@@ -21,7 +21,7 @@
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
-    "--logging.level.org.apereo.cas=info",
+
     
     "--cas.authn.pac4j.saml[0].keystore-password=pac4j-demo-passwd",
     "--cas.authn.pac4j.saml[0].private-key-password=pac4j-demo-passwd",

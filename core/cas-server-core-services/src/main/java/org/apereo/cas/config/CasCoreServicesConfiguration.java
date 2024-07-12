@@ -45,13 +45,12 @@ import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import org.apereo.cas.web.UrlValidator;
-
 import com.github.benmanes.caffeine.cache.Cache;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -77,7 +76,6 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.EnableAsync;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -179,7 +177,8 @@ class CasCoreServicesConfiguration {
                     .given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val location = casProperties.getAccessStrategy().getGroovy().getLocation();
-                    return new GroovyRegisteredServiceAccessStrategyEnforcer(new WatchableGroovyScriptResource(location));
+                    val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+                    return new GroovyRegisteredServiceAccessStrategyEnforcer(scriptFactory.fromResource(location));
                 })
                 .otherwiseProxy()
                 .get();
@@ -333,8 +332,15 @@ class CasCoreServicesConfiguration {
         public RegisteredServicesTemplatesManager registeredServicesTemplatesManager(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
-            return new DefaultRegisteredServicesTemplatesManager(casProperties.getServiceRegistry(),
-                new RegisteredServiceJsonSerializer(applicationContext));
+            return BeanSupplier.of(RegisteredServicesTemplatesManager.class)
+                .when(BeanCondition.on("cas.service-registry.templates.directory.location").exists().given(applicationContext.getEnvironment()))
+                .supply(() -> {
+                    val registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
+                    return new DefaultRegisteredServicesTemplatesManager(casProperties.getServiceRegistry(), registeredServiceSerializer);
+                })
+                .otherwise(RegisteredServicesTemplatesManager::noOp)
+                .get();
+            
         }
 
         @ConditionalOnMissingBean(name = ServicesManager.BEAN_NAME)

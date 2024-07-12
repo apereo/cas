@@ -6,8 +6,7 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-    "--cas.authn.pac4j.rest.url=http://localhost:5432/delegatedauthn",
+    "--cas.authn.pac4j.rest.url=http://localhost:5432/delegatedauthn"
 
-    "--logging.level.org.apereo.cas=debug"
   ]
 }

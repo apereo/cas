@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{cas.mfa.simple.pagetitle}">CAS Multifactor Authentication View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
+</head>
+
+<body>
+
+<main class="container mt-3 mb-3">
+    <div layout:fragment="content" id="login" class="mdc-card mdc-card-content card w-lg-50 p-4 m-auto">
+        <form method="post" id="fm1" th:action="@{/login}">
+            <div class="banner banner-danger my-2" th:if="${flowRequestContext.messageContext.hasErrorMessages()}">
+                <h2 th:utext="#{screen.mfaUnavailable.heading}">MFA Provider Unavailable</h2>
+                <p th:each="message : ${flowRequestContext.messageContext.allMessages}"
+                   th:utext="${message.text}">Message Text</p>
+            </div>
+            
+            <h2><i class="mdi mdi-email fas fa-door-open" aria-hidden="true"></i>
+                <span th:utext="#{cas.mfa.simple.contact-selection.title}">Select Address</span>
+            </h2>
+            <span th:utext="#{cas.mfa.simple.contact-selection.description}">We have found multiple options for your account.</span>
+            <p/>
+            <div th:if="${emailRecipients}">
+                <h4>Email</h4>
+                <span th:remove="tag" th:each="recipient : ${emailRecipients}">
+                    <div class="mdc-form-field form-check">
+                        <div class="mdc-checkbox">
+                            <input th:id="${recipient.key}"
+                                   th:name="${recipient.key}"
+                                   class="mdc-checkbox__native-control form-check-input"
+                                   type="checkbox"/>
+                            <div class="mdc-checkbox__background">
+                                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                    <path class="mdc-checkbox__checkmark-path" fill="none"
+                                          d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+                                </svg>
+                                <div class="mdc-checkbox__mixedmark"></div>
+                            </div>
+                            <div class="mdc-checkbox__ripple"></div>
+                        </div>
+                        <label class="form-check-label"
+                               th:for="${recipient.key}"
+                               th:utext="${recipient.value.obfuscated}" />
+                    </div>
+                 </span>
+                <hr width="75%">
+                <p/>
+            </div>
+
+            <div th:if="${smsRecipients}">
+                <h4>Phone</h4>
+                <span th:remove="tag" th:each="recipient : ${smsRecipients}">
+                    <div class="mdc-form-field form-check">
+                        <div class="mdc-checkbox">
+                            <input th:id="${recipient.key}"
+                                   class="mdc-checkbox__native-control form-check-input"
+                                   th:name="${recipient.key}"
+                                   type="checkbox"/>
+                            <div class="mdc-checkbox__background">
+                                <svg class="mdc-checkbox__checkmark" viewBox="0 0 24 24">
+                                    <path class="mdc-checkbox__checkmark-path" fill="none"
+                                          d="M1.73,12.91 8.1,19.28 22.79,4.59"/>
+                                </svg>
+                                <div class="mdc-checkbox__mixedmark"></div>
+                            </div>
+                            <div class="mdc-checkbox__ripple"></div>
+                        </div>
+                        <label class="form-check-label"
+                               th:for="${recipient.key}"
+                               th:utext="${recipient.value.obfuscated}" />
+                    </div>
+                 </span>
+            </div>
+               <p/>
+            <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.button.continue', id='continueButton')}"/>
+
+            <input type="hidden" id="eventId" name="_eventId" value="select"/>
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            <input type="hidden" name="geolocation"/>
+        </form>
+
+        <script type="text/javascript">
+            $('#continueButton').prop('disabled', true);
+            function jqueryReady() {
+                $('#fm1 input[type="checkbox"]').change(() => {
+                    const atLeastOneChecked = $('input[type="checkbox"]').is(':checked');
+                    $('#continueButton').prop('disabled', !atLeastOneChecked);
+                });
+            }
+        </script>
+        
+    </div>
+</main>
+</body>
+
+</html>

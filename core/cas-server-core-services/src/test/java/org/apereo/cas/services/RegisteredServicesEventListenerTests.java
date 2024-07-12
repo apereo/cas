@@ -4,6 +4,7 @@ import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -14,6 +15,7 @@ import org.apereo.cas.notifications.sms.MockSmsSender;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -21,6 +23,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -52,6 +55,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
+    CasCoreScriptingAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
@@ -67,6 +71,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.service-registry.mail.text=Service ${service} has expired in CAS service registry"
 })
 @Tag("Mail")
+@ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 25000)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class RegisteredServicesEventListenerTests {
@@ -93,7 +98,7 @@ class RegisteredServicesEventListenerTests {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         assertDoesNotThrow(new Executable() {
             @Override
-            public void execute() throws Throwable {
+            public void execute() {
                 val listener = new DefaultRegisteredServicesEventListener(servicesManager, casProperties, communicationsManager);
                 val event = new CasRegisteredServiceExpiredEvent(this, registeredService, false, clientInfo);
                 listener.handleRegisteredServiceExpiredEvent(event);

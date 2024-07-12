@@ -1,6 +1,7 @@
 
 const cas = require("../../cas.js");
 const assert = require("assert");
+const querystring = require("querystring");
 
 async function loginAndVerify(browser) {
     const page = await cas.newPage(browser);
@@ -32,10 +33,52 @@ async function loginAndVerify(browser) {
     await cas.assertInnerText(page, "#content div h2", "Log In Successful");
 }
 
+async function executeRequest(url, method, statusCode, contentType = "application/x-www-form-urlencoded", requestBody = undefined) {
+    return cas.doRequest(url, method,
+        {
+            "Accept": "application/json",
+            "Content-Length": requestBody === undefined ? 0 : Buffer.byteLength(requestBody),
+            "Content-Type": contentType
+        },
+        statusCode, requestBody);
+}
+
+async function fetchSsoSessions() {
+    await cas.logg("Removing all SSO Sessions");
+    await cas.doDelete("https://localhost:8443/cas/actuator/ssoSessions?type=ALL&from=1&count=100000");
+    
+    const formData = {
+        username: "casuser",
+        password: "Mellon",
+        rememberMe: true
+    };
+    const postData = querystring.stringify(formData);
+    for (let i = 0; i < 100; i++) {
+        const tgt = await executeRequest("https://localhost:8443/cas/v1/tickets", "POST", 201, "application/x-www-form-urlencoded", postData);
+        assert(tgt !== undefined);
+    }
+    await cas.doDelete("https://localhost:8443/cas/actuator/ticketRegistry/clean", 200,
+        async (res) => {
+            assert(res.status === 200);
+        }, async (err) => {
+            throw err;
+        }, {
+            "Accept": "application/json",
+            "Content-Type": "application/x-www-form-urlencoded"
+        });
+    
+    await cas.doGet("https://localhost:8443/cas/actuator/ssoSessions?type=ALL", async (res) => {
+        assert(res.status === 200);
+    }, (err) => {
+        throw err;
+    });
+}
+
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     await loginAndVerify(browser);
     await cas.refreshContext();
     await loginAndVerify(browser);
     await browser.close();
+    await fetchSsoSessions();
 })();

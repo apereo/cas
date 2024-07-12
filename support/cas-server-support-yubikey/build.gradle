@@ -29,6 +29,7 @@ dependencies {
     compileOnly project(":support:cas-server-support-trusted-mfa")
 
     implementation libraries.yubicoapi
+    implementation libraries.jose4j
 
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-notifications")
@@ -37,6 +38,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-configuration")

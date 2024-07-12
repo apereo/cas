@@ -1,9 +1,8 @@
 package org.apereo.cas.configuration;
 
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
-import org.apereo.cas.configuration.loader.ConfigurationPropertiesLoaderFactory;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.ResourceUtils;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,8 +40,8 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
 
     private static final List<String> PROFILE_PATTERNS = Arrays.asList("application-%s.%s", "%s.%s");
 
-    private final ConfigurationPropertiesLoaderFactory configurationPropertiesLoaderFactory;
-
+    private final CipherExecutor<String, String> casConfigurationCipherExecutor;
+    
     /**
      * Returns a property source composed of system properties and environment variables.
      * <p>
@@ -170,30 +169,32 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
      * @return Merged properties
      */
     private CompositePropertySource loadSettingsByApplicationProfiles(final Environment environment, final File config) {
-        val profiles = ConfigurationPropertiesLoaderFactory.getApplicationProfiles(environment);
+        val profiles = Arrays.stream(environment.getActiveProfiles()).toList();
         val resources = scanForConfigurationResources(environment, config, profiles);
         val composite = new CompositePropertySource("applicationProfilesCompositeProperties");
         LOGGER.info("Configuration files found at [{}] are [{}] under profile(s) [{}]", config, resources, profiles);
         resources.forEach(Unchecked.consumer(resource -> {
             LOGGER.debug("Loading configuration file [{}]", resource);
-            val loader = configurationPropertiesLoaderFactory.getLoader(resource, "applicationProfilesProperties-" + resource.getFilename());
-            composite.addFirstPropertySource(loader.load());
+
+            val configurationLoaders = CasConfigurationPropertiesSourceLocator.getConfigurationPropertiesLoaders();
+            val foundLoader = configurationLoaders
+                .stream()
+                .filter(loader -> loader.supports(resource))
+                .findFirst()
+                .orElseThrow();
+
+            val source = foundLoader.load(resource, environment,
+                "applicationProfilesProperties-" + resource.getFilename(), casConfigurationCipherExecutor);
+            composite.addFirstPropertySource(source);
+
+            
         }));
         return composite;
     }
 
-    /**
-     * Load embedded YAML/Properties property source.
-     * To save startup time and no incur too much IO for embedded resources,
-     * this method does not use {@link ResourceUtils#doesResourceExist} and instead relies on {@link Resource#exists()}.
-     *
-     * @param resourceLoader the resource loader
-     * @param environment    the environment
-     * @return the property source
-     */
     protected PropertySource<?> loadEmbeddedProperties(final ResourceLoader resourceLoader,
                                                      final Environment environment) {
-        val profiles = ConfigurationPropertiesLoaderFactory.getApplicationProfiles(environment);
+        val profiles = Arrays.stream(environment.getActiveProfiles()).toList();
         val configFiles = profiles
             .stream()
             .map(profile -> EXTENSIONS.stream()
@@ -210,13 +211,22 @@ public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfig
         LOGGER.debug("Loading embedded configuration files [{}]", configFiles);
 
         val composite = new CompositePropertySource("embeddedCompositeProperties");
+        val configurationLoaders = CasConfigurationPropertiesSourceLocator.getConfigurationPropertiesLoaders();
+        
         configFiles
             .stream()
             .filter(Resource::exists)
             .forEach(resource -> {
                 LOGGER.trace("Loading properties from [{}]", resource);
-                val source = configurationPropertiesLoaderFactory.getLoader(resource,
-                    String.format("embeddedProperties-%s", resource.getFilename())).load();
+
+                val foundLoader = configurationLoaders
+                    .stream()
+                    .filter(loader -> loader.supports(resource))
+                    .findFirst()
+                    .orElseThrow();
+
+                val sourceName = String.format("embeddedProperties-%s", resource.getFilename());
+                val source = foundLoader.load(resource, environment, sourceName, casConfigurationCipherExecutor);
                 composite.addPropertySource(source);
             });
         return composite;

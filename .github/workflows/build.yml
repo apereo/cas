@@ -37,6 +37,9 @@ jobs:
   initialize:
     if: ${{ (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'Bot')) }}
     runs-on: ubuntu-latest
+    outputs:
+      JDK_CURRENT: ${{ env.JDK_CURRENT }}
+      JDK_LATEST: ${{ env.JDK_LATEST }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
@@ -54,49 +57,31 @@ jobs:
   build:
     needs: [initialize]
     continue-on-error: false
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
-    runs-on: ${{ matrix.os }}
+        jdk:
+          - ${{ needs.initialize.outputs.JDK_CURRENT }}
+          - ${{ needs.initialize.outputs.JDK_LATEST }}
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK
+      - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v4
         with:
-          java-version: ${{ env.JDK_CURRENT }}
+          java-version: ${{ matrix.jdk }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
         shell: bash
-      - name: Build with Gradle
+      - name: Build with JDK ${{ matrix.jdk }}
         run: ./gradlew build ${{ env.GRADLE_BUILD_OPTIONS }}
       - uses: actions/upload-artifact@v4
         with:
           name: binary-artifacts
           path: ./**/build/libs/*.*
-
-  ##########################################################################
-
-  build-latest-jdk:
-    runs-on: ubuntu-latest
-    needs: [initialize]
-    continue-on-error: false
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: ${{ env.JDK_LATEST }}
-          distribution: ${{ env.JDK_DISTRIBUTION }}
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-      - name: Initialize
-        run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
-      - name: Build with Gradle
-        run: ./gradlew build -DskipAot=true ${{ env.GRADLE_BUILD_OPTIONS }}
 
   ##########################################################################
 

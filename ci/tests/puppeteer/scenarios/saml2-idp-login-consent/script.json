@@ -1,5 +1,5 @@
 {
-  "dependencies": "saml-idp,consent-webflow",
+  "dependencies": "saml-idp,consent-webflow,scripting",
   "conditions": {
     "docker": "true"
   },

@@ -110,7 +110,10 @@ class SamlIdPGitRegisteredServiceMetadataConfiguration {
     static class GitSamlRegisteredServiceRepositoryScheduler implements Runnable {
         private final GitRepository gitRepository;
 
-        @Scheduled(initialDelayString = "${cas.authn.saml-idp.metadata.git.schedule.start-delay:PT60S}",
+        @Scheduled(
+            cron = "${cas.authn.saml-idp.metadata.git.schedule.cron-expression:}",
+            zone = "${cas.authn.saml-idp.metadata.git.schedule.cron-time-zone:}",
+            initialDelayString = "${cas.authn.saml-idp.metadata.git.schedule.start-delay:PT60S}",
             fixedDelayString = "${cas.authn.saml-idp.metadata.git.schedule.repeat-interval:PT2H}")
         @Override
         public void run() {

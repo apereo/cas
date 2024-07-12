@@ -7,6 +7,8 @@ ext {
     ]
 }
 dependencies {
+    implementation libraries.jose4j
+    
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-cookie")
 
@@ -39,7 +41,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-logging")
     testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core")
-
+    testImplementation project(":core:cas-server-core-scripting")
+    
     testImplementation project(":support:cas-server-support-reports")
     testImplementation project(":support:cas-server-support-person-directory")
 

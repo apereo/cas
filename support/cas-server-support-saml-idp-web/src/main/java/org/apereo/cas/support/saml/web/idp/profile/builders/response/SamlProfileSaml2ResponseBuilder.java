@@ -88,8 +88,6 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
             storeAttributeQueryTicketInRegistry(assertion, context);
         }
 
-        val customizers = configurationContext.getApplicationContext()
-            .getBeansOfType(SamlIdPResponseCustomizer.class).values();
         val finalAssertion = encryptAssertion(assertion, context);
         if (finalAssertion.isPresent()) {
             val result = finalAssertion.get();
@@ -97,15 +95,15 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                 LOGGER.trace("Built assertion is encrypted, so the response will add it to the encrypted assertions collection");
                 samlResponse.getEncryptedAssertions().add(encrypted);
             } else if (result instanceof final Assertion nonEncryptedAssertion) {
-                customizers.stream()
-                    .sorted(AnnotationAwareOrderComparator.INSTANCE)
-                    .forEach(customizer -> customizer.customizeAssertion(context, this, nonEncryptedAssertion));
-
                 LOGGER.trace("Built assertion is not encrypted, so the response will add it to the assertions collection");
                 samlResponse.getAssertions().add(nonEncryptedAssertion);
             }
         }
+
         samlResponse.setStatus(determineResponseStatus(context));
+
+        val customizers = configurationContext.getApplicationContext()
+            .getBeansOfType(SamlIdPResponseCustomizer.class).values();
         customizers.stream()
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .forEach(customizer -> customizer.customizeResponse(context, this, samlResponse));
@@ -126,7 +124,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
 
     protected boolean signSamlResponseFor(final SamlProfileBuilderContext context) {
         return context.getRegisteredService().getSignResponses().isTrue()
-            || SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().entityDescriptor(),
+            || SamlIdPUtils.doesEntityDescriptorMatchEntityAttribute(context.getAdaptor().getEntityDescriptor(),
             List.of(MetadataEntityAttributeQuery.of(SamlIdPConstants.KnownEntityAttributes.SHIBBOLETH_SIGN_RESPONSES.getName(),
                 Attribute.URI_REFERENCE, List.of(Boolean.TRUE.toString()))));
     }

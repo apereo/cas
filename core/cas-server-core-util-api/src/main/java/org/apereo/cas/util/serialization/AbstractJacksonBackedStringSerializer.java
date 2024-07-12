@@ -17,6 +17,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
+import org.springframework.context.ConfigurableApplicationContext;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,11 +48,12 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     private static final long serialVersionUID = -8415599777321259365L;
 
     private final PrettyPrinter prettyPrinter;
+    private final ConfigurableApplicationContext applicationContext;
 
     private ObjectMapper objectMapper;
 
-    protected AbstractJacksonBackedStringSerializer() {
-        this(new DefaultPrettyPrinter());
+    protected AbstractJacksonBackedStringSerializer(final ConfigurableApplicationContext applicationContext) {
+        this(new DefaultPrettyPrinter(), applicationContext);
     }
 
     @Override

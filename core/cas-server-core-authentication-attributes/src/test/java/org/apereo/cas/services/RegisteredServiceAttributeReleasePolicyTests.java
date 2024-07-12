@@ -14,7 +14,9 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.cache.DefaultPrincipalAttributesRepositoryCache;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -23,6 +25,7 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,6 +53,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @Tag("RegisteredService")
+@ExtendWith(CasTestExtension.class)
 class RegisteredServiceAttributeReleasePolicyTests {
 
     private static final String ATTR_1 = "attr1";
@@ -79,9 +83,10 @@ class RegisteredServiceAttributeReleasePolicyTests {
         CommonTestConfiguration.class,
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        CasCoreUtilAutoConfiguration.class
+        CasCoreUtilAutoConfiguration.class,
+    CasCoreScriptingAutoConfiguration.class
     })
-    public class DefaultTests {
+    class DefaultTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 
@@ -350,9 +355,10 @@ class RegisteredServiceAttributeReleasePolicyTests {
         AttributeRepositoryTests.AttributeRepositoryTestConfiguration.class,
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        CasCoreUtilAutoConfiguration.class
+        CasCoreUtilAutoConfiguration.class,
+    CasCoreScriptingAutoConfiguration.class
     })
-    public class AttributeRepositoryTests {
+    class AttributeRepositoryTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 

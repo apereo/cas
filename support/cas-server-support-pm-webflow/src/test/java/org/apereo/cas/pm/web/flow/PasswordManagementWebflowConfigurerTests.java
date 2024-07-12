@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.webflow.engine.ActionState;
@@ -42,7 +42,7 @@ class PasswordManagementWebflowConfigurerTests {
         "cas.authn.pm.reset.security-questions-enabled=false",
         "cas.authn.pm.core.enabled=false"
     })
-    @Import({
+    @ImportAutoConfiguration({
         CasPasswordManagementAutoConfiguration.class,
         CasPasswordManagementWebflowAutoConfiguration.class
     })
@@ -90,7 +90,7 @@ class PasswordManagementWebflowConfigurerTests {
 
     @Nested
     @TestPropertySource(properties = "cas.authn.pm.core.enabled=true")
-    @Import({
+    @ImportAutoConfiguration({
         CasSimpleMultifactorAuthenticationAutoConfiguration.class,
         CasPasswordManagementAutoConfiguration.class,
         CasPasswordManagementWebflowAutoConfiguration.class

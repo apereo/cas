@@ -16,19 +16,11 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-public class HttpServletRequestXMLMessageDecodersMap extends HashMap<HttpMethod, BaseHttpServletRequestXMLMessageDecoder> {
+public class HttpServletRequestXMLMessageDecodersMap extends HashMap<HttpMethod, BaseHttpServletRequestXMLMessageDecoder> implements XMLMessageDecodersMap {
     @Serial
     private static final long serialVersionUID = -461142665557954114L;
 
-    /**
-     * Gets a cloned instance of the decoder.
-     * Decoders are initialized once at configuration
-     * and then re-created on demand so they can initialized
-     * via OpenSAML again for new incoming requests.
-     *
-     * @param method the method
-     * @return the instance
-     */
+    @Override
     public BaseHttpServletRequestXMLMessageDecoder getInstance(final HttpMethod method) {
         return FunctionUtils.doUnchecked(() -> {
             val decoder = get(method);

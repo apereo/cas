@@ -8,6 +8,7 @@ ext {
 }
 dependencies {
     implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-notifications-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-configuration-api")
@@ -28,6 +29,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-audit-api")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-notifications")
+    
     testImplementation project(":support:cas-server-support-person-directory")
 
     testImplementation project(path: ":support:cas-server-support-trusted-mfa", configuration: "tests")

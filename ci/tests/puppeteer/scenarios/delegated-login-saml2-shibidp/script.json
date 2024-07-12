@@ -1,5 +1,5 @@
 {
-  "dependencies": "pac4j-webflow",
+  "dependencies": "pac4j-webflow,pac4j-saml",
   "conditions": {
     "docker": "true"
   },
@@ -20,7 +20,7 @@
     "--cas.authn.pac4j.saml[0].client-name=SAML2Client",
     "--cas.authn.pac4j.saml[0].principal-id-attribute=mail",
 
-    "--logging.level.org.apereo.cas=info",
+
     "--logging.level.org.pac4j=warn",
     "--logging.level.org.opensaml=warn",
 

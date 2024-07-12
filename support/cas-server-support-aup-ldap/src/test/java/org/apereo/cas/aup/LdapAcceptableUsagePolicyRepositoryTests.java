@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("LdapRepository")
 @EnabledIfListeningOnPort(port = 10389)
-@Import(CasAcceptableUsagePolicyLdapAutoConfiguration.class)
+@ImportAutoConfiguration(CasAcceptableUsagePolicyLdapAutoConfiguration.class)
 @TestPropertySource(properties = {
     "cas.acceptable-usage-policy.ldap[0].ldap-url=ldap://localhost:10389",
     "cas.acceptable-usage-policy.ldap[0].base-dn=ou=people,dc=example,dc=org",

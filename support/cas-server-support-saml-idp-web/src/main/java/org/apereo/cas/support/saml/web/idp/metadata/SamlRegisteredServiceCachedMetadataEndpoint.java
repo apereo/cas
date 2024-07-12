@@ -85,8 +85,8 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActu
         + "In case the service definition points to an aggregate, you may also specify an entity id to locate the service provider within that aggregate. "
         + "If you do not specify any parameters, all entries in the metadata cache will be invalidated.",
         parameters = {
-            @Parameter(name = "serviceId"),
-            @Parameter(name = "entityId")
+            @Parameter(name = "serviceId", description = "The service id"),
+            @Parameter(name = "entityId", description = "The entity id")
         })
     public ResponseEntity invalidate(
         @Nullable
@@ -121,17 +121,17 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActu
      * @return the cached metadata object
      */
     @GetMapping(produces = {
+        MediaType.APPLICATION_JSON_VALUE,
         MEDIA_TYPE_SPRING_BOOT_V2_JSON,
         MEDIA_TYPE_SPRING_BOOT_V3_JSON,
         MediaType.APPLICATION_FORM_URLENCODED_VALUE,
-        MediaType.APPLICATION_JSON_VALUE,
         MEDIA_TYPE_CAS_YAML
     })
     @Operation(summary = "Get SAML2 cached metadata for a SAML2 registered service. The service id could be the registered service numeric identifier, its name or actual service id. "
         + "In case the service definition points to an aggregate, you may also specify an entity id to locate the service provider within that aggregate",
         parameters = {
-            @Parameter(name = "serviceId", required = true),
-            @Parameter(name = "entityId")
+            @Parameter(name = "serviceId", required = true, description = "The service id"),
+            @Parameter(name = "entityId", description = "The entity id")
         })
     public ResponseEntity<? extends Map> getCachedMetadataObject(
         @RequestParam final String serviceId,

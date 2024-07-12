@@ -1,7 +1,9 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.test.CasTestExtension;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +22,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 )
 @Getter
 @Tag("AuthenticationThrottling")
+@ExtendWith(CasTestExtension.class)
 class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests
     extends BaseThrottledSubmissionHandlerInterceptorAdapterTests {
 

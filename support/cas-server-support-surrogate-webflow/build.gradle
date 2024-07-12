@@ -34,9 +34,7 @@ dependencies {
     compileOnly project(":support:cas-server-support-pac4j-webflow")
     compileOnly project(":support:cas-server-support-passwordless-api")
     compileOnly project(":support:cas-server-support-passwordless-webflow")
-
-
-
+    
     testImplementation project(":support:cas-server-support-themes")
 
     testImplementation project(":core:cas-server-core")
@@ -49,6 +47,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-configuration")
     

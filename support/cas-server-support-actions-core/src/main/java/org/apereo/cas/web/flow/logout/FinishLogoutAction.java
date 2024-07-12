@@ -8,6 +8,7 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.WebUtils;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -20,6 +21,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
+@Slf4j
 public class FinishLogoutAction extends AbstractLogoutAction {
     public FinishLogoutAction(final TicketRegistry ticketRegistry,
                               final CasCookieBuilder ticketGrantingTicketCookieGenerator,
@@ -35,6 +37,7 @@ public class FinishLogoutAction extends AbstractLogoutAction {
     protected Event doInternalExecute(final RequestContext context) {
         val logoutRedirect = WebUtils.getLogoutRedirectUrl(context, String.class);
         if (StringUtils.isNotBlank(logoutRedirect)) {
+            LOGGER.debug("Redirecting to [{}]", logoutRedirect);
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_REDIRECT);
         }
         val logoutPostUrl = WebUtils.getLogoutPostUrl(context);
@@ -43,6 +46,7 @@ public class FinishLogoutAction extends AbstractLogoutAction {
             val flowScope = context.getFlowScope();
             flowScope.put("originalUrl", logoutPostUrl);
             flowScope.put("parameters", logoutPostData);
+            LOGGER.debug("Submitting POST logout request to [{}] with parameters [{}]", logoutPostUrl, logoutPostData);
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_POST);
         }
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINISH);

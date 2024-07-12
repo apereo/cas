@@ -1,7 +1,8 @@
 package org.apereo.cas.notifications.sms;
 
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.notifications.BaseNotificationTests;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -12,17 +13,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -33,16 +32,11 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 
 @Tag("RestfulApi")
+@ExtendWith(CasTestExtension.class)
 class RestfulSmsSenderTests {
 
     @Nested
-    @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        CasCoreNotificationsAutoConfiguration.class,
-        MailSenderAutoConfiguration.class,
-        MailSenderValidatorAutoConfiguration.class
-    },
+    @SpringBootTest(classes = BaseNotificationTests.SharedTestConfiguration.class,
         properties = {
             "cas.sms-provider.rest.style=REQUEST_BODY",
             "cas.sms-provider.rest.url=http://localhost:8232"
@@ -77,19 +71,13 @@ class RestfulSmsSenderTests {
         void verifySms() throws Throwable {
             assertTrue(communicationsManager.isSmsSenderDefined());
             val smsRequest = SmsRequest.builder().from("CAS")
-                .to("1234567890").text("Hello CAS").build();
+                .to(List.of("1234567890")).text("Hello CAS").build();
             assertTrue(communicationsManager.sms(smsRequest));
         }
     }
 
     @Nested
-    @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        CasCoreNotificationsAutoConfiguration.class,
-        MailSenderAutoConfiguration.class,
-        MailSenderValidatorAutoConfiguration.class
-    },
+    @SpringBootTest(classes = BaseNotificationTests.SharedTestConfiguration.class,
         properties = {
             "cas.sms-provider.rest.style=QUERY_PARAMETERS",
             "cas.sms-provider.rest.url=http://localhost:8132"
@@ -124,7 +112,7 @@ class RestfulSmsSenderTests {
         void verifySms() throws Throwable {
             assertTrue(communicationsManager.isSmsSenderDefined());
             val smsRequest = SmsRequest.builder().from("CAS")
-                .to("1234567890").text("Hello CAS").build();
+                .to(List.of("1234567890")).text("Hello CAS").build();
             assertTrue(communicationsManager.sms(smsRequest));
         }
     }

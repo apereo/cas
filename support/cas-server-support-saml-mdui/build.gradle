@@ -46,6 +46,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-validation-api")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(":core:cas-server-core-scripting")
+    
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":support:cas-server-support-thymeleaf")

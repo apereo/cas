@@ -167,7 +167,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     @Override
     public List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
         return dbTableService
-            .query(criteria)
+            .query(criteria.withId(digestIdentifier(criteria.getId())))
             .map(ticket -> criteria.isDecode() ? decodeTicket(ticket) : ticket)
             .filter(Objects::nonNull)
             .filter(ticket -> StringUtils.isBlank(criteria.getPrincipal())

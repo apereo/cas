@@ -1,5 +1,5 @@
 {
-  "dependencies": "events-memory,electrofence,geolocation",
+  "dependencies": "events-memory,electrofence,geolocation,scripting",
   "conditions": {
     "docker": "true"
   },

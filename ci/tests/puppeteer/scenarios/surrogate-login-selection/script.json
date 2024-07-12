@@ -1,5 +1,5 @@
 {
-  "dependencies": "surrogate-webflow",
+  "dependencies": "surrogate-webflow,pac4j-webflow",
   "conditions": {
     "docker": "true"
   },
@@ -10,13 +10,20 @@
     "--cas.authn.surrogate.simple.surrogates.casuser=user1,user2,user3",
     "--cas.authn.surrogate.core.principal-attribute-names=membership",
     "--cas.authn.surrogate.core.principal-attribute-values=(ad|st|su).*",
-    
+
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
-    
+
+
+    "--cas.http-client.host-name-verifier=none",
+
     "--cas.authn.attribute-repository.stub.attributes.lastname=User",
     "--cas.authn.attribute-repository.stub.attributes.firstname=CAS",
-    "--cas.authn.attribute-repository.stub.attributes.membership=admin,staff,superuser"
+    "--cas.authn.attribute-repository.stub.attributes.membership=admin,staff,superuser",
+
+    "--cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
+    "--cas.authn.pac4j.cas[0].protocol=CAS30",
+    "--cas.authn.pac4j.cas[0].client-name=CasClient"
   ],
-  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/cas/run-cas-server.sh"
 }

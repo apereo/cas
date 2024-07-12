@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("Attributes")
-public class StubPersonAttributeDaoTests {
+class StubPersonAttributeDaoTests {
 
     private StubPersonAttributeDao testInstance;
 

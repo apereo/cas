@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export DOCKER_IMAGE="apereo/cas:7.0.5.1"
+
 if [[ -f "${CAS_KEYSTORE}" ]] ; then
   echo -e "Found existing CAS keystore at ${CAS_KEYSTORE}"
 else
@@ -78,7 +80,7 @@ docker network create casserver-network
 docker run --rm -d \
   --mount type=bind,source="${CAS_KEYSTORE}",target=/etc/cas/thekeystore \
   -e SPRING_APPLICATION_JSON="${properties}" --network casserver-network \
-  -p 8797:8797 -p 8444:8443 --name casserver apereo/cas:7.0.4
+  -p 8797:8797 -p 8444:8443 --name casserver ${DOCKER_IMAGE}
 docker logs -f casserver &
 echo -e "Waiting for CAS..."
 until curl -k -L --output /dev/null --silent --fail https://localhost:8444/cas/login; do

@@ -5,9 +5,11 @@ import org.apereo.cas.config.CasMongoDbEventsAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.WebProperties;
@@ -22,6 +24,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  * @since 5.2.0
  */
 @Tag("MongoDb")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = {
     CasMongoDbEventsAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,

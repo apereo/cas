@@ -4,7 +4,7 @@
     "docker": "true"
   },
   "properties": [
-    "--logging.level.org.apereo.cas=info",
+
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",

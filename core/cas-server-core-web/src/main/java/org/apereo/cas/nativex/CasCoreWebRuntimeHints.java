@@ -4,6 +4,8 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.web.DefaultBrowserStorage;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
+import org.springframework.core.Ordered;
 import java.util.List;
 
 /**
@@ -18,5 +20,7 @@ public class CasCoreWebRuntimeHints implements CasRuntimeHintsRegistrar {
         hints.resources().registerResourceBundle("cas_common_messages");
         registerSerializationHints(hints, DefaultBrowserStorage.class);
         registerReflectionHints(hints, List.of(TypeReference.of("org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$EmptyHandler")));
+
+        registerSpringProxy(hints, WebServerFactoryCustomizer.class, Ordered.class);
     }
 }

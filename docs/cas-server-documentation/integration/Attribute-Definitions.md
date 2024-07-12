@@ -175,7 +175,7 @@ released as `urn:oid:1.3.6.1.4.1.5923.1.1.1.6` with a friendly name of `eduPerso
 
 {% endtab %}
 
-{% tab attrdefinitions Embedded Script %}
+{% tab attrdefinitions <i class="fa fa-pencil px-1"></i>Embedded Script %}
 Same use case as above, except the attribute value be additional processed by an embedded Groovy script
 
 ```json 
@@ -197,7 +197,7 @@ the final values of `eduPersonPrincipalName` would be [`Hi, casuser`]
 released as `urn:oid:1.3.6.1.4.1.5923.1.1.1.6` with a friendly name of `eduPersonPrincipalName`.
 {% endtab %}
 
-{% tab attrdefinitions External Script %}
+{% tab attrdefinitions <i class="fa fa-file-code px-1"></i>External Script %}
 Same use case as above, except the attribute value be additionally processed by an external Groovy script:
 
 ```json 
@@ -262,6 +262,8 @@ defined and on a successful match, the linked construct will be evaluated to det
 
 For example, if the resolved set of attributes are `memberships=[m1, m2, m3, m4, m9]`,
 the final values of `memberships` would be [`admins`,`users`] which would then be released under the name `affiliations`.
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% endtab %}
 

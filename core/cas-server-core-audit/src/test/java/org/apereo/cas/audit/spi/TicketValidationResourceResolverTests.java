@@ -1,6 +1,7 @@
 package org.apereo.cas.audit.spi;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.validation.Assertion;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
@@ -8,6 +9,7 @@ import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 5.3.0
  */
 @Tag("Audits")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseAuditConfigurationTests.SharedTestConfiguration.class,
     properties = {
         "cas.audit.engine.include-validation-assertion=true",

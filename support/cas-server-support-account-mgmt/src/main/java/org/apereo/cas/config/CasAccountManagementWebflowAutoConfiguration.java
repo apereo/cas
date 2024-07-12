@@ -37,7 +37,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -52,7 +52,6 @@ import org.apereo.cas.web.flow.InitializeCaptchaAction;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
-
 import lombok.val;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
@@ -70,7 +69,6 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -113,7 +111,8 @@ public class CasAccountManagementWebflowAutoConfiguration {
         final AccountRegistrationUsernameBuilder accountRegistrationUsernameBuilder,
         @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
         final AccountRegistrationProvisioner accountMgmtRegistrationProvisioner) {
-        return new DefaultAccountRegistrationService(accountMgmtRegistrationPropertyLoader, casProperties, accountMgmtCipherExecutor, accountRegistrationUsernameBuilder,
+        return new DefaultAccountRegistrationService(accountMgmtRegistrationPropertyLoader, casProperties,
+            accountMgmtCipherExecutor, accountRegistrationUsernameBuilder,
             accountMgmtRegistrationProvisioner);
     }
 
@@ -172,8 +171,9 @@ public class CasAccountManagementWebflowAutoConfiguration {
                     .exists().given(applicationContext.getEnvironment()))
                 .supply(() -> () -> {
                     val groovy = casProperties.getAccountRegistration().getProvisioning().getGroovy();
+                    val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
                     return new GroovyAccountRegistrationProvisioner(
-                        new WatchableGroovyScriptResource(groovy.getLocation()), applicationContext);
+                        scriptFactory.fromResource(groovy.getLocation()), applicationContext);
                 })
                 .otherwiseProxy()
                 .get();

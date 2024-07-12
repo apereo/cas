@@ -63,19 +63,19 @@ import static org.mockito.Mockito.*;
  */
 @Tag("CAS")
 class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
-    private static final String TGT_ID = "tgt-id";
+    private String ticketGrantingTicketId;
 
-    private static final String TGT2_ID = "tgt2-id";
+    private String ticketGrantingTicketId2;
 
-    private static final String ST_ID = "st-id";
+    private String serviceTicketId;
 
-    private static final String ST2_ID = "st2-id";
+    private String serviceTicketId2;
 
-    private static final String SVC1_ID = "test1";
+    private String serviceId1;
 
-    private static final String SVC2_ID = "test2";
+    private String serviceId2;
 
-    private static final String PRINCIPAL = "principal";
+    private String principal;
 
     private CentralAuthenticationService cas;
 
@@ -130,23 +130,31 @@ class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
 
     @BeforeEach
     public void prepareNewCAS() throws Throwable {
-        authentication = RegisteredServiceTestUtils.getAuthentication(PRINCIPAL,
+        this.ticketGrantingTicketId = UUID.randomUUID().toString();
+        this.ticketGrantingTicketId2 = UUID.randomUUID().toString();
+        this.serviceTicketId = UUID.randomUUID().toString();
+        this.serviceTicketId2 = UUID.randomUUID().toString();
+        this.serviceId1 = UUID.randomUUID().toString();
+        this.serviceId2 = UUID.randomUUID().toString();
+        this.principal = UUID.randomUUID().toString();
+
+        authentication = RegisteredServiceTestUtils.getAuthentication(principal,
             new SimpleTestUsernamePasswordAuthenticationHandler(),
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("principal"), Map.of());
         val tgtRootMock = createRootTicketGrantingTicket();
-        val service1 = RegisteredServiceTestUtils.getService(SVC1_ID);
-        val stMock = createMockServiceTicket(ST_ID, service1);
-        val tgtMock = createMockTicketGrantingTicket(TGT_ID, stMock, false, tgtRootMock, new ArrayList<>());
+        val service1 = RegisteredServiceTestUtils.getService(serviceId1);
+        val stMock = createMockServiceTicket(serviceTicketId, service1);
+        val tgtMock = createMockTicketGrantingTicket(ticketGrantingTicketId, stMock, false, tgtRootMock, new ArrayList<>());
         val proxiedBy = RegisteredServiceTestUtils.getService("proxiedBy");
         when(tgtMock.getProxiedBy()).thenReturn(proxiedBy);
         stMock.setTicketGrantingTicket(tgtMock);
-        
+
         val authnListMock = List.of(authentication, authentication);
         when(tgtMock.getChainedAuthentications()).thenReturn(authnListMock);
 
-        val service2 = RegisteredServiceTestUtils.getService(SVC2_ID);
-        val stMock2 = createMockServiceTicket(ST2_ID, service2);
-        val tgtMock2 = createMockTicketGrantingTicket(TGT2_ID, stMock2, false, tgtRootMock, authnListMock);
+        val service2 = RegisteredServiceTestUtils.getService(serviceId2);
+        val stMock2 = createMockServiceTicket(serviceTicketId2, service2);
+        val tgtMock2 = createMockTicketGrantingTicket(ticketGrantingTicketId2, stMock2, false, tgtRootMock, authnListMock);
         stMock2.setTicketGrantingTicket(tgtMock2);
         ticketRegistry.addTicket(Stream.of(stMock, tgtMock, stMock2, tgtMock2));
 
@@ -181,26 +189,26 @@ class DefaultCentralAuthenticationServiceMockitoTests extends BaseCasCoreTests {
 
     @Test
     void verifyInvalidServiceWhenDelegatingTicketGrantingTicket() throws Throwable {
-        assertThrows(UnauthorizedServiceException.class, () -> cas.createProxyGrantingTicket(ST_ID, getAuthenticationContext()));
+        assertThrows(UnauthorizedServiceException.class, () -> cas.createProxyGrantingTicket(serviceTicketId, getAuthenticationContext()));
     }
 
     @Test
     void disallowVendingServiceTicketsWhenServiceIsNotAllowedToProxyCAS1019() {
         assertThrows(UnauthorizedProxyingException.class,
-            () -> cas.grantServiceTicket(TGT_ID, RegisteredServiceTestUtils.getService(SVC1_ID), getAuthenticationContext()));
+            () -> cas.grantServiceTicket(ticketGrantingTicketId, RegisteredServiceTestUtils.getService(serviceId1), getAuthenticationContext()));
     }
 
     @Test
     void verifyChainedAuthenticationsOnValidation() throws Throwable {
-        val svc = RegisteredServiceTestUtils.getService(SVC2_ID);
-        val st = cas.grantServiceTicket(TGT2_ID, svc, getAuthenticationContext());
+        val svc = RegisteredServiceTestUtils.getService(serviceId2);
+        val st = cas.grantServiceTicket(ticketGrantingTicketId2, svc, getAuthenticationContext());
         assertNotNull(st);
 
         val assertion = cas.validateServiceTicket(st.getId(), svc);
         assertNotNull(assertion);
 
         assertEquals(assertion.getService(), svc);
-        assertEquals(PRINCIPAL, assertion.getPrimaryAuthentication().getPrincipal().getId());
+        assertEquals(principal, assertion.getPrimaryAuthentication().getPrincipal().getId());
         assertSame(2, assertion.getChainedAuthentications().size());
         IntStream.range(0, assertion.getChainedAuthentications().size())
             .forEach(i -> assertEquals(assertion.getChainedAuthentications().get(i), authentication));

@@ -12,6 +12,9 @@ dependencies {
     implementation libraries.mail
 
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-scripting")
+
+    implementation project(":core:cas-server-core-web")
     
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")

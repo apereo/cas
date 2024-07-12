@@ -15,12 +15,14 @@ import org.apereo.cas.services.DefaultRegisteredServiceSingleSignOnParticipation
 import org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
@@ -46,8 +48,9 @@ import static org.mockito.Mockito.*;
     WebEndpointAutoConfiguration.class,
     EndpointAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class
-}, properties = "spring.main.allow-bean-definition-overriding=true")
+})
 @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
+@ExtendWith(CasTestExtension.class)
 class DefaultSingleSignOnParticipationStrategyTests {
 
     @Autowired

@@ -73,6 +73,8 @@ public class CasStatelessTicketRegistryAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "statelessTicketRegistry")
     public TicketRegistry ticketRegistry(
+        @Qualifier("statelessTicketRegistryCipherExecutor")
+        final CipherExecutor statelessTicketRegistryCipherExecutor,
         final List<TicketCompactor<? extends Ticket>> ticketCompactors,
         @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog,
@@ -81,9 +83,7 @@ public class CasStatelessTicketRegistryAutoConfiguration {
         @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
         final ObjectProvider<LogoutManager> logoutManager,
         final CasConfigurationProperties casProperties) {
-        val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(
-            casProperties.getTicket().getRegistry().getStateless().getCrypto(), "stateless");
-        return new StatelessTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, ticketCompactors);
+        return new StatelessTicketRegistry(statelessTicketRegistryCipherExecutor, ticketSerializationManager, ticketCatalog, ticketCompactors);
     }
 
     @Bean

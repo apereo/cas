@@ -34,10 +34,7 @@ public abstract class BaseOktaTests {
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        RefreshAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        RefreshAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
@@ -50,10 +47,9 @@ public abstract class BaseOktaTests {
         CasCoreWebflowAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
-        CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
-        CasAuthenticationEventExecutionPlanTestConfiguration.class
-    })
+        CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class})
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import({CasRegisteredServicesTestConfiguration.class, CasAuthenticationEventExecutionPlanTestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 }

@@ -5,12 +5,31 @@
     ":rebaseStalePrs",
     ":preserveSemverRanges",
     ":disableRateLimiting",
+    ":disableDependencyDashboard",
     ":semanticCommits",
     ":semanticCommitTypeAll(renovatebot)"
   ],
   "labels": ["Bot", "Renovate"],
   "schedule": [
     "after 10pm and before 6am every weekday"
+  ],
+  "docker": {
+    "enabled": true
+  },
+  "dockerfile": {
+    "enabled": true
+  },
+  "docker-compose": {
+    "enabled": true
+  },
+  "regexManagers": [
+    {
+      "fileMatch": ["^.*\\.sh$"],
+      "matchStrings": [
+        "export\\s+DOCKER_IMAGE\\s*=\\s*\"(?<depName>[^\"]+):(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "docker"
+    }
   ],
   "packageRules": [
     {
@@ -20,6 +39,14 @@
     {
       "matchManagers": ["github-actions"],
       "enabled": true
+    },
+    {
+      "managers": ["dockerfile"],
+      "groupName": "all-docker-updates"
+    },
+    {
+      "matchDatasources": ["docker"],
+      "versioning": "semver"
     },
     {
       "matchFileNames": ["**/package.json"],

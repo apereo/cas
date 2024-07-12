@@ -2,9 +2,11 @@ package org.apereo.cas.util.spring.boot;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Simple")
+@ExtendWith(CasTestExtension.class)
 @Execution(ExecutionMode.SAME_THREAD)
 class CasFeatureEnabledConditionTests {
     @ConditionalOnFeaturesEnabled({

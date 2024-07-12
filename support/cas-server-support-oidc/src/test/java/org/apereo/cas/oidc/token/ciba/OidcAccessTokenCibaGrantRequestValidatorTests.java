@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("OIDC")
-public class OidcAccessTokenCibaGrantRequestValidatorTests extends AbstractOidcTests {
+class OidcAccessTokenCibaGrantRequestValidatorTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcAccessTokenCibaGrantRequestValidator")
     private OAuth20TokenRequestValidator oidcAccessTokenCibaGrantRequestValidator;

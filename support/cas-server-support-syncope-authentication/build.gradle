@@ -8,7 +8,6 @@ ext {
 }
 dependencies {
     implementation libraries.apachecxfsearch
-
     
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-services")
@@ -46,6 +45,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-cookie-api")
+    testImplementation project(":core:cas-server-core-scripting")
 
     testImplementation project(":support:cas-server-support-account-mgmt-api")
     testImplementation project(":support:cas-server-support-account-mgmt")

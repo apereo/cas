@@ -262,6 +262,8 @@ public class CasJdbcAuditAutoConfiguration {
         private final AuditTrailManager jdbcAuditTrailManager;
 
         @Scheduled(
+            cron = "${cas.audit.jdbc.schedule.cron-expression:}",
+            zone = "${cas.audit.jdbc.schedule.cron-time-zone:}",
             initialDelayString = "${cas.audit.jdbc.schedule.start-delay:10000}",
             fixedDelayString = "${cas.audit.jdbc.schedule.repeat-interval:30000}")
         @Override

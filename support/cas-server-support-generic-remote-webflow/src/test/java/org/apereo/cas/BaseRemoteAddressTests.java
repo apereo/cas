@@ -8,6 +8,7 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -31,32 +32,30 @@ import org.springframework.context.annotation.Import;
  * @since 5.3.0
  */
 public abstract class BaseRemoteAddressTests {
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasThemesAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
-        CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasRemoteAuthenticationAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import({CasPersonDirectoryTestConfiguration.class,
+        CasRegisteredServicesTestConfiguration.class,
+        CasAuthenticationEventExecutionPlanTestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 }

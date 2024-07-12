@@ -351,10 +351,10 @@ public class CasOAuthUmaAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oauthUmaTicketSerializationExecutionPlanConfigurer")
-        public TicketSerializationExecutionPlanConfigurer oauthUmaTicketSerializationExecutionPlanConfigurer() {
+        public TicketSerializationExecutionPlanConfigurer oauthUmaTicketSerializationExecutionPlanConfigurer(final ConfigurableApplicationContext applicationContext) {
             return plan -> {
-                plan.registerTicketSerializer(new UmaPermissionTicketStringSerializer());
-                plan.registerTicketSerializer(UmaPermissionTicket.class.getName(), new UmaPermissionTicketStringSerializer());
+                plan.registerTicketSerializer(new UmaPermissionTicketStringSerializer(applicationContext));
+                plan.registerTicketSerializer(UmaPermissionTicket.class.getName(), new UmaPermissionTicketStringSerializer(applicationContext));
             };
         }
 
@@ -362,8 +362,8 @@ public class CasOAuthUmaAutoConfiguration {
             @Serial
             private static final long serialVersionUID = -2198623586274810263L;
 
-            UmaPermissionTicketStringSerializer() {
-                super(MINIMAL_PRETTY_PRINTER);
+            UmaPermissionTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
+                super(MINIMAL_PRETTY_PRINTER, applicationContext);
             }
 
             @Override

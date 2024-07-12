@@ -27,4 +27,6 @@ public class SingleLogoutContinuation implements Serializable {
     private final Map<String, String> data = new HashMap<>();
     @Builder.Default
     private final HttpMethod method = HttpMethod.POST;
+    @Builder.Default
+    private final Map<String, Serializable> context = new HashMap<>();
 }

@@ -7,10 +7,12 @@ import org.apereo.cas.authentication.exceptions.UniquePrincipalRequiredException
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -19,6 +21,7 @@ import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -46,12 +49,14 @@ import static org.mockito.Mockito.*;
     CasCoreTicketsAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
+    CasCoreScriptingAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreLogoutAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class
 })
 @Tag("AuthenticationPolicy")
+@ExtendWith(CasTestExtension.class)
 class UniquePrincipalAuthenticationPolicyTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)

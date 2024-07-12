@@ -1,8 +1,8 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.RegisteredServicePrincipalAttributesRepository;
+import org.apereo.cas.util.NamedObject;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.core.Ordered;
 
@@ -18,7 +18,7 @@ import java.util.Map;
  * @since 4.1.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface RegisteredServiceAttributeReleasePolicy extends Serializable, Ordered {
+public interface RegisteredServiceAttributeReleasePolicy extends Serializable, Ordered, NamedObject {
 
     /**
      * Is authorized to release authentication attributes boolean.
@@ -96,16 +96,7 @@ public interface RegisteredServiceAttributeReleasePolicy extends Serializable, O
     default int getOrder() {
         return 0;
     }
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    @JsonIgnore
-    default String getName() {
-        return getClass().getSimpleName();
-    }
+    
 
     /**
      * Gets condition that controls whether this policy should be activated.

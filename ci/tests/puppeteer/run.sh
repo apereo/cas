@@ -30,13 +30,13 @@ function printcyan() {
   printf "🔷 ${CYAN}$1${ENDCOLOR}\n"
 }
 function printgreen() {
-  printf "☘️ ${GREEN}$1${ENDCOLOR}\n"
+  printf "☘️  ${GREEN}$1${ENDCOLOR}\n"
 }
 function printyellow() {
-  printf "⚠️ ${YELLOW}$1${ENDCOLOR}\n"
+  printf "⚠️  ${YELLOW}$1${ENDCOLOR}\n"
 }
 function printred() {
-  printf "🔥 ${RED}$1${ENDCOLOR}\n"
+  printf "🔥  ${RED}$1${ENDCOLOR}\n"
 }
 
 function progressbar() {
@@ -75,7 +75,7 @@ function sleepfor() {
 }
 
 casVersion=($(cat "$PWD"/gradle.properties | grep "version" | cut -d= -f2))
-echo -n "Running Puppeteer tests for Apereo CAS Server: " && printcyan "${casVersion}"
+echo -e -n "Running Puppeteer tests for Apereo CAS Server: ${casVersion}\n"
 
 DEBUG_PORT="5000"
 DEBUG_SUSPEND="n"
@@ -299,6 +299,8 @@ if [[ "${buildDockerImage}" == "true" && $dockerInstalled -ne 0 ]]; then
     exit 1
 fi
 
+cdsEnabled=$(jq -j 'if .requirements.cds.enabled == "" or .requirements.cds.enabled == null or .requirements.cds.enabled == true then true else false end' "${config}")
+
 scenarioName=${scenario##*/}
 enabled=$(jq -j '.enabled' "${config}")
 if [[ "${enabled}" == "false" ]]; then
@@ -360,6 +362,11 @@ if [[ "${DISABLE_LINTER}" == "false" ]]; then
     printred "Please run: npx eslint --fix ${scriptPath}"
     exit 1
   fi
+  echo ./scenarios/"${SCENARIO}"/script.json jq > /dev/null
+  if [ $? -ne 0 ]; then
+      printred "Found linting errors in scenario configuration; unable to run the scenario [${scenarioName}]"
+      exit 1
+    fi
   popd || exit 1
 fi
 
@@ -458,8 +465,8 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
 
   rm -rf ${targetArtifact}
   BUILD_COMMAND=$(printf '%s' \
-      "./gradlew ${BUILD_TASKS} -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc --build-cache --configure-on-demand --parallel \
-      ${BUILD_SCRIPT} ${DAEMON} -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS}")
+      "./gradlew ${BUILD_TASKS} -DskipSpringBootDevTools=true -DskipNestedConfigMetadataGen=true -x check -x test -x javadoc --build-cache --configure-on-demand --parallel \
+      ${BUILD_SCRIPT} ${DAEMON} -DskipBootifulLaunchScript=true -DcasModules="${dependencies}" --no-watch-fs --max-workers=8 ${BUILDFLAGS}")
   printcyan "Executing build command in the ${BUILD_SPAWN}:\n\n${BUILD_COMMAND}"
 
   if [[ "${BUILD_SPAWN}" == "background" ]]; then
@@ -670,10 +677,13 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
       if [[ "${NATIVE_RUN}" == "true" ]]; then
         printcyan "Launching CAS instance #${c} under port ${serverPort} from ${targetArtifact}"
         ${targetArtifact} -Dcom.sun.net.ssl.checkRevocation=false \
-          -Dlog.console.stacktraces=true -DaotSpringActiveProfiles=none \
+          -Dlog.console.stacktraces=true \
+          -DaotSpringActiveProfiles=none \
           --spring.main.lazy-initialization=false \
+          --spring.devtools.restart.enabled=false \
           --management.endpoints.web.discovery.enabled=true \
-          --server.port=${serverPort} --spring.profiles.active=none  \
+          --server.port=${serverPort} \
+          --spring.profiles.active=none  \
           --server.ssl.key-store="$keystore" ${properties} &
       elif [[ "${buildDockerImage}" == "true" ]]; then
         printcyan "Launching Docker image cas-${scenarioName}:latest"
@@ -689,17 +699,35 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
             cas-${scenarioName}:latest
         docker logs -f cas-${scenarioName} 2>/dev/null &
       else
-        printcyan "Launching CAS instance #${c} under port ${serverPort} from "$PWD"/cas.${projectType}"
-        java ${runArgs} -Dlog.console.stacktraces=true -jar "$PWD"/cas.${projectType} \
-           -Dcom.sun.net.ssl.checkRevocation=false \
-           --server.port=${serverPort} \
-           --spring.main.lazy-initialization=false \
-           --spring.profiles.active=none \
-           --management.endpoints.web.discovery.enabled=true \
-           --server.ssl.key-store="$keystore" \
-           --cas.audit.engine.enabled=true \
-           --cas.audit.slf4j.use-single-line=true \
-           ${properties} &
+        casArtifactToRun="$PWD/cas.${projectType}"
+        if [[ "${cdsEnabled}" == "true" ]]; then
+          printgreen "The scenario ${scenarioName} will run with CDS"
+          rm -rf ${PWD}/cas 2>/dev/null
+          printcyan "Extracting CAS to ${PWD}/cas"
+          java -Djarmode=tools -jar "$PWD"/cas.${projectType} extract >/dev/null 2>&1
+          printcyan "Launching CAS from ${PWD}/cas/cas.${projectType} to perform a training run"
+          java -XX:ArchiveClassesAtExit=${PWD}/cas/cas.jsa -Dspring.context.exit=onRefresh -jar ${PWD}/cas/cas.${projectType} >/dev/null 2>&1
+          printcyan "Generated archive cache file ${PWD}/cas/cas.jsa"
+          runArgs="${runArgs} -XX:SharedArchiveFile=${PWD}/cas/cas.jsa"
+          casArtifactToRun="${PWD}/cas/cas.${projectType}"
+        else
+          printcyan "The scenario ${scenarioName} will run without CDS"
+        fi
+
+        printcyan "Launching CAS instance #${c} under port ${serverPort} from ${casArtifactToRun}"
+        java ${runArgs} \
+          -Dlog.console.stacktraces=true \
+          -jar "${casArtifactToRun}" \
+          -Dcom.sun.net.ssl.checkRevocation=false \
+          --server.port=${serverPort} \
+          --spring.main.lazy-initialization=false \
+          --spring.profiles.active=none \
+          --spring.devtools.restart.enabled=false \
+          --management.endpoints.web.discovery.enabled=true \
+          --server.ssl.key-store="$keystore" \
+          --cas.audit.engine.enabled=true \
+          --cas.audit.slf4j.use-single-line=true \
+          ${properties} &
       fi
       pid=$!
       printcyan "Waiting for CAS instance #${c} under process id ${pid}"
@@ -727,7 +755,7 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
     fi
   done
 
-  printgreen "\nReady!"
+  printgreen "Ready!"
   if [[ "${INITONLY}" == "false" ]]; then
     readyScript=$(jq -j '.readyScript // empty' < "${config}")
     readyScript="${readyScript//\$\{PWD\}/${PWD}}"
@@ -812,6 +840,7 @@ if [[ "${RERUN}" != "true" ]]; then
   done
   
   printgreen "Removing previous build artifacts..."
+  rm -Rf "${PWD}"/cas >/dev/null 2>&1
   rm -f "$PWD"/cas.${projectType} >/dev/null 2>&1
   rm -f "${public_cert}" >/dev/null 2>&1
   rm -Rf "${PUPPETEER_DIR}/overlay" >/dev/null 2>&1

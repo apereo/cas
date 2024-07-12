@@ -1,7 +1,7 @@
 description = "Apereo CAS Core Authentication"
 dependencies {
 
-
+    api project(":api:cas-server-core-api-scripting")
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-authentication")
@@ -12,5 +12,8 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")
 
+
+    testImplementation project(":core:cas-server-core-scripting")
+    
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

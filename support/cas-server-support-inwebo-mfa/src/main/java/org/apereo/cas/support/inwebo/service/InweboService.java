@@ -103,6 +103,7 @@ public record InweboService(CasConfigurationProperties casProperties, InweboCons
                 .toUriString();
 
             val json = call(url);
+            LOGGER.debug("Push authenticate response from [{}]: [{}]", url, json.toPrettyString());
             val err = json.get("err").asText("OK");
             val response = (InweboPushAuthenticateResponse) buildResponse(
                 new InweboPushAuthenticateResponse(), "pushAuthenticate(" + login + ')', err);

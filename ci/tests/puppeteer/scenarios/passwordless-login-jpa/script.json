@@ -9,7 +9,7 @@
     "--cas.server.prefix=https://localhost:8443/cas",
 
     "--cas.service-registry.core.init-from-json=true",
-    "--logging.level.org.apereo.cas=info",
+
 
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",

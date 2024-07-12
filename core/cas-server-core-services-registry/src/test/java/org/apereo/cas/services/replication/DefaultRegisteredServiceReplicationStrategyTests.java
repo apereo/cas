@@ -5,6 +5,7 @@ import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.PublisherIdentifier;
 import org.apereo.cas.util.cache.DistributedCacheManager;
@@ -12,6 +13,7 @@ import org.apereo.cas.util.cache.DistributedCacheObject;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -35,6 +37,7 @@ import static org.mockito.Mockito.*;
 }, properties = "cas.service-registry.stream.core.replication-mode=ACTIVE")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("RegisteredService")
+@ExtendWith(CasTestExtension.class)
 class DefaultRegisteredServiceReplicationStrategyTests {
 
     @Autowired

@@ -6,9 +6,11 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.CasJpaYubiKeyAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -31,6 +33,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     "cas.authn.mfa.yubikey.jpa.ddl-auto=create-drop"
 })
 @Tag("JDBCMFA")
+@ExtendWith(CasTestExtension.class)
 @Getter
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class JpaYubiKeyAccountRegistryTests extends AbstractYubiKeyAccountRegistryTests {

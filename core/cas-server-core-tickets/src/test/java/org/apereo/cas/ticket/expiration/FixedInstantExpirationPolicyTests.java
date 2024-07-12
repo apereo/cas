@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("ExpirationPolicy")
-public class FixedInstantExpirationPolicyTests {
+class FixedInstantExpirationPolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "FixedInstantExpirationPolicy.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

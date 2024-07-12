@@ -8,6 +8,7 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -40,11 +41,7 @@ public abstract class BaseYubiKeyTests {
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
-        YubiKeyTestConfiguration.class,
+        AopAutoConfiguration.class,
         CasMultifactorAuthnTrustAutoConfiguration.class,
         CasYubiKeyAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
@@ -54,15 +51,17 @@ public abstract class BaseYubiKeyTests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import({YubiKeyTestConfiguration.class, CasPersonDirectoryTestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 

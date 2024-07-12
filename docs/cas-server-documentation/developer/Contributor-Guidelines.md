@@ -156,8 +156,7 @@ and pushing changes, (That's what email filters, etc are for), so do not ever wo
 contributors and/or project members with the frequency of your progress notifications. Continue working on
 the use case as often as you like and be sure to keep asking for feedback as you make progress.
 
-<div class="alert alert-success">
-:sunny: <strong>Inactivity</strong><br/>Note that contributions and pull requests that remain inactive for a 
+<div class="alert alert-success">:sunny: <strong>Inactivity</strong><br/>Note that contributions and pull requests that remain inactive for a 
 certain period get tagged as <i>Pending</i> and will be eventually closed automatically. Staleness 
 is only allowed to a certain degree, but worry not. Any stale closed pull request can always be reopened and progress resumed without data loss.
 </div>
@@ -168,8 +167,7 @@ Yes, absolutely. Provided the change fits the scope of the maintenance branch an
 the branch is still under care, you are more than welcome to move changes across the codebase's various branches as
 much as needed to remove pain and improve.
 
-<div class="alert alert-success">
-:sunny: <strong>Port Forward</strong><br/>Remember that changes applied to previous branches that target CAS versions in 
+<div class="alert alert-success">:sunny: <strong>Port Forward</strong><br/>Remember that changes applied to previous branches that target CAS versions in 
 maintenance mode <b>MUST</b> be ported forward to the master branch as well, via a separate pull request.
 </div>
 
@@ -316,8 +314,7 @@ than *usual* to be merged, it's possible that the proposed changeset violates on
 - The patch introduces too many (i.e. formatting) changes that are not related to the proposal's objective.
 - The patch violates the general design principles of the codebase or introduces inconsistent/contradictory concepts that are difficult to maintain.
 
-<div class="alert alert-success">
-:sunny: <strong>Remember</strong><br/>If you need help, please ask and seek clarification as often 
+<div class="alert alert-success">:sunny: <strong>Remember</strong><br/>If you need help, please ask and seek clarification as often 
 as you prefer. The shared objective of a pull request is not to judge or point fingers but to 
 collaborate and make progress. Remain positive, optimistic with a healthy attitude towards comments and constructive feedback.
 </div>
@@ -376,8 +373,7 @@ commit anything to the `master` branch. The workflow more or less is the followi
 3. Commit changes to branch.
 4. Go back to #2 until you are satisfied.
 
-<div class="alert alert-success">
-:sunny: <strong>Functional Build</strong><br/>You may want to ensure the codebase can be 
+<div class="alert alert-success">:sunny: <strong>Functional Build</strong><br/>You may want to ensure the codebase can be 
 built locally from source. <a href="https://apereo.github.io/cas/developer/Build-Process.html">Follow this guide</a> to learn more.
 </div>
 
@@ -424,8 +420,7 @@ mode until the release is declared EOL and form the basis of follow-up patch rel
 maintenance cycles. When you are preparing a pull request, please be sure to select the appropriate
 target branch for the patch to ensure your change can be included in the coming maintenance release as scheduled.
 
-<div class="alert alert-success">
-:sunny: <strong>Port Forward</strong><br/>Once more, please remember that changes applied to 
+<div class="alert alert-success">:sunny: <strong>Port Forward</strong><br/>Once more, please remember that changes applied to 
 previous branches that target CAS versions in maintenance mode <b>MUST</b> be ported 
 forward to the master branch as well, via a separate pull request.
 </div>

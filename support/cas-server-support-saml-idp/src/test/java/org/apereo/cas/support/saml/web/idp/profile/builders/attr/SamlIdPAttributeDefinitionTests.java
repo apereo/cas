@@ -48,7 +48,7 @@ class SamlIdPAttributeDefinitionTests extends BaseSamlIdPConfigurationTests {
         assertEquals(1, values.size());
     }
 
-    private static AttributeDefinitionResolutionContext getAttributeDefinitionResolutionContext() throws Throwable {
+    private static AttributeDefinitionResolutionContext getAttributeDefinitionResolutionContext() {
         return AttributeDefinitionResolutionContext.builder()
             .principal(CoreAuthenticationTestUtils.getPrincipal())
             .registeredService(CoreAuthenticationTestUtils.getRegisteredService())

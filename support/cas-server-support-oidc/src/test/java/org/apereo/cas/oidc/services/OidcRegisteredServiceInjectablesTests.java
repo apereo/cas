@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oidc.services.defaults.jwksKeyId=12345",
     "cas.authn.oidc.services.defaults.idTokenSigningAlg=SHA512"
 })
-public class OidcRegisteredServiceInjectablesTests extends AbstractOidcTests {
+class OidcRegisteredServiceInjectablesTests extends AbstractOidcTests {
 
     @Test
     void verifyOperation() throws Exception {

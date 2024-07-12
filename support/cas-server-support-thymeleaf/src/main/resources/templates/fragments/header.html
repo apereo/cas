@@ -66,7 +66,7 @@
 
     <div th:replace="~{fragments/logindrawer :: logindrawer}"/>
 
-    <script>var countMessages = 0;</script>
+    <script>let countMessages = 0;</script>
     <div
             th:if="${'true' == #strings.defaultString(#themes.code('cas.notifications-menu.enabled'), 'true')}"
             class="mdc-dialog cas-notification-dialog modal"
@@ -80,7 +80,7 @@
                         <script>countMessages++;</script>
                         <h3 class="mdc-typography--headline6 mdi mdi-alert-circle fas fa-exclamation-circle"
                             th:utext="#{screen.defaultauthn.title}"/>
-                        <p class="text text-wrap small" th:utext="#{screen.defaultauthn.heading}">
+                        <p class="text text-wrap small text-justify" th:utext="#{screen.defaultauthn.heading}">
                             <i class="mdi mdi-google fas fa-google" aria-hidden="true"></i>
                             Static AuthN is ONLY useful for demo purposes. It is recommended that you connect CAS to
                             LDAP,
@@ -121,102 +121,30 @@
     </div>
 
     <script type="text/javascript">
-
-        (material => {
-            let header = {
-                init: () => {
-                    header.attachTopbar();
-                    material.autoInit();
-                },
-                attachDrawer: () => {
-                    let elm = document.getElementById('app-drawer');
-                    if (elm != null) {
-                        let drawer = material.drawer.MDCDrawer.attachTo(elm);
-                        let closeDrawer = evt => {
-                            drawer.open = false;
-                        };
-                        drawer.foundation.handleScrimClick = closeDrawer;
-                        document.onkeydown = evt => {
-                            evt = evt || window.event;
-                            if (evt.keyCode == 27) {
-                                closeDrawer();
-                            }
-                        };
-                        header.drawer = drawer;
-                        return drawer;
-                    }
-                    return undefined;
-                },
-                attachTopbar: drawer => {
-
-                    drawer = header.attachDrawer();
-                    let dialog = header.attachNotificationDialog();
-
-                    if (drawer != undefined) {
-                        header.attachDrawerToggle(drawer);
-                    }
-                    if (dialog != undefined) {
-                        header.attachNotificationToggle(dialog);
-                    }
-                },
-                attachDrawerToggle: drawer => {
-                    let appBar = document.getElementById('app-bar');
-                    if (appBar != null) {
-                        let topAppBar = material.topAppBar.MDCTopAppBar.attachTo(appBar);
-                        topAppBar.setScrollTarget(document.getElementById('main-content'));
-                        topAppBar.listen('MDCTopAppBar:nav', () => {
-                            drawer.open = !drawer.open;
-                        });
-                        return topAppBar;
-                    }
-                    return undefined;
-                },
-                attachNotificationDialog: () => {
-                    let element = document.getElementById('cas-notification-dialog');
-                    if (element != null) {
-                        return material.dialog.MDCDialog.attachTo(element);
-                    }
-                    return undefined;
-                },
-                attachNotificationToggle: dialog => {
-                    let btn = document.getElementById('cas-notifications-menu');
-                    if (btn != null) {
-                        btn.addEventListener('click', () => {
-                            dialog.open();
-                        });
-                    }
-                }
+        function supportsCookies() {
+            try {
+                document.cookie = 'testcookie=1';
+                let ret = document.cookie.indexOf('testcookie=') !== -1;
+                document.cookie = 'testcookie=1; expires=Thu, 01-Jan-1970 00:00:01 GMT';
+                return ret;
+            } catch (e) {
+                console.log(e);
+                return false;
             }
-            function supportsCookies() {
-                try {
-                    document.cookie = 'testcookie=1';
-                    let ret = document.cookie.indexOf('testcookie=') !== -1;
-                    document.cookie = 'testcookie=1; expires=Thu, 01-Jan-1970 00:00:01 GMT';
-                    return ret;
-                } catch (e) {
-                    console.log(e);
-                    return false;
-                }
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!supportsCookies()) {
+                countMessages++;
+                window.jQuery('#cookiesSupportedDiv').show();
             }
 
-            document.addEventListener('DOMContentLoaded', () => {
-                if (material) {
-                    header.init();
-                }
-
-                if (!supportsCookies()) {
-                    countMessages++;
-                    window.jQuery('#cookiesSupportedDiv').show();
-                }
-
-                if (countMessages === 0) {
-                    window.jQuery('#notifications-count').remove();
-                    window.jQuery('#cas-notifications-menu').remove();
-                } else {
-                    window.jQuery('#notifications-count').text(`(${countMessages})`)
-                }
-            });
-        })(typeof mdc !== 'undefined' && mdc);
+            if (countMessages === 0) {
+                window.jQuery('#notifications-count').remove();
+                window.jQuery('#cas-notifications-menu').remove();
+            } else {
+                window.jQuery('#notifications-count').text(`(${countMessages})`)
+            }
+        });
     </script>
 </div>
 

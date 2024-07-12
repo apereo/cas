@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export DOCKER_IMAGE="apereo/saml2-sp:latest"
+
 if [[ -n "${AUTHN_CONTEXT}" ]]; then
   echo -e "Found requested authn context: ${AUTHN_CONTEXT}"
 fi
@@ -33,7 +35,7 @@ docker run -p 9876:9876 -p 8076:8076 \
   -e ACS_URL="${ACS_URL}" \
   -v "${SCENARIO_FOLDER}"/saml-md/idp-metadata.xml:/sp-webapp/idp-metadata.xml \
   -v "${CAS_KEYSTORE}":/etc/cas/thekeystore \
-  apereo/saml2-sp:latest
+  ${DOCKER_IMAGE}
 docker logs -f saml2-sp &
 sleep 30
 docker ps | grep "saml2-sp"

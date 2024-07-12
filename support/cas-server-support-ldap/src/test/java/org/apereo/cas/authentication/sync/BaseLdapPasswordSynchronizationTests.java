@@ -6,16 +6,19 @@ import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasLdapAuthenticationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -41,6 +44,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreLogoutAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
+    CasCoreScriptingAutoConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasLdapAuthenticationAutoConfiguration.class
 },
@@ -55,6 +59,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
         "cas.authn.password-sync.ldap[0].password-attribute=userPassword"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseLdapPasswordSynchronizationTests {
     @Autowired
     @Qualifier("ldapPasswordSynchronizers")

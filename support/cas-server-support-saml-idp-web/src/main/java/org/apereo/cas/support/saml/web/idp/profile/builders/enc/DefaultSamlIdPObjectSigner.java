@@ -16,7 +16,6 @@ import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import com.google.common.collect.Sets;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -53,10 +52,8 @@ import org.opensaml.xmlsec.config.impl.DefaultSecurityConfigurationBootstrap;
 import org.opensaml.xmlsec.context.SecurityParametersContext;
 import org.opensaml.xmlsec.criterion.SignatureSigningConfigurationCriterion;
 import org.opensaml.xmlsec.impl.BasicSignatureSigningConfiguration;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -79,7 +76,7 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
     private final CasConfigurationProperties casProperties;
 
     private final SamlIdPMetadataLocator samlIdPMetadataLocator;
-    
+
     private static boolean doesCredentialFingerprintMatch(final AbstractCredential credential,
                                                           final SamlRegisteredService samlRegisteredService) {
         val fingerprint = samlRegisteredService.getSigningCredentialFingerprint();
@@ -170,7 +167,7 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
         final MessageContext outboundContext,
         final SamlRegisteredService service) {
         val secParametersContext = outboundContext.ensureSubcontext(SecurityParametersContext.class);
-        val roleDesc = adaptor.ssoDescriptor();
+        val roleDesc = adaptor.getSsoDescriptor();
         val signingParameters = buildSignatureSigningParameters(roleDesc, service);
         Objects.requireNonNull(secParametersContext).setSignatureSigningParameters(signingParameters);
     }
@@ -206,7 +203,7 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
      * @return the signature signing parameters
      */
     protected SignatureSigningParameters buildSignatureSigningParameters(final RoleDescriptor descriptor,
-                                                               final SamlRegisteredService service) {
+                                                                         final SamlRegisteredService service) {
         return FunctionUtils.doUnchecked(() -> {
             val criteria = new CriteriaSet();
             val signatureSigningConfiguration = getSignatureSigningConfiguration(service);
@@ -229,7 +226,7 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
                     params.getSignatureReferenceCanonicalizationAlgorithm());
             } else {
                 LOGGER.warn("Unable to resolve SignatureSigningParameters, response signing will fail."
-                            + " Make sure domain names in IDP metadata URLs and certificates match CAS domain name");
+                    + " Make sure domain names in IDP metadata URLs and certificates match CAS domain name");
             }
             return params;
         });
@@ -378,8 +375,8 @@ public class DefaultSamlIdPObjectSigner implements SamlIdPObjectSigner {
     }
 
     protected AbstractCredential getResolvedSigningCredential(final Credential credential,
-                                                    final PrivateKey privateKey,
-                                                    final SamlRegisteredService service) {
+                                                              final PrivateKey privateKey,
+                                                              final SamlRegisteredService service) {
         try {
             val samlIdp = casProperties.getAuthn().getSamlIdp();
             val credType = SamlIdPResponseProperties.SignatureCredentialTypes.valueOf(

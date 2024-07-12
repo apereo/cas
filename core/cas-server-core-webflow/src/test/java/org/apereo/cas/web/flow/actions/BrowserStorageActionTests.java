@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.tgc.pin-to-session=false",
     "cas.tgc.crypto.enabled=false"
 })
-public class BrowserStorageActionTests extends BaseWebflowConfigurerTests {
+class BrowserStorageActionTests extends BaseWebflowConfigurerTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).minimal(false).build().toObjectMapper();
 

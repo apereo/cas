@@ -21,9 +21,7 @@
             <div class="mdc-form-field form-check">
                 <div th:replace="~{fragments/switchbutton :: switchbutton (id='ignorewarn', label='screen.welcome.label.warnremove')}"/>
             </div>
-            <button id="continueButton" class="mdc-button mdc-button--raised btn btn-primary mt-4 d-block" type="submit">
-                <span th:text="#{screen.button.continue}"></span>
-            </button>
+            <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.button.continue', id='continueButton')}"/>
         </form>
     </div>
 </main>

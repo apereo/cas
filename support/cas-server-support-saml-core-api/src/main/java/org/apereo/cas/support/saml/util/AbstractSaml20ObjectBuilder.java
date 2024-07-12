@@ -82,14 +82,8 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         }
     }
 
-    /**
-     * Gets name id.
-     *
-     * @param nameIdFormat the name id format
-     * @param nameIdValue  the name id value
-     * @return the name iD
-     */
-    public NameID getNameID(final String nameIdFormat, final String nameIdValue) {
+    @Override
+    public NameID newNameID(final String nameIdFormat, final String nameIdValue) {
         val nameId = newSamlObject(NameID.class);
         nameId.setFormat(nameIdFormat);
         nameId.setValue(nameIdValue);
@@ -137,13 +131,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         return samlResponse;
     }
 
-    /**
-     * Create a new SAML status object.
-     *
-     * @param codeValue     the code value
-     * @param statusMessage the status message
-     * @return the status
-     */
+    @Override
     public Status newStatus(final String codeValue, final String statusMessage) {
         LOGGER.trace("Creating new SAML Status for code value: [{}], status message: [{}]", codeValue, statusMessage);
         val status = newSamlObject(Status.class);
@@ -194,16 +182,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         return assertion;
     }
 
-    /**
-     * New logout response.
-     *
-     * @param id          the id
-     * @param destination the destination
-     * @param issuer      the issuer
-     * @param status      the status
-     * @param recipient   the recipient
-     * @return the logout response
-     */
+    @Override
     public LogoutResponse newLogoutResponse(final String id, final String destination,
                                             final Issuer issuer, final Status status,
                                             final String recipient) {
@@ -217,18 +196,8 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         logoutResponse.setVersion(SAMLVersion.VERSION_20);
         return logoutResponse;
     }
-
-    /**
-     * New saml2 logout request.
-     *
-     * @param id           the id
-     * @param issueInstant the issue instant
-     * @param destination  the destination
-     * @param issuer       the issuer
-     * @param sessionIndex the session index
-     * @param nameId       the name id
-     * @return the logout request
-     */
+    
+    @Override
     public LogoutRequest newLogoutRequest(final String id, final ZonedDateTime issueInstant,
                                           final String destination, final Issuer issuer,
                                           final String sessionIndex, final NameID nameId) {
@@ -260,6 +229,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param issuerValue the issuer
      * @return the issuer
      */
+    @Override
     public Issuer newIssuer(final String issuerValue) {
         val issuer = newSamlObject(Issuer.class);
         issuer.setValue(issuerValue);
@@ -380,7 +350,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      */
     public Subject newSubject(final String nameIdFormat, final String nameIdValue,
                               final SubjectConfirmation subjectConfirmation) {
-        val nameID = getNameID(nameIdFormat, nameIdValue);
+        val nameID = newNameID(nameIdFormat, nameIdValue);
         return newSubject(nameID, null, subjectConfirmation);
     }
 

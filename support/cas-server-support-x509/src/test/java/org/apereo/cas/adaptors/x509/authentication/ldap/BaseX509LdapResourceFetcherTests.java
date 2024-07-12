@@ -1,7 +1,8 @@
 package org.apereo.cas.adaptors.x509.authentication.ldap;
 
 import org.apereo.cas.adaptors.x509.BaseX509Tests;
-
+import org.apereo.cas.test.CasTestExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -31,6 +32,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         "cas.authn.x509.ldap.bind-credential=password"
     })
 @EnableScheduling
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseX509LdapResourceFetcherTests {
     protected static final int LDAP_PORT = 10389;
 }

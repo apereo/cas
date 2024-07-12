@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.captcha;
 
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -33,29 +34,35 @@ public class GoogleRecaptchaProperties implements CasFeatureModule, Serializable
 
     /**
      * Indicate the version of the recaptcha api.
-     * Accepted values are: {@code V2, V3}.
      */
     private RecaptchaVersions version = RecaptchaVersions.GOOGLE_RECAPTCHA_V2;
 
     /**
-     * Whether google reCAPTCHA should be enabled.
+     * Whether reCAPTCHA should be enabled.
      */
     @RequiredProperty
     private boolean enabled = true;
 
     /**
-     * The google reCAPTCHA site key.
+     * The reCAPTCHA site key.
      */
     @RequiredProperty
+    @ExpressionLanguageCapable
     private String siteKey;
 
     /**
-     * The google reCAPTCHA endpoint for verification of tokens and input.
+     * The reCAPTCHA endpoint for verification of the reCAPTCHA response.
+     * The endpoint is specific to the reCAPTCHA provider:
+     * <ul>
+     *     <li>For Google reCAPTCHA, the endpoint is {@code https://www.google.com/recaptcha/api/siteverify}.</li>
+     *     <li>For hCaptcha, the endpoint is {@code https://hcaptcha.com/siteverify}.</li>
+     *     <li>For Turnstile, the endpoint is {@code https://challenges.cloudflare.com/turnstile/v0/siteverify}.</li>
+     * </ul>
      */
     private String verifyUrl = "https://www.google.com/recaptcha/api/siteverify";
 
     /**
-     * The google reCAPTCHA site secret.
+     * The reCAPTCHA site secret.
      */
     @RequiredProperty
     private String secret;
@@ -77,7 +84,7 @@ public class GoogleRecaptchaProperties implements CasFeatureModule, Serializable
     private String position = "bottomright";
 
     /**
-     * reCAPTCHA v3 returns a score (1.0 is very likely a good interaction, 0.0 is very likely a bot).
+     * Google reCAPTCHA v3 returns a score (1.0 is very likely a good interaction, 0.0 is very likely a bot).
      * reCAPTCHA learns by seeing real traffic on your site. For this reason, scores in a staging
      * environment or soon after implementing may differ from production. As reCAPTCHA v3 doesn't
      * ever interrupt the user flow, you can first run reCAPTCHA without taking action and then
@@ -114,8 +121,18 @@ public class GoogleRecaptchaProperties implements CasFeatureModule, Serializable
          */
         GOOGLE_RECAPTCHA_V3,
         /**
-         * hCaptcha.
+         * hCaptcha is an alternative to reCAPTCHA that requires website visitors
+         * to label images as part of its business model.
+         * The provider is more focused on manual image recognition challenges. It is a image classification
+         * task based CAPTCHA provider employing visual challenges like identifying objects.
          */
-        HCAPTCHA
+        HCAPTCHA,
+        /**
+         * Offers a CAPTCHA alternative by Cloudflare that prioritizes user experience and privacy.
+         * Turnstile delivers frustration-free, CAPTCHA-free web experiences to website visitors -
+         * with just a simple snippet of free code. Moreover, Turnstile stops abuse and confirms
+         * visitors are real without the data privacy concerns or awful user experience of CAPTCHAs.
+         */
+        TURNSTILE
     }
 }

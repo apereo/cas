@@ -47,6 +47,7 @@ ext {
 
     skipBootifulArtifact = providers.systemProperty("skipBootifulArtifact").present
     skipErrorProneCompiler = providers.systemProperty("skipErrorProneCompiler").present
+    skipSpringBootDevTools = providers.systemProperty("skipSpringBootDevTools").present
 
     skipArtifactSigning = providers.systemProperty("skipArtifactSigning").present
     terminateCompilerOnWarning = providers.systemProperty("terminateCompilerOnWarning").getOrElse("true") == "true"
@@ -55,6 +56,8 @@ ext {
     remoteDebuggingSuspend = providers.systemProperty("remoteDebuggingSuspend").getOrElse("false") == "true" ? "y" : "n"
     generateGitProperties = publishFlag || providers.systemProperty("generateGitProperties").present
     generateTimestamps = publishFlag || providers.systemProperty("generateTimestamps").present
+    
+    skipBootifulLaunchScript = providers.systemProperty("skipBootifulLaunchScript").present
 
     ci = System.getenv("CI") || providers.systemProperty("CI").present
 
@@ -420,7 +423,6 @@ subprojects {
         api libraries.jackson
         api libraries.httpclient
         api libraries.quartz
-        api libraries.groovy
         api libraries.caffein
         api libraries.springcloud
         api libraries.springboot

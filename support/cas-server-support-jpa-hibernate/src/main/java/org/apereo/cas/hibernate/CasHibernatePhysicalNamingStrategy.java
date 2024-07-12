@@ -1,8 +1,8 @@
 package org.apereo.cas.hibernate;
 
-import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
@@ -11,7 +11,6 @@ import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
 import jakarta.annotation.Nonnull;
 
 /**
@@ -41,13 +40,20 @@ public class CasHibernatePhysicalNamingStrategy extends CamelCaseToUnderscoresNa
         LOGGER.trace("Locating physical table name for [{}] based on configured table names [{}]", tableName, tableNames);
         if (tableNames.containsKey(tableName)) {
             val physicalName = tableNames.get(tableName);
-            if (ScriptingUtils.isExternalGroovyScript(physicalName)) {
-                LOGGER.trace("Executing script [{}] to determine physical table name for [{}]", physicalName, tableName);
-                val scriptResource = applicationContext.getResource(physicalName);
-                val args = new Object[]{name, jdbcEnvironment, applicationContext, LOGGER};
-                val identifier = ScriptingUtils.executeGroovyScript(scriptResource, args, Identifier.class, true);
-                LOGGER.trace("Determine table physical name from script [{}] to be [{}]", scriptResource, identifier);
-                return identifier;
+
+            val scriptFactoryInstance = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+            if (scriptFactoryInstance.isPresent()) {
+                if (scriptFactoryInstance.get().isExternalScript(physicalName)) {
+                    LOGGER.trace("Executing script [{}] to determine physical table name for [{}]", physicalName, tableName);
+                    return FunctionUtils.doUnchecked(() -> {
+                        val scriptResource = applicationContext.getResource(physicalName);
+                        val args = new Object[]{name, jdbcEnvironment, applicationContext, LOGGER};
+                        val script = scriptFactoryInstance.get().fromResource(scriptResource);
+                        val identifier = script.execute(args, Identifier.class, true);
+                        LOGGER.trace("Determine table physical name from script [{}] to be [{}]", scriptResource, identifier);
+                        return identifier;
+                    });
+                }
             }
             LOGGER.trace("Located physical table name [{}] for [{}]", physicalName, tableName);
             return Identifier.toIdentifier(physicalName);
@@ -56,9 +62,7 @@ public class CasHibernatePhysicalNamingStrategy extends CamelCaseToUnderscoresNa
     }
 
     @Override
-    public void setApplicationContext(
-        @Nonnull
-        final ApplicationContext applicationContext) throws BeansException {
+    public void setApplicationContext(@Nonnull final ApplicationContext applicationContext) throws BeansException {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
     }
 

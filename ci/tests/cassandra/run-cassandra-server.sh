@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export DOCKER_IMAGE="cassandra:5.0"
+
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 echo "Generating security keys and certificates..."
 "$PWD"/ci/tests/cassandra/generate-keys.sh
@@ -12,7 +14,7 @@ docker run --rm --name cassandra -d -p 7199:7199 -p 7000:7000 -p 7001:7001 -p 90
   -v "$PWD"/ci/tests/cassandra/cqlshrc:/root/.cassandra/cqlshrc \
   -v "$PWD"/ci/tests/cassandra/security:/security \
   -e CASSANDRA_USER=cassandra -e CASSANDRA_PASSWORD=cassandra \
-  cassandra:5.0
+  ${DOCKER_IMAGE}
   
 #docker logs -f cassandra &
 

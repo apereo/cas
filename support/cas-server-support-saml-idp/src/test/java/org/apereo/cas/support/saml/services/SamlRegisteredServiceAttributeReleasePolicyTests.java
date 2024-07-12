@@ -9,11 +9,13 @@ import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.CachedMetadataResolverResult;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
@@ -36,6 +38,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("SAMLAttributes")
+@ExtendWith(CasTestExtension.class)
 class SamlRegisteredServiceAttributeReleasePolicyTests {
     @Nested
     @SpringBootTest(classes = {
@@ -43,7 +46,7 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
         RefreshAutoConfiguration.class
     })
     @EnableConfigurationProperties(CasConfigurationProperties.class)
-    public class DefaultTests {
+    class DefaultTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
 

@@ -9,7 +9,7 @@ category: Installation
 
 Note that by default, the embedded container attempts to enable the HTTP2 protocol.
 
-{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-webapp-tomcat" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-webapp-tomcat" bundled="true" %}
 
 ## Configuration
 

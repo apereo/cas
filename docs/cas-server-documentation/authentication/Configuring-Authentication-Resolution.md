@@ -52,3 +52,5 @@ The following parameters are passed to the script:
 | `logger`          | The object responsible for issuing log messages such as `logger.info(...)`.                             |
 
 The outcome of the script should be the collection of selected handlers with the type `Set<AuthenticationHandler>`.
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).

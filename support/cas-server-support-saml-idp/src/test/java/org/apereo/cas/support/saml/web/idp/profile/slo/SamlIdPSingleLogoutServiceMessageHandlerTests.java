@@ -8,6 +8,7 @@ import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.util.Saml20ObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.RandomUtils;
@@ -45,7 +46,7 @@ class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPConfigura
 
     @Autowired
     @Qualifier("samlIdPLogoutResponseObjectBuilder")
-    private SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder;
+    private Saml20ObjectBuilder samlIdPLogoutResponseObjectBuilder;
     
     private SamlRegisteredService samlRegisteredService;
 
@@ -120,7 +121,7 @@ class SamlIdPSingleLogoutServiceMessageHandlerTests extends BaseSamlIdPConfigura
             "https://github.com/apereo/cas",
             samlIdPLogoutResponseObjectBuilder.newIssuer(service.getId()),
             UUID.randomUUID().toString(),
-            samlIdPLogoutResponseObjectBuilder.getNameID(NameIDType.EMAIL, "cas@example.org"));
+            samlIdPLogoutResponseObjectBuilder.newNameID(NameIDType.EMAIL, "cas@example.org"));
         try (val writer = SamlUtils.transformSamlObject(openSamlConfigBean, logoutRequest)) {
             val encodedRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
             WebUtils.putSingleLogoutRequest(request, encodedRequest);

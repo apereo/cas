@@ -96,7 +96,7 @@ public class MockTicketGrantingTicketCreatedEventProducer {
         createEvent("casuser", i, casEventRepository);
     }
 
-    public static void createEvents(final CasEventRepository casEventRepository) throws Throwable {
+    public static void createEvents(final CasEventRepository casEventRepository) {
         IntStream.range(1, 1000).forEach(Unchecked.intConsumer(i -> createEvent(i, casEventRepository)));
     }
 }

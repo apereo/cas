@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.config.CasCoreEventsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
@@ -13,6 +14,7 @@ import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
@@ -21,6 +23,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.ResourceAccessMode;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,11 +61,13 @@ import static org.mockito.Mockito.*;
     CasAuthenticationEventListenerTests.EventTestConfiguration.class,
     CasCoreEventsAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
+    CasCoreScriptingAutoConfiguration.class,
     RefreshAutoConfiguration.class
 })
 @Tag("Events")
+@ExtendWith(CasTestExtension.class)
 @ResourceLock(value = "casEventRepository", mode = ResourceAccessMode.READ_WRITE)
-class CasAuthenticationEventListenerTests {
+public class CasAuthenticationEventListenerTests {
     private static final String REMOTE_ADDR_IP = "123.456.789.010";
     private static final String LOCAL_ADDR_IP = "123.456.789.000";
     private static final int NUM_TO_USE_IP1 = 10;
@@ -266,7 +271,7 @@ class CasAuthenticationEventListenerTests {
     }
 
     @TestConfiguration(value = "EventTestConfiguration", proxyBeanMethods = false)
-    @EnableAsync
+    @EnableAsync(proxyTargetClass = false)
     static class EventTestConfiguration implements AsyncConfigurer {
         @Bean
         public CasEventRepository casEventRepository() {

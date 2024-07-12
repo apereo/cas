@@ -34,3 +34,5 @@ def shouldResumeOnFailure(Object... args) {
     return false
 }
 ```
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).

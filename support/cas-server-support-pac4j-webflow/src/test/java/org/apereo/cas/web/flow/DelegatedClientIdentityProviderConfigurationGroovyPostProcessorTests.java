@@ -2,21 +2,20 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedirectTypes;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
-
 import lombok.val;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -28,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class,
     properties = "cas.authn.pac4j.core.groovy-provider-post-processor.location=classpath:GroovyClientProviderProcessor.groovy")
 @Tag("Delegation")
+@ExtendWith(CasTestExtension.class)
 class DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTests {
     @Autowired
     @Qualifier("delegatedClientIdentityProviderConfigurationPostProcessor")

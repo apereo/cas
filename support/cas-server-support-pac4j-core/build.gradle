@@ -13,18 +13,14 @@ dependencies {
     implementation project(":core:cas-server-core-services-authentication")
     
     implementation project(":support:cas-server-support-pac4j-core-clients")
-    implementation project(":support:cas-server-support-saml-core-api")
     implementation project(":support:cas-server-support-pac4j-api")
 
     compileOnly project(":support:cas-server-support-scim-core")
     compileOnly project(":support:cas-server-support-ldap-core")
 
-    implementation libraries.pac4joidcoauth
-    implementation libraries.pac4jsaml
+    
     implementation libraries.pac4jcore
     implementation libraries.pac4jcas
-    implementation libraries.opensaml
-    implementation libraries.shibutiljavasupport
     implementation libraries.nimbus
 
     testImplementation libraries.casclient
@@ -44,6 +40,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-services-registry")

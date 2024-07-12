@@ -1,6 +1,7 @@
 package org.apereo.cas.util.serialization;
 
 import org.apereo.cas.configuration.support.TriStateBoolean;
+import org.apereo.cas.test.CasTestExtension;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.dataformat.xml.XmlFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -12,6 +13,7 @@ import lombok.experimental.Accessors;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @Tag("Utility")
+@ExtendWith(CasTestExtension.class)
 class JacksonObjectMapperFactoryTests {
     @Test
     void verifyYamlFactory() throws Throwable {

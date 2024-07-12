@@ -1,5 +1,5 @@
 {
-  "dependencies": "stateless-ticket-registry",
+  "dependencies": "stateless-ticket-registry,scripting",
   "conditions": {
     "docker": "true"
   },

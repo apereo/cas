@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 @EnableWebSecurity
 @Tag("Web")
-public class ServicesControllerTests {
+class ServicesControllerTests {
     @Autowired
     private ConfigurableWebApplicationContext webApplicationContext;
 

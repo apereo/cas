@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("SHELL")
-public class ConvertPropertiesToYAMLCommandTests extends BaseCasShellCommandTests {
+class ConvertPropertiesToYAMLCommandTests extends BaseCasShellCommandTests {
     @Test
     void verifyOperation() throws Throwable {
         val properties = new Properties();

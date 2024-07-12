@@ -1,5 +1,7 @@
 package org.apereo.cas.util.serialization;
 
+import org.apereo.cas.util.NamedObject;
+
 /**
  * This is {@link ComponentSerializationPlanConfigurer}, to be implemented
  * by modules that wish to register serializable classes into the plan.
@@ -8,20 +10,11 @@ package org.apereo.cas.util.serialization;
  * @since 5.2.0
  */
 @FunctionalInterface
-public interface ComponentSerializationPlanConfigurer {
+public interface ComponentSerializationPlanConfigurer extends NamedObject {
     /**
      * configure the plan.
      *
      * @param plan the plan
      */
     void configureComponentSerializationPlan(ComponentSerializationPlan plan);
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
 }

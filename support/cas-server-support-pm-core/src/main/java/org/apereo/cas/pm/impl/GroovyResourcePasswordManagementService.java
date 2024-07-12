@@ -6,13 +6,13 @@ import org.apereo.cas.pm.PasswordChangeRequest;
 import org.apereo.cas.pm.PasswordHistoryService;
 import org.apereo.cas.pm.PasswordManagementQuery;
 import org.apereo.cas.util.crypto.CipherExecutor;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.core.io.Resource;
-
 import java.io.Serializable;
 import java.util.Map;
 
@@ -26,7 +26,7 @@ import java.util.Map;
 @Getter
 public class GroovyResourcePasswordManagementService extends BasePasswordManagementService {
 
-    private final WatchableGroovyScriptResource watchableScript;
+    private final ExecutableCompiledScript watchableScript;
 
     public GroovyResourcePasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                                    final String issuer,
@@ -34,7 +34,8 @@ public class GroovyResourcePasswordManagementService extends BasePasswordManagem
                                                    final Resource groovyResource,
                                                    final PasswordHistoryService passwordHistoryService) {
         super(passwordManagementProperties, cipherExecutor, issuer, passwordHistoryService);
-        this.watchableScript = new WatchableGroovyScriptResource(groovyResource);
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        this.watchableScript = scriptFactory.fromResource(groovyResource);
     }
 
     @Override

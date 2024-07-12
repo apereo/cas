@@ -3,6 +3,7 @@ package org.apereo.cas.sba;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasSpringBootAdminAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import de.codecentric.boot.admin.client.config.SpringBootAdminClientAutoConfiguration;
 import de.codecentric.boot.admin.client.registration.RegistrationClient;
@@ -16,6 +17,7 @@ import de.codecentric.boot.admin.server.web.client.InstanceWebClientCustomizer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
@@ -57,13 +59,13 @@ import static org.mockito.Mockito.*;
     CasSpringBootAdminAutoConfiguration.class
 }, properties = {
     "cas.host.name=CASInstance",
-    "spring.main.allow-bean-definition-overriding=true",
     "spring.boot.admin.client.url=https://localhost:8443/cas",
     "spring.boot.admin.client.username=casuser",
     "spring.boot.admin.client.password=Mellon"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasSpringBootAdminServerTests {
+@ExtendWith(CasTestExtension.class)
+class CasSpringBootAdminServerTests {
     @Autowired
     @Qualifier("springBootAdminEndpointConfigurer")
     private CasWebSecurityConfigurer<HttpSecurity> springBootAdminEndpointConfigurer;

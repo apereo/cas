@@ -1,10 +1,11 @@
 package org.apereo.cas.util.transforms;
 
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.core.io.Resource;
 
 /**
@@ -16,14 +17,15 @@ import org.springframework.core.io.Resource;
 @Slf4j
 @RequiredArgsConstructor
 public class GroovyPrincipalNameTransformer implements PrincipalNameTransformer {
-    private final WatchableGroovyScriptResource watchableScript;
+    private final ExecutableCompiledScript watchableScript;
 
     public GroovyPrincipalNameTransformer(final Resource groovyResource) {
-        this.watchableScript = new WatchableGroovyScriptResource(groovyResource);
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        this.watchableScript = scriptFactory.fromResource(groovyResource);
     }
 
     @Override
-    public String transform(final String formUserId) throws Throwable{
+    public String transform(final String formUserId) throws Throwable {
         return watchableScript.execute(new Object[]{formUserId, LOGGER}, String.class, true);
     }
 }

@@ -5,7 +5,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +23,7 @@ import org.springframework.binding.mapping.Mapper;
 import org.springframework.binding.mapping.Mapping;
 import org.springframework.binding.mapping.impl.DefaultMapper;
 import org.springframework.binding.mapping.impl.DefaultMapping;
+import org.springframework.binding.mapping.impl.DefaultMappingContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.expression.BeanExpressionContextAccessor;
 import org.springframework.context.expression.EnvironmentAccessor;
@@ -75,7 +75,6 @@ import org.springframework.webflow.expression.spel.FlowVariablePropertyAccessor;
 import org.springframework.webflow.expression.spel.MapAdaptablePropertyAccessor;
 import org.springframework.webflow.expression.spel.MessageSourcePropertyAccessor;
 import org.springframework.webflow.expression.spel.ScopeSearchingPropertyAccessor;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -398,7 +397,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public SubflowState createSubflowState(final Flow flow, final String stateId, final String subflow, final Action entryAction) {
         return createSubflowState(flow, stateId, subflow, this.mainFlowDefinitionRegistry, entryAction);
     }
-    
+
     @Override
     public SubflowState createSubflowState(final Flow flow, final String stateId,
                                            final String subflow, final FlowDefinitionRegistry registry,
@@ -664,12 +663,12 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
             LOGGER.warn("Flow registry is not configured and/or initialized correctly.");
             return null;
         }
-        val found = Arrays.asList(registry.getFlowDefinitionIds()).contains(id);
+        val found = List.of(registry.getFlowDefinitionIds()).contains(id);
         if (found) {
             return (Flow) registry.getFlowDefinition(id);
         }
-        LOGGER.warn("Could not find flow definition [{}]. Available flow definition ids are [{}]",
-            id, registry.getFlowDefinitionIds());
+        LOGGER.debug("[{}] could not find flow definition [{}]. Available flow definition ids are [{}]",
+            getName(), id, registry.getFlowDefinitionIds());
         return null;
     }
 
@@ -708,6 +707,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         mappings
             .stream()
             .map(DefaultMapping.class::cast)
+            .map(CasDefaultMapping::new)
             .forEach(flowInputMapper::addMapping);
         flow.setInputMapper(flowInputMapper);
         return flowInputMapper;
@@ -724,16 +724,17 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         mappings
             .stream()
             .map(DefaultMapping.class::cast)
+            .map(CasDefaultMapping::new)
             .forEach(flowInputMapper::addMapping);
         return flowInputMapper;
     }
-    
+
     @Override
     public Mapping createFlowMapping(final String sourceExpression, final String targetExpression,
                                      final boolean required, final Class type) {
         val source = createExpression(sourceExpression);
         val target = createExpression(targetExpression);
-        val mapping = new DefaultMapping(source, target);
+        val mapping = new CasDefaultMapping(new DefaultMapping(source, target));
         mapping.setRequired(required);
         if (type != null) {
             val typeConverter = new RuntimeBindingConversionExecutor(type, flowBuilderServices.getConversionService());
@@ -869,9 +870,9 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     /**
      * Prepend actions to action state execution list.
      *
-     * @param flow          the flow
+     * @param flow    the flow
      * @param stateId the action state id
-     * @param actions       the actions
+     * @param actions the actions
      */
     public void prependActionsToActionStateExecutionList(final Flow flow, final String stateId, final Object... actions) {
         val evalActions = Arrays.stream(actions)
@@ -899,28 +900,30 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     /**
      * Add actions to action state execution list at.
      *
-     * @param flow          the flow
-     * @param stateId the action state id
-     * @param position      the position
-     * @param actions       the actions
+     * @param flow     the flow
+     * @param stateId  the action state id
+     * @param position the position
+     * @param actions  the actions
      */
     public void addActionsToActionStateExecutionListAt(final Flow flow, final String stateId, final int position,
                                                        final Action... actions) {
-        val givenState = getState(flow, stateId, TransitionableState.class);
-        var actionList = new ActionList();
-        if (givenState instanceof final ActionState as) {
-            actionList = as.getActionList();
+        if (flow != null) {
+            val givenState = getState(flow, stateId, TransitionableState.class);
+            var actionList = new ActionList();
+            if (givenState instanceof final ActionState as) {
+                actionList = as.getActionList();
+            }
+            if (givenState instanceof final ViewState vs) {
+                actionList = vs.getEntryActionList();
+            }
+            val currentActions = new ArrayList<Action>(actionList.size() + actions.length);
+            actionList.forEach(currentActions::add);
+            val index = position < 0 || position == Integer.MAX_VALUE ? currentActions.size() : position;
+            currentActions.forEach(actionList::remove);
+            currentActions.addAll(index, Arrays.stream(actions).toList());
+            actionList.addAll(currentActions.toArray(Action[]::new));
+            LOGGER.trace("Final (entry) action list for state [{}] is [{}]", stateId, actionList);
         }
-        if (givenState instanceof final ViewState vs) {
-            actionList = vs.getEntryActionList();
-        }
-        val currentActions = new ArrayList<Action>(actionList.size() + actions.length);
-        actionList.forEach(currentActions::add);
-        val index = position < 0 || position == Integer.MAX_VALUE ? currentActions.size() : position;
-        currentActions.forEach(actionList::remove);
-        currentActions.addAll(index, Arrays.stream(actions).toList());
-        actionList.addAll(currentActions.toArray(Action[]::new));
-        LOGGER.trace("Final (entry) action list for state [{}] is [{}]", stateId, actionList);
     }
 
 
@@ -930,9 +933,21 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         return new ActionExecutingViewFactory(new ExternalRedirectAction(expression));
     }
 
-    /**
-     * Handle the initialization of the webflow.
-     */
     protected void doInitialize() {
+    }
+
+    private static class CasDefaultMapping extends DefaultMapping {
+        CasDefaultMapping(final DefaultMapping mapping) {
+            super(mapping.getSourceExpression(), mapping.getTargetExpression());
+            setRequired(mapping.isRequired());
+            setTypeConverter(mapping.getTypeConverter());
+        }
+
+        @Override
+        public void map(final DefaultMappingContext context) {
+            if (getSourceExpression().getValue(context.getSource()) != null) {
+                super.map(context);
+            }
+        }
     }
 }

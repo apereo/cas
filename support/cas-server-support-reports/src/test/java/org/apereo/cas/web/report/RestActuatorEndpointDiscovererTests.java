@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("ActuatorEndpoint")
 @Import(RestActuatorEndpointDiscovererTests.MyTestConfiguration.class)
-public class RestActuatorEndpointDiscovererTests extends AbstractCasEndpointTests {
+class RestActuatorEndpointDiscovererTests extends AbstractCasEndpointTests {
 
     @Autowired
     @Qualifier("myEndpoint")

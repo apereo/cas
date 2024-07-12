@@ -1,7 +1,9 @@
 package org.apereo.cas.consent;
 
+import org.apereo.cas.test.CasTestExtension;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest(classes = BaseConsentRepositoryTests.SharedTestConfiguration.class)
 @Getter
 @Tag("Consent")
+@ExtendWith(CasTestExtension.class)
 class InMemoryConsentRepositoryTests extends BaseConsentRepositoryTests {
 
     @Autowired

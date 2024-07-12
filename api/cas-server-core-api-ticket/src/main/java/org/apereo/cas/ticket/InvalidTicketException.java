@@ -5,7 +5,7 @@ import lombok.Getter;
 import java.io.Serial;
 
 /**
- * AbstractTicketException to alert that a Ticket was not found or that it is expired.
+ * Exception to alert that a {@link Ticket} was not found or that it is expired.
  *
  * @author Scott Battaglia
  * @since 3.0.0

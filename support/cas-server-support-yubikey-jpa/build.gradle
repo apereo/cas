@@ -35,7 +35,8 @@ dependencies {
     testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-util")
-
+    testImplementation project(":core:cas-server-core-scripting")
+    
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-trusted-mfa")
 

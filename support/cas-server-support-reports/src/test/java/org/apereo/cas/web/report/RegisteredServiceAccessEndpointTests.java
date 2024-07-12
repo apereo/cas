@@ -2,9 +2,11 @@ package org.apereo.cas.web.report;
 
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,6 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 7.1.0
  */
 @Tag("ActuatorEndpoint")
+@ExtendWith(CasTestExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest(classes = AbstractCasEndpointTests.SharedTestConfiguration.class,
     properties = {
@@ -36,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "management.endpoints.web.exposure.include=*"
     },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-public class RegisteredServiceAccessEndpointTests extends AbstractCasEndpointTests {
+class RegisteredServiceAccessEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("mockMvc")
     private MockMvc mockMvc;

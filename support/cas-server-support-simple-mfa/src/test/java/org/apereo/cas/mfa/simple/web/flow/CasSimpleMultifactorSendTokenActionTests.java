@@ -44,16 +44,20 @@ class CasSimpleMultifactorSendTokenActionTests {
         "cas.authn.mfa.simple.mail.text=CAS Token is ${token}"
     })
     @Import(BaseCasSimpleMultifactorAuthenticationTests.CasSimpleMultifactorTestConfiguration.class)
-    class MultipleEmailsTests extends BaseCasSimpleMultifactorSendTokenActionTests {
+    class MultipleContactInfoTests extends BaseCasSimpleMultifactorSendTokenActionTests {
         @Test
         void verifyOperation() throws Throwable {
             val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
-                CollectionUtils.wrap("mail", List.of("cas@example.org", "user@example.com")));
+                CollectionUtils.wrap(
+                    "mail", List.of("cas@example.org", "user@example.com"),
+                    "phone", List.of("6024351243", "5034351243")
+                ));
             val requestContext = buildRequestContextFor(principal);
             var event = mfaSimpleMultifactorSendTokenAction.execute(requestContext);
-            assertEquals("selectEmails", event.getId());
-            assertTrue(requestContext.getFlowScope().contains("emailRecipients", Map.class));
-            val emailRecipients = requestContext.getFlowScope().get("emailRecipients", Map.class);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_SELECT, event.getId());
+            assertTrue(requestContext.getFlowScope().contains(CasSimpleMultifactorSendTokenAction.FLOW_SCOPE_ATTR_EMAIL_RECIPIENTS, Map.class));
+            assertTrue(requestContext.getFlowScope().contains(CasSimpleMultifactorSendTokenAction.FLOW_SCOPE_ATTR_SMS_RECIPIENTS, Map.class));
+            val emailRecipients = requestContext.getFlowScope().get(CasSimpleMultifactorSendTokenAction.FLOW_SCOPE_ATTR_EMAIL_RECIPIENTS, Map.class);
             emailRecipients.keySet().forEach(key -> requestContext.setParameter(key.toString(), "nothing"));
             event = mfaSimpleMultifactorSendTokenAction.execute(requestContext);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, event.getId());

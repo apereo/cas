@@ -39,7 +39,7 @@
     </Appenders>
     
     <Loggers>
-        <Logger name="org.apereo" level="off"  />
+        <Logger name="org.apereo" level="error"  />
         <Logger name="org.apereo.cas.logging.CasAppender" level="trace" additivity="false">
             <AppenderRef ref="CasAppender"/>
         </Logger>

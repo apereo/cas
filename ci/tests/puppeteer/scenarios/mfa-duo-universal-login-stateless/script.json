@@ -18,7 +18,6 @@
     "--cas.authn.mfa.duo[0].duo-integration-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_IKEY']}",
     "--cas.authn.mfa.duo[0].duo-api-host=${#environmentVars['DUO_SECURITY_API_HOST']}",
 
-    "--cas.service-registry.core.init-from-json=true",
     "--cas.authn.attribute-repository.core.default-attributes-to-release=cn,mail",
     "--cas.authn.attribute-repository.stub.attributes.cn=casuser",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
@@ -27,8 +26,12 @@
 
     "--cas.authn.attribute-repository.attribute-definition-store.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/definitions.json",
 
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
+    
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=duoAdmin",
     "--management.endpoints.enabled-by-default=true"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

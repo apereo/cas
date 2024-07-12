@@ -123,7 +123,7 @@ and you can find [most of them here](https://upstart.ubuntu.com/cookbook/).
 
 {% endtab %}
 
-{% tab osserviceopts Windows Service %}
+{% tab osserviceopts <i class="fa fa-windows px-1"></i>Windows Service %}
 
 CAS may be started as Windows service using [winsw](https://github.com/kohsuke/winsw).
 

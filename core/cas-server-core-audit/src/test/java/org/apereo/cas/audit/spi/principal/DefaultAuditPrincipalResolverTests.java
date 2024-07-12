@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.MockRequestContext;
@@ -18,6 +19,7 @@ import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -40,9 +42,10 @@ import static org.mockito.Mockito.*;
  * @since 7.0.0
  */
 @Tag("Audits")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseAuditConfigurationTests.SharedTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class DefaultAuditPrincipalResolverTests {
+class DefaultAuditPrincipalResolverTests {
     @Autowired
     @Qualifier("auditablePrincipalResolver")
     private PrincipalResolver auditablePrincipalResolver;
@@ -87,7 +90,7 @@ public class DefaultAuditPrincipalResolverTests {
         assertEquals(PrincipalResolver.UNKNOWN_USER, auditablePrincipalResolver.resolveFrom(jp, new Object()));
     }
 
-    public static Stream<Arguments> getAuditReturnValueParameters() throws Throwable {
+    public static Stream<Arguments> getAuditReturnValueParameters() {
         val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
         val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), authentication, NeverExpiresExpirationPolicy.INSTANCE);
         val authenticationResult = CoreAuthenticationTestUtils.getAuthenticationResult(authentication);

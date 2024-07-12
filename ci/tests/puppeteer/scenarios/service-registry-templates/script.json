@@ -1,5 +1,5 @@
 {
-  "dependencies": "reports,json-service-registry",
+  "dependencies": "reports,json-service-registry,scripting",
   "conditions": {
     "docker": "true"
   },

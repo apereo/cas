@@ -9,10 +9,10 @@ function printred() {
   printf "🔥 ${RED}$1${ENDCOLOR}\n"
 }
 function printgreen() {
-  printf "✅ ${GREEN}$1${ENDCOLOR}\n"
+  printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
 }
 function printyellow() {
-  printf "🔥 ${YELLOW}$1${ENDCOLOR}\n"
+  printf "⚠️  ${YELLOW}$1${ENDCOLOR}\n"
 }
 
 function validateProjectDocumentation() {
@@ -51,12 +51,13 @@ userinterface=true
 
 serve=false
 
+
 while (("$#")); do
   case "$1" in
   --reset)
     printgreen "Resetting local build to allow forceful creation of documentation binary artifacts...\n"
     ./gradlew :api:cas-server-core-api-configuration-model:clean :docs:cas-server-documentation-processor:clean $GRADLE_BUILD_OPTIONS
-    printgreen "\nBuild completed. Documentation binary artifacts and configuration catalog will be rebuilt on the next attempt."
+    printgreen "Build completed. Documentation binary artifacts and configuration catalog will be rebuilt on the next attempt."
     shift 1
     ;;
   --local)
@@ -64,10 +65,10 @@ while (("$#")); do
     shift 2
     printgreen "Generating documentation for property filter: ${propFilter}\n"
     serve=true
+    proofRead=false
     
     audit=false
-    proofRead=false
-    actuators=false 
+    actuators=false
     thirdParty=false
     serviceProps=false
     publishDocs=false
@@ -75,7 +76,7 @@ while (("$#")); do
     buildFeatures=false
     shellCommands=false
     dependencyVersions=false
-    userinterface=true
+    userinterface=false
     ;;
   --branch)
     branchVersion=$2
@@ -339,12 +340,12 @@ if [[ ${buildDocs} == "true" ]]; then
   printgreen "Installing documentation dependencies...\n"
   bundle config set force_ruby_platform true
   bundle install
-  printgreen "\nBuilding documentation site for $branchVersion with data at $PWD/gh-pages/_data"
+  printgreen "Building documentation site for $branchVersion with data at $PWD/gh-pages/_data"
   echo -n "Starting at " && date
   jekyll --version
 
   if [[ "${CI}" == "true" ]]; then
-    while sleep 30; do echo -e '\n=====[ Build is still running ]====='; done &
+    while sleep 30; do echo -e "\n=====[ Build is still running: $(date +'%Y-%m-%d %H:%M:%S') ]====="; done &
     sleeppid=$!
   fi
 
@@ -394,7 +395,7 @@ cd "$PWD/gh-pages" || exit
 if [[ $clone == "true" ]]; then
   rm -Rf .jekyll-cache .jekyll-metadata .sass-cache "$branchVersion/build"
   rm -Rf "$branchVersion/build"
-  printgreen "\nConfiguring git repository settings...\n"
+  printgreen "Configuring git repository settings...\n"
   rm -Rf .git
   git init
   git config init.defaultBranch master

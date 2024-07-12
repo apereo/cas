@@ -5,8 +5,10 @@ import org.apereo.cas.config.CasWsFederationAuthenticationAutoConfiguration;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import lombok.val;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -29,9 +31,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = AbstractWsFederationTests.SharedTestConfiguration.class,
     properties = {
-        "spring.main.allow-bean-definition-overriding=true",
         "cas.authn.wsfed[0].identity-provider-url=https://adfs.example.com/adfs/ls/",
         "cas.authn.wsfed[0].identity-provider-identifier=http://(iam-dev-windows.unicon.net|adfs.example.com)/adfs/services/trust",
         "cas.authn.wsfed[0].relying-party-identifier=urn:federation:cas",
@@ -80,18 +82,14 @@ public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
         standardCred.setAttributes(attributes);
         return standardCred;
     }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         SecurityAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
-        CasWsFederationAuthenticationAutoConfiguration.class,
-        AbstractOpenSamlTests.SharedTestConfiguration.class
-    })
+        AopAutoConfiguration.class,
+        CasWsFederationAuthenticationAutoConfiguration.class})
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import(AbstractOpenSamlTests.SharedTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 

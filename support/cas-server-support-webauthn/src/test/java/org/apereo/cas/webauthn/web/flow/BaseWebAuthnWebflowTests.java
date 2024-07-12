@@ -8,6 +8,7 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -36,10 +37,7 @@ public abstract class BaseWebAuthnWebflowTests {
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         SecurityAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
@@ -53,11 +51,13 @@ public abstract class BaseWebAuthnWebflowTests {
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
         CasMultifactorAuthnTrustAutoConfiguration.class,
         CasSupportActionsAutoConfiguration.class,
-        CasWebAuthnAutoConfiguration.class
+        CasWebAuthnAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

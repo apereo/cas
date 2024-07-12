@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
+import org.apereo.cas.util.NamedObject;
 
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.NotImplementedException;
@@ -15,7 +16,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public interface SamlRegisteredServiceMetadataResolver {
+public interface SamlRegisteredServiceMetadataResolver extends NamedObject {
 
     /**
      * Resolve list.
@@ -56,14 +57,6 @@ public interface SamlRegisteredServiceMetadataResolver {
         throw new NotImplementedException("Operation saveOrUpdate is not implemented/supported");
     }
 
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
 
     /**
      * Is the resolver available and able to resolve metadata?

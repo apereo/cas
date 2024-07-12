@@ -50,3 +50,5 @@ def supportsCredentialClass(final Object... args) {
     return credentialClazz == UsernamePasswordCredential.class
 }
 ```
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).

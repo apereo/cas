@@ -108,12 +108,14 @@ Each provider should have its own dedicated settings and properties that would a
   
 {% tabs bypassproviders %}
 
-{% tab bypassproviders Groovy %}
+{% tab bypassproviders <i class="fa fa-file-code px-1"></i>Groovy %}
 
 Multifactor authentication bypass may be determined using a Groovy script of your
 own design. The outcome of the script, if `true` indicates that multifactor
 authentication for the requested provider should proceed. Otherwise `false` indicates
-that  multifactor authentication for this provider should be skipped and bypassed.
+that multifactor authentication for this provider should be skipped and bypassed.
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 The outline of the script may be as follows:
 

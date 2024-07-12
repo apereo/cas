@@ -7,6 +7,7 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -15,7 +16,9 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasGraphicalUserAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -38,6 +41,7 @@ import org.springframework.webflow.execution.Action;
  */
 @SpringBootTest(classes = AbstractGraphicalAuthenticationTests.SharedTestConfiguration.class,
     properties = "cas.authn.gua.simple.casuser=classpath:image.jpg")
+@ExtendWith(CasTestExtension.class)
 public abstract class AbstractGraphicalAuthenticationTests {
     @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_GUA_PREPARE_LOGIN)
@@ -51,22 +55,16 @@ public abstract class AbstractGraphicalAuthenticationTests {
 
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasGraphicalUserAuthenticationAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
@@ -75,8 +73,11 @@ public abstract class AbstractGraphicalAuthenticationTests {
         CasCoreAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
-        CasCoreUtilAutoConfiguration.class
+        CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import({CasRegisteredServicesTestConfiguration.class, CasPersonDirectoryTestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 }

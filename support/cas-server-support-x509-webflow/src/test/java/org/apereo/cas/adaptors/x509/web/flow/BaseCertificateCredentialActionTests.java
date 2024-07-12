@@ -20,7 +20,9 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CasX509AuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasX509AuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasX509CertificateExtractorAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -75,6 +77,7 @@ import org.springframework.webflow.execution.Action;
         "cas.authn.x509.ldap.bind-dn=cn=Directory Manager,dc=example,dc=org",
         "cas.authn.x509.ldap.bind-credential=Password"
     })
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseCertificateCredentialActionTests {
     public static final CasX509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 

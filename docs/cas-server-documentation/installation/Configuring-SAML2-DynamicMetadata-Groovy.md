@@ -49,3 +49,5 @@ The parameters passed are as follows:
 | `samlProperties`    | The object responsible for capturing the CAS SAML IdP properties defined in the configuration.                     |
 | `criteriaSet`       | The object responsible for capturing the criteria for metadata solution, if any.                                   |
 | `logger`            | The object responsible for issuing log messages such as `logger.info(...)`.                                        |
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).

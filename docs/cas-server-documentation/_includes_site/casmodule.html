@@ -140,12 +140,16 @@ dependencies {
 ```groovy
 dependencies {
     /*
-    The following platform references should be included automatically and are listed here for reference only.
-            
-    implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
-    implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
-    */
+        The following platform references should be included automatically and are listed here for reference only.
 
+        implementation enforcedPlatform("org.apereo.cas:cas-server-support-bom:${project.'cas.version'}")
+        implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        {% if include.bundled == "true" %}
+        Including this module in the CAS WAR overlay is optional and unnecessary. This module is automatically included
+        and bundled with the CAS server distribution and there are alternative options baked in to allow one to replace
+        this module with another. The entry below is listed for reference only.
+        {%- endif %}
+    */
     implementation "{{include.group}}:{{include.module}}"
 }
 ```

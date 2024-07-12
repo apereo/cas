@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -19,12 +20,14 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.services.BaseRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -48,6 +51,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseConsentRepositoryTests.SharedTestConfiguration.class)
 @Getter
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseConsentRepositoryTests {
     protected static final DefaultConsentDecisionBuilder BUILDER = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
 
@@ -111,18 +115,15 @@ public abstract class BaseConsentRepositoryTests {
     protected String getUser() {
         return RandomUtils.randomAlphanumeric(8);
     }
-
     @ImportAutoConfiguration({
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         ServletWebServerFactoryAutoConfiguration.class,
-        DispatcherServletAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        DispatcherServletAutoConfiguration.class,
         CasConsentCoreAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
@@ -131,12 +132,13 @@ public abstract class BaseConsentRepositoryTests {
         CasCoreServicesAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

@@ -29,6 +29,8 @@ dependencies {
     if (!skipConfigurationMetadata) {
         annotationProcessor libraries.springbootconfigmetadata
     }
+
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }
 
 abstract class ConfigurationMetadataLocationProvider implements CommandLineArgumentProvider {

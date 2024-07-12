@@ -156,26 +156,34 @@ class CasWebflowContextConfiguration {
     @Configuration(value = "CasWebflowContextFlowExecutorConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasWebflowContextFlowExecutorConfiguration {
+        
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
+        @ConditionalOnMissingBean(name = "logoutFlowExecutor")
         public FlowExecutor logoutFlowExecutor(
+            @Qualifier("logoutFlowUrlHandler") final FlowUrlHandler logoutFlowUrlHandler,
             final CasConfigurationProperties casProperties,
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGOUT_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry logoutFlowRegistry,
             @Qualifier("webflowCipherExecutor") final CipherExecutor webflowCipherExecutor) {
             val factory = new WebflowExecutorFactory(casProperties.getWebflow(),
-                logoutFlowRegistry, webflowCipherExecutor, FLOW_EXECUTION_LISTENERS);
+                logoutFlowRegistry, webflowCipherExecutor, FLOW_EXECUTION_LISTENERS,
+                logoutFlowUrlHandler);
             return factory.build();
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
+        @ConditionalOnMissingBean(name = "loginFlowExecutor")
         public FlowExecutor loginFlowExecutor(
+            @Qualifier("loginFlowUrlHandler") final FlowUrlHandler loginFlowUrlHandler,
             final CasConfigurationProperties casProperties,
-            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY) final FlowDefinitionRegistry loginFlowRegistry,
-            @Qualifier("webflowCipherExecutor") final CipherExecutor webflowCipherExecutor) {
+            @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
+            final FlowDefinitionRegistry loginFlowRegistry,
+            @Qualifier("webflowCipherExecutor")
+            final CipherExecutor webflowCipherExecutor) {
             val factory = new WebflowExecutorFactory(casProperties.getWebflow(),
                 loginFlowRegistry, webflowCipherExecutor,
-                FLOW_EXECUTION_LISTENERS);
+                FLOW_EXECUTION_LISTENERS, loginFlowUrlHandler);
 
             return factory.build();
         }

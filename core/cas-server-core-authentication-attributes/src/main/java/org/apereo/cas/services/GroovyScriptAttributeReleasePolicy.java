@@ -2,7 +2,7 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -51,7 +51,7 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
     }
 
     protected Map<String, List<Object>> fetchAttributeValueFromScript(
-        final ExecutableCompiledGroovyScript script,
+        final ExecutableCompiledScript script,
         final RegisteredServiceAttributeReleasePolicyContext context,
         final Map<String, List<Object>> attributes) throws Throwable {
         val args = new Object[]{attributes, LOGGER, context.getPrincipal(), context.getRegisteredService()};

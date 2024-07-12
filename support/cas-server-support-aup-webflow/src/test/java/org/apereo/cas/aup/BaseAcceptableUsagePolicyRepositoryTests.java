@@ -14,6 +14,7 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -24,10 +25,12 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -51,6 +54,7 @@ import static org.mockito.Mockito.*;
  * @since 6.0.0
  */
 @SpringBootTest(classes = BaseAcceptableUsagePolicyRepositoryTests.SharedTestConfiguration.class)
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
@@ -112,32 +116,29 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         return context;
     }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
-        CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasAcceptableUsagePolicyWebflowAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
-        CasCoreLogoutAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class
-    })
+        CasCoreLogoutAutoConfiguration.class})
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import({CasRegisteredServicesTestConfiguration.class,
+        CasAuthenticationEventExecutionPlanTestConfiguration.class,
+        CasPersonDirectoryTestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 }

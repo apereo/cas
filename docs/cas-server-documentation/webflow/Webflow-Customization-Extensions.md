@@ -146,6 +146,8 @@ with good reason and make sure you have thought changes through before stepping 
 
 #### Configuration
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% include_cached casproperties.html properties="cas.webflow" includes=".autoconfigure,.groovy" %}
 
 #### Webflow Auto Configuration

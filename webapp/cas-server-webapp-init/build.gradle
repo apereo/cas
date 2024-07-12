@@ -2,6 +2,7 @@ description = "Apereo CAS Web Application Initializer"
 dependencies {
     implementation libraries.hibernatevalidator
 
+    implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration")

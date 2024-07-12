@@ -1,5 +1,5 @@
 {
-  "dependencies": "simple-mfa,wsfederation-webflow",
+  "dependencies": "simple-mfa,wsfederation-webflow,scripting",
   "conditions": {
     "env": "ADFS_HOST,ADFS_RELYING_PARTY_ID,ADFS_USERNAME,ADFS_PASSWORD",
     "docker": "true"
@@ -17,6 +17,7 @@
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
+    "--cas.tgc.crypto.alg=A128CBC-HS256",
     "--cas.tgc.crypto.encryption.key=u696jJnPvm1DHLR7yVCSKMMzzoPoFxJZW4-MP1CkM5w",
     "--cas.tgc.crypto.signing.key=zPdNCd0R1oMR0ClzEqZzapkte8rO0tNvygYjmHoUhitAu6CBscwMC3ZTKy8tleTKiQ6GVcuiQQgxfd1nSKxf7w",
     
@@ -26,6 +27,7 @@
     "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
 
+    "--cas.authn.wsfed[0].cookie.crypto.alg=A128CBC-HS256",
     "--cas.authn.wsfed[0].cookie.crypto.encryption.key=wjDVCGIx5ztrk9vKI55YIP01SLE4Ziaj0WsfjvVIaAE",
     "--cas.authn.wsfed[0].cookie.crypto.signing.key=BXI9U68k1OYJ-vgCvqtZHLPhkCCiAWWfGiqHWdBVF7hXsvgLD1WQHgHbUYee039w7KXux7zfRpBDBeq6K3jfUg",
     

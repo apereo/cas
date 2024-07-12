@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.util.NamedObject;
 import org.springframework.web.servlet.AsyncHandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -16,7 +17,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInterceptor {
+public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInterceptor, NamedObject {
 
     /**
      * Default bean name.
@@ -50,15 +51,7 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
     default boolean exceedsThreshold(final HttpServletRequest request) {
         return false;
     }
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
+    
 
     /**
      * Decrement the the throttle so authentication can resume.

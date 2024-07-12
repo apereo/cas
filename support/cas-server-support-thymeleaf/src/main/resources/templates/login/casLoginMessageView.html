@@ -21,10 +21,7 @@
                <form method="post" id="form" class="me-2" th:action="@{/login}">
                   <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
                   <input type="hidden" name="_eventId" value="proceed" />
-                  <button class="mdc-button mdc-button--raised mdc-card__action mdc-card__action--button btn btn-primary"
-                     type="submit" id="continue" name="continue" accesskey="l" th:value="#{screen.button.continue}" value="Continue">
-                     <span class="mdc-button__label" th:text="#{screen.button.continue}">Continue</span>
-                  </button>
+                  <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.button.continue', id='continue', name='continue')}"/>
                </form>
 
                <form method="post" id="changePasswordForm" class="fm-v" th:action="@{/login}"

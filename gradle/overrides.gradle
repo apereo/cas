@@ -10,8 +10,8 @@ configurations.configureEach {
             failOnVersionConflict()
         }
         preferProjectModules()
-
-        def dependencyCacheDays = Integer.valueOf(project.dependencyCacheDays)
+        
+        def dependencyCacheDays = Integer.valueOf(providers.systemProperty("dependencyCacheDays").getOrElse("1"))
         cacheDynamicVersionsFor dependencyCacheDays, 'days'
         cacheChangingModulesFor dependencyCacheDays, 'days'
 

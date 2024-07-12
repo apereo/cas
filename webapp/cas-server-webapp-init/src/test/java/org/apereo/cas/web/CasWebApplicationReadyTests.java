@@ -2,10 +2,12 @@ package org.apereo.cas.web;
 
 import org.apereo.cas.config.CasWebApplicationAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("WebApp")
+@ExtendWith(CasTestExtension.class)
 class CasWebApplicationReadyTests {
     @Test
     void verifyOperation() throws Throwable {

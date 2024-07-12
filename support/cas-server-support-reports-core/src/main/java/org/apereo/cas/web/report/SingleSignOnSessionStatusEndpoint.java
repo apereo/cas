@@ -50,8 +50,8 @@ public class SingleSignOnSessionStatusEndpoint extends BaseCasRestActuatorEndpoi
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get current status of single sign-on", parameters = {
-        @Parameter(name = "tgc", required = false),
-        @Parameter(name = "request", required = false)
+        @Parameter(name = "tgc", required = false, description = "The ticket-granting ticket cookie value"),
+        @Parameter(name = "request", required = false, description = "The HTTP request")
     })
     public ResponseEntity<Map<?, ?>> ssoStatus(
         @RequestParam(name = "tgc", required = false, defaultValue = StringUtils.EMPTY) final String tgc,

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("RegisteredService")
-public class PermitRegisteredServiceAccessStrategyTests {
+class PermitRegisteredServiceAccessStrategyTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
     

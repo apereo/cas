@@ -1,17 +1,15 @@
 package org.apereo.cas.notifications;
 
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasSlackMessagingAutoConfiguration;
 import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,13 +20,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
     CasSlackMessagingAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class
+    BaseNotificationTests.SharedTestConfiguration.class
 }, properties = "cas.slack-messaging.api-token=xoxb-1234567890")
 @Tag("Simple")
+@ExtendWith(CasTestExtension.class)
 class SlackNotificationSenderTests {
 
     @Autowired

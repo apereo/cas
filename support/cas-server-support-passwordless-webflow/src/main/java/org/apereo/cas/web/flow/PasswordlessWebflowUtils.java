@@ -1,11 +1,15 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import lombok.experimental.UtilityClass;
+import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This is {@link PasswordlessWebflowUtils}.
@@ -105,4 +109,24 @@ public class PasswordlessWebflowUtils {
         return requestContext.getFlowScope().contains("passwordlessAccount");
     }
 
+    /**
+     * Put passwordless captcha enabled.
+     *
+     * @param requestContext the request context
+     * @param recaptcha      the recaptcha
+     */
+    public static void putPasswordlessCaptchaEnabled(final RequestContext requestContext, final GoogleRecaptchaProperties recaptcha) {
+        requestContext.getFlowScope().put("passwordlessCaptchaEnabled", recaptcha.isEnabled());
+    }
+
+    /**
+     * Is passwordless captcha enabled.
+     *
+     * @param requestContext the request context
+     * @return true/false
+     */
+    public static boolean isPasswordlessCaptchaEnabled(final RequestContext requestContext) {
+        val enabled = Objects.requireNonNullElse(requestContext.getFlowScope().getBoolean("passwordlessCaptchaEnabled", Boolean.FALSE), Boolean.FALSE);
+        return BooleanUtils.toBoolean(enabled);
+    }
 }

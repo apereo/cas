@@ -31,14 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pac4j.oidc[0].google.secret=123",
 
     "cas.authn.pac4j.github.id=123",
-    "cas.authn.pac4j.github.secret=123",
-
-    "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
-    "cas.authn.pac4j.saml[0].keystore-password=1234567890",
-    "cas.authn.pac4j.saml[0].private-key-password=1234567890",
-    "cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=classpath:idp-metadata.xml",
-    "cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=file:/tmp/sp.xml",
-    "cas.authn.pac4j.saml[0].service-provider-entity-id=test-entityid"
+    "cas.authn.pac4j.github.secret=123"
 })
 @Tag("ActuatorEndpoint")
 @Import(BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)

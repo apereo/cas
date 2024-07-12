@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.oidc.OidcConfigurationContext;
-import org.apereo.cas.oidc.issuer.OidcIssuerService;
 import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequestValidator;
 import org.apereo.cas.oidc.token.OidcIdTokenExpirationPolicyBuilder;
 import org.apereo.cas.oidc.token.OidcIdTokenGeneratorService;
@@ -40,7 +39,6 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.idtoken.IdTokenGeneratorService;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -70,17 +68,9 @@ class OidcResponseConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AccessTokenResponseGenerator oidcAccessTokenResponseGenerator(
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier("oidcIdTokenGenerator")
-            final IdTokenGeneratorService oidcIdTokenGenerator,
-            @Qualifier("accessTokenJwtBuilder")
-            final JwtBuilder accessTokenJwtBuilder,
-            final CasConfigurationProperties casProperties,
-            @Qualifier(OidcIssuerService.BEAN_NAME)
-            final OidcIssuerService oidcIssuerService) {
-            return new OidcAccessTokenResponseGenerator(oidcIdTokenGenerator, accessTokenJwtBuilder,
-                ticketRegistry, casProperties, oidcIssuerService);
+            @Qualifier(OidcConfigurationContext.BEAN_NAME)
+            final ObjectProvider<OidcConfigurationContext> oidcConfigurationContext) {
+            return new OidcAccessTokenResponseGenerator(oidcConfigurationContext);
         }
     }
 

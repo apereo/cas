@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 7.1.0
  */
 @Tag("Metrics")
-public class ExecutableObserverTests {
+class ExecutableObserverTests {
     @Test
     void verifyOperation() throws Throwable {
         val joinPoint = getProceedingJoinPoint();

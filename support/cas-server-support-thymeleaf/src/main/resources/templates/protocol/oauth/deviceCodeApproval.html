@@ -45,8 +45,7 @@
                 </div>
             </div>
         </section>
-        <input class="mdc-button mdc-button--raised btn btn-primary" name="submit" th:value="#{screen.oauth.confirm.allow}"
-               type="submit" value="Allow"/>
+        <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.oauth.confirm.allow')}"/>
     </form>
 </div>
 </body>

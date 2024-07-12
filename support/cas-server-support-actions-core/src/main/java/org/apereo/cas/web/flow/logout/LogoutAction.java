@@ -56,11 +56,11 @@ public class LogoutAction extends AbstractLogoutAction {
             .map(Unchecked.function(strategy -> strategy.handle(request, response)))
             .filter(Objects::nonNull)
             .forEach(logoutResponse -> {
+                LOGGER.debug("Logout response is [{}]", logoutResponse);
                 logoutResponse.getService().ifPresent(service -> WebUtils.putServiceIntoFlowScope(requestContext, service));
                 logoutResponse.getLogoutRedirectUrl().ifPresent(url -> WebUtils.putLogoutRedirectUrl(requestContext, url));
                 logoutResponse.getLogoutPostUrl().ifPresent(url -> WebUtils.putLogoutPostUrl(requestContext, url));
                 WebUtils.putLogoutPostData(requestContext, logoutResponse.getLogoutPostData());
-
             });
 
         if (needFrontSlo) {

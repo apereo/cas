@@ -28,7 +28,9 @@
                             <div class="mdc-typography--body1">
                                 <div class="banner banner-danger alert alert-danger banner-dismissible"
                                      role="alert" style="display: none" id="errorPanel">
-                                    <a href="#" class="close" onclick="$(this).parent().hide();" th:aria-label="#{screen.pm.button.close}"><span class="mdi mdi-close-box" aria-hidden="true"></span></a>
+                                    <a href="#" class="close" onclick="$(this).parent().hide();" th:aria-label="#{screen.pm.button.close}">
+                                        <span class="mdi mdi-close-box" aria-hidden="true"></span>
+                                    </a>
                                     <h3>Failure</h3>
                                     <p th:utext="#{screen.authentication.gauth.invalidtoken}">
                                 </div>
@@ -49,7 +51,6 @@
                                                     <span class="mdc-notched-outline__notch">
                                                         <span class="mdc-floating-label"
                                                               th:utext="#{cas.mfa.googleauth.label.token}">Token</span>
-
                                                     </span>
                                                     <span class="mdc-notched-outline__trailing"></span>
                                                 </span>
@@ -97,7 +98,7 @@
                             <button class="mdc-button mdc-button--raised btn btn-primary me-2" name="registerButton" id="registerButton">
                                 <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
                             </button>
-                            <button type="button" class="mdc-button mdc-button--outline btn btn-outline-secondary"
+                            <button type="button" class="mdc-button mdc-button--outline btn btn-outline-secondary button-cancel"
                                     data-mdc-dialog-action="accept" data-mdc-dialog-button-default>
                                 <span class="mdc-button__label">Cancel</span>
                             </button>
@@ -161,35 +162,21 @@
         <div class="d-flex flex-column align-items-center">
             <div class="d-flex justify-content-center">
                 <button class="mdc-button mdc-button--raised btn btn-primary me-2" name="confirm" id="confirm" accesskey="f"
-                        value="Confirm">
+                        onclick="cas.openDialog('confirm-reg-dialog')" value="Confirm">
                     <span class="mdc-button__label" th:text="#{screen.welcome.button.confirm}">Confirm</span>
                 </button>
                 <button class="mdc-button mdc-button--raised btn btn-primary me-2" id="print" name="print" accesskey="p" type="button"
                         onclick="window.print();">
                     <span class="mdc-button__label" th:text="#{screen.welcome.button.print}">Print</span>
                 </button>
-                <button class="mdc-button mdc-button--outline btn btn-outline-secondary" name="back" accesskey="c" type="button"
+                <button class="mdc-button mdc-button--outline btn btn-outline-secondary button-cancel" name="back" accesskey="c" type="button"
                         value="Cancel" id="cancel"
-                        onclick="location.href = document.getElementById('fm1').action;"
+                        onclick="location.href = location.href;"
                         th:value="#{screen.pm.button.cancel}">
                     <span class="mdc-button__label" th:text="#{screen.pm.button.cancel}">Cancel</span>
                 </button>
             </div>
         </div>
-
-        <script type="text/javascript">
-            (material => {
-                document.addEventListener('DOMContentLoaded', () => {
-                    let element = document.getElementById('confirm-reg-dialog');
-                    let dialog = material.dialog.MDCDialog.attachTo(element);
-                    let btn = document.getElementById('confirm');
-                    btn.addEventListener('click', event => {
-                        dialog.open();
-                        event.preventDefault();
-                    }, false);
-                });
-            })(mdc);
-        </script>
     </div>
 </main>
 </body>

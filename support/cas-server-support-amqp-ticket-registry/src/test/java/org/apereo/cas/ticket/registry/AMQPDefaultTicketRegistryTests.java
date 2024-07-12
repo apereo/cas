@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -22,8 +23,8 @@ import org.springframework.test.context.TestPropertySource;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Import({
-    AMQPDefaultTicketRegistryTests.AMQPTicketRegistryTestConfiguration.class,
+@Import(AMQPDefaultTicketRegistryTests.AMQPTicketRegistryTestConfiguration.class)
+@ImportAutoConfiguration({
     CompositeMeterRegistryAutoConfiguration.class,
     RabbitAutoConfiguration.class,
     CasAMQPTicketRegistryAutoConfiguration.class

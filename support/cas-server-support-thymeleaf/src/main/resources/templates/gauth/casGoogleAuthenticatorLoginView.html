@@ -68,7 +68,7 @@
             <button id="loginButton" class="mdc-button mdc-button--raised btn btn-primary" accesskey="l">
                 <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
             </button>
-            <a class="mdc-button mdc-button--raised btn btn-primary" id="cancel" name="cancel"
+            <a class="mdc-button mdc-button--raised btn btn-primary button-cancel" id="cancel" name="cancel"
                onclick="location.href = location.href;">
                 <span class="mdc-button__label" th:utext="#{screen.authentication.gauth.cancel}">Cancel</span>
             </a>
@@ -87,11 +87,13 @@
         </span>
 
         <div id="deviceRegistrationDiv"
-             th:if="${gauthMultipleDeviceRegistrationEnabled && #bools.isTrue(#objects.nullSafe(mfaDeviceRegistrationEnabled,true))}">
+             th:if="${gauthMultipleDeviceRegistrationEnabled && #bools.isTrue(#objects.nullSafe(mfaDeviceRegistrationEnabled, true))}">
             <p>
             <hr width="75%">
             <p th:utext="#{screen.authentication.gauth.reganotherdevice}"></p>
-            <button class="mdc-button mdc-button--raised btn btn-primary me-2" name="registerButton" id="registerButton">
+            <button class="mdc-button mdc-button--raised btn btn-primary me-2"
+                    onclick="cas.openDialog('confirm-reg-dialog')"
+                    name="registerButton" id="registerButton">
                 <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
             </button>
 
@@ -113,7 +115,7 @@
                                         <p th:utext="#{screen.authentication.gauth.invalidtoken}">
                                     </div>
 
-                                    <p th:utext="#{screen.authentication.gauth.confirm.desc}">Description</p>
+                                    <p class="text-justify" th:utext="#{screen.authentication.gauth.confirm.desc}">Description</p>
 
                                     <input type="hidden" name="_eventId" value="confirm"/>
                                     <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
@@ -210,7 +212,7 @@
                                 <button class="mdc-button mdc-button--raised btn btn-primary me-2" name="verifyButton" id="verifyButton">
                                     <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
                                 </button>
-                                <button type="button" class="mdc-button mdc-button--outline btn btn-outline-secondary"
+                                <button type="button" class="mdc-button mdc-button--outline btn btn-outline-secondary button-cancel"
                                         data-mdc-dialog-action="accept" data-mdc-dialog-button-default>
                                     <span class="mdc-button__label">Cancel</span>
                                 </button>
@@ -246,22 +248,6 @@
                 </script>
             </div>
             <!-- Confirmation Dialog -->
-
-
-            <script type="text/javascript">
-                (material => {
-                    document.addEventListener('DOMContentLoaded', () => {
-                        let element = document.getElementById('confirm-reg-dialog');
-                        let dialog = material.dialog.MDCDialog.attachTo(element);
-                        let btn = document.getElementById('registerButton');
-                        btn.addEventListener('click', event => {
-                            dialog.open();
-                            event.preventDefault();
-                        }, false);
-                    });
-                })(mdc);
-            </script>
-
         </div>
         </p>
     </div>

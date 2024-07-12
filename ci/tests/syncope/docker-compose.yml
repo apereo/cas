@@ -12,7 +12,7 @@ services:
   syncope:
     depends_on:
       - db
-    image: apache/syncope:3.0.6
+    image: apache/syncope:3.0.7
     ports:
       - "18080:8080"
     restart: always

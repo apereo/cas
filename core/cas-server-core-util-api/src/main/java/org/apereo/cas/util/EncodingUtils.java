@@ -14,6 +14,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.json.JsonUtil;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwe.JsonWebEncryption;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.JsonWebKey;
@@ -468,7 +469,7 @@ public class EncodingUtils {
         return JsonWebTokenEncryptor.builder()
             .key(key)
             .algorithm(KeyManagementAlgorithmIdentifiers.DIRECT)
-            .encryptionMethod(EncryptionJwtCryptoProperties.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM)
+            .encryptionMethod(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256)
             .build()
             .encrypt(value);
     }

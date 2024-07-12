@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.util.NamedObject;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 
@@ -19,7 +20,7 @@ import java.util.stream.Stream;
  * @author Dmitriy Kopylenko
  * @since 3.1
  */
-public interface ServiceRegistry {
+public interface ServiceRegistry extends NamedObject {
 
     /**
      * Bean name.
@@ -210,15 +211,5 @@ public interface ServiceRegistry {
      */
     default long size() {
         return load().size();
-    }
-
-    /**
-     * Returns the friendly name of this registry.
-     *
-     * @return the name.
-     * @since 5.2.0
-     */
-    default String getName() {
-        return this.getClass().getSimpleName();
     }
 }

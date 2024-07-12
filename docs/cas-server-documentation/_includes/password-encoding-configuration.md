@@ -36,3 +36,5 @@ Boolean matches(final Object... args) {
     logger.debug("Does match or not ?");
     return ...
 ```
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide]({{ baseUrl }}/integration/Apache-Groovy-Scripting.html).

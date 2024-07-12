@@ -212,7 +212,7 @@ public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation
     @Operation(summary = "Get Spring webflow report using an optional flow id",
-        parameters = {@Parameter(name = "flowId"), @Parameter(name = "stateId")})
+        parameters = {@Parameter(name = "flowId", description = "The webflow id"), @Parameter(name = "stateId", description = "The state id")})
     public Map<?, ?> getReport(@Nullable final String flowId, @Nullable final String stateId) {
         val jsonMap = new LinkedHashMap<String, Object>();
 

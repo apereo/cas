@@ -1,18 +1,18 @@
 package org.apereo.cas.notifications.call;
 
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.notifications.BaseNotificationTests;
 import org.apereo.cas.notifications.CommunicationsManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,13 +25,12 @@ import static org.mockito.Mockito.*;
  * @since 7.0.0
  */
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
     PhoneCallOperatorTests.PhoneCallOperatorTestConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class
+    BaseNotificationTests.SharedTestConfiguration.class
 })
 @Tag("SMS")
-public class PhoneCallOperatorTests {
+@ExtendWith(CasTestExtension.class)
+class PhoneCallOperatorTests {
     @Autowired
     @Qualifier(CommunicationsManager.BEAN_NAME)
     private CommunicationsManager communicationsManager;

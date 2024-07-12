@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("OIDC")
-public class OidcDefaultTokenGeneratorTests extends AbstractOidcTests {
+class OidcDefaultTokenGeneratorTests extends AbstractOidcTests {
 
     @Test
     void verifyCibaAuthRequestClaim() throws Throwable {

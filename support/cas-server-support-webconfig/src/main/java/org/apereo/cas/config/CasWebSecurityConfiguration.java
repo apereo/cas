@@ -9,6 +9,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapter;
+import org.apereo.cas.web.security.CasWebflowSecurityContextRepository;
 
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoExtractionOptions;
@@ -23,10 +24,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.Ordered;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -44,6 +47,8 @@ import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.webflow.context.servlet.FlowUrlHandler;
+import org.springframework.webflow.executor.FlowExecutor;
 
 import jakarta.annotation.Nonnull;
 
@@ -93,10 +98,17 @@ class CasWebSecurityConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(name = "securityContextRepository")
-        public SecurityContextRepository securityContextRepository() {
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public SecurityContextRepository securityContextRepository(
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("loginFlowUrlHandler")
+            final FlowUrlHandler loginFlowUrlHandler,
+            @Qualifier("loginFlowExecutor")
+            final FlowExecutor loginFlowExecutor) {
             return new DelegatingSecurityContextRepository(
                 new RequestAttributeSecurityContextRepository(),
-                new HttpSessionSecurityContextRepository()
+                new HttpSessionSecurityContextRepository(),
+                new CasWebflowSecurityContextRepository(applicationContext)
             );
         }
 

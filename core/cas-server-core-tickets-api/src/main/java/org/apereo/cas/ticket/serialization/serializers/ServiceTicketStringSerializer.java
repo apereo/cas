@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.serialization.serializers;
 import org.apereo.cas.ticket.ServiceTicketImpl;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 
+import org.springframework.context.ConfigurableApplicationContext;
 import java.io.Serial;
 
 /**
@@ -15,8 +16,8 @@ public class ServiceTicketStringSerializer extends AbstractJacksonBackedStringSe
     @Serial
     private static final long serialVersionUID = 8959617299162115085L;
 
-    public ServiceTicketStringSerializer() {
-        super(MINIMAL_PRETTY_PRINTER);
+    public ServiceTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
+        super(MINIMAL_PRETTY_PRINTER, applicationContext);
     }
 
     @Override

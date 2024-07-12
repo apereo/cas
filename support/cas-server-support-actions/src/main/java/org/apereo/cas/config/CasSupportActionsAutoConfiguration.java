@@ -20,8 +20,6 @@ import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
-import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
@@ -69,6 +67,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.webflow.execution.Action;
@@ -403,8 +402,6 @@ public class CasSupportActionsAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_REDIRECT_UNAUTHORIZED_SERVICE_URL)
         public Action redirectUnauthorizedServiceUrlAction(
-            @Qualifier(ScriptResourceCacheManager.BEAN_NAME)
-            final ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> cacheManager,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(ServicesManager.BEAN_NAME)
@@ -412,7 +409,7 @@ public class CasSupportActionsAutoConfiguration {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
-                .withAction(() -> new RedirectUnauthorizedServiceUrlAction(servicesManager, applicationContext, cacheManager))
+                .withAction(() -> new RedirectUnauthorizedServiceUrlAction(servicesManager, applicationContext))
                 .withId(CasWebflowConstants.ACTION_ID_REDIRECT_UNAUTHORIZED_SERVICE_URL)
                 .build()
                 .get();
@@ -632,7 +629,7 @@ public class CasSupportActionsAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action populateSpringSecurityContextAction(
             @Qualifier("securityContextRepository")
-            final ObjectProvider securityContextRepository,
+            final ObjectProvider<SecurityContextRepository> securityContextRepository,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext) {
             return WebflowActionBeanSupplier.builder()

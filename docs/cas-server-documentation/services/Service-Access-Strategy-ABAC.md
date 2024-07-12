@@ -139,7 +139,7 @@ To access the service, the principal must have a `cn` attribute whose value is e
 ```
 {% endtab %}
 
-{% tab accessstrategy Groovy %}
+{% tab accessstrategy <i class="fa fa-code px-1"></i>Groovy %}
 To access the service, the principal must have a `cn` attribute whose values must contain `admin`
 and the overall set of resolved principal attributes must already have found an attribute for `name`.
 
@@ -163,6 +163,9 @@ and the overall set of resolved principal attributes must already have found an 
   }
 }
 ```
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
 
 {% tab accessstrategy Rejected Attributes %}

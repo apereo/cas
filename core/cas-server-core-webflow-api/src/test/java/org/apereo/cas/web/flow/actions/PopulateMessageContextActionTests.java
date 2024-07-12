@@ -13,7 +13,7 @@ import org.springframework.binding.message.Severity;
  * @since 7.0.0
  */
 @Tag("WebflowActions")
-public class PopulateMessageContextActionTests {
+class PopulateMessageContextActionTests {
     @Test
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create();

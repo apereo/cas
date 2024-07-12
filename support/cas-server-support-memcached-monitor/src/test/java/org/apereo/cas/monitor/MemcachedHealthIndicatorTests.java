@@ -2,12 +2,14 @@ package org.apereo.cas.monitor;
 
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasMemcachedMonitorAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -41,6 +43,7 @@ import static org.mockito.Mockito.*;
     "cas.monitor.memcached.hash-algorithm=FNV1A_64_HASH"
 })
 @Tag("Memcached")
+@ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 11211)
 @Deprecated(since = "7.0.0")
 class MemcachedHealthIndicatorTests {

@@ -1,4 +1,3 @@
-
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -8,7 +7,8 @@ const cas = require("../../cas.js");
     await cas.gotoLoginWithAuthnMethod(page, undefined, "mfa-inwebo");
     await cas.loginWith(page, "testcaspush", "password");
     await cas.sleep(2000);
-    const form = await page.$("#pendingCheckResultForm");
-    assert(form !== null);
+    const pendingForm = await page.$("#pendingCheckResultForm");
+    const retryForm = await page.$("#retryForm");
+    assert(retryForm !== null || pendingForm !== null);
     await browser.close();
 })();
