@@ -13,4 +13,4 @@ Support is enabled by including the the following module:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-sendgrid" %}
 
-{% include_cached casproperties.html thirdPartyStartsWith="spring.sendgrid" %}
+{% include_cached casproperties.html thirdPartyStartsWith="spring.sendgrid" displayEmailServers="false" %}
