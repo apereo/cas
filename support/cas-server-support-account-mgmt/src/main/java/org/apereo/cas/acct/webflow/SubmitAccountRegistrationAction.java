@@ -88,8 +88,10 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
         if (StringUtils.isNotBlank(registrationRequest.getPhone())) {
             val smsProps = casProperties.getAccountRegistration().getSms();
             val message = SmsBodyBuilder.builder().properties(smsProps).parameters(Map.of("url", url)).build().get();
-            val smsRequest = SmsRequest.builder().from(smsProps.getFrom())
-                .to(registrationRequest.getPhone()).text(message).build();
+            val smsRequest = SmsRequest.builder()
+                .from(smsProps.getFrom())
+                .to(List.of(registrationRequest.getPhone()))
+                .text(message).build();
             return communicationsManager.sms(smsRequest);
         }
         return false;

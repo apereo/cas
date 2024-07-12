@@ -1,8 +1,10 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,9 +31,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     "spring.data.mongodb.password=secret"
 })
 @Tag("MongoDb")
+@ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MongoSessionConfigurationTests {
+class MongoSessionConfigurationTests {
     @Test
-    public void verifyOperation() throws Exception {
+    void verifyOperation() throws Exception {
     }
 }

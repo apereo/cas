@@ -1,16 +1,16 @@
 package org.apereo.cas.web.view;
 
 import org.apereo.cas.BaseThymeleafTests;
+import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.AbstractTemplateResolver;
-
 import java.util.HashMap;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -26,6 +26,7 @@ import static org.mockito.Mockito.*;
         "cas.view.template-prefixes=classpath:templates,file:/templates"
     })
 @Tag("Web")
+@ExtendWith(CasTestExtension.class)
 class CasThymeleafConfigurationTests {
     @Autowired
     @Qualifier("chainingTemplateViewResolver")

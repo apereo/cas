@@ -10,7 +10,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -78,7 +78,9 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
 
     private static boolean isMetadataFileSystemResource(final String location) {
         val metadataResource = FunctionUtils.doUnchecked(() -> ResourceUtils.isUrl(location) ? null : ResourceUtils.getResourceFrom(location));
-        return metadataResource instanceof FileSystemResource && !ScriptingUtils.isGroovyScript(location);
+        val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+        return metadataResource instanceof FileSystemResource
+            && (scriptFactory.isEmpty() || !scriptFactory.get().isScript(location));
     }
 
     @Override

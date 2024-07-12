@@ -1,8 +1,8 @@
 {
-  "dependencies": "pac4j-webflow,jdbc,mongo-ticket-registry",
+  "dependencies": "pac4j-webflow,jdbc,mongo-ticket-registry,pac4j-oidc",
   "conditions": {
     "docker": "true"
-  },
+  },               
   "environmentVariables": [
     "SQL_QUERY=SELECT * FROM simple_table1 WHERE {0}"
   ],
@@ -13,7 +13,7 @@
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.enabled-by-default=true",
-    
+
     "--cas.authn.attribute-repository.stub.attributes.email=casuser@apereo.org",
     "--cas.authn.attribute-repository.stub.attributes.name=CAS",
 
@@ -33,6 +33,7 @@
     "--cas.authn.pac4j.oidc[0].generic.supported-client-authentication-methods=client_secret_basic,client_secret_post",
     "--cas.authn.pac4j.oidc[0].generic.client-name=Keycloak",
     "--cas.authn.pac4j.oidc[0].generic.display-name=KeycloakClient",
+    "--cas.authn.pac4j.oidc[0].generic.validate-logout-token=false",
 
     "--cas.authn.attribute-repository.jdbc[0].query-attributes.username=username",
     "--cas.authn.attribute-repository.jdbc[0].sql=${#environmentVars['SQL_QUERY']}",
@@ -47,8 +48,6 @@
     "--cas.authn.attribute-repository.jdbc[0].attributes.department=department",
     "--cas.authn.attribute-repository.jdbc[0].attributes.role=cas_role",
 
-    "--logging.level.org.apereo.cas=info",
-    
     "--cas.ticket.registry.mongo.database-name=ticket-registry",
     "--cas.ticket.registry.mongo.authentication-database-name=admin",
     "--cas.ticket.registry.mongo.host=localhost",
@@ -57,5 +56,5 @@
     "--cas.ticket.registry.mongo.user-id=root",
     "--cas.ticket.registry.mongo.password=secret"
   ],
-  "initScript": "${PWD}/ci/tests/oidc/run-keycloak-server.sh,${PWD}/ci/tests/postgres/run-postgres-server.sh,${PWD}/ci/tests/mongodb/run-mongodb-server.sh"
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/oidc/run-keycloak-server.sh,${PWD}/ci/tests/postgres/run-postgres-server.sh,${PWD}/ci/tests/mongodb/run-mongodb-server.sh"
 }

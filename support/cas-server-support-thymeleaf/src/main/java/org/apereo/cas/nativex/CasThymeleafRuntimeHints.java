@@ -2,10 +2,12 @@ package org.apereo.cas.nativex;
 
 import org.apereo.cas.services.web.CasThymeleafOutputTemplateHandler;
 import org.apereo.cas.services.web.CasThymeleafTemplatesDirector;
+import org.apereo.cas.services.web.ThemeViewResolverFactory;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.web.view.CasMustacheView;
 import org.apereo.cas.web.view.CasThymeleafView;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.context.ApplicationContextAware;
 import org.thymeleaf.DialectConfiguration;
 import org.thymeleaf.engine.IterationStatusVar;
 import org.thymeleaf.engine.StandardModelFactory;
@@ -49,5 +51,6 @@ public class CasThymeleafRuntimeHints implements CasRuntimeHintsRegistrar {
         ));
 
         registerReflectionHints(hints, List.of("org.thymeleaf.engine.Text"));
+        registerSpringProxy(hints, ThemeViewResolverFactory.class, ApplicationContextAware.class);
     }
 }

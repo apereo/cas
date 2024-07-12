@@ -6,9 +6,6 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
 import org.apereo.cas.util.feature.DefaultCasRuntimeModuleLoader;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
-import org.apereo.cas.util.scripting.GroovyScriptResourceCacheManager;
-import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.Converters;
@@ -124,14 +121,6 @@ class CasCoreUtilConfiguration {
         @ConditionalOnMissingBean(name = "casBeanValidationPostProcessor")
         public static BeanPostProcessor casBeanValidationPostProcessor() {
             return new BeanValidationPostProcessor();
-        }
-
-        @Bean
-        @ConditionalOnMissingBean(name = ScriptResourceCacheManager.BEAN_NAME)
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ScriptResourceCacheManager<String, ExecutableCompiledGroovyScript> scriptResourceCacheManager(
-            final CasConfigurationProperties casProperties) {
-            return new GroovyScriptResourceCacheManager(casProperties.getCore().getGroovyCacheManager());
         }
 
         @Bean

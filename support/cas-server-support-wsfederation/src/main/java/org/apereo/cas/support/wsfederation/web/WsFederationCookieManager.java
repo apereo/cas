@@ -35,7 +35,7 @@ public class WsFederationCookieManager {
     private final Collection<WsFederationConfiguration> configurations;
     private final CasConfigurationProperties casProperties;
 
-    private final WsFederationServerStateSerializer serializer = new WsFederationServerStateSerializer();
+    private final WsFederationServerStateSerializer serializer;
 
     /**
      * Retrieve service.

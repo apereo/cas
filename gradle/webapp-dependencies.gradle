@@ -37,9 +37,13 @@ dependencies {
                 project.name.matches(pattern)
             }
 
-            ansi.green("Including CAS module(s): ${projectsToAdd}")
-            projectsToAdd.each {
-                implementation it
+            if (projectsToAdd.isEmpty()) {
+                ansi.yellow("No CAS module(s) found for ${it}")
+            } else {
+                ansi.green("Including CAS module(s): ${projectsToAdd}")
+                projectsToAdd.each {
+                    implementation it
+                }
             }
         }
     }
@@ -47,7 +51,7 @@ dependencies {
     implementation libraries.springcloudconfigclient
     implementation libraries.springcloudbootstrap
     implementation libraries.springbootpropertymigrator
-    if (!rootProject.publishFlag) {
+    if (!rootProject.publishFlag && !rootProject.skipSpringBootDevTools) {
         runtimeOnly libraries.springbootdevtools
     }
 }

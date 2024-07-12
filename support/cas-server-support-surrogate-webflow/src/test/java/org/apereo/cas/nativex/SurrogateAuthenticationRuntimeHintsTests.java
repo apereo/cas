@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Native")
-public class SurrogateAuthenticationRuntimeHintsTests {
+class SurrogateAuthenticationRuntimeHintsTests {
     @Test
     void verifyHints() throws Throwable {
         val hints = new RuntimeHints();

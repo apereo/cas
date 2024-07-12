@@ -5,14 +5,12 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.util.serialization.StringSerializer;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.core.io.Resource;
-import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -34,13 +32,17 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
 
     private final Resource location;
 
-    private final StringSerializer<Map<String, List<OneTimeTokenAccount>>> serializer = new OneTimeAccountSerializer();
+    private final StringSerializer<Map<String, List<OneTimeTokenAccount>>> serializer;
 
-    public JsonGoogleAuthenticatorTokenCredentialRepository(final Resource location, final IGoogleAuthenticator googleAuthenticator,
-                                                            final CipherExecutor<String, String> tokenCredentialCipher,
-                                                            final CipherExecutor<Number, Number> scratchCodesCipher) {
+    public JsonGoogleAuthenticatorTokenCredentialRepository(
+        final Resource location,
+        final IGoogleAuthenticator googleAuthenticator,
+        final CipherExecutor<String, String> tokenCredentialCipher,
+        final CipherExecutor<Number, Number> scratchCodesCipher,
+        final StringSerializer<Map<String, List<OneTimeTokenAccount>>> serializer) {
         super(tokenCredentialCipher, scratchCodesCipher, googleAuthenticator);
         this.location = location;
+        this.serializer = serializer;
     }
 
     @Override
@@ -189,16 +191,6 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
             val accounts = readAccountsFromJsonRepository();
             return accounts.containsKey(username.trim().toLowerCase(Locale.ENGLISH)) ? accounts.get(username.trim().toLowerCase(Locale.ENGLISH)).size() : 0;
         });
-    }
-
-    private static final class OneTimeAccountSerializer extends AbstractJacksonBackedStringSerializer<Map<String, List<OneTimeTokenAccount>>> {
-        @Serial
-        private static final long serialVersionUID = 1466569521275630254L;
-
-        @Override
-        public Class getTypeToSerialize() {
-            return HashMap.class;
-        }
     }
 
     private void writeAccountsToJsonRepository(final Map<String, List<OneTimeTokenAccount>> accounts) {

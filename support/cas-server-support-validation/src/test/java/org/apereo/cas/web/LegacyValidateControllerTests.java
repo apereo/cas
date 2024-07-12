@@ -11,6 +11,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
 /**
@@ -19,8 +20,8 @@ import org.springframework.context.annotation.Import;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Import({
-    CasPersonDirectoryTestConfiguration.class,
+@Import(CasPersonDirectoryTestConfiguration.class)
+@ImportAutoConfiguration({
     CasThymeleafAutoConfiguration.class,
     CasValidationAutoConfiguration.class
 })

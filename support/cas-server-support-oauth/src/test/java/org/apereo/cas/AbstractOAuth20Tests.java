@@ -20,6 +20,7 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -48,6 +49,7 @@ import org.apereo.cas.support.oauth.validator.OAuth20ClientSecretValidator;
 import org.apereo.cas.support.oauth.web.CasOAuth20AuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.support.oauth.web.OAuth20RequestParameterResolver;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20DeviceUserCodeApprovalEndpointController;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.OAuth20TokenGeneratedResult;
@@ -58,6 +60,7 @@ import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20Acc
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.support.oauth.web.response.callback.OAuth20AuthorizationResponseBuilder;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -87,6 +90,8 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hc.core5.http.HttpStatus;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.HttpConstants;
@@ -143,16 +148,16 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = AbstractOAuth20Tests.SharedTestConfiguration.class,
     properties = {
-        "spring.main.allow-bean-definition-overriding=true",
-
         "cas.audit.engine.audit-format=JSON",
         "cas.audit.slf4j.use-single-line=true",
 
         "cas.authn.attribute-repository.stub.attributes.uid=cas",
         "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
 
+        "cas.authn.oauth.session-replication.cookie.crypto.alg=" + ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256,
         "cas.authn.oauth.session-replication.cookie.crypto.encryption.key=3RXtt06xYUAli7uU-Z915ZGe0MRBFw3uDjWgOEf1GT8",
         "cas.authn.oauth.session-replication.cookie.crypto.signing.key=jIFR-fojN0vOIUcT0hDRXHLVp07CV-YeU8GnjICsXpu65lfkJbiKP028pT74Iurkor38xDGXNcXk_Y1V4rNDqw"
     })
@@ -233,6 +238,10 @@ public abstract class AbstractOAuth20Tests {
     @Autowired
     @Qualifier("oauthCasClient")
     protected Client oauthCasClient;
+
+    @Autowired
+    @Qualifier("oauth20ConfigurationContext")
+    protected OAuth20ConfigurationContext configurationContext;
 
     @Autowired
     @Qualifier("oauthCasClientRedirectActionBuilder")
@@ -841,13 +850,9 @@ public abstract class AbstractOAuth20Tests {
         SecurityAutoConfiguration.class,
         AopAutoConfiguration.class,
         IntegrationAutoConfiguration.class,
-        MailSenderAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        MailSenderAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
-        CasOAuth20AuthenticationEventExecutionPlanTestConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
@@ -855,17 +860,21 @@ public abstract class AbstractOAuth20Tests {
         CasThrottlingAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
-        AbstractOAuth20Tests.OAuth20TestConfiguration.class,
         CasThymeleafAutoConfiguration.class,
         CasThemesAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreMultifactorAuthenticationAutoConfiguration.class,
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasOAuth20AutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import({
+        CasOAuth20AuthenticationEventExecutionPlanTestConfiguration.class,
+        AbstractOAuth20Tests.OAuth20TestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 }

@@ -2,9 +2,8 @@
 const cas = require("../../cas.js");
 const assert = require("assert");
 
-async function testService(page, clientId, oidc = true) {
+async function testService(page, clientId, oidc = true, redirectUrl = "https://localhost:9859/anything/cas") {
     await cas.log(`Testing application with client id ${clientId}`);
-    const redirectUrl = "https://localhost:9859/anything/cas";
     const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=${encodeURIComponent("openid profile")}&redirect_uri=${redirectUrl}`;
     await cas.goto(page, url);
     await cas.sleep(1000);
@@ -37,21 +36,33 @@ async function testService(page, clientId, oidc = true) {
         assert(decodedIdToken.sub !== undefined);
         assert(decodedIdToken.client_id !== undefined);
         assert(decodedIdToken.iss === "https://sso.example.org/cas/oidc");
-    } else {
-        assert(decodedAccessToken.grant_type === "authorization_code");
-        assert(decodedAccessToken.iss === "https://localhost:8443/cas/oidc");
-        assert(decodedAccessToken.client_id === "oauth-clientid");
+        return {accessToken: decodedAccessToken, idToken: decodedIdToken};
     }
+    assert(decodedAccessToken.grant_type === "authorization_code");
+    assert(decodedAccessToken.iss === "https://localhost:8443/cas/oidc");
+    assert(decodedAccessToken.client_id === clientId);
     
     await cas.goto(page, "https://localhost:8443/cas/logout");
     await cas.sleep(1000);
-    await cas.log("=========================================================");
+    return {accessToken: decodedAccessToken};
 }
 
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await testService(page, "client", true);
+    await cas.gotoLogout(page);
+    await cas.separator();
     await testService(page, "oauth-clientid", false);
+    await cas.gotoLogout(page);
+    await cas.separator();
+    const payload = await testService(page, "jwtaccesstoken", true, "https://localhost:9859/anything/jwtaccesstoken");
+    assert(payload.accessToken.mail === "casuser@example.org");
+    const roles = payload.accessToken.roles;
+    assert(["admin", "system", "user"].every((element) => roles.includes(element)));
+    assert(payload.accessToken.lastname === undefined);
+    assert(payload.accessToken.firstname === undefined);
+    assert(payload.accessToken.phone === undefined);
+    await cas.gotoLogout(page);
     await browser.close();
 })();

@@ -12,7 +12,7 @@
     "figlet": "1.7.0",
     "http-cas-client": "0.4.3",
     "jimp": "0.22.12",
-    "jose": "4.15.5",
+    "jose": "4.15.7",
     "jsonpath-plus": "7.2.0",
     "jsonwebtoken": "9.0.2",
     "jwk-to-pem": "2.0.5",
@@ -20,23 +20,23 @@
     "node-docker-api": "1.1.22",
     "node-static-auth": "1.0.6",
     "perf_hooks": "0.0.1",
-    "pino": "8.21.0",
-    "pino-pretty": "10.3.1",
+    "pino": "9.2.0",
+    "pino-pretty": "11.2.1",
     "properties-reader": "2.3.0",
     "ps-node": "0.1.6",
-    "puppeteer": "22.10.0",
+    "puppeteer": "22.12.1",
     "puppeteer-loadtest": "2.2.1",
     "qrcode-reader": "1.0.4",
     "request": "2.88.2",
     "sockjs-client": "1.6.1",
-    "unzipper": "0.11.6",
+    "unzipper": "0.12.1",
     "wait-on": "7.2.0",
     "xml2js": "0.6.2",
-    "yaml": "2.4.2"
+    "yaml": "2.4.5"
   },
   "devDependencies": {
-    "@eslint/js": "9.3.0",
-    "eslint": "9.3.0",
-    "globals": "15.3.0"
+    "@eslint/js": "9.5.0",
+    "eslint": "9.5.0",
+    "globals": "15.6.0"
   }
 }

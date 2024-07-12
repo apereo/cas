@@ -8,7 +8,6 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
-import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -41,24 +40,10 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  * @since 6.2.0
  */
 public abstract class BaseDelegatedAuthenticationTests {
-
     @ImportAutoConfiguration({
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        ThymeleafAutoConfiguration.class,
-        MockMvcAutoConfiguration.class,
-        ErrorMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @EnableWebMvc
-    @Import({
-        DelegatedAuthenticationWebflowTestConfiguration.class,
-        DelegatedAuthenticationClientsTestConfiguration.class,
         CasDelegatedAuthenticationAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
-        CasCoreSamlAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
@@ -71,8 +56,17 @@ public abstract class BaseDelegatedAuthenticationTests {
         CasCoreCookieAutoConfiguration.class,
         CasThymeleafAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
-        CasCoreAuditAutoConfiguration.class
+        CasCoreAuditAutoConfiguration.class,
+        RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
+        ThymeleafAutoConfiguration.class,
+        MockMvcAutoConfiguration.class,
+        ErrorMvcAutoConfiguration.class,
+        AopAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @EnableWebMvc
+    @Import({DelegatedAuthenticationWebflowTestConfiguration.class, DelegatedAuthenticationClientsTestConfiguration.class})
     public static class SharedTestConfiguration {
     }
 

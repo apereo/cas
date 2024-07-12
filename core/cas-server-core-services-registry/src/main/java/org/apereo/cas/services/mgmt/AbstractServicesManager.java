@@ -1,9 +1,9 @@
 package org.apereo.cas.services.mgmt;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.IndexableServicesManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.ServicesManagerConfigurationContext;
 import org.apereo.cas.services.query.RegisteredServiceQuery;
 import org.apereo.cas.services.query.RegisteredServiceQueryAttribute;
@@ -48,7 +48,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @Getter
-public abstract class AbstractServicesManager implements ServicesManager {
+public abstract class AbstractServicesManager implements IndexableServicesManager {
     protected final ServicesManagerConfigurationContext configurationContext;
 
     private final CasReentrantLock lock = new CasReentrantLock();
@@ -74,6 +74,26 @@ public abstract class AbstractServicesManager implements ServicesManager {
         }
     }
 
+    @Override
+    public void clearIndexedServices() {
+        if (configurationContext.getCasProperties().getServiceRegistry().getCore().isIndexServices()){
+            indexedRegisteredServices.clear();
+        }
+    }
+
+    @Override
+    public long countIndexedServices() {
+        return configurationContext.getCasProperties().getServiceRegistry().getCore().isIndexServices()
+            ? indexedRegisteredServices.size()
+            : 0;
+    }
+
+    @Override
+    public Optional<RegisteredService> findIndexedServiceBy(final long id) {
+        return configurationContext.getCasProperties().getServiceRegistry().getCore().isIndexServices()
+            ? indexedRegisteredServices.stream().filter(registeredService -> registeredService.getId() == id).findFirst()
+            : Optional.empty();
+    }
 
     @Override
     public void save(final Stream<RegisteredService> toSave) {
@@ -355,6 +375,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         servicesCache.invalidateAll();
         servicesCache.putAll(servicesMap);
         if (configurationContext.getCasProperties().getServiceRegistry().getCore().isIndexServices()) {
+            indexedRegisteredServices.clear();
             indexedRegisteredServices.addAll(servicesMap.values());
         }
         return servicesCache.asMap();
@@ -419,6 +440,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         if (configurationContext.getServicesCache().getIfPresent(service.getId()) == null) {
             configurationContext.getServicesCache().put(service.getId(), service);
             if (configurationContext.getCasProperties().getServiceRegistry().getCore().isIndexServices()) {
+                indexedRegisteredServices.removeIf(registeredService -> registeredService.getId() == service.getId());
                 indexedRegisteredServices.add(service);
             }
         }

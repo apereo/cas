@@ -34,3 +34,5 @@ def getAccounts(Object... args) {
 ```
 
 {% include_cached casproperties.html properties="cas.authn.surrogate.groovy" %}
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).

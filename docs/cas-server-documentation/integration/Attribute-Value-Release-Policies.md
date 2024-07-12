@@ -205,7 +205,7 @@ and `marathon101`, the filter will produce values `courseA-athon101` and `course
 {% endtab %}
 
 
-{% tab attrvaluefilters Groovy %}
+{% tab attrvaluefilters <i class="fa fa-code px-1"></i>Groovy %}
 
 Attribute value filtering may also be carried out using an inline or external Groovy script.
 Scripts have access to the current resolved attributes via `attributes` and a `logger`.
@@ -232,6 +232,8 @@ An inline groovy filter allows you to embed the script directly in the service d
   }
 }
 ```
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 ### External Groovy
 
@@ -275,6 +277,7 @@ The parameters passed are as follows:
 | `attributes` | A `Map` of current  attributes resolved from sources.                       |
 | `logger`     | The object responsible for issuing log messages such as `logger.info(...)`. |
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% endtab %}
 

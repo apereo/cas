@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Logout")
-public class SessionTerminationHandlerTests {
+class SessionTerminationHandlerTests {
     @Test
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create();

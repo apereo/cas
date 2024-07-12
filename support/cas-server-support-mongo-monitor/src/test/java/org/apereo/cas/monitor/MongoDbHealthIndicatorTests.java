@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasMongoDbMonitoringAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.mongo.CasMongoOperations;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import lombok.val;
@@ -19,6 +20,7 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.HealthIndicator;
@@ -39,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("MongoDb")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = {
     CasMongoDbMonitoringAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
@@ -87,8 +90,7 @@ class MongoDbHealthIndicatorTests {
         assertTrue(details.containsKey("name"));
 
         details.values().forEach(value -> {
-            if (value instanceof Map) {
-                val map = (Map<String, ?>) value;
+            if (value instanceof final Map map) {
                 assertTrue(map.containsKey("size"));
                 assertTrue(map.containsKey("capacity"));
                 assertTrue(map.containsKey("evictions"));

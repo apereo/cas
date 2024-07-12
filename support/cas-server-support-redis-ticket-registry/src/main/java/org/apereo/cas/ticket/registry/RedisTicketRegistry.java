@@ -219,7 +219,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             });
     }
 
-
     @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
         return redisKeyGeneratorFactory.getRedisKeyGenerator(Principal.class.getName())
@@ -325,9 +324,17 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
     }
 
     @Override
+    public long countTickets() {
+        val redisTicketsKey = redisKeyGeneratorFactory.getRedisKeyGenerator(Ticket.class.getName()).orElseThrow().forAllEntries();
+        return casRedisTemplates.getTicketsRedisTemplate().count(redisTicketsKey);
+    }
+
+    @Override
     public List<? extends Serializable> query(final TicketRegistryQueryCriteria queryCriteria) {
         val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(Ticket.class.getName()).orElseThrow();
-        val redisTicketsKey = redisKeyGenerator.forEntryType(queryCriteria.getType());
+        val redisTicketsKey = StringUtils.isNotBlank(queryCriteria.getId())
+            ? redisKeyGenerator.forEntry(queryCriteria.getType(), digestIdentifier(queryCriteria.getId()))
+            : redisKeyGenerator.forEntryType(queryCriteria.getType());
 
         if (queryCriteria.isDecode()) {
             try (val scanResults = casRedisTemplates.getTicketsRedisTemplate().scan(redisTicketsKey, queryCriteria.getCount())) {

@@ -81,13 +81,7 @@
                         </div>
                     </section>
 
-
-                    <button class="mdc-button mdc-button--raised"
-                            accesskey="l"
-                            th:value="#{screen.welcome.button.login}"
-                            value="Login">
-                        <span class="mdc-button__label" th:value="#{screen.welcome.button.login}">Login</span>
-                    </button>
+                    <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')}"/>
                 </form>
             </div>
         </section>

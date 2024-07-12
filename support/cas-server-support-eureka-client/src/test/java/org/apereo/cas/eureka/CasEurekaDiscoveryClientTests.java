@@ -3,9 +3,11 @@ package org.apereo.cas.eureka;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasEurekaDiscoveryClientAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -25,7 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("WebApp")
-public class CasEurekaDiscoveryClientTests {
+@ExtendWith(CasTestExtension.class)
+class CasEurekaDiscoveryClientTests {
     @SpringBootTest(classes = {
         CasCoreWebAutoConfiguration.class,
         CasEurekaDiscoveryClientAutoConfiguration.class,

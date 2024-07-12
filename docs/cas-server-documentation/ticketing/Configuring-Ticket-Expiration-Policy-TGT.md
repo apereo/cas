@@ -42,7 +42,7 @@ This policy provides a hard-time out as well as a sliding window.
 
 {% endtab %}
 
-{% tab exppolicies Per Principal %}
+{% tab exppolicies <i class="fa fa-person px-1"></i>Per Principal %}
 
 This ticket expiration policy is conditionally activated if and when the authenticated principal contains a `authenticationSessionTimeout` attribute.
 This attribute is expected to be a single-valued attribute whose value, measured in seconds, would allow CAS to build a hard timeout

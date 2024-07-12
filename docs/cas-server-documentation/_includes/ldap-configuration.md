@@ -29,3 +29,4 @@ The following parameters are passed to the script:
 | `applicationContext` | Reference to the Spring `ApplicationContext` reference.                     |
 | `logger`             | The object responsible for issuing log messages such as `logger.info(...)`. |
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide]({{ baseUrl }}/integration/Apache-Groovy-Scripting.html).

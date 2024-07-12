@@ -2,12 +2,14 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationTextPublisher;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.actuate.observability.AutoConfigureObservability;
@@ -31,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseAutoConfigurationTests.SharedTestConfiguration.class
 })
 @Tag("RegisteredService")
+@ExtendWith(CasTestExtension.class)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @AutoConfigureObservability
 class CasCoreServicesMonitoringConfigurationTests {

@@ -31,7 +31,7 @@ Always use the specified authentication context class in the final response.
 
 {% endtab %}
 
-{% tab saml2authnctx External Groovy %}
+{% tab saml2authnctx <i class="fa fa-file-code px-1"></i>External Groovy %}
 
 You can always manipulate the authentication context class in more dynamic ways using a Groovy script:
 
@@ -62,9 +62,11 @@ def run(final Object... args) {
 }
 ```
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
 
-{% tab saml2authnctx Embedded Groovy %}
+{% tab saml2authnctx <i class="fa fa-pencil px-1"></i>Embedded Groovy %}
 
 Similar to the external Groovy script option, except the script is embedded inside the service definition:
 
@@ -78,6 +80,8 @@ Similar to the external Groovy script option, except the script is embedded insi
   "requiredAuthenticationContextClass": "groovy { return 'https://refeds.org/profile/mfa' } "
 }
 ```
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% endtab %}
 

@@ -39,7 +39,7 @@ public class ConfigurationJasyptCipherEndpoint extends BaseCasRestActuatorEndpoi
         produces = MediaType.TEXT_PLAIN_VALUE,
         consumes = MediaType.TEXT_PLAIN_VALUE)
     @Operation(summary = "Encrypt configuration value",
-        parameters = @Parameter(name = "value", required = true))
+        parameters = @Parameter(name = "value", required = true, description = "The value to encrypt"))
     public ResponseEntity<String> encrypt(@RequestBody final String value) {
         return ResponseEntity.ok(casConfigurationCipherExecutor.encode(value));
     }
@@ -54,7 +54,7 @@ public class ConfigurationJasyptCipherEndpoint extends BaseCasRestActuatorEndpoi
         produces = MediaType.TEXT_PLAIN_VALUE,
         consumes = MediaType.TEXT_PLAIN_VALUE)
     @Operation(summary = "Decrypt configuration value",
-        parameters = @Parameter(name = "value", required = true))
+        parameters = @Parameter(name = "value", required = true, description = "The value to decrypt"))
     public ResponseEntity<String> decrypt(@RequestBody final String value) {
         return ResponseEntity.ok(casConfigurationCipherExecutor.decode(value));
     }

@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.expression.ParserContext;
 import org.springframework.expression.common.TemplateParserContext;
 import org.springframework.expression.spel.SpelCompilerMode;
@@ -20,6 +21,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * This is {@link SpringExpressionLanguageValueResolver}.
@@ -46,18 +48,19 @@ public class SpringExpressionLanguageValueResolver implements Function {
     private final StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
 
     protected SpringExpressionLanguageValueResolver() {
-        val properties = System.getProperties();
-        evaluationContext.setVariable("systemProperties", properties);
-        evaluationContext.setVariable("sysProps", properties);
+        val systemProperties = System.getProperties();
+        evaluationContext.setVariable("systemProperties", systemProperties);
+        evaluationContext.setVariable("sysProps", systemProperties);
 
-        val environment = System.getenv();
-        evaluationContext.setVariable("environmentVars", environment);
-        evaluationContext.setVariable("environmentVariables", environment);
-        evaluationContext.setVariable("envVars", environment);
-        evaluationContext.setVariable("env", environment);
+        val environmentVariables = System.getenv();
+        evaluationContext.setVariable("environmentVars", environmentVariables);
+        evaluationContext.setVariable("environmentVariables", environmentVariables);
+        evaluationContext.setVariable("envVars", environmentVariables);
+        evaluationContext.setVariable("env", environmentVariables);
 
         evaluationContext.setVariable("tempDir", FileUtils.getTempDirectoryPath());
         evaluationContext.setVariable("zoneId", ZoneId.systemDefault().getId());
+        evaluationContext.setVariable("applicationContext", (Supplier<ApplicationContext>) ApplicationContextProvider::getApplicationContext);
     }
 
     /**
@@ -80,14 +83,26 @@ public class SpringExpressionLanguageValueResolver implements Function {
      * @return the string
      */
     public String resolve(final String value) {
+        return resolve(value, String.class);
+    }
+
+    /**
+     * Resolve value for a type.
+     *
+     * @param <T>   the type parameter
+     * @param value the value
+     * @param clazz the clazz
+     * @return the t
+     */
+    public <T> T resolve(final String value, final Class<T> clazz) {
         if (StringUtils.isNotBlank(value)) {
             LOGGER.trace("Parsing expression as [{}]", value);
             val expression = EXPRESSION_PARSER.parseExpression(value, PARSER_CONTEXT);
-            val result = expression.getValue(evaluationContext, String.class);
+            val result = expression.getValue(evaluationContext, clazz);
             LOGGER.trace("Parsed expression result is [{}]", result);
             return result;
         }
-        return value;
+        return (T) value;
     }
 
     @Override

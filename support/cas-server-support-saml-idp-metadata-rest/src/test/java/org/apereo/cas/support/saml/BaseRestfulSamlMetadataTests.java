@@ -3,6 +3,8 @@ package org.apereo.cas.support.saml;
 import org.apereo.cas.config.CasSamlIdPRestfulMetadataAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
+import org.apereo.cas.test.CasTestExtension;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,6 +26,7 @@ import org.springframework.boot.test.context.SpringBootTest;
     }
 )
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseRestfulSamlMetadataTests {
     @Autowired
     protected CasConfigurationProperties casProperties;

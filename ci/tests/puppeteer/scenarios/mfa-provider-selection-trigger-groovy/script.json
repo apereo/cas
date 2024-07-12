@@ -1,5 +1,5 @@
 {
-  "dependencies": "gauth,webauthn",
+  "dependencies": "gauth,webauthn,scripting",
 
   "properties": [
     "--cas.server.name=https://localhost:8443",

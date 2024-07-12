@@ -3,15 +3,13 @@ package org.apereo.cas.services;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
-import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.io.Serial;
 
 /**
@@ -37,7 +35,8 @@ public class GroovySurrogateRegisteredServiceAccessStrategy extends BaseSurrogat
             try {
                 val args = new Object[]{request.getPrincipalId(), request.getAttributes(), LOGGER};
                 val resource = ResourceUtils.getResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript));
-                return ScriptingUtils.executeGroovyScript(resource, args, Boolean.class, true);
+                val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+                return scriptFactory.fromResource(resource).execute(args, Boolean.class);
             } catch (final Exception e) {
                 LoggingUtils.error(LOGGER, e);
             }

@@ -206,7 +206,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
             LOGGER.debug("Sending password reset URL [{}] via SMS to [{}]", url.toExternalForm(), to);
             val reset = casProperties.getAuthn().getPm().getReset().getSms();
             val message = SmsBodyBuilder.builder().properties(reset).parameters(Map.of("url", url.toExternalForm())).build().get();
-            val smsRequest = SmsRequest.builder().from(reset.getFrom()).to(to).text(message).build();
+            val smsRequest = SmsRequest.builder().from(reset.getFrom()).to(List.of(to)).text(message).build();
             return communicationsManager.sms(smsRequest);
         }
         return false;

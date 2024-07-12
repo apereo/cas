@@ -5,7 +5,7 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-    "--logging.level.org.apereo.cas=info",
+
 
     "--cas.authn.attribute-repository.stub.attributes.cn=casuser",
     "--cas.authn.attribute-repository.stub.attributes.mail=cas@example.org",

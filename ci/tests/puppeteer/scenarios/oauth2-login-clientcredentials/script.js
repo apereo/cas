@@ -14,8 +14,12 @@ const cas = require("../../cas.js");
         cas.decodeJwt(res.data.access_token, true).then((decoded) => {
             assert(decoded !== undefined);
             assert(decoded.payload["sub"] === "client");
+            assert(decoded.payload["aud"] === "client");
             assert(decoded.payload.client_id === "client");
             assert(decoded.payload.grant_type === "client_credentials");
+            assert(decoded.payload.username === "client");
+            assert(decoded.payload.email === "casuser@apereo.org");
+            assert(decoded.payload.password === undefined);
         });
 
     }, (error) => {

@@ -10,7 +10,7 @@
 
     "--cas.authn.mfa.triggers.global.global-provider-id=mfa-duo",
 
-    "--logging.level.org.apereo.cas=info",
+
 
     "--cas.authn.accept.users=duobypass::Mellon",
     "--cas.authn.mfa.duo[0].account-status-enabled=false",

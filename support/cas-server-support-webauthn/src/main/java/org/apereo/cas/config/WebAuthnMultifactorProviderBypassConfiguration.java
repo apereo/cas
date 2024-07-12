@@ -12,6 +12,8 @@ import org.apereo.cas.authentication.bypass.RegisteredServicePrincipalAttributeM
 import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
@@ -111,9 +113,16 @@ class WebAuthnMultifactorProviderBypassConfiguration {
     public MultifactorAuthenticationProviderBypassEvaluator webAuthnGroovyMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
-        val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn();
-        val props = webAuthn.getBypass();
-        return new GroovyMultifactorAuthenticationProviderBypassEvaluator(props, webAuthn.getId(), applicationContext);
+
+        return BeanSupplier.of(MultifactorAuthenticationProviderBypassEvaluator.class)
+            .when(BeanCondition.on("cas.authn.mfa.web-authn.bypass.groovy.location").exists().given(applicationContext.getEnvironment()))
+            .supply(() -> {
+                val webAuthn = casProperties.getAuthn().getMfa().getWebAuthn();
+                val props = webAuthn.getBypass();
+                return new GroovyMultifactorAuthenticationProviderBypassEvaluator(props, webAuthn.getId(), applicationContext);
+            })
+            .otherwiseProxy()
+            .get();
     }
 
     @ConditionalOnMissingBean(name = "webAuthnHttpRequestMultifactorAuthenticationProviderBypass")

@@ -43,7 +43,8 @@ public class CasResolveAttributesReportEndpoint extends BaseCasActuatorEndpoint 
      * @throws Throwable the throwable
      */
     @ReadOperation
-    @Operation(summary = "Resolve principal attributes for user", parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH))
+    @Operation(summary = "Resolve principal attributes for user",
+        parameters = @Parameter(name = "username", required = true, in = ParameterIn.PATH, description = "The username to resolve attributes for"))
     public Map<String, Object> resolvePrincipalAttributes(@Selector final String username) throws Throwable {
         val map = new HashMap<String, Object>();
         val principal = defaultPrincipalResolver.getObject().resolve(new BasicIdentifiableCredential(username));

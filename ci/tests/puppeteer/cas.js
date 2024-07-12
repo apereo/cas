@@ -397,7 +397,7 @@ exports.newPage = async (browser) => {
             } else if (message.type() === "error") {
                 this.logr(`Console ${message.type()}: ${message.text()}`);
             } else {
-                this.logg(`Console ${message.type()}: ${message.text()}`);
+                this.log(`Console ${message.type()}: ${message.text()}`);
             }
         })
         .on("pageerror", ({message}) => this.logr(`Console: ${message}`));
@@ -479,7 +479,8 @@ exports.doRequest = async (url, method = "GET",
             method: method,
             rejectUnauthorized: false,
             headers: headers,
-            timeout: 15000
+            timeout: 15000,
+            keepAlive: true
         };
         options.agent = new https.Agent(options);
 
@@ -675,7 +676,9 @@ exports.verifyJwt = async (token, secret, options) => {
     await this.log(`Decoding token ${token}`);
     const decoded = JwtOps.verify(token, secret, options, undefined);
     if (options.complete) {
-        await this.logg(`Decoded token header: ${decoded.header}`);
+        await this.log("Decoded token header");
+        await this.logg(decoded.header);
+
         await this.log("Decoded token payload:");
         await this.logg(decoded.payload);
     } else {
@@ -733,7 +736,8 @@ exports.decodeJwt = async (token, complete = false) => {
     assert(token !== undefined, "Token cannot be undefined");
     const decoded = JwtOps.decode(token, {complete: complete});
     if (complete) {
-        await this.logg(`Decoded token header: ${decoded.header}`);
+        await this.log("Decoded token header");
+        await this.logg(decoded.header);
         await this.log("Decoded token payload:");
         await this.logg(decoded.payload);
     } else {
@@ -944,9 +948,9 @@ exports.parseXML = async (xml, options = {}) => {
     return parsedXML;
 };
 
-exports.refreshContext = async (url = "https://localhost:8443/cas") => {
+exports.refreshContext = async (url = "https://localhost:8443/cas", headers = {}) => {
     await this.log("Refreshing CAS application context...");
-    const response = await this.doRequest(`${url}/actuator/refresh`, "POST");
+    const response = await this.doRequest(`${url}/actuator/refresh`, "POST", headers);
     await this.log(response);
 };
 

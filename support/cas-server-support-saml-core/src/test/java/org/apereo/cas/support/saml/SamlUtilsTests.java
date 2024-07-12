@@ -2,12 +2,14 @@ package org.apereo.cas.support.saml;
 
 import org.apereo.cas.config.BaseSamlConfigurationTests;
 import org.apereo.cas.support.saml.util.NonInflatingSaml20ObjectBuilder;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import net.shibboleth.shared.xml.ParserPool;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.velocity.app.VelocityEngine;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.io.MarshallerFactory;
@@ -30,6 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("SAML")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseSamlConfigurationTests.SharedTestConfiguration.class)
 class SamlUtilsTests {
     @Autowired
@@ -80,7 +83,7 @@ class SamlUtilsTests {
     @Test
     void verifyTransformFails() throws Throwable {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
-        val attr = builder.getNameID(NameIDType.TRANSIENT, "value");
+        val attr = builder.newNameID(NameIDType.TRANSIENT, "value");
         val xml = SamlUtils.transformSamlObject(openSamlConfigBean, attr).toString();
         assertThrows(SamlException.class, () -> SamlUtils.transformSamlObject(openSamlConfigBean,
             xml.getBytes(StandardCharsets.UTF_8), AuthnRequest.class));

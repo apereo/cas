@@ -15,7 +15,7 @@ that value will then be used to construct the Name ID along with the right forma
 
 {% tabs saml2nameids %}
 
-{% tab saml2nameids Email Address %}
+{% tab saml2nameids <i class="fa fa-envelope px-1"></i>Email Address %}
 
 The following service definition instructs CAS to use the `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress`
 as the final Name ID format, and use the `mail` attribute value as the final Name ID value.

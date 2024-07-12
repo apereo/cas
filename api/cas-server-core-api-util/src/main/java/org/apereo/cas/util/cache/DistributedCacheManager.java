@@ -1,5 +1,6 @@
 package org.apereo.cas.util.cache;
 
+import org.apereo.cas.util.NamedObject;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.val;
 
@@ -22,7 +23,7 @@ import java.util.function.Predicate;
  * @since 5.2.0
  */
 public interface DistributedCacheManager<K extends Serializable, V extends Serializable, I extends Serializable>
-    extends Closeable {
+    extends Closeable, NamedObject {
 
     /**
      * No op distributed cache manager.
@@ -110,15 +111,7 @@ public interface DistributedCacheManager<K extends Serializable, V extends Seria
     default DistributedCacheManager<K, V, I> remove(final K key, final V item, final boolean publish) {
         return this;
     }
-
-    /**
-     * Gets the cache impl name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return this.getClass().getSimpleName();
-    }
+    
 
     /**
      * Find values matching this predicate.

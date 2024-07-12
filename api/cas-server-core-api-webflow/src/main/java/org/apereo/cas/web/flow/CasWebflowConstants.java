@@ -1412,6 +1412,11 @@ public interface CasWebflowConstants {
     String ACTION_ID_SERVICE_AUTHZ_CHECK = "serviceAuthorizationCheck";
 
     /**
+     * Action id 'passwordlessValidateCaptchaAction'.
+     */
+    String ACTION_ID_PASSWORDLESS_VALIDATE_CAPTCHA = "passwordlessValidateCaptchaAction";
+    
+    /**
      * Action id 'validateCaptchaAction'.
      */
     String ACTION_ID_VALIDATE_CAPTCHA = "validateCaptchaAction";
@@ -1656,9 +1661,22 @@ public interface CasWebflowConstants {
     String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT = "delegatedAuthenticationClientLogoutAction";
 
     /**
-     * Action id `delegatedAuthenticationClientFinishLogoutAction`.
+     * Action id `delegatedAuthenticationSaml2ClientFinishLogoutAction`.
      */
-    String ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_FINISH_LOGOUT = "delegatedAuthenticationClientFinishLogoutAction";
+    String ACTION_ID_DELEGATED_AUTHENTICATION_SAML2_CLIENT_FINISH_LOGOUT = "delegatedAuthenticationSaml2ClientFinishLogoutAction";
+    /**
+     * Action id `delegatedSaml2ClientLogoutAction`.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_SAML2_CLIENT_LOGOUT = "delegatedSaml2ClientLogoutAction";
+    /**
+     * Action id `delegatedClientOidcLogoutAction`.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_OIDC_CLIENT_LOGOUT = "delegatedClientOidcLogoutAction";
+
+    /**
+     * Action id `delegatedSaml2ClientTerminateSessionAction`.
+     */
+    String ACTION_ID_DELEGATED_AUTHENTICATION_SAML2_TERMINATE_SESSION = "delegatedSaml2ClientTerminateSessionAction";
 
     /**
      * Action id `delegatedAuthenticationClientFinishLogoutAction`.
@@ -1774,6 +1792,11 @@ public interface CasWebflowConstants {
      * Action id 'accountMgmtRegistrationInitializeCaptchaAction .
      */
     String ACTION_ID_ACCOUNT_REGISTRATION_INIT_CAPTCHA = "accountMgmtRegistrationInitializeCaptchaAction";
+
+    /**
+     * Action id 'passwordlessInitializeCaptchaAction'.
+     */
+    String ACTION_ID_PASSWORDLESS_INIT_CAPTCHA = "passwordlessInitializeCaptchaAction";
 
     /**
      * Action id 'accountMgmtRegistrationValidateCaptchaAction .

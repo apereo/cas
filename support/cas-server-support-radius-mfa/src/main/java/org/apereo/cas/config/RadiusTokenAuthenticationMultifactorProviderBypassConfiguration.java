@@ -12,6 +12,8 @@ import org.apereo.cas.authentication.bypass.RegisteredServicePrincipalAttributeM
 import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.util.spring.beans.BeanCondition;
+import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import lombok.val;
@@ -100,9 +102,17 @@ class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
     public MultifactorAuthenticationProviderBypassEvaluator radiusGroovyMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
-        val radius = casProperties.getAuthn().getMfa().getRadius();
-        val props = radius.getBypass();
-        return new GroovyMultifactorAuthenticationProviderBypassEvaluator(props, radius.getId(), applicationContext);
+
+        return BeanSupplier.of(MultifactorAuthenticationProviderBypassEvaluator.class)
+            .when(BeanCondition.on("cas.authn.mfa.radius.bypass.groovy.location").exists().given(applicationContext.getEnvironment()))
+            .supply(() -> {
+                val radius = casProperties.getAuthn().getMfa().getRadius();
+                val props = radius.getBypass();
+                return new GroovyMultifactorAuthenticationProviderBypassEvaluator(props, radius.getId(), applicationContext);
+            })
+            .otherwiseProxy()
+            .get();
+        
     }
 
     @ConditionalOnMissingBean(name = "radiusRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")

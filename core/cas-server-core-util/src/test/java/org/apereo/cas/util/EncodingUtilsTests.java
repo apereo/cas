@@ -37,6 +37,7 @@ class EncodingUtilsTests {
         assertSame(PrivateKey.class, factory.getObjectType());
         return factory.getObject();
     }
+    
     private static PublicKey getPublicKey() throws Exception {
         val factory = new PublicKeyFactoryBean(new ClassPathResource("keys/RSA2048Public.key"), RsaKeyUtil.RSA);
         factory.setSingleton(false);

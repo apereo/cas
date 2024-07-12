@@ -21,6 +21,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import java.util.HashMap;
@@ -38,16 +39,14 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Tickets")
 @Tag("TicketRegistryTestWithoutEncryption")
-@Import({
-    CasStatelessTicketRegistryAutoConfiguration.class,
-    BaseWebflowConfigurerTests.SharedTestConfiguration.class
-})
+@Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
+@ImportAutoConfiguration(CasStatelessTicketRegistryAutoConfiguration.class)
 @Getter
 @TestPropertySource(properties = {
     "cas.ticket.registry.stateless.crypto.signing.key=classpath:/private.key",
     "cas.ticket.registry.stateless.crypto.encryption.key=classpath:/public.key"
 })
-public class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
+class StatelessTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier(TicketRegistry.BEAN_NAME)
     private TicketRegistry newTicketRegistry;

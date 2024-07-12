@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("WebflowConfig")
-public class DefaultCasWebflowCredentialProviderTests extends BaseWebflowConfigurerTests {
+class DefaultCasWebflowCredentialProviderTests extends BaseWebflowConfigurerTests {
 
     @Autowired
     @Qualifier(CasWebflowCredentialProvider.BEAN_NAME)

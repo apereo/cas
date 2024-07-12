@@ -3,8 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.apereo.cas.util.scripting.GroovyShellScript;
-import org.apereo.cas.util.scripting.ScriptingUtils;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -55,7 +54,11 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
 
     @Override
     protected List<String> determineRequestedAttributeDefinitions(final RegisteredServiceAttributeReleasePolicyContext context) {
-        return getAllowedAttributes().stream().filter(key -> !ScriptingUtils.isInlineGroovyScript(key)).collect(Collectors.toList());
+        val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+        return getAllowedAttributes()
+            .stream()
+            .filter(key -> scriptFactory.isEmpty() || !scriptFactory.get().isInlineScript(key))
+            .collect(Collectors.toList());
     }
 
     protected Map<String, List<Object>> authorizeReleaseOfAllowedAttributes(
@@ -64,11 +67,13 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
         val resolvedAttributes = new TreeMap<String, List<Object>>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attributes);
         val attributesToRelease = new HashMap<String, List<Object>>();
+
+        val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
         getAllowedAttributes().forEach(attr -> {
             if (resolvedAttributes.containsKey(attr)) {
                 LOGGER.debug("Found attribute [{}] in the list of allowed attributes", attr);
                 attributesToRelease.put(attr, resolvedAttributes.get(attr));
-            } else if (CasRuntimeHintsRegistrar.notInNativeImage()) {
+            } else if (CasRuntimeHintsRegistrar.notInNativeImage() && scriptFactory.isPresent()) {
                 attributesToRelease.putAll(executeInlineGroovyScript(context, attributes, attr));
             }
         });
@@ -76,11 +81,12 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
     }
 
     private static Map<String, List<Object>> executeInlineGroovyScript(final RegisteredServiceAttributeReleasePolicyContext context,
-                                                                       final Map<String, List<Object>> resolvedAttributes, final String attribute) {
-        val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(attribute);
-        if (matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {
-            val inlineGroovy = matcherInline.group(1);
-            try (val executableScript = new GroovyShellScript(inlineGroovy)) {
+                                                                       final Map<String, List<Object>> resolvedAttributes,
+                                                                       final String attribute) {
+        val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+        if (scriptFactory.isPresent() && scriptFactory.get().isInlineScript(attribute) && CasRuntimeHintsRegistrar.notInNativeImage()) {
+            val inlineGroovy = scriptFactory.get().getInlineScript(attribute).orElseThrow();
+            try (val executableScript = scriptFactory.get().fromScript(inlineGroovy)) {
                 val args = CollectionUtils.<String, Object>wrap(
                     "context", context,
                     "attributes", resolvedAttributes,

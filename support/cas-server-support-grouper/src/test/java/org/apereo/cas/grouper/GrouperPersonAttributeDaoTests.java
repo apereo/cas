@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.persondir.GrouperPersonAttributeDao;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
+import org.apereo.cas.test.CasTestExtension;
 import edu.internet2.middleware.grouperClient.api.GcGetGroups;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResults;
@@ -15,6 +16,7 @@ import lombok.val;
 import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,6 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 6.4.0
  */
 @Tag("Grouper")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = {
     GrouperPersonAttributeDaoTests.GrouperPersonAttributeDaoTestConfiguration.class,
     BaseGrouperConfigurationTests.SharedTestConfiguration.class

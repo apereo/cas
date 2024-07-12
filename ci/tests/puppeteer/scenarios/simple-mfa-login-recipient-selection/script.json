@@ -1,0 +1,31 @@
+{
+  "dependencies": "simple-mfa",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org,casperson@example.com",
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477465342",
+    "--cas.authn.attribute-repository.stub.attributes.telephone=14477465342",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.http-client.host-name-verifier=none",
+    
+    "--cas.sms-provider.rest.url=https://localhost:9859/hidden-basic-auth/casuser/paSSw0rd",
+    "--cas.sms-provider.rest.method=POST",
+    "--cas.sms-provider.rest.basic-auth-username=casuser",
+    "--cas.sms-provider.rest.basic-auth-password=paSSw0rd",
+
+    "--cas.authn.mfa.simple.mail.html=false",
+    "--cas.authn.mfa.simple.mail.from=cas@example.com",
+    "--cas.authn.mfa.simple.mail.subject=Token",
+    "--cas.authn.mfa.simple.mail.text=${token}"
+  ],
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}
+

@@ -4,21 +4,20 @@ import org.apereo.cas.audit.AuditActionResolvers;
 import org.apereo.cas.audit.AuditResourceResolvers;
 import org.apereo.cas.audit.AuditableActions;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
@@ -32,13 +31,11 @@ import java.util.Map;
  * @since 5.0.0
  */
 @RequiredArgsConstructor
-public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20AccessTokenResponseGenerator {
+public class OAuth20DefaultAccessTokenResponseGenerator<T extends OAuth20ConfigurationContext> implements OAuth20AccessTokenResponseGenerator {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    protected final JwtBuilder accessTokenJwtBuilder;
-    protected final TicketRegistry ticketRegistry;
-    protected final CasConfigurationProperties casProperties;
+    protected final ObjectProvider<T> configurationContext;
 
     private static boolean shouldGenerateDeviceFlowResponse(final OAuth20AccessTokenResponseResult result) {
         val generatedToken = result.getGeneratedToken();
@@ -119,13 +116,15 @@ public class OAuth20DefaultAccessTokenResponseGenerator implements OAuth20Access
         return model;
     }
 
-    protected <T extends OAuth20Token> T resolveToken(final Ticket token, final Class<T> clazz) {
-        return token == null ? null : (token.isStateless() ? ticketRegistry.getTicket(token.getId(), clazz) : (T) token);
+    protected <TokenType extends OAuth20Token> TokenType resolveToken(final Ticket token, final Class<TokenType> clazz) {
+        return token == null
+            ? null
+            : (token.isStateless() ? configurationContext.getObject().getTicketRegistry().getTicket(token.getId(), clazz) : (TokenType) token);
     }
 
     protected String encodeAccessToken(final OAuth20AccessToken accessToken,
                                        final OAuth20AccessTokenResponseResult result) {
-        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(accessTokenJwtBuilder, result, accessToken, casProperties);
+        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext.getObject(), result, accessToken);
         return cipher.encode(accessToken.getId(), new Object[]{accessToken, result});
     }
 }

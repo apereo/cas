@@ -28,7 +28,7 @@ specific attributes from LDAP for each profile and the ability to specify the at
 
 {% endtab %}
 
-{% tab delegatedauthnprofileselection Groovy %}
+{% tab delegatedauthnprofileselection <i class="fa fa-file-code px-1"></i>Groovy %}
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.profile-selection.groovy" %}
 
@@ -59,6 +59,8 @@ The following parameters are passed to the script:
 | `clientCredentials` | Represents CAS credential and payload received by CAS from the identity provider.                |
 | `userProfile`       | Points to the *resolved* user profile from the identity provider in exchange for the credential. |
 | `logger`            | The object responsible for issuing log messages such as `logger.info(...)`.                      |
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% endtab %}
 

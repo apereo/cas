@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 7.1.0
  */
 @Tag("Webflow")
-public class CasFlowHandlerAdapterTests {
+class CasFlowHandlerAdapterTests {
     @Test
     void verifyOperation() throws Throwable {
         val applicationContext = new StaticApplicationContext();

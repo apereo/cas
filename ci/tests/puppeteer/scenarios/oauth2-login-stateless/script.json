@@ -10,7 +10,7 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-    "--logging.level.org.apereo.cas=info",
+
 
     "--cas.ticket.st.time-to-kill-in-seconds=900",
 
@@ -29,6 +29,7 @@
     "--cas.webflow.crypto.signing.key=Q4tQGAuJSmuJ5WA0zByB9P6hYr5dpTd2JJifyy6Tm_CJ35pkbdhFvcgG-3igDjA4CTjau6Z0yMft-dhVUbRnPQ",
     "--cas.webflow.crypto.encryption.key=g-Rk2ZvexS6tdooIiDh0IQ",
 
+    "--cas.authn.oauth.access-token.crypto.alg=A128CBC-HS256",
     "--cas.authn.oauth.access-token.crypto.encryption-enabled=false",
     "--cas.authn.oauth.access-token.crypto.signing.key=${#environmentVars['OAUTH_ACCESS_TOKEN_SIGNING_KEY']}",
 

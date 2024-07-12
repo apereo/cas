@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.DelegatedAuthenticationCredential
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasSurrogateAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.PasswordlessWebflowUtils;
 import org.apereo.cas.web.flow.action.BaseSurrogateAuthenticationTests;
@@ -12,6 +13,7 @@ import org.apereo.cas.web.flow.passwordless.SurrogatePasswordlessAuthenticationR
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.credentials.TokenCredentials;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +37,11 @@ import static org.mockito.Mockito.*;
     CasSurrogateAuthenticationWebflowAutoConfiguration.class,
     CasDelegatedAuthenticationAutoConfiguration.class,
     BaseSurrogateAuthenticationTests.SharedTestConfiguration.class
-},
-    properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
+}, properties = "cas.authn.surrogate.simple.surrogates.casuser=cassurrogate")
+@ExtendWith(CasTestExtension.class)
 class SurrogateDelegatedAuthenticationCredentialExtractorTests {
     @Autowired
-    @Qualifier("delegatedAuthenticationCredentialExtractor")
+    @Qualifier("surrogateDelegatedPasswordlessAuthenticationCredentialExtractor")
     private DelegatedAuthenticationCredentialExtractor delegatedAuthenticationCredentialExtractor;
 
     @Autowired
@@ -51,9 +53,11 @@ class SurrogateDelegatedAuthenticationCredentialExtractorTests {
         val client = mock(BaseClient.class);
 
         val uid = UUID.randomUUID().toString();
-        val passwordlessRequest = PasswordlessAuthenticationRequest.builder()
+        val passwordlessRequest = PasswordlessAuthenticationRequest
+            .builder()
             .properties(Map.of(SurrogatePasswordlessAuthenticationRequestParser.PROPORTY_SURROGATE_USERNAME, "cassurrogate"))
-            .username(uid).build();
+            .username(uid)
+            .build();
         PasswordlessWebflowUtils.putPasswordlessAuthenticationRequest(context, passwordlessRequest);
 
         val tokenCredentials = new TokenCredentials(uid);
@@ -62,8 +66,9 @@ class SurrogateDelegatedAuthenticationCredentialExtractorTests {
 
         val credentials = delegatedAuthenticationCredentialExtractor.extract(client, context).get();
         assertNotNull(credentials);
-        assertTrue(credentials.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class).isPresent());
-        
+        val trait = credentials.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class);
+        assertTrue(trait.isPresent());
+        assertEquals("cassurrogate", trait.get().getSurrogateUsername());
         when(client.getCredentials(any())).thenReturn(Optional.empty());
         assertTrue(delegatedAuthenticationCredentialExtractor.extract(client, context).isEmpty());
     }

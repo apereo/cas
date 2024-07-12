@@ -17,17 +17,13 @@
         <form method="POST" id="startBrowserForm">
             <input type="hidden" name="_eventId" th:value="${browserAuthenticator}" />
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
-            <button id="browser" name="browser" type="submit" class="mdc-button mdc-button--raised btn btn-primary">
-                <span class="mdc-button__label" th:text="#{cas.inwebo.selectauthent.browser}">Browser authentication</span>
-            </button>
+            <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='cas.inwebo.selectauthnt.browser', id='browser', name='browser')}"/>
         </form>
         <br />
         <form method="POST" id="startPushForm">
             <input type="hidden" name="_eventId" value="push" />
             <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
-            <button id="push" name="push" type="submit" class="mdc-button mdc-button--raised btn btn-primary">
-                <span class="mdc-button__label" th:text="#{cas.inwebo.selectauthent.push}">Mobile/desktop notification</span>
-            </button>
+            <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='cas.inwebo.selectauthnt.push', id='push', name='push')}"/>
         </form>
     </div>
 </main>

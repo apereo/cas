@@ -12,6 +12,7 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -26,7 +27,9 @@ import org.apereo.cas.impl.mock.MockTicketGrantingTicketCreatedEventProducer;
 import org.apereo.cas.notifications.sms.MockSmsSender;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -51,6 +54,7 @@ import javax.net.ssl.HttpsURLConnection;
  */
 @SpringBootTest(classes = BaseAuthenticationRequestRiskCalculatorTests.SharedTestConfiguration.class)
 @EnableScheduling
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseAuthenticationRequestRiskCalculatorTests {
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
@@ -88,16 +92,11 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
             return MockSmsSender.INSTANCE;
         }
     }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
-        ElectronicFenceTestConfiguration.class,
+        AopAutoConfiguration.class,
         CasElectronicFenceAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
@@ -112,11 +111,14 @@ public abstract class BaseAuthenticationRequestRiskCalculatorTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasEventsInMemoryRepositoryAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreEventsAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import(ElectronicFenceTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

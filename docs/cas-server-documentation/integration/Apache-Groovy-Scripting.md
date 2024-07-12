@@ -8,8 +8,19 @@ category: Installation
 # Scripting with Apache Groovy
 
 [Apache Groovy](https://groovy-lang.org/) is a powerful, optionally typed and dynamic language, with static-typing and static compilation capabilities, 
-for the Java platform aimed at improving developer productivity thanks to a concise, familiar and easy to learn syntax. CAS takes advantage of Groovy in 
-forms of either embedded or external scripts that allow one to, by default, dynamically build constructs, attributes, access strategies and a lot more.
+for the Java platform aimed at improving developer productivity thanks to a concise, familiar and easy to learn syntax. 
+
+Support is enabled by including the following module in the WAR overlay:
+
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-core-scripting" %}
+
+<div class="alert alert-info">:information_source: <strong>Usage</strong><p>
+Remember to include the above module in your CAS build if you intend to implement any sort of behavior with Apache Groovy and scripting.
+This includes evaluating policies, release attributes, modifying or customizing components, etc. Without the listed above module,
+Apache Groovy functionality and libraries will not be pulled into your CAS project and CAS would most likely fail to deliver at runtime.</p></div>
+
+CAS takes advantage of Apache Groovy in forms of either embedded or external scripts that allow one to, by default, 
+dynamically build constructs, attributes, access strategies and a lot more.
 
 As an example, the following construct is what's referred to in CAS as an *embedded* or *inline* Groovy script:
 

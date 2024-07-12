@@ -20,17 +20,24 @@ printgreen "Building CAS command-line shell version $casVersion"
 ./gradlew :support:cas-server-support-shell:build -DskipNestedConfigMetadataGen=true \
   -x check -x javadoc  --no-daemon --build-cache --configure-on-demand --parallel
 
-printgreen "Running CAS command-line shell version $casVersion"
 rm -rf cas-shell.out
-java -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar @ci/tests/shell/cas-shell-script.sh > cas-shell.out &
+COMMANDS=$(cat "${PWD}"/ci/tests/shell/cas-shell-script.sh)
+printgreen "Running CAS command-line shell commands:"
+echo "${COMMANDS}"
+
+printgreen "Running CAS command-line shell version ${casVersion}"
+java -jar support/cas-server-support-shell/build/libs/cas-server-support-shell-${casVersion}.jar \
+  @ci/tests/shell/cas-shell-script.sh \
+  --spring.shell.noninteractive.enabled=false \
+  --spring.shell.script.enabled=true > cas-shell.out &
 pid=$!
-printgreen "Launched CAS command-line shell under process id ${pid}"
-sleep 5
+printgreen "Launched CAS command-line shell under process id ${pid}. Waiting for commands to finish..."
+sleep 8
 exitRequest="org.springframework.shell.ExitRequest"
 while :; do
     if grep -q ${exitRequest} "cas-shell.out"; then
         line_number=$(grep -n ${exitRequest} "cas-shell.out" | cut -d: -f1)
-        echo "Found exist request at line ${line_number} in CAS command-line shell output"
+        printf "Found ${GREEN}${exitRequest}${ENDCOLOR} at line ${GREEN}${line_number}${ENDCOLOR} in CAS command-line shell output\n"
         sed -i -e "${line_number},\$d" "cas-shell.out"
         break
     fi

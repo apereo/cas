@@ -23,6 +23,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -43,12 +44,13 @@ class OidcComponentSerializationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "oidcTicketSerializationExecutionPlanConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public TicketSerializationExecutionPlanConfigurer oidcTicketSerializationExecutionPlanConfigurer() {
+    public TicketSerializationExecutionPlanConfigurer oidcTicketSerializationExecutionPlanConfigurer(
+        final ConfigurableApplicationContext applicationContext) {
         return plan -> {
-            plan.registerTicketSerializer(new OidcPushedAuthorizationRequestSerializer());
-            plan.registerTicketSerializer(new OidcCibaRequestSerializer());
-            plan.registerTicketSerializer(OidcPushedAuthorizationRequest.class.getName(), new OidcPushedAuthorizationRequestSerializer());
-            plan.registerTicketSerializer(OidcCibaRequest.class.getName(), new OidcCibaRequestSerializer());
+            plan.registerTicketSerializer(new OidcPushedAuthorizationRequestSerializer(applicationContext));
+            plan.registerTicketSerializer(new OidcCibaRequestSerializer(applicationContext));
+            plan.registerTicketSerializer(OidcPushedAuthorizationRequest.class.getName(), new OidcPushedAuthorizationRequestSerializer(applicationContext));
+            plan.registerTicketSerializer(OidcCibaRequest.class.getName(), new OidcCibaRequestSerializer(applicationContext));
         };
     }
 
@@ -76,8 +78,8 @@ class OidcComponentSerializationConfiguration {
         @Serial
         private static final long serialVersionUID = -6298623586274810263L;
 
-        OidcPushedAuthorizationRequestSerializer() {
-            super(MINIMAL_PRETTY_PRINTER);
+        OidcPushedAuthorizationRequestSerializer(final ConfigurableApplicationContext applicationContext) {
+            super(MINIMAL_PRETTY_PRINTER, applicationContext);
         }
 
         @Override
@@ -91,8 +93,8 @@ class OidcComponentSerializationConfiguration {
         @Serial
         private static final long serialVersionUID = -1298623586274810263L;
 
-        OidcCibaRequestSerializer() {
-            super(MINIMAL_PRETTY_PRINTER);
+        OidcCibaRequestSerializer(final ConfigurableApplicationContext applicationContext) {
+            super(MINIMAL_PRETTY_PRINTER, applicationContext);
         }
 
         @Override

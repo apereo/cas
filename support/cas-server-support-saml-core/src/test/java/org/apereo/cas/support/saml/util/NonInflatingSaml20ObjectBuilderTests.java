@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.BaseSamlConfigurationTests;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.expiration.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.InetAddressUtils;
@@ -12,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.xerces.xs.XSObject;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.opensaml.core.xml.schema.XSBase64Binary;
 import org.opensaml.core.xml.schema.XSBoolean;
 import org.opensaml.core.xml.schema.XSDateTime;
@@ -39,6 +41,7 @@ import static org.mockito.Mockito.*;
  * @since 6.2.0
  */
 @Tag("SAMLResponse")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseSamlConfigurationTests.SharedTestConfiguration.class)
 class NonInflatingSaml20ObjectBuilderTests {
     @Autowired
@@ -137,8 +140,8 @@ class NonInflatingSaml20ObjectBuilderTests {
     @Test
     void verifySubject() throws Throwable {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
-        val id = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
-        val subjectId = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
+        val id = builder.newNameID(NameIDType.UNSPECIFIED, "casuser");
+        val subjectId = builder.newNameID(NameIDType.UNSPECIFIED, "casuser");
 
         val confirmation = builder.newSubjectConfirmation("https://www.apereo.org/app/sp",
             ZonedDateTime.now(ZoneOffset.UTC), "2ab8d364-7d6a-4e3e-ab17-c48b87c487e2",
@@ -150,8 +153,8 @@ class NonInflatingSaml20ObjectBuilderTests {
     @Test
     void verifySubjectNoRecipient() throws Throwable {
         val builder = new NonInflatingSaml20ObjectBuilder(openSamlConfigBean);
-        val id = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
-        val subjectId = builder.getNameID(NameIDType.UNSPECIFIED, "casuser");
+        val id = builder.newNameID(NameIDType.UNSPECIFIED, "casuser");
+        val subjectId = builder.newNameID(NameIDType.UNSPECIFIED, "casuser");
         val confirmation = builder.newSubjectConfirmation(null, ZonedDateTime.now(ZoneOffset.UTC),
             "2ab8d364-7d6a-4e3e-ab17-c48b87c487e2", ZonedDateTime.now(ZoneOffset.UTC), null);
         val sub = builder.newSubject(id, subjectId, confirmation);

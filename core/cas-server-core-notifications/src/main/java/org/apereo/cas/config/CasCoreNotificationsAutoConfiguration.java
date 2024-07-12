@@ -13,6 +13,7 @@ import org.apereo.cas.notifications.push.NotificationSenderExecutionPlanConfigur
 import org.apereo.cas.notifications.sms.GroovySmsSender;
 import org.apereo.cas.notifications.sms.RestfulSmsSender;
 import org.apereo.cas.notifications.sms.SmsSender;
+import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
@@ -79,14 +80,17 @@ public class CasCoreNotificationsAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = SmsSender.BEAN_NAME)
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public SmsSender smsSender(final CasConfigurationProperties casProperties) {
+    public SmsSender smsSender(
+        @Qualifier(HttpClient.BEAN_NAME_HTTPCLIENT_TRUST_STORE)
+        final HttpClient supportsTrustStoreSslSocketFactoryHttpClient,
+        final CasConfigurationProperties casProperties) {
         val groovy = casProperties.getSmsProvider().getGroovy();
         if (groovy.getLocation() != null && CasRuntimeHintsRegistrar.notInNativeImage()) {
             return new GroovySmsSender(groovy.getLocation());
         }
         val rest = casProperties.getSmsProvider().getRest();
         if (StringUtils.isNotBlank(rest.getUrl())) {
-            return new RestfulSmsSender(rest);
+            return new RestfulSmsSender(rest, supportsTrustStoreSslSocketFactoryHttpClient);
         }
         return SmsSender.noOp();
     }

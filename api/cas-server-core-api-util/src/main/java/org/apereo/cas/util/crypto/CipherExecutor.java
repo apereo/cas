@@ -1,5 +1,6 @@
 package org.apereo.cas.util.crypto;
 
+import org.apereo.cas.util.NamedObject;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.io.Serializable;
 import java.security.Key;
@@ -13,7 +14,7 @@ import java.security.Key;
  * @param <O> the type parameter for the output
  * @since 4.1
  */
-public interface CipherExecutor<I, O> extends EncodableCipher<I, O>, DecodableCipher<I, O> {
+public interface CipherExecutor<I, O> extends EncodableCipher<I, O>, DecodableCipher<I, O>, NamedObject {
     /**
      * Default cipher bean name for ticket registry ops.
      */
@@ -63,15 +64,7 @@ public interface CipherExecutor<I, O> extends EncodableCipher<I, O>, DecodableCi
     default boolean isEnabled() {
         return true;
     }
-
-    /**
-     * The (component) name of this cipher.
-     *
-     * @return the name.
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
+    
 
     /**
      * Produce the signing key used to sign tokens in this cipher.

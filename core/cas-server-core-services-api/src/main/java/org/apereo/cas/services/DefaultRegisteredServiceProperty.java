@@ -5,9 +5,11 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.val;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -63,9 +65,10 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
         if (this.values == null) {
             this.values = new HashSet<>(0);
         }
+        val resolver = SpringExpressionLanguageValueResolver.getInstance();
         return this.values
             .stream()
-            .map(value -> SpringExpressionLanguageValueResolver.getInstance().resolve(value))
+            .map(resolver::resolve)
             .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
@@ -101,8 +104,10 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
      *
      * @param value the value
      */
-    public void addValue(final String value) {
+    @CanIgnoreReturnValue
+    public RegisteredServiceProperty addValue(final String value) {
         values.add(value);
+        return this;
     }
 
 }

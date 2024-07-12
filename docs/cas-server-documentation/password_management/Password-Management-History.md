@@ -20,7 +20,7 @@ options may also provide their own support for password history.
  
 {% tabs passwordhistory %}
 
-{% tab passwordhistory Groovy %}
+{% tab passwordhistory <i class="fa fa-file-code px-1"></i>Groovy %}
 
 Password history tracking, once enabled, can be handed off to an external Groovy script as such:
 
@@ -57,6 +57,8 @@ def removeAll(Object[] args) {
 The `request` parameter encapsulates a `PasswordChangeRequest` object, carrying `username` and `password` fields.
 
 {% include_cached casproperties.html properties="cas.authn.pm.history.groovy" %}
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% endtab %}
 

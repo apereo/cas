@@ -7,16 +7,12 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
+import org.apereo.cas.util.spring.RestActuatorEndpointFilter;
 import org.apereo.cas.util.thread.Cleanable;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
-import groovy.lang.Script;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
-import org.codehaus.groovy.runtime.BytecodeInterface8;
-import org.codehaus.groovy.transform.StaticTypesTransformation;
-import org.codehaus.groovy.transform.sc.StaticCompileTransformation;
 import org.slf4j.LoggerFactory;
-import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.TypeReference;
 import org.springframework.beans.factory.InitializingBean;
@@ -79,7 +75,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.IntStream;
 
 /**
  * This is {@link CasCoreUtilRuntimeHints}.
@@ -88,7 +83,6 @@ import java.util.stream.IntStream;
  * @since 7.0.0
  */
 public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
-    private static final int GROOVY_DGM_CLASS_COUNTER = 1500;
 
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
@@ -167,11 +161,7 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
 
         registerReflectionHints(hints, List.of(
             ClassUtils.class,
-            LoggerFactory.class,
-            StaticCompileTransformation.class,
-            StaticTypesTransformation.class,
-            Script.class,
-            BytecodeInterface8.class
+            LoggerFactory.class
         ));
 
         registerReflectionHintsForConstructors(hints,
@@ -182,7 +172,8 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
                 EventListenerMethodProcessor.class,
                 DefaultEventListenerFactory.class,
                 AutowiredAnnotationBeanPostProcessor.class,
-                CommonAnnotationBeanPostProcessor.class
+                CommonAnnotationBeanPostProcessor.class,
+                RestActuatorEndpointFilter.class
             ));
 
         registerReflectionHintsForTypes(hints,
@@ -197,26 +188,12 @@ public class CasCoreUtilRuntimeHints implements CasRuntimeHintsRegistrar {
         registerReflectionHintsForPublicElements(hints, findSubclassesInPackage(CipherExecutor.class, "org.apereo.cas"));
 
         registerCaffeineHints(hints);
-        registerGroovyDGMClasses(hints, classLoader);
-
         FunctionUtils.doAndHandle(__ -> {
             val clazz = ClassUtils.getClass("nonapi.io.github.classgraph.classloaderhandler.ClassLoaderHandler", false);
             registerReflectionHints(hints, findSubclassesInPackage(clazz, "nonapi.io.github.classgraph.classloaderhandler"));
         });
     }
-
-    private static void registerGroovyDGMClasses(final RuntimeHints hints, final ClassLoader classLoader) {
-        IntStream.range(1, GROOVY_DGM_CLASS_COUNTER).forEach(idx ->
-            hints.reflection().registerTypeIfPresent(classLoader,
-                "org.codehaus.groovy.runtime.dgm$" + idx,
-                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-                MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
-                MemberCategory.INVOKE_DECLARED_METHODS,
-                MemberCategory.INVOKE_PUBLIC_METHODS,
-                MemberCategory.DECLARED_FIELDS,
-                MemberCategory.PUBLIC_FIELDS));
-    }
-
+    
     private void registerCaffeineHints(final RuntimeHints hints) {
         FunctionUtils.doAndHandle(__ -> {
             var clazz = ClassUtils.getClass("com.github.benmanes.caffeine.cache.Node", false);

@@ -21,22 +21,18 @@ import org.springframework.context.annotation.Import;
  * @since 6.3.0
  */
 public abstract class BaseOAuth20WebflowTests {
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasThemesAutoConfiguration.class,
         CasThymeleafAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasOAuth20AutoConfiguration.class,
-        CasOAuth20WebflowAutoConfiguration.class,
-        BaseWebflowConfigurerTests.SharedTestConfiguration.class
-    })
+        CasOAuth20WebflowAutoConfiguration.class})
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

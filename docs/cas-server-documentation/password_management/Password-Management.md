@@ -16,7 +16,7 @@ that is fully in charge of managing the account password and associated flows.
 
 Support is enabled by including the following dependency in the WAR overlay:
 
-{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-pm-webflow" %}
+{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-pm-webflow" bundled="true" %}
 
 <div class="alert alert-info">:information_source: <strong>YAGNI</strong><p>You do not need to explicitly include this module
 in your configuration and overlays. This is just to tell you that it exists.</p></div>

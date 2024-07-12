@@ -7,7 +7,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oidc.jwks.mongo.drop-collection=true"
 })
 @EnabledIfListeningOnPort(port = 27017)
-@Import(CasOidcJwksMongoDbAutoConfiguration.class)
+@ImportAutoConfiguration(CasOidcJwksMongoDbAutoConfiguration.class)
 class OidcMongoDbJsonWebKeystoreGeneratorServiceTests extends AbstractOidcTests {
     @Test
     void verifyOperation() throws Throwable {

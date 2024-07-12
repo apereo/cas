@@ -68,7 +68,7 @@ class JcifsSpnegoAuthenticationHandlerTests {
         authenticate(credentials, authenticationHandler);
     }
 
-    private static void authenticate(final SpnegoCredential credentials, final JcifsSpnegoAuthenticationHandler authenticationHandler) throws Throwable {
+    private static void authenticate(final SpnegoCredential credentials, final JcifsSpnegoAuthenticationHandler authenticationHandler) {
         try {
             authenticationHandler.authenticate(credentials, mock(Service.class));
             throw new AssertionError("An AbstractAuthenticationException should have been thrown");

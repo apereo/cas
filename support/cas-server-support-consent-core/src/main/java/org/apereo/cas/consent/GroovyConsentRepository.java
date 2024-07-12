@@ -1,12 +1,11 @@
 package org.apereo.cas.consent;
 
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
-
 import java.io.Serial;
 import java.util.Set;
 
@@ -21,10 +20,11 @@ public class GroovyConsentRepository extends BaseConsentRepository implements Di
     @Serial
     private static final long serialVersionUID = 3482998768083902246L;
 
-    private final WatchableGroovyScriptResource watchableScript;
+    private final ExecutableCompiledScript watchableScript;
 
     public GroovyConsentRepository(final Resource groovyResource) throws Throwable {
-        this.watchableScript = new WatchableGroovyScriptResource(groovyResource);
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        this.watchableScript = scriptFactory.fromResource(groovyResource);
         setConsentDecisions(readDecisionsFromGroovyResource());
     }
 

@@ -22,6 +22,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.BrowserStorage;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -40,6 +41,7 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.ExternalContextHolder;
@@ -572,7 +574,8 @@ public class WebUtils {
      * @param requestContext the ctx
      */
     public static void putAuthentication(final Authentication authentication, final RequestContext requestContext) {
-        requestContext.getConversationScope().put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, authentication);
+        putAuthentication(authentication, requestContext.getConversationScope());
+        putAuthentication(authentication, requestContext.getFlowScope());
     }
 
     /**
@@ -588,13 +591,33 @@ public class WebUtils {
     }
 
     /**
+     * Put authentication.
+     *
+     * @param authentication the authentication
+     * @param scope          the scope
+     */
+    public static void putAuthentication(final Authentication authentication, final MutableAttributeMap scope) {
+        scope.put(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, authentication);
+    }
+    
+    /**
      * Gets authentication from conversation scope.
      *
      * @param ctx the ctx
      * @return the authentication
      */
     public static Authentication getAuthentication(final RequestContext ctx) {
-        return ctx.getConversationScope().get(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, Authentication.class);
+        return getAuthentication(ctx.getConversationScope());
+    }
+
+    /**
+     * Gets authentication.
+     *
+     * @param ctx the ctx
+     * @return the authentication
+     */
+    public static Authentication getAuthentication(final MutableAttributeMap<Object> ctx) {
+        return ctx.get(CasWebflowConstants.ATTRIBUTE_AUTHENTICATION, Authentication.class);
     }
 
     /**
@@ -758,7 +781,7 @@ public class WebUtils {
     public static void putRecaptchaPropertiesFlowScope(final RequestContext context, final GoogleRecaptchaProperties googleRecaptcha) {
         val flowScope = context.getFlowScope();
         if (googleRecaptcha.isEnabled()) {
-            flowScope.put("recaptchaSiteKey", googleRecaptcha.getSiteKey());
+            flowScope.put("recaptchaSiteKey", SpringExpressionLanguageValueResolver.getInstance().resolve(googleRecaptcha.getSiteKey()));
             flowScope.put("recaptchaInvisible", googleRecaptcha.isInvisible());
             flowScope.put("recaptchaPosition", googleRecaptcha.getPosition());
             flowScope.put("recaptchaVersion", googleRecaptcha.getVersion().name().toLowerCase(Locale.ENGLISH));
@@ -773,7 +796,7 @@ public class WebUtils {
      */
     public static String getRecaptchaSiteKey(final RequestContext context) {
         val flowScope = context.getFlowScope();
-        return flowScope.get("recaptchaSiteKey", String.class);
+        return SpringExpressionLanguageValueResolver.getInstance().resolve(flowScope.get("recaptchaSiteKey", String.class));
     }
 
     /**
@@ -1837,7 +1860,8 @@ public class WebUtils {
      * @return the http request parameters from request body
      */
     public static Map<String, String> getHttpRequestParametersFromRequestBody(final HttpServletRequest httpServletRequest) {
-        if (HttpMethod.POST.matches(httpServletRequest.getMethod())) {
+        if (HttpMethod.POST.matches(httpServletRequest.getMethod())
+            && StringUtils.equalsIgnoreCase(httpServletRequest.getContentType(), MediaType.APPLICATION_FORM_URLENCODED_VALUE)) {
             try (val is = httpServletRequest.getInputStream()) {
                 if (!is.isFinished()) {
                     val requestBody = IOUtils.toString(is, StandardCharsets.UTF_8);
@@ -1878,5 +1902,28 @@ public class WebUtils {
         return Optional.ofNullable(request.getParameter(name))
             .or(() -> Optional.ofNullable((String) request.getAttribute(name)))
             .filter(StringUtils::isNotBlank);
+    }
+
+    /**
+     * Track failed authentication attempts.
+     *
+     * @param requestContext the request context
+     */
+    public static void trackFailedAuthenticationAttempt(final RequestContext requestContext) {
+        val flowScope = requestContext.getFlowScope();
+        val attempts = flowScope.contains("authenticationFailureCount", Integer.class)
+            ? flowScope.get("authenticationFailureCount", Integer.class)
+            : 0;
+        flowScope.put("authenticationFailureCount", attempts + 1);
+    }
+
+    /**
+     * Gets authentication failure count.
+     *
+     * @param requestContext the request context
+     * @return the authentication failure count
+     */
+    public static Integer countFailedAuthenticationAttempts(final RequestContext requestContext) {
+        return requestContext.getFlowScope().get("authenticationFailureCount", Integer.class);
     }
 }

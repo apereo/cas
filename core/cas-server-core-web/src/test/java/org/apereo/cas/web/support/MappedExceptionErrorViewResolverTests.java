@@ -2,10 +2,12 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -24,12 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Web")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class
 })
-public class MappedExceptionErrorViewResolverTests {
+class MappedExceptionErrorViewResolverTests {
     @Autowired
     @Qualifier("defaultMappedExceptionErrorViewResolver")
     private ErrorViewResolver defaultMappedExceptionErrorViewResolver;

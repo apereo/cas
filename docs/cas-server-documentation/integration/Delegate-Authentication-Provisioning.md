@@ -15,7 +15,7 @@ external/guest accounts with their equivalent found in the authentication source
       
 {% tabs delegatedauthnprov %}
 
-{% tab delegatedauthnprov Groovy %}
+{% tab delegatedauthnprov <i class="fa fa-file-code px-1"></i>Groovy %}
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.provisioning.groovy" %}
 
@@ -36,6 +36,8 @@ It is not expected for the script to return a value. The following parameters ar
 | `userProfile` | The original `UserProfile` extracted from the external identity provider.                      |
 | `client`      | The `Client` configuration responsible for the exchange between CAS and the identity provider. |
 | `logger`      | The object responsible for issuing log messages such as `logger.info(...)`.                    |
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% endtab %}
 

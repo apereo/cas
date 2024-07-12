@@ -7,12 +7,14 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -33,6 +35,7 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @Tag("FileSystem")
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = AbstractServiceRegistryTests.SharedTestConfiguration.class)
 class JsonServiceRegistryTests extends BaseResourceBasedServiceRegistryTests {
     @Autowired

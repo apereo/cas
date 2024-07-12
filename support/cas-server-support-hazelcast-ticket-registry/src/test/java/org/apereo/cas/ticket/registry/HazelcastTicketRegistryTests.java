@@ -18,6 +18,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,10 +34,8 @@ import static org.mockito.Mockito.*;
 class HazelcastTicketRegistryTests {
     @Nested
     @Getter
-    @Import({
-        CasHazelcastTicketRegistryAutoConfiguration.class,
-        BaseTicketRegistryTests.SharedTestConfiguration.class
-    })
+    @ImportAutoConfiguration(CasHazelcastTicketRegistryAutoConfiguration.class)
+    @Import(BaseTicketRegistryTests.SharedTestConfiguration.class)
     @TestPropertySource(
         properties = {
             "cas.ticket.registry.hazelcast.core.enable-jet=false",
@@ -54,10 +53,8 @@ class HazelcastTicketRegistryTests {
 
     @Nested
     @Getter
-    @Import({
-        CasHazelcastTicketRegistryAutoConfiguration.class,
-        BaseTicketRegistryTests.SharedTestConfiguration.class
-    })
+    @ImportAutoConfiguration(CasHazelcastTicketRegistryAutoConfiguration.class)
+    @Import(BaseTicketRegistryTests.SharedTestConfiguration.class)
     @TestPropertySource(
         properties = {
             "cas.ticket.registry.hazelcast.cluster.network.port-auto-increment=false",

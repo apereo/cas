@@ -1,5 +1,5 @@
 {
-  "dependencies": "surrogate-webflow",
+  "dependencies": "surrogate-webflow,scripting",
 
   "properties": [
     "--cas.server.name=https://localhost:8443",

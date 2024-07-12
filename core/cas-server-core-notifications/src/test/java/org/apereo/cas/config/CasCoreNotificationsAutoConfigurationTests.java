@@ -1,18 +1,17 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.notifications.BaseNotificationTests;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.notifications.push.NotificationSender;
 import org.apereo.cas.notifications.sms.SmsSender;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,18 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasCoreNotificationsAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
-    MailSenderValidatorAutoConfiguration.class
-},
-    properties = {
-        "spring.mail.host=localhost",
-        "spring.mail.port=25000"
-    })
+@SpringBootTest(classes = BaseNotificationTests.SharedTestConfiguration.class, properties = {
+    "spring.mail.host=localhost",
+    "spring.mail.port=25000"
+})
 @Tag("Mail")
+@ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 25000)
 class CasCoreNotificationsAutoConfigurationTests {
     @Autowired

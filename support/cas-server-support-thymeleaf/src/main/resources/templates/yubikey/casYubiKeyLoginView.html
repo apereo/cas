@@ -56,11 +56,8 @@
                     </p>
                 </div>
             </section>
-            <button class="mdc-button mdc-button--raised btn btn-primary"
-                    accesskey="l"
-                    type="submit">
-                <span class="mdc-button__label" th:text="#{screen.welcome.button.login}">Login</span>
-            </button>
+            <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.login')}"/>
+
             <input type="hidden" name="_eventId_submit" value="Login"/>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="geolocation"/>
@@ -72,9 +69,7 @@
             <p th:utext="#{screen.authentication.yubikey.reganotherdevice}"></p>
             <input type="hidden" name="_eventId_register" value="register"/>
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-            <button class="mdc-button mdc-button--raised btn btn-primary me-2" type="submit" name="register" accesskey="r" value="Register">
-                <span class="mdc-button__label" th:text="#{screen.welcome.button.register}">Register</span>
-            </button>
+            <div th:replace="~{fragments/submitbutton :: submitButton (messageKey='screen.welcome.button.register', name='register', id='register')}"/>
         </form>
     </div>
 </main>

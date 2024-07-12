@@ -1,6 +1,6 @@
 package org.apereo.cas.support.wsfederation.attributes;
 
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -20,7 +20,7 @@ public class GroovyWsFederationAttributeMutator implements WsFederationAttribute
     @Serial
     private static final long serialVersionUID = -3864465057274774578L;
 
-    private final WatchableGroovyScriptResource watchableScript;
+    private final ExecutableCompiledScript watchableScript;
 
     @Override
     public Map<String, List<Object>> modifyAttributes(final Map<String, List<Object>> attributes) throws Throwable {

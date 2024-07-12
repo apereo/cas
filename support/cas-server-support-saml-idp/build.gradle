@@ -49,12 +49,12 @@ dependencies {
     compileOnly project(":support:cas-server-support-jpa-util")
     compileOnly project(":support:cas-server-support-consent-api")
     compileOnly project(":support:cas-server-support-pac4j-webflow")
-
-
+    
     implementation libraries.pac4jcore
     implementation libraries.shibutiljavasupport
+    implementation libraries.jose4j
+    compileOnly libraries.pac4jsaml
 
-    
     testImplementation libraries.pac4joidcoauth
     testImplementation libraries.pac4jsaml
 
@@ -92,5 +92,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-tickets")
-    
+    testImplementation project(":core:cas-server-core-scripting")
+
 }

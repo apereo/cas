@@ -1,0 +1,10 @@
+{
+  "id": "casuser",
+  "first_name": "CAS",
+  "locale": "de",
+  "username": "casuser",
+  "email": "casuser@example.org",
+  "location": "Berlin",
+  "family_name": "Apereo",
+  "display_name": "Apereo CAS"
+}

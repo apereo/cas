@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
@@ -32,10 +33,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnabledIfListeningOnPort(port = 18080)
-@Import({
-    CasSyncopeAutoConfiguration.class,
-    BaseSyncopeTests.SharedTestConfiguration.class
-})
+@ImportAutoConfiguration(CasSyncopeAutoConfiguration.class)
+@Import(BaseSyncopeTests.SharedTestConfiguration.class)
 @TestPropertySource(properties = {
     "cas.authn.syncope.provisioning.enabled=true",
     "cas.authn.syncope.provisioning.url=http://localhost:18080/syncope",

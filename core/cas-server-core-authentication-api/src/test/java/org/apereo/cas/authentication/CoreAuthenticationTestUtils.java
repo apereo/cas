@@ -203,12 +203,12 @@ public class CoreAuthenticationTestUtils {
         return getAuthenticationResult(support, service, getCredentialsWithSameUsernameAndPassword());
     }
 
-    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support) throws Throwable {
+    public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support) {
         return getAuthenticationResult(support, getWebApplicationService(), getCredentialsWithSameUsernameAndPassword());
     }
 
     public static AuthenticationResult getAuthenticationResult(final AuthenticationSystemSupport support,
-                                                               final Credential... credentials) throws Throwable {
+                                                               final Credential... credentials) {
         return getAuthenticationResult(support, getWebApplicationService(), credentials);
     }
 
@@ -217,11 +217,11 @@ public class CoreAuthenticationTestUtils {
         return FunctionUtils.doUnchecked(() -> support.finalizeAuthenticationTransaction(service, credentials));
     }
 
-    public static AuthenticationResult getAuthenticationResult() throws Throwable {
+    public static AuthenticationResult getAuthenticationResult() {
         return getAuthenticationResult(getWebApplicationService(), getAuthentication());
     }
 
-    public static AuthenticationResult getAuthenticationResult(final Service service) throws Throwable {
+    public static AuthenticationResult getAuthenticationResult(final Service service) {
         return getAuthenticationResult(service, getAuthentication());
     }
 
@@ -236,7 +236,7 @@ public class CoreAuthenticationTestUtils {
         return result;
     }
 
-    public static AuthenticationBuilder getAuthenticationBuilder() throws Throwable {
+    public static AuthenticationBuilder getAuthenticationBuilder() {
         return getAuthenticationBuilder(getPrincipal());
     }
 

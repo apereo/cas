@@ -1,0 +1,11 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "serviceId": "^https://localhost:9859/anything/1",
+  "name": "Sample",
+  "id": 1,
+  "description": "Sample Service",
+  "evaluationOrder": 1,
+  "scopes" : [ "java.util.HashSet", [ "profile", "email", "address", "phone" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ]
+}

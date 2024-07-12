@@ -69,7 +69,9 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
                         "Implementation-Version": project.version)
             }
             from "${project.layout.buildDirectory.getAsFile().get().path}/resources/main", { into "WEB-INF/classes" }
-            launchScript()
+            if (!rootProject.skipBootifulLaunchScript) {
+                launchScript()
+            }
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         }
 
@@ -80,7 +82,9 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
                 archiveFileName = project.ext.archiveFileName
             }
             from "${project.layout.buildDirectory.getAsFile().get().path}/resources/main", { into "WEB-INF/classes" }
-            launchScript()
+            if (!rootProject.skipBootifulLaunchScript) {
+                launchScript()
+            }
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         }
 
@@ -127,6 +131,10 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
         list.add("java.base/jdk.internal.ref=ALL-UNNAMED")
         list.add("--add-opens")
         list.add("java.base/java.lang=ALL-UNNAMED")
+        list.add("--add-opens")
+        list.add("java.base/java.util.concurrent=ALL-UNNAMED")
+        list.add("--add-opens")
+        list.add("java.base/java.util.concurrent.locks=ALL-UNNAMED")
         list.add("--add-opens")
         list.add("java.base/java.util=ALL-UNNAMED")
         list.add("--add-opens")

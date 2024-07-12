@@ -2,7 +2,7 @@ package org.apereo.cas.web.flow.delegation;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.flow.BasePasswordlessCasWebflowAction;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -30,12 +30,12 @@ import java.util.Set;
 public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePasswordlessCasWebflowAction implements DisposableBean {
     private final DelegatedClientIdentityProviderConfigurationProducer providerConfigurationProducer;
 
-    private final WatchableGroovyScriptResource watchableScript;
+    private final ExecutableCompiledScript watchableScript;
 
     public PasswordlessDetermineDelegatedAuthenticationAction(
         final CasConfigurationProperties casProperties,
         final DelegatedClientIdentityProviderConfigurationProducer providerConfigurationProducer,
-        final WatchableGroovyScriptResource watchableScript) {
+        final ExecutableCompiledScript watchableScript) {
         super(casProperties);
         this.providerConfigurationProducer = providerConfigurationProducer;
         this.watchableScript = watchableScript;

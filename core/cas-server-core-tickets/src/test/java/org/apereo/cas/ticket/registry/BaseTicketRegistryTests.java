@@ -8,6 +8,7 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -16,6 +17,7 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -54,6 +56,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.RepetitionInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
@@ -64,7 +67,6 @@ import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.util.AopTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.Serial;
@@ -94,6 +96,7 @@ import static org.junit.jupiter.api.Assumptions.*;
         "cas.ticket.tgt.core.only-track-most-recent-session=false",
         "cas.ticket.registry.cleaner.schedule.enabled=false"
     })
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseTicketRegistryTests {
 
     private static final int TICKETS_IN_REGISTRY = 1;
@@ -702,18 +705,15 @@ public abstract class BaseTicketRegistryTests {
             registry.setCipherExecutor(CipherExecutor.noOp());
         }
     }
-
     @ImportAutoConfiguration({
         ObservationAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         RefreshAutoConfiguration.class,
         IntegrationAutoConfiguration.class,
-        MailSenderAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        MailSenderAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
@@ -726,6 +726,7 @@ public abstract class BaseTicketRegistryTests {
         CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 

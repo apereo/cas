@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import org.apereo.cas.util.NamedObject;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
@@ -15,7 +16,7 @@ import java.util.Set;
  */
 @FunctionalInterface
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
-public interface AuthenticationPolicy extends Ordered, Serializable {
+public interface AuthenticationPolicy extends Ordered, Serializable, NamedObject {
 
     /**
      * Always satisfied authentication policy.
@@ -99,15 +100,6 @@ public interface AuthenticationPolicy extends Ordered, Serializable {
     @Override
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
-    }
-
-    /**
-     * Define the name of this even resolver.
-     *
-     * @return name of the resolver.
-     */
-    default String getName() {
-        return this.getClass().getSimpleName();
     }
 
     /**

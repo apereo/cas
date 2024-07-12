@@ -6,11 +6,6 @@
 # Check expiration date via:
 # openssl x509 -noout -enddate -in redis.crt
 
-export REDIS_VERSION=${1:-7.2.0-v10}
-export REDIS_SENTINEL_VERSION=${1:-7.2.4}
-
-echo "Running Redis $REDIS_VERSION, Sentinel: $REDIS_SENTINEL_VERSION"
-
 COMPOSE_FILE=./ci/tests/redis/docker-compose.yml
 test -f $COMPOSE_FILE || COMPOSE_FILE=docker-compose.yml
 docker-compose -f $COMPOSE_FILE down >/dev/null 2>/dev/null || true

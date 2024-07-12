@@ -2,10 +2,12 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
+import org.apereo.cas.test.CasTestExtension;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.Cleanup;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.Credential;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,7 @@ properties = {
     "cas.authn.attribute-repository.ldap[0].bind-dn=cn=Directory Manager",
     "cas.authn.attribute-repository.ldap[0].bind-credential=password"
 })
+@ExtendWith(CasTestExtension.class)
 class BasePrincipalAttributeRepositoryFetcherLdapTests {
     protected static final String UID = UUID.randomUUID().toString();
 

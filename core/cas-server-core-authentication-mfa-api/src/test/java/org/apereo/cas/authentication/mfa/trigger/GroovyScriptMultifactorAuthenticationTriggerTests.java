@@ -7,9 +7,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.mfa.MultifactorAuthenticationTestUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.util.scripting.ScriptingUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.val;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -18,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junitpioneer.jupiter.SetSystemProperty;
 import org.springframework.core.io.ClassPathResource;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -30,7 +27,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("GroovyAuthentication")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@SetSystemProperty(key = ScriptingUtils.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC, value = "true")
+@SetSystemProperty(key = ExecutableCompiledScriptFactory.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC, value = "true")
 class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
     @Order(1)
@@ -92,8 +89,10 @@ class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMultifactorA
     private GroovyScriptMultifactorAuthenticationTrigger buildGroovyTrigger() throws Throwable {
         val selector = mock(MultifactorAuthenticationProviderSelector.class);
         when(selector.resolve(any(), any(), any())).thenReturn(new TestMultifactorAuthenticationProvider());
+        val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+        val resource = new ClassPathResource("GroovyMfaTrigger.groovy");
         return new GroovyScriptMultifactorAuthenticationTrigger(
-            new WatchableGroovyScriptResource(new ClassPathResource("GroovyMfaTrigger.groovy")),
+            scriptFactory.fromResource(resource),
             applicationContext,
             new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
             selector);

@@ -7,16 +7,25 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-    "--logging.level.org.apereo.cas=info",
+
 
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/jwtkeystore.jwks",
 
+    "--cas.authn.oauth.code.time-to-kill-in-seconds=60",
+    
     "--cas.authn.oauth.access-token.create-as-jwt=true",
     "--cas.authn.oauth.access-token.crypto.encryption-enabled=false",
+    "--cas.authn.oauth.access-token.crypto.alg=A128CBC-HS256",
     "--cas.authn.oauth.access-token.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
     "--cas.authn.oauth.access-token.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ",
 
+    "--cas.authn.attribute-repository.stub.attributes.roles=user,admin,system",
+    "--cas.authn.attribute-repository.stub.attributes.lastname=User",
+    "--cas.authn.attribute-repository.stub.attributes.firstname=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+    
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],

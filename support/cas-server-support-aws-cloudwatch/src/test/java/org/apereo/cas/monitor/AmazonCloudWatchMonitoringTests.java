@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
         CasAmazonCloudWatchAutoConfiguration.class
     },
     properties = "management.cloudwatch.metrics.export.enabled=true")
-public class AmazonCloudWatchMonitoringTests {
+class AmazonCloudWatchMonitoringTests {
     static {
         System.setProperty(SdkSystemSetting.AWS_ACCESS_KEY_ID.property(), "AKIAIPPIGGUNIO74C63Z");
         System.setProperty(SdkSystemSetting.AWS_SECRET_ACCESS_KEY.property(), "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");

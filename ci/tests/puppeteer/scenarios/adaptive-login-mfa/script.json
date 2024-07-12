@@ -1,5 +1,5 @@
 {
-  "dependencies": "geolocation,simple-mfa",
+  "dependencies": "geolocation,simple-mfa,scripting",
   "conditions": {
     "docker": "true"
   },
@@ -7,7 +7,7 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--logging.level.org.apereo.cas=info",
+
 
     "--cas.events.core.track-geolocation=true",
 

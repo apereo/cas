@@ -1,5 +1,5 @@
 {
-  "dependencies": "pac4j-webflow,mongo-core",
+  "dependencies": "pac4j-webflow,mongo-core,pac4j-saml",
   "conditions": {
     "docker": "true"
   },
@@ -29,9 +29,7 @@
     "--cas.authn.pac4j.saml[0].keystore-path=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/samlKeystore.jks",
     "--cas.authn.pac4j.saml[0].destination-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
     "--cas.authn.pac4j.saml[0].client-name=SAML2Client",
-    "--cas.authn.pac4j.saml[0].sign-service-provider-metadata=true",
-
-    "--logging.level.org.apereo.cas=info"
+    "--cas.authn.pac4j.saml[0].sign-service-provider-metadata=true"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

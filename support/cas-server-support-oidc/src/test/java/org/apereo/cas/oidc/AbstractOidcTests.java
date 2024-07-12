@@ -15,6 +15,7 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -62,9 +63,11 @@ import org.apereo.cas.support.oauth.web.response.callback.OAuth20ResponseModeFac
 import org.apereo.cas.support.oauth.web.views.ConsentApprovalViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.code.OAuth20Code;
 import org.apereo.cas.ticket.code.OAuth20CodeFactory;
@@ -91,6 +94,7 @@ import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -117,7 +121,6 @@ import java.io.Serializable;
 import java.time.Duration;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -130,11 +133,11 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = AbstractOidcTests.SharedTestConfiguration.class,
     properties = {
         "spring.threads.virtual.enabled=true",
 
-        "spring.main.allow-bean-definition-overriding=true",
         "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",
 
         "cas.audit.slf4j.use-single-line=true",
@@ -152,7 +155,7 @@ public abstract class AbstractOidcTests {
     @Autowired
     @Qualifier("oauthTokenGenerator")
     protected OAuth20TokenGenerator oauthTokenGenerator;
-    
+
     @Autowired
     @Qualifier(OAuth20ResponseModeFactory.BEAN_NAME)
     protected OAuth20ResponseModeFactory oauthResponseModeFactory;
@@ -505,15 +508,28 @@ public abstract class AbstractOidcTests {
 
     protected OAuth20Code addCode(final Principal principal,
                                   final OAuthRegisteredService registeredService) throws Throwable {
-        val tgt = new MockTicketGrantingTicket("casuser");
+        val ticketGrantingTicket = new MockTicketGrantingTicket("casuser");
         val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getClientId());
+        val scopes = List.of(OidcConstants.StandardScopes.OPENID.getScope());
         val code = defaultOAuthCodeFactory.create(service, authentication,
-            tgt, List.of(OidcConstants.StandardScopes.OPENID.getScope()),
-            null, null, registeredService.getClientId(), new HashMap<>(),
+            ticketGrantingTicket, scopes, registeredService.getClientId(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
-        this.ticketRegistry.addTicket(code);
+        ticketRegistry.addTicket(code);
+        return code;
+    }
+
+    protected OAuth20Code addCode(final TicketGrantingTicket ticketGrantingTicket,
+                                  final OAuthRegisteredService registeredService) throws Throwable {
+        val authentication = ticketGrantingTicket.getAuthentication();
+        val factory = new WebApplicationServiceFactory();
+        val service = factory.createService(registeredService.getClientId());
+        val scopes = List.of(OidcConstants.StandardScopes.OPENID.getScope());
+        val code = defaultOAuthCodeFactory.create(service, authentication,
+            ticketGrantingTicket, scopes, registeredService.getClientId(),
+            OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
+        ticketRegistry.addTicket(code);
         return code;
     }
 
@@ -532,6 +548,7 @@ public abstract class AbstractOidcTests {
         return cibaRequestId;
     }
 
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         SecurityAutoConfiguration.class,
@@ -542,21 +559,17 @@ public abstract class AbstractOidcTests {
         ServletWebServerFactoryAutoConfiguration.class,
         DispatcherServletAutoConfiguration.class,
         IntegrationAutoConfiguration.class,
-        MailSenderAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        MailSenderAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasThemesAutoConfiguration.class,
         CasThymeleafAutoConfiguration.class,
@@ -567,6 +580,10 @@ public abstract class AbstractOidcTests {
         CasOidcAutoConfiguration.class,
         CasOAuth20AutoConfiguration.class,
         CasWebAppAutoConfiguration.class
+    })
+    @Import({
+        CasRegisteredServicesTestConfiguration.class,
+        CasPersonDirectoryTestConfiguration.class
     })
     public static class SharedTestConfiguration {
     }

@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("JDBCAuthentication")
-public class QueryAndEncodeDatabasePasswordEncoderTests {
+class QueryAndEncodeDatabasePasswordEncoderTests {
     private static final String STATIC_SALT = "oU92&p4b&NIWjAbC";
     private static final String DYNAMIC_SALT = "l!Ue%wj6TPMNf*lI";
 

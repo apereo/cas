@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationHandlerStates;
+import org.apereo.cas.util.NamedObject;
 
 import org.springframework.core.Ordered;
 
@@ -16,7 +17,7 @@ import java.security.GeneralSecurityException;
  * @since 4.0.0
  */
 @FunctionalInterface
-public interface AuthenticationHandler extends Ordered {
+public interface AuthenticationHandler extends Ordered, NamedObject {
 
     /**
      * Attribute name containing collection of handler names that successfully authenticated credential.
@@ -86,17 +87,6 @@ public interface AuthenticationHandler extends Ordered {
      */
     default boolean supports(final Class<? extends Credential> clazz) {
         return false;
-    }
-
-    /**
-     * Gets a unique name for this authentication handler within the Spring context that contains it.
-     * For implementations that allow setting a unique name, deployers MUST take care to ensure that every
-     * handler instance has a unique name.
-     *
-     * @return Unique name within a Spring context.
-     */
-    default String getName() {
-        return this.getClass().getSimpleName();
     }
 
     @Override

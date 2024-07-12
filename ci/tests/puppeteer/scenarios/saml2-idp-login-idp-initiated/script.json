@@ -13,7 +13,7 @@
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
 
-    "--logging.level.org.apereo.cas=info",
+
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
 
     "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",

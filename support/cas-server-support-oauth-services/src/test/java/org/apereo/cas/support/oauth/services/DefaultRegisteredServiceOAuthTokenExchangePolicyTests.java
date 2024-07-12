@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("OAuth")
-public class DefaultRegisteredServiceOAuthTokenExchangePolicyTests {
+class DefaultRegisteredServiceOAuthTokenExchangePolicyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "RegisteredServiceOAuthTokenExchangePolicyTests.json");
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

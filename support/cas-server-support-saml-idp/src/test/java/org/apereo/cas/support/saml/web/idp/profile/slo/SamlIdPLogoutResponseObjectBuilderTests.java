@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
+import org.apereo.cas.support.saml.util.Saml20ObjectBuilder;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -23,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SamlIdPLogoutResponseObjectBuilderTests extends BaseSamlIdPConfigurationTests {
     @Autowired
     @Qualifier("samlIdPLogoutResponseObjectBuilder")
-    private SamlIdPLogoutResponseObjectBuilder samlIdPLogoutResponseObjectBuilder;
+    private Saml20ObjectBuilder samlIdPLogoutResponseObjectBuilder;
 
     @Test
     void verifyOperation() throws Throwable {

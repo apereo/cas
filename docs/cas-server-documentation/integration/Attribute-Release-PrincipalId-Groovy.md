@@ -19,7 +19,7 @@ Groovy scripts whether inlined or external will receive and have access to the f
 
 {% tabs groovyprincipalid %}
 
-{% tab groovyprincipalid Inline %}
+{% tab groovyprincipalid <i class="fa fa-pencil px-1"></i> Inline %}
 
 Embed the groovy script directly inside the service configuration.
 
@@ -41,9 +41,11 @@ Embed the groovy script directly inside the service configuration.
 Note that the `uid` attribute in the above example is resolved internally as a multivalued attribute, as should all attributes when fetched by CAS. So
 the above example uses the `[0]` syntax to fetch the first value of the attribute.
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
 
-{% tab groovyprincipalid External %}
+{% tab groovyprincipalid <i class="fa fa-file-code px-1"></i> External %}
 
 Reference the groovy script as an external resource outside the service configuration.
 The script must return a single `String` value.
@@ -71,6 +73,8 @@ return "newPrincipalId"
 ```
 
 The configuration of this component qualifies to use the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% endtab %} 
 

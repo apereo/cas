@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.api;
 
+import org.apereo.cas.configuration.loader.CasConfigurationPropertiesLoader;
 import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ResourceLoader;
@@ -13,6 +15,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.ServiceLoader;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link CasConfigurationPropertiesSourceLocator}.
@@ -150,5 +154,19 @@ public interface CasConfigurationPropertiesSourceLocator {
      */
     static String getConfigurationName(final Environment environment) {
         return environment.getProperty("spring.config.name", "cas");
+    }
+
+    /**
+     * Gets configuration properties loaders.
+     *
+     * @return the configuration properties loaders
+     */
+    static List<CasConfigurationPropertiesLoader> getConfigurationPropertiesLoaders() {
+        return ServiceLoader.load(CasConfigurationPropertiesLoader.class)
+            .stream()
+            .map(ServiceLoader.Provider::get)
+            .filter(Objects::nonNull)
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .collect(Collectors.toList());
     }
 }

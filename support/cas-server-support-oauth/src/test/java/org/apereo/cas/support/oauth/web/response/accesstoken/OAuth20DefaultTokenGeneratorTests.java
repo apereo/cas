@@ -16,9 +16,12 @@ import org.apereo.cas.support.oauth.validator.token.device.UnapprovedOAuth20Devi
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.ticket.expiration.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
+import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.util.EncodingUtils;
 import lombok.val;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.jose4j.jwt.JwtClaims;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -41,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OAuthToken")
 @TestPropertySource(properties = {
+    "cas.authn.oauth.access-token.crypto.alg=" + ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256,
     "cas.authn.oauth.access-token.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
     "cas.authn.oauth.access-token.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ",
     "cas.authn.oauth.access-token.crypto.enabled=true",
@@ -85,7 +89,6 @@ class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         val actor = claims.getJSONObjectClaim(OAuth20Constants.CLAIM_ACT).get(OAuth20Constants.CLAIM_SUB);
         assertEquals("adminuser", actor);
     }
-
 
     @Test
     void verifyExchangeTokens() throws Throwable {
@@ -260,6 +263,25 @@ class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
     }
 
     @Test
+    void verifyTicketGrantingTicketExpired() throws Throwable {
+        val registeredService = getRegisteredService(SERVICE_URL, UUID.randomUUID().toString(), "secret");
+        servicesManager.save(registeredService);
+        val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
+        val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
+        val mockResponse = new MockHttpServletResponse();
+        val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        val webContext = new JEEContext(mockRequest, mockResponse);
+        val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), authentication, AlwaysExpiresExpirationPolicy.INSTANCE);
+        val tokenRequestContext = buildAccessTokenRequestContext(registeredService, authentication,
+            OAuth20GrantTypes.AUTHORIZATION_CODE, service, ticketGrantingTicket, webContext).withGenerateRefreshToken(true);
+        val result = oauthTokenGenerator.generate(tokenRequestContext);
+        val accessToken = result.getAccessToken().map(OAuth20AccessToken.class::cast).orElseThrow();
+        val refreshToken = result.getRefreshToken().map(OAuth20RefreshToken.class::cast).orElseThrow();
+        assertNull(accessToken.getTicketGrantingTicket());
+        assertNull(refreshToken.getTicketGrantingTicket());
+    }
+
+    @Test
     void verifyAccessTokenIsRefreshed() throws Throwable {
         val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
         registeredService.setJwtAccessToken(true);
@@ -289,9 +311,9 @@ class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         assertNotNull(refreshedJwt.getExpirationTime());
         assertNotEquals(jwt.getExpirationTime().getValue(), refreshedJwt.getExpirationTime().getValue());
     }
-
+    
     @Test
-    void verifyCustomizedRTWithNullAuthentication() throws Throwable {
+    void verifyCustomizedRefreshTokenWithNullAuthentication() throws Throwable {
         val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
         servicesManager.save(registeredService);
         val service = RegisteredServiceTestUtils.getService(SERVICE_URL);

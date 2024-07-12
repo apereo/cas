@@ -1,5 +1,5 @@
 {
-  "dependencies": "saml-idp,reports,monitor",
+  "dependencies": "saml-idp,reports,monitor,sentry,scripting",
   "conditions": {
     "docker": "true"
   },
@@ -27,7 +27,7 @@
     "--cas.http-client.host-name-verifier=none",
 
     "--logging.level.PROTOCOL_MESSAGE=info",
-    "--logging.level.org.apereo.cas=info",
+
 
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",

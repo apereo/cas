@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("Authentication")
-public class TokenAuthenticationSecurityTests {
+class TokenAuthenticationSecurityTests {
 
     @Test
     void verifyRsaOperation() throws Throwable {

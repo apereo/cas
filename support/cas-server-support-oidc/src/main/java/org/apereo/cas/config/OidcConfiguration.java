@@ -655,7 +655,7 @@ class OidcConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "oauthAccessTokenAuthenticator")
+        @ConditionalOnMissingBean(name = "oidcAccessTokenAuthenticator")
         public Authenticator oauthAccessTokenAuthenticator(
             @Qualifier("oidcTokenSigningAndEncryptionService")
             final OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService,
@@ -956,8 +956,9 @@ class OidcConfiguration {
         @ConditionalOnMissingBean(name = "clientRegistrationRequestSerializer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer() {
-            return new OidcClientRegistrationRequestSerializer();
+        public StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer(
+            final ConfigurableApplicationContext applicationContext) {
+            return new OidcClientRegistrationRequestSerializer(applicationContext);
         }
 
         @Bean

@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
  * @since 7.1.0
  */
 @Tag("Audits")
-public class DefaultClientInfoResolverTests {
+class DefaultClientInfoResolverTests {
 
     @Test
     void verifyOperation() throws Exception {

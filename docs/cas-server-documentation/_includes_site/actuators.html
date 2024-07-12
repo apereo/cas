@@ -143,7 +143,7 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                                 {%- else -%} 
                                 <i data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true"
                                    title="This endpoint is provided by a third-party framework to CAS."
-                                   class="fas fa-codepen"></i>
+                                   class="fa fa-code"></i>
                                 {%- endif -%} 
                             </sup>
                         </span></td>
@@ -246,7 +246,7 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                                     <br />
                                     {%- assign allParams="" -%}
                                     {%- if cfg.parameters.size > 0 -%}
-                                    <p>Endpoint Parameters:</p>
+                                    <h5>Endpoint Parameters</h5>
                                     <ul>
                                         {% for param in cfg.parameters -%}
                                         <li>
@@ -264,8 +264,8 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                                             <i class="fas fa-info-circle" data-bs-toggle="tooltip"
                                                data-bs-placment="top" data-bs-html="true"
                                                title="{{ paramTitle }}"></i>
-                                            <code>{{param.type}} {{ param.name }}</code>
-                                            {%- if param.description.size > 0 -%} - <sub>{{ param.description }}</sub>{%- endif -%}
+                                            <code>{{ param.name }} ({{ param.type }})</code>
+                                            {%- if param.description.size > 0 -%}: <span>{{ param.description }}</span>{%- endif -%}
                                             {%- assign allParams = allParams | append: param.name | append: "=...&" -%}
                                         </li>
                                         {%- endfor -%}
@@ -277,7 +277,7 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                                         <p>Once the endpoint is available, here is an example of how you could use it with <code>curl</code>: </p>
 {%- capture curlrequest -%}
 ```bash
-curl -u "username:password" \
+curl -k -u "username:password" \
     -X {{ cfg.method }} \
     -X "Content-Type: {{ cfg.consumes[0] | default: 'application/json' }}" \
     -X "Accept: {{ cfg.produces[0] | default: 'application/json' }}" \
@@ -509,7 +509,7 @@ curl -u "username:password" \
             </div>
 
             <script>
-                document.getElementById('{{key}}ModalConfig').addEventListener('shown.bs.modal', function (event) {
+                document.getElementById('{{key}}ModalConfig').addEventListener('shown.bs.modal', event => {
                     let content = $("#jdbcauthpropReference").html();
                     $("#placeholderSecurityJdbc{{ key }}").html(content);
 
@@ -521,7 +521,7 @@ curl -u "username:password" \
 
                     let elementId = "#casEndpointConfigPropsDiv .nav-item a.nav-link:first";
                     console.log(`Selecting configuration tab via ${elementId}`);
-                    $(elementId).addClass("active")
+                    $(elementId).addClass("active");
                     $(elementId).click();
                 })
             </script>

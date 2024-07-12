@@ -16,7 +16,7 @@
     "--cas.authn.oidc.id-token.include-id-token-claims=false",
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
 
-    "--logging.level.org.apereo.cas=info",
+
     
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"

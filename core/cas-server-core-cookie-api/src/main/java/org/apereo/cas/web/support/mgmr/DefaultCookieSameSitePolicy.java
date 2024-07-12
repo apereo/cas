@@ -2,20 +2,17 @@ package org.apereo.cas.web.support.mgmr;
 
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.web.cookie.CookieGenerationContext;
 import org.apereo.cas.web.cookie.CookieSameSitePolicy;
-
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ClassUtils;
 import org.jooq.lambda.Unchecked;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.Locale;
 import java.util.Optional;
 
@@ -60,7 +57,8 @@ public class DefaultCookieSameSitePolicy implements CookieSameSitePolicy {
         return FunctionUtils.doUnchecked(() -> {
             val sameSitePolicy = cookieGenerationContext.getSameSitePolicy();
             val resource = ResourceUtils.getResourceFrom(sameSitePolicy);
-            try (val groovyResource = new WatchableGroovyScriptResource(resource, false)) {
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            try (val groovyResource = scriptFactory.fromResource(resource)) {
                 return Optional.ofNullable(groovyResource.execute(
                     new Object[]{request, response, cookieGenerationContext, LOGGER}, String.class));
             }

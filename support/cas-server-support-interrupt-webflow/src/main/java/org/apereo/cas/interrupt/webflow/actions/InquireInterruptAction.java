@@ -137,7 +137,7 @@ public class InquireInterruptAction extends BaseCasWebflowAction {
             .isEmpty();
     }
 
-    private boolean isInterruptInquiryForcedFor(final WebBasedRegisteredService registeredService) {
+    protected boolean isInterruptInquiryForcedFor(final WebBasedRegisteredService registeredService) {
         return casProperties.getInterrupt().getCore().isForceExecution()
             || (registeredService != null && registeredService.getWebflowInterruptPolicy().getForceExecution().isTrue());
     }

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("OIDC")
 @TestPropertySource(properties = "cas.http-client.host-name-verifier=none")
-public class CibaPingTokenDeliveryHandlerTests extends AbstractOidcTests {
+class CibaPingTokenDeliveryHandlerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcCibaPingTokenDeliveryHandler")
     private CibaTokenDeliveryHandler oidcCibaPingTokenDeliveryHandler;

@@ -88,7 +88,7 @@ the user for credentials and ignore the existing session.
 
 {% endtab %}
 
-{% tab ssoservicepolicy Last Used Time %}
+{% tab ssoservicepolicy <i class="fa fa-clock px-1"></i>Last Used Time %}
 
 Honor the existing single sign-on session, if any, if the last time an SSO session was used is at most `5` seconds old. Otherwise, challenge the
 user for credentials and ignore the existing session.
@@ -159,7 +159,7 @@ and value patterns defined in the policy are able to support the [Spring Express
 
 {% endtab %}
 
-{% tab ssoservicepolicy Groovy %}
+{% tab ssoservicepolicy <i class="fa fa-code px-1"></i>Groovy %}
 
 SSO participation decisions can be determined using a Groovy script, that may be defined either inline
 or outsourced to an external Groovy script.
@@ -227,6 +227,8 @@ You may also do the same sort of thing with an inline Groovy script:
   }
 }
 ```
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% endtab %}
 

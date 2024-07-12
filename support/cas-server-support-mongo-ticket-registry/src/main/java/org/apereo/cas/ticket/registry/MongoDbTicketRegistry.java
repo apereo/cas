@@ -200,6 +200,16 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
+    public long countTickets() {
+        return ticketCatalog
+            .findAll()
+            .stream()
+            .map(this::getTicketCollectionInstanceByMetadata)
+            .mapToLong(map -> mongoTemplate.count(new Query(), map))
+            .sum();
+    }
+
+    @Override
     public Stream<? extends Ticket> getSessionsFor(final String principalId) {
         val ticketDefinitions = ticketCatalog.findTicketDefinition(TicketGrantingTicket.class);
         return ticketDefinitions
@@ -271,8 +281,10 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .map(this::getTicketCollectionInstanceByMetadata)
             .flatMap(map -> {
                 val limit = criteria.getCount() > 0 ? Limit.of(Long.valueOf(criteria.getCount()).intValue()) : Limit.unlimited();
-                val query = new Query().limit(limit);
-                return mongoTemplate.stream(query, MongoDbTicketDocument.class, map);
+                val query = StringUtils.isNotBlank(criteria.getId())
+                    ? new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_ID).is(digestIdentifier(criteria.getId())))
+                    : new Query();
+                return mongoTemplate.stream(query.limit(limit), MongoDbTicketDocument.class, map);
             })
             .filter(document -> StringUtils.isBlank(criteria.getPrincipal())
                 || StringUtils.equalsIgnoreCase(criteria.getPrincipal(), document.getPrincipal()))
@@ -286,7 +298,6 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
-
 
     @Override
     public long countTicketsFor(final Service service) {

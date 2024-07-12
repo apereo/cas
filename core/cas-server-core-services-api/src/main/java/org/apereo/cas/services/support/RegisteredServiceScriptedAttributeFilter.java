@@ -5,12 +5,9 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
-import org.apereo.cas.util.scripting.ExecutableCompiledGroovyScript;
-import org.apereo.cas.util.scripting.GroovyShellScript;
-import org.apereo.cas.util.scripting.ScriptingUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -22,10 +19,8 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import jakarta.persistence.PostLoad;
 import jakarta.persistence.Transient;
-
 import java.io.Serial;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +50,7 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
-    private transient ExecutableCompiledGroovyScript executableScript;
+    private transient ExecutableCompiledScript executableScript;
 
     @JsonCreator
     public RegisteredServiceScriptedAttributeFilter(@JsonProperty("order") final int order,
@@ -73,18 +68,17 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
     @PostLoad
     private void initializeWatchableScriptIfNeeded() {
         if (this.executableScript == null) {
-            val matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(script);
-            val matcherFile = ScriptingUtils.getMatcherForExternalGroovyScript(script);
-
-            if (matcherFile.find()) {
+            val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+            if (scriptFactory.isExternalScript(script)) {
                 val resource = FunctionUtils.doUnchecked(() -> {
-                    val scriptFile = SpringExpressionLanguageValueResolver.getInstance().resolve(matcherFile.group(2));
+                    val scriptFile = SpringExpressionLanguageValueResolver.getInstance()
+                        .resolve(scriptFactory.getExternalScript(script).orElseThrow());
                     LOGGER.debug("Loading attribute filter groovy script from [{}]", scriptFile);
                     return ResourceUtils.getRawResourceFrom(scriptFile);
                 });
-                this.executableScript = new WatchableGroovyScriptResource(resource);
-            } else if (matcherInline.find() && CasRuntimeHintsRegistrar.notInNativeImage()) {
-                this.executableScript = new GroovyShellScript(matcherInline.group(1));
+                this.executableScript = scriptFactory.fromResource(resource);
+            } else if (scriptFactory.isInlineScript(script) && CasRuntimeHintsRegistrar.notInNativeImage()) {
+                this.executableScript = scriptFactory.fromScript(scriptFactory.getInlineScript(script).orElseThrow());
             }
         }
     }

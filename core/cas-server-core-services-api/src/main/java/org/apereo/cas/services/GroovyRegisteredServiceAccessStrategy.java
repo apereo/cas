@@ -4,7 +4,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
@@ -40,7 +41,7 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
     @JsonIgnore
     @Transient
     @org.springframework.data.annotation.Transient
-    private transient WatchableGroovyScriptResource watchableScript;
+    private transient ExecutableCompiledScript watchableScript;
 
     @Override
     public boolean isServiceAccessAllowed(final RegisteredService registeredService, final Service service) {
@@ -74,11 +75,12 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
 
     protected void buildGroovyAccessStrategyInstanceIfNeeded() {
         if (watchableScript == null) {
-            val groovyResource = FunctionUtils.doUnchecked(() -> {
+            FunctionUtils.doAndHandle(__ -> {
                 val location = SpringExpressionLanguageValueResolver.getInstance().resolve(this.groovyScript);
-                return ResourceUtils.getResourceFrom(location);
+                val groovyResource = ResourceUtils.getResourceFrom(location);
+                val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+                watchableScript = scriptFactory.fromResource(groovyResource).setFailOnError(false);
             });
-            watchableScript = new WatchableGroovyScriptResource(groovyResource).setFailOnError(false);
         }
     }
 }

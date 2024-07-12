@@ -15,6 +15,7 @@ import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.aot.hint.TypeReference;
 import org.springframework.core.DecoratingProxy;
+import org.springframework.util.ClassUtils;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -53,8 +54,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      * System property set to true during spring AOT processing phase.
      */
     String SYSTEM_PROPERTY_SPRING_AOT_PROCESSING = "spring.aot.processing";
-
-
+    
     /**
      * Register spring proxies.
      *
@@ -343,6 +343,26 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
         registerReflectionHints(hints, entries, memberCategories);
         return this;
     }
+
+    /**
+     * Find subclasses of class.
+     *
+     * @param superClass the super class
+     * @return the collection
+     */
+    default Collection<Class> findSubclassesOf(final Class superClass) {
+        return findSubclassesInPackage(superClass, "org.apereo.cas");
+    }
+
+    /**
+     * Find subclasses in class package.
+     *
+     * @param superClass the super class
+     * @return the collection
+     */
+    default Collection<Class> findSubclassesInClassPackage(final Class superClass) {
+        return findSubclassesInPackage(superClass, superClass.getPackageName());
+    }
     
     /**
      * Find subclasses in packages and exclude tests.
@@ -371,6 +391,38 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
         return filteredResults;
     }
 
+    /**
+     * Is type present?.
+     *
+     * @param classLoader the class loader
+     * @param typeName    the type name
+     * @return true/false
+     */
+    default boolean isTypePresent(final ClassLoader classLoader, final Class typeName) {
+        return isTypePresent(classLoader, typeName.getTypeName());
+    }
+
+    /**
+     * Is type present?
+     *
+     * @param classLoader the class loader
+     * @param typeName    the type name
+     * @return true/false
+     */
+    default boolean isTypePresent(final ClassLoader classLoader, final String typeName) {
+        return ClassUtils.isPresent(typeName, classLoader);
+    }
+
+    /**
+     * Is groovy present?
+     *
+     * @param classLoader the class loader
+     * @return true/false
+     */
+    default boolean isGroovyPresent(final ClassLoader classLoader) {
+        return isTypePresent(classLoader, "groovy.lang.GroovyObject");
+    }
+    
     /**
      * Determine if code is executing or being aot-processed in a GraalVM native image.
      *

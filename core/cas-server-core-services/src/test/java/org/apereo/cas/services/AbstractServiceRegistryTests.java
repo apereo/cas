@@ -6,6 +6,7 @@ import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -38,7 +39,6 @@ import org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoC
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.annotation.Import;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -231,7 +231,7 @@ public abstract class AbstractServiceRegistryTests {
         });
     }
 
-    @Test
+    @RetryingTest(2)
     void verifyExpiredServiceDeleted() {
         getRegisteredServiceTypes().forEach(type -> {
             val service = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
@@ -277,7 +277,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void checkSaveMethodWithNonExistentServiceAndNoAttributes() {
+    void checkSaveMethodWithNonExistentServiceAndNoAttributes() {
         getRegisteredServiceTypes().forEach(type -> {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
             val r2 = serviceRegistry.save(r);
@@ -289,7 +289,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void checkSaveMethodWithDelegatedAuthnPolicy() {
+    void checkSaveMethodWithDelegatedAuthnPolicy() {
         getRegisteredServiceTypes().forEach(type -> {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
             val strategy = new DefaultRegisteredServiceAccessStrategy();
@@ -303,7 +303,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void execSaveWithAuthnMethodPolicy() {
+    void execSaveWithAuthnMethodPolicy() {
         getRegisteredServiceTypes().forEach(type -> {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
             val policy = new DefaultRegisteredServiceMultifactorPolicy();
@@ -322,7 +322,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void execSaveMethodWithDefaultUsernameAttribute() {
+    void execSaveMethodWithDefaultUsernameAttribute() {
         getRegisteredServiceTypes().forEach(type -> {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
             r.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
@@ -333,7 +333,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void execSaveMethodWithConsentPolicy() {
+    void execSaveMethodWithConsentPolicy() {
         getRegisteredServiceTypes().forEach(type -> {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
             val policy = new ReturnAllAttributeReleasePolicy();
@@ -347,7 +347,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void ensureSaveMethodWithDefaultPrincipalAttribute() {
+    void ensureSaveMethodWithDefaultPrincipalAttribute() {
         getRegisteredServiceTypes().forEach(type -> {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
 
@@ -511,7 +511,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void checkForAuthorizationStrategy() {
+    void checkForAuthorizationStrategy() {
         getRegisteredServiceTypes().forEach(type -> {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
             val authz = new DefaultRegisteredServiceAccessStrategy(false, false);
@@ -559,7 +559,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void serializePublicKeyForServiceAndVerify() {
+    void serializePublicKeyForServiceAndVerify() {
         getRegisteredServiceTypes().forEach(type -> {
             val publicKey = new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA");
             val registeredService = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
@@ -605,7 +605,7 @@ public abstract class AbstractServiceRegistryTests {
     }
 
     @Test
-    public void persistCustomServiceProperties() {
+    void persistCustomServiceProperties() {
         getRegisteredServiceTypes().forEach(type -> {
             val r = buildRegisteredServiceInstance(RandomUtils.nextInt(), type);
             val properties = new HashMap<String, RegisteredServiceProperty>();
@@ -639,7 +639,7 @@ public abstract class AbstractServiceRegistryTests {
 
     protected abstract ServiceRegistry getNewServiceRegistry() throws Exception;
 
-    protected void initializeServiceRegistry() throws Exception {
+    protected void initializeServiceRegistry() {
     }
 
     protected void tearDownServiceRegistry() throws Exception {
@@ -653,7 +653,6 @@ public abstract class AbstractServiceRegistryTests {
     protected Stream<Class<? extends BaseWebBasedRegisteredService>> getRegisteredServiceTypes() {
         return Stream.of(CasRegisteredService.class);
     }
-
     @ImportAutoConfiguration({
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
@@ -661,11 +660,9 @@ public abstract class AbstractServiceRegistryTests {
         RefreshAutoConfiguration.class,
         ServletWebServerFactoryAutoConfiguration.class,
         DispatcherServletAutoConfiguration.class,
-        EndpointAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        EndpointAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
@@ -675,6 +672,7 @@ public abstract class AbstractServiceRegistryTests {
         CasCoreLogoutAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }
 

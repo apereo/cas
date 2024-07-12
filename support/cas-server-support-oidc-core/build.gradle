@@ -5,6 +5,7 @@ dependencies {
     
     api project(":api:cas-server-core-api-throttle")
 
+
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-services-registry")
     implementation project(":core:cas-server-core-configuration-api")
@@ -12,6 +13,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-audit-api")
 
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":support:cas-server-support-json-service-registry")

@@ -16,6 +16,7 @@ import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
+import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.val;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Tag;
@@ -23,8 +24,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.context.annotation.Import;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -38,8 +42,20 @@ import static org.junit.jupiter.params.provider.Arguments.*;
  * @since 7.0.0
  */
 @Tag("CAS")
-@Import(CasStatelessTicketRegistryAutoConfiguration.class)
-public class StatelessTicketManagementTests extends AbstractCentralAuthenticationServiceTests {
+@ImportAutoConfiguration(CasStatelessTicketRegistryAutoConfiguration.class)
+class StatelessTicketManagementTests extends AbstractCentralAuthenticationServiceTests {
+    @Autowired
+    @Qualifier("statelessTicketRegistryCipherExecutor")
+    private CipherExecutor statelessTicketRegistryCipherExecutor;
+
+    @Test
+    void verifyStatelessCipher() throws Exception {
+        val value = UUID.randomUUID().toString();
+        val encoded = statelessTicketRegistryCipherExecutor.encode(value.getBytes(StandardCharsets.UTF_8));
+        val decoded = (byte[]) statelessTicketRegistryCipherExecutor.decode(encoded);
+        assertEquals(value, new String(decoded, StandardCharsets.UTF_8));
+    }
+
     @Test
     void verifyGrantServiceTicketAndValidate() throws Throwable {
         val service = RegisteredServiceTestUtils.getService("eduPersonTest");
@@ -84,7 +100,7 @@ public class StatelessTicketManagementTests extends AbstractCentralAuthenticatio
         }
     }
 
-    static Stream<Arguments> ticketProvider() throws Exception {
+    static Stream<Arguments> ticketProvider() {
         val service = RegisteredServiceTestUtils.getService("eduPersonTest");
         val authentication = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
         val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(), authentication, NeverExpiresExpirationPolicy.INSTANCE);

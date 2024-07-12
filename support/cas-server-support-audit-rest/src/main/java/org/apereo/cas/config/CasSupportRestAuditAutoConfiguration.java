@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.RestAuditTrailManager;
+import org.apereo.cas.audit.spi.AuditActionContextJsonSerializer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -13,6 +14,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
@@ -30,9 +32,11 @@ public class CasSupportRestAuditAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "restAuditTrailManager")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public AuditTrailManager restAuditTrailManager(final CasConfigurationProperties casProperties) {
+    public AuditTrailManager restAuditTrailManager(
+        final ConfigurableApplicationContext applicationContext,
+        final CasConfigurationProperties casProperties) {
         val rest = casProperties.getAudit().getRest();
-        return new RestAuditTrailManager(rest);
+        return new RestAuditTrailManager(new AuditActionContextJsonSerializer(applicationContext), rest);
     }
 
     @Bean

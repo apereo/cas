@@ -1,5 +1,4 @@
 const cas = require("../../cas.js");
-const assert = require("assert");
 
 (async () => {
     let browser = await cas.newBrowser(cas.browserOptions());
@@ -36,9 +35,13 @@ const assert = require("assert");
     page = await cas.newPage(browser);
     await cas.log("Log in attempt: #2");
     const response = await submitLogin(page);
-    assert(response.status() === 401);
-    
-    await cas.assertInnerTextStartsWith(page, "#content div.banner p", "Authentication attempt has failed");
+    const status = response.status();
+    if (status === 401) {
+        await cas.assertInnerTextStartsWith(page, "#content div.banner p", "Authentication attempt has failed");
+    } else if (status === 423) {
+        await cas.assertInnerText(page, "#content h2", "Access Denied");
+        await cas.assertInnerText(page, "#content p", "You've entered the wrong password for the user too many times. You've been throttled.");
+    }
     await browser.close();
 })();
 

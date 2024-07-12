@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.util.NamedObject;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.RequestContext;
 import java.util.Optional;
@@ -10,7 +11,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-public interface CasWebflowLoginContextProvider extends Ordered {
+public interface CasWebflowLoginContextProvider extends Ordered, NamedObject {
 
     /**
      * Gets candidate username.
@@ -56,14 +57,4 @@ public interface CasWebflowLoginContextProvider extends Ordered {
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
     }
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
-
 }

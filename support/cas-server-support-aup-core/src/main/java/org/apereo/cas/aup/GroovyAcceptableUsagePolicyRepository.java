@@ -3,14 +3,12 @@ package org.apereo.cas.aup;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.io.Serial;
 import java.util.Optional;
 
@@ -25,13 +23,13 @@ public class GroovyAcceptableUsagePolicyRepository extends BaseAcceptableUsagePo
     @Serial
     private static final long serialVersionUID = 2773808902502739L;
 
-    private final transient WatchableGroovyScriptResource watchableScript;
+    private final transient ExecutableCompiledScript watchableScript;
 
     private final transient ApplicationContext applicationContext;
 
     public GroovyAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
                                                  final AcceptableUsagePolicyProperties aupProperties,
-                                                 final WatchableGroovyScriptResource watchableScript,
+                                                 final ExecutableCompiledScript watchableScript,
                                                  final ApplicationContext applicationContext) {
         super(ticketRegistrySupport, aupProperties);
         this.watchableScript = watchableScript;

@@ -46,6 +46,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
+import org.springframework.webflow.context.servlet.FlowUrlHandler;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
@@ -141,11 +142,13 @@ class ElectronicFenceWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public FlowExecutor riskVerificationFlowExecutor(
+            @Qualifier("riskVerificationWebflowUrlHandler") final FlowUrlHandler riskVerificationWebflowUrlHandler,
             final CasConfigurationProperties casProperties,
             @Qualifier("riskVerificationFlowRegistry") final FlowDefinitionRegistry riskVerificationFlowRegistry,
             @Qualifier("webflowCipherExecutor") final CipherExecutor webflowCipherExecutor) {
             val factory = new WebflowExecutorFactory(casProperties.getWebflow(),
-                riskVerificationFlowRegistry, webflowCipherExecutor, FLOW_EXECUTION_LISTENERS);
+                riskVerificationFlowRegistry, webflowCipherExecutor, FLOW_EXECUTION_LISTENERS,
+                riskVerificationWebflowUrlHandler);
             return factory.build();
         }
 
@@ -162,12 +165,19 @@ class ElectronicFenceWebflowConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
+        public FlowUrlHandler riskVerificationWebflowUrlHandler() {
+            return new CasDefaultFlowUrlHandler();
+        }
+        
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @Bean
         public HandlerAdapter riskVerificationWebflowHandlerAdapter(
+            @Qualifier("riskVerificationWebflowUrlHandler") final FlowUrlHandler riskVerificationWebflowUrlHandler,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("riskVerificationFlowExecutor") final FlowExecutor riskVerificationFlowExecutor) {
             val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_RISK_VERIFICATION);
             handler.setFlowExecutor(riskVerificationFlowExecutor);
-            handler.setFlowUrlHandler(new CasDefaultFlowUrlHandler());
+            handler.setFlowUrlHandler(riskVerificationWebflowUrlHandler);
             return handler;
         }
 

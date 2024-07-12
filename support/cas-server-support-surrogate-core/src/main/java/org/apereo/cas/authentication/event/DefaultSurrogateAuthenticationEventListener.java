@@ -12,13 +12,12 @@ import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthen
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationSuccessfulEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link DefaultSurrogateAuthenticationEventListener}.
@@ -50,15 +49,21 @@ public class DefaultSurrogateAuthenticationEventListener implements SurrogateAut
             val text = SmsBodyBuilder.builder()
                 .properties(sms)
                 .parameters(Map.of("details", eventDetails))
-                .build().get();
+                .build().
+                get();
 
-            val smsRequest = SmsRequest.builder()
-                .principal(principal)
-                .attribute(sms.getAttributeName())
-                .from(sms.getFrom())
-                .text(text)
-                .build();
-            communicationsManager.sms(smsRequest);
+            val smsRequests = sms.getAttributeName()
+                .stream()
+                .map(attribute ->
+                    SmsRequest.builder()
+                        .principal(principal)
+                        .attribute(SpringExpressionLanguageValueResolver.getInstance().resolve(attribute))
+                        .from(sms.getFrom())
+                        .text(text)
+                        .build())
+                .collect(Collectors.<SmsRequest>toList());
+
+            communicationsManager.sms(smsRequests);
         } else {
             LOGGER.trace("CAS is unable to send surrogate-authentication SMS messages given no settings are defined to account for servers, etc");
         }

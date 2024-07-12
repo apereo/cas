@@ -1,0 +1,2 @@
+org.apereo.cas.configuration.loader.SimpleConfigurationPropertiesLoader
+org.apereo.cas.configuration.loader.YamlConfigurationPropertiesLoader

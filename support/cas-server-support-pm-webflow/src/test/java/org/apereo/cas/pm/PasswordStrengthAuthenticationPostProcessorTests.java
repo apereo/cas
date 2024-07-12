@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
     "cas.authn.pm.core.enabled=true",
     "cas.authn.pm.core.password-policy-pattern=^Th!.+{8,10}"
 })
-public class PasswordStrengthAuthenticationPostProcessorTests extends BasePasswordManagementActionTests {
+class PasswordStrengthAuthenticationPostProcessorTests extends BasePasswordManagementActionTests {
     @Autowired
     @Qualifier("passwordStrengthAuthenticationPostProcessor")
     private AuthenticationPostProcessor passwordStrengthAuthenticationPostProcessor;

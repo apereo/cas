@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import org.apereo.cas.util.NamedObject;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 /**
@@ -9,21 +10,12 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public interface TicketFactory {
+public interface TicketFactory extends NamedObject {
 
     /**
      * Default implementation bean name.
      */
     String BEAN_NAME = "defaultTicketFactory";
-
-    /**
-     * Gets name.
-     *
-     * @return the name
-     */
-    default String getName() {
-        return getClass().getSimpleName();
-    }
 
     /**
      * Get ticket factory.

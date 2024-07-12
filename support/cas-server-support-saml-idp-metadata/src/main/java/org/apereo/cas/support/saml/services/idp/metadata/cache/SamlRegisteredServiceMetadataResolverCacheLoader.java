@@ -36,14 +36,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLoader<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> {
 
-    /**
-     * The Config bean.
-     */
     protected final OpenSamlConfigBean configBean;
 
-    /**
-     * The Http client.
-     */
     protected final HttpClient httpClient;
     
     private final CasReentrantLock lock = new CasReentrantLock();

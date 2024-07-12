@@ -1,6 +1,7 @@
 package org.apereo.cas.services.util;
 
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.val;
@@ -19,7 +20,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public class RegisteredServiceJsonSerializer extends BaseRegisteredServiceSerializer {
+public class RegisteredServiceJsonSerializer extends AbstractJacksonBackedStringSerializer<RegisteredService> {
 
     @Serial
     private static final long serialVersionUID = 7645698151115635245L;

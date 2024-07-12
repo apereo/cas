@@ -1,8 +1,7 @@
 package org.apereo.cas.pac4j.client;
 
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.apereo.cas.util.scripting.WatchableGroovyScriptResource;
-
+import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -20,7 +19,7 @@ import org.springframework.core.Ordered;
 @RequiredArgsConstructor
 @Slf4j
 public class GroovyDelegatedClientAuthenticationRequestCustomizer implements DelegatedClientAuthenticationRequestCustomizer {
-    private final WatchableGroovyScriptResource watchableScript;
+    private final ExecutableCompiledScript watchableScript;
 
     private final ApplicationContext applicationContext;
 

@@ -14,6 +14,7 @@ import org.apereo.cas.support.wsfederation.authentication.principal.WsFederation
 import org.apereo.cas.support.wsfederation.services.WSFederationAuthenticationServiceRegistry;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
+import org.apereo.cas.support.wsfederation.web.WsFederationServerStateSerializer;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.beans.BeanContainer;
@@ -87,12 +88,13 @@ class WsFederationAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "wsFederationCookieManager")
         public WsFederationCookieManager wsFederationCookieManager(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("wsFederationConfigurations")
             final BeanContainer<WsFederationConfiguration> wsFederationConfigurations,
             final CasConfigurationProperties casProperties) {
-            return new WsFederationCookieManager(wsFederationConfigurations.toList(), casProperties);
+            return new WsFederationCookieManager(wsFederationConfigurations.toList(), casProperties,
+                new WsFederationServerStateSerializer(applicationContext));
         }
-
     }
 
     @Configuration(value = "WsFederationAuthenticationControllerConfiguration", proxyBeanMethods = false)

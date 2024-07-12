@@ -129,7 +129,7 @@ jobs:
           timeout_minutes: ${{ env.RETRY_MINUTES }}
           shell: bash
           command: |
-            ./testcas.sh --no-watch --category ${{ matrix.category }}
+            ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED
             [[ $? -eq 0 ]] && ./testcas.sh --no-watch --with-coverage
       - name: Check Coverage Report
         run: |
@@ -140,6 +140,7 @@ jobs:
             echo ${xml_files}
           fi
       - name: Upload to SonarCloud
+        if: ${{ env.SONARCLOUD_TOKEN != null }}
         run: |
           ./gradlew sonar --build-cache --configure-on-demand --no-daemon -DskipAot=true --parallel \
             -x javadoc -DskipNestedConfigMetadataGen=true -Dverbose=true \

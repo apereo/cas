@@ -1,5 +1,5 @@
 {
-  "dependencies": "saml-idp,pac4j-webflow",
+  "dependencies": "saml-idp,pac4j-webflow,pac4j-saml",
   "conditions": {
     "docker": "true"
   },
@@ -14,7 +14,7 @@
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services",
 
-    "--logging.level.org.apereo.cas=info",
+
 
     "--cas.authn.saml-idp.core.entity-id=https://cas.apereo.org/saml/idp",
     "--cas.authn.saml-idp.metadata.file-system.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md",

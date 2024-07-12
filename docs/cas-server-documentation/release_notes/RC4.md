@@ -69,6 +69,11 @@ identifier for the user they want to authenticate, will be able to initiate an i
 users without having end-user interaction from the consumption device. The flow involves direct communication from the 
 Client to CAS without redirect through the user's browser (consumption device).
 
+### CAS Initializr SBOM Support
+    
+CAS Initializr is now modified to generate a Software Bill of Materials (SBOM) using the CycloneDX format. This SBOM can be used to
+track and manage the open-source components used in your CAS deployment and may be examined via the `sbom` actuator endpoint.
+
 ## Other Stuff
           
 - CAS offers options to control SNI Host Checking for [Jetty](../installation/Configuring-Servlet-Container-Embedded-Jetty.html) when used as an embedded container.
@@ -80,7 +85,7 @@ Client to CAS without redirect through the user's browser (consumption device).
 - The password management flow is heavily reworked to better support multifactor authentication flows.
 - [Account management profile](../registration/Account-Management-Overview.html) will no longer list duplicate multifactor authentication devices when multiple providers are in effect. 
 - Registering multiple WebAuthN devices in account management profile is now corrected to use the correct configuration property for activation.
-- Calculation a [device fingerprint](../mfa/Multifactor-TrustedDevice-Authentication-DeviceFingerprint.html) for multifactor authentication trusted devices can use client-side technology to build a browser fingerprint.
+- Calculation of the [device fingerprint](../mfa/Multifactor-TrustedDevice-Authentication-DeviceFingerprint.html) for multifactor authentication trusted devices can use client-side technology to build a browser fingerprint.
 - Impersonation conditions can now be controlled via [principal attributes](../authentication/Surrogate-Authentication-AccountSelection.html) to allow for more fine-grained control.
 - CAS will forcefully not load services that might have been assigned a blank `id`, `name` or `serviceId` during service registration and loading.
 

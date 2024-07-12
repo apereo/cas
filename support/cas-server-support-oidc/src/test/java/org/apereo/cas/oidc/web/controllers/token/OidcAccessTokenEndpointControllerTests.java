@@ -5,11 +5,15 @@ import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.web.controllers.profile.OidcUserProfileEndpointController;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20ClientAuthenticationMethods;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
 import org.apereo.cas.support.oauth.services.DefaultRegisteredServiceOAuthTokenExchangePolicy;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -20,6 +24,7 @@ import com.nimbusds.oauth2.sdk.dpop.DefaultDPoPProofFactory;
 import com.nimbusds.oauth2.sdk.dpop.verifiers.InvalidDPoPProofException;
 import com.nimbusds.oauth2.sdk.token.DPoPAccessToken;
 import lombok.val;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.jose4j.keys.AesKey;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -27,7 +32,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -58,7 +63,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class OidcAccessTokenEndpointControllerTests {
 
     @Nested
-    @Import(CasWebAppAutoConfiguration.class)
+    @ImportAutoConfiguration(CasWebAppAutoConfiguration.class)
     @TestPropertySource(properties = "cas.authn.oidc.core.accepted-issuers-pattern=.*")
     class MvcTests extends AbstractOidcTests {
         private MockMvc mvc;
@@ -170,6 +175,60 @@ class OidcAccessTokenEndpointControllerTests {
                 .andExpect(jsonPath("$.id_token").exists())
                 .andExpect(jsonPath("$.access_token").doesNotExist())
                 .andReturn();
+        }
+
+        @Test
+        void verifyRefreshTokenUpdatesTicketGrantingTicket() throws Throwable {
+            val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+            registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.REFRESH_TOKEN.getType(), OAuth20GrantTypes.AUTHORIZATION_CODE.getType()));
+            registeredService.setGenerateRefreshToken(true);
+            servicesManager.save(registeredService);
+
+            val expirationPolicy = new TimeoutExpirationPolicy(2);
+            val ticketGrantingTicket = new TicketGrantingTicketImpl(UUID.randomUUID().toString(),
+                RegisteredServiceTestUtils.getAuthentication(), expirationPolicy);
+            val expirationTime = expirationPolicy.getIdleExpirationTime(ticketGrantingTicket);
+            val lastTimeUsed = ticketGrantingTicket.getLastTimeUsed();
+            
+            ticketRegistry.addTicket(ticketGrantingTicket);
+            val code = addCode(ticketGrantingTicket, registeredService);
+            val result = mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
+                    .secure(true)
+                    .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                    .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+                    .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
+                    .queryParam(OAuth20Constants.CODE, code.getId())
+                    .queryParam(OAuth20Constants.REDIRECT_URI, "https://oauth.example.org")
+                    .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.AUTHORIZATION_CODE.getType()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id_token").exists())
+                .andExpect(jsonPath("$.access_token").exists())
+                .andExpect(jsonPath("$.refresh_token").exists())
+                .andReturn();
+
+            val refreshToken = result.getModelAndView().getModel().get(OAuth20Constants.REFRESH_TOKEN).toString();
+            val auth = EncodingUtils.encodeBase64(registeredService.getClientId() + ':' + registeredService.getClientSecret());
+
+            for (var i = 0; i < 5; i++) {
+                mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.TOKEN_URL)
+                        .secure(true)
+                        .header(HttpHeaders.AUTHORIZATION, "Basic " + auth)
+                        .param(OAuth20Constants.CLIENT_ID, registeredService.getClientId())
+                        .param(OAuth20Constants.CLIENT_SECRET, registeredService.getClientSecret())
+                        .queryParam(OAuth20Constants.SCOPE, OidcConstants.StandardScopes.OPENID.getScope())
+                        .queryParam(OAuth20Constants.REFRESH_TOKEN, refreshToken)
+                        .queryParam(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.getType()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.id_token").exists())
+                    .andExpect(jsonPath("$.access_token").exists());
+                Thread.sleep(1000);
+            }
+            val tgt = ticketRegistry.getTicket(ticketGrantingTicket.getId(), TicketGrantingTicket.class);
+            assertNotNull(tgt);
+            val updatedExpirationTime = expirationPolicy.getIdleExpirationTime(tgt);
+            val updatedLastTimeUsed = tgt.getLastTimeUsed();
+            assertTrue(updatedExpirationTime.isAfter(expirationTime));
+            assertTrue(updatedLastTimeUsed.isAfter(lastTimeUsed));
         }
     }
 

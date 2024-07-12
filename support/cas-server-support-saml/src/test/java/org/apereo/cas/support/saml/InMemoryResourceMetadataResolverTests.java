@@ -1,10 +1,12 @@
 package org.apereo.cas.support.saml;
 
+import org.apereo.cas.test.CasTestExtension;
 import com.google.common.collect.Iterables;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.saml.criterion.EntityRoleCriterion;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
@@ -21,9 +23,9 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@SpringBootTest(classes = AbstractOpenSamlTests.SharedTestConfiguration.class,
-    properties = "spring.main.allow-bean-definition-overriding=true")
+@SpringBootTest(classes = AbstractOpenSamlTests.SharedTestConfiguration.class)
 @Tag("SAMLMetadata")
+@ExtendWith(CasTestExtension.class)
 class InMemoryResourceMetadataResolverTests extends AbstractOpenSamlTests {
 
     @Test

@@ -1,5 +1,5 @@
 {
-  "dependencies": "saml-idp",
+  "dependencies": "saml-idp,scripting",
   "conditions": {
     "docker": "true"
   },

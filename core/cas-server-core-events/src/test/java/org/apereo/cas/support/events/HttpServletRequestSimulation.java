@@ -57,7 +57,7 @@ public class HttpServletRequestSimulation implements Callable<Integer> {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer call() {
         postTGTCreatedEvent();
         return threadNum;
     }

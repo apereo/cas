@@ -135,11 +135,11 @@ public class CasSamlIdentityProviderDiscoveryAutoConfiguration {
             .stream()
             .filter(SAML2Client.class::isInstance)
             .map(SAML2Client.class::cast)
-            .forEach(c -> {
-                c.init(c.getIdentityProviderMetadataResolver() == null);
+            .forEach(client -> {
+                client.init(client.getIdentityProviderMetadataResolver() == null);
                 val entity = new SamlIdentityProviderEntity();
-                c.getIdentityProviderMetadataResolver().resolve();
-                entity.setEntityID(c.getIdentityProviderResolvedEntityId());
+                client.getIdentityProviderMetadataResolver().resolve();
+                entity.setEntityID(client.getIdentityProviderResolvedEntityId());
                 parsers.add(new SamlIdentityProviderEntityParser(entity));
             });
         return BeanContainer.of(parsers);

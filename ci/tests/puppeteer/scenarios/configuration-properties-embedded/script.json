@@ -1,7 +1,11 @@
 {
-  "dependencies": "core,reports",
-
+  "dependencies": "scripting,reports",
   "server": "jetty",
+  "requirements": {
+    "cds": {
+      "enabled": false
+    }
+  },
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
@@ -13,11 +17,9 @@
     "--spring.security.user.name=casuser",
     "--spring.profiles.active=embedded",
 
-    "--logging.level.org.apereo.cas=info",
+
 
     "--cas.monitor.endpoints.endpoint.defaults.access=AUTHENTICATED",
-    
-    "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.enabled-by-default=true",
     
     "--cas.standalone.configuration-directory=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config"

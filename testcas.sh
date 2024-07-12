@@ -99,6 +99,10 @@ while (( "$#" )); do
         flags+=" -DtestLoggingEvents=$2 "
         shift 2
         ;;
+    --offline)
+        flags+=" --offline "
+        shift
+        ;;
     --no-watch)
         flags+=" --no-watch-fs "
         shift
@@ -289,6 +293,7 @@ while (( "$#" )); do
                 task+="testOAuth "
                 ;;
             oidc)
+                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh
                 task+="testOIDC "
                 ;;
             mfa)
@@ -312,7 +317,7 @@ while (( "$#" )); do
             saml1)
                 task+="testSAML1 "
                 ;;
-            saml2web)
+            saml2web|samlweb)
                 task+="testSAML2Web "
                 ;;
             saml2)

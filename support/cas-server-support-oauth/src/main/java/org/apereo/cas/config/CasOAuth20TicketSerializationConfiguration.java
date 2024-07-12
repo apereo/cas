@@ -18,6 +18,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -37,19 +38,19 @@ class CasOAuth20TicketSerializationConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public TicketSerializationExecutionPlanConfigurer oauthTicketSerializationExecutionPlanConfigurer() {
+    public TicketSerializationExecutionPlanConfigurer oauthTicketSerializationExecutionPlanConfigurer(final ConfigurableApplicationContext applicationContext) {
         return plan -> {
-            plan.registerTicketSerializer(new OAuthCodeTicketStringSerializer());
-            plan.registerTicketSerializer(new AccessTokenTicketStringSerializer());
-            plan.registerTicketSerializer(new RefreshTokenTicketStringSerializer());
-            plan.registerTicketSerializer(new DeviceTokenTicketStringSerializer());
-            plan.registerTicketSerializer(new DeviceUserCodeTicketStringSerializer());
+            plan.registerTicketSerializer(new OAuthCodeTicketStringSerializer(applicationContext));
+            plan.registerTicketSerializer(new AccessTokenTicketStringSerializer(applicationContext));
+            plan.registerTicketSerializer(new RefreshTokenTicketStringSerializer(applicationContext));
+            plan.registerTicketSerializer(new DeviceTokenTicketStringSerializer(applicationContext));
+            plan.registerTicketSerializer(new DeviceUserCodeTicketStringSerializer(applicationContext));
 
-            plan.registerTicketSerializer(OAuth20Code.class.getName(), new OAuthCodeTicketStringSerializer());
-            plan.registerTicketSerializer(OAuth20AccessToken.class.getName(), new AccessTokenTicketStringSerializer());
-            plan.registerTicketSerializer(OAuth20RefreshToken.class.getName(), new RefreshTokenTicketStringSerializer());
-            plan.registerTicketSerializer(OAuth20DeviceToken.class.getName(), new DeviceTokenTicketStringSerializer());
-            plan.registerTicketSerializer(OAuth20DeviceUserCode.class.getName(), new DeviceUserCodeTicketStringSerializer());
+            plan.registerTicketSerializer(OAuth20Code.class.getName(), new OAuthCodeTicketStringSerializer(applicationContext));
+            plan.registerTicketSerializer(OAuth20AccessToken.class.getName(), new AccessTokenTicketStringSerializer(applicationContext));
+            plan.registerTicketSerializer(OAuth20RefreshToken.class.getName(), new RefreshTokenTicketStringSerializer(applicationContext));
+            plan.registerTicketSerializer(OAuth20DeviceToken.class.getName(), new DeviceTokenTicketStringSerializer(applicationContext));
+            plan.registerTicketSerializer(OAuth20DeviceUserCode.class.getName(), new DeviceUserCodeTicketStringSerializer(applicationContext));
         };
     }
 
@@ -57,8 +58,8 @@ class CasOAuth20TicketSerializationConfiguration {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
-        OAuthCodeTicketStringSerializer() {
-            super(MINIMAL_PRETTY_PRINTER);
+        OAuthCodeTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
+            super(MINIMAL_PRETTY_PRINTER, applicationContext);
         }
         
         @Override
@@ -71,8 +72,8 @@ class CasOAuth20TicketSerializationConfiguration {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
-        AccessTokenTicketStringSerializer() {
-            super(MINIMAL_PRETTY_PRINTER);
+        AccessTokenTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
+            super(MINIMAL_PRETTY_PRINTER, applicationContext);
         }
 
         @Override
@@ -85,8 +86,8 @@ class CasOAuth20TicketSerializationConfiguration {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
-        RefreshTokenTicketStringSerializer() {
-            super(MINIMAL_PRETTY_PRINTER);
+        RefreshTokenTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
+            super(MINIMAL_PRETTY_PRINTER, applicationContext);
         }
 
         @Override
@@ -99,8 +100,8 @@ class CasOAuth20TicketSerializationConfiguration {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
-        DeviceTokenTicketStringSerializer() {
-            super(MINIMAL_PRETTY_PRINTER);
+        DeviceTokenTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
+            super(MINIMAL_PRETTY_PRINTER, applicationContext);
         }
 
 
@@ -114,8 +115,8 @@ class CasOAuth20TicketSerializationConfiguration {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
-        DeviceUserCodeTicketStringSerializer() {
-            super(MINIMAL_PRETTY_PRINTER);
+        DeviceUserCodeTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
+            super(MINIMAL_PRETTY_PRINTER, applicationContext);
         }
 
         @Override

@@ -5,7 +5,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.binding.expression.Expression;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.webflow.action.EvaluateAction;
@@ -20,10 +20,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Import(CasStatelessTicketRegistryAutoConfiguration.class)
+@ImportAutoConfiguration(CasStatelessTicketRegistryAutoConfiguration.class)
 @Tag("WebflowConfig")
 @TestPropertySource(properties = "CasFeatureModule.AccountManagement.enabled=true")
-public class StatelessTicketRegistryWebflowConfigurerTests extends BaseWebflowConfigurerTests {
+class StatelessTicketRegistryWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test
     void verifyOperation() throws Throwable {
         val flow = (Flow) loginFlowDefinitionRegistry.getFlowDefinition(CasWebflowConfigurer.FLOW_ID_LOGIN);

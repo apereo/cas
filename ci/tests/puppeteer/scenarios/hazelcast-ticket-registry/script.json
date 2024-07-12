@@ -13,6 +13,7 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
+    "--cas.tgc.crypto.alg=A128CBC-HS256",
     "--cas.tgc.crypto.encryption.key=zl5c6ZS5ySPNMt9Wp22uFxHCbWy1gIuXYDDFHlMvjiE",
     "--cas.tgc.crypto.signing.key=qM-cyy8u3I4pWhJE-6Q8F8x6Obu3jlK7hYpYOVGlSDpAjZQ3JpHAa2p_olwiXffX_efHmcj6AE-Xnrm284hZLg",
     

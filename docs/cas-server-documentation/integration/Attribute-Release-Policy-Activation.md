@@ -50,7 +50,7 @@ principal must not carry any of the required attributes for the policy to activa
 
 {% endtab %}
 
-{% tab attrreleaseconditions Groovy %}
+{% tab attrreleaseconditions <i class="fa fa-code px-1"></i>Groovy %}
 
 The release policy can be conditionally activated via a Groovy script, that may be defined either inline
 or outsourced to an external Groovy script.
@@ -96,6 +96,7 @@ The following parameters are passed to the script:
 | `context` | The object that carries the attribute release execution context.            |
 | `logger`  | The object responsible for issuing log messages such as `logger.info(...)`. |
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 You may also do the same sort of thing with an inline Groovy script:
 
@@ -116,9 +117,11 @@ You may also do the same sort of thing with an inline Groovy script:
 }
 ```
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
 
-{% tab attrreleaseconditions Chaining %}
+{% tab attrreleaseconditions <i class="fa fa-link px-1"></i>Chaining %}
 
 You can also combine multiple activation criteria using a chaining setup:
 

@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreRestAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -95,20 +96,15 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
     public String getTestUser() {
         return "casuser";
     }
-
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
-        AopAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        AopAutoConfiguration.class,
         CasSurrogateAuthenticationAutoConfiguration.class,
         CasCoreRestAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreWebflowAutoConfiguration.class,
@@ -120,8 +116,11 @@ public abstract class BaseSurrogateAuthenticationServiceTests {
         CasCoreCookieAutoConfiguration.class,
         CasThemesAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
-        CasCoreTicketsAutoConfiguration.class
+        CasCoreTicketsAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import(CasPersonDirectoryTestConfiguration.class)
     public static class SharedTestConfiguration {
     }
 }

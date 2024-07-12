@@ -5,6 +5,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.web.CaptchaActivationStrategy;
@@ -14,6 +15,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = "cas.google-recaptcha.verify-url=http://localhost:9294"
 )
 @Tag("WebflowActions")
+@ExtendWith(CasTestExtension.class)
 class ValidateCaptchaActionTests {
 
     @Autowired

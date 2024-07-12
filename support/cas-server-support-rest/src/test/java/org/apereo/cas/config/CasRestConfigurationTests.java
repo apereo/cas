@@ -1,8 +1,10 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
+import org.apereo.cas.test.CasTestExtension;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -32,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreTicketsAutoConfiguration.class,
     CasRegisteredServicesTestConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
+    CasCoreScriptingAutoConfiguration.class,
     CasThrottlingAutoConfiguration.class,
     CasCoreAuditAutoConfiguration.class,
     CasCoreCookieAutoConfiguration.class,
@@ -39,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasRestAutoConfiguration.class
 })
 @Tag("CasConfiguration")
+@ExtendWith(CasTestExtension.class)
 class CasRestConfigurationTests {
 
     @Autowired

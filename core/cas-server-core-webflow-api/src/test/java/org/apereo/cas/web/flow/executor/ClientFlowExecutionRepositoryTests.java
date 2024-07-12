@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.executor;
 
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.cryptacular.bean.AEADBlockCipherBean;
 import org.cryptacular.bean.KeyStoreFactoryBean;
@@ -8,6 +9,7 @@ import org.cryptacular.io.ClassPathResource;
 import org.cryptacular.spec.AEADBlockCipherSpec;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,7 +34,6 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser;
 import org.springframework.webflow.test.CasMockViewFactoryCreator;
 import org.springframework.webflow.test.MockExternalContext;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -47,6 +48,7 @@ import static org.mockito.Mockito.*;
     RefreshAutoConfiguration.class
 })
 @Tag("Webflow")
+@ExtendWith(CasTestExtension.class)
 class ClientFlowExecutionRepositoryTests {
 
     @Autowired

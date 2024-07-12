@@ -66,7 +66,7 @@ The deployer also has the option to generate this cookie attribute dynamically v
 
 {% tabs samesitecookie %}
 
-{% tab samesitecookie Groovy %}
+{% tab samesitecookie <i class="fa fa-file-code px-1"></i>Groovy %}
         
 The cookie setting in CAS configuration may point to a Groovy script that is tasked to generate the `SameAttribute` cookie attribute.
 The outline of the script may be as follows:
@@ -93,7 +93,7 @@ The parameters that may be passed are as follows:
 
 {% endtab %}
 
-{% tab samesitecookie Java %}
+{% tab samesitecookie <i class="fa-brands fa-java px-1"></i>Java %}
 
 The cookie setting in CAS configuration may point to a Java class using its FQDN 
 that is tasked to generate the `SameAttribute` cookie attribute.

@@ -8,7 +8,11 @@ category: Multifactor Authentication
 
 # Groovy Per Application - Multifactor Authentication Triggers
 
-You may determine the multifactor authentication policy for a registered service using a Groovy script. The parameters passed are as follows:
+You may determine the multifactor authentication policy for a registered service using a Groovy script. 
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
+The parameters passed are as follows:
 
 | Parameter            | Description                                                                     |
 |----------------------|---------------------------------------------------------------------------------|
@@ -24,7 +28,7 @@ or the identifier of the multifactor provider that should be considered for acti
          
 {% tabs groovymfaperapp %}
 
-{% tab groovymfaperapp File %}
+{% tab groovymfaperapp <i class="fa fa-file-code px-1"></i>File %}
 
 The script may be defined in the service definition using its full path:
 
@@ -54,9 +58,11 @@ def run(final Object... args) {
 
 The `script` attribute supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.
 
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
+
 {% endtab %}
 
-{% tab groovymfaperapp Inline %}
+{% tab groovymfaperapp <i class="fa fa-pencil px-1"></i>Inline %}
 
 The script may be embedded directly in the service definition, as such:
 
@@ -72,6 +78,8 @@ The script may be embedded directly in the service definition, as such:
   }
 }
 ```
+
+To prepare CAS to support and integrate with Apache Groovy, please [review this guide](../integration/Apache-Groovy-Scripting.html).
 
 {% endtab %}
 

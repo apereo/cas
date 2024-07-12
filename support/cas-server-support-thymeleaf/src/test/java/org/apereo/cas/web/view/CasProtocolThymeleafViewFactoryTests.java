@@ -1,8 +1,10 @@
 package org.apereo.cas.web.view;
 
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
     ThymeleafAutoConfiguration.class
 })
 @Tag("Web")
+@ExtendWith(CasTestExtension.class)
 class CasProtocolThymeleafViewFactoryTests {
 
     @Autowired

@@ -18,11 +18,14 @@ import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.validation.TicketValidationResult;
 import org.apereo.cas.validation.TicketValidator;
 import lombok.val;
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,6 +59,7 @@ import static org.mockito.Mockito.*;
     CasCoreLogoutAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class
 })
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseJwtTokenTicketBuilderTests {
     @Autowired
     @Qualifier(TokenTicketBuilder.BEAN_NAME)
@@ -102,17 +106,17 @@ public abstract class BaseJwtTokenTicketBuilderTests {
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(id);
 
             if (hasSigningKey) {
-                val signingKey = new DefaultRegisteredServiceProperty();
-                signingKey.addValue("pR3Vizkn5FSY5xCg84cIS4m-b6jomamZD68C8ash-TlNmgGPcoLgbgquxHPoi24tRmGpqHgM4mEykctcQzZ-Xg");
                 registeredService.getProperties().put(
-                    RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY.getPropertyName(), signingKey);
+                    RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_SIGNING_KEY.getPropertyName(),
+                    new DefaultRegisteredServiceProperty().addValue("pR3Vizkn5FSY5xCg84cIS4m-b6jomamZD68C8ash-TlNmgGPcoLgbgquxHPoi24tRmGpqHgM4mEykctcQzZ-Xg"));
             }
             if (hasEncryptionKey) {
-                val encKey = new DefaultRegisteredServiceProperty();
-                encKey.addValue("0KVXaN-nlXafRUwgsr3H_l6hkufY7lzoTy7OVI5pN0E");
                 registeredService.getProperties().put(
-                    RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY.getPropertyName(), encKey);
-
+                    RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_KEY.getPropertyName(),
+                    new DefaultRegisteredServiceProperty().addValue("0KVXaN-nlXafRUwgsr3H_l6hkufY7lzoTy7OVI5pN0E"));
+                registeredService.getProperties().put(
+                    RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET_ENCRYPTION_ALG.getPropertyName(),
+                    new DefaultRegisteredServiceProperty().addValue(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256));
                 servicesManager.save(registeredService);
             }
             return registeredService;

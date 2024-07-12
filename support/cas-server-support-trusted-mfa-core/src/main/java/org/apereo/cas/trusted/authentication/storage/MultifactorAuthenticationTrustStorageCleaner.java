@@ -25,7 +25,10 @@ public class MultifactorAuthenticationTrustStorageCleaner implements Cleanable {
     private final MultifactorAuthenticationTrustStorage storage;
 
     @Override
-    @Scheduled(initialDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.start-delay:PT10S}",
+    @Scheduled(
+        cron = "${cas.authn.mfa.trusted.cleaner.schedule.cron-expression:}",
+        zone = "${cas.authn.mfa.trusted.cleaner.schedule.cron-time-zone:}",
+        initialDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.start-delay:PT10S}",
         fixedDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.repeat-interval:PT60S}")
     public void clean() {
         FunctionUtils.doAndHandle(__ -> {

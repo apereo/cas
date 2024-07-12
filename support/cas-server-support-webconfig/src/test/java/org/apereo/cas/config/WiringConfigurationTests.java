@@ -1,10 +1,12 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
@@ -62,7 +64,6 @@ import static org.junit.jupiter.api.Assertions.*;
     WebEndpointAutoConfiguration.class,
     RefreshAutoConfiguration.class
 }, properties = {
-    "spring.main.allow-bean-definition-overriding=true",
     "cas.authn.accept.users=casuser::Mellon",
     "cas.http-web-request.cors.enabled=true",
     "cas.http-web-request.pattern-to-block=.*",
@@ -73,6 +74,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableWebMvc
 @Tag("WebApp")
+@ExtendWith(CasTestExtension.class)
 class WiringConfigurationTests {
     @Autowired
     private ApplicationContext applicationContext;

@@ -11,11 +11,13 @@ import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasValidationAutoConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.v2.ProxyValidateController;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasValidationAutoConfiguration.class
 })
 @Tag("CAS")
+@ExtendWith(CasTestExtension.class)
 @Getter
 class ProxyValidateControllerTests {
     protected static final String SUCCESS = "Success";

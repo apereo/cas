@@ -5,7 +5,7 @@
     --mdc-text-button-label-text-color: #f7f7f7;
     --mdc-shape-small: 4px;
     --mdc-theme-body: rgb(27, 39, 51);
-    --mdc-theme-error: #d93d33;
+    --mdc-theme-error: #a20323;
     --cas-theme-primary: #114377;
     --cas-theme-primary-bg: rgba(21, 62, 80, 0.2);
     --cas-theme-button-bg: #26418f;
@@ -465,6 +465,10 @@ form button i.mdi {
     color: var(--cas-theme-primary, #153e50);
 }
 
+.button-cancel {
+    background-color: var(--mdc-theme-error, #a20323) !important;
+}
+
 .mdc-button--outline:not(:disabled, .reveal-password) {
     background-color: var(--cas-theme-secondary, #018077);
     border-radius: 8px 8px 8px 8px;
@@ -477,6 +481,7 @@ form button i.mdi {
     filter: drop-shadow(2px 2px 4px #023b53);
     background-color: var(--cas-theme-primary, #153E50);
 }
+
 
 .list-unstyled {
     padding-left: 0;

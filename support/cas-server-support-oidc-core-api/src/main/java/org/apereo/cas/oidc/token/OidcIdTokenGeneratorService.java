@@ -341,16 +341,15 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
                 .map(Map.Entry::getKey)
                 .orElseGet(ticket::getId);
         }
-        return jwtId;
+        return DigestUtils.sha512(jwtId);
     }
 
     protected void generateAccessTokenHash(final OAuth20AccessToken accessToken,
                                            final OidcRegisteredService registeredService,
                                            final JwtClaims claims) throws Throwable {
         val oidcIssuer = getConfigurationContext().getIssuerService().determineIssuer(Optional.of(registeredService));
-        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(getConfigurationContext().getAccessTokenJwtBuilder(),
-            registeredService, accessToken, accessToken.getService(), oidcIssuer,
-            getConfigurationContext().getCasProperties());
+        val cipher = OAuth20JwtAccessTokenEncoder.toEncodableCipher(getConfigurationContext(),
+            registeredService, accessToken, oidcIssuer);
         val encodedAccessToken = cipher.encode(accessToken.getId());
         val jsonWebKey = getConfigurationContext().getIdTokenSigningAndEncryptionService()
             .getJsonWebKeySigningKey(Optional.of(registeredService));

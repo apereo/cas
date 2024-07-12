@@ -1,5 +1,6 @@
 package org.apereo.cas.hz;
 
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.util.spring.boot.BannerContributor;
 import com.hazelcast.instance.BuildInfoProvider;
 import lombok.val;
@@ -15,7 +16,9 @@ import java.util.Formatter;
 public class HazelcastBannerContributor implements BannerContributor {
     @Override
     public void contribute(final Formatter formatter, final Environment environment) {
-        val info = BuildInfoProvider.getBuildInfo();
-        formatter.format("Hazelcast Version: %s.%s.%s%n", info.getVersion(), info.getRevision(), info.getBuild());
+        if (CasRuntimeHintsRegistrar.notInNativeImage()) {
+            val info = BuildInfoProvider.getBuildInfo();
+            formatter.format("Hazelcast Version: %s.%s.%s%n", info.getVersion(), info.getRevision(), info.getBuild());
+        }
     }
 }

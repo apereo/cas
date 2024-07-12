@@ -76,6 +76,10 @@ public interface CasFeatureModule {
          */
         Palantir,
         /**
+         * Scripting and Groovy support.
+         */
+        Scripting,
+        /**
          * Just-in-time provisioning users to external systems
          * and identity management solutions.
          */

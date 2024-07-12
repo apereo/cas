@@ -12,6 +12,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -31,13 +32,14 @@ class SamlIdPTicketSerializationConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public TicketSerializationExecutionPlanConfigurer samlIdPTicketSerializationExecutionPlanConfigurer() {
+    public TicketSerializationExecutionPlanConfigurer samlIdPTicketSerializationExecutionPlanConfigurer(
+        final ConfigurableApplicationContext applicationContext) {
         return plan -> {
-            plan.registerTicketSerializer(new SamlArtifactTicketStringSerializer());
-            plan.registerTicketSerializer(new SamlAttributeQueryTicketStringSerializer());
+            plan.registerTicketSerializer(new SamlArtifactTicketStringSerializer(applicationContext));
+            plan.registerTicketSerializer(new SamlAttributeQueryTicketStringSerializer(applicationContext));
 
-            plan.registerTicketSerializer(SamlArtifactTicket.class.getName(), new SamlArtifactTicketStringSerializer());
-            plan.registerTicketSerializer(SamlAttributeQueryTicket.class.getName(), new SamlAttributeQueryTicketStringSerializer());
+            plan.registerTicketSerializer(SamlArtifactTicket.class.getName(), new SamlArtifactTicketStringSerializer(applicationContext));
+            plan.registerTicketSerializer(SamlAttributeQueryTicket.class.getName(), new SamlAttributeQueryTicketStringSerializer(applicationContext));
         };
     }
 
@@ -45,8 +47,8 @@ class SamlIdPTicketSerializationConfiguration {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
-        SamlArtifactTicketStringSerializer() {
-            super(MINIMAL_PRETTY_PRINTER);
+        SamlArtifactTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
+            super(MINIMAL_PRETTY_PRINTER, applicationContext);
         }
 
         @Override
@@ -59,8 +61,8 @@ class SamlIdPTicketSerializationConfiguration {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
-        SamlAttributeQueryTicketStringSerializer() {
-            super(MINIMAL_PRETTY_PRINTER);
+        SamlAttributeQueryTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
+            super(MINIMAL_PRETTY_PRINTER, applicationContext);
         }
 
         @Override

@@ -6,6 +6,7 @@ import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
@@ -34,10 +35,7 @@ public abstract class BasePrincipalAttributeRepositoryTests {
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class
-    })
-    @SpringBootConfiguration
-    @Import({
+        WebMvcAutoConfiguration.class,
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
@@ -47,8 +45,10 @@ public abstract class BasePrincipalAttributeRepositoryTests {
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
-        SharedTestConfiguration.AttributeDefinitionsTestConfiguration.class
+        CasCoreScriptingAutoConfiguration.class
     })
+    @SpringBootConfiguration(proxyBeanMethods = false)
+    @Import(SharedTestConfiguration.AttributeDefinitionsTestConfiguration.class)
     public static class SharedTestConfiguration {
 
         @TestConfiguration(value = "AttributeDefinitionsTestConfiguration", proxyBeanMethods = false)
