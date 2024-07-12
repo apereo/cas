@@ -31,6 +31,10 @@ and many many more.
 If you have already identified an enhancement or a bug, it is STRONGLY recommended that you submit a pull request to address the case.
 There is no need for special ceremony to create separate issues. The pull request IS the issue and it will be tracked and tagged as such.
 
+<a href="https://github.com/apereo/cas/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=apereo/cas" alt="Contributors"/>
+</a>
+
 ## Documentation [![Javadoc](https://img.shields.io/badge/Documentation-Javadoc-ff69b4.svg?style=for-the-badge&logo=readme)][casjavadocs]
 
 | Version                                                                                    | Reference                                        |
