@@ -90,7 +90,7 @@ if ("${releaseRepositoryUrl}".contains("oss.sonatype.org")) {
         packageGroup = "org.apereo"
         repositories {
             sonatype {
-                stagingProfileId = "11d1ddbbdeae9d"
+                stagingProfileId = "${rootProject.sonatypeStagingProfileId}"
                 username = "${repositoryUsername}"
                 password = "${repositoryPassword}"
             }
@@ -185,7 +185,7 @@ allprojects {
             jdkName = project.targetCompatibility
             excludeDirs += file(".gradle")
             [".settings", "classes", "bin", "out", "docs", "dependency-cache", "libs",
-             "reports", "resources", "test-results", "tmp"].each {
+             "reports", "resources", "test-results", "tmp", "gh-pages"].each {
                 excludeDirs += project.layout.buildDirectory.files(it)
             }
         }
