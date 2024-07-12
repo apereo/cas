@@ -13,4 +13,4 @@ Support is enabled by including the the following module:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-mailjet" %}
 
-{% include_cached casproperties.html properties="cas.email-provider.mailjet" %}
+{% include_cached casproperties.html properties="cas.email-provider.mailjet" displayEmailServers="false" %}

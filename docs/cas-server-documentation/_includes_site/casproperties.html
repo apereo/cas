@@ -5,6 +5,7 @@
 {%- assign diff = max | minus: min -%}
 {%- assign rbrace = "}" -%}
 {%- assign lbrace = "{" -%}
+
 {%- assign excludes = include.excludes | split: "," -%}
 {%- assign includes = include.includes | split: "," -%}
 {%- assign properties = include.properties | split: "," -%}
@@ -88,6 +89,8 @@ class='nav nav-tabs nav-tabs-properties' id="navPillsMenus{{ casPropertiesRandom
     href='#rdbmsProperties{{ casPropertiesRandomNumber }}'><i class="fa fa-database px-1"></i>Hibernate & JDBC</a>
 </li>
 
+{%- assign displayEmailServers = include.displayEmailServers | default: "true" -%}
+{%- if displayEmailServers == "true" -%}
 <li class='nav-item property-tab' id='navEmailProperties{{ casPropertiesRandomNumber }}'>
     <a class='nav-link'
        id="linkEmail{{ casPropertiesRandomNumber }}"
@@ -95,6 +98,7 @@ class='nav nav-tabs nav-tabs-properties' id="navPillsMenus{{ casPropertiesRandom
        {% if forcePropertyTabsOnClick == "true" %}onclick="javascript:enablePropertiesTab{{ casPropertiesRandomNumber }}(this);" {% endif %}
     href='#emailProperties{{ casPropertiesRandomNumber }}'><i class="fa fa-envelope px-1"></i>Email Servers</a>
 </li>
+{%- endif -%}
 
 <li class='nav-item property-tab' id='navGroovyProperties{{ casPropertiesRandomNumber }}'>
     <a class='nav-link'
