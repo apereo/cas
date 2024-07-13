@@ -104,6 +104,7 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
         val assertion = newAssertion(statements, issuerId, ZonedDateTime.now(ZoneOffset.UTC), id);
         assertion.setSubject(samlProfileSamlSubjectBuilder.build(context));
         assertion.setConditions(samlProfileSamlConditionsBuilder.build(context));
+
         val customizers = openSamlConfigBean.getApplicationContext()
             .getBeansOfType(SamlIdPResponseCustomizer.class).values();
         customizers.stream()

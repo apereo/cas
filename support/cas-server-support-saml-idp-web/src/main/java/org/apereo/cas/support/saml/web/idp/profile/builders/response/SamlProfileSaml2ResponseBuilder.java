@@ -88,8 +88,6 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
             storeAttributeQueryTicketInRegistry(assertion, context);
         }
 
-        val customizers = configurationContext.getApplicationContext()
-            .getBeansOfType(SamlIdPResponseCustomizer.class).values();
         val finalAssertion = encryptAssertion(assertion, context);
         if (finalAssertion.isPresent()) {
             val result = finalAssertion.get();
@@ -101,7 +99,11 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
                 samlResponse.getAssertions().add(nonEncryptedAssertion);
             }
         }
+
         samlResponse.setStatus(determineResponseStatus(context));
+
+        val customizers = configurationContext.getApplicationContext()
+            .getBeansOfType(SamlIdPResponseCustomizer.class).values();
         customizers.stream()
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .forEach(customizer -> customizer.customizeResponse(context, this, samlResponse));
