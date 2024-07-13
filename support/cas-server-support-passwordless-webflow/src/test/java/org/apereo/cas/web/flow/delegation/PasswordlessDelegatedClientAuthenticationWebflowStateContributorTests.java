@@ -13,7 +13,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
-import org.pac4j.cas.client.CasClient;
+import org.pac4j.http.client.indirect.FormClient;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,7 +37,7 @@ class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTests exte
 
     @Test
     void verifyStore() throws Throwable {
-        val client = new CasClient();
+        val client = new FormClient();
         val context = MockRequestContext.create(applicationContext);
         val account = PasswordlessUserAccount.builder().username("casuser").build();
         PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(context, account);
@@ -53,7 +53,7 @@ class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTests exte
 
     @Test
     void verifyRestore() throws Throwable {
-        val client = new CasClient();
+        val client = new FormClient();
         val context = MockRequestContext.create(applicationContext);
         val account = PasswordlessUserAccount.builder().username("casuser").build();
         val sessionTicket = mock(TransientSessionTicket.class);
@@ -72,7 +72,7 @@ class PasswordlessDelegatedClientAuthenticationWebflowStateContributorTests exte
 
     @Test
     void verifyRestoreWithoutSessionTicket() throws Throwable {
-        val client = new CasClient();
+        val client = new FormClient();
         val context = MockRequestContext.create(applicationContext);
         val webContext = new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse());
         val stored = contributor.restore(context, webContext, Optional.empty(), client);
