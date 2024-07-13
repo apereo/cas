@@ -81,7 +81,7 @@ public class SystemUtils {
         info.put("OS Name", properties.get("os.name"));
         info.put("OS Version", properties.get("os.version"));
         info.put("OS Date/Time", LocalDateTime.now(ZoneId.systemDefault()));
-        info.put("OS Timezone", Clock.systemDefaultZone());
+        info.put("OS Timezone", Clock.systemDefaultZone().toString());
         info.put("OS Temp Directory", FileUtils.getTempDirectoryPath());
 
         return info;
