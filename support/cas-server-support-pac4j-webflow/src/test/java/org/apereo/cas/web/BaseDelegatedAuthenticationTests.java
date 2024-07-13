@@ -14,6 +14,8 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasDelegatedAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasDelegatedAuthenticationCasAutoConfiguration;
+import org.apereo.cas.config.CasDelegatedAuthenticationOidcAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.pac4j.client.DelegatedClientAuthenticationRequestCustomizer;
@@ -41,6 +43,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  */
 public abstract class BaseDelegatedAuthenticationTests {
     @ImportAutoConfiguration({
+        CasDelegatedAuthenticationOidcAutoConfiguration.class,
+        CasDelegatedAuthenticationCasAutoConfiguration.class,
         CasDelegatedAuthenticationAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,

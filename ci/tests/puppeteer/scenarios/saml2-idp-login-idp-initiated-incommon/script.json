@@ -9,8 +9,6 @@
     "--cas.server.prefix=https://localhost:8443/cas",
     "--cas.server.scope=example.net",
 
-
-
     "--cas.slo.disabled=true",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",

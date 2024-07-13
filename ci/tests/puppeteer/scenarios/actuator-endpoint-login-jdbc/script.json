@@ -13,7 +13,6 @@
     
     "--logging.level.org.springframework.security=debug",
 
-
     "--cas.monitor.endpoints.jdbc.password-encoder.type=DEFAULT",
     "--cas.monitor.endpoints.jdbc.password-encoder.encoding-algorithm=SHA-256",
     "--cas.monitor.endpoints.jdbc.role-prefix=ROLE_",

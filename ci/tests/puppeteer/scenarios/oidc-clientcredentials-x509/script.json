@@ -12,8 +12,6 @@
     "--server.ssl.key-store-type=PKCS12",
     "--server.ssl.client-auth=want",
 
-
-
     "--cas.authn.attribute-repository.stub.attributes.uid=casuser",
     "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
     "--cas.authn.attribute-repository.stub.attributes.givenName=ApereoCAS",

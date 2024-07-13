@@ -28,7 +28,6 @@
 
     "--cas.authn.accept.name=STATIC",
 
-
     "--logging.level.org.apache.cxf=info",
     "--logging.level.org.apache.wss4j=debug",
 

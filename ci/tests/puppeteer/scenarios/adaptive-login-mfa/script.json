@@ -8,7 +8,6 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-
     "--cas.events.core.track-geolocation=true",
 
     "--cas.authn.adaptive.policy.require-multifactor.mfa-simple=.*usa.*|safari|^172.168.*",

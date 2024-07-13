@@ -6,7 +6,6 @@
   "properties": [
     "--cas.jdbc.show-sql=false",
 
-
     "--logging.level.org.hibernate=warn",
     "--logging.level.org.springframework.orm=warn",
 

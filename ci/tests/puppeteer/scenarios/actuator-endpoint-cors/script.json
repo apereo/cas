@@ -11,8 +11,7 @@
     "--spring.security.user.password=Mellon",
 
     "--logging.level.org.springframework.security=debug",
-
-
+    
     "--management.endpoints.web.cors.allowed-headers=*",
     "--management.endpoints.web.cors.allowed-methods=OPTIONS,GET,POST",
     "--management.endpoints.web.cors.allowed-origin-patterns=http://localhost:8444",

@@ -20,7 +20,6 @@
     "--cas.authn.pac4j.saml[0].client-name=SAML2Client",
     "--cas.authn.pac4j.saml[0].principal-id-attribute=mail",
 
-
     "--logging.level.org.pac4j=warn",
     "--logging.level.org.opensaml=warn",
 

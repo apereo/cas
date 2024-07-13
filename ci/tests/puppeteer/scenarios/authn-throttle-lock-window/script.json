@@ -11,8 +11,6 @@
     "--cas.authn.throttle.failure.code=AUTHENTICATION_FAILED",
     "--cas.authn.throttle.failure.throttle-window-seconds=PT5S",
 
-
-
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=throttles",
     "--management.endpoint.health.show-details=always",
