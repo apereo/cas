@@ -10,11 +10,11 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.apereo.cas.validation.AuthenticationAttributeReleasePolicy;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
