@@ -3,7 +3,6 @@
 
   "properties": [
 
-
     "--cas.ticket.crypto.enabled=true",
 
     "--cas.server.name=https://localhost:8443",

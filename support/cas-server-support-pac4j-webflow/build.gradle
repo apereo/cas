@@ -60,8 +60,11 @@ dependencies {
     testImplementation project(":support:cas-server-support-scim")
     testImplementation project(":support:cas-server-support-discovery-profile-core")
     testImplementation project(":support:cas-server-support-ldap-core")
-    
+    testImplementation project(":support:cas-server-support-pac4j-oidc")
+    testImplementation project(":support:cas-server-support-pac4j-cas")
+
     testImplementation project(path: ":support:cas-server-support-pac4j-core-clients", configuration: "tests")
+    
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-audit-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")

@@ -56,4 +56,3 @@
   ],
   "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }
-

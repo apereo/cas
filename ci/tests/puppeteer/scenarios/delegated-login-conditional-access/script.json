@@ -15,8 +15,6 @@
     "--cas.authn.pac4j.cas[0].display-name=MyCAS",
     "--cas.authn.pac4j.core.name=ExternalCAS",
 
-
-    
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],

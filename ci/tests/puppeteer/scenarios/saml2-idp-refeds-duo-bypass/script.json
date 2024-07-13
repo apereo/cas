@@ -18,8 +18,6 @@
     "--cas.authn.accept.name=STATIC",
     "--cas.authn.accept.users=duobypass::Mellon",
 
-
-    
     "--cas.authn.mfa.duo[0].account-status-enabled=true",
     
     "--cas.authn.mfa.duo[0].duo-secret-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_SKEY']}",

@@ -25,7 +25,6 @@
     "--cas.scim.username=scim-user",
     "--cas.scim.password=changeit",
 
-
     "--cas.http-client.host-name-verifier=none",
 
     "--cas.authn.pac4j.provisioning.scim.enabled=true",

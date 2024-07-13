@@ -17,8 +17,6 @@
     "--spring.security.user.name=casuser",
     "--spring.profiles.active=embedded",
 
-
-
     "--cas.monitor.endpoints.endpoint.defaults.access=AUTHENTICATED",
     "--management.endpoints.enabled-by-default=true",
     

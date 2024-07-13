@@ -9,8 +9,6 @@
     "--cas.authn.throttle.schedule.start-delay=PT1S",
     "--cas.authn.throttle.schedule.repeat-interval=PT2S",
 
-
-    
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoints.enabled-by-default=true"

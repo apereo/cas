@@ -10,8 +10,6 @@
     "--server.ssl.key-store-type=PKCS12",
     "--server.ssl.client-auth=want",
 
-
-    
     "--cas.authn.attribute-repository.stub.attributes.sn=CAS",
 
     "--cas.authn.x509.principal-type=SUBJECT_ALT_NAME",

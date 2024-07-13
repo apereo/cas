@@ -21,7 +21,6 @@
     "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
     "--cas.authn.passwordless.core.delegated-authentication-selector-script.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/delegate-idp-selector.groovy",
 
-
     "--logging.level.org.springframework.security=warn",
     "--logging.level.org.springframework.web=warn",
     "--logging.level.org.springframework.webflow=info",

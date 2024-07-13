@@ -7,8 +7,6 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
 
-
-
     "--cas.authn.attribute-repository.stub.attributes.name=CASName",
     "--cas.authn.attribute-repository.stub.attributes.given_name=CAS",
     "--cas.authn.attribute-repository.stub.attributes.family_name=Apereo",
