@@ -82,6 +82,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-hazelcast-core")
     testImplementation project(":support:cas-server-support-mongo-core")
     testImplementation project(":support:cas-server-support-aws")
+    testImplementation project(":support:cas-server-support-pac4j-oidc")
 
     testImplementation project(path: ":support:cas-server-support-reports", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-pac4j-core-clients", configuration: "tests")
