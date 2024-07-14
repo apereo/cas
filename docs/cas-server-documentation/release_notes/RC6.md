@@ -77,4 +77,6 @@ are now configured to run with parallelism enabled.
 - Spring Boot
 - Spring Data
 - Apache Tomcat
+- Spring Retry
+- Amazon SDK
 - Pac4j
