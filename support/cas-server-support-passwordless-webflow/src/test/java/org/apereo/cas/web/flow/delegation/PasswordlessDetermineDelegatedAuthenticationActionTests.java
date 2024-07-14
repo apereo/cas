@@ -18,6 +18,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.pac4j.core.util.Pac4jConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
@@ -62,10 +63,8 @@ class PasswordlessDetermineDelegatedAuthenticationActionTests {
     }
 
     @Nested
-    @Import({
-        CasDelegatedAuthenticationCasAutoConfiguration.class,
-        BaseWebflowConfigurerTests.SharedTestConfiguration.class
-    })
+    @ImportAutoConfiguration(CasDelegatedAuthenticationCasAutoConfiguration.class)
+    @Import(BaseWebflowConfigurerTests.SharedTestConfiguration.class)
     @TestPropertySource(properties = {
         "cas.authn.pac4j.cas[0].login-url=https://casserver.herokuapp.com/cas/login",
         "cas.authn.pac4j.cas[0].protocol=CAS30",
