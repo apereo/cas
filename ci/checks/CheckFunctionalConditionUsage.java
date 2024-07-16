@@ -19,6 +19,7 @@ public class CheckFunctionalConditionUsage {
 
     private static void print(final String message, final Object... args) {
         //CHECKSTYLE:OFF
+        System.out.print("\uD83C\uDFC1 ");
         System.out.printf(message, args);
         //CHECKSTYLE:ON
     }

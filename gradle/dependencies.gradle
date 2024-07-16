@@ -2191,24 +2191,6 @@ ext.libraries = [
                 dependencies.create("com.github.stephenc.jcip:jcip-annotations:1.0-1") {
                 }
         ],
-        persondirectory            : dependencies.create("org.apereo.service.persondir:person-directory-impl:$personDirectoryVersion") {
-            exclude(group: "commons-logging", module: "commons-logging")
-            exclude(group: "org.slf4j", module: "slf4j-api")
-            exclude(group: "org.apache.httpcomponents", module: "httpclient")
-            exclude(group: "org.apache.commons", module: "commons-lang3")
-            exclude(group: "org.apache.commons", module: "commons-collections4")
-            exclude(group: "org.springframework", module: "spring-beans")
-            exclude(group: "org.ldaptive", module: "ldaptive")
-            exclude(group: "org.springframework", module: "spring-context")
-            exclude(group: "org.springframework", module: "spring-core")
-            exclude(group: "org.springframework", module: "spring-tx")
-            exclude(group: "com.google.guava", module: "guava")
-            exclude(group: "commons-io", module: "commons-io")
-            exclude(group: "com.sun.xml.bind", module: "jaxb-impl")
-            exclude(group: "com.squareup.retrofit2", module: "retrofit")
-            exclude(group: "com.squareup.retrofit2", module: "converter-moshi")
-            exclude(group: "com.squareup.okhttp3", module: "logging-interceptor")
-        },
         quartz                     : dependencies.create("org.quartz-scheduler:quartz:$quartzVersion") {
             exclude(group: "org.slf4j", module: "slf4j-api")
             exclude(group: "c3p0", module: "c3p0")
