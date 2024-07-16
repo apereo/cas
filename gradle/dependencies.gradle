@@ -2187,6 +2187,7 @@ ext.libraries = [
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
                 },
                 dependencies.create("net.minidev:json-smart:$jsonSmartVersion") {
+                    exclude(group: "org.ow2.asm", module: "asm")
                 },
                 dependencies.create("com.github.stephenc.jcip:jcip-annotations:1.0-1") {
                 }

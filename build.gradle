@@ -27,7 +27,6 @@ buildscript {
         classpath "org.graalvm.buildtools:native-gradle-plugin:${gradleGraalVmNativePluginVersion}"
         classpath "net.ltgt.gradle:gradle-errorprone-plugin:$gradleErrorProneVersion"
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:$gradleSonarqubeVersion"
-        classpath "com.github.johnrengelman:shadow:$gradleShadowVersion"
         classpath "io.github.gradle-nexus:publish-plugin:$gradleNexusPublishingVersion"
     }
 }
