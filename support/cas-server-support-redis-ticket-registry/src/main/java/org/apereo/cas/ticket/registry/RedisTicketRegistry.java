@@ -88,6 +88,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
 
     private final CasConfigurationProperties casProperties;
 
+    private RedisMappingContext redisMappingContext;
+
     public RedisTicketRegistry(final CipherExecutor cipherExecutor,
                                final TicketSerializationManager ticketSerializationManager,
                                final TicketCatalog ticketCatalog,
@@ -507,18 +509,21 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         }
     }
 
-
-    private RedisKeyValueAdapter buildRedisKeyValueAdapter(final String redisKeyPattern) {
-        val redisMappingContext = new RedisMappingContext(
-            new MappingConfiguration(new IndexConfiguration(), new KeyspaceConfiguration() {
-                @Nonnull
-                @Override
-                protected Iterable<KeyspaceSettings> initialConfiguration() {
-                    return Collections.singleton(new KeyspaceSettings(RedisTicketDocument.class, redisKeyPattern));
-                }
-            }));
-
-        val adapter = new RedisKeyValueAdapter(casRedisTemplates.getTicketsRedisTemplate(), redisMappingContext) {
+    private synchronized RedisKeyValueAdapter buildRedisKeyValueAdapter(final String redisKeyPattern) {
+        if (this.redisMappingContext == null) {
+            this.redisMappingContext = new RedisMappingContext(
+                    new MappingConfiguration(new IndexConfiguration(), new KeyspaceConfiguration() {
+                        @Nonnull
+                        @Override
+                        protected Iterable<KeyspaceSettings> initialConfiguration() {
+                            return Collections.singleton(new KeyspaceSettings(RedisTicketDocument.class, redisKeyPattern));
+                        }
+                    }));
+        } else {
+            this.redisMappingContext.getMappingConfiguration().getKeyspaceConfiguration()
+                    .addKeyspaceSettings(new KeyspaceConfiguration.KeyspaceSettings(RedisTicketDocument.class, redisKeyPattern));
+        }
+        val adapter = new RedisKeyValueAdapter(casRedisTemplates.getTicketsRedisTemplate(), this.redisMappingContext) {
             @Override
             @Nonnull
             public byte[] createKey(@Nonnull final String keyspace, @Nonnull final String id) {
