@@ -444,10 +444,13 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         });
     }
 
-    private RedisKeyValueAdapter buildRedisKeyValueAdapter(final String redisKeyPattern) {
+        if (this.redisMappingContext == null) {
         lock.tryLock(__ -> redisMappingContext.getMappingConfiguration().getKeyspaceConfiguration()
             .addKeyspaceSettings(new KeyspaceConfiguration.KeyspaceSettings(RedisTicketDocument.class, redisKeyPattern)));
-
+        } else {
+        val adapter = new RedisKeyValueAdapter(casRedisTemplates.getTicketsRedisTemplate(), this.redisMappingContext) {
+                    .addKeyspaceSettings(new KeyspaceConfiguration.KeyspaceSettings(RedisTicketDocument.class, redisKeyPattern));
+        }
         val adapter = new RedisKeyValueAdapter(casRedisTemplates.getTicketsRedisTemplate(), this.redisMappingContext) {
             @Override
             @Nonnull
