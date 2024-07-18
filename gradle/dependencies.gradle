@@ -3516,8 +3516,12 @@ ext.libraries = [
                 dependencies.create("org.webjars:font-awesome:$fontAwesomeVersion") {
                 }
         ],
-        webjarschartjs : [
+        webjarspalantir : [
                 dependencies.create("org.webjars.npm:chart.js:$chartJsVersion") {
+                    exclude(group: "org.webjars", module: "popper.js")
+                    exclude(group: "org.webjars", module: "jquery")
+                },
+                dependencies.create("org.webjars.npm:ace-builds:$aceEditorVersion") {
                     exclude(group: "org.webjars", module: "popper.js")
                     exclude(group: "org.webjars", module: "jquery")
                 }

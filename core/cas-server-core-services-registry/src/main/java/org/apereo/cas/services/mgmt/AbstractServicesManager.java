@@ -437,12 +437,10 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     }
 
     private void cacheRegisteredService(final RegisteredService service) {
-        if (configurationContext.getServicesCache().getIfPresent(service.getId()) == null) {
-            configurationContext.getServicesCache().put(service.getId(), service);
-            if (configurationContext.getCasProperties().getServiceRegistry().getCore().isIndexServices()) {
-                indexedRegisteredServices.removeIf(registeredService -> registeredService.getId() == service.getId());
-                indexedRegisteredServices.add(service);
-            }
+        configurationContext.getServicesCache().put(service.getId(), service);
+        if (configurationContext.getCasProperties().getServiceRegistry().getCore().isIndexServices()) {
+            indexedRegisteredServices.removeIf(registeredService -> registeredService.getId() == service.getId());
+            indexedRegisteredServices.add(service);
         }
     }
 
