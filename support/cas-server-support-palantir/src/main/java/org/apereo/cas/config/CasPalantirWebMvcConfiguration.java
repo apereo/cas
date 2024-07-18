@@ -42,9 +42,8 @@ class CasPalantirWebMvcConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "palantirDashboardController")
     public DashboardController palantirDashboardController(
-        final CasConfigurationProperties casProperties,
-        @Qualifier(ServicesManager.BEAN_NAME) final ObjectProvider<ServicesManager> servicesManager) {
-        return new DashboardController(casProperties, servicesManager);
+        final CasConfigurationProperties casProperties) {
+        return new DashboardController(casProperties);
     }
 
     @Bean

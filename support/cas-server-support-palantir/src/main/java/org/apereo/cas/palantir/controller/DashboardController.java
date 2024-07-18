@@ -24,7 +24,6 @@ import org.springframework.web.servlet.ModelAndView;
 @RequiredArgsConstructor
 public class DashboardController {
     private final CasConfigurationProperties casProperties;
-    private final ObjectProvider<ServicesManager> servicesManager;
     
     /**
      * Dashboard root.
@@ -50,7 +49,6 @@ public class DashboardController {
         val mav = new ModelAndView("palantir/casPalantirDashboardView");
         mav.addObject("authentication", authentication);
         mav.addObject("casServerPrefix", casProperties.getServer().getPrefix());
-        mav.addObject("authorizedServices", servicesManager.getObject().getAllServices());
         return mav;
     }
 }
