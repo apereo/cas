@@ -1113,16 +1113,6 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
-        jsonschema                  : [
-                dependencies.create("com.github.victools:jsonschema-generator:${jsonSchemaVersion}") {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                },
-                dependencies.create("com.github.victools:jsonschema-module-jackson:${jsonSchemaVersion}") {
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
-                }
-        ],
         jackson                    : [
                 dependencies.create("com.fasterxml.jackson.core:jackson-databind:$jacksonDataBindVersion") {
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
@@ -3524,6 +3514,12 @@ ext.libraries = [
                     exclude(group: "org.webjars", module: "jquery")
                 },
                 dependencies.create("org.webjars:font-awesome:$fontAwesomeVersion") {
+                }
+        ],
+        webjarschartjs : [
+                dependencies.create("org.webjars.npm:chart.js:$chartJsVersion") {
+                    exclude(group: "org.webjars", module: "popper.js")
+                    exclude(group: "org.webjars", module: "jquery")
                 }
         ],
         webjars                    : [

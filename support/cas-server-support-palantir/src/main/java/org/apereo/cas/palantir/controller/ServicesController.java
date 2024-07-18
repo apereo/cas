@@ -3,11 +3,18 @@ package org.apereo.cas.palantir.controller;
 import org.apereo.cas.palantir.PalantirConstants;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.io.TemporaryFileSystemResource;
 import org.apereo.cas.util.serialization.StringSerializer;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,7 +24,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import java.io.File;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * This is {@link ServicesController}.
@@ -92,5 +103,50 @@ public class ServicesController {
         val registeredService = registeredServiceSerializer.from(registeredServiceBody);
         val result = servicesManager.getObject().save(registeredService);
         return ResponseEntity.ok(registeredServiceSerializer.toString(result));
+    }
+
+    /**
+     * Export single service by its id.
+     *
+     * @param id the id
+     * @return the response entity
+     * @throws Exception the exception
+     */
+    @GetMapping(path = "/export/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Resource> export(@PathVariable("id") final long id) throws Exception {
+        val registeredService = servicesManager.getObject().findServiceBy(id);
+        val fileName = String.format("%s-%s", registeredService.getName(), registeredService.getId());
+        val serviceFile = File.createTempFile(fileName, ".json");
+        registeredServiceSerializer.to(serviceFile, registeredService);
+        val headers = new HttpHeaders();
+        val resource = new TemporaryFileSystemResource(serviceFile);
+        headers.setContentDisposition(ContentDisposition.attachment()
+            .filename(Objects.requireNonNull(resource.getFilename())).build());
+        headers.put("Filename", List.of(serviceFile.getName()));
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    }
+
+    /**
+     * Export services.
+     *
+     * @return the response entity
+     */
+    @GetMapping(path = "/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Resource> export() {
+        val resource = CompressionUtils.toZipFile(servicesManager.getObject().stream(),
+            Unchecked.function(entry -> {
+                val service = (RegisteredService) entry;
+                val fileName = String.format("%s-%s", service.getName(), service.getId());
+                val sourceFile = File.createTempFile(fileName, ".json");
+                registeredServiceSerializer.to(sourceFile, service);
+                return sourceFile;
+            }), "services");
+        val headers = new HttpHeaders();
+        headers.setContentDisposition(ContentDisposition.attachment()
+            .filename(Objects.requireNonNull(resource.getFilename())).build());
+        headers.put("Filename", List.of("services.zip"));
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 }

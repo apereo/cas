@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+</head>
+<body>
+<span th:fragment="main">
+    <div class="attribute-tab w-100 mdc-data-table table-responsive noborder" id="attribute-tab-0">
+            <table id="applicationsTable" class="mdc-data-table__table table table-striped noborder">
+                <thead>
+                <tr class="mdc-data-table__header-row">
+                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Service</th>
+                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">URL</th>
+                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Description</th>
+                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col"></th>
+                </tr>
+                </thead>
+                <tbody class="mdc-data-table__content">
+                <tr th:each="service : ${authorizedServices}" class="mdc-data-table__row"
+                    th:attr="serviceId=${service.id}">
+                    <td class="mdc-data-table__cell">
+                            <span th:switch="${service.friendlyName}">
+                                <span th:case="'SAML2 Service Provider'">
+                                    <i th:title="${service.friendlyName}"
+                                       class="mdi mdi-alpha-s-box-outline"></i></span>
+                                <span th:case="'CAS Client'">
+                                    <i th:title="${service.friendlyName}"
+                                       class="mdi mdi-alpha-c-box-outline"></i></span>
+                                <span th:case="'OAuth2 Client'">
+                                    <i th:title="${service.friendlyName}"
+                                       class="mdi mdi-alpha-o-circle-outline"></i></span>
+                                <span th:case="'OpenID Connect Relying Party'">
+                                    <i th:title="${service.friendlyName}"
+                                       class="mdi mdi-alpha-o-box-outline"></i></span>
+                                <span th:case="*"><i class="mdi mdi-web-box"></i></span>
+                            </span>
+                    </td>
+                    <td class="mdc-data-table__cell" th:attr="serviceId=${service.id}">
+                        <a th:id="${'service' + service.id}" th:title="${service.name}" th:utext="${service.name}"/>
+                        <p>
+                            <a target="_blank" th:if="${service.informationUrl}" th:href="${service.informationUrl}">Information URL</a>
+                            <a target="_blank" th:if="${service.privacyUrl}" th:href="${service.privacyUrl}">Privacy URL</a>
+                        </p>
+                    </td>
+                    <td class="mdc-data-table__cell" th:attr="serviceId=${service.id}">
+                        <kbd th:utext="${service.serviceId}" class="text-wrap"/>
+                    </td>
+                    <td class="mdc-data-table__cell" th:attr="serviceId=${service.id}">
+                        <span th:utext="${service.description}" class="text-wrap"/>
+                    </td>
+                    <td class="mdc-data-table__cell" th:attr="serviceId=${service.id}">
+                        <button type="button" id="editService" name="editService" href="#"
+                                th:attr="serviceId=${service.id}"
+                                class="mdc-button mdc-button--raised btn btn-link min-width-32x">
+                            <i class="mdi mdi-pencil fas fa-eye min-width-32x" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" id="deleteService" name="deleteService" href="#"
+                                th:attr="serviceId=${service.id}"
+                                class="mdc-button mdc-button--raised btn btn-link min-width-32x">
+                            <i class="mdi mdi-delete fas fa-eye min-width-32x" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" id="viewService" name="viewService" href="#"
+                                th:attr="serviceId=${service.id}"
+                                class="mdc-button mdc-button--raised btn btn-link min-width-32x">
+                            <i class="mdi mdi-eye fas fa-eye min-width-32x" aria-hidden="true"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div width="10%">
+                <div class="mdc-touch-target-wrapper">
+                    <button id="create" class="mdc-button mdc-button--raised" aria-label="Create">
+                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus" aria-hidden="true"></i>New Application</span>
+                    </button>
+                    <button id="exportAll" class="mdc-button mdc-button--raised" aria-label="Export All">
+                         <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-export" aria-hidden="true"></i>Export All</span>
+                    </button>
+                    <button id="reloadAll" class="mdc-button mdc-button--raised" aria-label="Reload" onclick="location.reload();">
+                         <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-refresh" aria-hidden="true"></i>Reload</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="mdc-dialog modal" id="viewServiceDialog" role="alertdialog"
+                 aria-modal="true" aria-labelledby="service-dialog-title" aria-describedby="dialog-content">
+                <div class="mdc-dialog__container w-100 modal-dialog">
+                    <div class="mdc-dialog__surface mw-50 modal-content">
+                        <h2 class="mdc-dialog__title mt-lg-2 modal-header" id="service-dialog-title"></h2>
+                        <p class="px-2 text-wrap-pretty text-justify" id="service-description"></p>
+                        <div class="mdc-dialog__content modal-body" id="dialog-content">
+                            <pre>
+                                <code class="border-rounded language-json text-wrap-pretty">Text</code>
+                            </pre>
+                        </div>
+                        <footer class="mdc-dialog__actions modal-footer">
+                            <button id="exportService" type="button"
+                                    class="mdc-button mdc-button--raised btn btn-outline-secondary">
+                                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-export"
+                                                                   aria-hidden="true"></i>Export</span>
+                            </button>
+                            <button type="button" class="mdc-button mdc-button--outline btn btn-outline-secondary"
+                                    data-mdc-dialog-action="accept"
+                                    data-mdc-dialog-button-default data-bs-dismiss="modal">
+                                <span class="mdc-button__label">Close</span>
+                            </button>
+                        </footer>
+                    </div>
+                </div>
+                <div class="mdc-dialog__scrim"></div>
+            </div>
+
+
+            <script type="text/javascript">
+                ((material) => {
+                    document.addEventListener("DOMContentLoaded", () => {
+                        const applicationsTable = $("#applicationsTable").DataTable({
+                            pageLength: 25,
+                            autoWidth: false,
+                            columnDefs: [
+                                {width: "3%", targets: 0},
+                                {width: "11%", targets: 1},
+                                {width: "17%", targets: 2},
+                                {width: "60%", targets: 3},
+                                {width: "9%", targets: 4},
+                            ]
+                        });
+
+                        let dialog = material.dialog.MDCDialog.attachTo(document.getElementById("viewServiceDialog"));
+                        let viewServiceButton = document.getElementById("viewService");
+                        viewServiceButton.addEventListener("click", event => {
+                            let caller = event.target || event.srcElement;
+                            let serviceId = $(caller.parentElement).attr("serviceId");
+                            $.get(`${casServerPrefix}/palantir/services/${serviceId}`, response => {
+                                const value = JSON.stringify(response, null, 4);
+                                $("#viewServiceDialog pre code").text(value);
+                                $("#viewServiceDialog #service-dialog-title").html(response.name);
+                                $("#viewServiceDialog #service-description").html(response.description);
+
+                                $("#exportService").attr("serviceId", response.id);
+                                $("#viewServiceDialog").attr("serviceId", response.id);
+
+                                hljs.highlightAll();
+                                dialog[material ? "open" : "show"]();
+                                event.preventDefault();
+                            }).fail((xhr, status, error) => {
+                                console.error("Error fetching data:", error);
+                            });
+                        }, false);
+
+
+                        let exportServiceButton = document.getElementById("exportService");
+                        exportServiceButton.addEventListener("click", event => {
+                            let serviceId = $(exportServiceButton).attr("serviceId");
+                            fetch(`${casServerPrefix}/palantir/services/export/${serviceId}`)
+                                .then(response => {
+                                    const filename = response.headers.get("filename");
+                                    response.blob().then(blob => {
+                                        const link = document.createElement("a");
+                                        link.href = window.URL.createObjectURL(blob);
+                                        link.download = filename;
+                                        document.body.appendChild(link);
+                                        link.click();
+                                        document.body.removeChild(link);
+                                    });
+
+                                })
+                                .catch(error => console.error("Error fetching file:", error));
+                            event.preventDefault();
+                        }, false);
+
+
+                        let deleteServiceButton = document.getElementById("deleteService");
+                        deleteServiceButton.addEventListener("click", event => {
+                            let caller = event.target || event.srcElement;
+                            let serviceId = $(caller.parentElement).attr("serviceId");
+
+                            let result = confirm("Are you sure you want to delete this entry?");
+                            if (result) {
+                                $.ajax({
+                                    url: `${casServerPrefix}/palantir/services/${serviceId}`,
+                                    type: "DELETE",
+                                    success: response => {
+                                        console.log("Resource deleted successfully:", response);
+                                        let nearestTr = $(caller).closest("tr");
+                                        applicationsTable.row(nearestTr).remove().draw();
+                                    },
+                                    error: (xhr, status, error) => {
+                                        console.error("Error deleting resource:", error);
+                                    }
+                                });
+                            }
+                            event.preventDefault();
+                        }, false);
+
+                        let exportAllButton = document.getElementById("exportAll");
+                        exportAllButton.addEventListener("click", event => {
+                            fetch(`${casServerPrefix}/palantir/services/export`)
+                                .then(response => {
+                                    const filename = response.headers.get("filename");
+                                    response.blob().then(blob => {
+                                        const link = document.createElement("a");
+                                        link.href = window.URL.createObjectURL(blob);
+                                        link.download = filename;
+                                        document.body.appendChild(link);
+                                        link.click();
+                                        document.body.removeChild(link);
+                                    });
+
+                                })
+                                .catch(error => console.error("Error fetching file:", error));
+                            event.preventDefault();
+                        }, false);
+
+                    });
+                })(window.mdc);
+            </script>
+
+        </div>
+</span>
+</body>
+</html>

@@ -142,6 +142,7 @@ header>nav .cas-brand .cas-logo {
 
 .noborder {
     border: 0 none;
+    border-style: none;
 }
 
 .close {
@@ -334,6 +335,11 @@ form button i.mdi {
     vertical-align: baseline;
 }
 
+#dashboardTabBar .mdi, .attribute-tab .mdi {
+    vertical-align: sub;
+    /*padding-right: 1px;*/
+}
+
 .mdi:before {
     font-size: 24px;
 }
@@ -371,6 +377,7 @@ form button i.mdi {
     border-color: #153e50;
     border-bottom: 1px solid var(--cas-theme-primary, #153e50);
 }
+
 
 .strong {
     font-weight: bold;
@@ -549,8 +556,28 @@ form button i.mdi {
     max-width: 100% !important;
 }
 
+.mw-75 {
+    max-width: 75% !important;
+}
+
+.mw-50 {
+    max-width: 50% !important;
+}
+
 .mh-100 {
     max-height: 100%;
+}
+
+.min-width-24x {
+    min-width: 24px !important;
+    width: 24px;
+    max-height: 24px !important;
+}
+
+.min-width-32x {
+    min-width: 32px !important;
+    width: 32px;
+    max-height: 32px !important;
 }
 
 .min-width-48x {
@@ -654,6 +681,10 @@ form button i.mdi {
 
 .text-wrap {
     white-space: normal;
+}
+
+.text-wrap-pretty {
+    text-wrap: pretty;
 }
 
 #servicedesc .mdi {

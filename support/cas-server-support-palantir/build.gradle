@@ -4,11 +4,9 @@ ext {
     projectMetadata = [
         category: "Administration",
         title: "Admin UI & Dashboard",
-        aliases: ["palantir", "adminui", "management"]
+        aliases: ["palantir", "adminui", "management", "casmgmt"]
     ]
 }
-
-apply plugin: "com.github.node-gradle.node"
 
 dependencies {
     api project(":api:cas-server-core-api-webflow")
@@ -33,23 +31,22 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-webflow-mfa-api")
 
-    implementation libraries.pac4jcore
-    implementation libraries.nimbus
-    implementation libraries.mail
-    implementation libraries.jasypt
-    implementation libraries.bouncycastle
+    compileOnly project(":support:cas-server-support-reports-core")
+
     implementation libraries.snakeyaml
     implementation libraries.jose4j
     implementation libraries.springsecurityweb
     implementation libraries.springsecurityconfig
-    implementation libraries.classgraph
-    implementation libraries.jsonschema
+
+    runtimeOnly libraries.webjars
+    runtimeOnly libraries.webjarschartjs
 
     testImplementation libraries.springboottomcat
 
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":support:cas-server-support-person-directory")
-    
+    testImplementation project(":support:cas-server-support-reports")
+
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-util")
@@ -64,6 +61,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-notifications")
 
+
     testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
@@ -72,24 +70,3 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-webflow", configuration: "tests")
 }
-
-node {
-    version = "${nodeVersion}"
-    yarnVersion = ''
-    download = true
-    distBaseUrl = null
-    nodeProjectDir = new File("${project.projectDir}", "client")
-}
-
-tasks.register("build-ui", NpxTask) {
-    dependsOn("npmInstall")
-    outputs.cacheIf { true }
-    outputs.dir(file("build/generated/assets"))
-    command = "vite"
-    args = ["build", "--emptyOutDir", "--outDir", "../build/generated/assets" ]
-    inputs.files('client/package.json','client/vite.config.js')
-            .withPropertyName('uiBuildConfig')
-            .withPathSensitivity(PathSensitivity.RELATIVE)
-    environment = ["BUILD_PATH": "build"]
-}
-build.dependsOn(tasks.named("build-ui"))

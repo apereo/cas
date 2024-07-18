@@ -27,6 +27,52 @@ function copyClipboard(element) {
     document.execCommand("copy");
 }
 
+function flattenJSON(data) {
+    let result = {};
+    let l = undefined;
+
+    function recurse(cur, prop) {
+        if (Object(cur) !== cur) {
+            result[prop] = cur;
+        } else if (Array.isArray(cur)) {
+            for (let i = 0, l = cur.length; i < l; i++) {
+                recurse(cur[i], `${prop}[${i}]`);
+            }
+            if (l === 0) {
+                result[prop] = [];
+            }
+        } else {
+            let isEmpty = true;
+            for (let p in cur) {
+                isEmpty = false;
+                recurse(cur[p], prop ? `${prop}.${p}` : p);
+            }
+            if (isEmpty && prop) {
+                result[prop] = {};
+            }
+        }
+    }
+
+    recurse(data, "");
+    return result;
+}
+
+function convertMemoryToGB(memoryStr) {
+    const units = {
+        B: 1,
+        KB: 1024,
+        MB: 1024 ** 2,
+        GB: 1024 ** 3,
+        TB: 1024 ** 4,
+    };
+    const regex = /(\d+(\.\d+)?)\s*(B|KB|MB|GB|TB)/i;
+    const match = memoryStr.match(regex);
+    const value = parseFloat(match[1]);
+    const unit = match[3].toUpperCase();
+    const bytes = value * units[unit];
+    return bytes / units.GB;
+}
+
 function isValidURL(str) {
     let pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
         '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name

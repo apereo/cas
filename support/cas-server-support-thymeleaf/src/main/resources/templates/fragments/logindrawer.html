@@ -16,9 +16,9 @@
         <aside id="app-drawer"
                th:if="${'true' == #strings.defaultString(#themes.code('cas.drawer-menu.enabled'), 'true')}"
                class="mdc-drawer mdc-drawer--dismissible mdc-drawer--modal offcanvas offcanvas-start">
+            
             <div class="mdc-drawer__header offcanvas-header flex-column">
-                <h2 class="mdc-drawer__title offcanvas-title" th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}">
-                    CAS</h2>
+                <h2 class="mdc-drawer__title offcanvas-title" th:text="${#strings.defaultString(#themes.code('cas.theme.name'), 'CAS')}">CAS</h2>
                 <div class="mdc-drawer__subtitle offcanvas-title"
                     th:text="${#strings.defaultString(#themes.code('cas.theme.description'), 'Central Authentication Service')}">
                     Central Authentication Service</div>

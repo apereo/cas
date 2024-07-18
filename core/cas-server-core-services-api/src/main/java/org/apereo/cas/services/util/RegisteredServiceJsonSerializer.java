@@ -2,13 +2,12 @@ package org.apereo.cas.services.util;
 
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
-
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.core.PrettyPrinter;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
-
 import java.io.File;
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
@@ -27,6 +26,11 @@ public class RegisteredServiceJsonSerializer extends AbstractJacksonBackedString
 
     public RegisteredServiceJsonSerializer(final ConfigurableApplicationContext applicationContext) {
         super(applicationContext);
+    }
+
+    public RegisteredServiceJsonSerializer(final PrettyPrinter prettyPrinter,
+                                           final ConfigurableApplicationContext applicationContext) {
+        super(prettyPrinter, applicationContext);
     }
 
     @Override

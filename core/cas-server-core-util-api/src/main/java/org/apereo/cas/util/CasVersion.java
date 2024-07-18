@@ -51,7 +51,7 @@ public class CasVersion {
     }
 
     public static ZonedDateTime getDateTime() {
-        return DateTimeUtils.zonedDateTimeOf(IMPLEMENTATION_DATE);
+        return IMPLEMENTATION_DATE != null ? DateTimeUtils.zonedDateTimeOf(IMPLEMENTATION_DATE) : ZonedDateTime.now(Clock.systemUTC());
     }
 
     static {
