@@ -1,4 +1,3 @@
-
 const assert = require("assert");
 const cas = require("../../cas.js");
 
@@ -12,7 +11,7 @@ const cas = require("../../cas.js");
     await cas.sleep(1000);
     await cas.screenshot(page);
     assert(response.status() === 200);
-    response = await cas.goto(page, "https://localhost:8443/cas/palantir/dashboard/services");
+    response = await cas.goto(page, "https://localhost:8443/cas/palantir/dashboard");
     await cas.log(`${response.status()} ${response.statusText()}`);
     await cas.screenshot(page);
     assert(response.ok());
