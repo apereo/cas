@@ -258,3 +258,45 @@ function autoHideElement(id, timeout = 1500) {
     }
     setTimeout(hideElement, timeout);
 }
+
+function initializeAceEditor(id) {
+    ace.require("ace/ext/language_tools");
+    const editor = ace.edit(id);
+    editor.setTheme("ace/theme/cobalt");
+    editor.session.setMode("ace/mode/json");
+    editor.session.setUseWrapMode(true);
+    editor.session.setTabSize(4);
+    editor.commands.addCommand({
+        name: "deleteLine",
+        bindKey: {
+            win: "Ctrl-Y",
+            mac: "Command-Y"
+        },
+        exec: editor => {
+            const cursorPosition = editor.getCursorPosition();
+            editor.session.remove({
+                start: { row: cursorPosition.row, column: 0 },
+                end: { row: cursorPosition.row + 1, column: 0 }
+            });
+        },
+        readOnly: false
+    });
+    editor.setOptions({
+        enableBasicAutocompletion: true,
+        enableLiveAutocompletion: true,
+        enableSnippets: true,
+        selectionStyle: "text",
+        highlightActiveLine: true,
+        highlightSelectedWord: true,
+        enableAutoIndent: true,
+        cursorStyle: "wide",
+        useSoftTabs: true,
+        hScrollBarAlwaysVisible: false,
+        showInvisibles: false,
+        animatedScroll: true,
+        highlightGutterLine: true,
+        showLineNumbers: true,
+        fontSize: "16px"
+    });
+    return editor;
+}

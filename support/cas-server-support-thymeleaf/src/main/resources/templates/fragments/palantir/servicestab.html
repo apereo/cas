@@ -52,20 +52,15 @@
                         <span th:utext="${service.description}" class="text-wrap"/>
                     </td>
                     <td class="mdc-data-table__cell" th:attr="serviceId=${service.id}">
-                        <button type="button" id="editService" name="editService" href="#"
+                        <button type="button" th:name="editService" href="#"
                                 th:attr="serviceId=${service.id}"
                                 class="mdc-button mdc-button--raised btn btn-link min-width-32x">
                             <i class="mdi mdi-pencil fas fa-eye min-width-32x" aria-hidden="true"></i>
                         </button>
-                        <button type="button" id="deleteService" name="deleteService" href="#"
+                        <button type="button" name="deleteService" href="#"
                                 th:attr="serviceId=${service.id}"
                                 class="mdc-button mdc-button--raised btn btn-link min-width-32x">
                             <i class="mdi mdi-delete fas fa-eye min-width-32x" aria-hidden="true"></i>
-                        </button>
-                        <button type="button" id="viewService" name="viewService" href="#"
-                                th:attr="serviceId=${service.id}"
-                                class="mdc-button mdc-button--raised btn btn-link min-width-32x">
-                            <i class="mdi mdi-eye fas fa-eye min-width-32x" aria-hidden="true"></i>
                         </button>
                     </td>
                 </tr>
@@ -80,28 +75,23 @@
                     <button id="exportAll" class="mdc-button mdc-button--raised" aria-label="Export All">
                          <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-export" aria-hidden="true"></i>Export All</span>
                     </button>
-                    <button id="reloadAll" class="mdc-button mdc-button--raised" aria-label="Reload" onclick="location.reload();">
+                    <button id="reloadAll" class="mdc-button mdc-button--raised" aria-label="Reload" onclick="location.reload(true);">
                          <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-refresh" aria-hidden="true"></i>Reload</span>
                     </button>
                 </div>
             </div>
-
-            <div class="mdc-dialog modal" id="viewServiceDialog" role="alertdialog"
-                 aria-modal="true" aria-labelledby="service-dialog-title" aria-describedby="dialog-content">
+        
+            <div class="mdc-dialog modal" id="editServiceDialog" role="alertdialog"
+                aria-modal="true" aria-labelledby="edit-service-dialog-title" aria-describedby="dialog-content">
                 <div class="mdc-dialog__container w-100 modal-dialog">
-                    <div class="mdc-dialog__surface mw-50 modal-content">
-                        <h2 class="mdc-dialog__title mt-lg-2 modal-header" id="service-dialog-title"></h2>
-                        <p class="px-2 text-wrap-pretty text-justify" id="service-description"></p>
-                        <div class="mdc-dialog__content modal-body" id="dialog-content">
-                            <pre>
-                                <code class="border-rounded language-json text-wrap-pretty">Text</code>
-                            </pre>
+                    <div class="mdc-dialog__surface mw-100 w-75 modal-content min-height-60">
+                        <div class="mdc-dialog__content modal-body" id="edit-service-dialog-content">
+                            <div class="aceeditor" id="editor"></div>
                         </div>
-                        <footer class="mdc-dialog__actions modal-footer">
-                            <button id="exportService" type="button"
+                        <footer class="mdc-dialog__actions modal-footer pr-4">
+                            <button id="saveService" type="button"
                                     class="mdc-button mdc-button--raised btn btn-outline-secondary">
-                                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-export"
-                                                                   aria-hidden="true"></i>Export</span>
+                                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-content-save" aria-hidden="true"></i>Save</span>
                             </button>
                             <button type="button" class="mdc-button mdc-button--outline btn btn-outline-secondary"
                                     data-mdc-dialog-action="accept"
@@ -113,7 +103,7 @@
                 </div>
                 <div class="mdc-dialog__scrim"></div>
             </div>
-
+        
 
             <script type="text/javascript">
                 ((material) => {
@@ -130,72 +120,52 @@
                             ]
                         });
 
-                        let dialog = material.dialog.MDCDialog.attachTo(document.getElementById("viewServiceDialog"));
-                        let viewServiceButton = document.getElementById("viewService");
-                        viewServiceButton.addEventListener("click", event => {
-                            let caller = event.target || event.srcElement;
-                            let serviceId = $(caller.parentElement).attr("serviceId");
-                            $.get(`${casServerPrefix}/palantir/services/${serviceId}`, response => {
-                                const value = JSON.stringify(response, null, 4);
-                                $("#viewServiceDialog pre code").text(value);
-                                $("#viewServiceDialog #service-dialog-title").html(response.name);
-                                $("#viewServiceDialog #service-description").html(response.description);
+                        let exportServiceButtons = document.getElementsByName("exportService");
+                        exportServiceButtons.forEach(exportServiceButton => {
+                            exportServiceButton.addEventListener("click", event => {
+                                let serviceId = $(exportServiceButton).attr("serviceId");
+                                fetch(`${casServerPrefix}/palantir/services/export/${serviceId}`)
+                                    .then(response => {
+                                        const filename = response.headers.get("filename");
+                                        response.blob().then(blob => {
+                                            const link = document.createElement("a");
+                                            link.href = window.URL.createObjectURL(blob);
+                                            link.download = filename;
+                                            document.body.appendChild(link);
+                                            link.click();
+                                            document.body.removeChild(link);
+                                        });
 
-                                $("#exportService").attr("serviceId", response.id);
-                                $("#viewServiceDialog").attr("serviceId", response.id);
-
-                                hljs.highlightAll();
-                                dialog[material ? "open" : "show"]();
+                                    })
+                                    .catch(error => console.error("Error fetching file:", error));
                                 event.preventDefault();
-                            }).fail((xhr, status, error) => {
-                                console.error("Error fetching data:", error);
-                            });
-                        }, false);
+                            }, false);
+                        });
 
+                        let deleteServiceButtons = document.getElementsByName("deleteService");
+                        deleteServiceButtons.forEach(deleteServiceButton => {
+                            deleteServiceButton.addEventListener("click", event => {
+                                let caller = event.target || event.srcElement;
+                                let serviceId = $(caller.parentElement).attr("serviceId");
 
-                        let exportServiceButton = document.getElementById("exportService");
-                        exportServiceButton.addEventListener("click", event => {
-                            let serviceId = $(exportServiceButton).attr("serviceId");
-                            fetch(`${casServerPrefix}/palantir/services/export/${serviceId}`)
-                                .then(response => {
-                                    const filename = response.headers.get("filename");
-                                    response.blob().then(blob => {
-                                        const link = document.createElement("a");
-                                        link.href = window.URL.createObjectURL(blob);
-                                        link.download = filename;
-                                        document.body.appendChild(link);
-                                        link.click();
-                                        document.body.removeChild(link);
+                                let result = confirm("Are you sure you want to delete this entry?");
+                                if (result) {
+                                    $.ajax({
+                                        url: `${casServerPrefix}/palantir/services/${serviceId}`,
+                                        type: "DELETE",
+                                        success: response => {
+                                            console.log("Resource deleted successfully:", response);
+                                            let nearestTr = $(caller).closest("tr");
+                                            applicationsTable.row(nearestTr).remove().draw();
+                                        },
+                                        error: (xhr, status, error) => {
+                                            console.error("Error deleting resource:", error);
+                                        }
                                     });
-
-                                })
-                                .catch(error => console.error("Error fetching file:", error));
-                            event.preventDefault();
-                        }, false);
-
-
-                        let deleteServiceButton = document.getElementById("deleteService");
-                        deleteServiceButton.addEventListener("click", event => {
-                            let caller = event.target || event.srcElement;
-                            let serviceId = $(caller.parentElement).attr("serviceId");
-
-                            let result = confirm("Are you sure you want to delete this entry?");
-                            if (result) {
-                                $.ajax({
-                                    url: `${casServerPrefix}/palantir/services/${serviceId}`,
-                                    type: "DELETE",
-                                    success: response => {
-                                        console.log("Resource deleted successfully:", response);
-                                        let nearestTr = $(caller).closest("tr");
-                                        applicationsTable.row(nearestTr).remove().draw();
-                                    },
-                                    error: (xhr, status, error) => {
-                                        console.error("Error deleting resource:", error);
-                                    }
-                                });
-                            }
-                            event.preventDefault();
-                        }, false);
+                                }
+                                event.preventDefault();
+                            }, false);
+                        });
 
                         let exportAllButton = document.getElementById("exportAll");
                         exportAllButton.addEventListener("click", event => {
@@ -215,7 +185,50 @@
                                 .catch(error => console.error("Error fetching file:", error));
                             event.preventDefault();
                         }, false);
+                        
+                        let editServiceDialog = material.dialog.MDCDialog.attachTo(document.getElementById("editServiceDialog"));
+                        let editServiceButtons = document.getElementsByName("editService");
+                        const editor = initializeAceEditor("editor");
+                        editServiceButtons.forEach(editServiceButton => {
+                            editServiceButton.addEventListener("click", event => {
+                                let caller = event.target || event.srcElement;
 
+                                let serviceId = $(caller.parentElement).attr("serviceId");
+                                $.get(`${casServerPrefix}/palantir/services/${serviceId}`, response => {
+                                    const value = JSON.stringify(response, null, 4);
+                                    editor.setValue(value, -1);
+                                    editor.gotoLine(1);
+                                }).fail((xhr, status, error) => {
+                                    console.error("Error fetching data:", error);
+                                });
+                                editServiceDialog["open"]();
+                                event.preventDefault();
+
+                            }, false);
+                        });
+
+                        let saveServiceButton = document.getElementById("saveService");
+                        saveServiceButton.addEventListener("click", event => {
+
+                            let result = confirm("Are you sure you want to update this entry?");
+                            if (result) {
+                                const value = editor.getValue();
+                                $.ajax({
+                                    url: `${casServerPrefix}/palantir/services`,
+                                    type: "PUT",
+                                    contentType: "application/json",
+                                    data: value,
+                                    success: response => {
+                                        console.log("Update successful:", response);
+                                        editServiceDialog["close"]();
+                                        $("#reloadAll").click();
+                                    },
+                                    error: (xhr, status, error) => {
+                                        console.error("Update failed:", error);
+                                    }
+                                });
+                            }
+                        }, false);
                     });
                 })(window.mdc);
             </script>

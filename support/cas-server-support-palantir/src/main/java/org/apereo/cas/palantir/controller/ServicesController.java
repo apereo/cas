@@ -50,7 +50,7 @@ public class ServicesController {
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getAllServices() {
-        return ResponseEntity.ok(registeredServiceSerializer.fromList(servicesManager.getObject().getAllServices()));
+        return ResponseEntity.ok(registeredServiceSerializer.fromList(servicesManager.getObject().load()));
     }
 
     /**

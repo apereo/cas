@@ -39,7 +39,7 @@ dependencies {
     implementation libraries.springsecurityconfig
 
     runtimeOnly libraries.webjars
-    runtimeOnly libraries.webjarschartjs
+    runtimeOnly libraries.webjarspalantir
 
     testImplementation libraries.springboottomcat
 

@@ -340,6 +340,15 @@ form button i.mdi {
     /*padding-right: 1px;*/
 }
 
+.aceeditor {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    font-family: "Monaco", "Menlo", "Ubuntu Mono", "Droid Sans Mono", "Consolas", monospace !important;
+}
+
 .mdi:before {
     font-size: 24px;
 }
@@ -366,6 +375,10 @@ form button i.mdi {
 
 .pr-2 {
     padding-right: 0.8rem;
+}
+
+.pr-4 {
+    padding-right: 1.2rem;
 }
 
 .bg-primary {
@@ -591,6 +604,10 @@ form button i.mdi {
 
 .min-vh-100 {
     min-height: 100vh;
+}
+
+.min-height-60 {
+    min-height: 60%;
 }
 
 .vw-100 {
