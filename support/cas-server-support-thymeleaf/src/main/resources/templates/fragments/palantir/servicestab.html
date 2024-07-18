@@ -69,11 +69,16 @@
 
             <div width="10%">
                 <div class="mdc-touch-target-wrapper">
-                    <button id="create" class="mdc-button mdc-button--raised" aria-label="Create">
-                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus" aria-hidden="true"></i>New Application</span>
+                    <button id="newService" class="mdc-button mdc-button--raised" aria-label="Create">
+                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus" aria-hidden="true"></i>New</span>
+                    </button>
+
+                    <input type="file" id="serviceFileInput" style="display: none;">
+                    <button id="importService" class="mdc-button mdc-button--raised" aria-label="Import">
+                         <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-import" aria-hidden="true"></i>Import</span>
                     </button>
                     <button id="exportAll" class="mdc-button mdc-button--raised" aria-label="Export All">
-                         <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-export" aria-hidden="true"></i>Export All</span>
+                         <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-export" aria-hidden="true"></i>Export</span>
                     </button>
                     <button id="reloadAll" class="mdc-button mdc-button--raised" aria-label="Reload" onclick="location.reload(true);">
                          <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-refresh" aria-hidden="true"></i>Reload</span>
@@ -120,6 +125,52 @@
                             ]
                         });
 
+                        let newServiceButton = document.getElementById("newService");
+                        newServiceButton.addEventListener("click", event => {
+
+                            const editServiceDialogElement = document.getElementById("editServiceDialog");
+                            let editServiceDialog = material.dialog.MDCDialog.attachTo(editServiceDialogElement);
+                            const editor = initializeAceEditor("editor");
+                            editor.gotoLine(1);
+
+                            $(editServiceDialogElement).attr("newService", true);
+                            editServiceDialog["open"]();
+                            event.preventDefault();
+                        }, false);
+
+                        let importServiceButton = document.getElementById("importService");
+                        importServiceButton.addEventListener("click", event => {
+                            $("#serviceFileInput").click();
+
+                            $("#serviceFileInput").change(event => {
+                                const file = event.target.files[0];
+
+                                const reader = new FileReader();
+                                reader.readAsText(file);
+                                reader.onload = e => {
+                                    const fileContent = e.target.result;
+                                    console.log("File content:", fileContent);
+
+                                    $.ajax({
+                                        url: `${casServerPrefix}/palantir/services`,
+                                        type: "PUT",
+                                        contentType: "application/json",
+                                        data: fileContent,
+                                        success: response => {
+                                            console.log("File upload successful:", response);
+                                            $("#reloadAll").click();
+                                        },
+                                        error: (xhr, status, error) => {
+                                            console.error("File upload failed:", error);
+                                        }
+                                    });
+                                };
+
+                            });
+                            
+                            event.preventDefault();
+                        }, false);
+                        
                         let exportServiceButtons = document.getElementsByName("exportService");
                         exportServiceButtons.forEach(exportServiceButton => {
                             exportServiceButton.addEventListener("click", event => {
@@ -201,6 +252,9 @@
                                 }).fail((xhr, status, error) => {
                                     console.error("Error fetching data:", error);
                                 });
+
+                                const editServiceDialogElement = document.getElementById("editServiceDialog");
+                                $(editServiceDialogElement).attr("newService", false);
                                 editServiceDialog["open"]();
                                 event.preventDefault();
 
@@ -213,9 +267,13 @@
                             let result = confirm("Are you sure you want to update this entry?");
                             if (result) {
                                 const value = editor.getValue();
+
+                                const editServiceDialogElement = document.getElementById("editServiceDialog");
+                                const isNewService = $(editServiceDialogElement).attr("newService") === "true";
+
                                 $.ajax({
                                     url: `${casServerPrefix}/palantir/services`,
-                                    type: "PUT",
+                                    type: isNewService ? "POST" : "PUT",
                                     contentType: "application/json",
                                     data: value,
                                     success: response => {
