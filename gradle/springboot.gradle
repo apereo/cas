@@ -15,8 +15,6 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
                 resources {
                     srcDirs new File("/etc/cas/templates/"),
                             new File("${project(":webapp").getProjectDir()}/cas-server-webapp-resources/src/main/resources/"),
-                            new File("${project(":support").getProjectDir()}/cas-server-support-palantir/src/main/resources/static"),
-                            new File("${project(":support").getProjectDir()}/cas-server-support-palantir/src/main/resources/templates"),
                             new File("${project(":support").getProjectDir()}/cas-server-support-thymeleaf/src/main/resources/"),
                             new File("${project(":support").getProjectDir()}/cas-server-support-themes-collection/src/main/resources/")
                 }
@@ -40,12 +38,6 @@ if (project.ext.forceBootifulArtifact || (!rootProject.publishFlag && !rootProje
     }
 
     if (plugins.hasPlugin("war")) {
-
-        tasks.named("processBootRunResources") {
-            dependsOn(project(":support:cas-server-support-palantir").tasks.named("build-ui"))
-            duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-        }
-        
         tasks.named('javadoc') {
             enabled false
         }

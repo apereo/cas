@@ -97,5 +97,15 @@ class ServicesControllerTests {
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        mvc.perform(get("/palantir/services/export")
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(status().isOk());
+
+        mvc.perform(get("/palantir/services/export/" + newService.getId())
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(status().isOk());
     }
 }

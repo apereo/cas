@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout(mainContentClass='container-xxl')}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title th:text="#{cas.login.pagetitle}">CAS Admin UI</title>
+    <link rel="stylesheet" type="text/css" th:href="@{#{webjars.highlight.css}}"/>
+    <script type="text/javascript" th:src="@{#{webjars.highlight.js}}"></script>
+    <script type="text/javascript" th:src="@{#{webjars.chart.js}}"></script>
+</head>
+
+<body>
+<main class="container mt-3 mb-3">
+
+    <div layout:fragment="content" id="dashboard" class="mdc-card p-2 m-1">
+
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            let casServerPrefix = /*[[${casServerPrefix}]]*/;
+            /*]]>*/
+        </script>
+        
+        <div th:replace="~{fragments/palantir/dashboardtabs :: main}" />
+        <div th:replace="~{fragments/palantir/servicestab :: main}" />
+        <div th:replace="~{fragments/palantir/systemtab :: main}" />
+    </div>
+</main>
+</body>
+</html>

@@ -44,7 +44,7 @@ public class StatisticsEndpoint extends BaseCasActuatorEndpoint {
      */
     @ReadOperation
     @Operation(summary = "Get a report of CAS statistics on tickets. Expired tickets will be removed")
-    public Map<String, Object> handle() {
+    public Map<String, Object> statistics() {
         val model = new HashMap<String, Object>();
 
         val diff = Duration.between(upTimeStartDate, ZonedDateTime.now(ZoneOffset.UTC));

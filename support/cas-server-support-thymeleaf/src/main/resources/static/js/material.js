@@ -80,6 +80,10 @@ let cas = {
             tabs.foundation.adapter.activateTabAtIndex(0);
         }
 
+        for (const el of document.querySelectorAll('.mdc-fab')) {
+           new mdc.ripple.MDCRipple(el);
+        }
+
     },
     checkCaps: (ev) => {
         let s = String.fromCharCode(ev.which);

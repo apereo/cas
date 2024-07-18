@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+</head>
+<body>
+<span th:fragment="main">
+    <div class="attribute-tab w-100 d-none" id="attribute-tab-1">
+        <table id="systemTable" class="mdc-data-table__table table table-striped noborder">
+            <thead>
+            <tr class="mdc-data-table__header-row">
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Field</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
+            </tr>
+            </thead>
+            <tbody class="mdc-data-table__content">
+            </tbody>
+        </table>
+
+        <div class="mdc-layout-grid">
+          <div class="mdc-layout-grid__inner">
+            <div class="mdc-layout-grid__cell"><canvas id="memoryChart"></canvas></div>
+            <div class="mdc-layout-grid__cell"><canvas id="statisticsChart"></canvas></div>
+          </div>
+        </div>
+
+        <script type="text/javascript">
+            ((material) => {
+
+                document.addEventListener("DOMContentLoaded", () => {
+                    const systemTable = $("#systemTable").DataTable({
+                        pageLength: 10,
+                        drawCallback: settings => {
+                            $("#systemTable tr").addClass("mdc-data-table__row");
+                            $("#systemTable td").addClass("mdc-data-table__cell");
+                        }
+                    });
+
+                    function fetchSystemData(callback) {
+                        $.get(`${casServerPrefix}/palantir/system`, response => callback(response)).fail((xhr, status, error) => {
+                            console.error("Error fetching data:", error);
+                        });
+                    }
+                    function fetchStatistics(callback) {
+                        $.get(`${casServerPrefix}/palantir/system/statistics`, response => callback(response)).fail((xhr, status, error) => {
+                            console.error("Error fetching data:", error);
+                        });
+                    }
+
+                    let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
+                    tabs.listen("MDCTabBar:activated", ev => {
+                        let index = ev.detail.index;
+                        if (index === 1) {
+                            fetchSystemData(response => {
+                                const flattened = flattenJSON(response);
+                                systemTable.clear();
+
+                                for (const [key, value] of Object.entries(flattened)) {
+                                    systemTable.row.add({
+                                        0: `<code>${key}</code>`,
+                                        1: `<code>${value}</code>`
+                                    });
+                                }
+                                systemTable.draw();
+                            });
+                        }
+                    });
+
+                    const memoryChartCtx = document.getElementById('memoryChart').getContext('2d');
+                    const memoryChart = new Chart(memoryChartCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Total Memory', 'Free Memory', 'Used Memory'],
+                            datasets: [{
+                                label: 'Memory (GB)',
+                                data: [0, 0, 0],
+                                fill: true,
+                                backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+                                borderColor: ['rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    stacked: true
+                                },
+                                x: {
+                                    stacked: true,
+                                    grid: {
+                                        offset: true
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    setInterval(() => {
+                        const index = tabs.foundation.adapter.getFocusedTabIndex();
+                        if (index === 1) {
+                            fetchSystemData(response => {
+                                const maximum = convertMemoryToGB(response.systemInfo["JVM Maximum Memory"]);
+                                const free = convertMemoryToGB(response.systemInfo["JVM Free Memory"]);
+                                const total = convertMemoryToGB(response.systemInfo["JVM Total Memory"]);
+                                console.log("Memory: ", maximum, total, free);
+                                memoryChart.data.datasets[0].data = [maximum, total, free];
+                                memoryChart.update();
+                            });
+                        }
+                    }, 2000);
+                    
+                    const statisticsChartCtx = document.getElementById('statisticsChart').getContext('2d');
+                    const statisticsChart = new Chart(statisticsChartCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Current Tickets', 'Expired (Removed) Tickets'],
+                            datasets: [{
+                                label: 'Ticket Registry',
+                                data: [0, 0],
+                                fill: true,
+                                backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(255, 99, 132, 0.2)'],
+                                borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    stacked: true,
+                                    ticks: {
+                                        stepSize: 1
+                                    }
+                                },
+                                x: {
+                                    stacked: true,
+                                    grid: {
+                                        offset: true
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    setInterval(() => {
+                        const index = tabs.foundation.adapter.getFocusedTabIndex();
+                        if (index === 1) {
+                            fetchStatistics(response => {
+                                const expired = response.expiredTickets;
+                                const valid = response.validTickets;
+                                statisticsChart.data.datasets[0].data = [valid, expired];
+                                statisticsChart.update();
+                            });
+                        }
+                    }, 5000);
+                });
+            })(window.mdc);
+        </script>
+    </div>
+</span>
+</body>
+</html>
