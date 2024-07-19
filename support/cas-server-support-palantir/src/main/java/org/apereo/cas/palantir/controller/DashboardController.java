@@ -2,10 +2,8 @@ package org.apereo.cas.palantir.controller;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.palantir.PalantirConstants;
-import org.apereo.cas.services.ServicesManager;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
