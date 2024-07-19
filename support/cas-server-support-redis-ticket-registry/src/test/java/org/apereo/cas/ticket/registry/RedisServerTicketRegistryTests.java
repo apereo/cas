@@ -365,16 +365,15 @@ class RedisServerTicketRegistryTests {
             val principalId = UUID.randomUUID().toString();
             val testHasFailed = new AtomicBoolean();
             val threads = new ArrayList<Thread>();
-            for (var i = 1; i <= 3; i++) {
+            for (var i = 1; i <= 100; i++) {
                 val runnable = new RunnableAddTicketGrantingTicket(ticketRegistry, principalId, 100);
-                val thread = new Thread(runnable);
-                thread.setName("Thread-" + i);
-                thread.setUncaughtExceptionHandler((t, e) -> {
+                val thread = Thread.ofVirtual();
+                thread.name("Thread-" + i);
+                thread.uncaughtExceptionHandler((t, e) -> {
                     LOGGER.error(e.getMessage(), e);
                     testHasFailed.set(true);
                 });
-                threads.add(thread);
-                thread.start();
+                threads.add(thread.start(runnable));
             }
             for (val thread : threads) {
                 try {
