@@ -16,6 +16,7 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -59,8 +60,9 @@ class CasPalantirWebMvcConfiguration {
     @ConditionalOnMissingBean(name = "palantirSystemController")
     public SystemController palantirSystemController(
         final ObjectProvider<StatisticsEndpoint> statisticsProvider,
+        final ObjectProvider<HealthEndpoint> healthProvider,
         final ObjectProvider<InfoEndpoint> infoProvider) {
-        return new SystemController(infoProvider, statisticsProvider);
+        return new SystemController(infoProvider, statisticsProvider, healthProvider);
     }
 
     @Bean

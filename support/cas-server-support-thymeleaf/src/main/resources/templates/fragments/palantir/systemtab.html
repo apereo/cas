@@ -23,141 +23,215 @@
           <div class="mdc-layout-grid__inner">
             <div class="mdc-layout-grid__cell"><canvas id="memoryChart"></canvas></div>
             <div class="mdc-layout-grid__cell"><canvas id="statisticsChart"></canvas></div>
+            <div class="mdc-layout-grid__cell"><canvas id="systemHealthChart"></canvas></div>
           </div>
         </div>
 
         <script type="text/javascript">
-            ((material) => {
-
-                document.addEventListener("DOMContentLoaded", () => {
-                    const systemTable = $("#systemTable").DataTable({
-                        pageLength: 10,
-                        drawCallback: settings => {
-                            $("#systemTable tr").addClass("mdc-data-table__row");
-                            $("#systemTable td").addClass("mdc-data-table__cell");
-                        }
+            function configureHealthChart(systemHealthChart) {
+                $.get(`${casServerPrefix}/palantir/system/health`, response => {
+                    console.log(response);
+                    const payload = {
+                        labels: [],
+                        data: [],
+                        colors: []
+                    };
+                    Object.keys(response.components).forEach(key => {
+                        payload.labels.push(key.charAt(0).toUpperCase() + key.slice(1).toLowerCase());
+                        payload.data.push(response.components[key].status === "UP" ? 1 : 0);
+                        payload.colors.push(response.components[key].status === "UP" ? "rgb(5, 166, 31)" : "rgba(166, 45, 15)");
                     });
-
-                    function fetchSystemData(callback) {
-                        $.get(`${casServerPrefix}/palantir/system`, response => callback(response)).fail((xhr, status, error) => {
-                            console.error("Error fetching data:", error);
+                    systemHealthChart.data.labels = payload.labels;
+                    systemHealthChart.data.datasets[0].data = payload.data;
+                    systemHealthChart.data.datasets[0].backgroundColor = payload.colors;
+                    systemHealthChart.data.datasets[0].borderColor = payload.colors;
+                    systemHealthChart.options.plugins.legend.labels.generateLabels = (chart => {
+                        const originalLabels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                        originalLabels.forEach(label => {
+                            label.fillStyle = response.status === "UP" ? "rgb(5, 166, 31)" : "rgba(166, 45, 15)";
+                            label.lineWidth = 0;
                         });
-                    }
-                    function fetchStatistics(callback) {
-                        $.get(`${casServerPrefix}/palantir/system/statistics`, response => callback(response)).fail((xhr, status, error) => {
-                            console.error("Error fetching data:", error);
-                        });
-                    }
-
-                    let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
-                    tabs.listen("MDCTabBar:activated", ev => {
-                        let index = ev.detail.index;
-                        if (index === 1) {
-                            fetchSystemData(response => {
-                                const flattened = flattenJSON(response);
-                                systemTable.clear();
-
-                                for (const [key, value] of Object.entries(flattened)) {
-                                    systemTable.row.add({
-                                        0: `<code>${key}</code>`,
-                                        1: `<code>${value}</code>`
-                                    });
-                                }
-                                systemTable.draw();
-                            });
-                        }
+                        return originalLabels;
                     });
-
-                    const memoryChartCtx = document.getElementById('memoryChart').getContext('2d');
-                    const memoryChart = new Chart(memoryChartCtx, {
-                        type: 'bar',
-                        data: {
-                            labels: ['Total Memory', 'Free Memory', 'Used Memory'],
-                            datasets: [{
-                                label: 'Memory (GB)',
-                                data: [0, 0, 0],
-                                fill: true,
-                                backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(255, 99, 132, 0.2)'],
-                                borderColor: ['rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
-                                borderWidth: 2
-                            }]
-                        },
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    stacked: true
-                                },
-                                x: {
-                                    stacked: true,
-                                    grid: {
-                                        offset: true
-                                    }
-                                }
-                            }
-                        }
-                    });
-
-                    setInterval(() => {
-                        const index = tabs.foundation.adapter.getFocusedTabIndex();
-                        if (index === 1) {
-                            fetchSystemData(response => {
-                                const maximum = convertMemoryToGB(response.systemInfo["JVM Maximum Memory"]);
-                                const free = convertMemoryToGB(response.systemInfo["JVM Free Memory"]);
-                                const total = convertMemoryToGB(response.systemInfo["JVM Total Memory"]);
-                                console.log("Memory: ", maximum, total, free);
-                                memoryChart.data.datasets[0].data = [maximum, total, free];
-                                memoryChart.update();
-                            });
-                        }
-                    }, 2000);
                     
-                    const statisticsChartCtx = document.getElementById('statisticsChart').getContext('2d');
-                    const statisticsChart = new Chart(statisticsChartCtx, {
-                        type: 'bar',
-                        data: {
-                            labels: ['Current Tickets', 'Expired (Removed) Tickets'],
-                            datasets: [{
-                                label: 'Ticket Registry',
-                                data: [0, 0],
-                                fill: true,
-                                backgroundColor: ['rgba(75, 192, 192, 0.2)', 'rgba(255, 99, 132, 0.2)'],
-                                borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
-                                borderWidth: 2
-                            }]
-                        },
-                        options: {
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    stacked: true,
-                                    ticks: {
-                                        stepSize: 1
-                                    }
-                                },
-                                x: {
-                                    stacked: true,
-                                    grid: {
-                                        offset: true
-                                    }
+
+
+
+                    systemHealthChart.update();
+                }).fail((xhr, status, error) => {
+                    console.error("Error fetching data:", error);
+                });
+            }
+
+            function configureStatistics(statisticsChart) {
+                $.get(`${casServerPrefix}/palantir/system/statistics`, response => {
+                    const expired = response.expiredTickets;
+                    const valid = response.validTickets;
+                    statisticsChart.data.datasets[0].data = [valid, expired];
+                    statisticsChart.update();
+                }).fail((xhr, status, error) => {
+                    console.error("Error fetching data:", error);
+                });
+            }
+
+            function fetchSystemData(callback) {
+                $.get(`${casServerPrefix}/palantir/system`, response => callback(response)).fail((xhr, status, error) => {
+                    console.error("Error fetching data:", error);
+                });
+            }
+            
+            function configureSystemData(memoryChart) {
+                fetchSystemData(response => {
+                    const maximum = convertMemoryToGB(response.systemInfo["JVM Maximum Memory"]);
+                    const free = convertMemoryToGB(response.systemInfo["JVM Free Memory"]);
+                    const total = convertMemoryToGB(response.systemInfo["JVM Total Memory"]);
+                    console.log("Memory: ", maximum, total, free);
+                    memoryChart.data.datasets[0].data = [maximum, total, free];
+                    memoryChart.update();
+                });
+            }
+
+
+            document.addEventListener("DOMContentLoaded", () => {
+                const systemTable = $("#systemTable").DataTable({
+                    pageLength: 10,
+                    drawCallback: settings => {
+                        $("#systemTable tr").addClass("mdc-data-table__row");
+                        $("#systemTable td").addClass("mdc-data-table__cell");
+                    }
+                });
+
+                let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
+                tabs.listen("MDCTabBar:activated", ev => {
+                    let index = ev.detail.index;
+                    if (index === 1) {
+                        fetchSystemData(response => {
+                            const flattened = flattenJSON(response);
+                            systemTable.clear();
+
+                            for (const [key, value] of Object.entries(flattened)) {
+                                systemTable.row.add({
+                                    0: `<code>${key}</code>`,
+                                    1: `<code>${value}</code>`
+                                });
+                            }
+                            systemTable.draw();
+                        });
+                    }
+                });
+
+                const memoryChartCtx = document.getElementById("memoryChart").getContext("2d");
+                const memoryChart = new Chart(memoryChartCtx, {
+                    type: "bar",
+                    data: {
+                        labels: ["Total Memory", "Free Memory", "Used Memory"],
+                        datasets: [{
+                            label: "Memory (GB)",
+                            data: [0, 0, 0],
+                            fill: true,
+                            backgroundColor: ["rgba(54, 162, 235, 0.2)", "rgba(75, 192, 192, 0.2)", "rgba(255, 99, 132, 0.2)"],
+                            borderColor: ["rgba(54, 162, 235, 1)", "rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)"],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                stacked: true
+                            },
+                            x: {
+                                stacked: true,
+                                grid: {
+                                    offset: true
                                 }
                             }
                         }
-                    });
-
-                    setInterval(() => {
-                        const index = tabs.foundation.adapter.getFocusedTabIndex();
-                        if (index === 1) {
-                            fetchStatistics(response => {
-                                const expired = response.expiredTickets;
-                                const valid = response.validTickets;
-                                statisticsChart.data.datasets[0].data = [valid, expired];
-                                statisticsChart.update();
-                            });
-                        }
-                    }, 5000);
+                    }
                 });
-            })(window.mdc);
+
+                const statisticsChartCtx = document.getElementById("statisticsChart").getContext("2d");
+                const statisticsChart = new Chart(statisticsChartCtx, {
+                    type: "bar",
+                    data: {
+                        labels: ["Current Tickets", "Expired (Removed) Tickets"],
+                        datasets: [{
+                            label: "Ticket Registry",
+                            data: [0, 0],
+                            fill: true,
+                            backgroundColor: ["rgba(75, 192, 192, 0.2)", "rgba(255, 99, 132, 0.2)"],
+                            borderColor: ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)"],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                stacked: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            },
+                            x: {
+                                stacked: true,
+                                grid: {
+                                    offset: true
+                                }
+                            }
+                        }
+                    }
+                });
+
+                const systemHealthCtx = document.getElementById("systemHealthChart").getContext("2d");
+                const systemHealthChart = new Chart(systemHealthCtx, {
+                    type: "bar",
+                    data: {
+                        datasets: [{
+                            label: "System Health",
+                            fill: true,
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        indexAxis: "y",
+                        scales: {
+                            x: {
+                                ticks: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                setInterval(() => {
+                    const index = tabs.foundation.adapter.getFocusedTabIndex();
+                    if (index === 1) {
+                        configureSystemData(memoryChart);
+                    }
+                }, 2000);
+
+                setInterval(() => {
+                    const index = tabs.foundation.adapter.getFocusedTabIndex();
+                    if (index === 1) {
+                        configureStatistics(statisticsChart);
+                    }
+                }, 5000);
+
+                setInterval(() => {
+                    const index = tabs.foundation.adapter.getFocusedTabIndex();
+                    if (index === 1) {
+                        configureHealthChart(systemHealthChart);
+                    }
+                }, 5000);
+
+
+                configureSystemData(memoryChart);
+                configureStatistics(statisticsChart);
+                configureHealthChart(systemHealthChart);
+            });
+            
         </script>
     </div>
 </span>
