@@ -19,9 +19,6 @@ import java.util.Set;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface RegisteredService extends RegisteredServiceDefinition, Comparable<RegisteredService> {
-
-
-
     /**
      * Get the expiration policy rules for this service.
      *

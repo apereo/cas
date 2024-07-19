@@ -181,24 +181,28 @@ class DefaultServicesManagerTests {
         
         @Test
         void verifyOperation() throws Throwable {
-            val indexedServicesManager = (IndexableServicesManager) servicesManager.getServiceManagers().get(0);
+            val indexedServicesManager = (IndexableServicesManager) servicesManager.getServiceManagers().getFirst();
             indexedServicesManager.clearIndexedServices();
             assertEquals(0, indexedServicesManager.countIndexedServices());
 
-            val registeredService = new CasRegisteredService();
-            registeredService.setId(RandomUtils.nextLong());
-            registeredService.setName(UUID.randomUUID().toString());
-            registeredService.setServiceId(registeredService.getName());
+            var registeredService = getRegisteredService(RandomUtils.nextLong());
             indexedServicesManager.save(registeredService);
 
+            registeredService = getRegisteredService(registeredService.getId());
             registeredService.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(List.of("one", "two")));
-            indexedServicesManager.save(registeredService);
-
-            registeredService.setAttributeReleasePolicy(new ReturnAllowedAttributeReleasePolicy(List.of("A", "B")));
+            registeredService.setDescription(UUID.randomUUID().toString());
             indexedServicesManager.save(registeredService);
 
             assertEquals(1, indexedServicesManager.countIndexedServices());
             assertTrue(indexedServicesManager.findIndexedServiceBy(registeredService.getId()).isPresent());
+        }
+
+        private static CasRegisteredService getRegisteredService(final long id) {
+            val registeredService = new CasRegisteredService();
+            registeredService.setId(id);
+            registeredService.setName(UUID.randomUUID().toString());
+            registeredService.setServiceId(registeredService.getName());
+            return registeredService;
         }
     }
 }
