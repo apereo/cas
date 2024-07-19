@@ -17,6 +17,7 @@ import org.apereo.cas.ticket.registry.key.RedisKeyGeneratorFactory;
 import org.apereo.cas.ticket.registry.pub.RedisTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.thread.Cleanable;
@@ -40,8 +41,6 @@ import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisKeyValueAdapter;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.convert.KeyspaceConfiguration;
-import org.springframework.data.redis.core.convert.MappingConfiguration;
-import org.springframework.data.redis.core.index.IndexConfiguration;
 import org.springframework.data.redis.core.mapping.RedisMappingContext;
 import jakarta.annotation.Nonnull;
 import java.io.Serializable;
@@ -51,7 +50,6 @@ import java.time.Clock;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -88,6 +86,10 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
 
     private final CasConfigurationProperties casProperties;
 
+    private final RedisMappingContext redisMappingContext;
+
+    private final CasReentrantLock lock = new CasReentrantLock();
+
     public RedisTicketRegistry(final CipherExecutor cipherExecutor,
                                final TicketSerializationManager ticketSerializationManager,
                                final TicketCatalog ticketCatalog,
@@ -105,6 +107,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         this.redisModuleCommands = redisModuleCommands;
         this.redisKeyGeneratorFactory = redisKeyGeneratorFactory;
         this.casProperties = casProperties;
+        this.redisMappingContext = new RedisMappingContext();
+
         createIndexesIfNecessary();
     }
 
@@ -507,18 +511,11 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         }
     }
 
-
     private RedisKeyValueAdapter buildRedisKeyValueAdapter(final String redisKeyPattern) {
-        val redisMappingContext = new RedisMappingContext(
-            new MappingConfiguration(new IndexConfiguration(), new KeyspaceConfiguration() {
-                @Nonnull
-                @Override
-                protected Iterable<KeyspaceSettings> initialConfiguration() {
-                    return Collections.singleton(new KeyspaceSettings(RedisTicketDocument.class, redisKeyPattern));
-                }
-            }));
+        lock.tryLock(__ -> redisMappingContext.getMappingConfiguration().getKeyspaceConfiguration()
+            .addKeyspaceSettings(new KeyspaceConfiguration.KeyspaceSettings(RedisTicketDocument.class, redisKeyPattern)));
 
-        val adapter = new RedisKeyValueAdapter(casRedisTemplates.getTicketsRedisTemplate(), redisMappingContext) {
+        val adapter = new RedisKeyValueAdapter(casRedisTemplates.getTicketsRedisTemplate(), this.redisMappingContext) {
             @Override
             @Nonnull
             public byte[] createKey(@Nonnull final String keyspace, @Nonnull final String id) {
