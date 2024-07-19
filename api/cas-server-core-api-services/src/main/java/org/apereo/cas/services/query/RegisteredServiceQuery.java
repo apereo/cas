@@ -1,7 +1,6 @@
 package org.apereo.cas.services.query;
 
 import org.apereo.cas.services.RegisteredService;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

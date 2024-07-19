@@ -57,26 +57,29 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
 
     protected AbstractServicesManager(final ServicesManagerConfigurationContext configurationContext) {
         this.configurationContext = configurationContext;
-
         this.indexedRegisteredServices = new ConcurrentIndexedCollection<>();
         if (configurationContext.getCasProperties().getServiceRegistry().getCore().isIndexServices()) {
-            configurationContext.getRegisteredServiceLocators()
-                .forEach(locator -> locator.getRegisteredServiceIndexes()
-                    .stream()
-                    .map(RegisteredServiceQueryIndex::getIndex)
-                    .filter(AttributeIndex.class::isInstance)
-                    .map(AttributeIndex.class::cast)
-                    .forEach(index -> {
-                        LOGGER.debug("Adding registered service index [{}] supplied by [{}]",
-                            index.getAttribute().toString(), locator.getClass().getSimpleName());
-                        indexedRegisteredServices.addIndex(index);
-                    }));
+            createRegisteredServiceIndexes();
         }
+    }
+
+    private void createRegisteredServiceIndexes() {
+        configurationContext.getRegisteredServiceLocators()
+            .forEach(locator -> locator.getRegisteredServiceIndexes()
+                .stream()
+                .map(RegisteredServiceQueryIndex::getIndex)
+                .filter(AttributeIndex.class::isInstance)
+                .map(AttributeIndex.class::cast)
+                .forEach(index -> {
+                    LOGGER.debug("Adding registered service index [{}] supplied by [{}]",
+                        index.getAttribute().toString(), locator.getClass().getSimpleName());
+                    indexedRegisteredServices.addIndex(index);
+                }));
     }
 
     @Override
     public void clearIndexedServices() {
-        if (configurationContext.getCasProperties().getServiceRegistry().getCore().isIndexServices()){
+        if (configurationContext.getCasProperties().getServiceRegistry().getCore().isIndexServices()) {
             indexedRegisteredServices.clear();
         }
     }
