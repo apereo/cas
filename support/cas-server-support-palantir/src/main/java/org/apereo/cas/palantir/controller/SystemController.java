@@ -4,6 +4,7 @@ import org.apereo.cas.palantir.PalantirConstants;
 import org.apereo.cas.web.report.StatisticsEndpoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class SystemController {
     private final ObjectProvider<InfoEndpoint> infoProvider;
     private final ObjectProvider<StatisticsEndpoint> statisticsProvider;
+    private final ObjectProvider<HealthEndpoint> healthProvider;
 
     /**
      * Gets all services.
@@ -44,6 +46,15 @@ public class SystemController {
         return statisticsProvider
             .stream()
             .map(endpoint -> ResponseEntity.ok(endpoint.statistics()))
+            .findFirst()
+            .orElseGet(() -> ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).build());
+    }
+
+    @GetMapping(path = "/health", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getHealth() {
+        return healthProvider
+            .stream()
+            .map(endpoint -> ResponseEntity.ok(endpoint.health()))
             .findFirst()
             .orElseGet(() -> ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).build());
     }

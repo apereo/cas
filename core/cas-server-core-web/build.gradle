@@ -29,6 +29,7 @@ dependencies {
 
     testRuntimeOnly libraries.webjars
     testRuntimeOnly libraries.webjarsbootstrap
+    testRuntimeOnly libraries.webjarspalantir
     testRuntimeOnly libraries.websockets
     
     implementation libraries.snakeyaml
