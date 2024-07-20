@@ -113,9 +113,9 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         if (metadata != null) {
             val map = getTicketMapInstanceByMetadata(metadata);
             if (map != null) {
-                val ticketHolder = map.get(encTicketId);
-                if (ticketHolder != null && ticketHolder.getTicket() != null) {
-                    val result = decodeTicket(ticketHolder.getTicket());
+                val document = map.get(encTicketId);
+                if (document != null && document.ticket() != null) {
+                    val result = decodeTicket(document.ticket());
                     if (predicate != null && predicate.test(result)) {
                         return result;
                     }
@@ -208,7 +208,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             LOGGER.debug("Executing SQL query [{}]", query);
             val results = ticketMapInstance.values(Predicates.sql(query));
             return results.stream()
-                .map(row -> decodeTicket(row.getTicket()))
+                .map(row -> decodeTicket(row.ticket()))
                 .filter(ticket -> !ticket.isExpired());
         }
         return super.getSessionsWithAttributes(queryAttributes);
@@ -238,12 +238,12 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     public Stream<? extends Ticket> stream() {
         return ticketCatalog
             .findAll()
-            .stream()
+            .parallelStream()
             .map(metadata -> getTicketMapInstanceByMetadata(metadata).values())
             .flatMap(tickets -> {
                 var resultStream = tickets
-                    .stream()
-                    .map(HazelcastTicketDocument::getTicket);
+                    .parallelStream()
+                    .map(HazelcastTicketDocument::ticket);
                 if (properties.getPageSize() > 0) {
                     resultStream = resultStream.limit(properties.getPageSize());
                 }
