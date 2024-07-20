@@ -50,7 +50,7 @@ public interface TicketRegistry {
      * @throws Exception the exception
      */
     default List<? extends Ticket> addTicket(final Stream<? extends Ticket> toSave) throws Exception {
-        return toSave.map(Unchecked.function(this::addTicket)).filter(Objects::nonNull).collect(Collectors.toList());
+        return toSave.parallel().map(Unchecked.function(this::addTicket)).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     /**
@@ -164,7 +164,7 @@ public interface TicketRegistry {
      * @return the tickets stream
      */
     default Stream<? extends Ticket> stream() {
-        return getTickets().stream();
+        return getTickets().parallelStream();
     }
 
     /**

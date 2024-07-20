@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasHazelcastTicketRegistryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -7,20 +8,30 @@ import org.apereo.cas.ticket.DefaultTicketDefinition;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
+import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
+import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import lombok.Getter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -103,4 +114,54 @@ class HazelcastTicketRegistryTests {
         }
     }
 
+    @Nested
+    @SpringBootTest(classes = {
+        CasHazelcastTicketRegistryAutoConfiguration.class,
+        BaseTicketRegistryTests.SharedTestConfiguration.class
+    })
+    @TestPropertySource(
+        properties = {
+            "cas.ticket.registry.hazelcast.page-size=0",
+            "cas.ticket.registry.hazelcast.cluster.network.port-auto-increment=false",
+            "cas.ticket.registry.hazelcast.cluster.network.port=5709",
+            "cas.ticket.registry.hazelcast.cluster.core.instance-name=loadtestinstance"
+        })
+    class LoadTests {
+        private static final int COUNT = 50_000;
+
+        @Autowired
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        private TicketRegistry ticketRegistry;
+
+        @RepeatedTest(1)
+        @Tag("TicketRegistryTestWithEncryption")
+        void verifyLargeDataset() throws Throwable {
+            val username = UUID.randomUUID().toString();
+            val ticketGrantingTickets = Stream.generate(() -> {
+                val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY).getNewTicketId(TicketGrantingTicket.PREFIX);
+                return new TicketGrantingTicketImpl(tgtId, CoreAuthenticationTestUtils.getAuthentication(username), NeverExpiresExpirationPolicy.INSTANCE);
+            }).limit(COUNT);
+
+            val stopwatch = new StopWatch();
+            stopwatch.start();
+            ticketRegistry.addTicket(ticketGrantingTickets);
+
+            assertEquals(COUNT, ticketRegistry.getTickets().size());
+            stopwatch.stop();
+            var time = stopwatch.getTime(TimeUnit.SECONDS);
+            assertTrue(time <= 20);
+
+            stopwatch.reset();
+            stopwatch.start();
+            ticketRegistry
+                .stream()
+                .filter(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired())
+                .map(TicketGrantingTicket.class::cast)
+                .filter(ticket -> username.equals(ticket.getAuthentication().getPrincipal().getId()))
+                .collect(Collectors.toList());
+            stopwatch.stop();
+            time = stopwatch.getTime(TimeUnit.SECONDS);
+            assertTrue(time <= 20);
+        }
+    }
 }
