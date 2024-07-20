@@ -27,6 +27,19 @@ function copyClipboard(element) {
     document.execCommand("copy");
 }
 
+function getLastTwoWords(str) {
+    const parts = str.split('.');
+    return parts.slice(-2).join('.');
+}
+
+
+function camelcaseToTitleCase(str) {
+    return str
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/^./, char => char.toUpperCase())
+        .trim();
+}
+
 function flattenJSON(data) {
     let result = {};
     let l = undefined;

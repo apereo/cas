@@ -4,7 +4,6 @@ import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -16,13 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
-
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -71,6 +68,14 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
         assertEquals(HttpStatus.BAD_REQUEST, endpoint.importService(request).getStatusCode());
     }
 
+    @Test
+    void verifySaveService() throws Throwable {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        val content = new RegisteredServiceJsonSerializer(appCtx).toString(service);
+        assertEquals(HttpStatus.OK, endpoint.saveService(content).getStatusCode());
+    }
 
     @Test
     void verifyImportOperationAsYaml() throws Throwable {
@@ -90,6 +95,18 @@ class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
         val response = endpoint.export();
         assertNotNull(response);
         assertNotNull(response.getBody());
+        assertNotNull(endpoint.export(service.getId()));
+    }
+
+    @Test
+    void verifyServiceUpdate() throws Throwable {
+        val appCtx = new StaticApplicationContext();
+        appCtx.refresh();
+        val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+        servicesManager.save(service);
+        val content = new RegisteredServiceJsonSerializer(appCtx).toString(service);
+        val response = endpoint.updateService(content);
+        assertNotNull(response);
     }
 
     @Test

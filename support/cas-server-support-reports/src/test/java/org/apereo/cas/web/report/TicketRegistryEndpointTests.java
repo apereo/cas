@@ -13,6 +13,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.TestPropertySource;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -67,5 +68,11 @@ class TicketRegistryEndpointTests extends AbstractCasEndpointTests {
         assertTrue(results.containsKey("duration"));
         assertTrue(results.containsKey("startTime"));
         assertTrue(results.containsKey("endTime"));
+    }
+
+    @Test
+    void verifyCatalog() throws Throwable {
+        val catalog = (List) ticketRegistryEndpoint.ticketCatalog().getBody();
+        assertFalse(catalog.isEmpty());
     }
 }

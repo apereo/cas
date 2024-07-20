@@ -16,6 +16,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
@@ -333,6 +334,8 @@ public class CasReportsAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnAvailableEndpoint
         public TicketRegistryEndpoint ticketRegistryEndpoint(
+            @Qualifier(TicketCatalog.BEAN_NAME)
+            final ObjectProvider<TicketCatalog> ticketCatalog,
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
@@ -342,7 +345,8 @@ public class CasReportsAutoConfiguration {
             @Qualifier(TicketRegistryCleaner.BEAN_NAME)
             final ObjectProvider<TicketRegistryCleaner> ticketRegistryCleaner) {
             return new TicketRegistryEndpoint(casProperties, applicationContext,
-                ticketRegistry, ticketRegistryCleaner, ticketRegistrySupport);
+                ticketRegistry, ticketRegistryCleaner, ticketRegistrySupport,
+                ticketCatalog);
         }
 
         @Bean

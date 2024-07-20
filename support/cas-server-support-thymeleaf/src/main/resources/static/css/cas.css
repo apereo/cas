@@ -340,13 +340,21 @@ form button i.mdi {
     /*padding-right: 1px;*/
 }
 
-.aceeditor {
-    position: absolute;
+.ace-editor {
     top: 0;
-    right: 0;
     bottom: 0;
-    left: 0;
+    left:0;
+    right:0;
     font-family: "Monaco", "Menlo", "Ubuntu Mono", "Droid Sans Mono", "Consolas", monospace !important;
+}
+
+.ace-absolute {
+    position: absolute;
+}
+
+.ace-relative {
+    position: relative;
+    border-radius: 10px;
 }
 
 .mdi:before {
@@ -543,6 +551,14 @@ form button i.mdi {
 
 .w-auto {
     width: auto;
+}
+
+.h-450px {
+    height: 450px;
+}
+
+.h-350px {
+    height: 450px;
 }
 
 .h-25 {

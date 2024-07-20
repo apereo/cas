@@ -4,23 +4,12 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.palantir.PalantirConstants;
 import org.apereo.cas.palantir.controller.DashboardController;
-import org.apereo.cas.palantir.controller.ServicesController;
-import org.apereo.cas.palantir.controller.SystemController;
-import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.apereo.cas.web.report.StatisticsEndpoint;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import lombok.val;
-import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.health.HealthEndpoint;
-import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -45,24 +34,6 @@ class CasPalantirWebMvcConfiguration {
     public DashboardController palantirDashboardController(
         final CasConfigurationProperties casProperties) {
         return new DashboardController(casProperties);
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "palantirServicesController")
-    public ServicesController palantirServicesController(
-        @Qualifier(ServicesManager.BEAN_NAME) final ObjectProvider<ServicesManager> servicesManager,
-        final ConfigurableApplicationContext applicationContext) {
-        return new ServicesController(servicesManager,
-            new RegisteredServiceJsonSerializer(new DefaultPrettyPrinter(), applicationContext));
-    }
-
-    @Bean
-    @ConditionalOnMissingBean(name = "palantirSystemController")
-    public SystemController palantirSystemController(
-        final ObjectProvider<StatisticsEndpoint> statisticsProvider,
-        final ObjectProvider<HealthEndpoint> healthProvider,
-        final ObjectProvider<InfoEndpoint> infoProvider) {
-        return new SystemController(infoProvider, statisticsProvider, healthProvider);
     }
 
     @Bean

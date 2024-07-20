@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import java.io.Serial;
 
 /**
  * This is {@link DefaultTicketDefinitionProperties}.
@@ -17,6 +18,8 @@ import lombok.ToString;
 @Setter
 public class DefaultTicketDefinitionProperties implements TicketDefinitionProperties {
 
+    @Serial
+    private static final long serialVersionUID = -5634472680723687729L;
     /**
      * Whether ticket operations require cascading down in the storage.
      */

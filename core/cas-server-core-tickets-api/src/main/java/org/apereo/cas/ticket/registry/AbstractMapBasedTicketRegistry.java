@@ -144,9 +144,9 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     public List<? extends Serializable> query(final TicketRegistryQueryCriteria criteria) {
         return getMapInstance()
             .values()
-            .stream()
+            .parallelStream()
             .filter(ticket -> criteria.getType().equals(ticket.getPrefix())
-                && (StringUtils.isBlank(criteria.getId()) || criteria.getId().equals(ticket.getId())))
+                && (StringUtils.isBlank(criteria.getId()) || digestIdentifier(criteria.getId()).equals(ticket.getId())))
             .map(ticket -> criteria.isDecode() ? decodeTicket(ticket) : ticket)
             .filter(ticket -> StringUtils.isBlank(criteria.getPrincipal())
                 || (ticket instanceof final AuthenticationAwareTicket aat

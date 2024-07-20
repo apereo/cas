@@ -30,7 +30,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -153,12 +152,13 @@ class HazelcastTicketRegistryTests {
 
             stopwatch.reset();
             stopwatch.start();
-            ticketRegistry
+            var results = ticketRegistry
                 .stream()
                 .filter(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired())
                 .map(TicketGrantingTicket.class::cast)
                 .filter(ticket -> username.equals(ticket.getAuthentication().getPrincipal().getId()))
-                .collect(Collectors.toList());
+                .toList();
+            assertFalse(results.isEmpty());
             stopwatch.stop();
             time = stopwatch.getTime(TimeUnit.SECONDS);
             assertTrue(time <= 20);

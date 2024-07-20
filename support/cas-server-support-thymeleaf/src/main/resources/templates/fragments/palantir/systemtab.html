@@ -29,7 +29,7 @@
 
         <script type="text/javascript">
             function configureHealthChart(systemHealthChart) {
-                $.get(`${casServerPrefix}/palantir/system/health`, response => {
+                $.get(`${casServerPrefix}/actuator/health`, response => {
                     console.log(response);
                     const payload = {
                         labels: [],
@@ -54,9 +54,6 @@
                         return originalLabels;
                     });
                     
-
-
-
                     systemHealthChart.update();
                 }).fail((xhr, status, error) => {
                     console.error("Error fetching data:", error);
@@ -64,7 +61,7 @@
             }
 
             function configureStatistics(statisticsChart) {
-                $.get(`${casServerPrefix}/palantir/system/statistics`, response => {
+                $.get(`${casServerPrefix}/actuator/statistics`, response => {
                     const expired = response.expiredTickets;
                     const valid = response.validTickets;
                     statisticsChart.data.datasets[0].data = [valid, expired];
@@ -75,7 +72,7 @@
             }
 
             function fetchSystemData(callback) {
-                $.get(`${casServerPrefix}/palantir/system`, response => callback(response)).fail((xhr, status, error) => {
+                $.get(`${casServerPrefix}/actuator/info`, response => callback(response)).fail((xhr, status, error) => {
                     console.error("Error fetching data:", error);
                 });
             }
