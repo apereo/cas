@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.builder.CompareToBuilder;
+import java.io.Serial;
 
 /**
  * This is {@link DefaultTicketDefinition}.
@@ -20,6 +21,9 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 @RequiredArgsConstructor
 public class DefaultTicketDefinition implements TicketDefinition {
 
+    @Serial
+    private static final long serialVersionUID = 1607439557834230284L;
+    
     private final Class<? extends Ticket> implementationClass;
 
     private final Class<? extends Ticket> apiClass;

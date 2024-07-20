@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket;
 
 import org.springframework.core.Ordered;
+import java.io.Serializable;
 
 /**
  * This is {@link TicketDefinition}. Ticket definition describes additional Properties and misc settings
@@ -14,7 +15,7 @@ import org.springframework.core.Ordered;
  * @see TicketCatalog
  * @since 5.1.0
  */
-public interface TicketDefinition extends Ordered, Comparable<TicketDefinition> {
+public interface TicketDefinition extends Ordered, Comparable<TicketDefinition>, Serializable {
     /**
      * Gets prefix.
      *

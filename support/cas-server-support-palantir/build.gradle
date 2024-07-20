@@ -31,6 +31,8 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-mfa-api")
     implementation project(":core:cas-server-core-webflow-mfa-api")
 
+    implementation project(":core:cas-server-support-reports")
+    
     compileOnly project(":support:cas-server-support-reports-core")
 
     implementation libraries.snakeyaml

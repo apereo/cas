@@ -1,6 +1,7 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistryQueryCriteria;
@@ -42,16 +43,39 @@ public class TicketRegistryEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<TicketRegistry> ticketRegistryProvider;
     private final ObjectProvider<TicketRegistryCleaner> ticketRegistryCleanerProvider;
     private final ObjectProvider<TicketRegistrySupport> ticketRegistrySupportProvider;
-
+    private final ObjectProvider<TicketCatalog> ticketCatalogProvider;
+    
     public TicketRegistryEndpoint(final CasConfigurationProperties casProperties,
                                   final ConfigurableApplicationContext applicationContext,
                                   final ObjectProvider<TicketRegistry> ticketRegistryProvider,
                                   final ObjectProvider<TicketRegistryCleaner> ticketRegistryCleanerProvider,
-                                  final ObjectProvider<TicketRegistrySupport> ticketRegistrySupportProvider) {
+                                  final ObjectProvider<TicketRegistrySupport> ticketRegistrySupportProvider,
+                                  final ObjectProvider<TicketCatalog> ticketCatalogProvider) {
         super(casProperties, applicationContext);
         this.ticketRegistryProvider = ticketRegistryProvider;
         this.ticketRegistrySupportProvider = ticketRegistrySupportProvider;
         this.ticketRegistryCleanerProvider = ticketRegistryCleanerProvider;
+        this.ticketCatalogProvider = ticketCatalogProvider;
+    }
+
+
+    /**
+     * Ticket catalog.
+     *
+     * @return the response entity
+     */
+    @GetMapping(
+        path = "/ticketCatalog",
+        produces = {
+            MediaType.APPLICATION_JSON_VALUE,
+            MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+            MEDIA_TYPE_SPRING_BOOT_V3_JSON,
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+            MEDIA_TYPE_CAS_YAML
+        })
+    @Operation(summary = "Report registered ticket definitions from the ticket catalog")
+    public ResponseEntity ticketCatalog() {
+        return ResponseEntity.ok(ticketCatalogProvider.getObject().findAll().parallelStream().toList());
     }
 
     /**

@@ -8,9 +8,13 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.CompressionUtils;
+import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.io.TemporaryFileSystemResource;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -30,6 +34,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
@@ -215,9 +221,91 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         val headers = new HttpHeaders();
         headers.setContentDisposition(ContentDisposition.attachment()
             .filename(Objects.requireNonNull(resource.getFilename())).build());
+        headers.put("Filename", List.of("services.zip"));
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
+    /**
+     * Export response.
+     *
+     * @param id the id
+     * @return the response entity
+     * @throws Exception the exception
+     */
+    @GetMapping(path = "/export/{id}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    @Operation(summary = "Export registered services as a single JSON file",
+        parameters = @Parameter(name = "id", required = true, description = "The id of the registered service to export", in = ParameterIn.PATH))
+    public ResponseEntity<Resource> export(@PathVariable("id") final long id) throws Exception {
+        val registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
+        val registeredService = servicesManager.getObject().findServiceBy(id);
+        val fileName = String.format("%s-%s", registeredService.getName(), registeredService.getId());
+        val serviceFile = File.createTempFile(fileName, ".json");
+        registeredServiceSerializer.to(serviceFile, registeredService);
+        val headers = new HttpHeaders();
+        val resource = new TemporaryFileSystemResource(serviceFile);
+        headers.setContentDisposition(ContentDisposition.attachment()
+            .filename(Objects.requireNonNull(resource.getFilename())).build());
+        headers.put("Filename", List.of(serviceFile.getName()));
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+    }
+
+    /**
+     * Save service response entity.
+     *
+     * @param registeredServiceBody the registered service body
+     * @return the response entity
+     */
+    @PostMapping(consumes = {
+        MediaType.APPLICATION_OCTET_STREAM_VALUE,
+        MediaType.APPLICATION_JSON_VALUE,
+        MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+        MEDIA_TYPE_SPRING_BOOT_V3_JSON,
+        MEDIA_TYPE_CAS_YAML
+    }, produces = {
+        MediaType.APPLICATION_JSON_VALUE,
+        MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+        MEDIA_TYPE_SPRING_BOOT_V3_JSON,
+        MEDIA_TYPE_CAS_YAML
+    })
+    @ResponseBody
+    @Operation(summary = "Save registered service supplied in the request body")
+    public ResponseEntity saveService(@RequestBody final String registeredServiceBody) {
+        val registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
+        val registeredService = registeredServiceSerializer.from(registeredServiceBody);
+        registeredService.setId(RandomUtils.nextLong());
+        val result = servicesManager.getObject().save(registeredService);
+        return ResponseEntity.ok(registeredServiceSerializer.toString(result));
+    }
+
+
+    /**
+     * Update service response entity.
+     *
+     * @param registeredServiceBody the registered service body
+     * @return the response entity
+     */
+    @PutMapping(consumes = {
+        MediaType.APPLICATION_OCTET_STREAM_VALUE,
+        MediaType.APPLICATION_JSON_VALUE,
+        MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+        MEDIA_TYPE_SPRING_BOOT_V3_JSON,
+        MEDIA_TYPE_CAS_YAML
+    }, produces = {
+        MediaType.APPLICATION_JSON_VALUE,
+        MEDIA_TYPE_SPRING_BOOT_V2_JSON,
+        MEDIA_TYPE_SPRING_BOOT_V3_JSON,
+        MEDIA_TYPE_CAS_YAML
+    })
+    @ResponseBody
+    @Operation(summary = "Update registered service supplied in the request body")
+    public ResponseEntity updateService(@RequestBody final String registeredServiceBody) {
+        val registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
+        val registeredService = registeredServiceSerializer.from(registeredServiceBody);
+        val result = servicesManager.getObject().save(registeredService);
+        return ResponseEntity.ok(registeredServiceSerializer.toString(result));
+    }
+    
     private ResponseEntity<RegisteredService> importSingleService(final HttpServletRequest request) throws IOException {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.trace("Submitted registered service:\n[{}]", requestBody);

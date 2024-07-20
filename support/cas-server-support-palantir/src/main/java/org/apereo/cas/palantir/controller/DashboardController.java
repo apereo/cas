@@ -22,7 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequiredArgsConstructor
 public class DashboardController {
     private final CasConfigurationProperties casProperties;
-    
+
     /**
      * Dashboard root.
      *

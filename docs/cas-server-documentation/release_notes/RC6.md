@@ -61,7 +61,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
  
 ### Palantir Admin Console
 
-Small efforts are underway to improve the [Palantir Admin Console](../installation/Admin-Dashboard.md) as a viable alternative to the CAS Management tool.
+Small efforts are underway to improve the [Palantir Admin Console](../installation/Admin-Dashboard.html) as a viable alternative to the CAS Management tool.
 The console is now able to display and manage registered services and show basic information about system status, health, etc. We'll continue to refine
 the console and add more features in the coming releases.
 

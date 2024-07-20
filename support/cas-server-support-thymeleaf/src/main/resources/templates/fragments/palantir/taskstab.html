@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+</head>
+<body>
+<span th:fragment="main">
+    <div class="attribute-tab w-100 d-none" id="attribute-tab-3">
+        <table id="scheduledTasksTable" class="mdc-data-table__table table table-striped noborder">
+            <thead>
+            <tr class="mdc-data-table__header-row">
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Task</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Field</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
+            </tr>
+            </thead>
+            <tbody class="mdc-data-table__content">
+            </tbody>
+        </table>
+        
+        <script type="text/javascript" th:inline="javascript">
+            document.addEventListener("DOMContentLoaded", () => {
+                const groupColumn = 0;
+                const scheduledtasks = $("#scheduledTasksTable").DataTable({
+                    pageLength: 25,
+                    columnDefs: [{ visible: false, targets: groupColumn }],
+                    order: [groupColumn, 'asc'],
+                    drawCallback: settings => {
+                        $("#scheduledTasksTable tr").addClass("mdc-data-table__row");
+                        $("#scheduledTasksTable td").addClass("mdc-data-table__cell");
+
+                        const api = settings.api;
+                        const rows = api.rows({ page: 'current' }).nodes();
+                        let last = null;
+                        api.column(groupColumn, { page: 'current' })
+                            .data()
+                            .each((group, i) => {
+                                if (last !== group) {
+                                    $(rows).eq(i).before(
+                                        `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
+                                            <td colspan="2">${group}</td>
+                                        </tr>`.trim());
+                                    last = group;
+                                }
+                            });
+                    }
+                });
+
+                function addScheduledTaskCategory(groupName, items) {
+                    if (items !== undefined && Array.isArray(items)) {
+                        for (const group of items) {
+                            const flattened = flattenJSON(group);
+                            for (const [key, value] of Object.entries(flattened)) {
+                                const target = flattened["runnable.target"];
+                                if (target !== value) {
+                                    scheduledtasks.row.add({
+                                        0: `<code>${camelcaseToTitleCase(groupName)} / ${getLastTwoWords(target)}</code>`,
+                                        1: `<code>${key}</code>`,
+                                        2: `<code>${value}</code>`
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+
+                $.get(`${casServerPrefix}/actuator/scheduledtasks`, response => {
+                    console.log(response);
+                    scheduledtasks.clear();
+                    for (const group of Object.keys(response)) {
+                        addScheduledTaskCategory(group, response[group]);
+                    }
+                    scheduledtasks.draw();
+                }).fail((xhr, status, error) => {
+                    console.error("Error fetching data:", error);
+                });
+                
+            });
+            </script>
+    </div>
+</span>
+</body>
+</html>
