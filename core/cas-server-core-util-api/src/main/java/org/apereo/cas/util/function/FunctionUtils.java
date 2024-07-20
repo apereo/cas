@@ -14,6 +14,7 @@ import org.springframework.retry.RetryCallback;
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.RetryListener;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.policy.NeverRetryPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 import java.util.HashMap;
@@ -497,6 +498,19 @@ public class FunctionUtils {
     }
 
     /**
+     * Do and retry with mix attempts.
+     *
+     * @param <T>             the type parameter
+     * @param callback        the callback
+     * @param maximumAttempts the maximum attempts
+     * @return the t
+     * @throws Exception the exception
+     */
+    public static <T> T doAndRetry(final RetryCallback<T, Exception> callback, final int maximumAttempts) throws Exception {
+        return doAndRetry(List.of(), callback, maximumAttempts);
+    }
+
+    /**
      * Do and retry.
      *
      * @param <T>      the type parameter
@@ -507,6 +521,22 @@ public class FunctionUtils {
      */
     public static <T> T doAndRetry(final List<Class<? extends Throwable>> clazzes,
                                    final RetryCallback<T, Exception> callback) throws Exception {
+        return doAndRetry(clazzes, callback, SimpleRetryPolicy.DEFAULT_MAX_ATTEMPTS);
+    }
+
+    /**
+     * Do and retry with a max number of attempts.
+     *
+     * @param <T>             the type parameter
+     * @param clazzes         the clazzes
+     * @param callback        the callback
+     * @param maximumAttempts the maximum attempts
+     * @return the t
+     * @throws Exception the exception
+     */
+    public static <T> T doAndRetry(final List<Class<? extends Throwable>> clazzes,
+                                   final RetryCallback<T, Exception> callback,
+                                   final int maximumAttempts) throws Exception {
         val retryTemplate = new RetryTemplate();
         retryTemplate.setBackOffPolicy(new FixedBackOffPolicy());
 
@@ -515,7 +545,9 @@ public class FunctionUtils {
         classified.put(Throwable.class, Boolean.TRUE);
         clazzes.forEach(clz -> classified.put(clz, Boolean.TRUE));
 
-        val retryPolicy = new SimpleRetryPolicy(SimpleRetryPolicy.DEFAULT_MAX_ATTEMPTS, classified, true);
+        val retryPolicy = maximumAttempts >= 0
+            ? new SimpleRetryPolicy(maximumAttempts, classified, true)
+            : new NeverRetryPolicy();
         retryTemplate.setRetryPolicy(retryPolicy);
         retryTemplate.setThrowLastExceptionOnExhausted(true);
         retryTemplate.registerListener(new RetryListener() {
