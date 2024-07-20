@@ -45,11 +45,15 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
     @Getter
     private final OpenSamlConfigBean openSamlConfigBean;
 
+    private final CasConfigurationProperties casProperties;
+    
     public SamlRegisteredServiceDefaultCachingMetadataResolver(
         final CasConfigurationProperties casProperties,
         final CacheLoader<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> loader,
         final OpenSamlConfigBean openSamlConfigBean) {
+
         this.openSamlConfigBean = openSamlConfigBean;
+        this.casProperties = casProperties;
 
         val core = casProperties.getAuthn().getSamlIdp().getMetadata().getCore();
         val metadataCacheExpiration = Beans.newDuration(core.getCacheExpiration());
@@ -91,7 +95,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
                     + metadataLocation + " to locate " + criteriaSet);
             }
             return queryResult.getResult();
-        });
+        }, casProperties.getAuthn().getSamlIdp().getMetadata().getCore().getMaximumRetryAttempts());
     }
 
     @Override

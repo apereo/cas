@@ -98,6 +98,14 @@ public class CoreSamlMetadataProperties implements Serializable {
     private int keySize = 4096;
 
     /**
+     * When attempting to resolve metadata from sources, particularly URLs,
+     * this setting controls the number of retry attempts that CAS should execute
+     * when metadata resolution fails. Setting this value to a zero or negative value
+     * will disable the retry policy.
+     */
+    private int maximumRetryAttempts = 3;
+
+    /**
      * The algorithm type/name that is used when generating certificates
      * for the SAML2 identity provider.
      * This setting is only relevant when artifacts needs to be generated.
