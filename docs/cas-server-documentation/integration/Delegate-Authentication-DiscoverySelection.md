@@ -13,7 +13,7 @@ using the following strategies.
 
 <div class="alert alert-info mt-3">:information_source: <strong>Remember</strong><p>
 If you are interested in supporting discovery of SAML2 identity providers using a discovery service,
-you may want to take a look at <a href="Delegate-Authentication-SAML.html">this guide</a>.
+you may want to take a look at <a href="Delegate-Authentication-SAML2.html">this guide</a>.
 </p></div>
 
 {% include_cached casproperties.html properties="cas.authn.pac4j.core.discovery-selection" %}

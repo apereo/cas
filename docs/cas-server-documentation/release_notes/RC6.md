@@ -58,17 +58,29 @@ A CAS server installation and deployment process can be tuned to build and run
 as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html).
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) have selectively switched
 to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
+ 
+### Palantir Admin Console
+
+Small efforts are underway to improve the [Palantir Admin Console](../installation/Admin-Dashboard.md) as a viable alternative to the CAS Management tool.
+The console is now able to display and manage registered services and show basic information about system status, health, etc. We'll continue to refine
+the console and add more features in the coming releases.
+
+![image](https://github.com/user-attachments/assets/b03e01a3-c4fd-4a41-8831-fea20452cc33)
+![image](https://github.com/user-attachments/assets/b1edbb4e-811d-4b62-8d75-49598f4b27ba)
+![image](https://github.com/user-attachments/assets/283c4f5e-7f51-4431-a47e-c28d5393782e)
 
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based via Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `485` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `486` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
 ## Other Stuff
 
 - Many small improvements and bug fixes in CAS documentation to remove typos and correct references.
+- When attempting to resolve SAML2 metadata, particularly via URLs, the number of retry attempts is now configurable.
+- Small improvements to [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) to prevent memory leaks and crashes.
 
 ## Library Upgrades
 
@@ -80,3 +92,6 @@ are now configured to run with parallelism enabled.
 - Spring Retry
 - Amazon SDK
 - Pac4j
+- LettuceMod
+- EclipseLink
+- Netty

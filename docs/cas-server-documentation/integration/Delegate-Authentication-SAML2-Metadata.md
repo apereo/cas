@@ -41,59 +41,14 @@ SAML2 metadata for both the delegated identity provider as well as the (CAS) ser
 
 {% tab pac4jsaml2md Service Provider %}
 
-### Default
+SAML2 metadata for CAS as the service provider can be managed via the following strategies.
 
-SAML2 metadata for CAS as the SAML2 service provider is typically managed on disk, and generated on startup if the metadata file
-is not found. Future and subsequent changes to this metadata file, if necessary, must be handled manually and the file might
-need to be curated and edited to fit your purposes.
-
-{% include_cached casproperties.html properties="cas.authn.pac4j.saml[].metadata.service-provider"  includes=".file-system" %}
-
-### MongoDb
-
-SAML2 metadata for CAS as the SAML2 service provider may also be managed inside a MongoDb instance. To active this feature, you need to start by including 
-the following module in the overlay:
-
-{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-mongo-core" %}
-
-{% include_cached featuretoggles.html features="DelegatedAuthentication.saml-mongodb" %}
-                                                                                    
-Finally, please make sure you have specified a collection name in your CAS settings that would ultimately house the generated SAML2 metadata.
-
-{% include_cached casproperties.html properties="cas.authn.pac4j.saml[].metadata.service-provider" includes="mongo" %}
-
-### JDBC
-
-SAML2 metadata for CAS as the SAML2 service provider may also be managed inside a relational database instance. To active this feature, you need to start by 
-including the following module in the overlay:
-
-{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-jpa-util" %}
-
-{% include_cached featuretoggles.html features="DelegatedAuthentication.saml-jdbc" %}
-
-Finally, please make sure you have specified a table name in your CAS settings that would ultimately house the generated SAML2 metadata.
-
-{% include_cached casproperties.html properties="cas.authn.pac4j.saml[].metadata.service-provider" includes="jdbc" %}
-
-The table structure and schema needs to be created and must exist prior to CAS starting up, and it should be modeled after the following SQL statement:
-
-```sql
-CREATE TABLE <table-name> (entityId VARCHAR(512), metadata TEXT)
-```
-
-### Amazon S3
-
-SAML2 metadata for CAS as the SAML2 service provider may also be managed inside an Amazon S3 bucket. A single bucket is created by default automatically
-that is able to store different objects for each service provider and metadata entity.
-
-To activate this feature, you need to start by including the following module in the overlay:
-
-{% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-aws" %}
-
-{% include_cached featuretoggles.html features="DelegatedAuthentication.saml-s3" %}
-
-{% include_cached casproperties.html properties="cas.authn.pac4j.saml[].metadata.service-provider" includes="amazon-s3" %}
-
+| Option      | Reference                                                                 |
+|-------------|---------------------------------------------------------------------------|
+| File System | [See this guide](Delegate-Authentication-SAML2-Metadata-FileSystem.html). |
+| JDBC        | [See this guide](Delegate-Authentication-SAML2-Metadata-JDBC.html).       |
+| MongoDb     | [See this guide](Delegate-Authentication-SAML2-Metadata-MongoDb.html).    |
+| Amazon S3   | [See this guide](Delegate-Authentication-SAML2-Metadata-AmazonS3.html).   |
 
 {% endtab %}
 

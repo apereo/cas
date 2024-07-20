@@ -19,7 +19,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 
 ## Metadata Management
 
-Please [see this guide](Delegate-Authentication-SAML-Metadata.html).     
+Please [see this guide](Delegate-Authentication-SAML2-Metadata.html).     
 
 ## Per Service Customizations
 
@@ -56,7 +56,7 @@ See [registered service properties](../services/Configuring-Service-Custom-Prope
 
 ## Identity Provider Discovery Service
 
-Please [see this guide](Delegate-Authentication-SAML-Discovery.html).
+Please [see this guide](Delegate-Authentication-SAML2-Discovery.html).
 
 ## Troubleshooting
 

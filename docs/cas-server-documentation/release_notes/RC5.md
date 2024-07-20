@@ -104,7 +104,7 @@ such as credential stuffing attacks.
 All functionality and components that allow CAS to route authentication requests to external SAML2 identity providers are now consolidated under a single module.
 This is done to simplify the setup in a more modular way and reduce the number of libraries and dependencies that would be pulled into the build.
 
-Please make sure you review the [SAML2 delegated authentication](../integration/Delegate-Authentication-SAML.html) page and include the correct module in your build.
+Please make sure you review the [SAML2 delegated authentication](../integration/Delegate-Authentication-SAML2.html) page and include the correct module in your build.
 
 <div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
 This is potentially a breaking change. Make sure to review your build's dependencies and adjust modules to restore functionality.
@@ -124,8 +124,8 @@ This is potentially a breaking change. Make sure to review your build's dependen
 
 ### SAML2 Delegated Authentication Metadata
 
-CAS is now able to store and manage its SAML2 service provider metadata via [Amazon S3 buckets](../integration/Delegate-Authentication-SAML-Metadata.html). 
-This feature is relevant only when [SAML2 delegated authentication](../integration/Delegate-Authentication-SAML.html) is turned on.
+CAS is now able to store and manage its SAML2 service provider metadata via [Amazon S3 buckets](../integration/Delegate-Authentication-SAML2-Metadata.html). 
+This feature is relevant only when [SAML2 delegated authentication](../integration/Delegate-Authentication-SAML2.html) is turned on.
     
 ### Apache Groovy & Scripting
                                                                     
