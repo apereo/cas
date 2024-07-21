@@ -33,6 +33,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -58,6 +61,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
+    WebEndpointAutoConfiguration.class,
+    EndpointAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreScriptingAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
@@ -73,6 +78,9 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
 
+    @Autowired
+    private WebEndpointProperties webEndpointProperties;
+    
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
@@ -100,7 +108,22 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
             new DirectObjectProvider<>(servicesManager),
             new DirectObjectProvider<>(argumentExtractor),
             new DirectObjectProvider<>(new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy())),
-            new DirectObjectProvider<>(new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext)));
+            new DirectObjectProvider<>(new RegisteredServiceAccessStrategyAuditableEnforcer(applicationContext)),
+            webEndpointProperties);
+    }
+
+    @Test
+    void verifyActuatorPathIgnored() throws Throwable {
+        val filter = getFilterForProperty(UUID.randomUUID().toString(), RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL);
+        val response = new MockHttpServletResponse();
+        val request = new MockHttpServletRequest();
+        request.setRequestURI(webEndpointProperties.getBasePath());
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, UUID.randomUUID().toString());
+        val servletContext = new MockServletContext();
+        val filterConfig = new MockFilterConfig(servletContext);
+        filter.init(filterConfig);
+        assertDoesNotThrow(() -> filter.doFilter(request, response, new MockFilterChain()));
+        assertEquals(HttpStatus.SC_OK, response.getStatus());
     }
 
     @Test
