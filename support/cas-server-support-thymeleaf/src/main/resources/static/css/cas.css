@@ -642,6 +642,10 @@ form button i.mdi {
     max-width: 25%;
 }
 
+.mw-20 {
+    max-width: 20%;
+}
+
 .mt-0 {
     margin-top: 0;
 }
@@ -655,6 +659,20 @@ form button i.mdi {
 .border-bottom {
     border-color: #153e50;
     border-bottom: 1px solid var(--cas-theme-primary, #153e50);
+}
+
+.elevation-surface {
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    -ms-flex-pack: distribute;
+    justify-content: space-around;
+    min-height: 100px;
+    min-width: 200px;
+    margin: 15px;
+    -ms-flex-align: center;
+    align-items: center;
+    border-radius: 50px;
+    background-color: cornsilk;
 }
 
 @media all and (min-width: 768px) {

@@ -29,19 +29,25 @@
                     </button>
                     <input type="file" id="serviceFileInput" style="display: none;">
                     <button id="importService" class="mdc-button mdc-button--raised" aria-label="Import">
-                         <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-import" aria-hidden="true"></i>Import</span>
+                         <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-import"
+                                                            aria-hidden="true"></i>Import</span>
                     </button>
                     <button id="exportAll" class="mdc-button mdc-button--raised" aria-label="Export All">
-                         <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-export" aria-hidden="true"></i>Export</span>
+                         <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-export"
+                                                            aria-hidden="true"></i>Export</span>
                     </button>
-                    <button id="reloadAll" class="mdc-button mdc-button--raised" aria-label="Reload" onclick="fetchServices();">
-                         <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-refresh" aria-hidden="true"></i>Reload</span>
+                    <button id="reloadAll" class="mdc-button mdc-button--raised" aria-label="Reload"
+                            onclick="fetchServices();">
+                         <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-refresh"
+                                                            aria-hidden="true"></i>Reload</span>
                     </button>
                 </div>
             </div>
-        
+            <div class="mw-20">
+              <canvas id="servicesChart"></canvas>
+            </div>
             <div class="mdc-dialog modal" id="editServiceDialog" role="alertdialog"
-                aria-modal="true" aria-labelledby="edit-service-dialog-title" aria-describedby="dialog-content">
+                 aria-modal="true" aria-labelledby="edit-service-dialog-title" aria-describedby="dialog-content">
                 <div class="mdc-dialog__container w-100 modal-dialog">
                     <div class="mdc-dialog__surface mw-100 w-75 modal-content min-height-60">
                         <div class="mdc-dialog__content modal-body" id="edit-service-dialog-content">
@@ -50,7 +56,8 @@
                         <footer class="mdc-dialog__actions modal-footer pr-4">
                             <button id="saveService" type="button"
                                     class="mdc-button mdc-button--raised btn btn-outline-secondary">
-                                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-content-save" aria-hidden="true"></i>Save</span>
+                                <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-content-save"
+                                                                   aria-hidden="true"></i>Save</span>
                             </button>
                             <button type="button" class="mdc-button mdc-button--outline btn btn-outline-secondary"
                                     data-mdc-dialog-action="accept"
