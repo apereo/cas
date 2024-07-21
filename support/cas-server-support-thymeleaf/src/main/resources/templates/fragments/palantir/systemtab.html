@@ -27,6 +27,15 @@
           </div>
         </div>
 
+        <hr>
+        <br/>
+        <h2>Features</h2>
+        <div class="d-flex align-items-start mb-4">
+            <div id="casFeaturesChipset" class="mdc-chip-set" role="grid">
+            </div>
+        </div>
+
+
         <script type="text/javascript">
             function configureHealthChart(systemHealthChart) {
                 $.get(`${casServerPrefix}/actuator/health`, response => {
@@ -223,6 +232,23 @@
                     }
                 }, 5000);
 
+
+                $.get(`${casServerPrefix}/actuator/casFeatures`, response => {
+                    console.log(response);
+                    $("#casFeaturesChipset").empty();
+                    for (const element of response) {
+                        let feature = `
+                            <div class="mdc-chip" role="row">
+                                <div class="mdc-chip__ripple"></div>
+                                <span role="gridcell">
+                                  <span class="mdc-chip__text">${element.trim()}</span>
+                                </span>
+                            </div>
+                        `.trim();
+                        $("#casFeaturesChipset").append($(feature));
+                    }
+                });
+                
 
                 configureSystemData(memoryChart);
                 configureStatistics(statisticsChart);

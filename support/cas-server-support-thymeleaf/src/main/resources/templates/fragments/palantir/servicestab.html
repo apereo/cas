@@ -106,7 +106,7 @@
                                 0: `<i title='${serviceClass}' class='mdi ${icon}'></i>`,
                                 1: `${serviceDetails}`,
                                 2: `<span serviceId='${service.id}' class="text-wrap">${service.serviceId}</span>`,
-                                3: `<span serviceId='${service.id}' class="text-wrap">${service.description}</span>`,
+                                3: `<span serviceId='${service.id}' class="text-wrap">${service.description ?? ''}</span>`,
                                 4: `<span serviceId='${service.id}'>${serviceButtons.trim()}</span>`
                             });
                         }
