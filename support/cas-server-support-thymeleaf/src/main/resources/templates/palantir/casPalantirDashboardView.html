@@ -11,6 +11,7 @@
     <script type="text/javascript" th:src="@{#{webjars.chart.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.ace-editor.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.ace-editor-languagetools.js}}"></script>
+    <script type="text/javascript" th:src="@{/js/palantir.js}"></script>
 </head>
 
 <body>
@@ -20,7 +21,7 @@
 
         <script th:inline="javascript">
             /*<![CDATA[*/
-            let casServerPrefix = /*[[${casServerPrefix}]]*/;
+            const casServerPrefix = /*[[${casServerPrefix}]]*/;
             /*]]>*/
         </script>
         

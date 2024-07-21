@@ -98,57 +98,6 @@
         <section class="my-3 d-flex h-350px d-none" id="accessStrategyEditorContainer">
               <pre class="ace-editor ace-relative w-100 h-100" id="accessStrategyEditor"></pre>
         </section>
-        
-        
-        <script type="text/javascript" th:inline="javascript">
-            document.addEventListener("DOMContentLoaded", () => {
-
-                const accessStrategyEditor = initializeAceEditor("accessStrategyEditor");
-                accessStrategyEditor.setReadOnly(true);
-
-                let accessStrategyButton = document.getElementById("accessStrategyButton");
-                accessStrategyButton.addEventListener("click", event => {
-                    $("#serviceAccessResultDiv").hide();
-                    const form = document.getElementById("fmAccessStrategy");
-                    if (!form.reportValidity()) {
-                        return false;
-                    }
-
-                    accessStrategyEditor.setValue("");
-                    const formData = $(form).serializeArray();
-                    const renamedData = formData.filter(item => item.value !== "").map(item => {
-                        const newName = $(`[name="${item.name}"]`).data('param-name') || item.name;
-                        return { name: newName, value: item.value };
-                    });
-
-                    $.ajax({
-                        url: `${casServerPrefix}/actuator/serviceAccess`,
-                        type: "POST",
-                        contentType: "application/x-www-form-urlencoded",
-                        data: $.param(renamedData),
-                        success: (response, status, xhr) => {
-                            $("#accessStrategyEditorContainer").removeClass("d-none");
-                            $("#serviceAccessResultDiv")
-                                .show()
-                                .addClass("banner-success")
-                                .removeClass("banner-danger");
-                            $("#serviceAccessResultDiv #serviceAccessResult").text(`Status ${xhr.status}: Service is authorized.`);
-                            accessStrategyEditor.setValue(JSON.stringify(response, null, 2));
-                            accessStrategyEditor.gotoLine(1);
-                        },
-                        error: (xhr, status, error) => {
-                            $("#serviceAccessResultDiv")
-                                .show()
-                                .removeClass("banner-success")
-                                .addClass("banner-danger");
-                            $("#accessStrategyEditorContainer").addClass("d-none");
-                            $("#serviceAccessResultDiv #serviceAccessResult").text(`Status ${xhr.status}: Service is unauthorized.`)
-                        }
-                    });
-                    event.preventDefault();
-                }, false);
-            });
-            </script>
     </div>
 </span>
 </body>
