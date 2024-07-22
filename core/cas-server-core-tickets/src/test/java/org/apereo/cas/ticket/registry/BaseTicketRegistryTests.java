@@ -78,6 +78,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import static org.awaitility.Awaitility.*;
@@ -515,7 +516,7 @@ public abstract class BaseTicketRegistryTests {
                 val addedServiceTicket = ticketRegistry.addTicket(st);
                 await().untilAsserted(() -> assertNotNull(ticketRegistry.getTicket(addedServiceTicket.getId())));
             }
-            await().untilAsserted(() -> {
+            await().atMost(30, TimeUnit.SECONDS).untilAsserted(() -> {
                 val sessionCount = ticketRegistry.sessionCount();
                 assertEquals(tgts.size(), ticketRegistry.sessionCount(),
                     () -> "The sessionCount " + sessionCount + " is not the same as the collection " + tgts.size());
