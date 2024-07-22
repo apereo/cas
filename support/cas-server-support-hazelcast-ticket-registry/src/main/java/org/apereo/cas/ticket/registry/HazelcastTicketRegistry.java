@@ -189,6 +189,19 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     }
 
     @Override
+    public long sessionCount() {
+        if (properties.getCore().isEnableJet()) {
+            val md = ticketCatalog.find(TicketGrantingTicket.PREFIX);
+            val sql = String.format("SELECT COUNT(*) FROM %s", md.getProperties().getStorageName());
+            LOGGER.debug("Executing SQL query [{}]", sql);
+            try (val results = hazelcastInstance.getSql().execute(sql)) {
+                return results.stream().findFirst().get().getObject(0);
+            }
+        }
+        return super.sessionCount();
+    }
+
+    @Override
     public Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
         if (properties.getCore().isEnableJet()) {
             val md = ticketCatalog.find(TicketGrantingTicket.PREFIX);
