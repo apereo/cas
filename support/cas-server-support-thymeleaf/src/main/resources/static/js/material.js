@@ -22,8 +22,8 @@ let cas = {
             new mdc.textField.MDCTextFieldHelperText(helper);
         }
         
-        let selector = document.querySelector('.mdc-select');
-        if (selector != null) {
+        let selectors = document.querySelectorAll('.mdc-select');
+        for (const selector of selectors) {
             const select = new mdc.select.MDCSelect(selector);
             select.listen('MDCSelect:change', () => {
                 $('#source').val(select.value);

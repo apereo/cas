@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
@@ -44,6 +45,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipInputStream;
 
@@ -89,7 +91,12 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         MEDIA_TYPE_CAS_YAML
     })
     public ResponseEntity<String> handle() throws Exception {
-        return ResponseEntity.ok(MAPPER.writeValueAsString(servicesManager.getObject().load()));
+        return ResponseEntity.ok(MAPPER.writeValueAsString(
+            servicesManager.getObject().load()
+                .stream()
+                .filter(RegisteredServiceProperty.RegisteredServiceProperties.INTERNAL_SERVICE_DEFINITION::isNotAssignedTo)
+                .collect(Collectors.toList())
+        ));
     }
 
     /**
@@ -269,7 +276,8 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         MEDIA_TYPE_CAS_YAML
     })
     @ResponseBody
-    @Operation(summary = "Save registered service supplied in the request body")
+    @Operation(summary = "Save registered service supplied in the request body",
+         parameters = @Parameter(name = "body", required = true, description = "The request body to contain service definition"))
     public ResponseEntity saveService(@RequestBody final String registeredServiceBody) {
         val registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
         val registeredService = registeredServiceSerializer.from(registeredServiceBody);
@@ -298,14 +306,15 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         MEDIA_TYPE_CAS_YAML
     })
     @ResponseBody
-    @Operation(summary = "Update registered service supplied in the request body")
+    @Operation(summary = "Update registered service supplied in the request body",
+        parameters = @Parameter(name = "body", required = true, description = "The request body to contain service definition"))
     public ResponseEntity updateService(@RequestBody final String registeredServiceBody) {
         val registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
         val registeredService = registeredServiceSerializer.from(registeredServiceBody);
         val result = servicesManager.getObject().save(registeredService);
         return ResponseEntity.ok(registeredServiceSerializer.toString(result));
     }
-    
+
     private ResponseEntity<RegisteredService> importSingleService(final HttpServletRequest request) throws IOException {
         val requestBody = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
         LOGGER.trace("Submitted registered service:\n[{}]", requestBody);

@@ -1,11 +1,13 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.test.CasTestExtension;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.query.extractor.ValueCollector;
 import lombok.val;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,7 @@ import static org.mockito.Mockito.*;
     })
 @Tag("Hazelcast")
 @Execution(ExecutionMode.SAME_THREAD)
+@ExtendWith(CasTestExtension.class)
 class HazelcastSessionConfigurationTests {
     @Autowired
     @Qualifier("hazelcastInstance")

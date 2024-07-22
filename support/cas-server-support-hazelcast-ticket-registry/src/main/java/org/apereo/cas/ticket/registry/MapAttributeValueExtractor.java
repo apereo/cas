@@ -17,7 +17,7 @@ public class MapAttributeValueExtractor implements ValueExtractor<HazelcastTicke
     public void extract(final HazelcastTicketDocument ticketHolder,
                         final String attributeName,
                         final ValueCollector valueCollector) {
-        val values = ticketHolder.attributes().get(attributeName);
+        val values = ticketHolder.getAttributes().get(attributeName);
         if (values != null) {
             valueCollector.addObject(new MultiResult<>(values));
         }

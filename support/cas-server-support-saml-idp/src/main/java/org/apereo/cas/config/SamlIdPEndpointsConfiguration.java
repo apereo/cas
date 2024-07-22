@@ -414,6 +414,7 @@ class SamlIdPEndpointsConfiguration {
                 service.setName(service.getClass().getSimpleName());
                 service.setDescription("SAML Authentication Request Callback");
                 service.setServiceId(callbackService);
+                service.markAsInternal();
                 plan.registerServiceRegistry(new SamlIdPServiceRegistry(applicationContext, service));
             };
         }

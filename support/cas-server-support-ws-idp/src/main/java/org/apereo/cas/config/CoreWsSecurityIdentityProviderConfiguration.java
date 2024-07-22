@@ -130,6 +130,7 @@ class CoreWsSecurityIdentityProviderConfiguration {
                 service.setName(service.getClass().getSimpleName());
                 service.setDescription("WS-Federation Authentication Request");
                 service.setServiceId(wsFederationCallbackService.getId().concat(".+"));
+                service.markAsInternal();
                 LOGGER.debug("Saving callback service [{}] into the registry", service.getServiceId());
                 plan.registerServiceRegistry(new WSFederationServiceRegistry(applicationContext, service));
             };

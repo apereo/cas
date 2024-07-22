@@ -3,12 +3,11 @@
  */
 function fetchServices(callback) {
     $.get(`${casServerPrefix}/actuator/registeredServices`, response => {
-        let serviceCountByType = [0,0,0,0,0];
+        let serviceCountByType = [0, 0, 0, 0, 0];
         let applicationsTable = $("#applicationsTable").DataTable();
         applicationsTable.clear();
         for (const service of response[1]) {
             let icon = "mdi-web-box";
-
             const serviceClass = service["@class"];
             if (serviceClass.includes("CasRegisteredService")) {
                 icon = "mdi-alpha-c-box-outline";
@@ -59,14 +58,14 @@ function fetchServices(callback) {
             });
         }
         applicationsTable.draw();
-        
+
         servicesChart.data.datasets[0].data = serviceCountByType;
         servicesChart.update();
 
         if (callback !== undefined) {
             callback(applicationsTable);
         }
-        
+
         initializeServiceButtons();
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
@@ -74,9 +73,8 @@ function fetchServices(callback) {
 }
 
 function initializeFooterButtons() {
-    let newServiceButton = document.getElementById("newService");
-    newServiceButton.addEventListener("click", event => {
 
+    $("button[name=newService]").off().on("click", () => {
         const editServiceDialogElement = document.getElementById("editServiceDialog");
         let editServiceDialog = window.mdc.dialog.MDCDialog.attachTo(editServiceDialogElement);
         const editor = initializeAceEditor("serviceEditor");
@@ -85,16 +83,12 @@ function initializeFooterButtons() {
 
         $(editServiceDialogElement).attr("newService", true);
         editServiceDialog["open"]();
-        event.preventDefault();
-    }, false);
+    });
 
-    let importServiceButton = document.getElementById("importService");
-    importServiceButton.addEventListener("click", event => {
+    $("button[name=importService]").off().on("click", () => {
         $("#serviceFileInput").click();
-
         $("#serviceFileInput").change(event => {
             const file = event.target.files[0];
-
             const reader = new FileReader();
             reader.readAsText(file);
             reader.onload = e => {
@@ -115,36 +109,28 @@ function initializeFooterButtons() {
                     }
                 });
             };
-
         });
-
-        event.preventDefault();
-    }, false);
-
-    let exportServiceButtons = document.getElementsByName("exportService");
-    exportServiceButtons.forEach(exportServiceButton => {
-        exportServiceButton.addEventListener("click", event => {
-            let serviceId = $(exportServiceButton).attr("serviceId");
-            fetch(`${casServerPrefix}/actuator/registeredServices/export/${serviceId}`)
-                .then(response => {
-                    const filename = response.headers.get("filename");
-                    response.blob().then(blob => {
-                        const link = document.createElement("a");
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = filename;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    });
-
-                })
-                .catch(error => console.error("Error fetching file:", error));
-            event.preventDefault();
-        }, false);
     });
 
-    let exportAllButton = document.getElementById("exportAll");
-    exportAllButton.addEventListener("click", event => {
+    $("button[name=exportService]").off().on("click", () => {
+        let serviceId = $(exportServiceButton).attr("serviceId");
+        fetch(`${casServerPrefix}/actuator/registeredServices/export/${serviceId}`)
+            .then(response => {
+                const filename = response.headers.get("filename");
+                response.blob().then(blob => {
+                    const link = document.createElement("a");
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = filename;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                });
+
+            })
+            .catch(error => console.error("Error fetching file:", error));
+    });
+
+    $("button[name=exportAll]").off().on("click", () => {
         fetch(`${casServerPrefix}/actuator/registeredServices/export`)
             .then(response => {
                 const filename = response.headers.get("filename");
@@ -159,8 +145,7 @@ function initializeFooterButtons() {
 
             })
             .catch(error => console.error("Error fetching file:", error));
-        event.preventDefault();
-    }, false);
+    });
 }
 
 /**
@@ -171,14 +156,16 @@ let memoryChart = null;
 let statisticsChart = null;
 let systemHealthChart = null;
 let jvmThreadsChart = null;
+
 /**
  * Initialization Functions
  */
 async function initializeAccessStrategyOperations() {
     const accessStrategyEditor = initializeAceEditor("accessStrategyEditor");
     accessStrategyEditor.setReadOnly(true);
-    let accessStrategyButton = document.getElementById("accessStrategyButton");
-    accessStrategyButton.addEventListener("click", event => {
+
+
+    $("button[name=accessStrategyButton]").off().on("click", () => {
         $("#serviceAccessResultDiv").hide();
         const form = document.getElementById("fmAccessStrategy");
         if (!form.reportValidity()) {
@@ -216,8 +203,7 @@ async function initializeAccessStrategyOperations() {
                 $("#serviceAccessResultDiv #serviceAccessResult").text(`Status ${xhr.status}: Service is unauthorized.`);
             }
         });
-        event.preventDefault();
-    }, false);
+    });
 }
 
 function initializeJvmMetrics() {
@@ -332,8 +318,7 @@ async function initializeTicketsOperations() {
     const ticketEditor = initializeAceEditor("ticketEditor");
     ticketEditor.setReadOnly(true);
 
-    let searchTicketButton = document.getElementById("searchTicketButton");
-    searchTicketButton.addEventListener("click", event => {
+    $("button#searchTicketButton").off().on("click", () => {
         const ticket = document.getElementById("ticket");
         if (!ticket.checkValidity()) {
             ticket.reportValidity();
@@ -353,11 +338,9 @@ async function initializeTicketsOperations() {
                     console.error("Error fetching data:", error);
                 });
         }
-        event.preventDefault();
-    }, false);
+    });
 
-    let cleanTicketsButton = document.getElementById("cleanTicketsButton");
-    cleanTicketsButton.addEventListener("click", event => {
+    $("button#cleanTicketsButton").off().on("click", () => {
         $.ajax({
             url: `${casServerPrefix}/actuator/ticketRegistry/clean`,
             type: "DELETE",
@@ -369,8 +352,7 @@ async function initializeTicketsOperations() {
                 console.log(`Error: ${status} / ${error} / ${xhr.responseText}`);
             }
         });
-        event.preventDefault();
-    }, false);
+    });
 
 
     $.get(`${casServerPrefix}/actuator/ticketRegistry/ticketCatalog`, response => {
@@ -435,6 +417,105 @@ async function initializeTicketsOperations() {
         ticketCatalogTable.draw();
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
+    });
+}
+
+async function initializeLoggingOperations() {
+    const loggersTable = $("#loggersTable").DataTable({
+        pageLength: 25,
+        autoWidth: false,
+        columnDefs: [
+            {width: "90%", targets: 0},
+            {width: "10%", targets: 1}
+        ],
+        drawCallback: settings => {
+            $("#loggersTable tr").addClass("mdc-data-table__row");
+            $("#loggersTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    function determineLoggerColor(level) {
+        let background = "darkgray";
+        switch (level) {
+        case "DEBUG":
+            background = "cornflowerblue";
+            break;
+        case "INFO":
+            background = "mediumseagreen";
+            break;
+        case "WARN":
+            background = "darkorange";
+            break;
+        case "ERROR":
+            background = "red";
+            break;
+        }
+        return background;
+    }
+
+    function fetchLoggerData(callback) {
+        $.get(`${casServerPrefix}/actuator/loggingConfig`, response => callback(response)).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+        });
+    }
+
+    function updateLoggersTable() {
+        fetchLoggerData(response => {
+            console.log(response);
+
+            loggersTable.clear();
+
+            for (const logger of response.loggers) {
+                const background = determineLoggerColor(logger.level);
+                const loggerLevel = `
+                    <select data-logger='${logger.name}' name='loggerLevelSelect' class="palantir" style="color: whitesmoke; background-color: ${background}">
+                        <option ${logger.level === "TRACE" ? "selected" : ""} value="TRACE">TRACE</option>
+                        <option ${logger.level === "DEBUG" ? "selected" : ""} value="DEBUG">DEBUG</option>
+                        <option ${logger.level === "INFO" ? "selected" : ""} value="INFO">INFO</option>
+                        <option ${logger.level === "WARN" ? "selected" : ""} value="WARN">WARN</option>
+                        <option ${logger.level === "ERROR" ? "selected" : ""} value="ERROR">ERROR</option>
+                        <option ${logger.level === "OFF" ? "selected" : ""} value="OFF">OFF</option>
+                    </select>
+                    `;
+
+                loggersTable.row.add({
+                    0: `<code>${logger.name}</code>`,
+                    1: `${loggerLevel.trim()}`
+                });
+            }
+            loggersTable.draw();
+
+            $("select[name=loggerLevelSelect]").off().on("change", function () {
+                const logger = $(this).data("logger");
+                const level = $(this).val();
+                console.log("Logger:", logger, "Level:", level);
+                const loggerData = {
+                    "configuredLevel": level
+                };
+                $.ajax({
+                    url: `${casServerPrefix}/actuator/loggers/${logger}`,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(loggerData),
+                    success: response => {
+                        console.log("Update successful:", response);
+                        $(this).css("background-color", determineLoggerColor(level));
+                    },
+                    error: (xhr, status, error) => {
+                        console.error("Failed", error);
+                    }
+                });
+
+            });
+        });
+    }
+
+    let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
+    tabs.listen("MDCTabBar:activated", ev => {
+        let index = ev.detail.index;
+        if (index === 5) {
+            updateLoggersTable();
+        }
     });
 }
 
@@ -590,37 +671,37 @@ function initializeServiceButtons() {
     const editor = initializeAceEditor("serviceEditor");
     let editServiceDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("editServiceDialog"));
 
-    $('button[name=deleteService]').off().on('click', function() {
+    $("button[name=deleteService]").off().on("click", function () {
         let serviceId = $(this).parent().attr("serviceId");
         swal({
             title: "Are you sure you want to delete this entry?",
             text: "Once deleted, you may not be able to recover this entry.",
             icon: "warning",
             buttons: true,
-            dangerMode: true,
+            dangerMode: true
         })
-        .then((willDelete) => {
-            if (willDelete) {
-                $.ajax({
-                    url: `${casServerPrefix}/actuator/registeredServices/${serviceId}`,
-                    type: "DELETE",
-                    success: response => {
-                        console.log("Resource deleted successfully:", response);
-                        let nearestTr = $(this).closest("tr");
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        url: `${casServerPrefix}/actuator/registeredServices/${serviceId}`,
+                        type: "DELETE",
+                        success: response => {
+                            console.log("Resource deleted successfully:", response);
+                            let nearestTr = $(this).closest("tr");
 
-                        let applicationsTable = $("#applicationsTable").DataTable();
-                        applicationsTable.row(nearestTr).remove().draw();
-                    },
-                    error: (xhr, status, error) => {
-                        console.error("Error deleting resource:", error);
-                    }
-                });
-            }
-        });
+                            let applicationsTable = $("#applicationsTable").DataTable();
+                            applicationsTable.row(nearestTr).remove().draw();
+                        },
+                        error: (xhr, status, error) => {
+                            console.error("Error deleting resource:", error);
+                        }
+                    });
+                }
+            });
 
     });
-    
-    $('button[name=editService]').off().on('click', function() {
+
+    $("button[name=editService]").off().on("click", function () {
         let serviceId = $(this).parent().attr("serviceId");
         $.get(`${casServerPrefix}/actuator/registeredServices/${serviceId}`, response => {
             const value = JSON.stringify(response, null, 4);
@@ -632,55 +713,55 @@ function initializeServiceButtons() {
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
         });
-        
+
     });
 
-    $('button[name=saveService]').off().on('click', () => {
+    $("button[name=saveService]").off().on("click", () => {
 
         swal({
             title: "Are you sure you want to update this entry?",
             text: "Once updated, you may not be able to revert this entry.",
             icon: "warning",
             buttons: true,
-            dangerMode: true,
+            dangerMode: true
         })
-        .then((willUpdate) => {
-            if (willUpdate) {
-                const value = editor.getValue();
+            .then((willUpdate) => {
+                if (willUpdate) {
+                    const value = editor.getValue();
 
-                const editServiceDialogElement = document.getElementById("editServiceDialog");
-                const isNewService = $(editServiceDialogElement).attr("newService") === "true";
+                    const editServiceDialogElement = document.getElementById("editServiceDialog");
+                    const isNewService = $(editServiceDialogElement).attr("newService") === "true";
 
-                $.ajax({
-                    url: `${casServerPrefix}/actuator/registeredServices`,
-                    type: isNewService ? "POST" : "PUT",
-                    contentType: "application/json",
-                    data: value,
-                    success: response => {
-                        console.log("Update successful:", response);
-                        editServiceDialog["close"]();
-                        fetchServices(() => {
-                            let newServiceId = response.id;
-                            $("#applicationsTable tr").removeClass("selected");
-                            console.log("New Service Id", newServiceId);
-                            $(`#applicationsTable tr td span[serviceId=${newServiceId}]`).each(function() {
-                                $(this).closest("tr").addClass("selected");
+                    $.ajax({
+                        url: `${casServerPrefix}/actuator/registeredServices`,
+                        type: isNewService ? "POST" : "PUT",
+                        contentType: "application/json",
+                        data: value,
+                        success: response => {
+                            console.log("Update successful:", response);
+                            editServiceDialog["close"]();
+                            fetchServices(() => {
+                                let newServiceId = response.id;
+                                $("#applicationsTable tr").removeClass("selected");
+                                console.log("New Service Id", newServiceId);
+                                $(`#applicationsTable tr td span[serviceId=${newServiceId}]`).each(function () {
+                                    $(this).closest("tr").addClass("selected");
+                                });
                             });
-                        });
-                    },
-                    error: (xhr, status, error) => {
-                        console.error("Update failed:", error);
-                    }
-                });
-            }
-        });
+                        },
+                        error: (xhr, status, error) => {
+                            console.error("Update failed:", error);
+                        }
+                    });
+                }
+            });
 
     });
 
-    $('button[name=copyService]').off().on('click', function() {
+    $("button[name=copyService]").off().on("click", function () {
         let serviceId = $(this).parent().attr("serviceId");
         $.get(`${casServerPrefix}/actuator/registeredServices/${serviceId}`, response => {
-            let clone = { ...response };
+            let clone = {...response};
             clone.serviceId = "...";
             clone.name = `...`;
             delete clone.id;
@@ -693,7 +774,7 @@ function initializeServiceButtons() {
             const value = JSON.stringify(clone, null, 4);
             editor.setValue(value, -1);
             editor.gotoLine(1);
-            editor.findAll('...', { regExp: false });
+            editor.findAll("...", {regExp: false});
 
             const editServiceDialogElement = document.getElementById("editServiceDialog");
             $(editServiceDialogElement).attr("newService", true);
@@ -721,7 +802,7 @@ async function initializeServicesOperations() {
         }
     });
 
-    applicationsTable.on('click', 'tbody tr', e => {
+    applicationsTable.on("click", "tbody tr", e => {
         e.currentTarget.classList.remove("selected");
     });
 
@@ -734,21 +815,21 @@ async function initializeAllCharts() {
         type: "pie",
         data: {
             labels: [
-                'CAS',
-                'SAML2',
-                'OAuth',
-                'OpenID Connect',
-                'Ws-Federation'
+                "CAS",
+                "SAML2",
+                "OAuth",
+                "OpenID Connect",
+                "Ws-Federation"
             ],
             datasets: [{
-                label: 'Registered Services',
-                data: [0,0,0,0,0],
+                label: "Registered Services",
+                data: [0, 0, 0, 0, 0],
                 backgroundColor: [
-                    'deepskyblue',
-                    'indianred',
-                    'mediumpurple',
-                    'limegreen',
-                    'slategrey'
+                    "deepskyblue",
+                    "indianred",
+                    "mediumpurple",
+                    "limegreen",
+                    "slategrey"
                 ],
                 hoverOffset: 4
             }]
@@ -757,7 +838,7 @@ async function initializeAllCharts() {
             responsive: true,
             plugins: {
                 legend: {
-                    position: 'top',
+                    position: "top"
                 },
                 title: {
                     display: true
@@ -766,7 +847,7 @@ async function initializeAllCharts() {
         }
     });
     servicesChart.update();
-    
+
     memoryChart = new Chart(document.getElementById("memoryChart").getContext("2d"), {
         type: "bar",
         data: {
@@ -889,7 +970,8 @@ async function initializePalantir() {
             initializeServicesOperations(),
             initializeAccessStrategyOperations(),
             initializeTicketsOperations(),
-            initializeSystemOperations()
+            initializeSystemOperations(),
+            initializeLoggingOperations()
         ]);
     } catch (error) {
         console.error("An error occurred:", error);

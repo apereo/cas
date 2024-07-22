@@ -3,8 +3,10 @@ package org.apereo.cas.services;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -126,5 +128,18 @@ public abstract class BaseRegisteredService implements RegisteredService {
         if (getMatchingStrategy() == null) {
             setMatchingStrategy(new FullRegexRegisteredServiceMatchingStrategy());
         }
+    }
+
+    /**
+     * Mark as internal base registered service.
+     *
+     * @return the base registered service
+     */
+    @CanIgnoreReturnValue
+    @JsonIgnore
+    public BaseRegisteredService markAsInternal() {
+        getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.INTERNAL_SERVICE_DEFINITION.getPropertyName(),
+            new DefaultRegisteredServiceProperty("true"));
+        return this;
     }
 }
