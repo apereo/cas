@@ -9,7 +9,7 @@
 <span th:fragment="main">
     <div class="attribute-tab w-100 d-none" id="attribute-tab-2">
 
-        <form id="fmSearchTicket" class="d-block">
+        <form class="d-block" onsubmit="return false;">
             <section class="cas-field form-group my-3 mdc-input-group d-flex">
                 <div class="mdc-input-group-field mdc-input-group-field-append w-100">
                     <div id="ticketDefinitionsSelect" class="mdc-select mdc-select--outlined mdc-select--required mdc-menu-surface--fullwidth pb-2">
@@ -65,10 +65,10 @@
                 </div>
             </section>
             <div class="d-flex">
-                <button id="searchTicketButton" class="mdc-button mdc-button--raised">
+                <button type="button" id="searchTicketButton" class="mdc-button mdc-button--raised">
                     <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-database-search" aria-hidden="true"></i>Search</span>
                 </button>
-                <button id="cleanTicketsButton" class="mdc-button mdc-button--raised">
+                <button type="button" id="cleanTicketsButton" class="mdc-button mdc-button--raised">
                     <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-broom" aria-hidden="true"></i>Clean</span>
                 </button>
             </div>

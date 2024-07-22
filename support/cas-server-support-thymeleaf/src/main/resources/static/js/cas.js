@@ -279,6 +279,7 @@ function initializeAceEditor(id) {
     editor.session.setMode("ace/mode/json");
     editor.session.setUseWrapMode(true);
     editor.session.setTabSize(4);
+    editor.setShowPrintMargin(false);
     editor.commands.addCommand({
         name: "deleteLine",
         bindKey: {

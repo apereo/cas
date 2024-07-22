@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.Serializable;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -343,6 +342,12 @@ public interface RegisteredServiceProperty extends Serializable {
             RegisteredServicePropertyGroups.REGISTERED_SERVICES, RegisteredServicePropertyTypes.BOOLEAN,
             "Whether this service definition is one that is tagged as wildcarded (catch-all) entry."),
         /**
+         * Whether this service definition is one that is tagged for internal CAS functions.
+         **/
+        INTERNAL_SERVICE_DEFINITION("internalServiceDefinition", "false",
+            RegisteredServicePropertyGroups.REGISTERED_SERVICES, RegisteredServicePropertyTypes.BOOLEAN,
+            "Whether this service definition is an internal system-level entry used by CAS itself."),
+        /**
          * Whether this service should skip qualification for required-service pattern checks.
          **/
         SKIP_REQUIRED_SERVICE_CHECK("skipRequiredServiceCheck", "false",
@@ -433,15 +438,15 @@ public interface RegisteredServiceProperty extends Serializable {
         CORS_ALLOWED_HEADERS("corsAllowedHeaders", StringUtils.EMPTY,
             RegisteredServicePropertyGroups.CORS, RegisteredServicePropertyTypes.STRING,
             "Define exposed headers in the response for CORS requests. Set the list of headers that a pre-flight "
-            + "request can list as allowed for use during an actual request. The special value "
-            + "`*` allows actual requests to send any header."),
+                + "request can list as allowed for use during an actual request. The special value "
+                + "`*` allows actual requests to send any header."),
         /**
          * Define exposed headers in the response for CORS requests.
          */
         CORS_EXPOSED_HEADERS("corsExposedHeaders", StringUtils.EMPTY,
             RegisteredServicePropertyGroups.CORS, RegisteredServicePropertyTypes.STRING,
             "List of response headers that a response might have and can be exposed. "
-            + "The special value `*` allows all headers to be exposed for non-credentialed requests."),
+                + "The special value `*` allows all headers to be exposed for non-credentialed requests."),
         /**
          * Indicate binding type, when using delegated authentication to saml2 identity providers.
          */
@@ -633,7 +638,7 @@ public interface RegisteredServiceProperty extends Serializable {
                     .entrySet()
                     .stream()
                     .filter(entry -> entry.getKey().equalsIgnoreCase(getPropertyName())
-                                     && StringUtils.isNotBlank(entry.getValue().value()))
+                        && StringUtils.isNotBlank(entry.getValue().value()))
                     .distinct()
                     .findFirst();
                 if (property.isPresent()) {
@@ -772,8 +777,8 @@ public interface RegisteredServiceProperty extends Serializable {
             return service != null && service.getProperties().entrySet()
                 .stream()
                 .anyMatch(entry -> entry.getKey().equalsIgnoreCase(getPropertyName())
-                                   && StringUtils.isNotBlank(entry.getValue().value())
-                                   && valueFilter.test(entry.getValue().value()));
+                    && StringUtils.isNotBlank(entry.getValue().value())
+                    && valueFilter.test(entry.getValue().value()));
         }
 
         /**
@@ -790,6 +795,34 @@ public interface RegisteredServiceProperty extends Serializable {
                 case BOOLEAN -> getPropertyBooleanValue(registeredService);
                 default -> getPropertyValue(registeredService).value();
             };
+        }
+
+
+        /**
+         * Is not assigned to boolean.
+         *
+         * @param service the service
+         * @return the boolean
+         */
+        @JsonIgnore
+        public boolean isNotAssignedTo(final RegisteredService service) {
+            return isNotAssignedTo(service, BooleanUtils::toBoolean);
+        }
+
+        /**
+         * Is not assigned to boolean.
+         *
+         * @param service     the service
+         * @param valueFilter the value filter
+         * @return the boolean
+         */
+        @JsonIgnore
+        public boolean isNotAssignedTo(final RegisteredService service, final Predicate<String> valueFilter) {
+            if (service == null || !service.getProperties().containsKey(getPropertyName())) {
+                return true;
+            }
+            val property = service.getProperties().get(getPropertyName());
+            return property == null || property.getValues().isEmpty() || property.getValues().stream().noneMatch(valueFilter);
         }
     }
 }

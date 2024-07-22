@@ -11,7 +11,6 @@ import org.apereo.cas.support.oauth.services.OAuth20ServiceRegistry;
 import org.apereo.cas.support.oauth.services.OAuth20ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -49,6 +48,7 @@ class CasOAuth20ServicesConfiguration {
             service.setDescription("OAuth Authentication Callback Request URL");
             service.setServiceId(oAuthCallbackUrl);
             service.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
+            service.markAsInternal();
             plan.registerServiceRegistry(new OAuth20ServiceRegistry(applicationContext, service));
         };
     }

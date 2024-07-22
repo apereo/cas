@@ -114,8 +114,8 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             val map = getTicketMapInstanceByMetadata(metadata);
             if (map != null) {
                 val document = map.get(encTicketId);
-                if (document != null && document.ticket() != null) {
-                    val result = decodeTicket(document.ticket());
+                if (document != null && document.getTicket() != null) {
+                    val result = decodeTicket(document.getTicket());
                     if (predicate != null && predicate.test(result)) {
                         return result;
                     }
@@ -208,7 +208,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             LOGGER.debug("Executing SQL query [{}]", query);
             val results = ticketMapInstance.values(Predicates.sql(query));
             return results.stream()
-                .map(row -> decodeTicket(row.ticket()))
+                .map(row -> decodeTicket(row.getTicket()))
                 .filter(ticket -> !ticket.isExpired());
         }
         return super.getSessionsWithAttributes(queryAttributes);
@@ -243,7 +243,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             .flatMap(tickets -> {
                 var resultStream = tickets
                     .parallelStream()
-                    .map(HazelcastTicketDocument::ticket);
+                    .map(HazelcastTicketDocument::getTicket);
                 if (properties.getPageSize() > 0) {
                     resultStream = resultStream.limit(properties.getPageSize());
                 }

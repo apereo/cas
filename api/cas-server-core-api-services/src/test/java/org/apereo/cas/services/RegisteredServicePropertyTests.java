@@ -1,15 +1,12 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import java.io.Serial;
 import java.util.Map;
 import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -35,6 +32,20 @@ class RegisteredServicePropertyTests {
         assertEquals("true", p1.getValue(String.class));
         assertTrue(p1.getBooleanValue());
     }
+
+    @Test
+    void verifyNotAssignedValue() throws Throwable {
+        val service = mock(RegisteredService.class);
+        val properties = (Map) Map.of(
+            RegisteredServiceProperties.CORS_MAX_AGE.getPropertyName(), new DefaultRegisteredServiceProperty("100"),
+            RegisteredServiceProperties.CORS_ALLOW_CREDENTIALS.getPropertyName(), new DefaultRegisteredServiceProperty("false")
+        );
+        when(service.getProperties()).thenReturn(properties);
+        assertTrue(RegisteredServiceProperties.INTERNAL_SERVICE_DEFINITION.isNotAssignedTo(service));
+        assertFalse(RegisteredServiceProperties.CORS_MAX_AGE.isNotAssignedTo(service, "100"::equalsIgnoreCase));
+        assertTrue(RegisteredServiceProperties.CORS_MAX_AGE.isNotAssignedTo(service, "600"::equalsIgnoreCase));
+    }
+
 
     @Test
     void verifyTypedValue() throws Throwable {
@@ -64,7 +75,7 @@ class RegisteredServicePropertyTests {
 
         @Override
         public Set<String> getValues() {
-            return Set.of();
+            return Set.of(value);
         }
 
         @Override

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasHazelcastTicketRegistryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.DefaultTicketDefinition;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -22,6 +23,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -41,6 +43,7 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @Tag("Hazelcast")
+@ExtendWith(CasTestExtension.class)
 class HazelcastTicketRegistryTests {
     @Nested
     @Getter
@@ -59,7 +62,6 @@ class HazelcastTicketRegistryTests {
         @Qualifier(TicketRegistry.BEAN_NAME)
         private TicketRegistry newTicketRegistry;
     }
-
 
     @Nested
     @Getter
@@ -122,7 +124,7 @@ class HazelcastTicketRegistryTests {
         properties = {
             "cas.ticket.registry.hazelcast.page-size=0",
             "cas.ticket.registry.hazelcast.cluster.network.port-auto-increment=false",
-            "cas.ticket.registry.hazelcast.cluster.network.port=5709",
+            "cas.ticket.registry.hazelcast.cluster.network.port=5705",
             "cas.ticket.registry.hazelcast.cluster.core.instance-name=loadtestinstance"
         })
     class LoadTests {
