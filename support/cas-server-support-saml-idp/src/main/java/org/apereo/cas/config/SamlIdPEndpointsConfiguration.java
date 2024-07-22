@@ -409,7 +409,7 @@ class SamlIdPEndpointsConfiguration {
                 val callbackService = samlIdPCallbackService.getId().concat(".*");
                 LOGGER.debug("Initializing SAML IdP callback service [{}]", callbackService);
                 val service = new CasRegisteredService();
-                service.setId(RandomUtils.nextLong());
+                service.setId(RandomUtils.nextInt());
                 service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
                 service.setName(service.getClass().getSimpleName());
                 service.setDescription("SAML Authentication Request Callback");

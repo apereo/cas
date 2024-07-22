@@ -371,7 +371,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                 .forEach(duo -> {
                     val serviceId = FunctionUtils.doUnchecked(() -> new URI(duo.getRegistration().getRegistrationUrl()).toURL().getHost());
                     val service = new CasRegisteredService();
-                    service.setId(RandomUtils.nextLong());
+                    service.setId(RandomUtils.nextInt());
                     service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
                     service.setName(service.getClass().getSimpleName());
                     service.setDescription("Duo Security Registration URL for " + duo.getId());

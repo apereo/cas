@@ -678,6 +678,10 @@ form button i.mdi {
     background-color: #e3e9ec;
 }
 
+.swal-overlay {
+    background-color: rgba(17, 67, 119, 0.95);
+}
+
 @media all and (min-width: 768px) {
     .w-md-50 {
         width: 50%;
