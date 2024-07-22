@@ -81,7 +81,7 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
         val items = container.queryItems("SELECT * FROM " + container.getId(), queryOptions, CosmosDbDocument.class);
         items.iterableByPage()
             .forEach(response -> services.addAll(response.getResults()
-                .stream()
+                .parallelStream()
                 .map(this::getRegisteredServiceFromDocumentBody)
                 .peek(this::invokeServiceRegistryListenerPostLoad).toList()));
         return services;
@@ -96,7 +96,7 @@ public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
         val items = container.queryItems(query, queryOptions, CosmosDbDocument.class);
         items.iterableByPage()
             .forEach(response -> services.addAll(response.getResults()
-                .stream()
+                .parallelStream()
                 .map(this::getRegisteredServiceFromDocumentBody)
                 .sorted()
                 .filter(r -> r.matches(id))

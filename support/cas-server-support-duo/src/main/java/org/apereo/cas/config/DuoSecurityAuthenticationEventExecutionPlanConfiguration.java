@@ -376,7 +376,7 @@ class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
                     service.setName(service.getClass().getSimpleName());
                     service.setDescription("Duo Security Registration URL for " + duo.getId());
                     service.setServiceId(serviceId);
-                    plan.registerServiceRegistry(new ImmutableInMemoryServiceRegistry(List.of(service), applicationContext, List.of()));
+                    plan.registerServiceRegistry(new ImmutableInMemoryServiceRegistry(service, applicationContext));
                 });
         }
     }

@@ -79,6 +79,7 @@ public class GoogleCloudFirestoreServiceRegistry extends AbstractServiceRegistry
     public Collection<RegisteredService> load() {
         val references = firestore.collection(collectionName).listDocuments();
         return StreamSupport.stream(references.spliterator(), false)
+            .parallel()
             .map(doc -> FunctionUtils.doUnchecked(() -> doc.get().get()))
             .map(doc -> doc.getString("json"))
             .filter(Objects::nonNull)

@@ -76,7 +76,7 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
         val list = this.mongoTemplate.findAll(RegisteredService.class, this.collectionName);
         val clientInfo = ClientInfoHolder.getClientInfo();
         return list
-            .stream()
+            .parallelStream()
             .map(this::invokeServiceRegistryListenerPostLoad)
             .filter(Objects::nonNull)
             .peek(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s, clientInfo)))

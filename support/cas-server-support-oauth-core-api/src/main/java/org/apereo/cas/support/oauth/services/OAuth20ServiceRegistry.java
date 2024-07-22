@@ -23,6 +23,6 @@ public class OAuth20ServiceRegistry extends ImmutableInMemoryServiceRegistry {
     }
 
     public OAuth20ServiceRegistry(final ConfigurableApplicationContext applicationContext, final RegisteredService... services) {
-        this(Arrays.stream(services).collect(Collectors.toList()), applicationContext);
+        this(Arrays.stream(services).parallel().collect(Collectors.toList()), applicationContext);
     }
 }
