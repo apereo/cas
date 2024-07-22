@@ -141,7 +141,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
                     val result = IOUtils.toString(content, StandardCharsets.UTF_8);
                     val services = this.serializer.fromList(result);
                     services
-                            .stream()
+                            .parallelStream()
                             .map(this::invokeServiceRegistryListenerPostLoad)
                             .filter(Objects::nonNull)
                             .forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s, clientInfo)));

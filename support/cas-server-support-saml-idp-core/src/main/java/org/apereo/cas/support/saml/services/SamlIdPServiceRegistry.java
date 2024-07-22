@@ -24,7 +24,7 @@ public class SamlIdPServiceRegistry extends ImmutableInMemoryServiceRegistry {
 
     public SamlIdPServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                   final RegisteredService... services) {
-        this(Arrays.stream(services).collect(Collectors.toList()), applicationContext);
+        this(Arrays.stream(services).parallel().collect(Collectors.toList()), applicationContext);
     }
 
 }
