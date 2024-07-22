@@ -43,7 +43,7 @@ class CasOAuth20ServicesConfiguration {
             val oAuthCallbackUrl = casProperties.getServer().getPrefix()
                                    + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
             val service = new CasRegisteredService();
-            service.setId(RandomUtils.nextLong());
+            service.setId(RandomUtils.nextInt());
             service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
             service.setName(service.getClass().getSimpleName());
             service.setDescription("OAuth Authentication Callback Request URL");

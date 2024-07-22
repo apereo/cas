@@ -592,23 +592,32 @@ function initializeServiceButtons() {
 
     $('button[name=deleteService]').off().on('click', function() {
         let serviceId = $(this).parent().attr("serviceId");
-        let result = confirm("Are you sure you want to delete this entry?");
-        if (result) {
-            $.ajax({
-                url: `${casServerPrefix}/actuator/registeredServices/${serviceId}`,
-                type: "DELETE",
-                success: response => {
-                    console.log("Resource deleted successfully:", response);
-                    let nearestTr = $(this).closest("tr");
+        swal({
+            title: "Are you sure you want to delete this entry?",
+            text: "Once deleted, you may not be able to recover this entry.",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                $.ajax({
+                    url: `${casServerPrefix}/actuator/registeredServices/${serviceId}`,
+                    type: "DELETE",
+                    success: response => {
+                        console.log("Resource deleted successfully:", response);
+                        let nearestTr = $(this).closest("tr");
 
-                    let applicationsTable = $("#applicationsTable").DataTable();
-                    applicationsTable.row(nearestTr).remove().draw();
-                },
-                error: (xhr, status, error) => {
-                    console.error("Error deleting resource:", error);
-                }
-            });
-        }
+                        let applicationsTable = $("#applicationsTable").DataTable();
+                        applicationsTable.row(nearestTr).remove().draw();
+                    },
+                    error: (xhr, status, error) => {
+                        console.error("Error deleting resource:", error);
+                    }
+                });
+            }
+        });
+
     });
     
     $('button[name=editService]').off().on('click', function() {
@@ -627,35 +636,45 @@ function initializeServiceButtons() {
     });
 
     $('button[name=saveService]').off().on('click', () => {
-        let result = confirm("Are you sure you want to update this entry?");
-        if (result) {
-            const value = editor.getValue();
 
-            const editServiceDialogElement = document.getElementById("editServiceDialog");
-            const isNewService = $(editServiceDialogElement).attr("newService") === "true";
+        swal({
+            title: "Are you sure you want to update this entry?",
+            text: "Once updated, you may not be able to revert this entry.",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willUpdate) => {
+            if (willUpdate) {
+                const value = editor.getValue();
 
-            $.ajax({
-                url: `${casServerPrefix}/actuator/registeredServices`,
-                type: isNewService ? "POST" : "PUT",
-                contentType: "application/json",
-                data: value,
-                success: response => {
-                    console.log("Update successful:", response);
-                    editServiceDialog["close"]();
-                    fetchServices(() => {
-                        let newServiceId = response.id;
-                        $("#applicationsTable tr").removeClass("selected");
-                        console.log("New Service Id", newServiceId);
-                        $(`#applicationsTable tr td span[serviceId=${newServiceId}]`).each(function() {
-                            $(this).closest("tr").addClass("selected");
+                const editServiceDialogElement = document.getElementById("editServiceDialog");
+                const isNewService = $(editServiceDialogElement).attr("newService") === "true";
+
+                $.ajax({
+                    url: `${casServerPrefix}/actuator/registeredServices`,
+                    type: isNewService ? "POST" : "PUT",
+                    contentType: "application/json",
+                    data: value,
+                    success: response => {
+                        console.log("Update successful:", response);
+                        editServiceDialog["close"]();
+                        fetchServices(() => {
+                            let newServiceId = response.id;
+                            $("#applicationsTable tr").removeClass("selected");
+                            console.log("New Service Id", newServiceId);
+                            $(`#applicationsTable tr td span[serviceId=${newServiceId}]`).each(function() {
+                                $(this).closest("tr").addClass("selected");
+                            });
                         });
-                    });
-                },
-                error: (xhr, status, error) => {
-                    console.error("Update failed:", error);
-                }
-            });
-        }
+                    },
+                    error: (xhr, status, error) => {
+                        console.error("Update failed:", error);
+                    }
+                });
+            }
+        });
+
     });
 
     $('button[name=copyService]').off().on('click', function() {
