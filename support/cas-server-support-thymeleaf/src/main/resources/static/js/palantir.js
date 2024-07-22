@@ -1,6 +1,15 @@
 /**
  * Internal Functions
  */
+const Tabs = {
+    APPLICATIONS: 0,
+    SYSTEM: 1,
+    TICKETS: 2,
+    TASKS: 3,
+    ACCESS_STRATEGY: 4,
+    LOGGING: 5
+};
+
 function fetchServices(callback) {
     $.get(`${casServerPrefix}/actuator/registeredServices`, response => {
         let serviceCountByType = [0, 0, 0, 0, 0];
@@ -305,7 +314,7 @@ async function initializeScheduledTasksOperations() {
     let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
     tabs.listen("MDCTabBar:activated", ev => {
         let index = ev.detail.index;
-        if (index === 3) {
+        if (index === Tabs.TASKS) {
             initializeJvmMetrics();
         }
     });
@@ -421,7 +430,16 @@ async function initializeTicketsOperations() {
 }
 
 async function initializeLoggingOperations() {
+    const toolbar = document.createElement('div');
+    toolbar.innerHTML = `
+        <button type="button" id="newLoggerButton" class="mdc-button mdc-button--raised">
+            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus" aria-hidden="true"></i>New</span>
+        </button>
+    `;
     const loggersTable = $("#loggersTable").DataTable({
+        layout: {
+            topStart: toolbar
+        },
         pageLength: 25,
         autoWidth: false,
         columnDefs: [
@@ -446,6 +464,9 @@ async function initializeLoggingOperations() {
         case "WARN":
             background = "darkorange";
             break;
+        case "OFF":
+            background = "black";
+            break;
         case "ERROR":
             background = "red";
             break;
@@ -461,11 +482,7 @@ async function initializeLoggingOperations() {
 
     function updateLoggersTable() {
         fetchLoggerData(response => {
-            console.log(response);
-
-            loggersTable.clear();
-
-            for (const logger of response.loggers) {
+            function addLoggerToTable(logger) {
                 const background = determineLoggerColor(logger.level);
                 const loggerLevel = `
                     <select data-logger='${logger.name}' name='loggerLevelSelect' class="palantir" style="color: whitesmoke; background-color: ${background}">
@@ -483,37 +500,62 @@ async function initializeLoggingOperations() {
                     1: `${loggerLevel.trim()}`
                 });
             }
+
+            function handleLoggerLevelSelectionChange() {
+                $("select[name=loggerLevelSelect]").off().on("change", function () {
+                    const logger = $(this).data("logger");
+                    const level = $(this).val();
+                    console.log("Logger:", logger, "Level:", level);
+                    const loggerData = {
+                        "configuredLevel": level
+                    };
+                    $.ajax({
+                        url: `${casServerPrefix}/actuator/loggers/${logger}`,
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify(loggerData),
+                        success: response => {
+                            console.log("Update successful:", response);
+                            $(this).css("background-color", determineLoggerColor(level));
+                        },
+                        error: (xhr, status, error) => {
+                            console.error("Failed", error);
+                        }
+                    });
+                });
+            }
+
+            console.log(response);
+
+            loggersTable.clear();
+            for (const logger of response.loggers) {
+                addLoggerToTable(logger);
+            }
             loggersTable.draw();
 
-            $("select[name=loggerLevelSelect]").off().on("change", function () {
-                const logger = $(this).data("logger");
-                const level = $(this).val();
-                console.log("Logger:", logger, "Level:", level);
-                const loggerData = {
-                    "configuredLevel": level
-                };
-                $.ajax({
-                    url: `${casServerPrefix}/actuator/loggers/${logger}`,
-                    type: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify(loggerData),
-                    success: response => {
-                        console.log("Update successful:", response);
-                        $(this).css("background-color", determineLoggerColor(level));
-                    },
-                    error: (xhr, status, error) => {
-                        console.error("Failed", error);
-                    }
-                });
-
+            $("#newLoggerButton").off().on("click", () => {
+                swal({
+                    content: "input",
+                    buttons: true,
+                    icon: "success",
+                    title: "What's the name of the new logger?",
+                    text: "The new logger will only be effective at runtime and will not be persisted.",
+                })
+                    .then((value) => {
+                        addLoggerToTable({name: value, level: "WARN"});
+                        loggersTable.draw();
+                        handleLoggerLevelSelectionChange();
+                        loggersTable.search(value).draw();
+                    });
             });
+            handleLoggerLevelSelectionChange();
         });
     }
 
     let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
     tabs.listen("MDCTabBar:activated", ev => {
         let index = ev.detail.index;
-        if (index === 5) {
+        if (index === Tabs.LOGGING) {
             updateLoggersTable();
         }
     });
@@ -609,7 +651,7 @@ async function initializeSystemOperations() {
     let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
     tabs.listen("MDCTabBar:activated", ev => {
         let index = ev.detail.index;
-        if (index === 1) {
+        if (index === Tabs.SYSTEM) {
             fetchSystemData(response => {
                 const flattened = flattenJSON(response);
                 systemTable.clear();
@@ -976,6 +1018,21 @@ async function initializePalantir() {
     } catch (error) {
         console.error("An error occurred:", error);
     }
+
+    let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
+    setTimeout(() => {
+        const selectedTab = window.localStorage.getItem("PalantirSelectedTab");
+        if (selectedTab) {
+            tabs.activateTab(Number(selectedTab));
+            tabs.setActiveTab(Number(selectedTab));
+            tabs.scrollTo(Number(selectedTab));
+        }
+    }, 5);
+
+    tabs.listen("MDCTabBar:activated", ev => {
+        console.log("Tracking tab", ev.detail.index);
+        window.localStorage.setItem("PalantirSelectedTab", ev.detail.index);
+    });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
