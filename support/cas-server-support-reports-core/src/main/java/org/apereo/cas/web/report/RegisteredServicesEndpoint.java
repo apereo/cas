@@ -273,7 +273,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     public ResponseEntity saveService(@RequestBody final String registeredServiceBody) {
         val registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
         val registeredService = registeredServiceSerializer.from(registeredServiceBody);
-        registeredService.setId(RandomUtils.nextLong());
+        registeredService.setId(RandomUtils.nextInt());
         val result = servicesManager.getObject().save(registeredService);
         return ResponseEntity.ok(registeredServiceSerializer.toString(result));
     }

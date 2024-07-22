@@ -1,7 +1,7 @@
 /**
  * Internal Functions
  */
-function fetchServices() {
+function fetchServices(callback) {
     $.get(`${casServerPrefix}/actuator/registeredServices`, response => {
         let serviceCountByType = [0,0,0,0,0];
         let applicationsTable = $("#applicationsTable").DataTable();
@@ -37,17 +37,21 @@ function fetchServices() {
             }
 
             let serviceButtons = `
-                                 <button type="button" name="editService" href="#" serviceId='${service.id}'
-                                        class="mdc-button mdc-button--raised btn btn-link min-width-32x">
-                                    <i class="mdi mdi-pencil fas fa-eye min-width-32x" aria-hidden="true"></i>
-                                </button>
-                                <button type="button" name="deleteService" href="#" serviceId='${service.id}'
-                                        class="mdc-button mdc-button--raised btn btn-link min-width-32x">
-                                    <i class="mdi mdi-delete fas fa-eye min-width-32x" aria-hidden="true"></i>
-                                </button>
-                            `;
+                 <button type="button" name="editService" href="#" serviceId='${service.id}'
+                        class="mdc-button mdc-button--raised btn btn-link min-width-32x">
+                    <i class="mdi mdi-pencil min-width-32x" aria-hidden="true"></i>
+                </button>
+                <button type="button" name="deleteService" href="#" serviceId='${service.id}'
+                        class="mdc-button mdc-button--raised btn btn-link min-width-32x">
+                    <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
+                </button>
+                <button type="button" name="copyService" href="#" serviceId='${service.id}'
+                        class="mdc-button mdc-button--raised btn btn-link min-width-32x">
+                    <i class="mdi mdi-content-copy min-width-32x" aria-hidden="true"></i>
+                </button>
+            `;
             applicationsTable.row.add({
-                0: `<i title='${serviceClass}' class='mdi ${icon}'></i>`,
+                0: `<i serviceId='${service.id}' title='${serviceClass}' class='mdi ${icon}'></i>`,
                 1: `${serviceDetails}`,
                 2: `<span serviceId='${service.id}' class="text-wrap">${service.serviceId}</span>`,
                 3: `<span serviceId='${service.id}' class="text-wrap">${service.description ?? ""}</span>`,
@@ -59,6 +63,10 @@ function fetchServices() {
         servicesChart.data.datasets[0].data = serviceCountByType;
         servicesChart.update();
 
+        if (callback !== undefined) {
+            callback(applicationsTable);
+        }
+        
         initializeServiceButtons();
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
@@ -578,60 +586,47 @@ async function initializeSystemOperations() {
     configureHealthChart();
 }
 
-async function initializeServiceButtons() {
-    let deleteServiceButtons = document.getElementsByName("deleteService");
-    deleteServiceButtons.forEach(deleteServiceButton => {
-        deleteServiceButton.addEventListener("click", event => {
-            let caller = event.target || event.srcElement;
-            let serviceId = $(caller.parentElement).attr("serviceId");
-
-            let result = confirm("Are you sure you want to delete this entry?");
-            if (result) {
-                $.ajax({
-                    url: `${casServerPrefix}/actuator/registeredServices/${serviceId}`,
-                    type: "DELETE",
-                    success: response => {
-                        console.log("Resource deleted successfully:", response);
-                        let nearestTr = $(caller).closest("tr");
-
-                        let applicationsTable = $("#applicationsTable").DataTable();
-                        applicationsTable.row(nearestTr).remove().draw();
-                    },
-                    error: (xhr, status, error) => {
-                        console.error("Error deleting resource:", error);
-                    }
-                });
-            }
-            event.preventDefault();
-        }, false);
-    });
-
-    let editServiceDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("editServiceDialog"));
-    let editServiceButtons = document.getElementsByName("editService");
+function initializeServiceButtons() {
     const editor = initializeAceEditor("serviceEditor");
-    editServiceButtons.forEach(editServiceButton => {
-        editServiceButton.addEventListener("click", event => {
-            let caller = event.target || event.srcElement;
+    let editServiceDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("editServiceDialog"));
 
-            let serviceId = $(caller.parentElement).attr("serviceId");
-            $.get(`${casServerPrefix}/actuator/registeredServices/${serviceId}`, response => {
-                const value = JSON.stringify(response, null, 4);
-                editor.setValue(value, -1);
-                editor.gotoLine(1);
-            }).fail((xhr, status, error) => {
-                console.error("Error fetching data:", error);
+    $('button[name=deleteService]').off().on('click', function() {
+        let serviceId = $(this).parent().attr("serviceId");
+        let result = confirm("Are you sure you want to delete this entry?");
+        if (result) {
+            $.ajax({
+                url: `${casServerPrefix}/actuator/registeredServices/${serviceId}`,
+                type: "DELETE",
+                success: response => {
+                    console.log("Resource deleted successfully:", response);
+                    let nearestTr = $(this).closest("tr");
+
+                    let applicationsTable = $("#applicationsTable").DataTable();
+                    applicationsTable.row(nearestTr).remove().draw();
+                },
+                error: (xhr, status, error) => {
+                    console.error("Error deleting resource:", error);
+                }
             });
-
+        }
+    });
+    
+    $('button[name=editService]').off().on('click', function() {
+        let serviceId = $(this).parent().attr("serviceId");
+        $.get(`${casServerPrefix}/actuator/registeredServices/${serviceId}`, response => {
+            const value = JSON.stringify(response, null, 4);
+            editor.setValue(value, -1);
+            editor.gotoLine(1);
             const editServiceDialogElement = document.getElementById("editServiceDialog");
             $(editServiceDialogElement).attr("newService", false);
             editServiceDialog["open"]();
-            event.preventDefault();
-
-        }, false);
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+        });
+        
     });
 
-    let saveServiceButton = document.getElementById("saveService");
-    saveServiceButton.addEventListener("click", event => {
+    $('button[name=saveService]').off().on('click', () => {
         let result = confirm("Are you sure you want to update this entry?");
         if (result) {
             const value = editor.getValue();
@@ -647,19 +642,51 @@ async function initializeServiceButtons() {
                 success: response => {
                     console.log("Update successful:", response);
                     editServiceDialog["close"]();
-                    $("#reloadAll").click();
+                    fetchServices(() => {
+                        let newServiceId = response.id;
+                        $("#applicationsTable tr").removeClass("selected");
+                        console.log("New Service Id", newServiceId);
+                        $(`#applicationsTable tr td span[serviceId=${newServiceId}]`).each(function() {
+                            $(this).closest("tr").addClass("selected");
+                        });
+                    });
                 },
                 error: (xhr, status, error) => {
                     console.error("Update failed:", error);
                 }
             });
         }
-        event.preventDefault();
-    }, false);
+    });
+
+    $('button[name=copyService]').off().on('click', function() {
+        let serviceId = $(this).parent().attr("serviceId");
+        $.get(`${casServerPrefix}/actuator/registeredServices/${serviceId}`, response => {
+            let clone = { ...response };
+            clone.serviceId = "...";
+            clone.name = `...`;
+            delete clone.id;
+
+            ["clientId", "clientSecret", "metadataLocation"].forEach(entry => {
+                if (Object.hasOwn(clone, entry)) {
+                    clone[entry] = `...`;
+                }
+            });
+            const value = JSON.stringify(clone, null, 4);
+            editor.setValue(value, -1);
+            editor.gotoLine(1);
+            editor.findAll('...', { regExp: false });
+
+            const editServiceDialogElement = document.getElementById("editServiceDialog");
+            $(editServiceDialogElement).attr("newService", true);
+            editServiceDialog["open"]();
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+        });
+    });
 }
 
 async function initializeServicesOperations() {
-    $("#applicationsTable").DataTable({
+    const applicationsTable = $("#applicationsTable").DataTable({
         pageLength: 25,
         autoWidth: false,
         columnDefs: [
@@ -674,7 +701,11 @@ async function initializeServicesOperations() {
             $("#applicationsTable td").addClass("mdc-data-table__cell");
         }
     });
-    
+
+    applicationsTable.on('click', 'tbody tr', e => {
+        e.currentTarget.classList.remove("selected");
+    });
+
     fetchServices();
     initializeFooterButtons();
 }
