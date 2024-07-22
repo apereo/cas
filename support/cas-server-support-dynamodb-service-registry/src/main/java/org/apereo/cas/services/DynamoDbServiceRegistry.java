@@ -48,7 +48,7 @@ public class DynamoDbServiceRegistry extends AbstractServiceRegistry {
         val svc = dbTableService.getAll();
         val clientInfo = ClientInfoHolder.getClientInfo();
         return svc
-            .parallelStream()
+            .stream()
             .map(this::invokeServiceRegistryListenerPostLoad)
             .filter(Objects::nonNull)
             .peek(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s, clientInfo)))

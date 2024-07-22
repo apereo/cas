@@ -94,7 +94,7 @@ public class CassandraServiceRegistry extends AbstractServiceRegistry implements
     @Override
     public Collection<RegisteredService> load() {
         val results = cassandraSessionFactory.getCassandraTemplate().select(Query.query(), CassandraRegisteredServiceHolder.class);
-        return results.parallelStream()
+        return results.stream()
             .map(holder -> serializer.from(holder.getData()))
             .filter(Objects::nonNull)
             .map(this::invokeServiceRegistryListenerPostLoad)

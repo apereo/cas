@@ -161,7 +161,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         val externalForm = configDirectory.getURI().toASCIIString();
         if (CasRuntimeHintsRegistrar.inNativeImage() && ResourceUtils.isEmbeddedResource(externalForm)) {
             val servicesDirectory = CasConfigurationPropertiesSourceLocator.DEFAULT_CAS_CONFIG_DIRECTORIES
-                .parallelStream()
+                .stream()
                 .map(directory -> new File(directory, "services"))
                 .filter(File::exists)
                 .findFirst()
@@ -199,7 +199,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         val fileName = getRegisteredServiceFileName(service);
         try (val out = Files.newOutputStream(fileName.toPath())) {
             invokeServiceRegistryListenerPreSave(service);
-            val result = registeredServiceSerializers.parallelStream().anyMatch(s -> {
+            val result = registeredServiceSerializers.stream().anyMatch(s -> {
                 try {
                     s.to(out, service);
                     return true;
@@ -259,7 +259,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             val clientInfo = ClientInfoHolder.getClientInfo();
 
             this.services = files
-                .parallelStream()
+                .stream()
                 .map(this::load)
                 .filter(Objects::nonNull)
                 .flatMap(Collection::stream)
@@ -296,7 +296,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             LOGGER.debug("[{}] starts with ., ignoring", fileName);
             return new ArrayList<>(0);
         }
-        if (Arrays.stream(getExtensions()).parallel().noneMatch(fileName::endsWith)) {
+        if (Arrays.stream(getExtensions()).noneMatch(fileName::endsWith)) {
             LOGGER.debug("[{}] doesn't end with valid extension, ignoring", fileName);
             return new ArrayList<>(0);
         }
@@ -312,7 +312,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         LOGGER.debug("Attempting to read and parse [{}]", file.getAbsoluteFile());
         try (val in = Files.newBufferedReader(file.toPath())) {
             return registeredServiceSerializers
-                .parallelStream()
+                .stream()
                 .filter(serializer -> serializer.supports(file))
                 .map(serializer -> serializer.load(in))
                 .filter(Objects::nonNull)
@@ -330,7 +330,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     @Override
     public Stream<? extends RegisteredService> getServicesStream() {
-        return this.services.values().parallelStream();
+        return this.services.values().stream();
     }
 
     @Override
@@ -369,7 +369,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             LOGGER.trace("[{}] starts with ., ignoring...", fileName);
             return null;
         }
-        if (Arrays.stream(getExtensions()).parallel().noneMatch(fileName::endsWith)) {
+        if (Arrays.stream(getExtensions()).noneMatch(fileName::endsWith)) {
             LOGGER.trace("[{}] doesn't end with valid extension, ignoring", fileName);
             return null;
         }
@@ -407,7 +407,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             new File(defaultServicesDirectory, friendlyName)
         );
         return candidateParentDirectories
-            .parallelStream()
+            .stream()
             .filter(dir -> dir.exists() && dir.isDirectory())
             .findFirst()
             .orElse(defaultServicesDirectory);

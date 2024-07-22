@@ -89,7 +89,7 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
         resourceResolverName = AuditResourceResolvers.DELETE_SERVICE_RESOURCE_RESOLVER)
     @Override
     public RegisteredService delete(final long id) {
-        return serviceManagers.parallelStream()
+        return serviceManagers.stream()
             .map(manager -> manager.delete(id))
             .filter(Objects::nonNull)
             .findFirst()
@@ -113,8 +113,8 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
 
     @Override
     public Collection<RegisteredService> findServiceBy(final Predicate<RegisteredService> clazz) {
-        return serviceManagers.parallelStream()
-            .flatMap(manager -> manager.findServiceBy(clazz).parallelStream())
+        return serviceManagers.stream()
+            .flatMap(manager -> manager.findServiceBy(clazz).stream())
             .collect(Collectors.toList());
     }
 
@@ -126,7 +126,7 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
 
     @Override
     public RegisteredService findServiceBy(final long id) {
-        return serviceManagers.parallelStream()
+        return serviceManagers.stream()
             .map(manager -> manager.findServiceBy(id))
             .filter(Objects::nonNull)
             .findFirst()
@@ -141,7 +141,7 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
 
     @Override
     public RegisteredService findServiceByName(final String name) {
-        return serviceManagers.parallelStream()
+        return serviceManagers.stream()
             .map(s -> s.findServiceByName(name))
             .filter(Objects::nonNull)
             .findFirst()
@@ -156,29 +156,29 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
 
     @Override
     public Collection<RegisteredService> getAllServices() {
-        return serviceManagers.parallelStream()
-            .flatMap(manager -> manager.getAllServices().parallelStream())
+        return serviceManagers.stream()
+            .flatMap(manager -> manager.getAllServices().stream())
             .collect(Collectors.toList());
     }
 
     @Override
     public <T extends RegisteredService> Collection<T> getAllServicesOfType(final Class<T> clazz) {
-        return serviceManagers.parallelStream()
+        return serviceManagers.stream()
             .filter(manager -> manager.supports(clazz))
-            .flatMap(manager -> manager.getAllServicesOfType(clazz).parallelStream())
+            .flatMap(manager -> manager.getAllServicesOfType(clazz).stream())
             .collect(Collectors.toList());
     }
 
     @Override
     public Collection<RegisteredService> load() {
-        return serviceManagers.parallelStream()
-            .flatMap(manager -> manager.load().parallelStream())
+        return serviceManagers.stream()
+            .flatMap(manager -> manager.load().stream())
             .collect(Collectors.toList());
     }
 
     @Override
     public long count() {
-        return serviceManagers.parallelStream()
+        return serviceManagers.stream()
             .mapToLong(ServicesManager::count)
             .sum();
     }
@@ -200,24 +200,24 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
 
     @Override
     public Stream<String> getDomains() {
-        return serviceManagers.parallelStream()
+        return serviceManagers.stream()
             .flatMap(ServicesManager::getDomains);
     }
 
     @Override
     public Collection<RegisteredService> getServicesForDomain(final String domain) {
         return serviceManagers
-            .parallelStream()
-            .flatMap(manager -> manager.getServicesForDomain(domain).parallelStream())
+            .stream()
+            .flatMap(manager -> manager.getServicesForDomain(domain).stream())
             .collect(Collectors.toList());
     }
 
     @Override
     public Stream<RegisteredService> findServicesBy(final RegisteredServiceQuery... queries) {
         return serviceManagers
-            .parallelStream()
+            .stream()
             .map(manager -> manager.findServicesBy(queries))
-            .flatMap(results -> StreamSupport.stream(results.spliterator(), false).parallel());
+            .flatMap(results -> StreamSupport.stream(results.spliterator(), false));
     }
 
     private Optional<ServicesManager> findServicesManager(final RegisteredService service) {

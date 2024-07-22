@@ -131,7 +131,6 @@ class CasServiceRegistryInitializationConfiguration {
             }
             val baseName = FilenameUtils.getBaseName(registry.getLocation().getFilename());
             val patterns = Arrays.stream(applicationContext.getEnvironment().getActiveProfiles())
-                .parallel()
                 .map(profile -> String.format("classpath*:/%s/%s/*.json", baseName, profile))
                 .collect(Collectors.toList());
 

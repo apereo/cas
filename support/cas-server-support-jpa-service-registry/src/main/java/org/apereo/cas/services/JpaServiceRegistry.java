@@ -84,7 +84,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
             val list = entityManager.createQuery(query, JpaRegisteredServiceEntity.class).getResultList();
             val clientInfo = ClientInfoHolder.getClientInfo();
             return list
-                .parallelStream()
+                .stream()
                 .map(this::toRegisteredService)
                 .sorted()
                 .map(this::invokeServiceRegistryListenerPostLoad)
@@ -117,9 +117,8 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
     public RegisteredService findServiceById(final long id) {
         return transactionTemplate.execute(__ ->
             Optional.ofNullable(entityManager.find(JpaRegisteredServiceEntity.class, id))
-                .stream()
-                .parallel()
                 .map(this::toRegisteredService)
+                .stream()
                 .peek(this::invokeServiceRegistryListenerPostLoad)
                 .findFirst()
                 .orElse(null));
@@ -133,7 +132,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
                 .setParameter("serviceId", '%' + id + '%')
                 .getResultList();
             return results
-                .parallelStream()
+                .stream()
                 .map(this::toRegisteredService)
                 .sorted()
                 .filter(r -> r.matches(id))
@@ -151,7 +150,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
                 .setParameter("serviceId", id)
                 .getResultList();
             return results
-                .parallelStream()
+                .stream()
                 .map(this::toRegisteredService)
                 .sorted()
                 .peek(this::invokeServiceRegistryListenerPostLoad)
@@ -168,7 +167,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
                 .setParameter("name", name)
                 .getResultList();
             return results
-                .parallelStream()
+                .stream()
                 .map(this::toRegisteredService)
                 .sorted()
                 .peek(this::invokeServiceRegistryListenerPostLoad)

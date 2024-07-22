@@ -47,7 +47,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
-        return serviceRegistries.parallelStream().allMatch(registry -> registry.delete(registeredService));
+        return serviceRegistries.stream().allMatch(registry -> registry.delete(registeredService));
     }
 
     @Override
@@ -57,7 +57,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
 
     @Override
     public Collection<RegisteredService> load() {
-        return serviceRegistries.parallelStream()
+        return serviceRegistries.stream()
             .map(ServiceRegistry::load)
             .filter(Objects::nonNull)
             .flatMap(Collection::stream)
@@ -66,7 +66,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        return serviceRegistries.parallelStream()
+        return serviceRegistries.stream()
             .map(registry -> registry.findServiceById(id))
             .filter(Objects::nonNull)
             .findFirst()
@@ -75,7 +75,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
 
     @Override
     public RegisteredService findServiceBy(final String id) {
-        return serviceRegistries.parallelStream()
+        return serviceRegistries.stream()
             .map(registry -> registry.findServiceBy(id))
             .filter(Objects::nonNull)
             .findFirst()
@@ -84,7 +84,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
 
     @Override
     public RegisteredService findServiceByExactServiceId(final String id) {
-        return serviceRegistries.parallelStream()
+        return serviceRegistries.stream()
             .map(registry -> registry.findServiceByExactServiceId(id))
             .filter(Objects::nonNull)
             .findFirst()
@@ -93,7 +93,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
 
     @Override
     public RegisteredService findServiceByExactServiceName(final String name) {
-        return serviceRegistries.parallelStream()
+        return serviceRegistries.stream()
             .map(registry -> registry.findServiceByExactServiceName(name))
             .filter(Objects::nonNull)
             .findFirst()
@@ -103,7 +103,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
     @Override
     public long size() {
         val filter = Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
-        return serviceRegistries.parallelStream()
+        return serviceRegistries.stream()
             .filter(filter)
             .map(ServiceRegistry::size)
             .mapToLong(Long::longValue)
@@ -113,7 +113,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
     @Override
     public String getName() {
         val filter = Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
-        val name = serviceRegistries.parallelStream()
+        val name = serviceRegistries.stream()
             .filter(filter)
             .map(ServiceRegistry::getName)
             .collect(Collectors.joining(","));
@@ -133,7 +133,7 @@ public class DefaultChainingServiceRegistry extends AbstractServiceRegistry impl
     @Override
     public void synchronize(final RegisteredService service) {
         this.serviceRegistries
-            .parallelStream()
+            .stream()
             .filter(serviceRegistry -> {
                 if (StringUtils.isNotBlank(service.getServiceId())) {
                     val match = serviceRegistry.findServiceByExactServiceId(service.getServiceId());

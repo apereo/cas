@@ -63,7 +63,7 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
             invokeServiceRegistryListenerPreSave(rs);
             val bucketNameToUse = determineBucketName(rs);
             if (s3Client.listBuckets(ListBucketsRequest.builder().build())
-                .buckets().parallelStream().noneMatch(b -> b.name().equalsIgnoreCase(bucketNameToUse))) {
+                .buckets().stream().noneMatch(b -> b.name().equalsIgnoreCase(bucketNameToUse))) {
                 LOGGER.trace("Bucket [{}] does not exist. Creating...", bucketNameToUse);
                 val bucket = s3Client.createBucket(CreateBucketRequest.builder().bucket(bucketNameToUse).build());
                 LOGGER.debug("Created bucket [{}]", bucket.location());
@@ -92,7 +92,7 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
     @Override
     public void deleteAll() {
         val buckets = s3Client.listBuckets(ListBucketsRequest.builder().build()).buckets();
-        buckets.parallelStream()
+        buckets.stream()
             .filter(AmazonS3ServiceRegistry::getRegisteredServiceBucketPredicate)
             .forEach(bucket -> {
                 val objects = s3Client.listObjectsV2(ListObjectsV2Request.builder().bucket(bucket.name()).build());
@@ -110,7 +110,7 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
             LOGGER.trace("Deleting registered service [{}]", registeredService);
             val buckets = s3Client.listBuckets(ListBucketsRequest.builder().build()).buckets();
             val result = buckets
-                .parallelStream()
+                .stream()
                 .filter(getRegisteredServiceBucketPredicate(registeredService.getId()))
                 .findFirst();
             if (result.isPresent()) {
@@ -137,7 +137,7 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
     public Collection<RegisteredService> load() {
         val buckets = s3Client.listBuckets(ListBucketsRequest.builder().build()).buckets();
         return buckets
-            .parallelStream()
+            .stream()
             .filter(AmazonS3ServiceRegistry::getRegisteredServiceBucketPredicate)
             .map(this::fetchRegisteredServiceFromBucket)
             .collect(Collectors.toList());
@@ -147,7 +147,7 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
     public RegisteredService findServiceById(final long id) {
         val buckets = s3Client.listBuckets(ListBucketsRequest.builder().build()).buckets();
         return buckets
-            .parallelStream()
+            .stream()
             .filter(getRegisteredServiceBucketPredicate(id))
             .map(this::fetchRegisteredServiceFromBucket)
             .findFirst()
@@ -158,7 +158,7 @@ public class AmazonS3ServiceRegistry extends AbstractServiceRegistry {
     public long size() {
         val buckets = s3Client.listBuckets(ListBucketsRequest.builder().build()).buckets();
         return buckets
-            .parallelStream()
+            .stream()
             .filter(AmazonS3ServiceRegistry::getRegisteredServiceBucketPredicate)
             .count();
     }

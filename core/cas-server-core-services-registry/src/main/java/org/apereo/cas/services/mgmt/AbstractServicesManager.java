@@ -66,7 +66,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     private void createRegisteredServiceIndexes() {
         configurationContext.getRegisteredServiceLocators()
             .forEach(locator -> locator.getRegisteredServiceIndexes()
-                .parallelStream()
+                .stream()
                 .map(RegisteredServiceQueryIndex::getIndex)
                 .filter(AttributeIndex.class::isInstance)
                 .map(AttributeIndex.class::cast)
@@ -94,7 +94,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     @Override
     public Optional<RegisteredService> findIndexedServiceBy(final long id) {
         return configurationContext.getCasProperties().getServiceRegistry().getCore().isIndexServices()
-            ? indexedRegisteredServices.parallelStream().filter(registeredService -> registeredService.getId() == id).findFirst()
+            ? indexedRegisteredServices.stream().filter(registeredService -> registeredService.getId() == id).findFirst()
             : Optional.empty();
     }
 
@@ -183,7 +183,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
 
         val candidates = getCandidateServicesToMatch(service.getId());
         var foundService = configurationContext.getRegisteredServiceLocators()
-            .parallelStream()
+            .stream()
             .map(locator -> locator.locate(candidates, service))
             .filter(registeredService -> validateRegisteredService(registeredService) != null)
             .findFirst();
@@ -195,7 +195,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
             if (foundService.isPresent()) {
                 val registeredService = foundService.get();
                 foundService = configurationContext.getRegisteredServiceLocators()
-                    .parallelStream()
+                    .stream()
                     .filter(locator -> locator.supports(registeredService, service))
                     .findFirst()
                     .map(locator -> {
@@ -218,7 +218,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
             return new ArrayList<>(0);
         }
         val results = configurationContext.getServiceRegistry().findServicePredicate(predicate)
-            .parallelStream()
+            .stream()
             .sorted()
             .peek(RegisteredService::initialize)
             .collect(Collectors.toMap(RegisteredService::getId, Function.identity(), (r, s) -> s));
@@ -346,7 +346,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
             LOGGER.trace("Loading services from [{}]", configurationContext.getServiceRegistry().getName());
             val servicesMap = configurationContext.getServiceRegistry()
                 .load()
-                .parallelStream()
+                .stream()
                 .filter(this::supports)
                 .filter(this::validateAndFilterServiceByEnvironment)
                 .peek(this::loadInternal)
@@ -393,7 +393,6 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     public Stream<RegisteredService> findServicesBy(final RegisteredServiceQuery... queries) {
         val serviceQueries = Arrays
             .stream(queries)
-            .parallel()
             .map(RegisteredServiceQueryAttribute::new)
             .map(RegisteredServiceQueryAttribute::toQuery)
             .toList();
@@ -437,7 +436,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
         if (size <= 0) {
             return () -> (Stream<RegisteredService>) configurationContext.getServiceRegistry().getServicesStream();
         }
-        return () -> configurationContext.getServicesCache().asMap().values().parallelStream();
+        return () -> configurationContext.getServicesCache().asMap().values().stream();
     }
 
     private void cacheRegisteredService(final RegisteredService service) {
@@ -509,7 +508,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
             return true;
         }
         return service.getEnvironments()
-            .parallelStream()
+            .stream()
             .anyMatch(configurationContext.getEnvironments()::contains);
     }
 
@@ -524,6 +523,6 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     private static Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(
         final Predicate<RegisteredService>... p) {
         val predicates = Stream.of(p).collect(Collectors.toCollection(ArrayList::new));
-        return predicates.parallelStream().reduce(x -> true, Predicate::and);
+        return predicates.stream().reduce(x -> true, Predicate::and);
     }
 }

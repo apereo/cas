@@ -688,7 +688,7 @@ async function initializeAllCharts() {
                 'SAML2',
                 'OAuth',
                 'OpenID Connect',
-                'WS-Federation'
+                'Ws-Federation'
             ],
             datasets: [{
                 label: 'Registered Services',
@@ -707,7 +707,7 @@ async function initializeAllCharts() {
             responsive: true,
             plugins: {
                 legend: {
-                    position: 'bottom',
+                    position: 'top',
                 },
                 title: {
                     display: true
