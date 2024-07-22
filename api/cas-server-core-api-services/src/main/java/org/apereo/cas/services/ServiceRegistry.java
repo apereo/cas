@@ -94,7 +94,7 @@ public interface ServiceRegistry extends NamedObject {
      * @return the services stream
      */
     default Stream<? extends RegisteredService> getServicesStream() {
-        return load().parallelStream();
+        return load().stream();
     }
 
     /**

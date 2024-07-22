@@ -91,7 +91,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
         val clientInfo = ClientInfoHolder.getClientInfo();
         if (LdapUtils.containsResultEntry(response)) {
             response.getEntries()
-                .parallelStream()
+                .stream()
                 .map(this.ldapServiceMapper::mapToRegisteredService)
                 .filter(Objects::nonNull)
                 .map(this::invokeServiceRegistryListenerPostLoad)
@@ -128,7 +128,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
         val response = getSearchResultResponse();
         if (LdapUtils.containsResultEntry(response)) {
             return response.getEntries()
-                .parallelStream()
+                .stream()
                 .map(this.ldapServiceMapper::mapToRegisteredService)
                 .filter(Objects::nonNull)
                 .count();

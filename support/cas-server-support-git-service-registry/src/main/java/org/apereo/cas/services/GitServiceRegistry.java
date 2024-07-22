@@ -109,7 +109,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
     public void deleteAll() {
         FunctionUtils.doUnchecked(__ -> {
             val currentServices = load();
-            currentServices.parallelStream()
+            currentServices.stream()
                 .map(this::locateExistingRegisteredServiceFile)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -135,7 +135,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
                 val objects = gitRepository.getObjectsInRepository(
                     new PathRegexPatternTreeFilter(objectPattern));
                 registeredServices = objects
-                    .parallelStream()
+                    .stream()
                     .filter(Objects::nonNull)
                     .map(this::parseGitObjectContentIntoRegisteredService)
                     .flatMap(Collection::stream)
@@ -153,12 +153,12 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
                 LOGGER.debug("Located [{}] files(s)", files.size());
 
                 registeredServices = files
-                    .parallelStream()
+                    .stream()
                     .filter(file -> file.isFile() && file.canRead() && file.canWrite() && file.length() > 0)
                     .map(Unchecked.function(file -> {
                         try (val in = Files.newBufferedReader(file.toPath())) {
                             return registeredServiceSerializers
-                                .parallelStream()
+                                .stream()
                                 .filter(s -> s.supports(file))
                                 .map(s -> s.load(in))
                                 .filter(Objects::nonNull)
@@ -184,11 +184,11 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        return this.registeredServices.parallelStream().filter(r -> r.getId() == id).findFirst().orElse(null);
+        return this.registeredServices.stream().filter(r -> r.getId() == id).findFirst().orElse(null);
     }
 
     private Optional<File> locateExistingRegisteredServiceFile(final RegisteredService registeredService) {
-        return registeredServiceLocators.parallelStream()
+        return registeredServiceLocators.stream()
             .map(locator -> locator.locate(registeredService))
             .filter(Optional::isPresent)
             .map(Optional::get)
@@ -204,7 +204,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
 
     private List<RegisteredService> parseGitObjectContentIntoRegisteredService(final GitRepository.GitObject obj) {
         return this.registeredServiceSerializers
-            .parallelStream()
+            .stream()
             .filter(s -> s.supports(obj.getContent()))
             .map(s -> s.load(new StringReader(obj.getContent())))
             .filter(Objects::nonNull)
@@ -214,7 +214,7 @@ public class GitServiceRegistry extends AbstractServiceRegistry {
 
     private boolean writeRegisteredServiceToFile(final RegisteredService registeredService, final File file) {
         try (val out = Files.newOutputStream(file.toPath())) {
-            return this.registeredServiceSerializers.parallelStream().anyMatch(s -> {
+            return this.registeredServiceSerializers.stream().anyMatch(s -> {
                 s.to(out, registeredService);
                 return true;
             });

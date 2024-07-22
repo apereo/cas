@@ -65,7 +65,7 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
         val services = new ArrayList<RegisteredService>(registeredServices.size());
         val clientInfo = ClientInfoHolder.getClientInfo();
         registeredServices
-            .parallelStream()
+            .stream()
             .map(this::invokeServiceRegistryListenerPostLoad)
             .filter(Objects::nonNull)
             .forEach(s -> {
@@ -77,12 +77,12 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public Stream<? extends RegisteredService> getServicesStream() {
-        return this.registeredServices.parallelStream();
+        return this.registeredServices.stream();
     }
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        return this.registeredServices.parallelStream().filter(r -> r.getId() == id).findFirst().orElse(null);
+        return this.registeredServices.stream().filter(r -> r.getId() == id).findFirst().orElse(null);
     }
 
     @Override
@@ -96,6 +96,6 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
      * @return the highest service id in the list of registered services
      */
     private long findHighestId() {
-        return this.registeredServices.parallelStream().map(RegisteredService::getId).max(Comparator.naturalOrder()).orElse(0L);
+        return this.registeredServices.stream().map(RegisteredService::getId).max(Comparator.naturalOrder()).orElse(0L);
     }
 }
