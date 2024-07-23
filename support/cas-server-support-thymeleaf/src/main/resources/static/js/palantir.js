@@ -7,7 +7,8 @@ const Tabs = {
     TICKETS: 2,
     TASKS: 3,
     ACCESS_STRATEGY: 4,
-    LOGGING: 5
+    LOGGING: 5,
+    SSO_SESSIONS: 6
 };
 
 function fetchServices(callback) {
