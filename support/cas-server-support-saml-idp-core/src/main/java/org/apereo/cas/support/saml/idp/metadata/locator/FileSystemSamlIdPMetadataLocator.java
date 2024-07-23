@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
 
@@ -110,9 +111,13 @@ public class FileSystemSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLoc
         }
         initializeMetadataDirectory();
         val resource = ResourceUtils.toFileSystemResource(new File(this.metadataLocation, artifactName));
-        if (resource.exists()) {
+        if (resource.exists() && resource.isReadable()) {
             val content = FileUtils.readFileToString(resource.getFile(), StandardCharsets.UTF_8);
-            return resolveContentToResource(content);
+            if (StringUtils.isNotBlank(content)) {
+                return resolveContentToResource(content);
+            }
+            LOGGER.warn("Metadata artifact at [{}] is empty and invalid and will be deleted", resource);
+            FileUtils.deleteQuietly(resource.getFile());
         }
         return ResourceUtils.toFileSystemResource(resource.getFile());
     }

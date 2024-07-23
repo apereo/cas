@@ -4,7 +4,6 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -16,7 +15,6 @@ import org.opensaml.xmlsec.signature.SignableXMLObject;
 import org.opensaml.xmlsec.signature.support.SignatureConstants;
 import org.opensaml.xmlsec.signature.support.SignatureSupport;
 import org.springframework.beans.factory.InitializingBean;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -40,31 +38,29 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
 
     @Override
     public Pair<String, String> buildSelfSignedEncryptionCert(final Optional<SamlRegisteredService> registeredService) throws Throwable {
-        val encCert = getConfigurationContext().getSamlIdPMetadataLocator()
-            .getEncryptionCertificate(registeredService).getFile();
-        val encKey = getConfigurationContext().getSamlIdPMetadataLocator()
-            .resolveEncryptionKey(registeredService).getFile();
-        writeCertificateAndKey(encCert, encKey, registeredService);
-        return Pair.of(FileUtils.readFileToString(encCert, StandardCharsets.UTF_8),
-            FileUtils.readFileToString(encKey, StandardCharsets.UTF_8));
+        val encCert = getConfigurationContext().getSamlIdPMetadataLocator().getEncryptionCertificate(registeredService);
+        val encKey = getConfigurationContext().getSamlIdPMetadataLocator().resolveEncryptionKey(registeredService);
+        if (encCert.isFile() && encKey.isFile()) {
+            writeCertificateAndKey(encCert.getFile(), encKey.getFile(), registeredService);
+        }
+        return Pair.of(encCert.getContentAsString(StandardCharsets.UTF_8), encKey.getContentAsString(StandardCharsets.UTF_8));
     }
 
     @Override
     public Pair<String, String> buildSelfSignedSigningCert(final Optional<SamlRegisteredService> registeredService) throws Throwable {
-        val signingCert = getConfigurationContext().getSamlIdPMetadataLocator()
-            .resolveSigningCertificate(registeredService).getFile();
-        val signingKey = getConfigurationContext().getSamlIdPMetadataLocator()
-            .resolveSigningKey(registeredService).getFile();
-        writeCertificateAndKey(signingCert, signingKey, registeredService);
-        return Pair.of(FileUtils.readFileToString(signingCert, StandardCharsets.UTF_8),
-            FileUtils.readFileToString(signingKey, StandardCharsets.UTF_8));
+        val signingCert = getConfigurationContext().getSamlIdPMetadataLocator().resolveSigningCertificate(registeredService);
+        val signingKey = getConfigurationContext().getSamlIdPMetadataLocator().resolveSigningKey(registeredService);
+        if (signingCert.isFile() && signingKey.isFile()) {
+            writeCertificateAndKey(signingCert.getFile(), signingKey.getFile(), registeredService);
+        }
+        return Pair.of(signingCert.getContentAsString(StandardCharsets.UTF_8), signingKey.getContentAsString(StandardCharsets.UTF_8));
     }
 
     @Override
     protected String writeMetadata(final String metadata, final Optional<SamlRegisteredService> registeredService) throws Throwable {
         val metadataFile = getConfigurationContext().getSamlIdPMetadataLocator().resolveMetadata(registeredService).getFile();
         LOGGER.info("Writing SAML2 metadata to [{}]", metadataFile);
-        
+
         val mdProps = getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getMetadata();
         if (mdProps.getFileSystem().isSignMetadata()) {
             val resolvedCert = getConfigurationContext().getSamlIdPMetadataLocator().resolveSigningCertificate(registeredService);
@@ -111,14 +107,6 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
         }
     }
 
-    /**
-     * Write certificate and key.
-     *
-     * @param certificate       the certificate
-     * @param key               the key
-     * @param registeredService the registered service
-     * @throws Exception the exception
-     */
     protected void writeCertificateAndKey(final File certificate, final File key,
                                           final Optional<SamlRegisteredService> registeredService) throws Exception {
         if (certificate.exists()) {
@@ -133,8 +121,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
         LOGGER.debug("Writing SAML2 certificate file to [{}]", certificate.getPath());
         try (val keyWriter = Files.newBufferedWriter(key.toPath(), StandardCharsets.UTF_8);
              val certWriter = Files.newBufferedWriter(certificate.toPath(), StandardCharsets.UTF_8)) {
-            getConfigurationContext().getSamlIdPCertificateAndKeyWriter()
-                .writeCertificateAndKey(keyWriter, certWriter);
+            getConfigurationContext().getSamlIdPCertificateAndKeyWriter().writeCertificateAndKey(keyWriter, certWriter);
         }
     }
 

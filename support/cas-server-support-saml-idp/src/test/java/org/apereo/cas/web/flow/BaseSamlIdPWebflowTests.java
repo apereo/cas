@@ -10,10 +10,12 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
@@ -43,6 +45,7 @@ import static org.mockito.Mockito.*;
     CasCoreSamlAutoConfiguration.class,
     CasSamlIdPAutoConfiguration.class
 })
+@ExtendWith(CasTestExtension.class)
 public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests {
 
     @Autowired
