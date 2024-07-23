@@ -196,7 +196,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             val sql = String.format("SELECT COUNT(*) FROM %s", md.getProperties().getStorageName());
             LOGGER.debug("Executing SQL query [{}]", sql);
             try (val results = hazelcastInstance.getSql().execute(sql)) {
-                return results.stream().findFirst().get().getObject(0);
+                return results.iterator().next().getObject(0);
             }
         }
         return super.sessionCount();
@@ -209,7 +209,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             val sql = String.format("SELECT COUNT(*) FROM %s", md.getProperties().getStorageName());
             LOGGER.debug("Executing SQL query [{}]", sql);
             try (val results = hazelcastInstance.getSql().execute(sql)) {
-                return results.stream().findFirst().get().getObject(0);
+                return results.iterator().next().getObject(0);
             }
         }
         return super.serviceTicketCount();
