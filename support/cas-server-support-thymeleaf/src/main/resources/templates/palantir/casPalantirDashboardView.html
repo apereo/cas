@@ -18,22 +18,26 @@
 <body>
 <main class="container mt-3 mb-3">
 
-    <div layout:fragment="content" id="dashboard" class="mdc-card p-2 m-1">
+    <div layout:fragment="content" id="dashboard">
 
         <script th:inline="javascript">
             /*<![CDATA[*/
             const casServerPrefix = /*[[${casServerPrefix}]]*/;
             /*]]>*/
         </script>
-        
-        <div th:replace="~{fragments/palantir/dashboardtabs :: main}" />
-        <div th:replace="~{fragments/palantir/servicestab :: main}" />
-        <div th:replace="~{fragments/palantir/systemtab :: main}" />
-        <div th:replace="~{fragments/palantir/ticketstab :: main}" />
-        <div th:replace="~{fragments/palantir/taskstab :: main}" />
-        <div th:replace="~{fragments/palantir/accessstrategytab :: main}" />
-        <div th:replace="~{fragments/palantir/loggerstab :: main}" />
-        <div th:replace="~{fragments/palantir/ssosessionstab :: main}" />
+
+        <div th:replace="~{fragments/palantir/navigationsidebar :: main}"/>
+        <div class="mdc-card p-2 m-1" style="min-height: 100vh;">
+            <div th:replace="~{fragments/palantir/dashboardtabs :: main}"/>
+            <div th:replace="~{fragments/palantir/servicestab :: main}"/>
+            <div th:replace="~{fragments/palantir/systemtab :: main}"/>
+            <div th:replace="~{fragments/palantir/ticketstab :: main}"/>
+            <div th:replace="~{fragments/palantir/taskstab :: main}"/>
+            <div th:replace="~{fragments/palantir/accessstrategytab :: main}"/>
+            <div th:replace="~{fragments/palantir/loggerstab :: main}"/>
+            <div th:replace="~{fragments/palantir/ssosessionstab :: main}"/>
+        </div>
+
     </div>
 </main>
 </body>

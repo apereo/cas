@@ -1025,17 +1025,31 @@ async function initializePalantir() {
         const selectedTab = window.localStorage.getItem("PalantirSelectedTab");
         if (selectedTab) {
             tabs.activateTab(Number(selectedTab));
-            tabs.setActiveTab(Number(selectedTab));
-            tabs.scrollTo(Number(selectedTab));
         }
     }, 5);
 
     tabs.listen("MDCTabBar:activated", ev => {
-        console.log("Tracking tab", ev.detail.index);
-        window.localStorage.setItem("PalantirSelectedTab", ev.detail.index);
+        const idx = ev.detail.index;
+        console.log("Tracking tab", idx);
+        window.localStorage.setItem("PalantirSelectedTab", idx);
+
+        let matchingElement = $(`nav.sidebar-navigation ul li[data-tab-index=${idx}]`);
+        $("nav.sidebar-navigation ul li").removeClass('active');
+        $(matchingElement).addClass('active');
     });
+}
+
+function activateDashboardTab(idx) {
+    let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
+    tabs.activateTab(Number(idx));
 }
 
 document.addEventListener("DOMContentLoaded", () => {
     initializePalantir().then(r => console.log("Palantir ready!"));
+    $('nav.sidebar-navigation ul li').off().on('click', function() {
+        $('li').removeClass('active');
+        $(this).addClass('active');
+        const index = $(this).data("tab-index");
+        activateDashboardTab(index);
+    });
 });
