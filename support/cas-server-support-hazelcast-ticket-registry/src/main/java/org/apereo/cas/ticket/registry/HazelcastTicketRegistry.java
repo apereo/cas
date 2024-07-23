@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.ticket.ServiceAwareTicket;
+import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
@@ -186,6 +187,32 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
                 .sum();
         }
         return super.countTicketsFor(service);
+    }
+
+    @Override
+    public long sessionCount() {
+        if (properties.getCore().isEnableJet()) {
+            val md = ticketCatalog.find(TicketGrantingTicket.PREFIX);
+            val sql = String.format("SELECT COUNT(*) FROM %s", md.getProperties().getStorageName());
+            LOGGER.debug("Executing SQL query [{}]", sql);
+            try (val results = hazelcastInstance.getSql().execute(sql)) {
+                return results.iterator().next().getObject(0);
+            }
+        }
+        return super.sessionCount();
+    }
+
+    @Override
+    public long serviceTicketCount() {
+        if (properties.getCore().isEnableJet()) {
+            val md = ticketCatalog.find(ServiceTicket.PREFIX);
+            val sql = String.format("SELECT COUNT(*) FROM %s", md.getProperties().getStorageName());
+            LOGGER.debug("Executing SQL query [{}]", sql);
+            try (val results = hazelcastInstance.getSql().execute(sql)) {
+                return results.iterator().next().getObject(0);
+            }
+        }
+        return super.serviceTicketCount();
     }
 
     @Override
