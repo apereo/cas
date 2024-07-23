@@ -492,7 +492,7 @@ public abstract class BaseTicketRegistryTests {
             }
             await().untilAsserted(() -> {
                 val sessionCount = ticketRegistry.sessionCount();
-                assertEquals(tgts.size(), ticketRegistry.sessionCount(),
+                assertEquals(tgts.size(), sessionCount,
                     () -> "The sessionCount " + sessionCount + " is not the same as the collection " + tgts.size());
             });
 
