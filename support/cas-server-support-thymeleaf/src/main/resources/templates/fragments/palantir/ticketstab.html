@@ -58,7 +58,6 @@
                         <input class="mdc-text-field__input form-control" type="text"
                                name="ticket" tabindex="0" id="ticket" size="50" autocomplete="off" required/>
                     </label>
-
                     <div class="pt-2">
                         <div th:replace="~{fragments/switchbutton :: switchbutton (id='decodeTicket', label='screen.checkbox.decode.title')}"/>
                     </div>
@@ -77,6 +76,20 @@
         <section class="my-3 d-flex h-350px">
               <pre class="ace-editor ace-relative w-100 h-100" id="ticketEditor"></pre>
         </section>
+        <br/>
+        <hr/>
+        <h2>Ticket Expiration Policies</h2>
+        <table id="ticketExpirationPoliciesTable" class="mdc-data-table__table table table-striped noborder">
+            <thead>
+            <tr class="mdc-data-table__header-row">
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Type</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Field</th>
+                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
+            </tr>
+            </thead>
+            <tbody class="mdc-data-table__content">
+            </tbody>
+        </table>
         <br/>
         <hr/>
         <h2>Ticket Catalog</h2>

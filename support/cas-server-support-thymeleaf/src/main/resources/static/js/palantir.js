@@ -11,6 +11,15 @@ const Tabs = {
     SSO_SESSIONS: 6
 };
 
+/**
+ * Charts objects.
+ */
+let servicesChart = null;
+let memoryChart = null;
+let statisticsChart = null;
+let systemHealthChart = null;
+let jvmThreadsChart = null;
+
 function fetchServices(callback) {
     $.get(`${casServerPrefix}/actuator/registeredServices`, response => {
         let serviceCountByType = [0, 0, 0, 0, 0];
@@ -158,14 +167,6 @@ function initializeFooterButtons() {
     });
 }
 
-/**
- * Charts objects.
- */
-let servicesChart = null;
-let memoryChart = null;
-let statisticsChart = null;
-let systemHealthChart = null;
-let jvmThreadsChart = null;
 
 /**
  * Initialization Functions
@@ -173,8 +174,7 @@ let jvmThreadsChart = null;
 async function initializeAccessStrategyOperations() {
     const accessStrategyEditor = initializeAceEditor("accessStrategyEditor");
     accessStrategyEditor.setReadOnly(true);
-
-
+    
     $("button[name=accessStrategyButton]").off().on("click", () => {
         $("#serviceAccessResultDiv").hide();
         const form = document.getElementById("fmAccessStrategy");
@@ -364,6 +364,33 @@ async function initializeTicketsOperations() {
         });
     });
 
+    const ticketCatalogTable = $("#ticketCatalogTable").DataTable({
+
+        pageLength: 10,
+        columnDefs: [
+            {visible: false, targets: 0}
+        ],
+
+        order: [0, "desc"],
+        drawCallback: settings => {
+            $("#ticketCatalogTable tr").addClass("mdc-data-table__row");
+            $("#ticketCatalogTable td").addClass("mdc-data-table__cell");
+
+            const api = settings.api;
+            const rows = api.rows({page: "current"}).nodes();
+            let last = null;
+            api.column(0, {page: "current"})
+                .data()
+                .each((group, i) => {
+                    if (last !== group) {
+                        $(rows).eq(i).before(
+                            `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
+                                            <td colspan="2">${group}</td></tr>`.trim());
+                        last = group;
+                    }
+                });
+        }
+    });
 
     $.get(`${casServerPrefix}/actuator/ticketRegistry/ticketCatalog`, response => {
         console.log(response);
@@ -375,6 +402,16 @@ async function initializeTicketsOperations() {
                             </li>
                         `;
             $("#ticketDefinitions").append($(item.trim()));
+
+            const flattened = flattenJSON(entry);
+            for (const [key, value] of Object.entries(flattened)) {
+                ticketCatalogTable.row.add({
+                    0: `<code>${entry.prefix}</code>`,
+                    1: `<code>${key}</code>`,
+                    2: `<code>${value}</code>`
+                });
+            }
+            ticketCatalogTable.draw();
         });
         const ticketDefinitions = new mdc.select.MDCSelect(document.getElementById("ticketDefinitionsSelect"));
         ticketDefinitions.selectedIndex = 0;
@@ -382,56 +419,200 @@ async function initializeTicketsOperations() {
         console.error("Error fetching data:", error);
     });
 
-    const groupColumn = 0;
-    const ticketCatalogTable = $("#ticketCatalogTable").DataTable({
-        pageLength: 25,
+
+    const ticketExpirationPoliciesTable = $("#ticketExpirationPoliciesTable").DataTable({
+        pageLength: 10,
         columnDefs: [
-            {visible: false, targets: groupColumn}
+            {visible: false, targets: 0}
         ],
 
-        order: [groupColumn, "desc"],
+        order: [0, "desc"],
         drawCallback: settings => {
-            $("#ticketCatalogTable tr").addClass("mdc-data-table__row");
-            $("#ticketCatalogTable td").addClass("mdc-data-table__cell");
+            $("#ticketExpirationPoliciesTable tr").addClass("mdc-data-table__row");
+            $("#ticketExpirationPoliciesTable td").addClass("mdc-data-table__cell");
 
             const api = settings.api;
             const rows = api.rows({page: "current"}).nodes();
             let last = null;
-            api.column(groupColumn, {page: "current"})
+            api.column(0, {page: "current"})
                 .data()
                 .each((group, i) => {
                     if (last !== group) {
                         $(rows).eq(i).before(
                             `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
-                                            <td colspan="2">${group}</td>
-                                        </tr>`.trim());
+                                            <td colspan="2">${group}</td></tr>`.trim());
                         last = group;
                     }
                 });
         }
     });
 
-    $.get(`${casServerPrefix}/actuator/ticketRegistry/ticketCatalog`, response => {
+    $.get(`${casServerPrefix}/actuator/ticketExpirationPolicies`, response => {
         console.log(response);
-        ticketCatalogTable.clear();
-        for (const definition of response) {
-            const flattened = flattenJSON(definition);
-            for (const [key, value] of Object.entries(flattened)) {
-                ticketCatalogTable.row.add({
-                    0: `<code>${definition.prefix}</code>`,
-                    1: `<code>${key}</code>`,
-                    2: `<code>${value}</code>`
+        ticketExpirationPoliciesTable.clear();
+        for (const key of Object.keys(response)) {
+            const policy = response[key];
+            delete policy.name;
+
+            const flattened = flattenJSON(policy);
+            for (const [k, v] of Object.entries(flattened)) {
+                ticketExpirationPoliciesTable.row.add({
+                    0: `<code>${key}</code>`,
+                    1: `<code>${k}</code>`,
+                    2: `<code>${v}</code>`
                 });
             }
         }
-        ticketCatalogTable.draw();
+        ticketExpirationPoliciesTable.draw();
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
     });
 }
 
+
+async function initializeSsoSessionOperations() {
+    const ssoSessionsEditor = initializeAceEditor("ssoSessionsEditor");
+    ssoSessionsEditor.setReadOnly(true);
+
+
+    const ssoSessionsTable = $("#ssoSessionsTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        columnDefs: [
+            {width: "15%", targets: 0},
+            {width: "35%", targets: 1},
+            {width: "10%", targets: 2},
+            {width: "15%", targets: 3},
+            {width: "5%", targets: 4},
+            {width: "8%", targets: 5},
+            {width: "12%", targets: 6}
+        ],
+        drawCallback: settings => {
+            $("#ssoSessionsTable tr").addClass("mdc-data-table__row");
+            $("#ssoSessionsTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    $('#ssoSessionUsername').on('keypress', e => {
+        if (e.which === 13) {
+            $('#ssoSessionButton').click();
+        }
+    });
+
+    $("#removeSsoSessionButton").off().on("click", () => {
+        const form = document.getElementById("fmSsoSessions");
+        if (!form.reportValidity()) {
+            return false;
+        }
+        
+        swal({
+            title: "Are you sure you want to delete all sessions for the user?",
+            text: "Once deleted, you may not be able to recover this entry.",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    const username = $("#ssoSessionUsername").val();
+
+                    $.ajax({
+                        url: `${casServerPrefix}/actuator/ssoSessions/users/${username}`,
+                        type: "DELETE",
+                        contentType: "application/x-www-form-urlencoded",
+                        success: (response, status, xhr) => {
+                            ssoSessionsEditor.setValue(JSON.stringify(response, null, 2));
+                            ssoSessionsEditor.gotoLine(1);
+                            ssoSessionsTable.clear().draw();
+                        },
+                        error: (xhr, status, error) => {
+                            console.error("Error fetching data:", error);
+                        }
+                    });
+                }
+            });
+    });
+    
+    $("button[name=ssoSessionButton]").off().on("click", () => {
+        const form = document.getElementById("fmSsoSessions");
+        if (!form.reportValidity()) {
+            return false;
+        }
+
+        ssoSessionsEditor.setValue("");
+        const username = $("#ssoSessionUsername").val();
+        $.ajax({
+            url: `${casServerPrefix}/actuator/ssoSessions/users/${username}`,
+            type: "GET",
+            contentType: "application/x-www-form-urlencoded",
+            success: (response, status, xhr) => {
+                $("#ssoSessionsEditorContainer").removeClass("d-none");
+                ssoSessionsEditor.setValue(JSON.stringify(response, null, 2));
+                ssoSessionsEditor.gotoLine(1);
+
+                for (const session of response.activeSsoSessions) {
+                    
+                    let serviceButtons = `
+                         <button type="button" name="removeSsoSession" href="#" 
+                                data-ticketgrantingticket='${session.ticket_granting_ticket}'
+                                class="mdc-button mdc-button--raised min-width-32x">
+                            <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
+                        </button>
+                    `;
+
+                    ssoSessionsTable.row.add({
+                        0: `<code>${session["authentication_date"]}</code>`,
+                        1: `<code>${session["ticket_granting_ticket"]}</code>`,
+                        2: `<code>${session["authentication_attributes"]?.clientIpAddress?.[0]}</code>`,
+                        3: `<code>${session["authentication_attributes"]?.userAgent?.[0]}</code>`,
+                        4: `<code>${session["number_of_uses"]}</code>`,
+                        5: `<code>${session["remember_me"]}</code>`,
+                        6: `${serviceButtons}`,
+                    });
+                }
+                ssoSessionsTable.draw();
+                $("button[name=removeSsoSession]").off().on("click", function () {
+                    const ticket = $(this).data("ticketgrantingticket");
+                    console.log("Removing ticket-granting ticket:", ticket);
+                    
+                    swal({
+                        title: "Are you sure you want to delete this session?",
+                        text: "Once deleted, you may not be able to recover this entry.",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true
+                    })
+                        .then((willDelete) => {
+                            if (willDelete) {
+                                $.ajax({
+                                    url: `${casServerPrefix}/actuator/ssoSessions/${ticket}`,
+                                    type: "DELETE",
+                                    contentType: "application/x-www-form-urlencoded",
+                                    success: (response, status, xhr) => {
+                                        ssoSessionsEditor.setValue(JSON.stringify(response, null, 2));
+                                        ssoSessionsEditor.gotoLine(1);
+                                        let nearestTr = $(this).closest("tr");
+                                        ssoSessionsTable.row(nearestTr).remove().draw();
+                                    },
+                                    error: (xhr, status, error) => {
+                                        console.error("Error fetching data:", error);
+                                    }
+                                });
+                            }
+                        });
+                });
+            },
+            error: (xhr, status, error) => {
+                console.error("Error fetching data:", error);
+            }
+        });
+    });
+
+    
+}
+
 async function initializeLoggingOperations() {
-    const toolbar = document.createElement('div');
+    const toolbar = document.createElement("div");
     toolbar.innerHTML = `
         <button type="button" id="newLoggerButton" class="mdc-button mdc-button--raised">
             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus" aria-hidden="true"></i>New</span>
@@ -540,7 +721,7 @@ async function initializeLoggingOperations() {
                     buttons: true,
                     icon: "success",
                     title: "What's the name of the new logger?",
-                    text: "The new logger will only be effective at runtime and will not be persisted.",
+                    text: "The new logger will only be effective at runtime and will not be persisted."
                 })
                     .then((value) => {
                         addLoggerToTable({name: value, level: "WARN"});
@@ -1005,6 +1186,12 @@ async function initializeAllCharts() {
 
 }
 
+function updateNavigationSidebar() {
+    setTimeout(() => {
+        $("nav.sidebar-navigation").css("height", $("#dashboard .mdc-card").css("height"));
+    }, 100);
+}
+
 async function initializePalantir() {
     try {
         await Promise.all([
@@ -1014,7 +1201,8 @@ async function initializePalantir() {
             initializeAccessStrategyOperations(),
             initializeTicketsOperations(),
             initializeSystemOperations(),
-            initializeLoggingOperations()
+            initializeLoggingOperations(),
+            initializeSsoSessionOperations()
         ]);
     } catch (error) {
         console.error("An error occurred:", error);
@@ -1034,21 +1222,23 @@ async function initializePalantir() {
         window.localStorage.setItem("PalantirSelectedTab", idx);
 
         let matchingElement = $(`nav.sidebar-navigation ul li[data-tab-index=${idx}]`);
-        $("nav.sidebar-navigation ul li").removeClass('active');
-        $(matchingElement).addClass('active');
+        $("nav.sidebar-navigation ul li").removeClass("active");
+        $(matchingElement).addClass("active");
+        updateNavigationSidebar();
     });
 }
 
 function activateDashboardTab(idx) {
     let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
     tabs.activateTab(Number(idx));
+    updateNavigationSidebar();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
     initializePalantir().then(r => console.log("Palantir ready!"));
-    $('nav.sidebar-navigation ul li').off().on('click', function() {
-        $('li').removeClass('active');
-        $(this).addClass('active');
+    $("nav.sidebar-navigation ul li").off().on("click", function () {
+        $("li").removeClass("active");
+        $(this).addClass("active");
         const index = $(this).data("tab-index");
         activateDashboardTab(index);
     });
