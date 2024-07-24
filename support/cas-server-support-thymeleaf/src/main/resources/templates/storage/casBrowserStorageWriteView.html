@@ -36,7 +36,6 @@
                 /*<![CDATA[*/
 
                 const browserStorage = /*[[${browserStorage}]]*/ ;
-                const httpRequestSecure = /*[[${httpRequestSecure}]]*/ ;
                 let payload;
                 if (browserStorage.storageType === 'SESSION') {
                     payload = writeToSessionStorage(browserStorage);
@@ -45,8 +44,6 @@
                 }
                 let url = browserStorage.destinationUrl;
                 if (url !== undefined && url !== "" && url !== null) {
-                    console.log(url);
-                    console.log(httpRequestSecure);
                     window.location.href = url;
                 } else {
                     document.getElementById("fm1").submit();
