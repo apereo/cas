@@ -174,7 +174,7 @@ function initializeFooterButtons() {
 async function initializeAccessStrategyOperations() {
     const accessStrategyEditor = initializeAceEditor("accessStrategyEditor");
     accessStrategyEditor.setReadOnly(true);
-    
+
     $("button[name=accessStrategyButton]").off().on("click", () => {
         $("#serviceAccessResultDiv").hide();
         const form = document.getElementById("fmAccessStrategy");
@@ -474,18 +474,32 @@ async function initializeSsoSessionOperations() {
     const ssoSessionsEditor = initializeAceEditor("ssoSessionsEditor");
     ssoSessionsEditor.setReadOnly(true);
 
+    const ssoSessionDetailsTable = $("#ssoSessionDetailsTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        columnDefs: [
+            {width: "10%", targets: 0},
+            {width: "20%", targets: 1},
+            {width: "70%", targets: 2}
+        ],
+        drawCallback: settings => {
+            $("#ssoSessionDetailsTable tr").addClass("mdc-data-table__row");
+            $("#ssoSessionDetailsTable td").addClass("mdc-data-table__cell");
+        }
+    });
 
     const ssoSessionsTable = $("#ssoSessionsTable").DataTable({
         pageLength: 10,
         autoWidth: false,
         columnDefs: [
-            {width: "15%", targets: 0},
-            {width: "35%", targets: 1},
+            {width: "13%", targets: 0},
+            {width: "37%", targets: 1},
             {width: "10%", targets: 2},
             {width: "15%", targets: 3},
             {width: "5%", targets: 4},
             {width: "8%", targets: 5},
-            {width: "12%", targets: 6}
+            {width: "12%", targets: 6},
+            {visible: false, target: 7}
         ],
         drawCallback: settings => {
             $("#ssoSessionsTable tr").addClass("mdc-data-table__row");
@@ -504,7 +518,7 @@ async function initializeSsoSessionOperations() {
         if (!form.reportValidity()) {
             return false;
         }
-        
+
         swal({
             title: "Are you sure you want to delete all sessions for the user?",
             text: "Once deleted, you may not be able to recover this entry.",
@@ -532,7 +546,7 @@ async function initializeSsoSessionOperations() {
                 }
             });
     });
-    
+
     $("button[name=ssoSessionButton]").off().on("click", () => {
         const form = document.getElementById("fmSsoSessions");
         if (!form.reportValidity()) {
@@ -551,12 +565,22 @@ async function initializeSsoSessionOperations() {
                 ssoSessionsEditor.gotoLine(1);
 
                 for (const session of response.activeSsoSessions) {
-                    
+                    const attributes = {
+                        principal: session["principal_attributes"],
+                        authentication: session["authentication_attributes"]
+                    };
+
                     let serviceButtons = `
                          <button type="button" name="removeSsoSession" href="#" 
                                 data-ticketgrantingticket='${session.ticket_granting_ticket}'
                                 class="mdc-button mdc-button--raised min-width-32x">
                             <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" name="viewSsoSession" href="#" 
+                                data-ticketgrantingticket='${session.ticket_granting_ticket}'
+                                class="mdc-button mdc-button--raised min-width-32x">
+                            <i class="mdi mdi-account-eye min-width-32x" aria-hidden="true"></i>
+                            <span id="sessionAttributes" class="d-none">${JSON.stringify(attributes)}</span>
                         </button>
                     `;
 
@@ -568,13 +592,38 @@ async function initializeSsoSessionOperations() {
                         4: `<code>${session["number_of_uses"]}</code>`,
                         5: `<code>${session["remember_me"]}</code>`,
                         6: `${serviceButtons}`,
+                        7: `${JSON.stringify(attributes)}`
                     });
                 }
                 ssoSessionsTable.draw();
+
+                $("button[name=viewSsoSession]").off().on("click", function () {
+
+                    const attributes = JSON.parse($(this).children("span").first().text());
+                    for(const [key, value] of Object.entries(attributes.principal)) {
+                        ssoSessionDetailsTable.row.add({
+                            0: `<code>Principal</code>`,
+                            1: `<code>${key}</code>`,
+                            2: `<code>${value}</code>`
+                        });
+                    }
+                    for(const [key, value] of Object.entries(attributes.authentication)) {
+                        ssoSessionDetailsTable.row.add({
+                            0: `<code>Authentication</code>`,
+                            1: `<code>${key}</code>`,
+                            2: `<code>${value}</code>`
+                        });
+                    }
+                    ssoSessionDetailsTable.draw();
+
+                    let dialog = mdc.dialog.MDCDialog.attachTo(document.getElementById("ssoSession-dialog"));
+                    dialog["open"]();
+                });
+
                 $("button[name=removeSsoSession]").off().on("click", function () {
                     const ticket = $(this).data("ticketgrantingticket");
                     console.log("Removing ticket-granting ticket:", ticket);
-                    
+
                     swal({
                         title: "Are you sure you want to delete this session?",
                         text: "Once deleted, you may not be able to recover this entry.",
@@ -608,7 +657,7 @@ async function initializeSsoSessionOperations() {
         });
     });
 
-    
+
 }
 
 async function initializeLoggingOperations() {

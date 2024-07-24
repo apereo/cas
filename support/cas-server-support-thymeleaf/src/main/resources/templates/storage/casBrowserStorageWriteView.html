@@ -32,22 +32,28 @@
         </form>
 
         <script th:inline="javascript">
-            /*<![CDATA[*/
+            document.addEventListener('DOMContentLoaded', () => {
+                /*<![CDATA[*/
 
-            const browserStorage = /*[[${browserStorage}]]*/ ;
-            let payload;
-            if (browserStorage.storageType === 'SESSION') {
-                payload = writeToSessionStorage(browserStorage);
-            } else {
-                payload = writeToLocalStorage(browserStorage);
-            }
-            let url = browserStorage.destinationUrl;
-            if (url !== undefined && url !== "" && url !== null) {
-                window.location.href = url;
-            } else {
-                document.getElementById("fm1").submit();
-            }
-            /*]]>*/
+                const browserStorage = /*[[${browserStorage}]]*/ ;
+                const httpRequestSecure = /*[[${httpRequestSecure}]]*/ ;
+                let payload;
+                if (browserStorage.storageType === 'SESSION') {
+                    payload = writeToSessionStorage(browserStorage);
+                } else {
+                    payload = writeToLocalStorage(browserStorage);
+                }
+                let url = browserStorage.destinationUrl;
+                if (url !== undefined && url !== "" && url !== null) {
+                    console.log(url);
+                    console.log(httpRequestSecure);
+                    window.location.href = url;
+                } else {
+                    document.getElementById("fm1").submit();
+                }
+                /*]]>*/
+            });
+
         </script>
 
         <noscript>
