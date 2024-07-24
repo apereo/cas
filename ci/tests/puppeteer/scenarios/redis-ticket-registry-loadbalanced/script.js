@@ -9,8 +9,7 @@ async function ensureNoSsoSessionsExistAfterLogout(page, port) {
     const content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
     await cas.log(payload);
-    assert(payload.totalTicketGrantingTickets === 0);
-    assert(payload.totalTickets === 0);
+    assert(payload.totalSsoSessions === 0);
 }
 
 async function testBasicLoginLogout(browser) {
@@ -75,8 +74,7 @@ async function ensureSessionsRecorded(page, port, conditions) {
     const payload = JSON.parse(content);
     console.dir(payload, {depth: null, colors: true});
 
-    assert(payload.totalTicketGrantingTickets === 1);
-    assert(payload.totalTickets === 1);
+    assert(payload.totalSsoSessions === 1);
 
     for (const ticket in conditions) {
         await cas.log(`Checking for issued ticket ${ticket}`);
