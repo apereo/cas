@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -39,7 +40,7 @@ class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
 
     @Test
     void verifyOperationFilterWithoutOpenId() throws Throwable {
-        val service = getOidcRegisteredService();
+        val service = getOidcRegisteredService(UUID.randomUUID().toString());
         val accessToken = mock(OAuth20AccessToken.class);
         val original = CoreAuthenticationTestUtils.getPrincipal();
         assertFalse(original.getAttributes().isEmpty());
@@ -50,7 +51,7 @@ class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
 
     @Test
     void verifyScopeFreeWithOpenIdScope() throws Throwable {
-        val service = getOidcRegisteredService();
+        val service = getOidcRegisteredService(UUID.randomUUID().toString());
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
         when(accessToken.getScopes()).thenReturn(CollectionUtils.wrapSet(OidcConstants.StandardScopes.OPENID.getScope()));
@@ -74,7 +75,7 @@ class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
 
     @Test
     void verifyOperationFilterWithOpenId() throws Throwable {
-        val service = getOidcRegisteredService();
+        val service = getOidcRegisteredService(UUID.randomUUID().toString());
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
         when(accessToken.getScopes()).thenReturn(CollectionUtils.wrapSet(
@@ -102,7 +103,7 @@ class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
 
     @Test
     void verifyOperationFilterWithServiceDefinedScopes() throws Throwable {
-        val service = getOidcRegisteredService();
+        val service = getOidcRegisteredService(UUID.randomUUID().toString());
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
         when(accessToken.getScopes()).thenReturn(CollectionUtils.wrapSet(
@@ -127,7 +128,7 @@ class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
 
     @Test
     void verifyOperationFilterWithServiceDefinedReleasePolicy() throws Throwable {
-        val service = getOidcRegisteredService();
+        val service = getOidcRegisteredService(UUID.randomUUID().toString());
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
         when(accessToken.getScopes()).thenReturn(CollectionUtils.wrapSet(
@@ -152,7 +153,7 @@ class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
 
     @Test
     void verifyByUserInfoClaims() throws Throwable {
-        val service = getOidcRegisteredService();
+        val service = getOidcRegisteredService(UUID.randomUUID().toString());
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getClaims()).thenReturn(Map.of("userinfo", Map.of(
             "name", "{\"essential\": true}",
@@ -175,7 +176,7 @@ class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
 
     @Test
     void verifyAccessTokenNoScopes() throws Throwable {
-        val service = getOidcRegisteredService();
+        val service = getOidcRegisteredService(UUID.randomUUID().toString());
         val accessToken = mock(OAuth20AccessToken.class);
         when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket("casuser"));
         when(accessToken.getScopes()).thenReturn(Set.of(OidcConstants.StandardScopes.OPENID.getScope()));
