@@ -1,15 +1,14 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.web.CasYamlHttpMessageConverter;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.http.MediaType;
 import org.springframework.mock.http.MockHttpOutputMessage;
-
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -19,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("RegisteredService")
+@ExtendWith(CasTestExtension.class)
 class CasYamlHttpMessageConverterTests {
     private static BaseRegisteredService getService() {
         val svc = new CasRegisteredService();
@@ -29,12 +29,14 @@ class CasYamlHttpMessageConverterTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val input = new CasYamlHttpMessageConverter();
+        val converter = new CasYamlHttpMessageConverter();
         val outputMessage = new MockHttpOutputMessage();
-        input.write(getService(), MediaType.APPLICATION_JSON, outputMessage);
+        converter.write(getService(), MediaType.APPLICATION_JSON, outputMessage);
         assertNotNull(outputMessage.getBodyAsString());
-
-        input.write(List.of(getService()), MediaType.APPLICATION_JSON, outputMessage);
+        converter.write(List.of(getService()), MediaType.APPLICATION_JSON, outputMessage);
         assertNotNull(outputMessage.getBodyAsString());
+        assertFalse(converter.canWrite(String.class, null));
+        assertFalse(converter.canWrite(String.class, MediaType.APPLICATION_JSON));
+        assertTrue(converter.canWrite(String.class, CasYamlHttpMessageConverter.MEDIA_TYPE_YAML));
     }
 }

@@ -3,6 +3,12 @@
       layout:decorate="~{layout(mainContentClass='container-xxl')}">
 
 <head>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const casServerPrefix = /*[[${casServerPrefix}]]*/;
+        /*]]>*/
+    </script>
+    
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title th:text="#{cas.login.pagetitle}">CAS Admin UI</title>
@@ -18,14 +24,7 @@
 <body>
 <main class="container mt-3 mb-3">
 
-    <div layout:fragment="content" id="dashboard">
-
-        <script th:inline="javascript">
-            /*<![CDATA[*/
-            const casServerPrefix = /*[[${casServerPrefix}]]*/;
-            /*]]>*/
-        </script>
-
+    <div layout:fragment="content" id="dashboard" class="d-none">
         <div th:replace="~{fragments/palantir/navigationsidebar :: main}"/>
         <div class="mdc-card p-2 m-1" style="min-height: 100vh;">
             <div th:replace="~{fragments/palantir/dashboardtabs :: main}"/>

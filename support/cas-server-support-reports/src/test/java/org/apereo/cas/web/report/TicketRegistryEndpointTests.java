@@ -56,6 +56,11 @@ class TicketRegistryEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
+    void verifyHead() throws Throwable {
+        assertTrue(ticketRegistryEndpoint.head().getStatusCode().is2xxSuccessful());
+    }
+
+    @Test
     void verifyClean() throws Throwable {
         val ticket = new MockTicketGrantingTicket(UUID.randomUUID().toString());
         ticketRegistry.addTicket(ticket);

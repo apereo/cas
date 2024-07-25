@@ -23,6 +23,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import jakarta.validation.Valid;
 import java.time.Clock;
 import java.time.ZonedDateTime;
@@ -59,6 +61,17 @@ public class TicketRegistryEndpoint extends BaseCasRestActuatorEndpoint {
     }
 
 
+    /**
+     * Head response entity.
+     *
+     * @return the response entity
+     */
+    @Operation(summary = "Reports back to the presence of the endpoint without any content")
+    @RequestMapping(method = RequestMethod.HEAD, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity head() {
+        return ResponseEntity.ok().build();
+    }
+    
     /**
      * Ticket catalog.
      *
