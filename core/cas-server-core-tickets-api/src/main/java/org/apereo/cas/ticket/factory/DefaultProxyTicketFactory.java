@@ -13,7 +13,7 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
-import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class DefaultProxyTicketFactory implements ProxyTicketFactory {
-    private final UniqueTicketIdGenerator defaultTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    private final UniqueTicketIdGenerator defaultTicketIdGenerator = new HostNameBasedUniqueTicketIdGenerator();
 
     @Getter
     private final ExpirationPolicyBuilder<ProxyTicket> expirationPolicyBuilder;
