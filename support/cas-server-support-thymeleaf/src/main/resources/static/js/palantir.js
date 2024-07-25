@@ -113,7 +113,7 @@ function fetchServices(callback) {
         initializeServiceButtons();
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
-        displayErrorInBanner(xhr.responseJSON);
+        displayErrorInBanner(xhr);
     });
 }
 
@@ -160,7 +160,7 @@ function initializeFooterButtons() {
                                 },
                                 error: (xhr, status, error) => {
                                     console.error("File upload failed:", error);
-                                    displayErrorInBanner(xhr.responseJSON);
+                                    displayErrorInBanner(xhr);
                                 }
                             });
                         };
@@ -256,9 +256,11 @@ async function initializeAccessStrategyOperations() {
 
 function displayErrorInBanner(error) {
     $("#errorBanner").removeClass("d-none");
-    $("#errorDetails")
-        .empty()
-        .html(`Unable to make an API call to <code>${error.path}</code>. Is the endpoint enabled and available?`);
+    let message = `HTTP error: ${error.status}. `;
+    if (error.hasOwnProperty("path")) {
+        message += `Unable to make an API call to <code>${error.path}</code>. Is the endpoint enabled and available?`;
+    }
+    $("#errorDetails").empty().html(message);
 }
 
 function initializeJvmMetrics() {
@@ -266,7 +268,7 @@ function initializeJvmMetrics() {
         return new Promise((resolve, reject) =>
             $.get(`${Endpoints.METRICS}/${metricName}`, response => resolve(response.measurements[0].value)).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr.responseJSON);
+                displayErrorInBanner(xhr);
                 reject(error);
             }));
     }
@@ -299,7 +301,7 @@ function initializeJvmMetrics() {
                 resolve(threadData);
             }).fail((xhr, status, error) => {
                 console.error("Error thread dump:", error);
-                displayErrorInBanner(xhr.responseJSON);
+                displayErrorInBanner(xhr);
                 reject(error);
             }));
 
@@ -376,7 +378,7 @@ async function initializeScheduledTasksOperations() {
         scheduledtasks.draw();
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
-        displayErrorInBanner(xhr.responseJSON);
+        displayErrorInBanner(xhr);
     });
 
     initializeJvmMetrics();
@@ -406,7 +408,7 @@ async function initializeTicketsOperations() {
                 })
                 .fail((xhr, status, error) => {
                     console.error("Error fetching data:", error);
-                    displayErrorInBanner(xhr.responseJSON);
+                    displayErrorInBanner(xhr);
                 });
         }
     });
@@ -421,7 +423,7 @@ async function initializeTicketsOperations() {
             },
             error: (xhr, status, error) => {
                 console.log(`Error: ${status} / ${error} / ${xhr.responseText}`);
-                displayErrorInBanner(xhr.responseJSON);
+                displayErrorInBanner(xhr);
             }
         }));
 
@@ -478,7 +480,7 @@ async function initializeTicketsOperations() {
         ticketDefinitions.selectedIndex = 0;
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
-        displayErrorInBanner(xhr.responseJSON);
+        displayErrorInBanner(xhr);
     });
 
 
@@ -528,7 +530,7 @@ async function initializeTicketsOperations() {
         ticketExpirationPoliciesTable.draw();
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
-        displayErrorInBanner(xhr.responseJSON);
+        displayErrorInBanner(xhr);
     });
 }
 
@@ -604,7 +606,7 @@ async function initializeSsoSessionOperations() {
                         },
                         error: (xhr, status, error) => {
                             console.error("Error fetching data:", error);
-                            displayErrorInBanner(xhr.responseJSON);
+                            displayErrorInBanner(xhr);
                         }
                     });
                 }
@@ -709,7 +711,7 @@ async function initializeSsoSessionOperations() {
                                     },
                                     error: (xhr, status, error) => {
                                         console.error("Error fetching data:", error);
-                                        displayErrorInBanner(xhr.responseJSON);
+                                        displayErrorInBanner(xhr);
                                     }
                                 });
                             }
@@ -718,7 +720,7 @@ async function initializeSsoSessionOperations() {
             },
             error: (xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr.responseJSON);
+                displayErrorInBanner(xhr);
             }
         });
     });
@@ -774,7 +776,7 @@ async function initializeLoggingOperations() {
     function fetchLoggerData(callback) {
         $.get(Endpoints.LOGGING_CONFIG, response => callback(response)).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr.responseJSON);
+            displayErrorInBanner(xhr);
         });
     }
 
@@ -818,7 +820,7 @@ async function initializeLoggingOperations() {
                         },
                         error: (xhr, status, error) => {
                             console.error("Failed", error);
-                            displayErrorInBanner(xhr.responseJSON);
+                            displayErrorInBanner(xhr);
                         }
                     });
                 });
@@ -964,7 +966,7 @@ async function initializeSystemOperations() {
             httpRequestsByUrlChart.update();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr.responseJSON);
+            displayErrorInBanner(xhr);
         });
 
         $("#downloadHeapDumpButton").off().on("click", () => {
@@ -1016,7 +1018,7 @@ async function initializeSystemOperations() {
             systemHealthChart.update();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr.responseJSON);
+            displayErrorInBanner(xhr);
         });
     }
 
@@ -1032,7 +1034,7 @@ async function initializeSystemOperations() {
     function fetchSystemData(callback) {
         $.get(Endpoints.INFO, response => callback(response)).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr.responseJSON);
+            displayErrorInBanner(xhr);
         });
     }
 
@@ -1054,7 +1056,7 @@ async function initializeSystemOperations() {
             $("#httpRequestsMaxTime").text(`${maxTime}s`);
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr.responseJSON);
+            displayErrorInBanner(xhr);
         });
         $.get(`${Endpoints.METRICS}/http.server.requests.active`, response => {
             let active = response.measurements[0].value;
@@ -1063,7 +1065,7 @@ async function initializeSystemOperations() {
             $("#httpRequestsDuration").text(`${duration}s`);
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr.responseJSON);
+            displayErrorInBanner(xhr);
         });
         configureHttpRequestResponses().then(configureAuditEventsChart());
     }
@@ -1149,7 +1151,7 @@ function initializeServiceButtons() {
                         },
                         error: (xhr, status, error) => {
                             console.error("Error deleting resource:", error);
-                            displayErrorInBanner(xhr.responseJSON);
+                            displayErrorInBanner(xhr);
                         }
                     });
                 }
@@ -1168,7 +1170,7 @@ function initializeServiceButtons() {
             editServiceDialog["open"]();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr.responseJSON);
+            displayErrorInBanner(xhr);
         });
 
     });
@@ -1207,7 +1209,7 @@ function initializeServiceButtons() {
                         },
                         error: (xhr, status, error) => {
                             console.error("Update failed:", error);
-                            displayErrorInBanner(xhr.responseJSON);
+                            displayErrorInBanner(xhr);
                         }
                     });
                 }
@@ -1236,7 +1238,7 @@ function initializeServiceButtons() {
             editServiceDialog["open"]();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr.responseJSON);
+            displayErrorInBanner(xhr);
         });
     });
 }
@@ -1540,7 +1542,7 @@ async function initializeConfigurationOperations() {
 
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
-        displayErrorInBanner(xhr.responseJSON);
+        displayErrorInBanner(xhr);
     });
 }
 
@@ -1577,7 +1579,7 @@ function ifPalantirIsReady() {
                 type: "HEAD"
             }).then(
                 response => {
-                    if (response.status >= 400) {
+                    if (response !== undefined && response.status >= 400) {
                         unavailableUrls.push(url);
                     }
                 },
