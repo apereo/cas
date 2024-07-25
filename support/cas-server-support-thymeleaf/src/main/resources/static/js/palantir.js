@@ -22,6 +22,7 @@ let jvmThreadsChart = null;
 let httpRequestResponsesChart = null;
 let httpRequestsByUrlChart = null;
 let auditEventsChart = null;
+let threadDumpChart = null;
 
 function fetchServices(callback) {
     $.get(`${casServerPrefix}/actuator/registeredServices`, response => {
@@ -110,28 +111,41 @@ function initializeFooterButtons() {
     $("button[name=importService]").off().on("click", () => {
         $("#serviceFileInput").click();
         $("#serviceFileInput").change(event => {
-            const file = event.target.files[0];
-            const reader = new FileReader();
-            reader.readAsText(file);
-            reader.onload = e => {
-                const fileContent = e.target.result;
-                console.log("File content:", fileContent);
+            swal({
+                title: "Are you sure you want to import this entry?",
+                text: "Once import, the entry should take immediate effect.",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true
+            })
+                .then((willImport) => {
+                    if (willImport) {
+                        const file = event.target.files[0];
+                        const reader = new FileReader();
+                        reader.readAsText(file);
+                        reader.onload = e => {
+                            const fileContent = e.target.result;
+                            console.log("File content:", fileContent);
 
-                $.ajax({
-                    url: `${casServerPrefix}/actuator/registeredServices`,
-                    type: "PUT",
-                    contentType: "application/json",
-                    data: fileContent,
-                    success: response => {
-                        console.log("File upload successful:", response);
-                        $("#reloadAll").click();
-                    },
-                    error: (xhr, status, error) => {
-                        console.error("File upload failed:", error);
+                            $.ajax({
+                                url: `${casServerPrefix}/actuator/registeredServices`,
+                                type: "PUT",
+                                contentType: "application/json",
+                                data: fileContent,
+                                success: response => {
+                                    console.log("File upload successful:", response);
+                                    $("#reloadAll").click();
+                                },
+                                error: (xhr, status, error) => {
+                                    console.error("File upload failed:", error);
+                                }
+                            });
+                        };
                     }
                 });
-            };
         });
+
+
     });
 
     $("button[name=exportService]").off().on("click", () => {
@@ -242,15 +256,47 @@ function initializeJvmMetrics() {
             ].map(metric => fetchJvmThreadMetric(metric));
             const results = await Promise.all(promises);
             const numbersArray = results.map(result => Number(result));
-            console.log("Fetched values:", numbersArray);
+            console.log("Fetched JVM metrics:", numbersArray);
             return numbersArray;
         } catch (error) {
             console.error("An error occurred:", error);
         }
     }
-    fetchJvmMetrics().then(payload => {
-        jvmThreadsChart.data.datasets[0].data = payload;
-        jvmThreadsChart.update();
+    
+    async function fetchThreadDump() {
+        return new Promise((resolve, reject) => {
+            $.get(`${casServerPrefix}/actuator/threaddump`, response => {
+                console.log("Thread dump", response);
+                let threadData = {};
+                for (const thread of response.threads) {
+                    if (!threadData[thread.threadState]) {
+                        threadData[thread.threadState] = 0;
+                    }
+                    threadData[thread.threadState] += 1;
+                }
+                resolve(threadData);
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                reject(error);
+            });
+        });
+
+    }
+
+    fetchJvmMetrics()
+        .then(payload => {
+            jvmThreadsChart.data.datasets[0].data = payload;
+            jvmThreadsChart.update();
+        });
+
+    fetchThreadDump().then(payload => {
+        threadDumpChart.data.labels = Object.keys(payload);
+        const values = Object.values(payload);
+        threadDumpChart.data.datasets[0] = {
+             label: `${values.reduce((sum, value) => sum + value, 0)} Threads`,
+             data: values
+         };
+         threadDumpChart.update();
     });
 }
 
@@ -314,7 +360,7 @@ async function initializeScheduledTasksOperations() {
 
     setInterval(() => {
         initializeJvmMetrics();
-    }, 4000);
+    }, 5000);
 }
 
 async function initializeTicketsOperations() {
@@ -804,8 +850,8 @@ async function initializeSystemOperations() {
                 return accumulator;
             }, {});
 
-            for(const [key, value] of Object.entries(results)) {
-                let auditEntry = Object.assign({ timestamp: key }, value);
+            for (const [key, value] of Object.entries(results)) {
+                let auditEntry = Object.assign({timestamp: key}, value);
                 auditData.push(auditEntry);
             }
 
@@ -830,7 +876,7 @@ async function initializeSystemOperations() {
             auditEventsChart.update();
         });
     }
-    
+
     async function configureHttpRequestResponses() {
         $.get(`${casServerPrefix}/actuator/httpexchanges`, response => {
             function urlIsAcceptable(url) {
@@ -1190,6 +1236,24 @@ async function initializeServicesOperations() {
 }
 
 async function initializeAllCharts() {
+    threadDumpChart = new Chart(document.getElementById("threadDumpChart").getContext("2d"), {
+        type: "bar",
+        options: {
+            responsive: true,
+            fill: true,
+            borderWidth: 2,
+            plugins: {
+                legend: {
+                    position: "top"
+                },
+                title: {
+                    display: true,
+                }
+            }
+        }
+    });
+    threadDumpChart.update();
+    
     servicesChart = new Chart(document.getElementById("servicesChart").getContext("2d"), {
         type: "pie",
         data: {
@@ -1356,7 +1420,7 @@ async function initializeAllCharts() {
         data: {
             labels: ["Daemon", "Live", "Peak", "Started", "States"],
             datasets: [{
-                label: "JVM Threads",
+                label: "JVM Thread Types",
                 data: [0, 0, 0, 0, 0],
                 fill: true,
                 borderWidth: 2
