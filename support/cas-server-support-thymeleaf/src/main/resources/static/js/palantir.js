@@ -1611,9 +1611,25 @@ document.addEventListener("DOMContentLoaded", () => {
         window.localStorage.setItem("PalantirSelectedTab", index);
         activateDashboardTab(index);
     });
+    swal({
+        title: "Initializing Palantir",
+        text: "Please wait while Palantir is being initialized...",
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        buttons: false
+    });
     ifPalantirIsReady().then(urls => {
         if (urls.length === 0) {
-            initializePalantir().then(r => console.log("Palantir ready!"));
+            initializePalantir().then(r => {
+                console.log("Palantir ready!");
+                swal({
+                    title: "Palantir is ready!",
+                    text: "Palantir has been successfully initialized and is ready for use.",
+                    showConfirmButton: false,
+                    buttons: false,
+                    timer: 1000
+                });
+            });
         } else {
             console.error("Palantir is not ready. The following endpoints are unavailable:", urls);
             $("#dashboard").hide();
