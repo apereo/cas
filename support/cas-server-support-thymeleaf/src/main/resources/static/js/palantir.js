@@ -11,6 +11,27 @@ const Tabs = {
     SSO_SESSIONS: 6
 };
 
+const Endpoints = {
+    REGISTERED_SERVICES: `${casServerPrefix}/actuator/registeredServices`,
+    SERVICE_ACCESS: `${casServerPrefix}/actuator/serviceAccess`,
+    METRICS: `${casServerPrefix}/actuator/metrics`,
+    SCHEDULED_TASKS: `${casServerPrefix}/actuator/scheduledtasks`,
+    THREAD_DUMP: `${casServerPrefix}/actuator/threaddump`,
+    TICKET_REGISTRY: `${casServerPrefix}/actuator/ticketRegistry`,
+    SSO_SESSIONS: `${casServerPrefix}/actuator/ssoSessions`,
+    ENV: `${casServerPrefix}/actuator/env`,
+    LOGGING_CONFIG: `${casServerPrefix}/actuator/loggingConfig`,
+    EXPIRATION_POLICIES: `${casServerPrefix}/actuator/ticketExpirationPolicies`,
+    LOGGERS: `${casServerPrefix}/actuator/loggers`,
+    AUDIT_EVENTS: `${casServerPrefix}/actuator/auditevents`,
+    HTTP_EXCHANGES: `${casServerPrefix}/actuator/httpexchanges`,
+    HEAP_DUMP: `${casServerPrefix}/actuator/heapdump`,
+    HEALTH: `${casServerPrefix}/actuator/health`,
+    STATISTICS: `${casServerPrefix}/actuator/statistics`,
+    INFO: `${casServerPrefix}/actuator/info`,
+    CAS_FEATURES: `${casServerPrefix}/actuator/casFeatures`
+};
+
 /**
  * Charts objects.
  */
@@ -25,7 +46,7 @@ let auditEventsChart = null;
 let threadDumpChart = null;
 
 function fetchServices(callback) {
-    $.get(`${casServerPrefix}/actuator/registeredServices`, response => {
+    $.get(Endpoints.REGISTERED_SERVICES, response => {
         let serviceCountByType = [0, 0, 0, 0, 0];
         let applicationsTable = $("#applicationsTable").DataTable();
         applicationsTable.clear();
@@ -92,6 +113,7 @@ function fetchServices(callback) {
         initializeServiceButtons();
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
+        displayErrorInBanner(xhr.responseJSON);
     });
 }
 
@@ -110,7 +132,7 @@ function initializeFooterButtons() {
 
     $("button[name=importService]").off().on("click", () => {
         $("#serviceFileInput").click();
-        $("#serviceFileInput").change(event => {
+        $("#serviceFileInput").change(event =>
             swal({
                 title: "Are you sure you want to import this entry?",
                 text: "Once import, the entry should take immediate effect.",
@@ -128,7 +150,7 @@ function initializeFooterButtons() {
                             console.log("File content:", fileContent);
 
                             $.ajax({
-                                url: `${casServerPrefix}/actuator/registeredServices`,
+                                url: `${Endpoints.REGISTERED_SERVICES}`,
                                 type: "PUT",
                                 contentType: "application/json",
                                 data: fileContent,
@@ -138,19 +160,19 @@ function initializeFooterButtons() {
                                 },
                                 error: (xhr, status, error) => {
                                     console.error("File upload failed:", error);
+                                    displayErrorInBanner(xhr.responseJSON);
                                 }
                             });
                         };
                     }
-                });
-        });
+                }));
 
 
     });
 
     $("button[name=exportService]").off().on("click", () => {
         let serviceId = $(exportServiceButton).attr("serviceId");
-        fetch(`${casServerPrefix}/actuator/registeredServices/export/${serviceId}`)
+        fetch(`${Endpoints.REGISTERED_SERVICES}/export/${serviceId}`)
             .then(response => {
                 const filename = response.headers.get("filename");
                 response.blob().then(blob => {
@@ -166,8 +188,8 @@ function initializeFooterButtons() {
             .catch(error => console.error("Error fetching file:", error));
     });
 
-    $("button[name=exportAll]").off().on("click", () => {
-        fetch(`${casServerPrefix}/actuator/registeredServices/export`)
+    $("button[name=exportAll]").off().on("click", () =>
+        fetch(`${Endpoints.REGISTERED_SERVICES}/export`)
             .then(response => {
                 const filename = response.headers.get("filename");
                 response.blob().then(blob => {
@@ -180,8 +202,7 @@ function initializeFooterButtons() {
                 });
 
             })
-            .catch(error => console.error("Error fetching file:", error));
-    });
+            .catch(error => console.error("Error fetching file:", error)));
 }
 
 
@@ -207,7 +228,7 @@ async function initializeAccessStrategyOperations() {
         });
 
         $.ajax({
-            url: `${casServerPrefix}/actuator/serviceAccess`,
+            url: Endpoints.SERVICE_ACCESS,
             type: "POST",
             contentType: "application/x-www-form-urlencoded",
             data: $.param(renamedData),
@@ -233,39 +254,40 @@ async function initializeAccessStrategyOperations() {
     });
 }
 
+function displayErrorInBanner(error) {
+    $("#errorBanner").removeClass("d-none");
+    $("#errorDetails")
+        .empty()
+        .html(`Unable to make an API call to <code>${error.path}</code>. Is the endpoint enabled and available?`);
+}
+
 function initializeJvmMetrics() {
     function fetchJvmThreadMetric(metricName) {
-        return new Promise((resolve, reject) => {
-            $.get(`${casServerPrefix}/actuator/metrics/${metricName}`, response => {
-                resolve(response.measurements[0].value);
-            }).fail((xhr, status, error) => {
+        return new Promise((resolve, reject) =>
+            $.get(`${Endpoints.METRICS}/${metricName}`, response => resolve(response.measurements[0].value)).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
+                displayErrorInBanner(xhr.responseJSON);
                 reject(error);
-            });
-        });
+            }));
     }
 
     async function fetchJvmMetrics() {
-        try {
-            const promises = [
-                "jvm.threads.daemon",
-                "jvm.threads.live",
-                "jvm.threads.peak",
-                "jvm.threads.started",
-                "jvm.threads.states"
-            ].map(metric => fetchJvmThreadMetric(metric));
-            const results = await Promise.all(promises);
-            const numbersArray = results.map(result => Number(result));
-            console.log("Fetched JVM metrics:", numbersArray);
-            return numbersArray;
-        } catch (error) {
-            console.error("An error occurred:", error);
-        }
+        const promises = [
+            "jvm.threads.daemon",
+            "jvm.threads.live",
+            "jvm.threads.peak",
+            "jvm.threads.started",
+            "jvm.threads.states"
+        ].map(metric => fetchJvmThreadMetric(metric));
+        const results = await Promise.all(promises);
+        const numbersArray = results.map(result => Number(result));
+        console.log("Fetched JVM metrics:", numbersArray);
+        return numbersArray;
     }
-    
+
     async function fetchThreadDump() {
-        return new Promise((resolve, reject) => {
-            $.get(`${casServerPrefix}/actuator/threaddump`, response => {
+        return new Promise((resolve, reject) =>
+            $.get(Endpoints.THREAD_DUMP, response => {
                 console.log("Thread dump", response);
                 let threadData = {};
                 for (const thread of response.threads) {
@@ -276,10 +298,10 @@ function initializeJvmMetrics() {
                 }
                 resolve(threadData);
             }).fail((xhr, status, error) => {
-                console.error("Error fetching data:", error);
+                console.error("Error thread dump:", error);
+                displayErrorInBanner(xhr.responseJSON);
                 reject(error);
-            });
-        });
+            }));
 
     }
 
@@ -293,10 +315,10 @@ function initializeJvmMetrics() {
         threadDumpChart.data.labels = Object.keys(payload);
         const values = Object.values(payload);
         threadDumpChart.data.datasets[0] = {
-             label: `${values.reduce((sum, value) => sum + value, 0)} Threads`,
-             data: values
-         };
-         threadDumpChart.update();
+            label: `${values.reduce((sum, value) => sum + value, 0)} Threads`,
+            data: values
+        };
+        threadDumpChart.update();
     });
 }
 
@@ -345,7 +367,7 @@ async function initializeScheduledTasksOperations() {
         }
     }
 
-    $.get(`${casServerPrefix}/actuator/scheduledtasks`, response => {
+    $.get(Endpoints.SCHEDULED_TASKS, response => {
         console.log(response);
         scheduledtasks.clear();
         for (const group of Object.keys(response)) {
@@ -354,13 +376,12 @@ async function initializeScheduledTasksOperations() {
         scheduledtasks.draw();
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
+        displayErrorInBanner(xhr.responseJSON);
     });
 
     initializeJvmMetrics();
 
-    setInterval(() => {
-        initializeJvmMetrics();
-    }, 5000);
+    setInterval(() => initializeJvmMetrics(), 5000);
 }
 
 async function initializeTicketsOperations() {
@@ -378,20 +399,21 @@ async function initializeTicketsOperations() {
         if (ticket && type) {
             const decode = new mdc.switchControl.MDCSwitch(document.getElementById("decodeTicketButton")).selected;
             ticketEditor.setValue("");
-            $.get(`${casServerPrefix}/actuator/ticketRegistry/query?type=${type}&id=${ticketId}&decode=${decode}`,
+            $.get(`${Endpoints.TICKET_REGISTRY}/query?type=${type}&id=${ticketId}&decode=${decode}`,
                 response => {
                     ticketEditor.setValue(JSON.stringify(response, null, 2));
                     ticketEditor.gotoLine(1);
                 })
                 .fail((xhr, status, error) => {
                     console.error("Error fetching data:", error);
+                    displayErrorInBanner(xhr.responseJSON);
                 });
         }
     });
 
-    $("button#cleanTicketsButton").off().on("click", () => {
+    $("button#cleanTicketsButton").off().on("click", () =>
         $.ajax({
-            url: `${casServerPrefix}/actuator/ticketRegistry/clean`,
+            url: `${Endpoints.TICKET_REGISTRY}/clean`,
             type: "DELETE",
             success: response => {
                 ticketEditor.setValue(JSON.stringify(response, null, 2));
@@ -399,9 +421,9 @@ async function initializeTicketsOperations() {
             },
             error: (xhr, status, error) => {
                 console.log(`Error: ${status} / ${error} / ${xhr.responseText}`);
+                displayErrorInBanner(xhr.responseJSON);
             }
-        });
-    });
+        }));
 
     const ticketCatalogTable = $("#ticketCatalogTable").DataTable({
 
@@ -431,7 +453,7 @@ async function initializeTicketsOperations() {
         }
     });
 
-    $.get(`${casServerPrefix}/actuator/ticketRegistry/ticketCatalog`, response => {
+    $.get(`${Endpoints.TICKET_REGISTRY}/ticketCatalog`, response => {
         console.log(response);
         response.forEach(entry => {
             let item = `
@@ -456,6 +478,7 @@ async function initializeTicketsOperations() {
         ticketDefinitions.selectedIndex = 0;
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
+        displayErrorInBanner(xhr.responseJSON);
     });
 
 
@@ -486,7 +509,7 @@ async function initializeTicketsOperations() {
         }
     });
 
-    $.get(`${casServerPrefix}/actuator/ticketExpirationPolicies`, response => {
+    $.get(Endpoints.EXPIRATION_POLICIES, response => {
         console.log(response);
         ticketExpirationPoliciesTable.clear();
         for (const key of Object.keys(response)) {
@@ -505,6 +528,7 @@ async function initializeTicketsOperations() {
         ticketExpirationPoliciesTable.draw();
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
+        displayErrorInBanner(xhr.responseJSON);
     });
 }
 
@@ -570,7 +594,7 @@ async function initializeSsoSessionOperations() {
                     const username = $("#ssoSessionUsername").val();
 
                     $.ajax({
-                        url: `${casServerPrefix}/actuator/ssoSessions/users/${username}`,
+                        url: `${Endpoints.SSO_SESSIONS}/users/${username}`,
                         type: "DELETE",
                         contentType: "application/x-www-form-urlencoded",
                         success: (response, status, xhr) => {
@@ -580,6 +604,7 @@ async function initializeSsoSessionOperations() {
                         },
                         error: (xhr, status, error) => {
                             console.error("Error fetching data:", error);
+                            displayErrorInBanner(xhr.responseJSON);
                         }
                     });
                 }
@@ -595,7 +620,7 @@ async function initializeSsoSessionOperations() {
         ssoSessionsEditor.setValue("");
         const username = $("#ssoSessionUsername").val();
         $.ajax({
-            url: `${casServerPrefix}/actuator/ssoSessions/users/${username}`,
+            url: `${Endpoints.SSO_SESSIONS}/users/${username}`,
             type: "GET",
             contentType: "application/x-www-form-urlencoded",
             success: (response, status, xhr) => {
@@ -673,7 +698,7 @@ async function initializeSsoSessionOperations() {
                         .then((willDelete) => {
                             if (willDelete) {
                                 $.ajax({
-                                    url: `${casServerPrefix}/actuator/ssoSessions/${ticket}`,
+                                    url: `${Endpoints.SSO_SESSIONS}/${ticket}`,
                                     type: "DELETE",
                                     contentType: "application/x-www-form-urlencoded",
                                     success: (response, status, xhr) => {
@@ -684,6 +709,7 @@ async function initializeSsoSessionOperations() {
                                     },
                                     error: (xhr, status, error) => {
                                         console.error("Error fetching data:", error);
+                                        displayErrorInBanner(xhr.responseJSON);
                                     }
                                 });
                             }
@@ -692,6 +718,7 @@ async function initializeSsoSessionOperations() {
             },
             error: (xhr, status, error) => {
                 console.error("Error fetching data:", error);
+                displayErrorInBanner(xhr.responseJSON);
             }
         });
     });
@@ -745,8 +772,9 @@ async function initializeLoggingOperations() {
     }
 
     function fetchLoggerData(callback) {
-        $.get(`${casServerPrefix}/actuator/loggingConfig`, response => callback(response)).fail((xhr, status, error) => {
+        $.get(Endpoints.LOGGING_CONFIG, response => callback(response)).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr.responseJSON);
         });
     }
 
@@ -780,7 +808,7 @@ async function initializeLoggingOperations() {
                         "configuredLevel": level
                     };
                     $.ajax({
-                        url: `${casServerPrefix}/actuator/loggers/${logger}`,
+                        url: `${Endpoints.LOGGERS}/${logger}`,
                         type: "POST",
                         contentType: "application/json",
                         data: JSON.stringify(loggerData),
@@ -790,6 +818,7 @@ async function initializeLoggingOperations() {
                         },
                         error: (xhr, status, error) => {
                             console.error("Failed", error);
+                            displayErrorInBanner(xhr.responseJSON);
                         }
                     });
                 });
@@ -803,7 +832,7 @@ async function initializeLoggingOperations() {
             }
             loggersTable.draw();
 
-            $("#newLoggerButton").off().on("click", () => {
+            $("#newLoggerButton").off().on("click", () =>
                 swal({
                     content: "input",
                     buttons: true,
@@ -816,8 +845,7 @@ async function initializeLoggingOperations() {
                         loggersTable.draw();
                         handleLoggerLevelSelectionChange();
                         loggersTable.search(value).draw();
-                    });
-            });
+                    }));
             handleLoggerLevelSelectionChange();
         });
     }
@@ -833,7 +861,7 @@ async function initializeLoggingOperations() {
 
 async function initializeSystemOperations() {
     function configureAuditEventsChart() {
-        $.get(`${casServerPrefix}/actuator/auditevents`, response => {
+        $.get(Endpoints.AUDIT_EVENTS, response => {
             let auditData = [];
             const results = response.events.reduce((accumulator, event) => {
                 let timestamp = formatDateYearMonthDay(event.timestamp);
@@ -878,7 +906,7 @@ async function initializeSystemOperations() {
     }
 
     async function configureHttpRequestResponses() {
-        $.get(`${casServerPrefix}/actuator/httpexchanges`, response => {
+        $.get(Endpoints.HTTP_EXCHANGES, response => {
             function urlIsAcceptable(url) {
                 return !url.startsWith("/actuator")
                     && !url.startsWith("/webjars")
@@ -936,12 +964,13 @@ async function initializeSystemOperations() {
             httpRequestsByUrlChart.update();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr.responseJSON);
         });
 
         $("#downloadHeapDumpButton").off().on("click", () => {
             $("#downloadHeapDumpButton").prop("disabled", true);
-            fetch(`${casServerPrefix}/actuator/heapdump`)
-                .then(response => {
+            fetch(Endpoints.HEAP_DUMP)
+                .then(response =>
                     response.blob().then(blob => {
                         const link = document.createElement("a");
                         link.href = window.URL.createObjectURL(blob);
@@ -950,8 +979,7 @@ async function initializeSystemOperations() {
                         link.click();
                         document.body.removeChild(link);
                         $("#downloadHeapDumpButton").prop("disabled", false);
-                    });
-                })
+                    }))
                 .catch(error => {
                     console.error("Error fetching file:", error);
                     $("#downloadHeapDumpButton").prop("disabled", false);
@@ -960,7 +988,7 @@ async function initializeSystemOperations() {
     }
 
     function configureHealthChart() {
-        $.get(`${casServerPrefix}/actuator/health`, response => {
+        $.get(Endpoints.HEALTH, response => {
             console.log(response);
             const payload = {
                 labels: [],
@@ -988,23 +1016,23 @@ async function initializeSystemOperations() {
             systemHealthChart.update();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr.responseJSON);
         });
     }
 
     function configureStatistics() {
-        $.get(`${casServerPrefix}/actuator/statistics`, response => {
+        $.get(Endpoints.STATISTICS, response => {
             const expired = response.expiredTickets;
             const valid = response.validTickets;
             statisticsChart.data.datasets[0].data = [valid, expired];
             statisticsChart.update();
-        }).fail((xhr, status, error) => {
-            console.error("Error fetching data:", error);
-        });
+        }).fail((xhr, status, error) => console.error("Error fetching data:", error));
     }
 
     function fetchSystemData(callback) {
-        $.get(`${casServerPrefix}/actuator/info`, response => callback(response)).fail((xhr, status, error) => {
+        $.get(Endpoints.INFO, response => callback(response)).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr.responseJSON);
         });
     }
 
@@ -1017,7 +1045,7 @@ async function initializeSystemOperations() {
             memoryChart.data.datasets[0].data = [maximum, total, free];
             memoryChart.update();
         });
-        $.get(`${casServerPrefix}/actuator/metrics/http.server.requests`, response => {
+        $.get(`${Endpoints.METRICS}/http.server.requests`, response => {
             let count = response.measurements[0].value;
             let totalTime = response.measurements[1].value.toFixed(2);
             let maxTime = response.measurements[2].value.toFixed(2);
@@ -1026,14 +1054,16 @@ async function initializeSystemOperations() {
             $("#httpRequestsMaxTime").text(`${maxTime}s`);
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr.responseJSON);
         });
-        $.get(`${casServerPrefix}/actuator/metrics/http.server.requests.active`, response => {
+        $.get(`${Endpoints.METRICS}/http.server.requests.active`, response => {
             let active = response.measurements[0].value;
             let duration = response.measurements[1].value.toFixed(2);
             $("#httpRequestsActive").text(active);
             $("#httpRequestsDuration").text(`${duration}s`);
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr.responseJSON);
         });
         configureHttpRequestResponses().then(configureAuditEventsChart());
     }
@@ -1071,7 +1101,7 @@ async function initializeSystemOperations() {
         configureStatistics();
     }, 5000);
 
-    $.get(`${casServerPrefix}/actuator/casFeatures`, response => {
+    $.get(Endpoints.CAS_FEATURES, response => {
         console.log(response);
         $("#casFeaturesChipset").empty();
         for (const element of response) {
@@ -1108,7 +1138,7 @@ function initializeServiceButtons() {
             .then((willDelete) => {
                 if (willDelete) {
                     $.ajax({
-                        url: `${casServerPrefix}/actuator/registeredServices/${serviceId}`,
+                        url: `${Endpoints.REGISTERED_SERVICES}/${serviceId}`,
                         type: "DELETE",
                         success: response => {
                             console.log("Resource deleted successfully:", response);
@@ -1119,6 +1149,7 @@ function initializeServiceButtons() {
                         },
                         error: (xhr, status, error) => {
                             console.error("Error deleting resource:", error);
+                            displayErrorInBanner(xhr.responseJSON);
                         }
                     });
                 }
@@ -1128,7 +1159,7 @@ function initializeServiceButtons() {
 
     $("button[name=editService]").off().on("click", function () {
         let serviceId = $(this).parent().attr("serviceId");
-        $.get(`${casServerPrefix}/actuator/registeredServices/${serviceId}`, response => {
+        $.get(`${Endpoints.REGISTERED_SERVICES}/${serviceId}`, response => {
             const value = JSON.stringify(response, null, 4);
             editor.setValue(value, -1);
             editor.gotoLine(1);
@@ -1137,12 +1168,12 @@ function initializeServiceButtons() {
             editServiceDialog["open"]();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr.responseJSON);
         });
 
     });
 
-    $("button[name=saveService]").off().on("click", () => {
-
+    $("button[name=saveService]").off().on("click", () =>
         swal({
             title: "Are you sure you want to update this entry?",
             text: "Once updated, you may not be able to revert this entry.",
@@ -1158,7 +1189,7 @@ function initializeServiceButtons() {
                     const isNewService = $(editServiceDialogElement).attr("newService") === "true";
 
                     $.ajax({
-                        url: `${casServerPrefix}/actuator/registeredServices`,
+                        url: `${Endpoints.REGISTERED_SERVICES}`,
                         type: isNewService ? "POST" : "PUT",
                         contentType: "application/json",
                         data: value,
@@ -1176,16 +1207,15 @@ function initializeServiceButtons() {
                         },
                         error: (xhr, status, error) => {
                             console.error("Update failed:", error);
+                            displayErrorInBanner(xhr.responseJSON);
                         }
                     });
                 }
-            });
-
-    });
+            }));
 
     $("button[name=copyService]").off().on("click", function () {
         let serviceId = $(this).parent().attr("serviceId");
-        $.get(`${casServerPrefix}/actuator/registeredServices/${serviceId}`, response => {
+        $.get(`${Endpoints.REGISTERED_SERVICES}/${serviceId}`, response => {
             let clone = {...response};
             clone.serviceId = "...";
             clone.name = `...`;
@@ -1206,6 +1236,7 @@ function initializeServiceButtons() {
             editServiceDialog["open"]();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr.responseJSON);
         });
     });
 }
@@ -1227,9 +1258,7 @@ async function initializeServicesOperations() {
         }
     });
 
-    applicationsTable.on("click", "tbody tr", e => {
-        e.currentTarget.classList.remove("selected");
-    });
+    applicationsTable.on("click", "tbody tr", e => e.currentTarget.classList.remove("selected"));
 
     fetchServices();
     initializeFooterButtons();
@@ -1247,13 +1276,13 @@ async function initializeAllCharts() {
                     position: "top"
                 },
                 title: {
-                    display: true,
+                    display: true
                 }
             }
         }
     });
     threadDumpChart.update();
-    
+
     servicesChart = new Chart(document.getElementById("servicesChart").getContext("2d"), {
         type: "pie",
         data: {
@@ -1448,9 +1477,7 @@ async function initializeAllCharts() {
 }
 
 function updateNavigationSidebar() {
-    setTimeout(() => {
-        $("nav.sidebar-navigation").css("height", $("#dashboard .mdc-card").css("height"));
-    }, 100);
+    setTimeout(() => $("nav.sidebar-navigation").css("height", $("#dashboard .mdc-card").css("height")), 100);
 }
 
 async function initializeConfigurationOperations() {
@@ -1482,7 +1509,7 @@ async function initializeConfigurationOperations() {
     });
 
     configurationTable.clear();
-    $.get(`${casServerPrefix}/actuator/env`, response => {
+    $.get(Endpoints.ENV, response => {
         for (const source of response.propertySources) {
             const properties = flattenJSON(source.properties);
             for (const [key, value] of Object.entries(properties)) {
@@ -1513,6 +1540,7 @@ async function initializeConfigurationOperations() {
 
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
+        displayErrorInBanner(xhr.responseJSON);
     });
 }
 
@@ -1529,16 +1557,37 @@ async function initializePalantir() {
             initializeSsoSessionOperations(),
             initializeConfigurationOperations()
         ]);
-
         setTimeout(() => {
             const selectedTab = window.localStorage.getItem("PalantirSelectedTab");
             $(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).click();
             activateDashboardTab(selectedTab);
         }, 2);
-
+        $("#dashboard").removeClass("d-none");
     } catch (error) {
         console.error("An error occurred:", error);
     }
+}
+
+function ifPalantirIsReady() {
+    const checkUrls = async (urls) => {
+        const unavailableUrls = [];
+        const promises = urls.map(url =>
+            $.ajax({
+                url: url,
+                type: "HEAD"
+            }).then(
+                response => {
+                    if (response.status >= 400) {
+                        unavailableUrls.push(url);
+                    }
+                },
+                () => unavailableUrls.push(url)
+            ));
+
+        await Promise.all(promises);
+        return unavailableUrls;
+    };
+    return checkUrls(Object.values(Endpoints));
 }
 
 function activateDashboardTab(idx) {
@@ -1560,5 +1609,18 @@ document.addEventListener("DOMContentLoaded", () => {
         window.localStorage.setItem("PalantirSelectedTab", index);
         activateDashboardTab(index);
     });
-    initializePalantir().then(r => console.log("Palantir ready!"));
+    ifPalantirIsReady().then(urls => {
+        if (urls.length === 0) {
+            initializePalantir().then(r => console.log("Palantir ready!"));
+        } else {
+            console.error("Palantir is not ready. The following endpoints are unavailable:", urls);
+            $("#dashboard").hide();
+            swal({
+                title: "Palantir is unavailable!",
+                text: `Palantir requires a number of endpoints to be enabled and exposed, and your CAS deployment fails to do so.\n
+                Please check the console logs to a get list of required URLs and configure your CAS deployment to enable and expose each endpoints in your settings.`,
+                icon: "warning"
+            });
+        }
+    });
 });
