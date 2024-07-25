@@ -10,12 +10,12 @@
     <div class="attribute-tab w-100 d-none" id="attribute-tab-1">
         <table id="systemTable" class="mdc-data-table__table table table-striped noborder">
             <thead>
-            <tr class="mdc-data-table__header-row">
-                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Field</th>
-                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
-            </tr>
+                <tr class="mdc-data-table__header-row">
+                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Field</th>
+                    <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value</th>
+                </tr>
             </thead>
-            <tbody class="mdc-data-table__content">
+                <tbody class="mdc-data-table__content">
             </tbody>
         </table>
 
@@ -60,8 +60,24 @@
                     <h1 class="pt-3 pr-2 pl-2"><code id="httpRequestsDuration">0</code></h1></strong>
                 </div>
             </div>
+            <hr>
+            <div class="mdc-layout-grid">
+                <div class="mdc-layout-grid__inner">
+                    <div class="mdc-layout-grid__cell">
+                        <canvas id="httpRequestResponsesChart"></canvas>
+                    </div>
+                    <div class="mdc-layout-grid__cell">
+                        <canvas id="httpRequestsByUrlChart"></canvas>
+                    </div>
+                    <div class="mdc-layout-grid__cell">
+                        <canvas id="auditEventsChart"></canvas>
+                    </div>
+                </div>
+            </div>
         </div>
-        
+        <button id="downloadHeapDumpButton" class="mdc-button mdc-button--raised">
+            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-download-circle" aria-hidden="true"></i>Heap Dump</span>
+        </button>
         <hr>
         <br/>
         <h2>Features</h2>
