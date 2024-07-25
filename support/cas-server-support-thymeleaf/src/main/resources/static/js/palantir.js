@@ -19,6 +19,9 @@ let memoryChart = null;
 let statisticsChart = null;
 let systemHealthChart = null;
 let jvmThreadsChart = null;
+let httpRequestResponsesChart = null;
+let httpRequestsByUrlChart = null;
+let auditEventsChart = null;
 
 function fetchServices(callback) {
     $.get(`${casServerPrefix}/actuator/registeredServices`, response => {
@@ -245,15 +248,10 @@ function initializeJvmMetrics() {
             console.error("An error occurred:", error);
         }
     }
-
-    let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
-    const index = tabs.foundation.adapter.getFocusedTabIndex();
-    if (index === 3) {
-        fetchJvmMetrics().then(payload => {
-            jvmThreadsChart.data.datasets[0].data = payload;
-            jvmThreadsChart.update();
-        });
-    }
+    fetchJvmMetrics().then(payload => {
+        jvmThreadsChart.data.datasets[0].data = payload;
+        jvmThreadsChart.update();
+    });
 }
 
 async function initializeScheduledTasksOperations() {
@@ -312,13 +310,8 @@ async function initializeScheduledTasksOperations() {
         console.error("Error fetching data:", error);
     });
 
-    let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
-    tabs.listen("MDCTabBar:activated", ev => {
-        let index = ev.detail.index;
-        if (index === Tabs.TASKS) {
-            initializeJvmMetrics();
-        }
-    });
+    initializeJvmMetrics();
+
     setInterval(() => {
         initializeJvmMetrics();
     }, 4000);
@@ -507,9 +500,9 @@ async function initializeSsoSessionOperations() {
         }
     });
 
-    $('#ssoSessionUsername').on('keypress', e => {
+    $("#ssoSessionUsername").on("keypress", e => {
         if (e.which === 13) {
-            $('#ssoSessionButton').click();
+            $("#ssoSessionButton").click();
         }
     });
 
@@ -600,14 +593,14 @@ async function initializeSsoSessionOperations() {
                 $("button[name=viewSsoSession]").off().on("click", function () {
 
                     const attributes = JSON.parse($(this).children("span").first().text());
-                    for(const [key, value] of Object.entries(attributes.principal)) {
+                    for (const [key, value] of Object.entries(attributes.principal)) {
                         ssoSessionDetailsTable.row.add({
                             0: `<code>Principal</code>`,
                             1: `<code>${key}</code>`,
                             2: `<code>${value}</code>`
                         });
                     }
-                    for(const [key, value] of Object.entries(attributes.authentication)) {
+                    for (const [key, value] of Object.entries(attributes.authentication)) {
                         ssoSessionDetailsTable.row.add({
                             0: `<code>Authentication</code>`,
                             1: `<code>${key}</code>`,
@@ -793,6 +786,133 @@ async function initializeLoggingOperations() {
 }
 
 async function initializeSystemOperations() {
+    function configureAuditEventsChart() {
+        $.get(`${casServerPrefix}/actuator/auditevents`, response => {
+            let auditData = [];
+            const results = response.events.reduce((accumulator, event) => {
+                let timestamp = formatDateYearMonthDay(event.timestamp);
+                const type = event.type;
+
+                if (!accumulator[timestamp]) {
+                    accumulator[timestamp] = {};
+                }
+
+                if (!accumulator[timestamp][type]) {
+                    accumulator[timestamp][type] = 0;
+                }
+                accumulator[timestamp][type]++;
+                return accumulator;
+            }, {});
+
+            for(const [key, value] of Object.entries(results)) {
+                let auditEntry = Object.assign({ timestamp: key }, value);
+                auditData.push(auditEntry);
+            }
+
+            auditEventsChart.data.labels = auditData.map(d => d.timestamp);
+            let datasets = [];
+            for (const entry of auditData) {
+                for (const type of Object.keys(auditData[0])) {
+                    if (type !== "timestamp" && type !== "AUTHORIZATION_FAILURE") {
+                        datasets.push({
+                            borderWidth: 2,
+                            data: auditData,
+                            parsing: {
+                                xAxisKey: "timestamp",
+                                yAxisKey: type
+                            },
+                            label: type
+                        });
+                    }
+                }
+            }
+            auditEventsChart.data.datasets = datasets;
+            auditEventsChart.update();
+        });
+    }
+    
+    async function configureHttpRequestResponses() {
+        $.get(`${casServerPrefix}/actuator/httpexchanges`, response => {
+            function urlIsAcceptable(url) {
+                return !url.startsWith("/actuator")
+                    && !url.startsWith("/webjars")
+                    && !url.endsWith(".js")
+                    && !url.endsWith(".ico")
+                    && !url.endsWith(".png")
+                    && !url.endsWith(".jpg")
+                    && !url.endsWith(".jpeg")
+                    && !url.endsWith(".gif")
+                    && !url.endsWith(".svg")
+                    && !url.endsWith(".css");
+            }
+
+            console.log(response);
+            let httpSuccesses = [];
+            let httpFailures = [];
+            let httpSuccessesPerUrl = [];
+            let httpFailuresPerUrl = [];
+
+            let totalHttpSuccessPerUrl = 0;
+            let totalHttpSuccess = 0;
+            let totalHttpFailurePerUrl = 0;
+            let totalHttpFailure = 0;
+
+            for (const exchange of response.exchanges) {
+                let timestamp = formatDateYearMonthDayHourMinute(exchange.timestamp);
+                let url = exchange.request.uri
+                    .replace(casServerPrefix, "")
+                    .replaceAll(/\?.+/gi, "");
+
+                if (urlIsAcceptable(url)) {
+                    if (exchange.response.status >= 100 && exchange.response.status <= 400) {
+                        totalHttpSuccess++;
+                        httpSuccesses.push({x: timestamp, y: totalHttpSuccess});
+                        totalHttpSuccessPerUrl++;
+                        httpSuccessesPerUrl.push({x: url, y: totalHttpSuccessPerUrl});
+                    } else {
+                        totalHttpFailure++;
+                        httpFailures.push({x: timestamp, y: totalHttpFailure});
+                        totalHttpFailurePerUrl++;
+                        httpFailuresPerUrl.push({x: url, y: totalHttpFailurePerUrl});
+                    }
+                }
+            }
+            httpRequestResponsesChart.data.datasets[0].data = httpSuccesses;
+            httpRequestResponsesChart.data.datasets[0].label = "Success";
+            httpRequestResponsesChart.data.datasets[1].data = httpFailures;
+            httpRequestResponsesChart.data.datasets[1].label = "Failure";
+            httpRequestResponsesChart.update();
+
+            httpRequestsByUrlChart.data.datasets[0].data = httpSuccessesPerUrl;
+            httpRequestsByUrlChart.data.datasets[0].label = "Success";
+            httpRequestsByUrlChart.data.datasets[1].data = httpFailuresPerUrl;
+            httpRequestsByUrlChart.data.datasets[1].label = "Failure";
+            httpRequestsByUrlChart.update();
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+        });
+
+        $("#downloadHeapDumpButton").off().on("click", () => {
+            $("#downloadHeapDumpButton").prop("disabled", true);
+            fetch(`${casServerPrefix}/actuator/heapdump`)
+                .then(response => {
+                    response.blob().then(blob => {
+                        const link = document.createElement("a");
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = "heapdump";
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        $("#downloadHeapDumpButton").prop("disabled", false);
+                    });
+                })
+                .catch(error => {
+                    console.error("Error fetching file:", error);
+                    $("#downloadHeapDumpButton").prop("disabled", false);
+                });
+        });
+    }
+
     function configureHealthChart() {
         $.get(`${casServerPrefix}/actuator/health`, response => {
             console.log(response);
@@ -869,6 +989,7 @@ async function initializeSystemOperations() {
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
         });
+        configureHttpRequestResponses().then(configureAuditEventsChart());
     }
 
     const systemTable = $("#systemTable").DataTable({
@@ -899,24 +1020,9 @@ async function initializeSystemOperations() {
     });
 
     setInterval(() => {
-        const index = tabs.foundation.adapter.getFocusedTabIndex();
-        if (index === 1) {
-            configureSystemData();
-        }
-    }, 5000);
-
-    setInterval(() => {
-        const index = tabs.foundation.adapter.getFocusedTabIndex();
-        if (index === 1) {
-            configureStatistics();
-        }
-    }, 5000);
-
-    setInterval(() => {
-        const index = tabs.foundation.adapter.getFocusedTabIndex();
-        if (index === 1) {
-            configureHealthChart();
-        }
+        configureSystemData();
+        configureHealthChart();
+        configureStatistics();
     }, 5000);
 
     $.get(`${casServerPrefix}/actuator/casFeatures`, response => {
@@ -1181,6 +1287,48 @@ async function initializeAllCharts() {
             }
         }
     });
+    auditEventsChart = new Chart(document.getElementById("auditEventsChart").getContext("2d"), {
+        type: "bar"
+    });
+    auditEventsChart.update();
+
+    httpRequestResponsesChart = new Chart(document.getElementById("httpRequestResponsesChart").getContext("2d"), {
+        type: "bar",
+        data: {
+            datasets: [
+                {
+                    data: [{x: "N/A", y: 0}, {x: "N/A", y: 0}],
+                    label: "Success",
+                    borderWidth: 2
+                },
+                {
+                    data: [{x: "N/A", y: 0}, {x: "N/A", y: 0}],
+                    label: "Failure",
+                    borderWidth: 2
+                }
+            ]
+        }
+    });
+    httpRequestResponsesChart.update();
+
+    httpRequestsByUrlChart = new Chart(document.getElementById("httpRequestsByUrlChart").getContext("2d"), {
+        type: "bar",
+        data: {
+            datasets: [
+                {
+                    data: [{x: "N/A", y: 0}, {x: "N/A", y: 0}],
+                    label: "Success",
+                    borderWidth: 2
+                },
+                {
+                    data: [{x: "N/A", y: 0}, {x: "N/A", y: 0}],
+                    label: "Failure",
+                    borderWidth: 2
+                }
+            ]
+        }
+    });
+    httpRequestsByUrlChart.update();
 
     systemHealthChart = new Chart(document.getElementById("systemHealthChart").getContext("2d"), {
         type: "bar",
@@ -1241,6 +1389,69 @@ function updateNavigationSidebar() {
     }, 100);
 }
 
+async function initializeConfigurationOperations() {
+    const configurationTable = $("#configurationTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        columnDefs: [
+            {visible: false, targets: 0}
+        ],
+        order: [0, "asc"],
+        drawCallback: settings => {
+            $("#configurationTable tr").addClass("mdc-data-table__row");
+            $("#configurationTable td").addClass("mdc-data-table__cell");
+
+            const api = settings.api;
+            const rows = api.rows({page: "current"}).nodes();
+            let last = null;
+            api.column(0, {page: "current"})
+                .data()
+                .each((group, i) => {
+                    if (last !== group) {
+                        $(rows).eq(i).before(
+                            `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
+                                            <td colspan="2">${group}</td></tr>`.trim());
+                        last = group;
+                    }
+                });
+        }
+    });
+
+    configurationTable.clear();
+    $.get(`${casServerPrefix}/actuator/env`, response => {
+        for (const source of response.propertySources) {
+            const properties = flattenJSON(source.properties);
+            for (const [key, value] of Object.entries(properties)) {
+                if (!key.endsWith(".origin")) {
+                    configurationTable.row.add({
+                        0: `${camelcaseToTitleCase(source.name)}`,
+                        1: `<code>${key.replace(".value", "")}</code>`,
+                        2: `<code>${value}</code>`
+                    });
+                }
+            }
+        }
+        configurationTable.draw();
+
+        $("#casActiveProfiles").empty();
+        for (const element of response.activeProfiles) {
+            let feature = `
+                <div class="mdc-chip" role="row">
+                    <div class="mdc-chip__ripple"></div>
+                    <span role="gridcell">
+                        <i class="mdi mdi-wrench" aria-hidden="true"></i>
+                      <span class="mdc-chip__text">${element.trim()}</span>
+                    </span>
+                </div>
+            `.trim();
+            $("#casActiveProfiles").append($(feature));
+        }
+
+    }).fail((xhr, status, error) => {
+        console.error("Error fetching data:", error);
+    });
+}
+
 async function initializePalantir() {
     try {
         await Promise.all([
@@ -1251,44 +1462,39 @@ async function initializePalantir() {
             initializeTicketsOperations(),
             initializeSystemOperations(),
             initializeLoggingOperations(),
-            initializeSsoSessionOperations()
+            initializeSsoSessionOperations(),
+            initializeConfigurationOperations()
         ]);
+
+        setTimeout(() => {
+            const selectedTab = window.localStorage.getItem("PalantirSelectedTab");
+            $(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).click();
+            activateDashboardTab(selectedTab);
+        }, 2);
+
     } catch (error) {
         console.error("An error occurred:", error);
     }
-
-    let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
-    setTimeout(() => {
-        const selectedTab = window.localStorage.getItem("PalantirSelectedTab");
-        if (selectedTab) {
-            tabs.activateTab(Number(selectedTab));
-        }
-    }, 5);
-
-    tabs.listen("MDCTabBar:activated", ev => {
-        const idx = ev.detail.index;
-        console.log("Tracking tab", idx);
-        window.localStorage.setItem("PalantirSelectedTab", idx);
-
-        let matchingElement = $(`nav.sidebar-navigation ul li[data-tab-index=${idx}]`);
-        $("nav.sidebar-navigation ul li").removeClass("active");
-        $(matchingElement).addClass("active");
-        updateNavigationSidebar();
-    });
 }
 
 function activateDashboardTab(idx) {
-    let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
-    tabs.activateTab(Number(idx));
-    updateNavigationSidebar();
+    try {
+        let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
+        tabs.activateTab(Number(idx));
+        updateNavigationSidebar();
+    } catch (e) {
+        console.error("An error occurred while activating tab:", e);
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    initializePalantir().then(r => console.log("Palantir ready!"));
     $("nav.sidebar-navigation ul li").off().on("click", function () {
         $("li").removeClass("active");
         $(this).addClass("active");
         const index = $(this).data("tab-index");
+        console.log("Tracking tab", index);
+        window.localStorage.setItem("PalantirSelectedTab", index);
         activateDashboardTab(index);
     });
+    initializePalantir().then(r => console.log("Palantir ready!"));
 });
