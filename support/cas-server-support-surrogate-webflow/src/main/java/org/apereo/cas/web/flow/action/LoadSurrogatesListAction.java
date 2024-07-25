@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.action;
 
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MutableCredential;
 import org.apereo.cas.authentication.SurrogateAuthenticationPrincipalBuilder;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
@@ -37,9 +38,9 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
     private final SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder;
 
     private boolean loadSurrogates(final RequestContext requestContext) throws Throwable {
-        val credential = WebUtils.getCredential(requestContext, MutableCredential.class);
-        if (credential != null) {
-            val username = credential.getId();
+        val credential = WebUtils.getCredential(requestContext, Credential.class);
+        if (credential instanceof final MutableCredential mc) {
+            val username = mc.getId();
             LOGGER.debug("Loading eligible accounts for [{}] to proxy", username);
             val service = Optional.ofNullable(WebUtils.getService(requestContext));
             val surrogates = surrogateService.getImpersonationAccounts(username, service)
@@ -70,8 +71,9 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
                 return loadSurrogateAccounts(requestContext);
             }
 
-            val currentCredential = WebUtils.getCredential(requestContext, MutableCredential.class);
-            if (currentCredential != null && currentCredential.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class)
+            val currentCredential = WebUtils.getCredential(requestContext, Credential.class);
+            if (currentCredential instanceof final MutableCredential mc
+                && mc.getCredentialMetadata().getTrait(SurrogateCredentialTrait.class)
                 .stream()
                 .anyMatch(trait -> StringUtils.isNotBlank(trait.getSurrogateUsername()))) {
                 val authenticationResultBuilder = WebUtils.getAuthenticationResultBuilder(requestContext);
