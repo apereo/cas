@@ -144,7 +144,7 @@ import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.token.JwtBuilder;
-import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -1217,28 +1217,28 @@ class CasOAuth20Configuration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "oAuthCodeIdGenerator")
         public UniqueTicketIdGenerator oAuthCodeIdGenerator() {
-            return new DefaultUniqueTicketIdGenerator();
+            return new HostNameBasedUniqueTicketIdGenerator();
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "refreshTokenIdGenerator")
         public UniqueTicketIdGenerator refreshTokenIdGenerator() {
-            return new DefaultUniqueTicketIdGenerator();
+            return new HostNameBasedUniqueTicketIdGenerator();
         }
 
         @ConditionalOnMissingBean(name = "accessTokenIdGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UniqueTicketIdGenerator accessTokenIdGenerator() {
-            return new DefaultUniqueTicketIdGenerator();
+            return new HostNameBasedUniqueTicketIdGenerator();
         }
 
         @ConditionalOnMissingBean(name = "deviceTokenIdGenerator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UniqueTicketIdGenerator deviceTokenIdGenerator() {
-            return new DefaultUniqueTicketIdGenerator();
+            return new HostNameBasedUniqueTicketIdGenerator();
         }
 
         @Bean

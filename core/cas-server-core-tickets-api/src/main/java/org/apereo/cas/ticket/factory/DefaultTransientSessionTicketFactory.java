@@ -7,7 +7,7 @@ import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ import java.util.Map;
 public class DefaultTransientSessionTicketFactory implements TransientSessionTicketFactory<TransientSessionTicket> {
     private final ExpirationPolicyBuilder<TransientSessionTicket> expirationPolicyBuilder;
 
-    private final UniqueTicketIdGenerator ticketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    private final UniqueTicketIdGenerator ticketIdGenerator = new HostNameBasedUniqueTicketIdGenerator();
 
     @Override
     public TransientSessionTicket create(final Service service, final Map<String, Serializable> properties) throws Throwable {
