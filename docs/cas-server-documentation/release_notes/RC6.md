@@ -93,5 +93,6 @@ are now configured to run with parallelism enabled.
 - Amazon SDK
 - Pac4j
 - LettuceMod
+- Hazelcast
 - EclipseLink
 - Netty

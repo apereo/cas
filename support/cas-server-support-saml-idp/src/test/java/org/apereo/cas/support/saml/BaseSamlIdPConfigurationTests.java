@@ -128,7 +128,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.webflow.crypto.signing.key=oZeAR5pEXsolruu4OQYsQKxf-FCvFzSsKlsVaKmfIl6pNzoPm6zPW94NRS1af7vT-0bb3DpPBeksvBXjloEsiA",
         "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
         "cas.authn.saml-idp.metadata.http.metadata-backup-location=file://${java.io.tmpdir}/metadata-backups",
-        "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata116"
+        "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata-${#randomNumber8}"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureObservability
