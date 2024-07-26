@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
+import org.springframework.http.HttpStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
@@ -89,7 +90,10 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
                 .service(service)
                 .build();
             val accessResult = registeredServiceAccessStrategyEnforcer.getObject().execute(audit);
-            accessResult.throwExceptionIfNeeded();
+            if (accessResult.isExecutionFailure()) {
+                httpServletResponse.setStatus(HttpStatus.FORBIDDEN.value());
+                return Optional.empty();
+            }
             return Optional.of(registeredService);
         }
         return Optional.empty();

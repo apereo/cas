@@ -19,7 +19,6 @@ import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty.RegisteredServiceProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnforcementFilter;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.DirectObjectProvider;
@@ -135,7 +134,7 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
         val servletContext = new MockServletContext();
         val filterConfig = new MockFilterConfig(servletContext);
         filter.init(filterConfig);
-        assertThrows(UnauthorizedServiceException.class, () -> filter.doFilter(request, response, new MockFilterChain()));
+        assertDoesNotThrow(() -> filter.doFilter(request, response, new MockFilterChain()));
         assertEquals(HttpStatus.SC_FORBIDDEN, response.getStatus());
     }
 
@@ -251,8 +250,8 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
         val response = new MockHttpServletResponse();
         val request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, "unknown-123456");
-        assertThrows(UnauthorizedServiceException.class,
-            () -> filter.doFilter(request, response, new MockFilterChain()));
+        assertDoesNotThrow(() -> filter.doFilter(request, response, new MockFilterChain()));
+        assertEquals(HttpStatus.SC_FORBIDDEN, response.getStatus());
     }
 
     @Test
@@ -270,8 +269,8 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
         filter.doFilter(request, response, new MockFilterChain());
         assertEquals("sameorigin", response.getHeader("X-Frame-Options"));
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "service-something-else");
-        assertThrows(UnauthorizedServiceException.class,
-            () -> filter.doFilter(request, new MockHttpServletResponse(), new MockFilterChain()));
+        assertDoesNotThrow(() -> filter.doFilter(request, response, new MockFilterChain()));
+        assertEquals(HttpStatus.SC_FORBIDDEN, response.getStatus());
     }
 
     @Test
@@ -289,8 +288,8 @@ class RegisteredServiceResponseHeadersEnforcementFilterTests {
         assertNull(response.getHeader("X-Frame-Options"));
 
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "service-something-else");
-        assertThrows(UnauthorizedServiceException.class,
-            () -> filter.doFilter(request, new MockHttpServletResponse(), new MockFilterChain()));
+        assertDoesNotThrow(() -> filter.doFilter(request, response, new MockFilterChain()));
+        assertEquals(HttpStatus.SC_FORBIDDEN, response.getStatus());
     }
 
     @Test
