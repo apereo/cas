@@ -8,7 +8,8 @@ const Tabs = {
     TASKS: 3,
     ACCESS_STRATEGY: 4,
     LOGGING: 5,
-    SSO_SESSIONS: 6
+    SSO_SESSIONS: 6,
+    PERSON_DIRECTORY: 7
 };
 
 const Endpoints = {
@@ -29,7 +30,8 @@ const Endpoints = {
     HEALTH: `${casServerPrefix}/actuator/health`,
     STATISTICS: `${casServerPrefix}/actuator/statistics`,
     INFO: `${casServerPrefix}/actuator/info`,
-    CAS_FEATURES: `${casServerPrefix}/actuator/casFeatures`
+    CAS_FEATURES: `${casServerPrefix}/actuator/casFeatures`,
+    PERSON_DIRECTORY: `${casServerPrefix}/actuator/personDirectory`,
 };
 
 /**
@@ -135,7 +137,7 @@ function initializeFooterButtons() {
         $("#serviceFileInput").change(event =>
             swal({
                 title: "Are you sure you want to import this entry?",
-                text: "Once import, the entry should take immediate effect.",
+                text: "Once imported, the entry should take immediate effect.",
                 icon: "warning",
                 buttons: true,
                 dangerMode: true
@@ -1482,6 +1484,81 @@ function updateNavigationSidebar() {
     setTimeout(() => $("nav.sidebar-navigation").css("height", $("#dashboard .mdc-card").css("height")), 100);
 }
 
+async function initializePersonDirectoryOperations() {
+    const personDirectoryTable = $("#personDirectoryTable").DataTable({
+        pageLength: 10,
+        drawCallback: settings => {
+            $("#personDirectoryTable tr").addClass("mdc-data-table__row");
+            $("#personDirectoryTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    $("button[name=personDirectoryClearButton]").off().on("click", () => {
+        const form = document.getElementById("fmPersonDirectory");
+        if (!form.reportValidity()) {
+            return false;
+        }
+        const username = $("#personUsername").val();
+        swal({
+            title: `Are you sure you want to delete the cache for ${username}?`,
+            text: `Once the cached entry is removed, attribute repositories would be forced to fetch attributes for ${username} again`,
+            icon: "warning",
+            buttons: true,
+            dangerMode: true
+        })
+            .then((willClear) => {
+                if (willClear) {
+                    personDirectoryTable.clear();
+                    $.ajax({
+                        url: `${Endpoints.PERSON_DIRECTORY}/cache/${username}`,
+                        type: "DELETE",
+                        contentType: "application/json",
+                        success: (response, status, xhr) => {
+                            console.log("Cache is now cleared");
+                        },
+                        error: (xhr, status, error) => {
+                            console.error("Error fetching data:", error);
+                            displayErrorInBanner(xhr);
+                        }
+                    });
+                }
+            });
+    });
+
+
+
+
+    $("button[name=personDirectoryButton]").off().on("click", () => {
+        const form = document.getElementById("fmPersonDirectory");
+        if (!form.reportValidity()) {
+            return false;
+        }
+        const username = $("#personUsername").val();
+        personDirectoryTable.clear();
+        $.ajax({
+            url: `${Endpoints.PERSON_DIRECTORY}/cache/${username}`,
+            type: "GET",
+            contentType: "application/json",
+            success: (response, status, xhr) => {
+                console.log(response);
+
+                for (const [key, values] of Object.entries(response.attributes)) {
+                    personDirectoryTable.row.add({
+                        0: `<code>${key}</code>`,
+                        1: `<code>${values}</code>`
+                    });
+                }
+                personDirectoryTable.draw();
+            },
+            error: (xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayErrorInBanner(xhr);
+            }
+        });
+    });
+    
+}
+
 async function initializeConfigurationOperations() {
     const configurationTable = $("#configurationTable").DataTable({
         pageLength: 10,
@@ -1557,7 +1634,8 @@ async function initializePalantir() {
             initializeSystemOperations(),
             initializeLoggingOperations(),
             initializeSsoSessionOperations(),
-            initializeConfigurationOperations()
+            initializeConfigurationOperations(),
+            initializePersonDirectoryOperations(),
         ]);
         setTimeout(() => {
             const selectedTab = window.localStorage.getItem("PalantirSelectedTab");
@@ -1614,7 +1692,6 @@ document.addEventListener("DOMContentLoaded", () => {
     swal({
         title: "Initializing Palantir",
         text: "Please wait while Palantir is being initialized...",
-        showConfirmButton: false,
         allowOutsideClick: false,
         buttons: false
     });
@@ -1625,9 +1702,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 swal({
                     title: "Palantir is ready!",
                     text: "Palantir has been successfully initialized and is ready for use.",
-                    showConfirmButton: false,
                     buttons: false,
-                    timer: 1000
+                    timer: 500
                 });
             });
         } else {

@@ -31,8 +31,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Optional;
@@ -74,17 +72,6 @@ public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint
         this.principalFactory = principalFactory;
     }
     
-    /**
-     * Head response entity.
-     *
-     * @return the response entity
-     */
-    @Operation(summary = "Reports back to the presence of the endpoint without any content")
-    @RequestMapping(method = RequestMethod.HEAD, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity head() {
-        return ResponseEntity.ok().build();
-    }
-
     /**
      * Authorize user based on application access strategy.
      *
