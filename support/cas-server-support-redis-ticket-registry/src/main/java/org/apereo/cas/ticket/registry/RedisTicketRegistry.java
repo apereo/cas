@@ -145,9 +145,13 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
 
         redisKeyGeneratorFactory.getRedisKeyGenerator(Principal.class.getName())
             .ifPresent(principalGenerator -> {
-                val principal = digestIdentifier(getPrincipalIdFrom(ticket));
-                val redisPrincipalKey = principalGenerator.forEntry(principal);
-                Stream.of(redisPrincipalKey).forEach(id -> casRedisTemplates.getSessionsRedisTemplate().delete(id));
+                val userId = digestIdentifier(getPrincipalIdFrom(ticket));
+                if (StringUtils.isNotBlank(userId) && ticket instanceof TicketGrantingTicket) {
+                    val digestedId = digestIdentifier(ticket.getId());
+                    val redisPrincipalKey = principalGenerator.forEntry(userId);
+                    val ops = casRedisTemplates.getSessionsRedisTemplate().boundZSetOps(redisPrincipalKey);
+                    ops.remove(digestedId);
+                }
             });
 
         ticketCache.ifAvailable(c -> c.invalidate(redisKeyGenerator.rawKey(redisTicketsKey)));
