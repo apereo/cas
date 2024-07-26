@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.monitor.Monitorable;
+import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
@@ -148,22 +149,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
 
     @Override
     public Collection<? extends Ticket> getTickets() {
-        return ticketCatalog.findAll()
-            .stream()
-            .map(metadata -> getTicketMapInstanceByMetadata(metadata).values())
-            .flatMap(tickets -> {
-                if (properties.getPageSize() > 0) {
-                    return tickets.stream()
-                        .limit(properties.getPageSize())
-                        .map(HazelcastTicketHolder::getTicket).toList()
-                        .stream();
-                }
-                return tickets
-                    .stream()
-                    .map(HazelcastTicketHolder::getTicket);
-            })
-            .map(this::decodeTicket)
-            .collect(Collectors.toSet());
+        return stream().collect(Collectors.toSet());
     }
 
     @Override
@@ -177,6 +163,32 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
             }
         }
         return super.countSessionsFor(principalId);
+    }
+
+    @Override
+    public long sessionCount() {
+        if (properties.getCore().isEnableJet()) {
+            val md = ticketCatalog.find(TicketGrantingTicket.PREFIX);
+            val sql = String.format("SELECT COUNT(*) FROM %s", md.getProperties().getStorageName());
+            LOGGER.debug("Executing SQL query [{}]", sql);
+            try (val results = hazelcastInstance.getSql().execute(sql)) {
+                return results.iterator().next().getObject(0);
+            }
+        }
+        return super.sessionCount();
+    }
+
+    @Override
+    public long serviceTicketCount() {
+        if (properties.getCore().isEnableJet()) {
+            val md = ticketCatalog.find(ServiceTicket.PREFIX);
+            val sql = String.format("SELECT COUNT(*) FROM %s", md.getProperties().getStorageName());
+            LOGGER.debug("Executing SQL query [{}]", sql);
+            try (val results = hazelcastInstance.getSql().execute(sql)) {
+                return results.iterator().next().getObject(0);
+            }
+        }
+        return super.serviceTicketCount();
     }
 
     @Override
@@ -225,6 +237,24 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         return super.getSessionsFor(principalId);
     }
 
+    @Override
+    public Stream<? extends Ticket> stream() {
+        return ticketCatalog
+            .findAll()
+            .stream()
+            .map(metadata -> getTicketMapInstanceByMetadata(metadata).values())
+            .flatMap(tickets -> {
+                var resultStream = tickets
+                    .stream()
+                    .map(HazelcastTicketHolder::getTicket);
+                if (properties.getPageSize() > 0) {
+                    resultStream = resultStream.limit(properties.getPageSize());
+                }
+                return resultStream;
+            })
+            .map(this::decodeTicket);
+    }
+    
     /**
      * Make sure we shutdown HazelCast when the context is destroyed.
      */
