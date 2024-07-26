@@ -115,6 +115,7 @@ public class SpringExpressionLanguageValueResolver implements Function {
         evaluationContext.setVariable("randomNumber4", RandomUtils.randomNumeric(4));
         evaluationContext.setVariable("randomNumber6", RandomUtils.randomNumeric(6));
         evaluationContext.setVariable("randomNumber8", RandomUtils.randomNumeric(8));
+        evaluationContext.setVariable("randomNumber12", RandomUtils.randomNumeric(8));
 
         evaluationContext.setVariable("randomString4", RandomUtils.randomAlphabetic(4));
         evaluationContext.setVariable("randomString6", RandomUtils.randomAlphabetic(6));
