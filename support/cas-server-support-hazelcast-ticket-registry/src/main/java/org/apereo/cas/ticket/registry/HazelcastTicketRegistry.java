@@ -114,9 +114,9 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
         if (metadata != null) {
             val map = getTicketMapInstanceByMetadata(metadata);
             if (map != null) {
-                val ticketHolder = map.get(encTicketId);
-                if (ticketHolder != null && ticketHolder.getTicket() != null) {
-                    val result = decodeTicket(ticketHolder.getTicket());
+                val document = map.get(encTicketId);
+                if (document != null && document.getTicket() != null) {
+                    val result = decodeTicket(document.getTicket());
                     if (predicate != null && predicate.test(result)) {
                         return result;
                     }
@@ -265,11 +265,11 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     public Stream<? extends Ticket> stream() {
         return ticketCatalog
             .findAll()
-            .stream()
+            .parallelStream()
             .map(metadata -> getTicketMapInstanceByMetadata(metadata).values())
             .flatMap(tickets -> {
                 var resultStream = tickets
-                    .stream()
+                    .parallelStream()
                     .map(HazelcastTicketDocument::getTicket);
                 if (properties.getPageSize() > 0) {
                     resultStream = resultStream.limit(properties.getPageSize());

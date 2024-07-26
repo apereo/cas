@@ -18,7 +18,14 @@
     --cas-theme-warning-bg: #fff3cd;
     --cas-theme-border-light: 1px solid rgba(0, 0, 0, .2);
     --mdc-theme-primary: var(--cas-theme-primary, #153e50);
-    --mdc-typography-font-family: "Ubuntu", "Open Sans", Roboto, Arial, sans-serif
+    --mdc-typography-font-family: "Ubuntu", "Open Sans", Roboto, Arial, sans-serif;
+    
+    --navbar-width: 256px;
+    --navbar-width-min: 80px;
+    --navbar-dark-primary: #18283b;
+    --navbar-dark-secondary: #2c3e50;
+    --navbar-light-primary: #f5f6fa;
+    --navbar-light-secondary: #8392a5;
 }
 
 body {
@@ -340,17 +347,25 @@ form button i.mdi {
     /*padding-right: 1px;*/
 }
 
-.aceeditor {
-    position: absolute;
+.ace-editor {
     top: 0;
-    right: 0;
     bottom: 0;
-    left: 0;
+    left:0;
+    right:0;
     font-family: "Monaco", "Menlo", "Ubuntu Mono", "Droid Sans Mono", "Consolas", monospace !important;
 }
 
+.ace-absolute {
+    position: absolute;
+}
+
+.ace-relative {
+    position: relative;
+    border-radius: 10px;
+}
+
 .mdi:before {
-    font-size: 24px;
+    font-size: 20px;
 }
 
 /* custom components */
@@ -373,6 +388,9 @@ form button i.mdi {
 
 /* utilities */
 
+.pl-2 {
+    padding-left: 0.8rem;
+}
 .pr-2 {
     padding-right: 0.8rem;
 }
@@ -545,6 +563,14 @@ form button i.mdi {
     width: auto;
 }
 
+.h-450px {
+    height: 450px;
+}
+
+.h-350px {
+    height: 450px;
+}
+
 .h-25 {
     height: 25%;
 }
@@ -626,6 +652,10 @@ form button i.mdi {
     max-width: 25%;
 }
 
+.mw-20 {
+    max-width: 20%;
+}
+
 .mt-0 {
     margin-top: 0;
 }
@@ -639,6 +669,35 @@ form button i.mdi {
 .border-bottom {
     border-color: #153e50;
     border-bottom: 1px solid var(--cas-theme-primary, #153e50);
+}
+
+select.palantir {
+    width: 100%;
+    height: 48px;
+    border-radius: 10px;
+    border-color: var(--cas-theme-primary);
+    font-family: monospace;
+    font-size: 16px;
+    padding-left: 7px;
+    font-weight: bold;
+}
+
+.elevation-surface {
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    -ms-flex-pack: distribute;
+    justify-content: space-around;
+    min-height: 100px;
+    min-width: 200px;
+    margin: 15px;
+    -ms-flex-align: center;
+    align-items: center;
+    border-radius: 50px;
+    background-color: #e3e9ec;
+}
+
+.swal-overlay {
+    background-color: rgba(17, 67, 119, 0.95);
 }
 
 @media all and (min-width: 768px) {
@@ -752,4 +811,74 @@ form button i.mdi {
     .container-xxl {
         max-width: 90%;
     }
+}
+
+/************************************/
+body {
+    overflow: hidden;
+}
+.sidebar-navigation {
+    border-radius: 5px;
+    display: inline-block;
+    min-height: 100vh;
+    width: 80px;
+    background-color: var(--mdc-theme-primary, #6200ee);
+    float: left;
+}
+.sidebar-navigation ul {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    color: white;
+    list-style: none;
+}
+.sidebar-navigation ul li {
+    padding: 28px 0;
+    cursor: pointer;
+    transition: all ease-out 120ms;
+    border-radius: 10px;
+}
+.sidebar-navigation ul li i {
+    display: block;
+    font-size: 24px;
+    transition: all ease 450ms;
+}
+.sidebar-navigation ul li .tooltip {
+    display: inline-block;
+    position: absolute;
+    background-color: #313443;
+    padding: 8px 15px;
+    border-radius: 3px;
+    margin-top: 10px;
+    left: 190px;
+    opacity: 0;
+    visibility: hidden;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    z-index: 100;
+
+}
+.sidebar-navigation ul li .tooltip:before {
+    content: "";
+    display: block;
+    position: absolute;
+    left: -4px;
+    top: 5px;
+    transform: rotate(45deg);
+    width: 10px;
+    height: 10px;
+    background-color: inherit;
+}
+.sidebar-navigation ul li:hover {
+    background-color: deepskyblue;
+}
+.sidebar-navigation ul li:hover .tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+.sidebar-navigation ul li.active {
+    background-color: steelblue;
+}
+.sidebar-navigation ul li.active i {
+    color: #98D7EC;
 }

@@ -16,7 +16,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
-import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +52,7 @@ public class OAuth20DefaultRefreshTokenFactory implements OAuth20RefreshTokenFac
                                              final ServicesManager servicesManager,
                                              final TicketTrackingPolicy descendantTicketsTrackingPolicy,
                                              final CasConfigurationProperties casProperties) {
-        this(new DefaultUniqueTicketIdGenerator(), ticketRegistry, expirationPolicyBuilder,
+        this(new HostNameBasedUniqueTicketIdGenerator(), ticketRegistry, expirationPolicyBuilder,
             servicesManager, descendantTicketsTrackingPolicy, casProperties);
     }
 

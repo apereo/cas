@@ -51,7 +51,7 @@ import org.apereo.cas.uma.web.controllers.resource.UmaDeleteResourceSetRegistrat
 import org.apereo.cas.uma.web.controllers.resource.UmaFindResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.resource.UmaUpdateResourceSetRegistrationEndpointController;
 import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpointController;
-import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
@@ -327,7 +327,7 @@ public class CasOAuthUmaAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public UniqueTicketIdGenerator umaPermissionTicketIdGenerator() {
-            return new DefaultUniqueTicketIdGenerator();
+            return new HostNameBasedUniqueTicketIdGenerator();
         }
 
         @Bean

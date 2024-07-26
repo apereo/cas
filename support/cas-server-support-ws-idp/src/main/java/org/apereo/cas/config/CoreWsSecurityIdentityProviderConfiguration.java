@@ -125,11 +125,12 @@ class CoreWsSecurityIdentityProviderConfiguration {
             return plan -> {
                 LOGGER.debug("Initializing WS Federation callback service [{}]", wsFederationCallbackService);
                 val service = new CasRegisteredService();
-                service.setId(RandomUtils.nextLong());
+                service.setId(RandomUtils.nextInt());
                 service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
                 service.setName(service.getClass().getSimpleName());
                 service.setDescription("WS-Federation Authentication Request");
                 service.setServiceId(wsFederationCallbackService.getId().concat(".+"));
+                service.markAsInternal();
                 LOGGER.debug("Saving callback service [{}] into the registry", service.getServiceId());
                 plan.registerServiceRegistry(new WSFederationServiceRegistry(applicationContext, service));
             };

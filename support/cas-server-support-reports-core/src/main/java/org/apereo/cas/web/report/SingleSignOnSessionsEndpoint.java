@@ -38,14 +38,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -133,36 +130,9 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
         @Valid
         @ModelAttribute final SsoSessionsRequest ssoSessionsRequest) {
         val sessionsMap = new HashMap<String, Object>();
-
-        val activeSsoSessions = getActiveSsoSessions(ssoSessionsRequest);
+        val activeSsoSessions = getActiveSsoSessions(ssoSessionsRequest).toList();
         sessionsMap.put("activeSsoSessions", activeSsoSessions);
-        val totalTicketGrantingTickets = new AtomicLong();
-        val totalProxyGrantingTickets = new AtomicLong();
-        val totalUsageCount = new AtomicLong();
-        val uniquePrincipals = new HashSet<>(activeSsoSessions.size());
-        for (val activeSsoSession : activeSsoSessions) {
-            if (activeSsoSession.containsKey(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey())) {
-                val isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey()).toString());
-                if (isProxied) {
-                    totalProxyGrantingTickets.incrementAndGet();
-                } else {
-                    totalTicketGrantingTickets.incrementAndGet();
-                    val principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.getAttributeKey()).toString();
-                    uniquePrincipals.add(principal);
-                }
-            } else {
-                totalTicketGrantingTickets.incrementAndGet();
-                val principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.getAttributeKey()).toString();
-                uniquePrincipals.add(principal);
-            }
-            val uses = Long.parseLong(activeSsoSession.get(SsoSessionAttributeKeys.NUMBER_OF_USES.getAttributeKey()).toString());
-            totalUsageCount.getAndAdd(uses);
-        }
-        sessionsMap.put("totalProxyGrantingTickets", totalProxyGrantingTickets);
-        sessionsMap.put("totalTicketGrantingTickets", totalTicketGrantingTickets);
-        sessionsMap.put("totalTickets", totalTicketGrantingTickets.longValue() + totalProxyGrantingTickets.longValue());
-        sessionsMap.put("totalPrincipals", uniquePrincipals.size());
-        sessionsMap.put("totalUsageCount", totalUsageCount);
+        sessionsMap.put("totalSsoSessions", ticketRegistryProvider.getObject().sessionCount());
         return sessionsMap;
     }
 
@@ -234,9 +204,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
         }
 
         val sessionsMap = new HashMap<String, Object>();
-        val collection = getActiveSsoSessions(ssoSessionsRequest);
-        collection
-            .stream()
+        getActiveSsoSessions(ssoSessionsRequest)
             .map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET_ID.getAttributeKey()).toString())
             .forEach(ticketGrantingTicket -> destroySsoSession(ticketGrantingTicket, request, response));
         sessionsMap.put(STATUS, HttpServletResponse.SC_OK);
@@ -305,22 +273,22 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
         private long count = 1000L;
     }
 
-    private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionsRequest ssoSessionsRequest) {
+    private Stream<Map<String, Object>> getActiveSsoSessions(final SsoSessionsRequest ssoSessionsRequest) {
         val option = Optional.ofNullable(ssoSessionsRequest.getType()).map(SsoSessionReportOptions::valueOf).orElse(SsoSessionReportOptions.ALL);
         return getNonExpiredTicketGrantingTickets(ssoSessionsRequest.getFrom(), ssoSessionsRequest.getCount())
             .map(TicketGrantingTicket.class::cast)
             .filter(tgt -> !(option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null))
             .filter(tgt -> StringUtils.isBlank(ssoSessionsRequest.getUsername())
                 || StringUtils.equalsIgnoreCase(ssoSessionsRequest.getUsername(), tgt.getAuthentication().getPrincipal().getId()))
-            .map(tgt -> buildSingleSignOnSessionFromTicketGrantingTicket(option, tgt))
-            .collect(Collectors.toList());
+            .sorted(Comparator.comparing(TicketGrantingTicket::getId))
+            .map(tgt -> buildSingleSignOnSessionFromTicketGrantingTicket(option, tgt));
     }
 
     private static Map<String, Object> buildSingleSignOnSessionFromTicketGrantingTicket(final SsoSessionReportOptions option,
                                                                                         final TicketGrantingTicket tgt) {
         val authentication = tgt.getAuthentication();
         val principal = authentication.getPrincipal();
-        val sso = new HashMap<String, Object>(SsoSessionAttributeKeys.values().length);
+        val sso = new LinkedHashMap<String, Object>(SsoSessionAttributeKeys.values().length);
         sso.put(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.getAttributeKey(), principal.getId());
 
         sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE.getAttributeKey(), authentication.getAuthenticationDate());

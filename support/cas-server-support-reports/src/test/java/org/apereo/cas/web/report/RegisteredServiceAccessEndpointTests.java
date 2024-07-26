@@ -55,6 +55,14 @@ class RegisteredServiceAccessEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
+    void verifyHead() throws Throwable {
+        mockMvc.perform(head("/actuator/serviceAccess")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+    }
+
+    @Test
     void verifyAccessAllowedOperation() throws Exception {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://canvas.example.edu");
         registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy()

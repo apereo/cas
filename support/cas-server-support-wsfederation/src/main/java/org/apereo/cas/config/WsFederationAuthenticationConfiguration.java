@@ -71,7 +71,8 @@ class WsFederationAuthenticationConfiguration {
             final ConfigurableApplicationContext applicationContext) {
             return plan -> {
                 val service = new CasRegisteredService();
-                service.setId(RandomUtils.nextLong());
+                service.setId(RandomUtils.nextInt());
+                service.markAsInternal();
                 service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
                 service.setName(service.getClass().getSimpleName());
                 service.setDescription("WS-Federation Authentication Request");

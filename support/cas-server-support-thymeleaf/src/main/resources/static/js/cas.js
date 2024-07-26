@@ -27,6 +27,37 @@ function copyClipboard(element) {
     document.execCommand("copy");
 }
 
+function getLastTwoWords(str) {
+    const parts = str.split('.');
+    return parts.slice(-2).join('.');
+}
+
+function formatDateYearMonthDayHourMinute(date) {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, "0"); // Months are zero-based
+    const day = d.getDate().toString().padStart(2, "0");
+    const hours = d.getHours().toString().padStart(2, "0");
+    const minutes = d.getMinutes().toString().padStart(2, "0");
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+}
+
+function formatDateYearMonthDay(date) {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const day = d.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
+
+
+function camelcaseToTitleCase(str) {
+    return str
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/^./, char => char.toUpperCase())
+        .trim();
+}
+
 function flattenJSON(data) {
     let result = {};
     let l = undefined;
@@ -266,6 +297,7 @@ function initializeAceEditor(id) {
     editor.session.setMode("ace/mode/json");
     editor.session.setUseWrapMode(true);
     editor.session.setTabSize(4);
+    editor.setShowPrintMargin(false);
     editor.commands.addCommand({
         name: "deleteLine",
         bindKey: {

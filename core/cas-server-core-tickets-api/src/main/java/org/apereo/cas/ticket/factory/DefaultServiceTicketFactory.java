@@ -15,7 +15,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
-import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
+import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.Getter;
@@ -44,7 +44,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
 
     private final CipherExecutor<String, String> cipherExecutor;
 
-    private final UniqueTicketIdGenerator defaultServiceTicketIdGenerator = new DefaultUniqueTicketIdGenerator();
+    private final UniqueTicketIdGenerator defaultServiceTicketIdGenerator = new HostNameBasedUniqueTicketIdGenerator();
 
     private final ServicesManager servicesManager;
 

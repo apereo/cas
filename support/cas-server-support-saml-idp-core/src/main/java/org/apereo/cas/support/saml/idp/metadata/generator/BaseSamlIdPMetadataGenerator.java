@@ -127,12 +127,6 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
         return metadata;
     }
 
-    /**
-     * Generate certificate and key pair.
-     *
-     * @return the pair where key/left is the certificate and value is the key
-     * @throws Exception the exception
-     */
     protected Pair<String, String> generateCertificateAndKey() throws Exception {
         try (val certWriter = new StringWriter(); val keyWriter = new StringWriter()) {
             configurationContext.getSamlIdPCertificateAndKeyWriter().writeCertificateAndKey(keyWriter, certWriter);
