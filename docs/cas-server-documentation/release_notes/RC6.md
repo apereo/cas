@@ -65,9 +65,7 @@ Small efforts are underway to improve the [Palantir Admin Console](../installati
 The console is now able to display and manage registered services and show basic information about system status, health, etc. We'll continue to refine
 the console and add more features in the coming releases.
 
-![image](https://github.com/user-attachments/assets/b03e01a3-c4fd-4a41-8831-fea20452cc33)
-![image](https://github.com/user-attachments/assets/b1edbb4e-811d-4b62-8d75-49598f4b27ba)
-![image](https://github.com/user-attachments/assets/283c4f5e-7f51-4431-a47e-c28d5393782e)
+<img width="60%" alt="image" src="https://github.com/user-attachments/assets/304fc177-7327-460c-b6dc-ae339f1aa76b">
 
 ### Testing Strategy
 
