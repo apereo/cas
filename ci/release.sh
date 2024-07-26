@@ -142,7 +142,6 @@ if [[ -z $REPOSITORY_USER && -z $REPOSITORY_PWD ]]; then
   echo "3) Publish SNAPSHOTs"
   read -p "Choose (1, 2, 3, etc): " selection
   echo
-  clear
 else
   printgreen "Repository username and password are predefined."
   username="$REPOSITORY_USER"
