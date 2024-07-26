@@ -1711,7 +1711,7 @@ document.addEventListener("DOMContentLoaded", () => {
             $("#dashboard").hide();
             swal({
                 title: "Palantir is unavailable!",
-                text: `Palantir requires a number of endpoints to be enabled and exposed, and your CAS deployment fails to do so.\n
+                text: `Palantir requires a number of actuator endpoints to be enabled and exposed, and your CAS deployment fails to do so.\n
                 Please check the console logs to a get list of required URLs and configure your CAS deployment to enable and expose each endpoints in your settings.`,
                 icon: "warning"
             });
