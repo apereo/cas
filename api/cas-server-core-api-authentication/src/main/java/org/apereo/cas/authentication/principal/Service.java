@@ -6,6 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,7 +20,7 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-public interface Service extends Principal {
+public interface Service extends Serializable {
 
     /**
      * Service attribute to keep track of various HTTP request properties.
@@ -61,6 +63,22 @@ public interface Service extends Principal {
      */
     String getOriginalUrl();
 
+    /**
+     * Principal id.
+     *
+     * @return the unique id for the Principal
+     */
+    String getId();
+
+    /**
+     * Principal attributes.
+     *
+     * @return the map of configured attributes for this principal
+     */
+    default Map<String, List<Object>> getAttributes() {
+        return new LinkedHashMap<>(0);
+    }
+    
     /**
      * Gets shortened id.
      *

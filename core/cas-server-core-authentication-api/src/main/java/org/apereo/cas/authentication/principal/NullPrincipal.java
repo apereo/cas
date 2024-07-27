@@ -1,13 +1,11 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.authentication.Authentication;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-
 import java.io.Serial;
 
 /**
@@ -35,7 +33,7 @@ public class NullPrincipal implements Principal {
     /**
      * The singleton instance.
      **/
-    private static NullPrincipal INSTANCE;
+    private static final NullPrincipal INSTANCE = new NullPrincipal();
 
     /**
      * Returns the single instance of this class. Will create
@@ -44,9 +42,6 @@ public class NullPrincipal implements Principal {
      * @return the instance
      */
     public static NullPrincipal getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new NullPrincipal();
-        }
         return INSTANCE;
     }
 
