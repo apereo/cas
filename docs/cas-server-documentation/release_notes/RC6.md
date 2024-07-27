@@ -65,7 +65,9 @@ Small efforts are underway to improve the [Palantir Admin Console](../installati
 The console is now able to display and manage registered services and show basic information about system status, health, etc. We'll continue to refine
 the console and add more features in the coming releases.
 
-<img width="60%" alt="image" src="https://github.com/user-attachments/assets/304fc177-7327-460c-b6dc-ae339f1aa76b">
+<a href="https://github.com/user-attachments/assets/304fc177-7327-460c-b6dc-ae339f1aa76b" data-lightbox="image-0" data-title="Palantir Admin Console">
+    <img src="https://github.com/user-attachments/assets/304fc177-7327-460c-b6dc-ae339f1aa76b" title="Palantir Admin Console" />
+</a>
 
 ### Testing Strategy
 
@@ -92,5 +94,6 @@ are now configured to run with parallelism enabled.
 - Pac4j
 - LettuceMod
 - Hazelcast
+- Kafka
 - EclipseLink
 - Netty
