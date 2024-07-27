@@ -62,14 +62,11 @@ public class DelegatedClientsEndpoint extends BaseCasActuatorEndpoint {
 
     private Map<String, Map<String, String>> buildClientMap(final Collection<BaseClient> currentClients) {
         val clientsMap = new TreeMap<String, Map<String, String>>();
-        currentClients.forEach(client -> {
-            delegatedClientsEndpointContributors.ifAvailable(contributors ->
-                contributors
-                    .stream()
-                    .filter(contributor -> contributor.supports(client))
-                    .forEach(contributor -> clientsMap.put(client.getName(), contributor.contribute(client))));
-
-        });
+        currentClients.forEach(client -> delegatedClientsEndpointContributors.ifAvailable(contributors ->
+            contributors
+                .stream()
+                .filter(contributor -> contributor.supports(client))
+                .forEach(contributor -> clientsMap.put(client.getName(), contributor.contribute(client)))));
         return clientsMap;
     }
 }

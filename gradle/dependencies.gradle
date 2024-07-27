@@ -453,6 +453,12 @@ ext.libraries = [
                 dependencies.create("org.apache.commons:commons-text:$commonsTextVersion") {
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "org.apache.commons", module: "commons-codec")
+                    exclude(group: "org.apache.commons", module: "commons-io")
+                },
+                dependencies.create("org.apache.commons:commons-compress:$commonsCompressVersion") {
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
                 },
                 dependencies.create("org.apache.commons:commons-pool2:$commonsPoolVersion") {
                 },

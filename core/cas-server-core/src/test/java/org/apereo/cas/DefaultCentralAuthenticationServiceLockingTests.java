@@ -39,17 +39,15 @@ class DefaultCentralAuthenticationServiceLockingTests {
                 RegisteredServiceTestUtils.getService());
             val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
             val serviceTicketIds = new CopyOnWriteArrayList<>();
-            Runnable runnable = () -> {
-                FunctionUtils.doUnchecked(u -> {
-                    for (var i = 0; i < TICKETS_PER_REQUEST; i++) {
-                        val serviceName = "testDefault" + '-' + Thread.currentThread().getName() + '-' + i;
-                        val mockService = RegisteredServiceTestUtils.getService(serviceName);
-                        val mockCtx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), mockService);
-                        val serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), mockService, mockCtx);
-                        serviceTicketIds.add(serviceTicketId.getId());
-                    }
-                });
-            };
+            Runnable runnable = () -> FunctionUtils.doUnchecked(u -> {
+                for (var i = 0; i < TICKETS_PER_REQUEST; i++) {
+                    val serviceName = "testDefault" + '-' + Thread.currentThread().getName() + '-' + i;
+                    val mockService = RegisteredServiceTestUtils.getService(serviceName);
+                    val mockCtx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), mockService);
+                    val serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), mockService, mockCtx);
+                    serviceTicketIds.add(serviceTicketId.getId());
+                }
+            });
             val threads = new ArrayList<Thread>();
             for (var i = 0; i < REQUEST_IN_BROWSER_CONCURRENCY; i++) {
                 val thread = new Thread(runnable);
@@ -84,17 +82,15 @@ class DefaultCentralAuthenticationServiceLockingTests {
                 RegisteredServiceTestUtils.getService());
             val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
             val serviceTicketIds = new CopyOnWriteArrayList<>();
-            Runnable runnable = () -> {
-                FunctionUtils.doUnchecked(u -> {
-                    for (var i = 0; i < TICKETS_PER_REQUEST; i++) {
-                        val serviceName = "testDefault" + '-' + Thread.currentThread().getName() + '-' + i;
-                        val mockService = RegisteredServiceTestUtils.getService(serviceName);
-                        val mockCtx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), mockService);
-                        val serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), mockService, mockCtx);
-                        serviceTicketIds.add(serviceTicketId.getId());
-                    }
-                });
-            };
+            Runnable runnable = () -> FunctionUtils.doUnchecked(u -> {
+                for (var i = 0; i < TICKETS_PER_REQUEST; i++) {
+                    val serviceName = "testDefault" + '-' + Thread.currentThread().getName() + '-' + i;
+                    val mockService = RegisteredServiceTestUtils.getService(serviceName);
+                    val mockCtx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), mockService);
+                    val serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), mockService, mockCtx);
+                    serviceTicketIds.add(serviceTicketId.getId());
+                }
+            });
             val threads = new ArrayList<Thread>();
             for (var i = 0; i < REQUEST_IN_BROWSER_CONCURRENCY; i++) {
                 val thread = new Thread(runnable);
