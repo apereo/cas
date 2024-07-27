@@ -38,4 +38,15 @@ public interface PrincipalFactory extends Serializable {
      * @throws Throwable the throwable
      */
     Principal createPrincipal(String id, Map<String, List<Object>> attributes) throws Throwable;
+
+    /**
+     * Principal Without attributes.
+     *
+     * @param principal the principal
+     * @return the principal
+     * @throws Throwable the throwable
+     */
+    default Principal withoutAttributes(final Principal principal) throws Throwable {
+        return createPrincipal(principal.getId());
+    }
 }
