@@ -74,7 +74,8 @@ public class WsFederationNavigationController {
     }
 
     protected Service determineService(final HttpServletRequest request) {
-        return ObjectUtils.defaultIfNull(argumentExtractor.extractService(request),
-            webApplicationServiceFactory.createService(casLoginEndpoint));
+        request.setAttribute(ServiceFactory.COLLECT_SERVICE_ATTRIBUTES, false);
+        val defaultService = webApplicationServiceFactory.createService(casLoginEndpoint);
+        return ObjectUtils.defaultIfNull(argumentExtractor.extractService(request), defaultService);
     }
 }
