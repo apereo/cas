@@ -14,6 +14,12 @@ import jakarta.servlet.http.HttpServletRequest;
 public interface ServiceFactory<T extends Service> extends Ordered {
 
     /**
+     * Flag as a request attribute to indicate if the factory
+     * should collect service attributes such as request headers, cookies, etc.
+     */
+    String COLLECT_SERVICE_ATTRIBUTES = "collectServiceAttributes";
+
+    /**
      * Create service object based on the parameters of the request.
      *
      * @param request the request

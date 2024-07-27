@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +19,20 @@ import java.util.Map;
  * @since 3.0.0
  */
 public interface Service extends Principal {
+
+    /**
+     * Service attribute to keep track of various HTTP request properties.
+     */
+    String SERVICE_ATTRIBUTE_HTTP_REQUEST = "httpRequest";
+    /**
+     * Service attribute to keep track of the available cookies.
+     */
+    String SERVICE_ATTRIBUTE_COOKIES = "cookies";
+    /**
+     * Service attribute to keep track of the request headers.
+     */
+    String SERVICE_ATTRIBUTE_HEADERS = "headers";
+    
     /**
      * Logger instance.
      */
@@ -82,5 +95,4 @@ public interface Service extends Principal {
         }
         return serviceId;
     }
-
 }
