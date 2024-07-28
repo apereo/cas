@@ -22,6 +22,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -85,8 +86,9 @@ class OAuth20AuthenticationServiceSelectionStrategyTests extends AbstractOAuth20
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request, new MockHttpServletResponse()));
         val service = strategy.resolveServiceFrom(RegisteredServiceTestUtils.getService("https://example.org"));
         assertNotNull(service);
-        assertTrue(service.getAttributes().containsKey("%s.requestURL".formatted(HttpServletRequest.class.getName())));
-        assertTrue(service.getAttributes().containsKey("%s.localeName".formatted(HttpServletRequest.class.getName())));
+        val httpRequest = (Map) service.getAttributes().get(Service.SERVICE_ATTRIBUTE_HTTP_REQUEST);
+        assertTrue(httpRequest.containsKey("%s.requestURL".formatted(HttpServletRequest.class.getName())));
+        assertTrue(httpRequest.containsKey("%s.localeName".formatted(HttpServletRequest.class.getName())));
         assertTrue(service.getAttributes().containsKey(CasProtocolConstants.PARAMETER_SERVICE));
     }
 }

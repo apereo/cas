@@ -7,7 +7,6 @@ import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
@@ -23,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.stream.Collectors;
+import java.util.zip.ZipInputStream;
 
 /**
  * This is {@link CasEventsReportEndpoint}.
@@ -108,14 +108,15 @@ public class CasEventsReportEndpoint extends BaseCasRestActuatorEndpoint {
     private ResponseEntity<CasEvent> importEventsAsStream(final HttpServletRequest request) throws Throwable {
         val eventRepository = applicationContext.getBean(CasEventRepository.BEAN_NAME, CasEventRepository.class);
         try (val bais = new ByteArrayInputStream(IOUtils.toByteArray(request.getInputStream()));
-             val zipIn = new ZipArchiveInputStream(bais)) {
+             val zipIn = new ZipInputStream(bais)) {
             var entry = zipIn.getNextEntry();
             while (entry != null) {
-                if (!entry.isDirectory()) {
+                if (!entry.isDirectory() && !entry.getName().contains("..") && entry.getName().endsWith(".json")) {
                     val requestBody = IOUtils.toString(zipIn, StandardCharsets.UTF_8);
                     val casEvent = MAPPER.readValue(requestBody, CasEvent.class);
                     eventRepository.save(casEvent);
                 }
+                zipIn.closeEntry();
                 entry = zipIn.getNextEntry();
             }
         }
