@@ -25,15 +25,9 @@ public class SimpleWebApplicationServiceImpl extends AbstractWebApplicationServi
     @Serial
     private static final long serialVersionUID = 8334068957483758042L;
 
-    /**
-     * Instantiates a new Simple web application service.
-     *
-     * @param id          the id
-     * @param originalUrl the original url
-     * @param artifactId  the artifact id
-     */
     @JsonCreator
-    protected SimpleWebApplicationServiceImpl(@JsonProperty("id") final String id, @JsonProperty("originalUrl") final String originalUrl,
+    protected SimpleWebApplicationServiceImpl(@JsonProperty("id") final String id,
+                                              @JsonProperty("originalUrl") final String originalUrl,
                                               @JsonProperty("artifactId") final String artifactId) {
         super(id, originalUrl, artifactId);
     }

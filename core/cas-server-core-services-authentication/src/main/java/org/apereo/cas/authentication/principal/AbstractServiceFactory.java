@@ -119,18 +119,24 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
             FunctionUtils.doIfNotBlank(request.getContentType(), value -> collectHttpRequestProperty("contentType", value, httpRequest));
             FunctionUtils.doIfNotBlank(request.getContextPath(), value -> collectHttpRequestProperty("contextPath", value, httpRequest));
             FunctionUtils.doIfNotBlank(request.getLocalName(), value -> collectHttpRequestProperty("localeName", value, httpRequest));
-            attributes.put(Service.SERVICE_ATTRIBUTE_HTTP_REQUEST, httpRequest);
+            if (!httpRequest.isEmpty()) {
+                attributes.put(Service.SERVICE_ATTRIBUTE_HTTP_REQUEST, httpRequest);
+            }
 
             val cookies = new LinkedHashMap<>();
             FunctionUtils.doIfNotNull(request.getCookies(), __ -> Arrays.stream(request.getCookies())
                 .forEach(cookie -> collectHttpRequestProperty("cookie-%s".formatted(cookie.getName()), cookie.getValue(), cookies)));
-            attributes.put(Service.SERVICE_ATTRIBUTE_COOKIES, cookies);
-
+            if (!cookies.isEmpty()) {
+                attributes.put(Service.SERVICE_ATTRIBUTE_COOKIES, cookies);
+            }
+            
             val headers = new LinkedHashMap<>();
             FunctionUtils.doIfNotNull(request.getHeaderNames(), __ -> StreamSupport.stream(
                     Spliterators.spliteratorUnknownSize(request.getHeaderNames().asIterator(), Spliterator.ORDERED), false)
                 .forEach(header -> collectHttpRequestProperty("header-%s".formatted(header), request.getHeader(header), headers)));
-            attributes.put(Service.SERVICE_ATTRIBUTE_HEADERS, headers);
+            if (!headers.isEmpty()) {
+                attributes.put(Service.SERVICE_ATTRIBUTE_HEADERS, headers);
+            }
         }
 
         LOGGER.trace("Extracted attributes [{}] for service [{}]", attributes, service.getId());

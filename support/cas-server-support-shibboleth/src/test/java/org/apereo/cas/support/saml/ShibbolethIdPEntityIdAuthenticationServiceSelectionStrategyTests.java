@@ -97,7 +97,7 @@ class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
             "https://cas.example.com/login?service=" + serviceUrl);
         val result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
         assertEquals("https://service.example.com", result.getId());
-        assertEquals(svc.getOriginalUrl(), result.getAttributes().get(Service.class.getName()).getFirst().toString());
+        assertEquals(svc.getOriginalUrl(), result.getFirstAttribute(Service.class.getName(), String.class));
     }
 
     @Test

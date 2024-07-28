@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -53,10 +54,13 @@ class SimpleWebApplicationServiceImplTests {
     void verifyResponse() throws Throwable {
         val request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.CONST_TEST_URL);
-        val impl = new WebApplicationServiceFactory().createService(request);
-
+        val service = new WebApplicationServiceFactory().createService(request);
+        assertFalse(service.getAttributes().isEmpty());
+        assertFalse(service.getAttributeAs("service", List.class).isEmpty());
+        assertFalse(service.getFirstAttribute("service", String.class).isEmpty());
+        assertThrows(ClassCastException.class, () -> service.getAttributeAs("service", Double.class));
         val response = new WebApplicationServiceResponseBuilder(servicesManager, SimpleUrlValidator.getInstance())
-            .build(impl, "ticketId", RegisteredServiceTestUtils.getAuthentication());
+            .build(service, "ticketId", RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.responseType());
     }
