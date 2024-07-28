@@ -19,7 +19,6 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.Table;
 import java.io.Serial;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -70,7 +69,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
 
     @Column(columnDefinition = "json")
     @Convert(converter = MultivaluedMapToJsonAttributeConverter.class)
-    private Map<String, List<Object>> attributes = new HashMap<>(0);
+    private Map<String, Object> attributes = new HashMap<>(0);
 
     protected AbstractWebApplicationService(final String id, final String originalUrl, final String artifactId) {
         this.id = id;

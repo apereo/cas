@@ -53,7 +53,7 @@ public interface Service extends Serializable {
      *
      * @param attributes the new attributes
      */
-    void setAttributes(Map<String, List<Object>> attributes);
+    void setAttributes(Map<String, Object> attributes);
 
     /**
      * Return the original url provided (as {@code service} or {@code targetService} request parameter).
@@ -75,10 +75,43 @@ public interface Service extends Serializable {
      *
      * @return the map of configured attributes for this principal
      */
-    default Map<String, List<Object>> getAttributes() {
+    default Map<String, Object> getAttributes() {
         return new LinkedHashMap<>(0);
     }
-    
+
+    /**
+     * Gets attribute as requested type.
+     *
+     * @param <T>   the type parameter
+     * @param name  the name
+     * @param clazz the clazz
+     * @return the attribute as
+     */
+    default <T> T getAttributeAs(final String name, final Class<T> clazz) {
+        val attribute = getAttributes().get(name);
+        if (attribute == null) {
+            return null;
+        }
+        if (!clazz.isAssignableFrom(attribute.getClass())) {
+            throw new ClassCastException("Attribute " + name + '[' + attribute
+                + " is of type " + attribute.getClass() + " when we were expecting " + clazz);
+        }
+        return (T) attribute;
+    }
+
+    /**
+     * Gets first attribute value with requested type.
+     *
+     * @param <T>   the type parameter
+     * @param name  the name
+     * @param clazz the clazz
+     * @return the first attribute
+     */
+    default <T> T getFirstAttribute(final String name, final Class<T> clazz) {
+        val values = getAttributeAs(name, List.class);
+        return values == null || values.isEmpty() ? null : clazz.cast(values.getFirst());
+    }
+
     /**
      * Gets shortened id.
      *

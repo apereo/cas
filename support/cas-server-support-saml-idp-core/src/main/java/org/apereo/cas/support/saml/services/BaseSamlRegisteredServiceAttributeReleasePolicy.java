@@ -50,17 +50,17 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
             return null;
         }
         LOGGER.debug("Attempting to determine entity id for service [{}]", selectedService);
-        val entityIdAttribute = selectedService.getAttributes().get(SamlProtocolConstants.PARAMETER_ENTITY_ID);
+        val entityIdAttribute = selectedService.getAttributeAs(SamlProtocolConstants.PARAMETER_ENTITY_ID, List.class);
         if (entityIdAttribute != null && !entityIdAttribute.isEmpty()) {
             LOGGER.debug("Found entity id [{}] as a service attribute", entityIdAttribute);
             return CollectionUtils.firstElement(entityIdAttribute).map(Object::toString).orElseThrow();
         }
-        val providerIdAttribute = selectedService.getAttributes().get(SamlIdPConstants.PROVIDER_ID);
+        val providerIdAttribute = selectedService.getAttributeAs(SamlIdPConstants.PROVIDER_ID, List.class);
         if (providerIdAttribute != null && !providerIdAttribute.isEmpty()) {
             LOGGER.debug("Found provider entity id [{}] as a service attribute", providerIdAttribute);
             return CollectionUtils.firstElement(providerIdAttribute).map(Object::toString).orElseThrow();
         }
-        val samlRequest = selectedService.getAttributes().get(SamlProtocolConstants.PARAMETER_SAML_REQUEST);
+        val samlRequest = selectedService.getAttributeAs(SamlProtocolConstants.PARAMETER_SAML_REQUEST, List.class);
         if (samlRequest != null && !samlRequest.isEmpty()) {
             val applicationContext = context.getApplicationContext();
             val sessionStore = applicationContext.getBean("samlIdPDistributedSessionStore", SessionStore.class);

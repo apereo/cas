@@ -51,7 +51,7 @@ public class AttributeQueryAttributeReleasePolicy extends BaseSamlRegisteredServ
 
     @Override
     protected boolean supports(final RegisteredServiceAttributeReleasePolicyContext context) {
-        val serviceAttributes = context.getService().getAttributes().getOrDefault("owner", List.of());
+        val serviceAttributes = (List) context.getService().getAttributes().getOrDefault("owner", List.of());
         return super.supports(context) && serviceAttributes.contains(SamlAttributeQueryTicket.class.getName());
     }
 }
