@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.DelegatedAuthenticationCandidateProfile;
 import org.apereo.cas.authentication.principal.DelegatedClientAuthenticationCredentialResolver;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.TestBaseDelegatedClientAuthenticationCredentialResolver;
 import org.apereo.cas.logout.slo.SingleLogoutContinuation;
@@ -186,7 +185,7 @@ class DelegatedClientAuthenticationActionTests {
             assertEquals("theme", context.getHttpServletRequest().getAttribute(ThemeChangeInterceptor.DEFAULT_PARAM_NAME));
             assertEquals(Locale.getDefault().getCountry(), context.getHttpServletRequest().getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
             assertEquals(HttpMethod.POST.name(), context.getHttpServletRequest().getAttribute(CasProtocolConstants.PARAMETER_METHOD));
-            assertEquals(service.getId(), ((Principal) context.getHttpServletRequest().getAttribute(CasProtocolConstants.PARAMETER_SERVICE)).getId());
+            assertEquals(service.getId(), ((Service) context.getHttpServletRequest().getAttribute(CasProtocolConstants.PARAMETER_SERVICE)).getId());
             val flowScope = context.getFlowScope();
             assertEquals(service.getId(), flowScope.get(CasProtocolConstants.PARAMETER_SERVICE, Service.class).getId());
             val credential = flowScope.get(CasWebflowConstants.VAR_ID_CREDENTIAL, ClientCredential.class);

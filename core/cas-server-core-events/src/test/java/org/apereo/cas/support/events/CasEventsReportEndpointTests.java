@@ -144,9 +144,9 @@ class CasEventsReportEndpointTests {
                 .setCreationTime(ZonedDateTime.now(Clock.systemUTC()).toString())
                 .putTimestamp(System.currentTimeMillis());
             val content = MAPPER.writeValueAsString(event);
-            var name = event.getEventId() + ".json";
-            val e = new ZipEntry(name);
-            zipStream.putNextEntry(e);
+            val name = event.getEventId() + ".json";
+            val entry = new ZipEntry(name);
+            zipStream.putNextEntry(entry);
 
             val data = content.getBytes(StandardCharsets.UTF_8);
             zipStream.write(data, 0, data.length);

@@ -18,7 +18,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -48,6 +47,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.ZipInputStream;
 
 /**
  * This is {@link RegisteredServicesEndpoint}.
@@ -345,16 +345,17 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     private ResponseEntity<RegisteredService> importServicesAsStream(final HttpServletRequest request) throws IOException {
         var servicesToImport = Stream.<RegisteredService>empty();
         try (val bais = new ByteArrayInputStream(IOUtils.toByteArray(request.getInputStream()));
-             val zipIn = new ZipArchiveInputStream(bais)) {
+             val zipIn = new ZipInputStream(bais)) {
             var entry = zipIn.getNextEntry();
             while (entry != null) {
-                if (!entry.isDirectory()) {
+                if (!entry.isDirectory() && !entry.getName().contains("..") && entry.getName().endsWith(".json")) {
                     val requestBody = IOUtils.toString(zipIn, StandardCharsets.UTF_8);
                     servicesToImport = Stream.concat(servicesToImport, registeredServiceSerializers.getObject()
                         .stream()
                         .map(serializer -> serializer.from(requestBody))
                         .filter(Objects::nonNull));
                 }
+                zipIn.closeEntry();
                 entry = zipIn.getNextEntry();
             }
         }
