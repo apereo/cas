@@ -13,18 +13,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 /**
- * This is {@link ConfigurationJasyptCipherEndpoint}.
+ * This is {@link CasConfigurationEndpoint}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
  */
 @Endpoint(id = "casConfig", enableByDefault = false)
-public class ConfigurationJasyptCipherEndpoint extends BaseCasRestActuatorEndpoint {
+public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
     private final CipherExecutor<String, String> casConfigurationCipherExecutor;
 
-    public ConfigurationJasyptCipherEndpoint(final CasConfigurationProperties casProperties,
-                                             final ConfigurableApplicationContext applicationContext,
-                                             final CipherExecutor<String, String> casConfigurationCipherExecutor) {
+    public CasConfigurationEndpoint(final CasConfigurationProperties casProperties,
+                                    final ConfigurableApplicationContext applicationContext,
+                                    final CipherExecutor<String, String> casConfigurationCipherExecutor) {
         super(casProperties, applicationContext);
         this.casConfigurationCipherExecutor = casConfigurationCipherExecutor;
     }

@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.email;
 
 import org.apereo.cas.configuration.model.support.aws.BaseAmazonWebServicesProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,7 +17,7 @@ import java.io.Serial;
 @Setter
 @RequiresModule(name = "cas-server-support-aws-ses", automated = true)
 @Accessors(chain = true)
-@JsonFilter("AmazonSesProperties")
+
 public class AmazonSesProperties extends BaseAmazonWebServicesProperties {
     @Serial
     private static final long serialVersionUID = -1202529110472766098L;

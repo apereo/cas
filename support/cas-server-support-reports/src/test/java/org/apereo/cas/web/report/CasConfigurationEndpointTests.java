@@ -12,7 +12,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link ConfigurationJasyptCipherEndpointTests}.
+ * This is {@link CasConfigurationEndpointTests}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
@@ -23,15 +23,15 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("ActuatorEndpoint")
 @ImportAutoConfiguration(CasCoreEnvironmentBootstrapAutoConfiguration.class)
-class ConfigurationJasyptCipherEndpointTests extends AbstractCasEndpointTests {
+class CasConfigurationEndpointTests extends AbstractCasEndpointTests {
     @Autowired
-    @Qualifier("casConfigurationCipherEndpoint")
-    private ConfigurationJasyptCipherEndpoint casConfigurationCipherEndpoint;
+    @Qualifier("casConfigurationEndpoint")
+    private CasConfigurationEndpoint casConfigurationEndpoint;
 
     @Test
     void verifyOperation() throws Throwable {
         val value = UUID.randomUUID().toString();
-        val encoded = casConfigurationCipherEndpoint.encrypt(value).getBody();
-        assertEquals(casConfigurationCipherEndpoint.decrypt(encoded).getBody(), value);
+        val encoded = casConfigurationEndpoint.encrypt(value).getBody();
+        assertEquals(casConfigurationEndpoint.decrypt(encoded).getBody(), value);
     }
 }

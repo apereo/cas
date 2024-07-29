@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.core.web.flow;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,7 +20,7 @@ import java.io.Serializable;
 @Setter
 @RequiresModule(name = "cas-server-core-webflow", automated = true)
 @Accessors(chain = true)
-@JsonFilter("WebflowAutoConfigurationProperties")
+
 public class WebflowAutoConfigurationProperties implements CasFeatureModule, Serializable {
 
     @Serial

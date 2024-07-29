@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.TriStateBoolean;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -25,7 +24,7 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("Pac4jSamlClientProperties")
+
 public class Pac4jSamlClientProperties extends Pac4jBaseClientProperties {
 
     @Serial

@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.pac4j.saml;
 
 import org.apereo.cas.configuration.model.support.aws.BaseAmazonWebServicesProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,7 +17,7 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("Pac4jSamlServiceProviderMetadataAmazonS3Properties")
+
 public class Pac4jSamlServiceProviderMetadataAmazonS3Properties extends BaseAmazonWebServicesProperties {
     @Serial
     private static final long serialVersionUID = -1214734720383722585L;

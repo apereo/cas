@@ -28,8 +28,8 @@ function copyClipboard(element) {
 }
 
 function getLastTwoWords(str) {
-    const parts = str.split('.');
-    return parts.slice(-2).join('.');
+    const parts = str.split(".");
+    return parts.slice(-2).join(".");
 }
 
 function formatDateYearMonthDayHourMinute(date) {
@@ -50,10 +50,18 @@ function formatDateYearMonthDay(date) {
     return `${year}-${month}-${day}`;
 }
 
+function toKebabCase(str) {
+    return str
+        .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+        .replace(/[^a-zA-Z0-9.[\]]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .toLowerCase();      
+}
+
 
 function camelcaseToTitleCase(str) {
     return str
-        .replace(/([A-Z])/g, ' $1')
+        .replace(/([A-Z])/g, " $1")
         .replace(/^./, char => char.toUpperCase())
         .trim();
 }
@@ -94,7 +102,7 @@ function convertMemoryToGB(memoryStr) {
         KB: 1024,
         MB: 1024 ** 2,
         GB: 1024 ** 3,
-        TB: 1024 ** 4,
+        TB: 1024 ** 4
     };
     const regex = /(\d+(\.\d+)?)\s*(B|KB|MB|GB|TB)/i;
     const match = memoryStr.match(regex);
@@ -105,12 +113,12 @@ function convertMemoryToGB(memoryStr) {
 }
 
 function isValidURL(str) {
-    let pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
-        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-        '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+    let pattern = new RegExp("^(https?:\\/\\/)?" + // protocol
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+        "(\\#[-a-z\\d_]*)?$", "i"); // fragment locator
     return !!pattern.test(str);
 }
 
@@ -120,54 +128,54 @@ function requestGeoPosition() {
         navigator.geolocation.watchPosition(showGeoPosition, logGeoLocationError,
             {maximumAge: 600000, timeout: 5000, enableHighAccuracy: true});
     } else {
-        console.log('Browser does not support Geo Location');
+        console.log("Browser does not support Geo Location");
     }
 }
 
 function logGeoLocationError(error) {
     switch (error.code) {
-        case error.PERMISSION_DENIED:
-            console.log('User denied the request for GeoLocation.');
-            break;
-        case error.POSITION_UNAVAILABLE:
-            console.log('Location information is unavailable.');
-            break;
-        case error.TIMEOUT:
-            console.log('The request to get user location timed out.');
-            break;
-        default:
-            console.log('An unknown error occurred.');
-            break;
+    case error.PERMISSION_DENIED:
+        console.log("User denied the request for GeoLocation.");
+        break;
+    case error.POSITION_UNAVAILABLE:
+        console.log("Location information is unavailable.");
+        break;
+    case error.TIMEOUT:
+        console.log("The request to get user location timed out.");
+        break;
+    default:
+        console.log("An unknown error occurred.");
+        break;
     }
 }
 
 function showGeoPosition(position) {
     let loc = `${position.coords.latitude},${position.coords.longitude},${position.coords.accuracy},${position.timestamp}`;
     console.log(`Tracking geolocation for ${loc}`);
-    $('[name="geolocation"]').val(loc);
+    $("[name=\"geolocation\"]").val(loc);
 }
 
 function preserveAnchorTagOnForm() {
-    $('#fm1').submit(() => {
+    $("#fm1").submit(() => {
         let location = self.document.location;
 
-        let action = $('#fm1').attr('action');
+        let action = $("#fm1").attr("action");
         if (action === undefined) {
             action = location.href;
         } else {
             action += location.search + encodeURIComponent(location.hash);
         }
-        $('#fm1').attr('action', action);
+        $("#fm1").attr("action", action);
 
     });
 }
 
 function preventFormResubmission() {
-    $('form').submit(() => {
-        $(':submit').attr('disabled', true);
-        let altText = $(':submit').attr('data-processing-text');
+    $("form").submit(() => {
+        $(":submit").attr("disabled", true);
+        let altText = $(":submit").attr("data-processing-text");
         if (altText) {
-            $(':submit').attr('value', altText);
+            $(":submit").attr("value", altText);
         }
         return true;
     });
@@ -226,7 +234,7 @@ function clearSessionStorage() {
         console.log("Browser does not support session storage for write-ops");
     } else {
         window.sessionStorage.clear();
-        console.log("Cleared session storage")
+        console.log("Cleared session storage");
     }
 }
 
@@ -256,27 +264,27 @@ function resourceLoadedSuccessfully() {
             requestGeoPosition();
         }
 
-        if ($(':focus').length === 0) {
-            $('input:visible:enabled:first').focus();
+        if ($(":focus").length === 0) {
+            $("input:visible:enabled:first").focus();
         }
 
         preserveAnchorTagOnForm();
         preventFormResubmission();
-        $('#fm1 input[name="username"],[name="password"]').trigger('input');
-        $('#fm1 input[name="username"]').focus();
+        $("#fm1 input[name=\"username\"],[name=\"password\"]").trigger("input");
+        $("#fm1 input[name=\"username\"]").focus();
 
-        $('.reveal-password').click(ev => {
-            if ($('.pwd').attr('type') === 'text') {
-                $('.pwd').attr('type', 'password');
+        $(".reveal-password").click(ev => {
+            if ($(".pwd").attr("type") === "text") {
+                $(".pwd").attr("type", "password");
                 $(".reveal-password-icon").removeClass("mdi mdi-eye-off").addClass("mdi mdi-eye");
             } else {
-                $('.pwd').attr('type', 'text');
+                $(".pwd").attr("type", "text");
                 $(".reveal-password-icon").removeClass("mdi mdi-eye").addClass("mdi mdi-eye-off");
             }
             ev.preventDefault();
         });
         // console.log(`JQuery Ready: ${typeof (jqueryReady)}`);
-        if (typeof (jqueryReady) == 'function') {
+        if (typeof (jqueryReady) == "function") {
             jqueryReady();
         }
     });
@@ -284,9 +292,11 @@ function resourceLoadedSuccessfully() {
 
 function autoHideElement(id, timeout = 1500) {
     let elementToFadeOut = document.getElementById(id);
+
     function hideElement() {
         $(elementToFadeOut).fadeOut(500);
     }
+
     setTimeout(hideElement, timeout);
 }
 
@@ -307,8 +317,8 @@ function initializeAceEditor(id) {
         exec: editor => {
             const cursorPosition = editor.getCursorPosition();
             editor.session.remove({
-                start: { row: cursorPosition.row, column: 0 },
-                end: { row: cursorPosition.row + 1, column: 0 }
+                start: {row: cursorPosition.row, column: 0},
+                end: {row: cursorPosition.row + 1, column: 0}
             });
         },
         readOnly: false

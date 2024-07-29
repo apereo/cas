@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.core.monitor;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -28,7 +27,7 @@ import java.util.stream.Stream;
 @Setter
 @ToString
 @Accessors(chain = true)
-@JsonFilter("ActuatorEndpointsMonitorProperties")
+
 public class ActuatorEndpointsMonitorProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -3375777593395683691L;

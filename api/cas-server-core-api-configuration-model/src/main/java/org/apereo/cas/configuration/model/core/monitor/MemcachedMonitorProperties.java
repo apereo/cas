@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.core.monitor;
 import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,7 +20,7 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("MemcachedMonitorProperties")
+
 @Deprecated(since = "7.0.0")
 public class MemcachedMonitorProperties extends BaseMemcachedProperties {
     @Serial

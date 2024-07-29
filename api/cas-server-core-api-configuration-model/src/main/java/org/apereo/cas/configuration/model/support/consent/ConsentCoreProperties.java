@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.configuration.model.core.web.flow.WebflowAutoConfigurationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -26,7 +25,7 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("ConsentCoreProperties")
+
 public class ConsentCoreProperties implements Serializable {
 
     @Serial

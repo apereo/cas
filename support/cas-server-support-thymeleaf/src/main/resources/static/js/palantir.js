@@ -9,7 +9,8 @@ const Tabs = {
     ACCESS_STRATEGY: 4,
     LOGGING: 5,
     SSO_SESSIONS: 6,
-    PERSON_DIRECTORY: 7
+    PERSON_DIRECTORY: 7,
+    AUTHENTICATION: 8
 };
 
 const Endpoints = {
@@ -32,6 +33,9 @@ const Endpoints = {
     INFO: `${casServerPrefix}/actuator/info`,
     CAS_FEATURES: `${casServerPrefix}/actuator/casFeatures`,
     PERSON_DIRECTORY: `${casServerPrefix}/actuator/personDirectory`,
+    CONFIG_PROPS: `${casServerPrefix}/actuator/configprops`,
+    AUTHENTICATION_HANDLERS: `${casServerPrefix}/actuator/authenticationHandlers`,
+    AUTHENTICATION_POLICIES: `${casServerPrefix}/actuator/authenticationPolicies`,
 };
 
 /**
@@ -1559,6 +1563,81 @@ async function initializePersonDirectoryOperations() {
     
 }
 
+async function initializeAuthenticationOperations() {
+    const authenticationHandlersTable = $("#authenticationHandlersTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        columnDefs: [
+            {visible: false, targets: 0}
+        ],
+        order: [0, "asc"],
+        drawCallback: settings => {
+            $("#authenticationHandlersTable tr").addClass("mdc-data-table__row");
+            $("#authenticationHandlersTable td").addClass("mdc-data-table__cell");
+
+            const api = settings.api;
+            const rows = api.rows({page: "current"}).nodes();
+            let last = null;
+            api.column(0, {page: "current"})
+                .data()
+                .each((group, i) => {
+                    if (last !== group) {
+                        $(rows).eq(i).before(
+                            `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
+                                            <td colspan="3">${group}</td></tr>`.trim());
+                        last = group;
+                    }
+                });
+        }
+    });
+
+    authenticationHandlersTable.clear();
+    $.get(Endpoints.AUTHENTICATION_HANDLERS, response => {
+        for (const handler of response) {
+            authenticationHandlersTable.row.add({
+                0: `${handler.name}`,
+                1: `<code>${handler.type}</code>`,
+                2: `<code>${handler.state}</code>`,
+                3: `<code>${handler.order}</code>`
+            });
+        }
+        authenticationHandlersTable.draw();
+    }).fail((xhr, status, error) => {
+        console.error("Error fetching data:", error);
+        displayErrorInBanner(xhr);
+    });
+
+
+    const authenticationPoliciesTable = $("#authenticationPoliciesTable").DataTable({
+        pageLength: 10,
+        order: [0, "asc"],
+        autoWidth: false,
+        columnDefs: [
+            {width: "80%", targets: 0},
+            {width: "20%", targets: 1}
+        ],
+        drawCallback: settings => {
+            $("#authenticationPoliciesTable tr").addClass("mdc-data-table__row");
+            $("#authenticationPoliciesTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    authenticationPoliciesTable.clear();
+    $.get(Endpoints.AUTHENTICATION_POLICIES, response => {
+        for (const handler of response) {
+            authenticationPoliciesTable.row.add({
+                0: `${handler.name}`,
+                1: `<code>${handler.order}</code>`
+            });
+        }
+        authenticationPoliciesTable.draw();
+    }).fail((xhr, status, error) => {
+        console.error("Error fetching data:", error);
+        displayErrorInBanner(xhr);
+    });
+    
+}
+
 async function initializeConfigurationOperations() {
     const configurationTable = $("#configurationTable").DataTable({
         pageLength: 10,
@@ -1621,6 +1700,69 @@ async function initializeConfigurationOperations() {
         console.error("Error fetching data:", error);
         displayErrorInBanner(xhr);
     });
+
+
+    const configPropsTable = $("#configPropsTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        columnDefs: [
+            {visible: false, targets: 0}
+        ],
+        order: [0, "asc"],
+        drawCallback: settings => {
+            $("#configPropsTable tr").addClass("mdc-data-table__row");
+            $("#configPropsTable td").addClass("mdc-data-table__cell");
+
+            const api = settings.api;
+            const rows = api.rows({page: "current"}).nodes();
+            let last = null;
+            api.column(0, {page: "current"})
+                .data()
+                .each((group, i) => {
+                    if (last !== group) {
+                        $(rows).eq(i).before(
+                            `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
+                                            <td colspan="2">${group}</td></tr>`.trim());
+                        last = group;
+                    }
+                });
+        }
+    });
+    configPropsTable.clear();
+    $.get(Endpoints.CONFIG_PROPS, response => {
+        const casBeans = response.contexts["cas-1"].beans;
+        const bootstrapBeans = response.contexts["bootstrap"].beans;
+        for (const [sourceBean, bean] of Object.entries(casBeans)) {
+            let flattened = flattenJSON(bean.properties);
+            for (const [prop, propValue] of Object.entries(flattened)) {
+                const property = `${bean.prefix}.${prop}`;
+                if (Object.keys(propValue).length > 0) {
+                    configPropsTable.row.add({
+                        0: `${sourceBean}`,
+                        1: `<code>${property}</code>`,
+                        2: `<code>${propValue}</code>`
+                    });
+                }
+            }
+        }
+        for (const [sourceBean, bean] of Object.entries(bootstrapBeans)) {
+            let flattened = flattenJSON(bean.properties);
+            for (const [prop, propValue] of Object.entries(flattened)) {
+                const property = `${bean.prefix}.${prop}`;
+                if (Object.keys(propValue).length > 0) {
+                    configPropsTable.row.add({
+                        0: `${sourceBean}`,
+                        1: `<code>${toKebabCase(property)}</code>`,
+                        2: `<code>${propValue}</code>`
+                    });
+                }
+            }
+        }
+        configPropsTable.draw();
+    }).fail((xhr, status, error) => {
+        console.error("Error fetching data:", error);
+        displayErrorInBanner(xhr);
+    });
 }
 
 async function initializePalantir() {
@@ -1636,6 +1778,7 @@ async function initializePalantir() {
             initializeSsoSessionOperations(),
             initializeConfigurationOperations(),
             initializePersonDirectoryOperations(),
+            initializeAuthenticationOperations(),
         ]);
         setTimeout(() => {
             const selectedTab = window.localStorage.getItem("PalantirSelectedTab");
@@ -1690,6 +1833,7 @@ document.addEventListener("DOMContentLoaded", () => {
         activateDashboardTab(index);
     });
     swal({
+        icon: "info",
         title: "Initializing Palantir",
         text: "Please wait while Palantir is being initialized...",
         allowOutsideClick: false,
@@ -1703,7 +1847,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     title: "Palantir is ready!",
                     text: "Palantir has been successfully initialized and is ready for use.",
                     buttons: false,
-                    timer: 500
+                    icon: "success",
+                    timer: 1000
                 });
             });
         } else {

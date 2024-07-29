@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,7 +23,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("UmaRequestingPartyTokenProperties")
+
 public class UmaRequestingPartyTokenProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 3988708361481340920L;

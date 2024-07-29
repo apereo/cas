@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.core.ticket;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,7 +20,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
 @Setter
 @Accessors(chain = true)
-@JsonFilter("TimeoutTicketExpirationPolicyProperties")
+
 public class TimeoutTicketExpirationPolicyProperties implements Serializable {
 
     @Serial

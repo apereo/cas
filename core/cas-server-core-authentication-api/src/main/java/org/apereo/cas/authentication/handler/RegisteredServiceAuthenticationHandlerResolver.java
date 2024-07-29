@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
-import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
+import org.apereo.cas.authentication.handler.support.ProxyAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -115,7 +115,7 @@ public class RegisteredServiceAuthenticationHandlerResolver implements Authentic
                 val handler = it.next();
                 val handlerName = handler.getName();
                 val removeHandler = !(handler instanceof MultifactorAuthenticationHandler)
-                    && !(handler instanceof HttpBasedServiceCredentialsAuthenticationHandler)
+                    && !(handler instanceof ProxyAuthenticationHandler)
                     && !requiredHandlers.contains(handlerName);
                 if (removeHandler) {
                     it.remove();

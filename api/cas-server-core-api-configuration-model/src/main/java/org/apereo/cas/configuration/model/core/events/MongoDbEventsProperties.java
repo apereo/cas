@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.core.events;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,7 +19,7 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("MongoDbEventsProperties")
+
 public class MongoDbEventsProperties extends SingleCollectionMongoDbProperties {
 
     @Serial

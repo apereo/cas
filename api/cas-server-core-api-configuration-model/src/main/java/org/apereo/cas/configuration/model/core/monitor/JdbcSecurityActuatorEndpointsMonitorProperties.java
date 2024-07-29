@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderPro
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,7 +20,7 @@ import java.io.Serial;
 @Getter
 @Setter
 @RequiresModule(name = "cas-server-core-monitor", automated = true)
-@JsonFilter("JdbcSecurityActuatorEndpointsMonitorProperties")
+
 @Accessors(chain = true)
 public class JdbcSecurityActuatorEndpointsMonitorProperties extends AbstractJpaProperties {
 

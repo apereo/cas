@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.core.sso;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,7 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("SingleSignOnServicesProperties")
+
 public class SingleSignOnServicesProperties implements Serializable {
 
     @Serial

@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.model.support.jdbc.authn.QueryJdbcAuthentica
 import org.apereo.cas.configuration.model.support.jdbc.authn.SearchJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -26,7 +25,7 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("JdbcAuthenticationProperties")
+
 public class JdbcAuthenticationProperties implements Serializable {
 
     @Serial

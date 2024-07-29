@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticat
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -30,7 +29,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("YubiKeyMultifactorProperties")
+
 public class YubiKeyMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
 
     /**

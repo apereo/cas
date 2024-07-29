@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.core.web.jetty;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,7 +17,7 @@ import java.io.Serializable;
 @Getter
 @Accessors(chain = true)
 @Setter
-@JsonFilter("CasEmbeddedJettyProperties")
+
 public class CasEmbeddedJettyProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -3630008224249750029L;

@@ -26,12 +26,12 @@ import javax.security.auth.login.FailedLoginException;
  * @since 3.0.0
  */
 @Slf4j
-public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
+public class ProxyAuthenticationHandler extends AbstractAuthenticationHandler {
     private final HttpClient httpClient;
 
-    public HttpBasedServiceCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                                            final PrincipalFactory principalFactory,
-                                                            final Integer order, final HttpClient httpClient) {
+    public ProxyAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                      final PrincipalFactory principalFactory,
+                                      final Integer order, final HttpClient httpClient) {
         super(name, servicesManager, principalFactory, order);
         this.httpClient = httpClient;
     }

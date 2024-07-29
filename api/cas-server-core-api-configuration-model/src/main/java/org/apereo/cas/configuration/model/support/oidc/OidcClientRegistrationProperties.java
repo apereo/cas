@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.oidc;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,7 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("OidcClientRegistrationProperties")
+
 public class OidcClientRegistrationProperties implements Serializable {
 
     @Serial

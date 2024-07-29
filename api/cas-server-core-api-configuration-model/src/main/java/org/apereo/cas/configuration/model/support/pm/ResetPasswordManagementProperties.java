@@ -8,7 +8,6 @@ import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -25,7 +24,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-pm-webflow")
 @Getter
 @Setter
-@JsonFilter("ResetPasswordManagementProperties")
+
 @Accessors(chain = true)
 public class ResetPasswordManagementProperties implements CasFeatureModule, Serializable {
 

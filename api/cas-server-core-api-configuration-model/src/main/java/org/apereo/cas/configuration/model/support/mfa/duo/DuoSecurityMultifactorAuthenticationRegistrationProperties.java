@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtCryptoPropertie
 import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningOptionalJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -22,7 +21,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("DuoSecurityMultifactorAuthenticationRegistrationProperties")
+
 public class DuoSecurityMultifactorAuthenticationRegistrationProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -1655375354167880807L;

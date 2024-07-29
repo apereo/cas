@@ -19,13 +19,13 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 3.0.0
  */
 @Tag("AuthenticationHandler")
-class HttpBasedServiceCredentialsAuthenticationHandlerTests {
+class ProxyAuthenticationHandlerTests {
 
     private AuthenticationHandler authenticationHandler;
 
     @BeforeEach
     public void initialize() {
-        authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler(StringUtils.EMPTY, null, null, null, new SimpleHttpClientFactoryBean().getObject());
+        authenticationHandler = new ProxyAuthenticationHandler(StringUtils.EMPTY, null, null, null, new SimpleHttpClientFactoryBean().getObject());
     }
 
     @Test
@@ -74,7 +74,7 @@ class HttpBasedServiceCredentialsAuthenticationHandlerTests {
         val clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setAcceptableCodes(CollectionUtils.wrapList(900));
         val httpClient = clientFactory.getObject();
-        authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler(StringUtils.EMPTY, null, null, null, httpClient);
+        authenticationHandler = new ProxyAuthenticationHandler(StringUtils.EMPTY, null, null, null, httpClient);
         assertThrows(FailedLoginException.class,
             () -> authenticationHandler.authenticate(
                 RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://www.ja-sig.org"),

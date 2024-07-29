@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.services.yaml;
 import org.apereo.cas.configuration.model.SpringResourceProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +22,7 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("YamlServiceRegistryProperties")
+
 public class YamlServiceRegistryProperties extends SpringResourceProperties {
     /**
      * Default location where services may be found.

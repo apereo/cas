@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +24,7 @@ import java.io.Serial;
 @Setter
 @Accessors(chain = true)
 @EqualsAndHashCode(of = {"duoApiHost", "duoIntegrationKey", "duoSecretKey"}, callSuper = true)
-@JsonFilter("DuoSecurityMultifactorProperties")
+
 public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifactorAuthenticationProviderProperties {
 
     /**

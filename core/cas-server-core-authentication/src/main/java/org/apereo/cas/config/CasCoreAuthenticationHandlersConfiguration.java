@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
-import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
+import org.apereo.cas.authentication.handler.support.ProxyAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.jaas.JaasAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
@@ -75,7 +75,7 @@ class CasCoreAuthenticationHandlersConfiguration {
             final HttpClient supportsTrustStoreSslSocketFactoryHttpClient) throws Exception {
             return BeanSupplier.of(AuthenticationHandler.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new HttpBasedServiceCredentialsAuthenticationHandler(null,
+                .supply(() -> new ProxyAuthenticationHandler("CasProxyAuthentication",
                     servicesManager, proxyPrincipalFactory, Integer.MIN_VALUE,
                     supportsTrustStoreSslSocketFactoryHttpClient))
                 .otherwiseProxy()

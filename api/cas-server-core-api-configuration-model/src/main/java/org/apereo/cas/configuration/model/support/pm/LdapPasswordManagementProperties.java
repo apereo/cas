@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchPropert
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -22,7 +21,7 @@ import java.util.Map;
 @RequiresModule(name = "cas-server-support-pm-ldap")
 @Getter
 @Setter
-@JsonFilter("LdapPasswordManagementProperties")
+
 @Accessors(chain = true)
 public class LdapPasswordManagementProperties extends AbstractLdapSearchProperties {
     @Serial

@@ -1,6 +1,6 @@
 package org.apereo.cas.web.report;
 
-import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
+import org.apereo.cas.authentication.handler.support.ProxyAuthenticationHandler;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -27,6 +27,6 @@ class RegisteredAuthenticationHandlersEndpointTests extends AbstractCasEndpointT
     @Test
     void verifyOperation() throws Throwable {
         assertFalse(endpoint.handle().isEmpty());
-        assertNotNull(endpoint.fetchAuthnHandler(HttpBasedServiceCredentialsAuthenticationHandler.class.getSimpleName()));
+        assertNotNull(endpoint.fetchAuthnHandler(ProxyAuthenticationHandler.class.getSimpleName()));
     }
 }

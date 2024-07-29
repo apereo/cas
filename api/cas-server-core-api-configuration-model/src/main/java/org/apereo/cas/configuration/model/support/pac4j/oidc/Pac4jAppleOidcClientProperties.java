@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.pac4j.oidc;
 import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,7 +19,7 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("Pac4jAppleOidcClientProperties")
+
 public class Pac4jAppleOidcClientProperties extends BasePac4jOidcClientProperties {
     @Serial
     private static final long serialVersionUID = 2258382317533639638L;

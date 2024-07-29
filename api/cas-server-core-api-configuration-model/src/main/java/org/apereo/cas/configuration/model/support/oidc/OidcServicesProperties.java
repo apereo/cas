@@ -1,7 +1,6 @@
 package org.apereo.cas.configuration.model.support.oidc;
 
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,7 +19,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("OidcServicesProperties")
+
 public class OidcServicesProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 1233477683583467669L;

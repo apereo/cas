@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.custom;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,7 +22,7 @@ import java.util.Map;
 @Setter
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-core-web", automated = true)
-@JsonFilter("CasCustomProperties")
+
 public class CasCustomProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = 5354004353286722083L;

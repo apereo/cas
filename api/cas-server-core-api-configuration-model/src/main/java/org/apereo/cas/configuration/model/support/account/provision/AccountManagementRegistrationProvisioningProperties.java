@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.syncope.SyncopeAccountManagementRegistrationProvisioningProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,7 +22,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("AccountManagementRegistrationProvisioningProperties")
+
 public class AccountManagementRegistrationProvisioningProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = -1279683905942523034L;
