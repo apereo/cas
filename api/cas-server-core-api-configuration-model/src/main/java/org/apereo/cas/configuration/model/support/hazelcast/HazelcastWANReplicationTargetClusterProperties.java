@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.hazelcast;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -22,7 +21,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("HazelcastWANReplicationTargetClusterProperties")
+
 public class HazelcastWANReplicationTargetClusterProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 1635330607045885145L;

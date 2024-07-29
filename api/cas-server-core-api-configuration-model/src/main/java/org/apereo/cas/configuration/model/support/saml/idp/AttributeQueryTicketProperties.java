@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.saml.idp;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("AttributeQueryTicketProperties")
+
 public class AttributeQueryTicketProperties implements Serializable {
 
     @Serial

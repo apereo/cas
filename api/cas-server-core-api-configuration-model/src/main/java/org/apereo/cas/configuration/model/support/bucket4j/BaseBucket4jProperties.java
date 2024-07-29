@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.bucket4j;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,7 +22,7 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("BaseBucket4jProperties")
+
 public abstract class BaseBucket4jProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = 1813165633105563813L;

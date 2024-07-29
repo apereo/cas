@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.configuration.model.support.git.services.BaseGitProperties;
 import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -26,7 +25,7 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("GitSamlMetadataProperties")
+
 public class GitSamlMetadataProperties extends BaseGitProperties {
     @Serial
     private static final long serialVersionUID = 4194689836396653458L;

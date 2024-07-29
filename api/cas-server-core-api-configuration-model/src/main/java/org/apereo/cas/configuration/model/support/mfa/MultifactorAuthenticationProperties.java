@@ -9,7 +9,6 @@ import org.apereo.cas.configuration.model.support.mfa.webauthn.WebAuthnMultifact
 import org.apereo.cas.configuration.model.support.mfa.yubikey.YubiKeyMultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -30,7 +29,7 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("MultifactorAuthenticationProperties")
+
 public class MultifactorAuthenticationProperties implements Serializable {
 
     @Serial

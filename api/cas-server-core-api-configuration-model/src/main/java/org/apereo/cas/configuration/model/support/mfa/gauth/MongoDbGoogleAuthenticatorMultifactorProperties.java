@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbP
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,7 +20,7 @@ import java.io.Serial;
 @Setter
 @RequiresModule(name = "cas-server-support-gauth-mongo")
 @Accessors(chain = true)
-@JsonFilter("MongoDbGoogleAuthenticatorMultifactorProperties")
+
 public class MongoDbGoogleAuthenticatorMultifactorProperties extends SingleCollectionMongoDbProperties {
     @Serial
     private static final long serialVersionUID = -200556119517414696L;

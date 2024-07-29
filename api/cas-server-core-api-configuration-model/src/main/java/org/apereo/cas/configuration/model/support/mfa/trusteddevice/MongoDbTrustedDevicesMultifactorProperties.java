@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.mfa.trusteddevice;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -20,7 +19,7 @@ import java.io.Serial;
 @Setter
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-support-trusted-mfa-mongo")
-@JsonFilter("MongoDbTrustedDevicesMultifactorProperties")
+
 public class MongoDbTrustedDevicesMultifactorProperties extends SingleCollectionMongoDbProperties {
 
     @Serial

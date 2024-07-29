@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.pac4j.saml;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,7 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("Pac4jSamlServiceProviderMetadataFileSystemProperties")
+
 public class Pac4jSamlServiceProviderMetadataFileSystemProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -992809796533384951L;

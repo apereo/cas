@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.configuration.model.support.aws.BaseAmazonWebServicesProperties;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,7 +22,7 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("AmazonS3SamlMetadataProperties")
+
 public class AmazonS3SamlMetadataProperties extends BaseAmazonWebServicesProperties {
     @Serial
     private static final long serialVersionUID = 352435146313504995L;

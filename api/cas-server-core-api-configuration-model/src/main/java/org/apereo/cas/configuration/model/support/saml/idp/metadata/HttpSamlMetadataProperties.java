@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,7 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("HttpSamlMetadataProperties")
+
 public class HttpSamlMetadataProperties implements Serializable {
 
     @Serial

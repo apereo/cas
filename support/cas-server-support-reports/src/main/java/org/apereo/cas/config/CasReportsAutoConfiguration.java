@@ -30,13 +30,13 @@ import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.web.ServiceValidateConfigurationContext;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.report.AuditLogEndpoint;
+import org.apereo.cas.web.report.CasConfigurationEndpoint;
 import org.apereo.cas.web.report.CasFeaturesEndpoint;
 import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasProtocolValidationEndpoint;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasRuntimeModulesEndpoint;
-import org.apereo.cas.web.report.ConfigurationJasyptCipherEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationHandlersEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationPoliciesEndpoint;
 import org.apereo.cas.web.report.RegisteredServiceAccessEndpoint;
@@ -194,12 +194,12 @@ public class CasReportsAutoConfiguration {
         @Bean
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public ConfigurationJasyptCipherEndpoint casConfigurationCipherEndpoint(
+        public CasConfigurationEndpoint casConfigurationEndpoint(
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("casConfigurationCipherExecutor")
             final CipherExecutor<String, String> casConfigurationCipherExecutor) {
-            return new ConfigurationJasyptCipherEndpoint(casProperties, applicationContext, casConfigurationCipherExecutor);
+            return new CasConfigurationEndpoint(casProperties, applicationContext, casConfigurationCipherExecutor);
         }
 
 

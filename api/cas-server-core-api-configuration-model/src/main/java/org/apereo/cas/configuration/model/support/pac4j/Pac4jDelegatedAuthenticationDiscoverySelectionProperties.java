@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.pac4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -23,7 +22,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("Pac4jDelegatedAuthenticationDiscoverySelectionProperties")
+
 public class Pac4jDelegatedAuthenticationDiscoverySelectionProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -2561947621312270068L;

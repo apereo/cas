@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,7 +23,7 @@ import java.util.stream.Stream;
 @Setter
 @RequiresModule(name = "cas-server-support-cassandra-core")
 @Accessors(chain = true)
-@JsonFilter("BaseCassandraProperties")
+
 public abstract class BaseCassandraProperties implements Serializable {
 
     @Serial

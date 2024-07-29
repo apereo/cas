@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.core.audit;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,7 +23,7 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("AuditEngineProperties")
+
 public class AuditEngineProperties implements Serializable {
 
     @Serial

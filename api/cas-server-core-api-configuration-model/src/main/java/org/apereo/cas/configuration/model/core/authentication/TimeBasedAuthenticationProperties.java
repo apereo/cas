@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.core.authentication;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,7 +22,7 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("TimeBasedAuthenticationProperties")
+
 public class TimeBasedAuthenticationProperties implements Serializable {
 
     @Serial

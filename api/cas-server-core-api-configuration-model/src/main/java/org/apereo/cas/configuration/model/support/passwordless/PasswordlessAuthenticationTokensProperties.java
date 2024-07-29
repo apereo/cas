@@ -10,7 +10,6 @@ import org.apereo.cas.configuration.model.support.passwordless.token.Passwordles
 import org.apereo.cas.configuration.model.support.passwordless.token.PasswordlessAuthenticationTokensCoreProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -28,7 +27,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("PasswordlessAuthenticationTokensProperties")
+
 public class PasswordlessAuthenticationTokensProperties implements Serializable {
 
     @Serial

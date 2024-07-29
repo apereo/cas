@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.mfa.simple;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,7 +20,7 @@ import java.io.Serial;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("CasSimpleMultifactorAuthenticationTokenProperties")
+
 public class CasSimpleMultifactorAuthenticationTokenProperties extends BaseMultifactorAuthenticationProviderProperties {
     @Serial
     private static final long serialVersionUID = -6333748853833491119L;

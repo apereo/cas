@@ -38,7 +38,7 @@ used to access this feature are those presented by Spring Security configuration
 Furthermore, note that Palantir requires a number of actuator endpoints, such as `info`, `env`, etc that are 
 provided by CAS and Spring Boot. It essentially sits on top of actuator endpoints and consumes and renders data. You
 will need to make sure these endpoints are enabled and exposed for your CAS deployment. There are startup checks in 
-place to ensure all required actuator endpoints are present and configured and you may always check your browser's 
+place to ensure **ALL required actuator endpoints** are present and configured and you may always check your browser's 
 console logs to figure out which endpoints are missing or misconfigured.
 
 Once enabled, Palantir is available at `/cas/palantir`.

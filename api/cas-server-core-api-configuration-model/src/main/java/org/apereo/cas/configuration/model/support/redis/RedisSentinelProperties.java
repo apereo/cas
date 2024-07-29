@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,7 +23,7 @@ import java.util.List;
 @Setter
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-support-redis-core")
-@JsonFilter("RedisSentinelProperties")
+
 public class RedisSentinelProperties implements CasFeatureModule, Serializable {
     @Serial
     private static final long serialVersionUID = 5434823157764550831L;

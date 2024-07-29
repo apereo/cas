@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.configuration.model.core.util.SigningJwtCryptoProperties;
 import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -22,7 +21,7 @@ import java.io.Serial;
 @Setter
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
-@JsonFilter("MultifactorAuthenticationProviderSelectionCookieProperties")
+
 public class MultifactorAuthenticationProviderSelectionCookieProperties extends PinnableCookieProperties {
     @Serial
     private static final long serialVersionUID = 6265362204295764362L;

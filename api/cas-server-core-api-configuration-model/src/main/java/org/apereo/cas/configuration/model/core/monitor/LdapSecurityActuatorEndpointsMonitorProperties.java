@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapAuthenticatio
 import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,7 +20,7 @@ import java.io.Serial;
 @Getter
 @Setter
 @RequiresModule(name = "cas-server-core-monitor", automated = true)
-@JsonFilter("LdapSecurityActuatorEndpointsMonitorProperties")
+
 @Accessors(chain = true)
 public class LdapSecurityActuatorEndpointsMonitorProperties extends AbstractLdapAuthenticationProperties {
 

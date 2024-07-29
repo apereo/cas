@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.replication;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -21,7 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("SessionReplicationProperties")
+
 public class SessionReplicationProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = -3839399712674610962L;

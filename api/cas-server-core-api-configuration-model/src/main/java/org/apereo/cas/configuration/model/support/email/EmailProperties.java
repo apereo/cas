@@ -3,7 +3,6 @@ package org.apereo.cas.configuration.model.support.email;
 import org.apereo.cas.configuration.support.ExpressionLanguageCapable;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +24,7 @@ import java.util.stream.Stream;
 @Setter
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Accessors(chain = true)
-@JsonFilter("EmailProperties")
+
 public class EmailProperties implements Serializable {
     @Serial
     private static final long serialVersionUID = 7367120636536230761L;

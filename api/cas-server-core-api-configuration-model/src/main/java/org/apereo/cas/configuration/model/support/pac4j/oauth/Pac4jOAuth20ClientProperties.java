@@ -4,7 +4,6 @@ import org.apereo.cas.configuration.model.support.pac4j.Pac4jIdentifiableClientP
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -23,7 +22,7 @@ import java.util.Map;
 @Getter
 @Setter
 @Accessors(chain = true)
-@JsonFilter("Pac4jOAuth20ClientProperties")
+
 public class Pac4jOAuth20ClientProperties extends Pac4jIdentifiableClientProperties {
 
     @Serial
