@@ -75,7 +75,7 @@ class CasCoreAuthenticationHandlersConfiguration {
             final HttpClient supportsTrustStoreSslSocketFactoryHttpClient) throws Exception {
             return BeanSupplier.of(AuthenticationHandler.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new ProxyAuthenticationHandler("CasProxyAuthentication",
+                .supply(() -> new ProxyAuthenticationHandler(null,
                     servicesManager, proxyPrincipalFactory, Integer.MIN_VALUE,
                     supportsTrustStoreSslSocketFactoryHttpClient))
                 .otherwiseProxy()
