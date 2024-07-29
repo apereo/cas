@@ -69,7 +69,8 @@ public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEnd
         MEDIA_TYPE_CAS_YAML
     })
     public AuthenticationHandlerDetails fetchAuthnHandler(@Selector final String name) {
-        return this.authenticationEventExecutionPlan.getObject().getAuthenticationHandlers()
+        return this.authenticationEventExecutionPlan.getObject()
+            .getAuthenticationHandlers()
             .stream()
             .filter(authnHandler -> authnHandler.getName().equalsIgnoreCase(name))
             .findFirst()
