@@ -24,5 +24,5 @@ public interface DelegatedClientsEndpointContributor {
      * @param client the client
      * @return the map
      */
-    Map<String, String> contribute(BaseClient client);
+    Map<String, Object> contribute(BaseClient client);
 }

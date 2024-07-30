@@ -116,7 +116,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
 
     private String xssProtection = "1; mode=block";
 
-    private String contentSecurityPolicy = "script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none';";
+    private String contentSecurityPolicy = "script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none'; worker-src 'self' 'unsafe-inline';";
 
     private static void throwIfUnrecognizedParamName(final Enumeration initParamNames) {
         val recognizedParameterNames = new HashSet<String>();

@@ -9,33 +9,9 @@ const Tabs = {
     ACCESS_STRATEGY: 4,
     LOGGING: 5,
     SSO_SESSIONS: 6,
-    PERSON_DIRECTORY: 7,
-    AUTHENTICATION: 8
-};
-
-const Endpoints = {
-    REGISTERED_SERVICES: `${casServerPrefix}/actuator/registeredServices`,
-    SERVICE_ACCESS: `${casServerPrefix}/actuator/serviceAccess`,
-    METRICS: `${casServerPrefix}/actuator/metrics`,
-    SCHEDULED_TASKS: `${casServerPrefix}/actuator/scheduledtasks`,
-    THREAD_DUMP: `${casServerPrefix}/actuator/threaddump`,
-    TICKET_REGISTRY: `${casServerPrefix}/actuator/ticketRegistry`,
-    SSO_SESSIONS: `${casServerPrefix}/actuator/ssoSessions`,
-    ENV: `${casServerPrefix}/actuator/env`,
-    LOGGING_CONFIG: `${casServerPrefix}/actuator/loggingConfig`,
-    EXPIRATION_POLICIES: `${casServerPrefix}/actuator/ticketExpirationPolicies`,
-    LOGGERS: `${casServerPrefix}/actuator/loggers`,
-    AUDIT_EVENTS: `${casServerPrefix}/actuator/auditevents`,
-    HTTP_EXCHANGES: `${casServerPrefix}/actuator/httpexchanges`,
-    HEAP_DUMP: `${casServerPrefix}/actuator/heapdump`,
-    HEALTH: `${casServerPrefix}/actuator/health`,
-    STATISTICS: `${casServerPrefix}/actuator/statistics`,
-    INFO: `${casServerPrefix}/actuator/info`,
-    CAS_FEATURES: `${casServerPrefix}/actuator/casFeatures`,
-    PERSON_DIRECTORY: `${casServerPrefix}/actuator/personDirectory`,
-    CONFIG_PROPS: `${casServerPrefix}/actuator/configprops`,
-    AUTHENTICATION_HANDLERS: `${casServerPrefix}/actuator/authenticationHandlers`,
-    AUTHENTICATION_POLICIES: `${casServerPrefix}/actuator/authenticationPolicies`,
+    CONFIGURATION: 7,
+    PERSON_DIRECTORY: 8,
+    AUTHENTICATION: 9
 };
 
 /**
@@ -52,40 +28,41 @@ let auditEventsChart = null;
 let threadDumpChart = null;
 
 function fetchServices(callback) {
-    $.get(Endpoints.REGISTERED_SERVICES, response => {
-        let serviceCountByType = [0, 0, 0, 0, 0];
-        let applicationsTable = $("#applicationsTable").DataTable();
-        applicationsTable.clear();
-        for (const service of response[1]) {
-            let icon = "mdi-web-box";
-            const serviceClass = service["@class"];
-            if (serviceClass.includes("CasRegisteredService")) {
-                icon = "mdi-alpha-c-box-outline";
-                serviceCountByType[0]++;
-            } else if (serviceClass.includes("SamlRegisteredService")) {
-                icon = "mdi-alpha-s-box-outline";
-                serviceCountByType[1]++;
-            } else if (serviceClass.includes("OAuthRegisteredService")) {
-                icon = "mdi-alpha-o-circle-outline";
-                serviceCountByType[2]++;
-            } else if (serviceClass.includes("OidcRegisteredService")) {
-                icon = "mdi-alpha-o-box-outline";
-                serviceCountByType[3]++;
-            } else if (serviceClass.includes("WSFederationRegisteredService")) {
-                icon = "mdi-alpha-w-box-outline";
-                serviceCountByType[4]++;
-            }
+    if (actuatorEndpoints.registeredservices) {
+        $.get(actuatorEndpoints.registeredservices, response => {
+            let serviceCountByType = [0, 0, 0, 0, 0];
+            let applicationsTable = $("#applicationsTable").DataTable();
+            applicationsTable.clear();
+            for (const service of response[1]) {
+                let icon = "mdi-web-box";
+                const serviceClass = service["@class"];
+                if (serviceClass.includes("CasRegisteredService")) {
+                    icon = "mdi-alpha-c-box-outline";
+                    serviceCountByType[0]++;
+                } else if (serviceClass.includes("SamlRegisteredService")) {
+                    icon = "mdi-alpha-s-box-outline";
+                    serviceCountByType[1]++;
+                } else if (serviceClass.includes("OAuthRegisteredService")) {
+                    icon = "mdi-alpha-o-circle-outline";
+                    serviceCountByType[2]++;
+                } else if (serviceClass.includes("OidcRegisteredService")) {
+                    icon = "mdi-alpha-o-box-outline";
+                    serviceCountByType[3]++;
+                } else if (serviceClass.includes("WSFederationRegisteredService")) {
+                    icon = "mdi-alpha-w-box-outline";
+                    serviceCountByType[4]++;
+                }
 
-            let serviceDetails = `<span serviceId="${service.id}" title='${service.name}'>${service.name}</span>`;
-            serviceDetails += "<p>";
-            if (service.informationUrl) {
-                serviceDetails += `<a target="_blank" href='${service.informationUrl}'>Information URL</a>`;
-            }
-            if (service.privacyUrl) {
-                serviceDetails += `&nbsp;<a target="_blank" href='${service.privacyUrl}'>Privacy URL</a>`;
-            }
+                let serviceDetails = `<span serviceId="${service.id}" title='${service.name}'>${service.name}</span>`;
+                serviceDetails += "<p>";
+                if (service.informationUrl) {
+                    serviceDetails += `<a target="_blank" href='${service.informationUrl}'>Information URL</a>`;
+                }
+                if (service.privacyUrl) {
+                    serviceDetails += `&nbsp;<a target="_blank" href='${service.privacyUrl}'>Privacy URL</a>`;
+                }
 
-            let serviceButtons = `
+                let serviceButtons = `
                  <button type="button" name="editService" href="#" serviceId='${service.id}'
                         class="mdc-button mdc-button--raised btn btn-link min-width-32x">
                     <i class="mdi mdi-pencil min-width-32x" aria-hidden="true"></i>
@@ -99,116 +76,124 @@ function fetchServices(callback) {
                     <i class="mdi mdi-content-copy min-width-32x" aria-hidden="true"></i>
                 </button>
             `;
-            applicationsTable.row.add({
-                0: `<i serviceId='${service.id}' title='${serviceClass}' class='mdi ${icon}'></i>`,
-                1: `${serviceDetails}`,
-                2: `<span serviceId='${service.id}' class="text-wrap">${service.serviceId}</span>`,
-                3: `<span serviceId='${service.id}' class="text-wrap">${service.description ?? ""}</span>`,
-                4: `<span serviceId='${service.id}'>${serviceButtons.trim()}</span>`
-            });
-        }
-        applicationsTable.draw();
+                applicationsTable.row.add({
+                    0: `<i serviceId='${service.id}' title='${serviceClass}' class='mdi ${icon}'></i>`,
+                    1: `${serviceDetails}`,
+                    2: `<span serviceId='${service.id}' class="text-wrap">${service.serviceId}</span>`,
+                    3: `<span serviceId='${service.id}' class="text-wrap">${service.description ?? ""}</span>`,
+                    4: `<span serviceId='${service.id}'>${serviceButtons.trim()}</span>`
+                });
+            }
+            applicationsTable.draw();
 
-        servicesChart.data.datasets[0].data = serviceCountByType;
-        servicesChart.update();
+            servicesChart.data.datasets[0].data = serviceCountByType;
+            servicesChart.update();
 
-        if (callback !== undefined) {
-            callback(applicationsTable);
-        }
+            if (callback !== undefined) {
+                callback(applicationsTable);
+            }
 
-        initializeServiceButtons();
-    }).fail((xhr, status, error) => {
-        console.error("Error fetching data:", error);
-        displayErrorInBanner(xhr);
-    });
+            initializeServiceButtons();
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr);
+        });
+    }
 }
 
 function initializeFooterButtons() {
 
     $("button[name=newService]").off().on("click", () => {
-        const editServiceDialogElement = document.getElementById("editServiceDialog");
-        let editServiceDialog = window.mdc.dialog.MDCDialog.attachTo(editServiceDialogElement);
-        const editor = initializeAceEditor("serviceEditor");
-        editor.setValue("");
-        editor.gotoLine(1);
+        if (actuatorEndpoints.registeredservices) {
+            const editServiceDialogElement = document.getElementById("editServiceDialog");
+            let editServiceDialog = window.mdc.dialog.MDCDialog.attachTo(editServiceDialogElement);
+            const editor = initializeAceEditor("serviceEditor");
+            editor.setValue("");
+            editor.gotoLine(1);
 
-        $(editServiceDialogElement).attr("newService", true);
-        editServiceDialog["open"]();
+            $(editServiceDialogElement).attr("newService", true);
+            editServiceDialog["open"]();
+        }
     });
 
     $("button[name=importService]").off().on("click", () => {
-        $("#serviceFileInput").click();
-        $("#serviceFileInput").change(event =>
-            swal({
-                title: "Are you sure you want to import this entry?",
-                text: "Once imported, the entry should take immediate effect.",
-                icon: "warning",
-                buttons: true,
-                dangerMode: true
-            })
-                .then((willImport) => {
-                    if (willImport) {
-                        const file = event.target.files[0];
-                        const reader = new FileReader();
-                        reader.readAsText(file);
-                        reader.onload = e => {
-                            const fileContent = e.target.result;
-                            console.log("File content:", fileContent);
+        if (actuatorEndpoints.registeredservices) {
+            $("#serviceFileInput").click();
+            $("#serviceFileInput").change(event =>
+                swal({
+                    title: "Are you sure you want to import this entry?",
+                    text: "Once imported, the entry should take immediate effect.",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true
+                })
+                    .then((willImport) => {
+                        if (willImport) {
+                            const file = event.target.files[0];
+                            const reader = new FileReader();
+                            reader.readAsText(file);
+                            reader.onload = e => {
+                                const fileContent = e.target.result;
+                                console.log("File content:", fileContent);
 
-                            $.ajax({
-                                url: `${Endpoints.REGISTERED_SERVICES}`,
-                                type: "PUT",
-                                contentType: "application/json",
-                                data: fileContent,
-                                success: response => {
-                                    console.log("File upload successful:", response);
-                                    $("#reloadAll").click();
-                                },
-                                error: (xhr, status, error) => {
-                                    console.error("File upload failed:", error);
-                                    displayErrorInBanner(xhr);
-                                }
-                            });
-                        };
-                    }
-                }));
-
-
+                                $.ajax({
+                                    url: `${actuatorEndpoints.registeredservices}`,
+                                    type: "PUT",
+                                    contentType: "application/json",
+                                    data: fileContent,
+                                    success: response => {
+                                        console.log("File upload successful:", response);
+                                        $("#reloadAll").click();
+                                    },
+                                    error: (xhr, status, error) => {
+                                        console.error("File upload failed:", error);
+                                        displayErrorInBanner(xhr);
+                                    }
+                                });
+                            };
+                        }
+                    }));
+        }
     });
 
     $("button[name=exportService]").off().on("click", () => {
-        let serviceId = $(exportServiceButton).attr("serviceId");
-        fetch(`${Endpoints.REGISTERED_SERVICES}/export/${serviceId}`)
-            .then(response => {
-                const filename = response.headers.get("filename");
-                response.blob().then(blob => {
-                    const link = document.createElement("a");
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = filename;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                });
+        if (actuatorEndpoints.registeredservices) {
+            let serviceId = $(exportServiceButton).attr("serviceId");
+            fetch(`${actuatorEndpoints.registeredservices}/export/${serviceId}`)
+                .then(response => {
+                    const filename = response.headers.get("filename");
+                    response.blob().then(blob => {
+                        const link = document.createElement("a");
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = filename;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    });
 
-            })
-            .catch(error => console.error("Error fetching file:", error));
+                })
+                .catch(error => console.error("Error fetching file:", error));
+        }
     });
 
-    $("button[name=exportAll]").off().on("click", () =>
-        fetch(`${Endpoints.REGISTERED_SERVICES}/export`)
-            .then(response => {
-                const filename = response.headers.get("filename");
-                response.blob().then(blob => {
-                    const link = document.createElement("a");
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = filename;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                });
+    $("button[name=exportAll]").off().on("click", () => {
+        if (actuatorEndpoints.registeredservices) {
+            fetch(`${actuatorEndpoints.registeredservices}/export`)
+                .then(response => {
+                    const filename = response.headers.get("filename");
+                    response.blob().then(blob => {
+                        const link = document.createElement("a");
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = filename;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    });
 
-            })
-            .catch(error => console.error("Error fetching file:", error)));
+                })
+                .catch(error => console.error("Error fetching file:", error));
+        }
+    });
 }
 
 
@@ -220,43 +205,45 @@ async function initializeAccessStrategyOperations() {
     accessStrategyEditor.setReadOnly(true);
 
     $("button[name=accessStrategyButton]").off().on("click", () => {
-        $("#serviceAccessResultDiv").hide();
-        const form = document.getElementById("fmAccessStrategy");
-        if (!form.reportValidity()) {
-            return false;
-        }
-
-        accessStrategyEditor.setValue("");
-        const formData = $(form).serializeArray();
-        const renamedData = formData.filter(item => item.value !== "").map(item => {
-            const newName = $(`[name="${item.name}"]`).data("param-name") || item.name;
-            return {name: newName, value: item.value};
-        });
-
-        $.ajax({
-            url: Endpoints.SERVICE_ACCESS,
-            type: "POST",
-            contentType: "application/x-www-form-urlencoded",
-            data: $.param(renamedData),
-            success: (response, status, xhr) => {
-                $("#accessStrategyEditorContainer").removeClass("d-none");
-                $("#serviceAccessResultDiv")
-                    .show()
-                    .addClass("banner-success")
-                    .removeClass("banner-danger");
-                $("#serviceAccessResultDiv #serviceAccessResult").text(`Status ${xhr.status}: Service is authorized.`);
-                accessStrategyEditor.setValue(JSON.stringify(response, null, 2));
-                accessStrategyEditor.gotoLine(1);
-            },
-            error: (xhr, status, error) => {
-                $("#serviceAccessResultDiv")
-                    .show()
-                    .removeClass("banner-success")
-                    .addClass("banner-danger");
-                $("#accessStrategyEditorContainer").addClass("d-none");
-                $("#serviceAccessResultDiv #serviceAccessResult").text(`Status ${xhr.status}: Service is unauthorized.`);
+        if (actuatorEndpoints.serviceaccess) {
+            $("#serviceAccessResultDiv").hide();
+            const form = document.getElementById("fmAccessStrategy");
+            if (!form.reportValidity()) {
+                return false;
             }
-        });
+
+            accessStrategyEditor.setValue("");
+            const formData = $(form).serializeArray();
+            const renamedData = formData.filter(item => item.value !== "").map(item => {
+                const newName = $(`[name="${item.name}"]`).data("param-name") || item.name;
+                return {name: newName, value: item.value};
+            });
+
+            $.ajax({
+                url: actuatorEndpoints.serviceaccess,
+                type: "POST",
+                contentType: "application/x-www-form-urlencoded",
+                data: $.param(renamedData),
+                success: (response, status, xhr) => {
+                    $("#accessStrategyEditorContainer").removeClass("d-none");
+                    $("#serviceAccessResultDiv")
+                        .show()
+                        .addClass("banner-success")
+                        .removeClass("banner-danger");
+                    $("#serviceAccessResultDiv #serviceAccessResult").text(`Status ${xhr.status}: Service is authorized.`);
+                    accessStrategyEditor.setValue(JSON.stringify(response, null, 2));
+                    accessStrategyEditor.gotoLine(1);
+                },
+                error: (xhr, status, error) => {
+                    $("#serviceAccessResultDiv")
+                        .show()
+                        .removeClass("banner-success")
+                        .addClass("banner-danger");
+                    $("#accessStrategyEditorContainer").addClass("d-none");
+                    $("#serviceAccessResultDiv #serviceAccessResult").text(`Status ${xhr.status}: Service is unauthorized.`);
+                }
+            });
+        }
     });
 }
 
@@ -272,11 +259,12 @@ function displayErrorInBanner(error) {
 function initializeJvmMetrics() {
     function fetchJvmThreadMetric(metricName) {
         return new Promise((resolve, reject) =>
-            $.get(`${Endpoints.METRICS}/${metricName}`, response => resolve(response.measurements[0].value)).fail((xhr, status, error) => {
+            $.get(`${actuatorEndpoints.metrics}/${metricName}`, response => resolve(response.measurements[0].value)).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
                 displayErrorInBanner(xhr);
                 reject(error);
-            }));
+            })
+        );
     }
 
     async function fetchJvmMetrics() {
@@ -295,7 +283,7 @@ function initializeJvmMetrics() {
 
     async function fetchThreadDump() {
         return new Promise((resolve, reject) =>
-            $.get(Endpoints.THREAD_DUMP, response => {
+            $.get(actuatorEndpoints.threaddump, response => {
                 console.log("Thread dump", response);
                 let threadData = {};
                 for (const thread of response.threads) {
@@ -313,21 +301,26 @@ function initializeJvmMetrics() {
 
     }
 
-    fetchJvmMetrics()
-        .then(payload => {
-            jvmThreadsChart.data.datasets[0].data = payload;
-            jvmThreadsChart.update();
-        });
+    if (actuatorEndpoints.metrics) {
+        fetchJvmMetrics()
+            .then(payload => {
+                jvmThreadsChart.data.datasets[0].data = payload;
+                jvmThreadsChart.update();
+            });
+    }
 
-    fetchThreadDump().then(payload => {
-        threadDumpChart.data.labels = Object.keys(payload);
-        const values = Object.values(payload);
-        threadDumpChart.data.datasets[0] = {
-            label: `${values.reduce((sum, value) => sum + value, 0)} Threads`,
-            data: values
-        };
-        threadDumpChart.update();
-    });
+
+    if (actuatorEndpoints.threaddump) {
+        fetchThreadDump().then(payload => {
+            threadDumpChart.data.labels = Object.keys(payload);
+            const values = Object.values(payload);
+            threadDumpChart.data.datasets[0] = {
+                label: `${values.reduce((sum, value) => sum + value, 0)} Threads`,
+                data: values
+            };
+            threadDumpChart.update();
+        });
+    }
 }
 
 async function initializeScheduledTasksOperations() {
@@ -375,21 +368,24 @@ async function initializeScheduledTasksOperations() {
         }
     }
 
-    $.get(Endpoints.SCHEDULED_TASKS, response => {
-        console.log(response);
-        scheduledtasks.clear();
-        for (const group of Object.keys(response)) {
-            addScheduledTaskCategory(group, response[group]);
-        }
-        scheduledtasks.draw();
-    }).fail((xhr, status, error) => {
-        console.error("Error fetching data:", error);
-        displayErrorInBanner(xhr);
-    });
+    if (actuatorEndpoints.scheduledtasks) {
+        $.get(actuatorEndpoints.scheduledtasks, response => {
+            console.log(response);
+            scheduledtasks.clear();
+            for (const group of Object.keys(response)) {
+                addScheduledTaskCategory(group, response[group]);
+            }
+            scheduledtasks.draw();
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr);
+        });
+    }
 
-    initializeJvmMetrics();
-
-    setInterval(() => initializeJvmMetrics(), 5000);
+    if (actuatorEndpoints.metrics) {
+        initializeJvmMetrics();
+        setInterval(() => initializeJvmMetrics(), 5000);
+    }
 }
 
 async function initializeTicketsOperations() {
@@ -407,31 +403,38 @@ async function initializeTicketsOperations() {
         if (ticket && type) {
             const decode = new mdc.switchControl.MDCSwitch(document.getElementById("decodeTicketButton")).selected;
             ticketEditor.setValue("");
-            $.get(`${Endpoints.TICKET_REGISTRY}/query?type=${type}&id=${ticketId}&decode=${decode}`,
-                response => {
-                    ticketEditor.setValue(JSON.stringify(response, null, 2));
-                    ticketEditor.gotoLine(1);
-                })
-                .fail((xhr, status, error) => {
-                    console.error("Error fetching data:", error);
-                    displayErrorInBanner(xhr);
-                });
+            if (actuatorEndpoints.ticketregistry) {
+                $.get(`${actuatorEndpoints.ticketregistry}/query?type=${type}&id=${ticketId}&decode=${decode}`,
+                    response => {
+                        ticketEditor.setValue(JSON.stringify(response, null, 2));
+                        ticketEditor.gotoLine(1);
+                    })
+                    .fail((xhr, status, error) => {
+                        console.error("Error fetching data:", error);
+                        displayErrorInBanner(xhr);
+                    });
+            }
         }
     });
 
-    $("button#cleanTicketsButton").off().on("click", () =>
-        $.ajax({
-            url: `${Endpoints.TICKET_REGISTRY}/clean`,
-            type: "DELETE",
-            success: response => {
-                ticketEditor.setValue(JSON.stringify(response, null, 2));
-                ticketEditor.gotoLine(1);
-            },
-            error: (xhr, status, error) => {
-                console.log(`Error: ${status} / ${error} / ${xhr.responseText}`);
-                displayErrorInBanner(xhr);
-            }
-        }));
+    $("button#cleanTicketsButton").off().on("click", () => {
+
+        if (actuatorEndpoints.ticketregistry) {
+            $.ajax({
+                url: `${actuatorEndpoints.ticketregistry}/clean`,
+                type: "DELETE",
+                success: response => {
+                    ticketEditor.setValue(JSON.stringify(response, null, 2));
+                    ticketEditor.gotoLine(1);
+                },
+                error: (xhr, status, error) => {
+                    console.log(`Error: ${status} / ${error} / ${xhr.responseText}`);
+                    displayErrorInBanner(xhr);
+                }
+            });
+        }
+
+    });
 
     const ticketCatalogTable = $("#ticketCatalogTable").DataTable({
 
@@ -461,34 +464,35 @@ async function initializeTicketsOperations() {
         }
     });
 
-    $.get(`${Endpoints.TICKET_REGISTRY}/ticketCatalog`, response => {
-        console.log(response);
-        response.forEach(entry => {
-            let item = `
+    if (actuatorEndpoints.ticketregistry) {
+        $.get(`${actuatorEndpoints.ticketregistry}/ticketCatalog`, response => {
+            console.log(response);
+            response.forEach(entry => {
+                let item = `
                             <li class="mdc-list-item" data-value='${entry.prefix}' role="option">
                                 <span class="mdc-list-item__ripple"></span>
                                 <span class="mdc-list-item__text">${entry.apiClass}</span>
                             </li>
                         `;
-            $("#ticketDefinitions").append($(item.trim()));
+                $("#ticketDefinitions").append($(item.trim()));
 
-            const flattened = flattenJSON(entry);
-            for (const [key, value] of Object.entries(flattened)) {
-                ticketCatalogTable.row.add({
-                    0: `<code>${entry.prefix}</code>`,
-                    1: `<code>${key}</code>`,
-                    2: `<code>${value}</code>`
-                });
-            }
-            ticketCatalogTable.draw();
+                const flattened = flattenJSON(entry);
+                for (const [key, value] of Object.entries(flattened)) {
+                    ticketCatalogTable.row.add({
+                        0: `<code>${entry.prefix}</code>`,
+                        1: `<code>${key}</code>`,
+                        2: `<code>${value}</code>`
+                    });
+                }
+                ticketCatalogTable.draw();
+            });
+            const ticketDefinitions = new mdc.select.MDCSelect(document.getElementById("ticketDefinitionsSelect"));
+            ticketDefinitions.selectedIndex = 0;
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr);
         });
-        const ticketDefinitions = new mdc.select.MDCSelect(document.getElementById("ticketDefinitionsSelect"));
-        ticketDefinitions.selectedIndex = 0;
-    }).fail((xhr, status, error) => {
-        console.error("Error fetching data:", error);
-        displayErrorInBanner(xhr);
-    });
-
+    }
 
     const ticketExpirationPoliciesTable = $("#ticketExpirationPoliciesTable").DataTable({
         pageLength: 10,
@@ -517,27 +521,29 @@ async function initializeTicketsOperations() {
         }
     });
 
-    $.get(Endpoints.EXPIRATION_POLICIES, response => {
-        console.log(response);
-        ticketExpirationPoliciesTable.clear();
-        for (const key of Object.keys(response)) {
-            const policy = response[key];
-            delete policy.name;
+    if (actuatorEndpoints.ticketExpirationPolicies) {
+        $.get(actuatorEndpoints.ticketExpirationPolicies, response => {
+            console.log(response);
+            ticketExpirationPoliciesTable.clear();
+            for (const key of Object.keys(response)) {
+                const policy = response[key];
+                delete policy.name;
 
-            const flattened = flattenJSON(policy);
-            for (const [k, v] of Object.entries(flattened)) {
-                ticketExpirationPoliciesTable.row.add({
-                    0: `<code>${key}</code>`,
-                    1: `<code>${k}</code>`,
-                    2: `<code>${v}</code>`
-                });
+                const flattened = flattenJSON(policy);
+                for (const [k, v] of Object.entries(flattened)) {
+                    ticketExpirationPoliciesTable.row.add({
+                        0: `<code>${key}</code>`,
+                        1: `<code>${k}</code>`,
+                        2: `<code>${v}</code>`
+                    });
+                }
             }
-        }
-        ticketExpirationPoliciesTable.draw();
-    }).fail((xhr, status, error) => {
-        console.error("Error fetching data:", error);
-        displayErrorInBanner(xhr);
-    });
+            ticketExpirationPoliciesTable.draw();
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr);
+        });
+    }
 }
 
 
@@ -585,64 +591,66 @@ async function initializeSsoSessionOperations() {
     });
 
     $("#removeSsoSessionButton").off().on("click", () => {
-        const form = document.getElementById("fmSsoSessions");
-        if (!form.reportValidity()) {
-            return false;
+        if (actuatorEndpoints.ssosessions) {
+            const form = document.getElementById("fmSsoSessions");
+            if (!form.reportValidity()) {
+                return false;
+            }
+
+            swal({
+                title: "Are you sure you want to delete all sessions for the user?",
+                text: "Once deleted, you may not be able to recover this entry.",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        const username = $("#ssoSessionUsername").val();
+
+                        $.ajax({
+                            url: `${actuatorEndpoints.ssosessions}/users/${username}`,
+                            type: "DELETE",
+                            contentType: "application/x-www-form-urlencoded",
+                            success: (response, status, xhr) => {
+                                ssoSessionsEditor.setValue(JSON.stringify(response, null, 2));
+                                ssoSessionsEditor.gotoLine(1);
+                                ssoSessionsTable.clear().draw();
+                            },
+                            error: (xhr, status, error) => {
+                                console.error("Error fetching data:", error);
+                                displayErrorInBanner(xhr);
+                            }
+                        });
+                    }
+                });
         }
-
-        swal({
-            title: "Are you sure you want to delete all sessions for the user?",
-            text: "Once deleted, you may not be able to recover this entry.",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true
-        })
-            .then((willDelete) => {
-                if (willDelete) {
-                    const username = $("#ssoSessionUsername").val();
-
-                    $.ajax({
-                        url: `${Endpoints.SSO_SESSIONS}/users/${username}`,
-                        type: "DELETE",
-                        contentType: "application/x-www-form-urlencoded",
-                        success: (response, status, xhr) => {
-                            ssoSessionsEditor.setValue(JSON.stringify(response, null, 2));
-                            ssoSessionsEditor.gotoLine(1);
-                            ssoSessionsTable.clear().draw();
-                        },
-                        error: (xhr, status, error) => {
-                            console.error("Error fetching data:", error);
-                            displayErrorInBanner(xhr);
-                        }
-                    });
-                }
-            });
     });
 
     $("button[name=ssoSessionButton]").off().on("click", () => {
-        const form = document.getElementById("fmSsoSessions");
-        if (!form.reportValidity()) {
-            return false;
-        }
+        if (actuatorEndpoints.ssosessions) {
+            const form = document.getElementById("fmSsoSessions");
+            if (!form.reportValidity()) {
+                return false;
+            }
+            ssoSessionsEditor.setValue("");
+            const username = $("#ssoSessionUsername").val();
+            $.ajax({
+                url: `${actuatorEndpoints.ssosessions}/users/${username}`,
+                type: "GET",
+                contentType: "application/x-www-form-urlencoded",
+                success: (response, status, xhr) => {
+                    $("#ssoSessionsEditorContainer").removeClass("d-none");
+                    ssoSessionsEditor.setValue(JSON.stringify(response, null, 2));
+                    ssoSessionsEditor.gotoLine(1);
 
-        ssoSessionsEditor.setValue("");
-        const username = $("#ssoSessionUsername").val();
-        $.ajax({
-            url: `${Endpoints.SSO_SESSIONS}/users/${username}`,
-            type: "GET",
-            contentType: "application/x-www-form-urlencoded",
-            success: (response, status, xhr) => {
-                $("#ssoSessionsEditorContainer").removeClass("d-none");
-                ssoSessionsEditor.setValue(JSON.stringify(response, null, 2));
-                ssoSessionsEditor.gotoLine(1);
+                    for (const session of response.activeSsoSessions) {
+                        const attributes = {
+                            principal: session["principal_attributes"],
+                            authentication: session["authentication_attributes"]
+                        };
 
-                for (const session of response.activeSsoSessions) {
-                    const attributes = {
-                        principal: session["principal_attributes"],
-                        authentication: session["authentication_attributes"]
-                    };
-
-                    let serviceButtons = `
+                        let serviceButtons = `
                          <button type="button" name="removeSsoSession" href="#" 
                                 data-ticketgrantingticket='${session.ticket_granting_ticket}'
                                 class="mdc-button mdc-button--raised min-width-32x">
@@ -656,81 +664,81 @@ async function initializeSsoSessionOperations() {
                         </button>
                     `;
 
-                    ssoSessionsTable.row.add({
-                        0: `<code>${session["authentication_date"]}</code>`,
-                        1: `<code>${session["ticket_granting_ticket"]}</code>`,
-                        2: `<code>${session["authentication_attributes"]?.clientIpAddress?.[0]}</code>`,
-                        3: `<code>${session["authentication_attributes"]?.userAgent?.[0]}</code>`,
-                        4: `<code>${session["number_of_uses"]}</code>`,
-                        5: `<code>${session["remember_me"]}</code>`,
-                        6: `${serviceButtons}`,
-                        7: `${JSON.stringify(attributes)}`
+                        ssoSessionsTable.row.add({
+                            0: `<code>${session["authentication_date"]}</code>`,
+                            1: `<code>${session["ticket_granting_ticket"]}</code>`,
+                            2: `<code>${session["authentication_attributes"]?.clientIpAddress?.[0]}</code>`,
+                            3: `<code>${session["authentication_attributes"]?.userAgent?.[0]}</code>`,
+                            4: `<code>${session["number_of_uses"]}</code>`,
+                            5: `<code>${session["remember_me"]}</code>`,
+                            6: `${serviceButtons}`,
+                            7: `${JSON.stringify(attributes)}`
+                        });
+                    }
+                    ssoSessionsTable.draw();
+
+                    $("button[name=viewSsoSession]").off().on("click", function () {
+
+                        const attributes = JSON.parse($(this).children("span").first().text());
+                        for (const [key, value] of Object.entries(attributes.principal)) {
+                            ssoSessionDetailsTable.row.add({
+                                0: `<code>Principal</code>`,
+                                1: `<code>${key}</code>`,
+                                2: `<code>${value}</code>`
+                            });
+                        }
+                        for (const [key, value] of Object.entries(attributes.authentication)) {
+                            ssoSessionDetailsTable.row.add({
+                                0: `<code>Authentication</code>`,
+                                1: `<code>${key}</code>`,
+                                2: `<code>${value}</code>`
+                            });
+                        }
+                        ssoSessionDetailsTable.draw();
+
+                        let dialog = mdc.dialog.MDCDialog.attachTo(document.getElementById("ssoSession-dialog"));
+                        dialog["open"]();
                     });
+
+                    $("button[name=removeSsoSession]").off().on("click", function () {
+                        const ticket = $(this).data("ticketgrantingticket");
+                        console.log("Removing ticket-granting ticket:", ticket);
+
+                        swal({
+                            title: "Are you sure you want to delete this session?",
+                            text: "Once deleted, you may not be able to recover this entry.",
+                            icon: "warning",
+                            buttons: true,
+                            dangerMode: true
+                        })
+                            .then((willDelete) => {
+                                if (willDelete) {
+                                    $.ajax({
+                                        url: `${actuatorEndpoints.ssosessions}/${ticket}`,
+                                        type: "DELETE",
+                                        contentType: "application/x-www-form-urlencoded",
+                                        success: (response, status, xhr) => {
+                                            ssoSessionsEditor.setValue(JSON.stringify(response, null, 2));
+                                            ssoSessionsEditor.gotoLine(1);
+                                            let nearestTr = $(this).closest("tr");
+                                            ssoSessionsTable.row(nearestTr).remove().draw();
+                                        },
+                                        error: (xhr, status, error) => {
+                                            console.error("Error fetching data:", error);
+                                            displayErrorInBanner(xhr);
+                                        }
+                                    });
+                                }
+                            });
+                    });
+                },
+                error: (xhr, status, error) => {
+                    console.error("Error fetching data:", error);
+                    displayErrorInBanner(xhr);
                 }
-                ssoSessionsTable.draw();
-
-                $("button[name=viewSsoSession]").off().on("click", function () {
-
-                    const attributes = JSON.parse($(this).children("span").first().text());
-                    for (const [key, value] of Object.entries(attributes.principal)) {
-                        ssoSessionDetailsTable.row.add({
-                            0: `<code>Principal</code>`,
-                            1: `<code>${key}</code>`,
-                            2: `<code>${value}</code>`
-                        });
-                    }
-                    for (const [key, value] of Object.entries(attributes.authentication)) {
-                        ssoSessionDetailsTable.row.add({
-                            0: `<code>Authentication</code>`,
-                            1: `<code>${key}</code>`,
-                            2: `<code>${value}</code>`
-                        });
-                    }
-                    ssoSessionDetailsTable.draw();
-
-                    let dialog = mdc.dialog.MDCDialog.attachTo(document.getElementById("ssoSession-dialog"));
-                    dialog["open"]();
-                });
-
-                $("button[name=removeSsoSession]").off().on("click", function () {
-                    const ticket = $(this).data("ticketgrantingticket");
-                    console.log("Removing ticket-granting ticket:", ticket);
-
-                    swal({
-                        title: "Are you sure you want to delete this session?",
-                        text: "Once deleted, you may not be able to recover this entry.",
-                        icon: "warning",
-                        buttons: true,
-                        dangerMode: true
-                    })
-                        .then((willDelete) => {
-                            if (willDelete) {
-                                $.ajax({
-                                    url: `${Endpoints.SSO_SESSIONS}/${ticket}`,
-                                    type: "DELETE",
-                                    contentType: "application/x-www-form-urlencoded",
-                                    success: (response, status, xhr) => {
-                                        ssoSessionsEditor.setValue(JSON.stringify(response, null, 2));
-                                        ssoSessionsEditor.gotoLine(1);
-                                        let nearestTr = $(this).closest("tr");
-                                        ssoSessionsTable.row(nearestTr).remove().draw();
-                                    },
-                                    error: (xhr, status, error) => {
-                                        console.error("Error fetching data:", error);
-                                        displayErrorInBanner(xhr);
-                                    }
-                                });
-                            }
-                        });
-                });
-            },
-            error: (xhr, status, error) => {
-                console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
-            }
-        });
+            });
+        }
     });
-
 
 }
 
@@ -780,10 +788,12 @@ async function initializeLoggingOperations() {
     }
 
     function fetchLoggerData(callback) {
-        $.get(Endpoints.LOGGING_CONFIG, response => callback(response)).fail((xhr, status, error) => {
-            console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
-        });
+        if (actuatorEndpoints.loggingConfig) {
+            $.get(actuatorEndpoints.loggingConfig, response => callback(response)).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayErrorInBanner(xhr);
+            });
+        }
     }
 
     function updateLoggersTable() {
@@ -809,26 +819,28 @@ async function initializeLoggingOperations() {
 
             function handleLoggerLevelSelectionChange() {
                 $("select[name=loggerLevelSelect]").off().on("change", function () {
-                    const logger = $(this).data("logger");
-                    const level = $(this).val();
-                    console.log("Logger:", logger, "Level:", level);
-                    const loggerData = {
-                        "configuredLevel": level
-                    };
-                    $.ajax({
-                        url: `${Endpoints.LOGGERS}/${logger}`,
-                        type: "POST",
-                        contentType: "application/json",
-                        data: JSON.stringify(loggerData),
-                        success: response => {
-                            console.log("Update successful:", response);
-                            $(this).css("background-color", determineLoggerColor(level));
-                        },
-                        error: (xhr, status, error) => {
-                            console.error("Failed", error);
-                            displayErrorInBanner(xhr);
-                        }
-                    });
+                    if (actuatorEndpoints.loggers) {
+                        const logger = $(this).data("logger");
+                        const level = $(this).val();
+                        console.log("Logger:", logger, "Level:", level);
+                        const loggerData = {
+                            "configuredLevel": level
+                        };
+                        $.ajax({
+                            url: `${actuatorEndpoints.loggers}/${logger}`,
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify(loggerData),
+                            success: response => {
+                                console.log("Update successful:", response);
+                                $(this).css("background-color", determineLoggerColor(level));
+                            },
+                            error: (xhr, status, error) => {
+                                console.error("Failed", error);
+                                displayErrorInBanner(xhr);
+                            }
+                        });
+                    }
                 });
             }
 
@@ -869,179 +881,189 @@ async function initializeLoggingOperations() {
 
 async function initializeSystemOperations() {
     function configureAuditEventsChart() {
-        $.get(Endpoints.AUDIT_EVENTS, response => {
-            let auditData = [];
-            const results = response.events.reduce((accumulator, event) => {
-                let timestamp = formatDateYearMonthDay(event.timestamp);
-                const type = event.type;
+        if (actuatorEndpoints.auditevents) {
+            $.get(actuatorEndpoints.auditevents, response => {
+                let auditData = [];
+                const results = response.events.reduce((accumulator, event) => {
+                    let timestamp = formatDateYearMonthDay(event.timestamp);
+                    const type = event.type;
 
-                if (!accumulator[timestamp]) {
-                    accumulator[timestamp] = {};
+                    if (!accumulator[timestamp]) {
+                        accumulator[timestamp] = {};
+                    }
+
+                    if (!accumulator[timestamp][type]) {
+                        accumulator[timestamp][type] = 0;
+                    }
+                    accumulator[timestamp][type]++;
+                    return accumulator;
+                }, {});
+
+                for (const [key, value] of Object.entries(results)) {
+                    let auditEntry = Object.assign({timestamp: key}, value);
+                    auditData.push(auditEntry);
                 }
 
-                if (!accumulator[timestamp][type]) {
-                    accumulator[timestamp][type] = 0;
-                }
-                accumulator[timestamp][type]++;
-                return accumulator;
-            }, {});
-
-            for (const [key, value] of Object.entries(results)) {
-                let auditEntry = Object.assign({timestamp: key}, value);
-                auditData.push(auditEntry);
-            }
-
-            auditEventsChart.data.labels = auditData.map(d => d.timestamp);
-            let datasets = [];
-            for (const entry of auditData) {
-                for (const type of Object.keys(auditData[0])) {
-                    if (type !== "timestamp" && type !== "AUTHORIZATION_FAILURE") {
-                        datasets.push({
-                            borderWidth: 2,
-                            data: auditData,
-                            parsing: {
-                                xAxisKey: "timestamp",
-                                yAxisKey: type
-                            },
-                            label: type
-                        });
+                auditEventsChart.data.labels = auditData.map(d => d.timestamp);
+                let datasets = [];
+                for (const entry of auditData) {
+                    for (const type of Object.keys(auditData[0])) {
+                        if (type !== "timestamp" && type !== "AUTHORIZATION_FAILURE") {
+                            datasets.push({
+                                borderWidth: 2,
+                                data: auditData,
+                                parsing: {
+                                    xAxisKey: "timestamp",
+                                    yAxisKey: type
+                                },
+                                label: type
+                            });
+                        }
                     }
                 }
-            }
-            auditEventsChart.data.datasets = datasets;
-            auditEventsChart.update();
-        });
+                auditEventsChart.data.datasets = datasets;
+                auditEventsChart.update();
+            });
+        }
     }
 
     async function configureHttpRequestResponses() {
-        $.get(Endpoints.HTTP_EXCHANGES, response => {
-            function urlIsAcceptable(url) {
-                return !url.startsWith("/actuator")
-                    && !url.startsWith("/webjars")
-                    && !url.endsWith(".js")
-                    && !url.endsWith(".ico")
-                    && !url.endsWith(".png")
-                    && !url.endsWith(".jpg")
-                    && !url.endsWith(".jpeg")
-                    && !url.endsWith(".gif")
-                    && !url.endsWith(".svg")
-                    && !url.endsWith(".css");
-            }
+        if (actuatorEndpoints.httpexchanges) {
+            $.get(actuatorEndpoints.httpexchanges, response => {
+                function urlIsAcceptable(url) {
+                    return !url.startsWith("/actuator")
+                        && !url.startsWith("/webjars")
+                        && !url.endsWith(".js")
+                        && !url.endsWith(".ico")
+                        && !url.endsWith(".png")
+                        && !url.endsWith(".jpg")
+                        && !url.endsWith(".jpeg")
+                        && !url.endsWith(".gif")
+                        && !url.endsWith(".svg")
+                        && !url.endsWith(".css");
+                }
 
-            console.log(response);
-            let httpSuccesses = [];
-            let httpFailures = [];
-            let httpSuccessesPerUrl = [];
-            let httpFailuresPerUrl = [];
+                console.log(response);
+                let httpSuccesses = [];
+                let httpFailures = [];
+                let httpSuccessesPerUrl = [];
+                let httpFailuresPerUrl = [];
 
-            let totalHttpSuccessPerUrl = 0;
-            let totalHttpSuccess = 0;
-            let totalHttpFailurePerUrl = 0;
-            let totalHttpFailure = 0;
+                let totalHttpSuccessPerUrl = 0;
+                let totalHttpSuccess = 0;
+                let totalHttpFailurePerUrl = 0;
+                let totalHttpFailure = 0;
 
-            for (const exchange of response.exchanges) {
-                let timestamp = formatDateYearMonthDayHourMinute(exchange.timestamp);
-                let url = exchange.request.uri
-                    .replace(casServerPrefix, "")
-                    .replaceAll(/\?.+/gi, "");
+                for (const exchange of response.exchanges) {
+                    let timestamp = formatDateYearMonthDayHourMinute(exchange.timestamp);
+                    let url = exchange.request.uri
+                        .replace(casServerPrefix, "")
+                        .replaceAll(/\?.+/gi, "");
 
-                if (urlIsAcceptable(url)) {
-                    if (exchange.response.status >= 100 && exchange.response.status <= 400) {
-                        totalHttpSuccess++;
-                        httpSuccesses.push({x: timestamp, y: totalHttpSuccess});
-                        totalHttpSuccessPerUrl++;
-                        httpSuccessesPerUrl.push({x: url, y: totalHttpSuccessPerUrl});
-                    } else {
-                        totalHttpFailure++;
-                        httpFailures.push({x: timestamp, y: totalHttpFailure});
-                        totalHttpFailurePerUrl++;
-                        httpFailuresPerUrl.push({x: url, y: totalHttpFailurePerUrl});
+                    if (urlIsAcceptable(url)) {
+                        if (exchange.response.status >= 100 && exchange.response.status <= 400) {
+                            totalHttpSuccess++;
+                            httpSuccesses.push({x: timestamp, y: totalHttpSuccess});
+                            totalHttpSuccessPerUrl++;
+                            httpSuccessesPerUrl.push({x: url, y: totalHttpSuccessPerUrl});
+                        } else {
+                            totalHttpFailure++;
+                            httpFailures.push({x: timestamp, y: totalHttpFailure});
+                            totalHttpFailurePerUrl++;
+                            httpFailuresPerUrl.push({x: url, y: totalHttpFailurePerUrl});
+                        }
                     }
                 }
-            }
-            httpRequestResponsesChart.data.datasets[0].data = httpSuccesses;
-            httpRequestResponsesChart.data.datasets[0].label = "Success";
-            httpRequestResponsesChart.data.datasets[1].data = httpFailures;
-            httpRequestResponsesChart.data.datasets[1].label = "Failure";
-            httpRequestResponsesChart.update();
+                httpRequestResponsesChart.data.datasets[0].data = httpSuccesses;
+                httpRequestResponsesChart.data.datasets[0].label = "Success";
+                httpRequestResponsesChart.data.datasets[1].data = httpFailures;
+                httpRequestResponsesChart.data.datasets[1].label = "Failure";
+                httpRequestResponsesChart.update();
 
-            httpRequestsByUrlChart.data.datasets[0].data = httpSuccessesPerUrl;
-            httpRequestsByUrlChart.data.datasets[0].label = "Success";
-            httpRequestsByUrlChart.data.datasets[1].data = httpFailuresPerUrl;
-            httpRequestsByUrlChart.data.datasets[1].label = "Failure";
-            httpRequestsByUrlChart.update();
-        }).fail((xhr, status, error) => {
-            console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
-        });
+                httpRequestsByUrlChart.data.datasets[0].data = httpSuccessesPerUrl;
+                httpRequestsByUrlChart.data.datasets[0].label = "Success";
+                httpRequestsByUrlChart.data.datasets[1].data = httpFailuresPerUrl;
+                httpRequestsByUrlChart.data.datasets[1].label = "Failure";
+                httpRequestsByUrlChart.update();
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayErrorInBanner(xhr);
+            });
 
-        $("#downloadHeapDumpButton").off().on("click", () => {
-            $("#downloadHeapDumpButton").prop("disabled", true);
-            fetch(Endpoints.HEAP_DUMP)
-                .then(response =>
-                    response.blob().then(blob => {
-                        const link = document.createElement("a");
-                        link.href = window.URL.createObjectURL(blob);
-                        link.download = "heapdump";
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
+            $("#downloadHeapDumpButton").off().on("click", () => {
+                $("#downloadHeapDumpButton").prop("disabled", true);
+                fetch(actuatorEndpoints.heapdump)
+                    .then(response =>
+                        response.blob().then(blob => {
+                            const link = document.createElement("a");
+                            link.href = window.URL.createObjectURL(blob);
+                            link.download = "heapdump";
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            $("#downloadHeapDumpButton").prop("disabled", false);
+                        }))
+                    .catch(error => {
+                        console.error("Error fetching file:", error);
                         $("#downloadHeapDumpButton").prop("disabled", false);
-                    }))
-                .catch(error => {
-                    console.error("Error fetching file:", error);
-                    $("#downloadHeapDumpButton").prop("disabled", false);
-                });
-        });
+                    });
+            });
+        }
     }
 
     function configureHealthChart() {
-        $.get(Endpoints.HEALTH, response => {
-            console.log(response);
-            const payload = {
-                labels: [],
-                data: [],
-                colors: []
-            };
-            Object.keys(response.components).forEach(key => {
-                payload.labels.push(key.charAt(0).toUpperCase() + key.slice(1).toLowerCase());
-                payload.data.push(response.components[key].status === "UP" ? 1 : 0);
-                payload.colors.push(response.components[key].status === "UP" ? "rgb(5, 166, 31)" : "rgba(166, 45, 15)");
-            });
-            systemHealthChart.data.labels = payload.labels;
-            systemHealthChart.data.datasets[0].data = payload.data;
-            systemHealthChart.data.datasets[0].backgroundColor = payload.colors;
-            systemHealthChart.data.datasets[0].borderColor = payload.colors;
-            systemHealthChart.options.plugins.legend.labels.generateLabels = (chart => {
-                const originalLabels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
-                originalLabels.forEach(label => {
-                    label.fillStyle = response.status === "UP" ? "rgb(5, 166, 31)" : "rgba(166, 45, 15)";
-                    label.lineWidth = 0;
+        if (actuatorEndpoints.health) {
+            $.get(actuatorEndpoints.health, response => {
+                console.log(response);
+                const payload = {
+                    labels: [],
+                    data: [],
+                    colors: []
+                };
+                Object.keys(response.components).forEach(key => {
+                    payload.labels.push(key.charAt(0).toUpperCase() + key.slice(1).toLowerCase());
+                    payload.data.push(response.components[key].status === "UP" ? 1 : 0);
+                    payload.colors.push(response.components[key].status === "UP" ? "rgb(5, 166, 31)" : "rgba(166, 45, 15)");
                 });
-                return originalLabels;
-            });
+                systemHealthChart.data.labels = payload.labels;
+                systemHealthChart.data.datasets[0].data = payload.data;
+                systemHealthChart.data.datasets[0].backgroundColor = payload.colors;
+                systemHealthChart.data.datasets[0].borderColor = payload.colors;
+                systemHealthChart.options.plugins.legend.labels.generateLabels = (chart => {
+                    const originalLabels = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                    originalLabels.forEach(label => {
+                        label.fillStyle = response.status === "UP" ? "rgb(5, 166, 31)" : "rgba(166, 45, 15)";
+                        label.lineWidth = 0;
+                    });
+                    return originalLabels;
+                });
 
-            systemHealthChart.update();
-        }).fail((xhr, status, error) => {
-            console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
-        });
+                systemHealthChart.update();
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayErrorInBanner(xhr);
+            });
+        }
     }
 
     function configureStatistics() {
-        $.get(Endpoints.STATISTICS, response => {
-            const expired = response.expiredTickets;
-            const valid = response.validTickets;
-            statisticsChart.data.datasets[0].data = [valid, expired];
-            statisticsChart.update();
-        }).fail((xhr, status, error) => console.error("Error fetching data:", error));
+        if (actuatorEndpoints.statistics) {
+            $.get(actuatorEndpoints.statistics, response => {
+                const expired = response.expiredTickets;
+                const valid = response.validTickets;
+                statisticsChart.data.datasets[0].data = [valid, expired];
+                statisticsChart.update();
+            }).fail((xhr, status, error) => console.error("Error fetching data:", error));
+        }
     }
 
     function fetchSystemData(callback) {
-        $.get(Endpoints.INFO, response => callback(response)).fail((xhr, status, error) => {
-            console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
-        });
+        if (actuatorEndpoints.info) {
+            $.get(actuatorEndpoints.info, response => callback(response)).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayErrorInBanner(xhr);
+            });
+        }
     }
 
     function configureSystemData() {
@@ -1053,26 +1075,29 @@ async function initializeSystemOperations() {
             memoryChart.data.datasets[0].data = [maximum, total, free];
             memoryChart.update();
         });
-        $.get(`${Endpoints.METRICS}/http.server.requests`, response => {
-            let count = response.measurements[0].value;
-            let totalTime = response.measurements[1].value.toFixed(2);
-            let maxTime = response.measurements[2].value.toFixed(2);
-            $("#httpRequestsCount").text(count);
-            $("#httpRequestsTotalTime").text(`${totalTime}s`);
-            $("#httpRequestsMaxTime").text(`${maxTime}s`);
-        }).fail((xhr, status, error) => {
-            console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
-        });
-        $.get(`${Endpoints.METRICS}/http.server.requests.active`, response => {
-            let active = response.measurements[0].value;
-            let duration = response.measurements[1].value.toFixed(2);
-            $("#httpRequestsActive").text(active);
-            $("#httpRequestsDuration").text(`${duration}s`);
-        }).fail((xhr, status, error) => {
-            console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
-        });
+
+        if (actuatorEndpoints.metrics) {
+            $.get(`${actuatorEndpoints.metrics}/http.server.requests`, response => {
+                let count = response.measurements[0].value;
+                let totalTime = response.measurements[1].value.toFixed(2);
+                let maxTime = response.measurements[2].value.toFixed(2);
+                $("#httpRequestsCount").text(count);
+                $("#httpRequestsTotalTime").text(`${totalTime}s`);
+                $("#httpRequestsMaxTime").text(`${maxTime}s`);
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayErrorInBanner(xhr);
+            });
+            $.get(`${actuatorEndpoints.metrics}/http.server.requests.active`, response => {
+                let active = response.measurements[0].value;
+                let duration = response.measurements[1].value.toFixed(2);
+                $("#httpRequestsActive").text(active);
+                $("#httpRequestsDuration").text(`${duration}s`);
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayErrorInBanner(xhr);
+            });
+        }
         configureHttpRequestResponses().then(configureAuditEventsChart());
     }
 
@@ -1109,11 +1134,12 @@ async function initializeSystemOperations() {
         configureStatistics();
     }, 5000);
 
-    $.get(Endpoints.CAS_FEATURES, response => {
-        console.log(response);
-        $("#casFeaturesChipset").empty();
-        for (const element of response) {
-            let feature = `
+    if (actuatorEndpoints.casFeatures) {
+        $.get(actuatorEndpoints.casFeatures, response => {
+            console.log(response);
+            $("#casFeaturesChipset").empty();
+            for (const element of response) {
+                let feature = `
                             <div class="mdc-chip" role="row">
                                 <div class="mdc-chip__ripple"></div>
                                 <span role="gridcell">
@@ -1121,9 +1147,10 @@ async function initializeSystemOperations() {
                                 </span>
                             </div>
                         `.trim();
-            $("#casFeaturesChipset").append($(feature));
-        }
-    });
+                $("#casFeaturesChipset").append($(feature));
+            }
+        });
+    }
 
     configureSystemData();
     configureStatistics();
@@ -1136,116 +1163,123 @@ function initializeServiceButtons() {
 
     $("button[name=deleteService]").off().on("click", function () {
         let serviceId = $(this).parent().attr("serviceId");
-        swal({
-            title: "Are you sure you want to delete this entry?",
-            text: "Once deleted, you may not be able to recover this entry.",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true
-        })
-            .then((willDelete) => {
-                if (willDelete) {
-                    $.ajax({
-                        url: `${Endpoints.REGISTERED_SERVICES}/${serviceId}`,
-                        type: "DELETE",
-                        success: response => {
-                            console.log("Resource deleted successfully:", response);
-                            let nearestTr = $(this).closest("tr");
+        if (actuatorEndpoints.registeredservices) {
+            swal({
+                title: "Are you sure you want to delete this entry?",
+                text: "Once deleted, you may not be able to recover this entry.",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        $.ajax({
+                            url: `${actuatorEndpoints.registeredservices}/${serviceId}`,
+                            type: "DELETE",
+                            success: response => {
+                                console.log("Resource deleted successfully:", response);
+                                let nearestTr = $(this).closest("tr");
 
-                            let applicationsTable = $("#applicationsTable").DataTable();
-                            applicationsTable.row(nearestTr).remove().draw();
-                        },
-                        error: (xhr, status, error) => {
-                            console.error("Error deleting resource:", error);
-                            displayErrorInBanner(xhr);
-                        }
-                    });
-                }
-            });
-
+                                let applicationsTable = $("#applicationsTable").DataTable();
+                                applicationsTable.row(nearestTr).remove().draw();
+                            },
+                            error: (xhr, status, error) => {
+                                console.error("Error deleting resource:", error);
+                                displayErrorInBanner(xhr);
+                            }
+                        });
+                    }
+                });
+        }
     });
 
     $("button[name=editService]").off().on("click", function () {
         let serviceId = $(this).parent().attr("serviceId");
-        $.get(`${Endpoints.REGISTERED_SERVICES}/${serviceId}`, response => {
-            const value = JSON.stringify(response, null, 4);
-            editor.setValue(value, -1);
-            editor.gotoLine(1);
-            const editServiceDialogElement = document.getElementById("editServiceDialog");
-            $(editServiceDialogElement).attr("newService", false);
-            editServiceDialog["open"]();
-        }).fail((xhr, status, error) => {
-            console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
-        });
-
+        if (actuatorEndpoints.registeredservices) {
+            $.get(`${actuatorEndpoints.registeredservices}/${serviceId}`, response => {
+                const value = JSON.stringify(response, null, 4);
+                editor.setValue(value, -1);
+                editor.gotoLine(1);
+                const editServiceDialogElement = document.getElementById("editServiceDialog");
+                $(editServiceDialogElement).attr("newService", false);
+                editServiceDialog["open"]();
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayErrorInBanner(xhr);
+            });
+        }
     });
 
-    $("button[name=saveService]").off().on("click", () =>
-        swal({
-            title: "Are you sure you want to update this entry?",
-            text: "Once updated, you may not be able to revert this entry.",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true
-        })
-            .then((willUpdate) => {
-                if (willUpdate) {
-                    const value = editor.getValue();
+    $("button[name=saveService]").off().on("click", () => {
+        if (actuatorEndpoints.registeredservices) {
+            swal({
+                title: "Are you sure you want to update this entry?",
+                text: "Once updated, you may not be able to revert this entry.",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true
+            })
+                .then((willUpdate) => {
+                    if (willUpdate) {
+                        const value = editor.getValue();
 
-                    const editServiceDialogElement = document.getElementById("editServiceDialog");
-                    const isNewService = $(editServiceDialogElement).attr("newService") === "true";
+                        const editServiceDialogElement = document.getElementById("editServiceDialog");
+                        const isNewService = $(editServiceDialogElement).attr("newService") === "true";
 
-                    $.ajax({
-                        url: `${Endpoints.REGISTERED_SERVICES}`,
-                        type: isNewService ? "POST" : "PUT",
-                        contentType: "application/json",
-                        data: value,
-                        success: response => {
-                            console.log("Update successful:", response);
-                            editServiceDialog["close"]();
-                            fetchServices(() => {
-                                let newServiceId = response.id;
-                                $("#applicationsTable tr").removeClass("selected");
-                                console.log("New Service Id", newServiceId);
-                                $(`#applicationsTable tr td span[serviceId=${newServiceId}]`).each(function () {
-                                    $(this).closest("tr").addClass("selected");
+                        $.ajax({
+                            url: `${actuatorEndpoints.registeredservices}`,
+                            type: isNewService ? "POST" : "PUT",
+                            contentType: "application/json",
+                            data: value,
+                            success: response => {
+                                console.log("Update successful:", response);
+                                editServiceDialog["close"]();
+                                fetchServices(() => {
+                                    let newServiceId = response.id;
+                                    $("#applicationsTable tr").removeClass("selected");
+                                    console.log("New Service Id", newServiceId);
+                                    $(`#applicationsTable tr td span[serviceId=${newServiceId}]`).each(function () {
+                                        $(this).closest("tr").addClass("selected");
+                                    });
                                 });
-                            });
-                        },
-                        error: (xhr, status, error) => {
-                            console.error("Update failed:", error);
-                            displayErrorInBanner(xhr);
-                        }
-                    });
-                }
-            }));
+                            },
+                            error: (xhr, status, error) => {
+                                console.error("Update failed:", error);
+                                displayErrorInBanner(xhr);
+                            }
+                        });
+                    }
+                })
+        }
+    });
 
     $("button[name=copyService]").off().on("click", function () {
-        let serviceId = $(this).parent().attr("serviceId");
-        $.get(`${Endpoints.REGISTERED_SERVICES}/${serviceId}`, response => {
-            let clone = {...response};
-            clone.serviceId = "...";
-            clone.name = `...`;
-            delete clone.id;
+        if (actuatorEndpoints.registeredservices) {
+            let serviceId = $(this).parent().attr("serviceId");
+            $.get(`${actuatorEndpoints.registeredservices}/${serviceId}`, response => {
+                let clone = {...response};
+                clone.serviceId = "...";
+                clone.name = `...`;
+                delete clone.id;
 
-            ["clientId", "clientSecret", "metadataLocation"].forEach(entry => {
-                if (Object.hasOwn(clone, entry)) {
-                    clone[entry] = `...`;
-                }
+                ["clientId", "clientSecret", "metadataLocation"].forEach(entry => {
+                    if (Object.hasOwn(clone, entry)) {
+                        clone[entry] = `...`;
+                    }
+                });
+                const value = JSON.stringify(clone, null, 4);
+                editor.setValue(value, -1);
+                editor.gotoLine(1);
+                editor.findAll("...", {regExp: false});
+
+                const editServiceDialogElement = document.getElementById("editServiceDialog");
+                $(editServiceDialogElement).attr("newService", true);
+                editServiceDialog["open"]();
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayErrorInBanner(xhr);
             });
-            const value = JSON.stringify(clone, null, 4);
-            editor.setValue(value, -1);
-            editor.gotoLine(1);
-            editor.findAll("...", {regExp: false});
-
-            const editServiceDialogElement = document.getElementById("editServiceDialog");
-            $(editServiceDialogElement).attr("newService", true);
-            editServiceDialog["open"]();
-        }).fail((xhr, status, error) => {
-            console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
-        });
+        }
     });
 }
 
@@ -1498,69 +1532,71 @@ async function initializePersonDirectoryOperations() {
     });
 
     $("button[name=personDirectoryClearButton]").off().on("click", () => {
-        const form = document.getElementById("fmPersonDirectory");
-        if (!form.reportValidity()) {
-            return false;
+        if (actuatorEndpoints.persondirectory) {
+            const form = document.getElementById("fmPersonDirectory");
+            if (!form.reportValidity()) {
+                return false;
+            }
+            const username = $("#personUsername").val();
+            swal({
+                title: `Are you sure you want to delete the cache for ${username}?`,
+                text: `Once the cached entry is removed, attribute repositories would be forced to fetch attributes for ${username} again`,
+                icon: "warning",
+                buttons: true,
+                dangerMode: true
+            })
+                .then((willClear) => {
+                    if (willClear) {
+                        personDirectoryTable.clear();
+                        $.ajax({
+                            url: `${actuatorEndpoints.persondirectory}/cache/${username}`,
+                            type: "DELETE",
+                            contentType: "application/json",
+                            success: (response, status, xhr) => {
+                                console.log("Cache is now cleared");
+                            },
+                            error: (xhr, status, error) => {
+                                console.error("Error fetching data:", error);
+                                displayErrorInBanner(xhr);
+                            }
+                        });
+                    }
+                });
         }
-        const username = $("#personUsername").val();
-        swal({
-            title: `Are you sure you want to delete the cache for ${username}?`,
-            text: `Once the cached entry is removed, attribute repositories would be forced to fetch attributes for ${username} again`,
-            icon: "warning",
-            buttons: true,
-            dangerMode: true
-        })
-            .then((willClear) => {
-                if (willClear) {
-                    personDirectoryTable.clear();
-                    $.ajax({
-                        url: `${Endpoints.PERSON_DIRECTORY}/cache/${username}`,
-                        type: "DELETE",
-                        contentType: "application/json",
-                        success: (response, status, xhr) => {
-                            console.log("Cache is now cleared");
-                        },
-                        error: (xhr, status, error) => {
-                            console.error("Error fetching data:", error);
-                            displayErrorInBanner(xhr);
-                        }
-                    });
-                }
-            });
     });
-
-
 
 
     $("button[name=personDirectoryButton]").off().on("click", () => {
-        const form = document.getElementById("fmPersonDirectory");
-        if (!form.reportValidity()) {
-            return false;
-        }
-        const username = $("#personUsername").val();
-        personDirectoryTable.clear();
-        $.ajax({
-            url: `${Endpoints.PERSON_DIRECTORY}/cache/${username}`,
-            type: "GET",
-            contentType: "application/json",
-            success: (response, status, xhr) => {
-                console.log(response);
-
-                for (const [key, values] of Object.entries(response.attributes)) {
-                    personDirectoryTable.row.add({
-                        0: `<code>${key}</code>`,
-                        1: `<code>${values}</code>`
-                    });
-                }
-                personDirectoryTable.draw();
-            },
-            error: (xhr, status, error) => {
-                console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+        if (actuatorEndpoints.persondirectory) {
+            const form = document.getElementById("fmPersonDirectory");
+            if (!form.reportValidity()) {
+                return false;
             }
-        });
+            const username = $("#personUsername").val();
+            personDirectoryTable.clear();
+            $.ajax({
+                url: `${actuatorEndpoints.persondirectory}/cache/${username}`,
+                type: "GET",
+                contentType: "application/json",
+                success: (response, status, xhr) => {
+                    console.log(response);
+
+                    for (const [key, values] of Object.entries(response.attributes)) {
+                        personDirectoryTable.row.add({
+                            0: `<code>${key}</code>`,
+                            1: `<code>${values}</code>`
+                        });
+                    }
+                    personDirectoryTable.draw();
+                },
+                error: (xhr, status, error) => {
+                    console.error("Error fetching data:", error);
+                    displayErrorInBanner(xhr);
+                }
+            });
+        }
     });
-    
+
 }
 
 async function initializeAuthenticationOperations() {
@@ -1568,7 +1604,10 @@ async function initializeAuthenticationOperations() {
         pageLength: 10,
         autoWidth: false,
         columnDefs: [
-            {visible: false, targets: 0}
+            {visible: false, targets: 0},
+            {width: "80%", targets: 1},
+            {width: "10%", targets: 2},
+            {width: "10%", targets: 3}
         ],
         order: [0, "asc"],
         drawCallback: settings => {
@@ -1592,21 +1631,22 @@ async function initializeAuthenticationOperations() {
     });
 
     authenticationHandlersTable.clear();
-    $.get(Endpoints.AUTHENTICATION_HANDLERS, response => {
-        for (const handler of response) {
-            authenticationHandlersTable.row.add({
-                0: `${handler.name}`,
-                1: `<code>${handler.type}</code>`,
-                2: `<code>${handler.state}</code>`,
-                3: `<code>${handler.order}</code>`
-            });
-        }
-        authenticationHandlersTable.draw();
-    }).fail((xhr, status, error) => {
-        console.error("Error fetching data:", error);
-        displayErrorInBanner(xhr);
-    });
-
+    if (actuatorEndpoints.authenticationHandlers) {
+        $.get(actuatorEndpoints.authenticationHandlers, response => {
+            for (const handler of response) {
+                authenticationHandlersTable.row.add({
+                    0: `${handler.name}`,
+                    1: `<code>${handler.type}</code>`,
+                    2: `<code>${handler.state}</code>`,
+                    3: `<code>${handler.order}</code>`
+                });
+            }
+            authenticationHandlersTable.draw();
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr);
+        });
+    }
 
     const authenticationPoliciesTable = $("#authenticationPoliciesTable").DataTable({
         pageLength: 10,
@@ -1623,19 +1663,74 @@ async function initializeAuthenticationOperations() {
     });
 
     authenticationPoliciesTable.clear();
-    $.get(Endpoints.AUTHENTICATION_POLICIES, response => {
-        for (const handler of response) {
-            authenticationPoliciesTable.row.add({
-                0: `${handler.name}`,
-                1: `<code>${handler.order}</code>`
-            });
+    if (actuatorEndpoints.authenticationPolicies) {
+        $.get(actuatorEndpoints.authenticationPolicies, response => {
+            for (const handler of response) {
+                authenticationPoliciesTable.row.add({
+                    0: `${handler.name}`,
+                    1: `<code>${handler.order}</code>`
+                });
+            }
+            authenticationPoliciesTable.draw();
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr);
+        });
+    }
+
+    const delegatedClientsTable = $("#delegatedClientsTable").DataTable({
+        pageLength: 10,
+        order: [0, "asc"],
+        autoWidth: false,
+        columnDefs: [
+            {visible: false, targets: 0},
+            {width: "50%", targets: 1},
+            {width: "50%", targets: 2}
+        ],
+        drawCallback: settings => {
+            $("#delegatedClientsTable tr").addClass("mdc-data-table__row");
+            $("#delegatedClientsTable td").addClass("mdc-data-table__cell");
+            const api = settings.api;
+            const rows = api.rows({page: "current"}).nodes();
+            let last = null;
+            api.column(0, {page: "current"})
+                .data()
+                .each((group, i) => {
+                    if (last !== group) {
+                        $(rows).eq(i).before(
+                            `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
+                                            <td colspan="2">${group}</td></tr>`.trim());
+                        last = group;
+                    }
+                });
         }
-        authenticationPoliciesTable.draw();
-    }).fail((xhr, status, error) => {
-        console.error("Error fetching data:", error);
-        displayErrorInBanner(xhr);
     });
-    
+
+    delegatedClientsTable.clear();
+    if (actuatorEndpoints.delegatedClients) {
+        $.get(actuatorEndpoints.delegatedClients, response => {
+            console.log(response);
+            for (const [key, idp] of Object.entries(response)) {
+                const details = flattenJSON(idp);
+                for (const [k, v] of Object.entries(details)) {
+                    if (Object.keys(v).length > 0) {
+                        delegatedClientsTable.row.add({
+                            0: `${key}`,
+                            1: `<code>${toKebabCase(k)}</code>`,
+                            2: `<code>${v}</code>`
+                        });
+                    }
+                }
+            }
+            delegatedClientsTable.draw();
+            $("#delegatedClientsContainer").removeClass("d-none");
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            $("#delegatedClientsContainer").addClass("d-none");
+        });
+    } else {
+        $("#delegatedClientsContainer").addClass("d-none");
+    }
 }
 
 async function initializeConfigurationOperations() {
@@ -1667,24 +1762,25 @@ async function initializeConfigurationOperations() {
     });
 
     configurationTable.clear();
-    $.get(Endpoints.ENV, response => {
-        for (const source of response.propertySources) {
-            const properties = flattenJSON(source.properties);
-            for (const [key, value] of Object.entries(properties)) {
-                if (!key.endsWith(".origin")) {
-                    configurationTable.row.add({
-                        0: `${camelcaseToTitleCase(source.name)}`,
-                        1: `<code>${key.replace(".value", "")}</code>`,
-                        2: `<code>${value}</code>`
-                    });
+    if (actuatorEndpoints.env) {
+        $.get(actuatorEndpoints.env, response => {
+            for (const source of response.propertySources) {
+                const properties = flattenJSON(source.properties);
+                for (const [key, value] of Object.entries(properties)) {
+                    if (!key.endsWith(".origin")) {
+                        configurationTable.row.add({
+                            0: `${camelcaseToTitleCase(source.name)}`,
+                            1: `<code>${key.replace(".value", "")}</code>`,
+                            2: `<code>${value}</code>`
+                        });
+                    }
                 }
             }
-        }
-        configurationTable.draw();
+            configurationTable.draw();
 
-        $("#casActiveProfiles").empty();
-        for (const element of response.activeProfiles) {
-            let feature = `
+            $("#casActiveProfiles").empty();
+            for (const element of response.activeProfiles) {
+                let feature = `
                 <div class="mdc-chip" role="row">
                     <div class="mdc-chip__ripple"></div>
                     <span role="gridcell">
@@ -1693,14 +1789,14 @@ async function initializeConfigurationOperations() {
                     </span>
                 </div>
             `.trim();
-            $("#casActiveProfiles").append($(feature));
-        }
+                $("#casActiveProfiles").append($(feature));
+            }
 
-    }).fail((xhr, status, error) => {
-        console.error("Error fetching data:", error);
-        displayErrorInBanner(xhr);
-    });
-
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr);
+        });
+    }
 
     const configPropsTable = $("#configPropsTable").DataTable({
         pageLength: 10,
@@ -1729,40 +1825,43 @@ async function initializeConfigurationOperations() {
         }
     });
     configPropsTable.clear();
-    $.get(Endpoints.CONFIG_PROPS, response => {
-        const casBeans = response.contexts["cas-1"].beans;
-        const bootstrapBeans = response.contexts["bootstrap"].beans;
-        for (const [sourceBean, bean] of Object.entries(casBeans)) {
-            let flattened = flattenJSON(bean.properties);
-            for (const [prop, propValue] of Object.entries(flattened)) {
-                const property = `${bean.prefix}.${prop}`;
-                if (Object.keys(propValue).length > 0) {
-                    configPropsTable.row.add({
-                        0: `${sourceBean}`,
-                        1: `<code>${property}</code>`,
-                        2: `<code>${propValue}</code>`
-                    });
+
+    if (actuatorEndpoints.configprops) {
+        $.get(actuatorEndpoints.configprops, response => {
+            const casBeans = response.contexts["cas-1"].beans;
+            const bootstrapBeans = response.contexts["bootstrap"].beans;
+            for (const [sourceBean, bean] of Object.entries(casBeans)) {
+                let flattened = flattenJSON(bean.properties);
+                for (const [prop, propValue] of Object.entries(flattened)) {
+                    const property = `${bean.prefix}.${prop}`;
+                    if (Object.keys(propValue).length > 0) {
+                        configPropsTable.row.add({
+                            0: `${sourceBean}`,
+                            1: `<code>${property}</code>`,
+                            2: `<code>${propValue}</code>`
+                        });
+                    }
                 }
             }
-        }
-        for (const [sourceBean, bean] of Object.entries(bootstrapBeans)) {
-            let flattened = flattenJSON(bean.properties);
-            for (const [prop, propValue] of Object.entries(flattened)) {
-                const property = `${bean.prefix}.${prop}`;
-                if (Object.keys(propValue).length > 0) {
-                    configPropsTable.row.add({
-                        0: `${sourceBean}`,
-                        1: `<code>${toKebabCase(property)}</code>`,
-                        2: `<code>${propValue}</code>`
-                    });
+            for (const [sourceBean, bean] of Object.entries(bootstrapBeans)) {
+                let flattened = flattenJSON(bean.properties);
+                for (const [prop, propValue] of Object.entries(flattened)) {
+                    const property = `${bean.prefix}.${prop}`;
+                    if (Object.keys(propValue).length > 0) {
+                        configPropsTable.row.add({
+                            0: `${sourceBean}`,
+                            1: `<code>${toKebabCase(property)}</code>`,
+                            2: `<code>${propValue}</code>`
+                        });
+                    }
                 }
             }
-        }
-        configPropsTable.draw();
-    }).fail((xhr, status, error) => {
-        console.error("Error fetching data:", error);
-        displayErrorInBanner(xhr);
-    });
+            configPropsTable.draw();
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr);
+        });
+    }
 }
 
 async function initializePalantir() {
@@ -1778,39 +1877,74 @@ async function initializePalantir() {
             initializeSsoSessionOperations(),
             initializeConfigurationOperations(),
             initializePersonDirectoryOperations(),
-            initializeAuthenticationOperations(),
+            initializeAuthenticationOperations()
         ]);
         setTimeout(() => {
             const selectedTab = window.localStorage.getItem("PalantirSelectedTab");
             $(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).click();
             activateDashboardTab(selectedTab);
+
+
+            if (!actuatorEndpoints.registeredservices) {
+                $("#applicationsTabButton").addClass("d-none");
+                $(`#attribute-tab-${Tabs.APPLICATIONS}`).addClass("d-none");
+            }
+            if (!actuatorEndpoints.metrics || !actuatorEndpoints.httpexchanges || !actuatorEndpoints.auditevents
+                || !actuatorEndpoints.heapdump || !actuatorEndpoints.health || !actuatorEndpoints.statistics) {
+                $("#systemTabButton").addClass("d-none");
+                $(`#attribute-tab-${Tabs.SYSTEM}`).addClass("d-none");
+            }
+            if (!actuatorEndpoints.ticketregistry) {
+                $("#ticketsTabButton").addClass("d-none");
+                $(`#attribute-tab-${Tabs.TICKETS}`).addClass("d-none");
+            }
+            if (!actuatorEndpoints.ticketregistry) {
+                $("#tasksTabButton").addClass("d-none");
+                $(`#attribute-tab-${Tabs.TASKS}`).addClass("d-none");
+            }
+            if (!actuatorEndpoints.persondirectory) {
+                $("#personDirectoryTabButton").addClass("d-none");
+                $(`#attribute-tab-${Tabs.PERSON_DIRECTORY}`).addClass("d-none");
+            }
+            if (!actuatorEndpoints.authenticationHandlers || !actuatorEndpoints.authenticationPolicies) {
+                $("#authenticationTabButton").addClass("d-none");
+                $(`#attribute-tab-${Tabs.AUTHENTICATION}`).addClass("d-none");
+            }
+            if (!actuatorEndpoints.serviceaccess) {
+                $("#accessStrategyTabButton").addClass("d-none");
+                $(`#attribute-tab-${Tabs.ACCESS_STRATEGY}`).addClass("d-none");
+            }
+            if (!actuatorEndpoints.ssoSessions) {
+                $("#ssoSessionsTabButton").addClass("d-none");
+                $(`#attribute-tab-${Tabs.SSO_SESSIONS}`).addClass("d-none");
+            }
+            if (!actuatorEndpoints.loggingConfig || !actuatorEndpoints.loggers) {
+                $("#loggingTabButton").addClass("d-none");
+                $(`#attribute-tab-${Tabs.LOGGING}`).addClass("d-none");
+            }
+            if (!actuatorEndpoints.env || !actuatorEndpoints.configprops) {
+                $("#configurationTabButton").addClass("d-none");
+                $(`#attribute-tab-${Tabs.CONFIGURATION}`).addClass("d-none");
+            }
+
+            let visibleCount = $("nav.sidebar-navigation ul li:visible").length;
+            console.log("Number of visible list items:", visibleCount);
+
+            if (visibleCount === 0) {
+                $("#dashboard").hide();
+                swal({
+                    title: "Palantir is unavailable!",
+                    text: `Palantir requires a number of actuator endpoints to be enabled and exposed, and your CAS deployment fails to do so.`,
+                    icon: "warning",
+                    buttons: false
+                });
+            } else {
+            }
         }, 2);
         $("#dashboard").removeClass("d-none");
     } catch (error) {
         console.error("An error occurred:", error);
     }
-}
-
-function ifPalantirIsReady() {
-    const checkUrls = async (urls) => {
-        const unavailableUrls = [];
-        const promises = urls.map(url =>
-            $.ajax({
-                url: url,
-                type: "HEAD"
-            }).then(
-                response => {
-                    if (response !== undefined && response.status >= 400) {
-                        unavailableUrls.push(url);
-                    }
-                },
-                () => unavailableUrls.push(url)
-            ));
-
-        await Promise.all(promises);
-        return unavailableUrls;
-    };
-    return checkUrls(Object.values(Endpoints));
 }
 
 function activateDashboardTab(idx) {
@@ -1839,27 +1973,14 @@ document.addEventListener("DOMContentLoaded", () => {
         allowOutsideClick: false,
         buttons: false
     });
-    ifPalantirIsReady().then(urls => {
-        if (urls.length === 0) {
-            initializePalantir().then(r => {
-                console.log("Palantir ready!");
-                swal({
-                    title: "Palantir is ready!",
-                    text: "Palantir has been successfully initialized and is ready for use.",
-                    buttons: false,
-                    icon: "success",
-                    timer: 1000
-                });
-            });
-        } else {
-            console.error("Palantir is not ready. The following endpoints are unavailable:", urls);
-            $("#dashboard").hide();
-            swal({
-                title: "Palantir is unavailable!",
-                text: `Palantir requires a number of actuator endpoints to be enabled and exposed, and your CAS deployment fails to do so.\n
-                Please check the console logs to a get list of required URLs and configure your CAS deployment to enable and expose each endpoints in your settings.`,
-                icon: "warning"
-            });
-        }
+    initializePalantir().then(r => {
+        console.log("Palantir ready!");
+        swal({
+            title: "Palantir is ready!",
+            text: "Palantir has been successfully initialized and is ready for use.",
+            buttons: false,
+            icon: "success",
+            timer: 1000
+        });
     });
 });

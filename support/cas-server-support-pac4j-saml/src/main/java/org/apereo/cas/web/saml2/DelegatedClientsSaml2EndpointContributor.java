@@ -3,6 +3,7 @@ package org.apereo.cas.web.saml2;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientsEndpointContributor;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.val;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.saml.client.SAML2Client;
@@ -22,7 +23,7 @@ public class DelegatedClientsSaml2EndpointContributor implements DelegatedClient
     }
 
     @Override
-    public Map<String, String> contribute(final BaseClient client) {
+    public Map<String, Object> contribute(final BaseClient client) {
         val saml2Client = (SAML2Client) client;
         saml2Client.init();
         val configuration = saml2Client.getConfiguration();
@@ -32,9 +33,20 @@ public class DelegatedClientsSaml2EndpointContributor implements DelegatedClient
             identityProviderMetadataResolver.resolve();
             identityProviderEntityId = identityProviderMetadataResolver.getEntityId();
         }
-        return CollectionUtils.wrap(
+
+        val payload = CollectionUtils.<String, Object>wrap(
+            "maximumAuthenticationLifetime", configuration.getMaximumAuthenticationLifetime(),
+            "acceptedSkew", configuration.getAcceptedSkew(),
+            "mappedAttributes", configuration.getMappedAttributes(),
+            "nameIdAttribute", configuration.getNameIdAttribute(),
+            "attributeAsId", configuration.getAttributeAsId(),
+            "nameIdPolicyFormat", configuration.getNameIdPolicyFormat(),
             "serviceProviderEntityId", configuration.getServiceProviderEntityId(),
             "identityProviderEntityId", identityProviderEntityId,
             "identityProviderMetadata", configuration.getIdentityProviderMetadataResource().toString());
+        payload.put("wantsAssertionsSigned", BooleanUtils.toStringTrueFalse(configuration.isWantsAssertionsSigned()));
+        payload.put("wantsResponsesSigned", BooleanUtils.toStringTrueFalse(configuration.isWantsResponsesSigned()));
+        payload.put("type", "saml2");
+        return payload;
     }
 }

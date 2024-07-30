@@ -66,7 +66,7 @@ The console is now able to display and manage registered services and show basic
 the console and add more features in the coming releases.
 
 <a href="https://github.com/user-attachments/assets/304fc177-7327-460c-b6dc-ae339f1aa76b" data-lightbox="image-0" data-title="Palantir Admin Console">
-    <img src="https://github.com/user-attachments/assets/304fc177-7327-460c-b6dc-ae339f1aa76b" title="Palantir Admin Console" />
+    <img width="60%" src="https://github.com/user-attachments/assets/304fc177-7327-460c-b6dc-ae339f1aa76b" title="Palantir Admin Console" />
 </a>
 
 ### Testing Strategy
@@ -98,3 +98,4 @@ are now configured to run with parallelism enabled.
 - EclipseLink
 - Netty
 - Lettuce
+- Jetty

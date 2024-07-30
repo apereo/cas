@@ -11,6 +11,8 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasPalantirAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.env.EnvironmentEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.health.HealthEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.info.InfoEndpointAutoConfiguration;
@@ -29,6 +31,8 @@ abstract class BasePalantirTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
+        EndpointAutoConfiguration.class,
+        WebEndpointAutoConfiguration.class,
         ServletWebServerFactoryAutoConfiguration.class,
 
         InfoEndpointAutoConfiguration.class,
