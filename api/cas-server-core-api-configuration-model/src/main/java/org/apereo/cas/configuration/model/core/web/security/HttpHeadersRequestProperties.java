@@ -88,7 +88,7 @@ public class HttpHeadersRequestProperties implements Serializable {
      * Multiple directives are separated with a semicolon.
      */
     @ExpressionLanguageCapable
-    private String contentSecurityPolicy = "script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none';";
+    private String contentSecurityPolicy = "script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none'; worker-src 'self' blob: 'unsafe-inline';";
 
     /**
      * Files with these extensions are considered static, so they will be cached by browsers. The value is part of a RegEx.

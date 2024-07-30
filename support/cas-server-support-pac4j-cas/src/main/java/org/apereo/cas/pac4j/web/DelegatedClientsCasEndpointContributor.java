@@ -2,6 +2,7 @@ package org.apereo.cas.pac4j.web;
 
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientsEndpointContributor;
 import org.apereo.cas.util.CollectionUtils;
+import lombok.val;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.client.BaseClient;
@@ -21,13 +22,18 @@ public class DelegatedClientsCasEndpointContributor implements DelegatedClientsE
     }
 
     @Override
-    public Map<String, String> contribute(final BaseClient client) {
+    public Map<String, Object> contribute(final BaseClient client) {
         return fetchCasConfiguration(((CasClient) client).getConfiguration());
     }
 
-    protected Map<String, String> fetchCasConfiguration(final CasConfiguration configuration) {
-        return CollectionUtils.wrap(
+    protected Map<String, Object> fetchCasConfiguration(final CasConfiguration configuration) {
+        val payload = CollectionUtils.<String, Object>wrap(
             "protocol", configuration.getProtocol(),
-            "loginUrl", configuration.getLoginUrl());
+            "loginUrl", configuration.getLoginUrl(),
+            "timeTolerance", configuration.getTimeTolerance()
+        );
+        payload.putAll(configuration.getCustomParams());
+        payload.put("type", "cas");
+        return payload;
     }
 }
