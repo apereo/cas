@@ -154,8 +154,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                 }
             });
 
-        ticketCache.ifAvailable(c -> c.invalidate(redisKeyGenerator.rawKey(redisTicketsKey)));
-        messagePublisher.ifAvailable(p -> p.delete(ticket));
+        ticketCache.ifAvailable(cache -> cache.invalidate(redisKeyGenerator.rawKey(redisTicketsKey)));
+        messagePublisher.ifAvailable(publisher -> publisher.delete(ticket));
         return count;
     }
 
@@ -171,7 +171,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
     public Ticket addSingleTicket(final Ticket ticket) {
         LOGGER.debug("Adding ticket [{}]", ticket);
         addOrUpdateTicket(ticket);
-        messagePublisher.ifAvailable(p -> p.add(ticket));
+        messagePublisher.ifAvailable(publisher -> publisher.add(ticket));
         return ticket;
     }
 
@@ -191,7 +191,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             val ticketPrefix = StringUtils.substring(ticketId, 0, ticketId.indexOf(UniqueTicketIdGenerator.SEPARATOR));
             val redisTicketsKey = redisKeyGeneratorFactory.getRedisKeyGenerator(Ticket.class.getName())
                 .orElseThrow().forEntry(ticketPrefix, digestIdentifier(ticketId));
-            return getTicketFromRedisByKey(predicate, redisTicketsKey);
+            return getTicketFromRedis(predicate, redisTicketsKey);
         });
     }
 
@@ -224,7 +224,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             .peek(ticket -> {
                 if (!ticket.isExpired()) {
                     val redisTicketsKey = redisKeyGenerator.forEntry(ticket.getPrefix(), digestIdentifier(ticket.getId()));
-                    ticketCache.ifAvailable(c -> c.put(redisKeyGenerator.rawKey(redisTicketsKey), ticket));
+                    ticketCache.ifAvailable(cache -> cache.put(redisKeyGenerator.rawKey(redisTicketsKey), ticket));
                 }
             });
     }
@@ -243,7 +243,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                     .filter(Objects::nonNull)
                     .map(ticketId -> {
                         val redisTicketsKey = redisKeyGenerator.forEntry(TicketGrantingTicket.PREFIX, ticketId);
-                        return getTicketFromRedisByKey(ticket -> !ticket.isExpired(), redisTicketsKey);
+                        return getTicketFromRedis(ticket -> !ticket.isExpired(), redisTicketsKey);
                     })
                     .map(this::decodeTicket)
                     .filter(Objects::nonNull)
@@ -432,7 +432,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         });
     }
 
-    private Ticket getTicketFromRedisByKey(final Predicate<Ticket> predicate, final String redisKeyPattern) {
+    protected Ticket getTicketFromRedis(final Predicate<Ticket> predicate, final String redisKeyPattern) {
         val query = redisKeyGeneratorFactory.getRedisKeyGenerator(Ticket.class.getName()).orElseThrow().rawKey(redisKeyPattern);
         val cachedTicket = ticketCache.stream().parallel().map(cache -> cache.getIfPresent(query)).filter(Objects::nonNull);
 
@@ -454,11 +454,11 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                 .findFirst()
                 .orElse(null));
         if (ticket != null && predicate.test(ticket) && !ticket.isExpired()) {
-            ticketCache.ifAvailable(c -> c.put(query, ticket));
+            ticketCache.ifAvailable(cache -> cache.put(query, ticket));
             return ticket;
         }
-        ticketCache.ifAvailable(c -> c.invalidate(query));
-        messagePublisher.ifAvailable(p -> p.delete(ticket));
+        ticketCache.ifAvailable(cache -> cache.invalidate(query));
+        messagePublisher.ifAvailable(publisher -> publisher.delete(ticket));
         return null;
     }
 
@@ -535,7 +535,6 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
 
     private void createIndexesIfNecessary() {
         redisModuleCommands.ifPresent(command -> {
-
             val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(Ticket.class.getName()).orElseThrow();
             val options = CreateOptions.<String, RedisTicketDocument>builder()
                 .prefix(redisKeyGenerator.getNamespace() + ':')

@@ -40,6 +40,9 @@ class SamlIdPTicketSerializationConfiguration {
 
             plan.registerTicketSerializer(SamlArtifactTicket.class.getName(), new SamlArtifactTicketStringSerializer(applicationContext));
             plan.registerTicketSerializer(SamlAttributeQueryTicket.class.getName(), new SamlAttributeQueryTicketStringSerializer(applicationContext));
+
+            plan.registerTicketSerializer(SamlArtifactTicket.PREFIX, new SamlArtifactTicketStringSerializer(applicationContext));
+            plan.registerTicketSerializer(SamlAttributeQueryTicket.PREFIX, new SamlAttributeQueryTicketStringSerializer(applicationContext));
         };
     }
 

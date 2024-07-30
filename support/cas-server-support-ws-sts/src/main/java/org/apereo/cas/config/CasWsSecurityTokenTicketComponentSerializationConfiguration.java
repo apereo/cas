@@ -36,6 +36,7 @@ class CasWsSecurityTokenTicketComponentSerializationConfiguration {
         return plan -> {
             plan.registerTicketSerializer(new SecurityTokenTicketStringSerializer(applicationContext));
             plan.registerTicketSerializer(SecurityTokenTicket.class.getName(), new SecurityTokenTicketStringSerializer(applicationContext));
+            plan.registerTicketSerializer(SecurityTokenTicket.PREFIX, new SecurityTokenTicketStringSerializer(applicationContext));
         };
     }
 

@@ -184,6 +184,8 @@ class CasSimpleMultifactorAuthenticationConfiguration {
                 plan.registerTicketSerializer(new CasSimpleMultifactorAuthenticationTicketStringSerializer(applicationContext));
                 plan.registerTicketSerializer(CasSimpleMultifactorAuthenticationTicket.class.getName(),
                     new CasSimpleMultifactorAuthenticationTicketStringSerializer(applicationContext));
+                plan.registerTicketSerializer(CasSimpleMultifactorAuthenticationTicket.PREFIX,
+                    new CasSimpleMultifactorAuthenticationTicketStringSerializer(applicationContext));
             };
         }
 

@@ -49,8 +49,11 @@ class OidcComponentSerializationConfiguration {
         return plan -> {
             plan.registerTicketSerializer(new OidcPushedAuthorizationRequestSerializer(applicationContext));
             plan.registerTicketSerializer(new OidcCibaRequestSerializer(applicationContext));
+
             plan.registerTicketSerializer(OidcPushedAuthorizationRequest.class.getName(), new OidcPushedAuthorizationRequestSerializer(applicationContext));
             plan.registerTicketSerializer(OidcCibaRequest.class.getName(), new OidcCibaRequestSerializer(applicationContext));
+            plan.registerTicketSerializer(OidcPushedAuthorizationRequest.PREFIX, new OidcPushedAuthorizationRequestSerializer(applicationContext));
+            plan.registerTicketSerializer(OidcCibaRequest.PREFIX, new OidcCibaRequestSerializer(applicationContext));
         };
     }
 

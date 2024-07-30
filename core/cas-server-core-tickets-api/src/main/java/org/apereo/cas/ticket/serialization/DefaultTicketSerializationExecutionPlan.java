@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.serialization;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.serialization.serializers.EncodedTicketStringSerializer;
@@ -41,6 +42,13 @@ public class DefaultTicketSerializationExecutionPlan implements TicketSerializat
         registerTicketSerializer(ServiceTicket.class.getName(), new ServiceTicketStringSerializer(applicationContext));
         registerTicketSerializer(ProxyTicket.class.getName(), new ProxyTicketStringSerializer(applicationContext));
         registerTicketSerializer(ProxyGrantingTicket.class.getName(), new ProxyGrantingTicketStringSerializer(applicationContext));
+        registerTicketSerializer(TransientSessionTicket.class.getName(), new TransientSessionTicketStringSerializer(applicationContext));
+
+        registerTicketSerializer(TicketGrantingTicket.PREFIX, new TicketGrantingTicketStringSerializer(applicationContext));
+        registerTicketSerializer(ServiceTicket.PREFIX, new ServiceTicketStringSerializer(applicationContext));
+        registerTicketSerializer(ProxyTicket.PROXY_TICKET_PREFIX, new ProxyTicketStringSerializer(applicationContext));
+        registerTicketSerializer(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX, new ProxyGrantingTicketStringSerializer(applicationContext));
+        registerTicketSerializer(TransientSessionTicket.PREFIX, new TransientSessionTicketStringSerializer(applicationContext));
     }
 
     @Override

@@ -51,6 +51,12 @@ class CasOAuth20TicketSerializationConfiguration {
             plan.registerTicketSerializer(OAuth20RefreshToken.class.getName(), new RefreshTokenTicketStringSerializer(applicationContext));
             plan.registerTicketSerializer(OAuth20DeviceToken.class.getName(), new DeviceTokenTicketStringSerializer(applicationContext));
             plan.registerTicketSerializer(OAuth20DeviceUserCode.class.getName(), new DeviceUserCodeTicketStringSerializer(applicationContext));
+
+            plan.registerTicketSerializer(OAuth20Code.PREFIX, new OAuthCodeTicketStringSerializer(applicationContext));
+            plan.registerTicketSerializer(OAuth20AccessToken.PREFIX, new AccessTokenTicketStringSerializer(applicationContext));
+            plan.registerTicketSerializer(OAuth20RefreshToken.PREFIX, new RefreshTokenTicketStringSerializer(applicationContext));
+            plan.registerTicketSerializer(OAuth20DeviceToken.PREFIX, new DeviceTokenTicketStringSerializer(applicationContext));
+            plan.registerTicketSerializer(OAuth20DeviceUserCode.PREFIX, new DeviceUserCodeTicketStringSerializer(applicationContext));
         };
     }
 
