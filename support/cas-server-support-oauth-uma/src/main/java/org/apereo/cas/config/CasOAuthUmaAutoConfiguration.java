@@ -355,6 +355,7 @@ public class CasOAuthUmaAutoConfiguration {
             return plan -> {
                 plan.registerTicketSerializer(new UmaPermissionTicketStringSerializer(applicationContext));
                 plan.registerTicketSerializer(UmaPermissionTicket.class.getName(), new UmaPermissionTicketStringSerializer(applicationContext));
+                plan.registerTicketSerializer(UmaPermissionTicket.PREFIX, new UmaPermissionTicketStringSerializer(applicationContext));
             };
         }
 

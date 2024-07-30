@@ -97,3 +97,4 @@ are now configured to run with parallelism enabled.
 - Kafka
 - EclipseLink
 - Netty
+- Lettuce

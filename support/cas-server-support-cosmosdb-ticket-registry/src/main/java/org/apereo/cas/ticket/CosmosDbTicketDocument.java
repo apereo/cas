@@ -30,7 +30,7 @@ public class CosmosDbTicketDocument implements Serializable {
 
     private String principal;
 
-    private Ticket ticket;
+    private String ticket;
 
     private long timeToLive;
 }
