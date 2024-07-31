@@ -300,11 +300,12 @@ function autoHideElement(id, timeout = 1500) {
     setTimeout(hideElement, timeout);
 }
 
-function initializeAceEditor(id) {
+function initializeAceEditor(id, mode="json") {
     ace.require("ace/ext/language_tools");
+    const beautify = ace.require("ace/ext/beautify");
     const editor = ace.edit(id);
     editor.setTheme("ace/theme/cobalt");
-    editor.session.setMode("ace/mode/json");
+    editor.session.setMode(`ace/mode/${mode}`);
     editor.session.setUseWrapMode(true);
     editor.session.setTabSize(4);
     editor.setShowPrintMargin(false);
@@ -340,5 +341,6 @@ function initializeAceEditor(id) {
         showLineNumbers: true,
         fontSize: "16px"
     });
+    beautify.beautify(editor.session);
     return editor;
 }
