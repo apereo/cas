@@ -1249,7 +1249,7 @@ function initializeServiceButtons() {
                             }
                         });
                     }
-                })
+                });
         }
     });
 
@@ -1684,8 +1684,9 @@ async function initializeAuthenticationOperations() {
         autoWidth: false,
         columnDefs: [
             {visible: false, targets: 0},
-            {width: "50%", targets: 1},
-            {width: "50%", targets: 2}
+            {width: "40%", targets: 1},
+            {width: "60%", targets: 2},
+            {visible: false, targets: 3}
         ],
         drawCallback: settings => {
             $("#delegatedClientsTable tr").addClass("mdc-data-table__row");
@@ -1697,9 +1698,27 @@ async function initializeAuthenticationOperations() {
                 .data()
                 .each((group, i) => {
                     if (last !== group) {
+                        let samlButtons = "";
+                        if (rows.data()[i][3] === "saml2") {
+                            samlButtons = `<span class="px-2">
+                                <button type="button" title="Service Provider Metadata" name="saml2ClientSpMetadata" href="#" clientName='${group}'
+                                        class="mdc-button mdc-button--raised toolbar">
+                                    <i class="mdi mdi-text-box min-width-32x" aria-hidden="true"></i>
+                                    Service Provider Metadata
+                                </button>
+                                <button type="button" title="Identity Provider Metadata" name="saml2ClientIdpMetadata" href="#" clientName='${group}'
+                                        class="mdc-button mdc-button--raised toolbar">
+                                    <i class="mdi mdi-file-xml-box min-width-32x" aria-hidden="true"></i>
+                                    Identity Provider Metadata
+                                </button>
+                        </span>
+                            `;
+                        }
+                        
                         $(rows).eq(i).before(
                             `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
-                                            <td colspan="2">${group}</td></tr>`.trim());
+                                <td colspan="3">${group} ${samlButtons.trim()} </td>
+                            </tr>`.trim());
                         last = group;
                     }
                 });
@@ -1708,22 +1727,53 @@ async function initializeAuthenticationOperations() {
 
     delegatedClientsTable.clear();
     if (actuatorEndpoints.delegatedClients) {
+        const saml2Editor = initializeAceEditor("delegatedClientsSaml2Editor", "xml");
+        saml2Editor.setReadOnly(true);
+        
         $.get(actuatorEndpoints.delegatedClients, response => {
+            function showSamlMetadata(payload) {
+                saml2Editor.setValue(new XMLSerializer().serializeToString(payload));
+                saml2Editor.gotoLine(1);
+
+                const beautify = ace.require("ace/ext/beautify");
+                beautify.beautify(saml2Editor.session);
+
+                const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("delegatedClientsSaml2Dialog"));
+                dialog["open"]();
+            }
+
             console.log(response);
             for (const [key, idp] of Object.entries(response)) {
                 const details = flattenJSON(idp);
                 for (const [k, v] of Object.entries(details)) {
-                    if (Object.keys(v).length > 0) {
+                    if (Object.keys(v).length > 0 && k !== "type") {
+                        let serviceButtons = null;
                         delegatedClientsTable.row.add({
                             0: `${key}`,
                             1: `<code>${toKebabCase(k)}</code>`,
-                            2: `<code>${v}</code>`
+                            2: `<code>${v}</code>`,
+                            3: `${idp.type}`
                         });
                     }
                 }
             }
             delegatedClientsTable.draw();
             $("#delegatedClientsContainer").removeClass("d-none");
+
+            $("button[name=saml2ClientSpMetadata]").off().on("click", function () {
+                $(this).prop("disabled", true);
+                const url = `${casServerPrefix}/sp/${$(this).attr("clientName")}/metadata`;
+                $.get(url, payload => showSamlMetadata(payload))
+                    .always(() => $(this).prop("disabled", false));
+
+            });
+            $("button[name=saml2ClientIdpMetadata]").off().on("click", function () {
+                $(this).prop("disabled", true);
+                const url = `${casServerPrefix}/sp/${$(this).attr("clientName")}/idp/metadata`;
+                $.get(url, payload => showSamlMetadata(payload))
+                    .always(() => $(this).prop("disabled", false));
+            });
+
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
             $("#delegatedClientsContainer").addClass("d-none");
