@@ -8,6 +8,7 @@
 <body>
 <span th:fragment="main">
     <div class="attribute-tab w-100 mdc-data-table table-responsive noborder" id="attribute-tab-0">
+        <h3>Services & Applications</h3>
             <table id="applicationsTable" class="mdc-data-table__table table table-striped noborder">
                 <thead>
                 <tr class="mdc-data-table__header-row">
@@ -28,11 +29,13 @@
                         <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-plus" aria-hidden="true"></i>New</span>
                     </button>
                     <input type="file" id="serviceFileInput" style="display: none;">
-                    <button name="importService" id="importService" class="mdc-button mdc-button--raised" aria-label="Import">
+                    <button name="importService" id="importService" class="mdc-button mdc-button--raised"
+                            aria-label="Import">
                          <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-import"
                                                             aria-hidden="true"></i>Import</span>
                     </button>
-                    <button name="exportAll" id="exportAll" class="mdc-button mdc-button--raised" aria-label="Export All">
+                    <button name="exportAll" id="exportAll" class="mdc-button mdc-button--raised"
+                            aria-label="Export All">
                          <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-file-export"
                                                             aria-hidden="true"></i>Export</span>
                     </button>
