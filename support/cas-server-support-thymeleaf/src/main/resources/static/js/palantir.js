@@ -12,7 +12,8 @@ const Tabs = {
     CONFIGURATION: 7,
     PERSON_DIRECTORY: 8,
     AUTHENTICATION: 9,
-    CONSENT: 10
+    CONSENT: 10,
+    PROTOCOLS: 11
 };
 
 /**
@@ -2049,6 +2050,35 @@ async function initializeConfigurationOperations() {
     }
 }
 
+async function initializeCasProtocolOperations() {
+    function buildCasProtocolPayload(endpoint,format) {
+        const form = document.getElementById("fmCasProtocol");
+        if (!form.reportValidity()) {
+            return false;
+        }
+        const username = $("#casProtocolUsername").val();
+        const password = $("#casProtocolPassword").val();
+        const service = $("#casProtocolService").val();
+
+        $.post(`${actuatorEndpoints.casvalidate}/${endpoint}`, {
+            username: username,
+            password: password,
+            service: service
+        }, data => {
+            const editor = initializeAceEditor("casProtocolEditor", format);
+            editor.setReadOnly(true);
+            editor.setValue(data);
+            editor.gotoLine(1);
+        }).fail((xhr, status, error) => {
+            displayErrorInBanner(xhr);
+        });
+    }
+
+    $("button[name=casProtocolV1Button]").off().on("click", () => buildCasProtocolPayload("validate", "text"));
+    $("button[name=casProtocolV2Button]").off().on("click", () => buildCasProtocolPayload("serviceValidate", "xml"));
+    $("button[name=casProtocolV3Button]").off().on("click", () => buildCasProtocolPayload("p3/serviceValidate", "xml"));
+}
+
 async function initializePalantir() {
     try {
         await Promise.all([
@@ -2063,7 +2093,8 @@ async function initializePalantir() {
             initializeConfigurationOperations(),
             initializePersonDirectoryOperations(),
             initializeAuthenticationOperations(),
-            initializeConsentOperations()
+            initializeConsentOperations(),
+            initializeCasProtocolOperations()
         ]);
         setTimeout(() => {
             if (!actuatorEndpoints.registeredservices) {
@@ -2110,6 +2141,9 @@ async function initializePalantir() {
             if (!actuatorEndpoints.attributeconsent) {
                 $("#consentTabButton").addClass("d-none");
                 $(`#attribute-tab-${Tabs.CONSENT}`).addClass("d-none");
+            }
+            if (!actuatorEndpoints.casvalidate) {
+                $("#casProtocolContainer").addClass("d-none");
             }
             
             let visibleCount = $("nav.sidebar-navigation ul li:visible").length;

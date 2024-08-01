@@ -573,7 +573,15 @@ span button.toolbar {
 }
 
 .h-350px {
-    height: 450px;
+    height: 350px;
+}
+
+.h-250px {
+    height: 250px;
+}
+
+.h-150px {
+    height: 150px;
 }
 
 .h-25 {
