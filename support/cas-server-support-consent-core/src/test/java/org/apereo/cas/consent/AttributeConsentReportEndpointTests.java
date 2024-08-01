@@ -54,6 +54,8 @@ class AttributeConsentReportEndpointTests extends AbstractCasEndpointTests {
 
         var results = attributeConsentReportEndpoint.consentDecisions(uid);
         assertFalse(results.isEmpty());
+        results = attributeConsentReportEndpoint.consentDecisions();
+        assertFalse(results.isEmpty());
 
         val entity = attributeConsentReportEndpoint.export();
         assertEquals(HttpStatus.OK, entity.getStatusCode());
