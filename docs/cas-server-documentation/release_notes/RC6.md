@@ -98,5 +98,7 @@ are now configured to run with parallelism enabled.
 - EclipseLink
 - Netty
 - Lettuce
+- LettuceMod
+- Google Cloud Monitor
 - OpenSAML
 - Jetty
