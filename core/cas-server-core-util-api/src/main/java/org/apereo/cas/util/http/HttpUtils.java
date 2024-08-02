@@ -85,7 +85,7 @@ public class HttpUtils {
                     }
                 }
                 return res;
-            });
+            }, execution.getMaximumRetryAttempts());
         } catch (final SSLHandshakeException e) {
             val sanitizedUrl = FunctionUtils.doUnchecked(
                 () -> new URIBuilder(execution.getUrl()).removeQuery().clearParameters().build().toASCIIString());

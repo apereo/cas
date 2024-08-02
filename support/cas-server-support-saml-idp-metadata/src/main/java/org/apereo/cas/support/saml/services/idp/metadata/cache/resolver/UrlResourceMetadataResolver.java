@@ -221,6 +221,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             .url(metadataLocation)
             .proxyUrl(service.getMetadataProxyLocation())
             .httpClient(httpClient)
+            .maximumRetryAttempts(samlIdPProperties.getMetadata().getCore().getMaximumRetryAttempts())
             .build();
         return HttpUtils.execute(exec);
     }
