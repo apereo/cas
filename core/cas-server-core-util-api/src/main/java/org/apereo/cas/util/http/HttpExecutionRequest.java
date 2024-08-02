@@ -37,6 +37,9 @@ public class HttpExecutionRequest {
     private final String bearerToken;
 
     @Builder.Default
+    private final int maximumRetryAttempts = 3;
+    
+    @Builder.Default
     private final Map<String, String> parameters = new LinkedHashMap<>();
 
     @Builder.Default
