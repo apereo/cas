@@ -1,3 +1,5 @@
+const DEFAULT_INTERVAL = 15000;
+
 /**
  * Internal Functions
  */
@@ -249,6 +251,11 @@ async function initializeAccessStrategyOperations() {
     });
 }
 
+function hideErrorInBanner() {
+    $("#errorBanner").addClass("d-none");
+    $("#errorDetails").empty();
+}
+
 function displayErrorInBanner(error) {
     $("#errorBanner").removeClass("d-none");
     let message = `HTTP error: ${error.status}. `;
@@ -386,7 +393,7 @@ async function initializeScheduledTasksOperations() {
 
     if (actuatorEndpoints.metrics) {
         initializeJvmMetrics();
-        setInterval(() => initializeJvmMetrics(), 5000);
+        setInterval(() => initializeJvmMetrics(), DEFAULT_INTERVAL);
     }
 }
 
@@ -420,7 +427,7 @@ async function initializeTicketsOperations() {
     });
 
     $("button#cleanTicketsButton").off().on("click", () => {
-
+        hideErrorInBanner();
         if (actuatorEndpoints.ticketregistry) {
             $.ajax({
                 url: `${actuatorEndpoints.ticketregistry}/clean`,
@@ -1133,7 +1140,7 @@ async function initializeSystemOperations() {
         configureSystemData();
         configureHealthChart();
         configureStatistics();
-    }, 5000);
+    }, DEFAULT_INTERVAL);
 
     if (actuatorEndpoints.casFeatures) {
         $.get(actuatorEndpoints.casFeatures, response => {
@@ -2069,14 +2076,153 @@ async function initializeCasProtocolOperations() {
             editor.setReadOnly(true);
             editor.setValue(data);
             editor.gotoLine(1);
+            $("#casProtocolEditorContainer").removeClass("d-none");
         }).fail((xhr, status, error) => {
             displayErrorInBanner(xhr);
+            $("#casProtocolEditorContainer").addClass("d-none");
         });
     }
 
     $("button[name=casProtocolV1Button]").off().on("click", () => buildCasProtocolPayload("validate", "text"));
     $("button[name=casProtocolV2Button]").off().on("click", () => buildCasProtocolPayload("serviceValidate", "xml"));
     $("button[name=casProtocolV3Button]").off().on("click", () => buildCasProtocolPayload("p3/serviceValidate", "xml"));
+}
+
+async function initializeSAML2ProtocolOperations() {
+    $("button[name=saml2ProtocolPostButton]").off().on("click", () => {
+        const form = document.getElementById("fmSaml2Protocol");
+        if (!form.reportValidity()) {
+            return false;
+        }
+        const username = $("#saml2ProtocolUsername").val();
+        const password = $("#saml2ProtocolPassword").val();
+        const entityId = $("#saml2ProtocolEntityId").val();
+
+        $.post(`${actuatorEndpoints.samlpostprofileresponse}`, {
+            username: username,
+            password: password,
+            entityId: entityId
+        }, data => {
+            const editor = initializeAceEditor("saml2ProtocolEditor", "xml");
+            editor.setReadOnly(true);
+            editor.setValue(new XMLSerializer().serializeToString(data));
+            editor.gotoLine(1);
+            $("#saml2ProtocolEditorContainer").removeClass("d-none");
+            $("#saml2ProtocolLogoutEditor").addClass("d-none");
+        }).fail((xhr, status, error) => {
+            displayErrorInBanner(xhr);
+            $("#saml2ProtocolEditorContainer").addClass("d-none");
+        });
+    });
+
+
+    $("button[name=saml2ProtocolLogoutButton]").off().on("click", function() {
+        const entityId = document.getElementById("saml2ProtocolEntityId");
+        if (!entityId.checkValidity()) {
+            entityId.reportValidity();
+            return false;
+        }
+        $.ajax({
+            url: `${actuatorEndpoints.samlpostprofileresponse}/logout/post`,
+            type: 'POST',
+            data: {
+                entityId: $("#saml2ProtocolEntityId").val()
+            },
+            success: (response, textStatus, jqXHR) => {
+                const saml2ProtocolEditor = initializeAceEditor("saml2ProtocolEditor", "html");
+                saml2ProtocolEditor.setReadOnly(true);
+                saml2ProtocolEditor.setValue(response);
+                saml2ProtocolEditor.gotoLine(1);
+
+                const logoutRequest = atob(jqXHR.getResponseHeader("LogoutRequest"));
+                const saml2ProtocolLogoutEditor = initializeAceEditor("saml2ProtocolLogoutEditor", "xml");
+                saml2ProtocolLogoutEditor.setReadOnly(true);
+                saml2ProtocolLogoutEditor.setValue(logoutRequest);
+                saml2ProtocolLogoutEditor.gotoLine(1);
+                
+                $("#saml2ProtocolEditorContainer").removeClass("d-none");
+                $("#saml2ProtocolLogoutEditor").removeClass("d-none");
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                displayErrorInBanner(xhr);
+                $("#saml2ProtocolEditorContainer").addClass("d-none");
+                $("#saml2ProtocolLogoutEditor").addClass("d-none");
+            }
+        });
+    });
+
+
+    $("button[name=saml2MetadataCacheInvalidateButton]").off().on("click", () => {
+        hideErrorInBanner();
+        $("#saml2MetadataCacheEditorContainer").addClass("d-none");
+        
+        swal({
+            title: "Are you sure you want to invalidate the cache entry?",
+            text: "Once deleted, the change will take effect immediately.",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true
+        })
+            .then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        url: `${actuatorEndpoints.samlidpregisteredservicemetadatacache}`,
+                        type: 'DELETE',
+                        data: {
+                            entityId: $("#saml2MetadataCacheEntityId").val(),
+                            serviceId: $("#saml2MetadataCacheService").val()
+                        },
+                        success: (response, textStatus, jqXHR) => {
+                            swal({
+                                title: "Cached metadata record(s) removed.",
+                                text: "Cached metadata entry has been removed successfully.",
+                                buttons: false,
+                                icon: "success",
+                                timer: 1000
+                            });
+                        },
+                        error: (jqXHR, textStatus, errorThrown) => {
+                            displayErrorInBanner(jqXHR);
+                        }
+                    });
+                }
+            });
+    });
+
+    $("button[name=saml2MetadataCacheFetchButton]").off().on("click", function() {
+        hideErrorInBanner();
+
+        $(this).prop("disabled", true);
+        $.ajax({
+            url: `${actuatorEndpoints.samlidpregisteredservicemetadatacache}`,
+            type: 'GET',
+            data: {
+                entityId: $("#saml2MetadataCacheEntityId").val(),
+                serviceId: $("#saml2MetadataCacheService").val()
+            },
+            success: (response, textStatus, jqXHR) => {
+                console.log(response);
+                
+                const editor = initializeAceEditor("saml2MetadataCacheEditor", "xml");
+                editor.setReadOnly(true);
+                for (const [entityId, entry] of Object.entries(response)) {
+                    editor.setValue(entry.metadata);
+                    $("#saml2MetadataCacheDetails").html(`<i class="mdc-tab__icon mdi mdi-clock" aria-hidden="true"></i> Cache Instant: <code>${entry.cachedInstant}</code>`);
+                }
+                editor.gotoLine(1);
+                $("#saml2MetadataCacheEditorContainer").removeClass("d-none");
+                $("#saml2MetadataCacheDetails").removeClass("d-none");
+                $(this).prop("disabled", false)
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                displayErrorInBanner(jqXHR);
+                $("#saml2MetadataCacheEditorContainer").addClass("d-none");
+                $("#saml2MetadataCacheDetails").addClass("d-none");
+                $(this).prop("disabled", false)
+            }
+        });
+        
+    });
 }
 
 async function initializePalantir() {
@@ -2094,7 +2240,8 @@ async function initializePalantir() {
             initializePersonDirectoryOperations(),
             initializeAuthenticationOperations(),
             initializeConsentOperations(),
-            initializeCasProtocolOperations()
+            initializeCasProtocolOperations(),
+            initializeSAML2ProtocolOperations()
         ]);
         setTimeout(() => {
             if (!actuatorEndpoints.registeredservices) {
@@ -2144,6 +2291,9 @@ async function initializePalantir() {
             }
             if (!actuatorEndpoints.casvalidate) {
                 $("#casProtocolContainer").addClass("d-none");
+            }
+            if (!actuatorEndpoints.samlpostprofileresponse) {
+                $("#saml2ProtocolContainer").addClass("d-none");
             }
             
             let visibleCount = $("nav.sidebar-navigation ul li:visible").length;

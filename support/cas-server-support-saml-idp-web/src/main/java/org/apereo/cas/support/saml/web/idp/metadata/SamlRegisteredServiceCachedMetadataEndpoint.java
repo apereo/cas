@@ -5,6 +5,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -173,13 +174,14 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActu
         var matchedServices = (Collection<RegisteredService>) null;
         if (NumberUtils.isCreatable(serviceId)) {
             val id = Long.parseLong(serviceId);
-            matchedServices = List.of(servicesManager.getObject().findServiceBy(id, SamlRegisteredService.class));
+            val samlService = servicesManager.getObject().findServiceBy(id, SamlRegisteredService.class);
+            matchedServices = samlService != null ? List.of(samlService) : List.of();
         } else {
             matchedServices = servicesManager.getObject().findServiceBy(svc -> svc instanceof SamlRegisteredService
                 && (svc.getName().equalsIgnoreCase(serviceId) || svc.getServiceId().equalsIgnoreCase(serviceId)));
         }
         if (matchedServices.isEmpty()) {
-            throw new IllegalArgumentException("Unable to locate service " + serviceId);
+            throw UnauthorizedServiceException.denied("Unable to locate service " + serviceId);
         }
         val registeredService = (SamlRegisteredService) matchedServices.iterator().next();
         val ctx = AuditableContext.builder()

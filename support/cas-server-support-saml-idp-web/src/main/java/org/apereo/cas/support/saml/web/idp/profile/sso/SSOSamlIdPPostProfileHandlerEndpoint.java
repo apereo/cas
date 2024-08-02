@@ -24,6 +24,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.AuthenticatedAsserti
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileBuilderContext;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
@@ -214,10 +215,15 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEnd
         endpoint.setLocation(sloEndpointDestination);
         endpointContext.setEndpoint(endpoint);
 
+        val encodedRequest = EncodingUtils.encodeBase64(SamlUtils.transformSamlObject(
+            saml20ObjectBuilder.getOpenSamlConfigBean(), logoutRequest, true).toString());
+        response.setHeader("LogoutRequest", encodedRequest);
+        
         messageContext.setMessage(logoutRequest);
         encoder.setMessageContext(messageContext);
         encoder.initialize();
         encoder.encode();
+
         return ResponseEntity.ok().build();
     }
 

@@ -7,6 +7,7 @@
     --mdc-theme-body: rgb(27, 39, 51);
     --mdc-theme-error: #a20323;
     --cas-theme-primary: #114377;
+    --cas-theme-button-bg-hover: #1678d8;
     --cas-theme-primary-bg: rgba(21, 62, 80, 0.2);
     --cas-theme-button-bg: #26418f;
     --cas-theme-button-bg-lite: #1e78d0;
@@ -520,11 +521,21 @@ span button.toolbar {
 
 .mdc-button--raised:not(:disabled, .reveal-password) {
     margin-right: 4px;
-    border-radius: 8px 8px 8px 8px;
+    border-radius: 9px 9px 9px 9px;
     filter: drop-shadow(2px 2px 4px #023b53);
     background-color: var(--cas-theme-primary, #153E50);
 }
 
+.mdc-button--raised:not(:disabled, .reveal-password):hover {
+    background-color: var(--cas-theme-button-bg-hover, dodgerblue);
+    transform: scale(1.08);
+    box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.15);
+}
+
+.mdc-button--lg {
+    width: 180px;
+    height: 48px;
+}
 
 .list-unstyled {
     padding-left: 0;
