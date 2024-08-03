@@ -524,12 +524,14 @@ span button.toolbar {
     border-radius: 9px 9px 9px 9px;
     filter: drop-shadow(2px 2px 4px #023b53);
     background-color: var(--cas-theme-primary, #153E50);
+    cursor: default;
 }
 
 .mdc-button--raised:not(:disabled, .reveal-password):hover {
     background-color: var(--cas-theme-button-bg-hover, dodgerblue);
     transform: scale(1.08);
     box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
 }
 
 .mdc-button--lg {
@@ -803,7 +805,32 @@ select.palantir {
     margin-right: auto;
 }
 
-/* IE flex fix */
+
+/** jQuery UI **/
+
+.ui-tabs-active {
+    background: var(--cas-theme-primary) !important;
+}
+
+.ui-widget, .ui-widget button {
+    font-family: var(--mdc-typography-font-family) !important;
+    font-size: unset;
+}
+.ui-widget-content, .ui-widget-header {
+    background: unset;
+}
+
+.ui-widget-header {
+    border:unset;
+}
+
+.ui-tabs .ui-tabs-nav li {
+    border-bottom: 1px solid var(--cas-theme-button-bg-lite);
+    margin-right: 0.07em;
+}
+
+/***************************/
+
 
 #main-content {
     margin-right: 10px;
@@ -816,14 +843,9 @@ select.palantir {
 @media all and (min-width: 768px) {
     .login-section {
         flex: 1 1 500px;
-        /* according to flexbugs, flex-basis should be explicitly set for IE */
-        /* https://github.com/philipwalton/flexbugs#flexbug-4 */
     }
 }
 
-/* flex-basis: auto works in IE with the column view,
-     but a specific value needs to be set for row view
-   */
 
 /* fix for not showing password reveal icon on MSEdge and MSIE */
 .pwd::-ms-reveal,

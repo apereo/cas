@@ -13,17 +13,22 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <title th:text="#{cas.login.pagetitle}">CAS Admin UI</title>
+
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.highlight.css}}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{#{webjars.jqueryui.css}}" />
+
     <script type="text/javascript" th:src="@{#{webjars.highlight.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.chart.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.ace-editor.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.ace-editor-languagetools.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.ace-editor-beautify.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.sweet-alert.js}}"></script>
+    
     <script type="text/javascript" th:src="@{/js/palantir.js}"></script>
 </head>
 
 <body>
+
 <main class="container mt-3 mb-3">
 
     <div layout:fragment="content" id="dashboard" class="d-none">
@@ -43,7 +48,7 @@
             <div th:replace="~{fragments/palantir/consenttab :: main}"/>
             <div th:replace="~{fragments/palantir/protocolstab :: main}"/>
         </div>
-
+        <script type="text/javascript" th:src="@{#{webjars.jqueryui.js}}"></script>
     </div>
 </main>
 </body>
