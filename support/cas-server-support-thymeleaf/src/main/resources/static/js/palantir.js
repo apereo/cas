@@ -2301,7 +2301,7 @@ async function initializePalantir() {
                 $("#accessStrategyTabButton").addClass("d-none");
                 $(`#attribute-tab-${Tabs.ACCESS_STRATEGY}`).addClass("d-none");
             }
-            if (!actuatorEndpoints.ssoSessions) {
+            if (!actuatorEndpoints.ssosessions) {
                 $("#ssoSessionsTabButton").addClass("d-none");
                 $(`#attribute-tab-${Tabs.SSO_SESSIONS}`).addClass("d-none");
             }
@@ -2323,7 +2323,15 @@ async function initializePalantir() {
             if (!actuatorEndpoints.samlpostprofileresponse) {
                 $("#saml2ProtocolContainer").addClass("d-none");
             }
+            if (!actuatorEndpoints.casconfig) {
+                $("#config-encryption-tab").addClass("d-none");
+                $("#casConfigSecurity").addClass("d-none");
+            }
             
+            if (!actuatorEndpoints.casvalidate && !actuatorEndpoints.samlpostprofileresponse) {
+                $("#protocolsTabButton").addClass("d-none");
+                $(`#attribute-tab-${Tabs.PROTOCOLS}`).addClass("d-none");
+            }
             let visibleCount = $("nav.sidebar-navigation ul li:visible").length;
             console.log("Number of visible list items:", visibleCount);
 
