@@ -8,8 +8,14 @@
 <body>
 <span th:fragment="main">
     <div class="attribute-tab w-100 d-none" id="attribute-tab-11">
-        <section id="casProtocolContainer">
-            <h3>CAS Protocol & Identity Provider</h3>
+        <div class="jqueryui-tabs">
+          <ul>
+            <li><a href="#casprotocol-tab">CAS Protocol</a></li>
+            <li><a href="#saml2protocol-tab">SAML2 Protocol</a></li>
+          </ul>
+
+            <div id="casprotocol-tab">
+              <section id="casProtocolContainer">
             <p>You can simulate CAS protocol validation responses for CAS-enabled client applications.</p>
             <form id="fmCasProtocol" class="d-block">
                 <section class="cas-field form-group my-3 mdc-input-group d-flex">
@@ -85,13 +91,13 @@
             <section class="my-3 d-flex h-250px d-none" id="casProtocolEditorContainer">
                   <pre class="ace-editor ace-relative w-100 h-100" id="casProtocolEditor"></pre>
             </section>
-        </section>
+            </section>
+          </div>
 
-        <section id="saml2ProtocolContainer">
-           <hr>
-           <h3>SAML2 Protocol & Identity Provider</h3>
+            <div id="saml2protocol-tab">
+              <section id="saml2ProtocolContainer">
            <p>You can simulate SAML2 responses for SAML2 service providers.</p>
-            
+
             <form id="fmSaml2Protocol" class="d-block">
                 <section class="saml2-field form-group my-3 mdc-input-group d-flex">
                     <div class="mdc-input-group-field mdc-input-group-field-append w-100">
@@ -163,11 +169,10 @@
                 <pre class="ace-editor ace-relative w-100 h-100 d-none" id="saml2ProtocolLogoutEditor"></pre>
             </section>
 
-            <hr>
             <p>You may also fetch, refresh or invalidate SAML2 metadata entries that are cached by CAS.
                 The service could be the registered service numeric identifier, its name or actual service id.
                 In case the SAML2 service definition points to an aggregate, you may also specify an entity id to locate the
-                SAML2 service provider within that aggregate. If you do not a service id, all entries in
+                SAML2 service provider within that aggregate. If you do not specify a service, all entries in
                 the SAML2 metadata cache will be invalidated.</p>
 
             <form id="fmSaml2MetadataCache" class="d-block">
@@ -205,9 +210,11 @@
                 <div class="d-flex">
                     <button type="button" name="saml2MetadataCacheFetchButton" id="saml2MetadataCacheFetchButton"
                             class="mdc-button mdc-button--raised">
-                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-download" aria-hidden="true"></i>Fetch</span>
+                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-download"
+                                                           aria-hidden="true"></i>Fetch</span>
                     </button>
-                    <button type="button" name="saml2MetadataCacheInvalidateButton" id="saml2MetadataCacheInvalidateButton"
+                    <button type="button" name="saml2MetadataCacheInvalidateButton"
+                            id="saml2MetadataCacheInvalidateButton"
                             class="mdc-button mdc-button--raised">
                         <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-delete" aria-hidden="true"></i>Invalidate</span>
                     </button>
@@ -219,6 +226,9 @@
             </section>
 
         </section>
+          </div>
+
+        </div>
     </div>
 </span>
 </body>

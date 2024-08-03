@@ -1954,6 +1954,31 @@ async function initializeConfigurationOperations() {
         }
     });
 
+    function encryptOrDecryptConfig(op) {
+        hideErrorInBanner();
+        $("#configEncryptionResult").addClass("d-none");
+        
+        const form = document.getElementById("fmConfigEncryption");
+        if (!form.reportValidity()) {
+            return false;
+        }
+        const configValue = $("#configValue").val();
+        if (actuatorEndpoints.casconfig) {
+            $.post({
+                url: `${actuatorEndpoints.casconfig}/${op}`,
+                data: configValue,
+                contentType: "text/plain"
+            }, data => {
+                $("#configEncryptionResult pre code").text(data);
+                hljs.highlightAll();
+                $("#configEncryptionResult").removeClass("d-none");
+            }).fail((xhr, status, error) => {
+                displayErrorInBanner(xhr);
+                $("#configEncryptionResult").addClass("d-none");
+            });
+        }
+    }
+
     configurationTable.clear();
     if (actuatorEndpoints.env) {
         $.get(actuatorEndpoints.env, response => {
@@ -2055,6 +2080,9 @@ async function initializeConfigurationOperations() {
             displayErrorInBanner(xhr);
         });
     }
+    
+    $("#encryptConfigButton").off().on("click", () => encryptOrDecryptConfig("encrypt"));
+    $("#decryptConfigButton").off().on("click", () => encryptOrDecryptConfig("decrypt"));
 }
 
 async function initializeCasProtocolOperations() {
@@ -2336,7 +2364,10 @@ function activateDashboardTab(idx) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    $(".jqueryui-tabs").tabs();
+
     $("nav.sidebar-navigation ul li").off().on("click", function () {
+        hideErrorInBanner();
         $("li").removeClass("active");
         $(this).addClass("active");
         const index = $(this).data("tab-index");
