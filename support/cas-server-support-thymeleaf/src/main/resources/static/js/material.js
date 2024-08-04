@@ -67,6 +67,9 @@ let cas = {
         for (const el of document.querySelectorAll('.mdc-data-table')) {
             new mdc.dataTable.MDCDataTable(el);
         }
+        for (const el of document.querySelectorAll('.mdc-snackbar')) {
+            new mdc.snackbar.MDCSnackbar(el);
+        }
 
         let elms = document.querySelectorAll('.mdc-tab-bar');
         for (const elm of elms) {
