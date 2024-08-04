@@ -252,17 +252,36 @@ async function initializeAccessStrategyOperations() {
 }
 
 function hideErrorInBanner() {
-    $("#errorBanner").addClass("d-none");
-    $("#errorDetails").empty();
+    const snackbar = new mdc.snackbar.MDCSnackbar(document.getElementById("errorBanner"));
+    snackbar.close();
 }
 
 function displayErrorInBanner(error) {
-    $("#errorBanner").removeClass("d-none");
-    let message = `HTTP error: ${error.status}. `;
-    if (error.hasOwnProperty("path")) {
-        message += `Unable to make an API call to <code>${error.path}</code>. Is the endpoint enabled and available?`;
+    let message = "";
+    switch (error.status) {
+    case 401:
+        message = "You are not authorized to access this resource. Are you sure you are authenticated?";
+        break;
+    case 403:
+        message = "You are forbidden from accessing this resource. Are you sure you have the necessary permissions and the entry is correctly regstered with CAS?";
+        break;
+    case 400:
+    case 500:
+        message = "Unable to process or accept the request. Check CAS server logs for details.";
+        break;
+    case 0:
+        message = "Unable to contact the CAS server. Are you sure the server is reachable?";
+        break;
+    default:
+        message = `HTTP error: ${error.status}. `;
+        break;
     }
-    $("#errorDetails").empty().html(message);
+    if (error.hasOwnProperty("path")) {
+        message += `Unable to make an API call to ${error.path}. Is the endpoint enabled and available?`;
+    }
+    const snackbar = new mdc.snackbar.MDCSnackbar(document.getElementById("errorBanner"));
+    snackbar.labelText = message;
+    snackbar.open();
 }
 
 function initializeJvmMetrics() {

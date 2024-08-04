@@ -8,10 +8,22 @@
 <body>
 <span th:fragment="main">
 
-    <div id="errorBanner" class="mb-4 d-none banner banner-danger alert alert-danger">
-        <h2>Something went wrong!</h2>
-        <p id="errorDetails"></p>
-    </div>
+    <aside class="mdc-snackbar" id="errorBanner">
+      <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
+        <div class="mdc-snackbar__label" aria-atomic="false">
+        </div>
+          <div class="mdc-snackbar__actions" aria-atomic="true">
+<!--              <button type="button" class="mdc-button mdc-snackbar__action">-->
+<!--                <div class="mdc-button__ripple"></div>-->
+<!--                <span class="mdc-button__label">DISMISS</span>-->
+<!--              </button>-->
+              
+              <button class="mdc-icon-button mdc-snackbar__dismiss" title="Dismiss">
+                  <i class="mdc-tab__icon mdi mdi-window-close" aria-hidden="true"></i>
+              </button>
+          </div>
+      </div>
+    </aside>
 
     <div class="mdc-tab-bar" role="tablist" id="dashboardTabBar">
         <div class="mdc-tab-scroller d-none">
