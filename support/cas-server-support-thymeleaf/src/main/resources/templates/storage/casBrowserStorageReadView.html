@@ -32,17 +32,19 @@
         
         <script th:inline="javascript">
             /*<![CDATA[*/
-            const browserStorage = /*[[${browserStorage}]]*/ ;
-            let payload;
-            if (browserStorage.storageType === 'SESSION') {
-                payload = readFromSessionStorage(browserStorage);
-            } else {
-                payload = readFromLocalStorage(browserStorage);
-            }
-            if (Object.keys(payload).length > 0) {
-                document.getElementById("browserStorage").value = JSON.stringify(payload);
-            }
-            document.getElementById("fm1").submit();
+            setTimeout(function(){
+	            const browserStorage = /*[[${browserStorage}]]*/ ;
+	            let payload;
+	            if (browserStorage.storageType === 'SESSION') {
+	                payload = readFromSessionStorage(browserStorage);
+	            } else {
+	                payload = readFromLocalStorage(browserStorage);
+	            }
+	            if (Object.keys(payload).length > 0) {
+	                document.getElementById("browserStorage").value = JSON.stringify(payload);
+	            }
+	            document.getElementById("fm1").submit();
+            }, 1);
             /*]]>*/
         </script>
 
