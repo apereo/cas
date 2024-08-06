@@ -1,6 +1,5 @@
 package org.apereo.cas.web.support;
 
-import org.apereo.cas.configuration.model.support.throttle.JdbcThrottleProperties;
 import org.apereo.cas.throttle.AbstractInspektrAuditHandlerInterceptorAdapter;
 import org.apereo.cas.throttle.ThrottledSubmissionHandlerConfigurationContext;
 import org.apereo.cas.util.DateTimeUtils;
@@ -8,12 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.RowMapper;
 import jakarta.servlet.http.HttpServletRequest;
-import java.sql.Types;
-import java.util.Collection;
-import java.util.Date;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Works in conjunction with the Inspektr Library to block attempts to dictionary attack users.
@@ -55,11 +51,7 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
                 ps.setString(4, throttle.getCore().getAppCode());
                 ps.setObject(5, getFailureInRangeCutOffDate());
             },
-            (resultSet, i) -> ThrottledSubmission
-                .builder()
-                .key(UUID.randomUUID().toString())
-                .value(DateTimeUtils.zonedDateTimeOf(resultSet.getTimestamp("AUD_DATE")))
-                .build());
+            buildThrottledSubmissionRowMapper());
         LOGGER.debug("Found [{}] failure(s) in audit log", failuresInAudits.size());
         val result = calculateFailureThresholdRateAndCompare(failuresInAudits);
         if (result) {
@@ -73,17 +65,11 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapter extends AbstractIn
         return "JdbcThrottle";
     }
 
-    @Override
-    public Collection getRecords() {
-        val throttle = getConfigurationContext().getCasProperties().getAuthn().getThrottle();
-        val failuresInAudits = jdbcTemplate.query(
-            JdbcThrottleProperties.SQL_AUDIT_QUERY_ALL,
-            new Object[]{
-                throttle.getFailure().getCode(),
-                throttle.getCore().getAppCode(),
-                getFailureInRangeCutOffDate()},
-            new int[]{Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
-            (resultSet, i) -> resultSet.getTimestamp("AUD_DATE"));
-        return failuresInAudits.stream().map(t -> new Date(t.getTime())).collect(Collectors.toList());
+    private static RowMapper<ThrottledSubmission> buildThrottledSubmissionRowMapper() {
+        return (resultSet, rowNum) -> ThrottledSubmission
+            .builder()
+            .key(UUID.randomUUID().toString())
+            .value(DateTimeUtils.zonedDateTimeOf(resultSet.getTimestamp("AUD_DATE")))
+            .build();
     }
 }

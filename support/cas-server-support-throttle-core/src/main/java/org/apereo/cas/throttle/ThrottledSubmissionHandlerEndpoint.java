@@ -2,7 +2,9 @@ package org.apereo.cas.throttle;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
+import org.apereo.cas.web.support.ThrottledSubmission;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
+import org.apereo.cas.web.support.ThrottledSubmissionsStore;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
@@ -13,10 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link ThrottledSubmissionHandlerEndpoint}.
@@ -28,24 +27,21 @@ import java.util.stream.Collectors;
 public class ThrottledSubmissionHandlerEndpoint extends BaseCasRestActuatorEndpoint {
 
     private final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan;
+    private final ObjectProvider<ThrottledSubmissionsStore> throttledSubmissionsStore;
 
     public ThrottledSubmissionHandlerEndpoint(final CasConfigurationProperties casProperties,
                                               final ConfigurableApplicationContext applicationContext,
-                                              final ObjectProvider<AuthenticationThrottlingExecutionPlan> executionPlan) {
+                                              final ObjectProvider<AuthenticationThrottlingExecutionPlan> executionPlan,
+                                              final ObjectProvider<ThrottledSubmissionsStore> throttledSubmissionsStore) {
         super(casProperties, applicationContext);
         this.authenticationThrottlingExecutionPlan = executionPlan;
+        this.throttledSubmissionsStore = throttledSubmissionsStore;
     }
 
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get throttled authentication records")
-    public List getRecords() {
-        return (List) authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors()
-            .stream()
-            .map(ThrottledSubmissionHandlerInterceptor.class::cast)
-            .filter(Objects::nonNull)
-            .map(ThrottledSubmissionHandlerInterceptor::getRecords)
-            .flatMap(Collection::stream)
-            .collect(Collectors.toList());
+    public List<ThrottledSubmission> getRecords() {
+        return throttledSubmissionsStore.getObject().entries().toList();
     }
 
     /**

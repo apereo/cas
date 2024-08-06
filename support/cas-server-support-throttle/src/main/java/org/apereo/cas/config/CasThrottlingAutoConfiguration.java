@@ -103,7 +103,8 @@ public class CasThrottlingAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "throttledRequestResponseHandler")
-        public ThrottledRequestResponseHandler throttledRequestResponseHandler(final CasConfigurationProperties casProperties) {
+        public ThrottledRequestResponseHandler throttledRequestResponseHandler(
+            final CasConfigurationProperties casProperties) {
             val throttle = casProperties.getAuthn().getThrottle();
             return new DefaultThrottledRequestResponseHandler(throttle.getCore().getUsernameParameter());
         }
@@ -175,8 +176,12 @@ public class CasThrottlingAutoConfiguration {
         public ThrottledSubmissionHandlerEndpoint throttledSubmissionHandlerEndpoint(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuthenticationThrottlingExecutionPlan.BEAN_NAME)
-            final ObjectProvider<AuthenticationThrottlingExecutionPlan> plan, final CasConfigurationProperties casProperties) {
-            return new ThrottledSubmissionHandlerEndpoint(casProperties, applicationContext, plan);
+            final ObjectProvider<AuthenticationThrottlingExecutionPlan> plan,
+            @Qualifier(ThrottledSubmissionsStore.BEAN_NAME)
+            final ObjectProvider<ThrottledSubmissionsStore> throttledSubmissionStore,
+            final CasConfigurationProperties casProperties) {
+            return new ThrottledSubmissionHandlerEndpoint(
+                casProperties, applicationContext, plan, throttledSubmissionStore);
         }
     }
 
