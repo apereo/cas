@@ -353,6 +353,25 @@ function initializeJvmMetrics() {
 }
 
 async function initializeScheduledTasksOperations() {
+
+    const threadDumpTable = $("#threadDumpTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        columnDefs: [
+            {width: "5%", targets: 0},
+            {width: "35%", targets: 1},
+            {width: "30%", targets: 2},
+            {width: "10%", targets: 3},
+            {width: "10%", targets: 4},
+            {width: "10%", targets: 5},
+        ],
+        drawCallback: settings => {
+            $("#threadDumpTable tr").addClass("mdc-data-table__row");
+            $("#threadDumpTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+
     const groupColumn = 0;
     const scheduledtasks = $("#scheduledTasksTable").DataTable({
         pageLength: 25,
@@ -414,6 +433,33 @@ async function initializeScheduledTasksOperations() {
     if (actuatorEndpoints.metrics) {
         initializeJvmMetrics();
         setInterval(() => initializeJvmMetrics(), DEFAULT_INTERVAL);
+    }
+
+    function fetchThreadDump() {
+        $.get(actuatorEndpoints.threaddump, response => {
+            console.log(response);
+            threadDumpTable.clear();
+            for (const thread of response.threads) {
+                threadDumpTable.row.add({
+                    0: `<code>${thread.threadId}</code>`,
+                    1: `<code>${thread.threadName}</code>`,
+                    2: `<code>${thread.threadState}</code>`,
+                    3: `<code>${thread.priority}</code>`,
+                    4: `<code>${thread.daemon}</code>`,
+                    5: `<code>${thread.suspended}</code>`,
+                });
+            }
+            threadDumpTable.draw();
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr);
+        });
+    }
+
+
+    if (actuatorEndpoints.threaddump) {
+        fetchThreadDump();
+        setInterval(() => fetchThreadDump(), DEFAULT_INTERVAL);
     }
 }
 
@@ -1451,7 +1497,15 @@ async function initializeAllCharts() {
         }
     });
     auditEventsChart = new Chart(document.getElementById("auditEventsChart").getContext("2d"), {
-        type: "bar"
+        type: "bar",
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Audit Events'
+                }
+            }
+        }
     });
     auditEventsChart.update();
 
@@ -1470,6 +1524,14 @@ async function initializeAllCharts() {
                     borderWidth: 2
                 }
             ]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'HTTP Request/Responses (Date)'
+                }
+            }
         }
     });
     httpRequestResponsesChart.update();
@@ -1489,6 +1551,14 @@ async function initializeAllCharts() {
                     borderWidth: 2
                 }
             ]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'HTTP Request/Responses (URL)'
+                }
+            }
         }
     });
     httpRequestsByUrlChart.update();
