@@ -8,9 +8,6 @@ import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import java.util.Collection;
-import java.util.List;
-
 /**
  * This is {@link ThrottledSubmissionHandlerInterceptor}.
  *
@@ -63,15 +60,6 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
      * Clear records and remove all.
      */
     default void clear() {
-    }
-
-    /**
-     * Gets all records.
-     *
-     * @return the all records
-     */
-    default Collection getRecords() {
-        return List.of();
     }
 
     @Override

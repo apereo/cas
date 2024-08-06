@@ -15,7 +15,8 @@ const Tabs = {
     PERSON_DIRECTORY: 8,
     AUTHENTICATION: 9,
     CONSENT: 10,
-    PROTOCOLS: 11
+    PROTOCOLS: 11,
+    THROTTLES: 12
 };
 
 /**
@@ -2135,6 +2136,103 @@ async function initializeCasProtocolOperations() {
     $("button[name=casProtocolV3Button]").off().on("click", () => buildCasProtocolPayload("p3/serviceValidate", "xml"));
 }
 
+async function initializeThrottlesOperations() {
+    const throttlesTable = $("#throttlesTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        columnDefs: [
+            {width: "15%", targets: 1},
+            {width: "15%", targets: 2},
+            {width: "15%", targets: 3},
+            {width: "15%", targets: 4},
+            {width: "20%", targets: 5}
+        ],
+        drawCallback: settings => {
+            $("#throttlesTable tr").addClass("mdc-data-table__row");
+            $("#throttlesTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    function fetchThrottledAttempts() {
+        throttlesTable.clear();
+        $.get(actuatorEndpoints.throttles, response => {
+            for (const record of response) {
+                throttlesTable.row.add({
+                    0: `<code>${record.key}</code>`,
+                    1: `<code>${record.id}</code>`,
+                    2: `<code>${record.value}</code>`,
+                    3: `<code>${record.username}</code>`,
+                    4: `<code>${record.clientIpAddress}</code>`,
+                    5: `<code>${record.expiration}</code>`
+                });
+            }
+            throttlesTable.draw();
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr);
+        });
+    }
+
+
+    if (actuatorEndpoints.throttles) {
+        fetchThrottledAttempts();
+
+        $("button[name=releaseThrottlesButton]").off().on("click", () => {
+            swal({
+                title: "Are you sure you want to release throttled entries?",
+                text: "Released entries, when eligible, will be removed from the authentication throttling store.",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        $.ajax({
+                            url: `${actuatorEndpoints.throttles}`,
+                            type: 'DELETE',
+                            data: {
+                                clear: false
+                            },
+                            success: (response, textStatus, jqXHR) => {
+                                fetchThrottledAttempts();
+                            },
+                            error: (jqXHR, textStatus, errorThrown) => {
+                                displayErrorInBanner(jqXHR);
+                            }
+                        });
+                    }
+                });
+        });
+
+        $("button[name=clearThrottlesButton]").off().on("click", () => {
+            swal({
+                title: "Are you sure you want to clear throttled entries?",
+                text: "Released entries will be removed from the authentication throttling store.",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        $.ajax({
+                            url: `${actuatorEndpoints.throttles}`,
+                            type: 'DELETE',
+                            data: {
+                                clear: true
+                            },
+                            success: (response, textStatus, jqXHR) => {
+                                fetchThrottledAttempts();
+                            },
+                            error: (jqXHR, textStatus, errorThrown) => {
+                                displayErrorInBanner(jqXHR);
+                            }
+                        });
+                    }
+                });
+        });
+    }
+}
+
 async function initializeSAML2ProtocolOperations() {
     $("button[name=saml2ProtocolPostButton]").off().on("click", () => {
         const form = document.getElementById("fmSaml2Protocol");
@@ -2163,7 +2261,7 @@ async function initializeSAML2ProtocolOperations() {
     });
 
 
-    $("button[name=saml2ProtocolLogoutButton]").off().on("click", function() {
+    $("button[name=saml2ProtocolLogoutButton]").off().on("click", () => {
         const entityId = document.getElementById("saml2ProtocolEntityId");
         if (!entityId.checkValidity()) {
             entityId.reportValidity();
@@ -2288,7 +2386,8 @@ async function initializePalantir() {
             initializeAuthenticationOperations(),
             initializeConsentOperations(),
             initializeCasProtocolOperations(),
-            initializeSAML2ProtocolOperations()
+            initializeSAML2ProtocolOperations(),
+            initializeThrottlesOperations()
         ]);
         setTimeout(() => {
             if (!actuatorEndpoints.registeredservices) {
@@ -2351,6 +2450,12 @@ async function initializePalantir() {
                 $("#protocolsTabButton").addClass("d-none");
                 $(`#attribute-tab-${Tabs.PROTOCOLS}`).addClass("d-none");
             }
+
+            if (!actuatorEndpoints.throttles) {
+                $("#throttlesTabButton").addClass("d-none");
+                $(`#attribute-tab-${Tabs.THROTTLES}`).addClass("d-none");
+            }
+
             let visibleCount = $("nav.sidebar-navigation ul li:visible").length;
             console.log("Number of visible list items:", visibleCount);
 
