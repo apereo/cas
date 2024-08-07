@@ -2,7 +2,6 @@ package org.apereo.cas.web.support;
 
 import org.apereo.cas.throttle.ThrottledSubmissionHandlerEndpoint;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
-
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -49,7 +47,9 @@ class ThrottledSubmissionHandlerEndpointTests extends AbstractCasEndpointTests {
         ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
         throttle.recordSubmissionFailure(request);
-        assertFalse(throttledSubmissionHandlerEndpoint.getRecords().isEmpty());
+        val records = throttledSubmissionHandlerEndpoint.getRecords();
+        assertFalse(records.isEmpty());
+        throttledSubmissionHandlerEndpoint.deleteByKey(records.getFirst().getKey());
         assertDoesNotThrow(() -> throttledSubmissionHandlerEndpoint.release(false));
         assertDoesNotThrow(() -> throttledSubmissionHandlerEndpoint.release(true));
     }
