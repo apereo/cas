@@ -143,7 +143,9 @@ public class HazelcastConfigurationFactory {
         LOGGER.trace("Created Hazelcast network configuration [{}]", networkConfig);
         config.setNetworkConfig(networkConfig);
         config.getSerializationConfig().setEnableCompression(hz.getCore().isEnableCompression());
-
+        config.getSerializationConfig().setUseNativeByteOrder(true);
+        config.getSerializationConfig().setAllowUnsafe(true);
+        
         val instanceName = StringUtils.hasText(cluster.getCore().getInstanceName())
             ? SpringExpressionLanguageValueResolver.getInstance().resolve(cluster.getCore().getInstanceName())
             : UUID.randomUUID().toString();
