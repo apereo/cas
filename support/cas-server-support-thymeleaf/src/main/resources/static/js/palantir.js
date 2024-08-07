@@ -67,6 +67,11 @@ function fetchServices(callback) {
                     serviceDetails += `&nbsp;<a target="_blank" href='${service.privacyUrl}'>Privacy URL</a>`;
                 }
 
+                let serviceIdDetails = `<span serviceId='${service.id}' class="text-wrap">${service.serviceId}</span>`;
+                if (serviceClass.includes("SamlRegisteredService")) {
+                    serviceIdDetails += `<br><p><a href='${service.metadataLocation}' target='_blank'>Metadata Location</a>`;
+                }
+
                 let serviceButtons = `
                  <button type="button" name="editService" href="#" serviceId='${service.id}'
                         class="mdc-button mdc-button--raised btn btn-link min-width-32x">
@@ -84,7 +89,7 @@ function fetchServices(callback) {
                 applicationsTable.row.add({
                     0: `<i serviceId='${service.id}' title='${serviceClass}' class='mdi ${icon}'></i>`,
                     1: `${serviceDetails}`,
-                    2: `<span serviceId='${service.id}' class="text-wrap">${service.serviceId}</span>`,
+                    2: `${serviceIdDetails}`,
                     3: `<span serviceId='${service.id}' class="text-wrap">${service.description ?? ""}</span>`,
                     4: `<span serviceId='${service.id}'>${serviceButtons.trim()}</span>`
                 });
