@@ -30,6 +30,7 @@ import static org.mockito.Mockito.*;
 class SamlIdPSingleSignOnParticipationStrategyTests {
 
     @Nested
+    @TestPropertySource(properties = "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml282")
     class DefaultTests extends BaseSamlIdPWebflowTests {
         @Autowired
         @Qualifier("samlIdPSingleSignOnParticipationStrategy")
@@ -73,7 +74,10 @@ class SamlIdPSingleSignOnParticipationStrategyTests {
     }
 
     @Nested
-    @TestPropertySource(properties = "cas.authn.mfa.triggers.global.global-provider-id=mfa-dummy")
+    @TestPropertySource(properties = {
+        "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml989",
+        "cas.authn.mfa.triggers.global.global-provider-id=mfa-dummy"
+    })
     class MfaProviderTests extends BaseSamlIdPWebflowTests {
         @Autowired
         @Qualifier("samlIdPSingleSignOnParticipationStrategy")
