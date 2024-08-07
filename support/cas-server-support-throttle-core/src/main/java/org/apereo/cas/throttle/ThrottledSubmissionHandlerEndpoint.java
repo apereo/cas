@@ -45,6 +45,11 @@ public class ThrottledSubmissionHandlerEndpoint extends BaseCasRestActuatorEndpo
         return throttledSubmissionsStore.getObject().entries().toList();
     }
 
+    /**
+     * Delete by key.
+     *
+     * @param key the key
+     */
     @DeleteMapping(path= "/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Removed selected key from the throttled authentication records")
     public void deleteByKey(@PathVariable final String key) {

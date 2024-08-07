@@ -329,6 +329,7 @@ public class HazelcastConfigurationFactory {
             .setStatisticsEnabled(true)
             .setMergePolicyConfig(mergePolicyConfig)
             .setMaxIdleSeconds((int) timeoutSeconds)
+            .setInMemoryFormat(InMemoryFormat.BINARY)
             .setBackupCount(cluster.getCore().getBackupCount())
             .setAsyncBackupCount(cluster.getCore().getAsyncBackupCount())
             .setEvictionConfig(evictionConfig);
