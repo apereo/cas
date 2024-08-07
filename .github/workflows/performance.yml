@@ -37,7 +37,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: ${{ env.JDK_DISTRIBUTION }}
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
       - name: Initialize
         run: ls ./ci && find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
 
@@ -66,7 +66,7 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Locust Performance Tests
@@ -100,7 +100,7 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
       - name: JMeter Performance Tests ${{ matrix.protocols }} / ${{ matrix.category }}
         uses: nick-fields/retry@v3
         with:
