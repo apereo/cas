@@ -61,8 +61,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
 
     @Override
     public Ticket updateTicket(final Ticket ticket) throws Exception {
-        addTicket(ticket);
-        return ticket;
+        return addTicket(ticket);
     }
 
     @Override
