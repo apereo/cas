@@ -29,11 +29,11 @@ recipeList:
       overwrite: true
       filePattern: 'gradle.properties'
   - org.openrewrite.gradle.UpdateGradleWrapper:
-      version: 8.9
+      version: 8.10-rc-1
       addIfMissing: true
   - org.openrewrite.gradle.AddProperty:
       key: tomcatVersion
-      value: 10.1.26
+      value: 10.1.28
       overwrite: false
       filePattern: 'gradle.properties'
   - org.openrewrite.gradle.AddProperty:
