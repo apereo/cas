@@ -47,7 +47,7 @@ const LOGGER = pino({
 const CHROMIUM_USER_DATA_DIR = `${__dirname}/chromium`;
 
 const BROWSER_OPTIONS = {
-    ignoreHTTPSErrors: true,
+    acceptInsecureCerts: true,
     headless: (process.env.CI === "true" || process.env.HEADLESS === "true") ? "new" : false,
     devtools: process.env.CI !== "true",
     defaultViewport: null,
