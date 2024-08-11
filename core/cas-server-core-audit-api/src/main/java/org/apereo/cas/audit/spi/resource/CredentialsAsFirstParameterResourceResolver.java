@@ -36,7 +36,7 @@ public class CredentialsAsFirstParameterResourceResolver implements AuditResourc
         return toResources(AopUtils.unWrapJoinPoint(joinPoint).getArgs());
     }
 
-    private String[] toResources(final Object[] args) {
+    protected String[] toResources(final Object[] args) {
         val object = args[0];
         if (object instanceof final AuthenticationTransaction transaction) {
             return new String[]{tranactionToResourceString(transaction)};

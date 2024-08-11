@@ -2346,6 +2346,131 @@ async function initializeThrottlesOperations() {
     }
 }
 
+async function initializeSAML1ProtocolOperations() {
+    $("button[name=saml1ProtocolButton]").off().on("click", () => {
+        const form = document.getElementById("fmSaml1Protocol");
+        if (!form.reportValidity()) {
+            return false;
+        }
+        const username = $("#saml1ProtocolUsername").val();
+        const password = $("#saml1ProtocolPassword").val();
+        const service = $("#saml1ProtocolService").val();
+
+        $.post(`${actuatorEndpoints.samlvalidate}`, {
+            username: username,
+            password: password,
+            service: service
+        }, data => {
+            $("#saml1ProtocolEditorContainer").removeClass("d-none");
+            const editor = initializeAceEditor("saml1ProtocolEditor", "xml");
+            editor.setReadOnly(true);
+            editor.setValue(data.assertion);
+            editor.gotoLine(1);
+
+            const serviceEditor = initializeAceEditor("saml1ProtocolServiceEditor", "json");
+            serviceEditor.setReadOnly(true);
+            serviceEditor.setValue(JSON.stringify(data.registeredService, null, 2));
+            serviceEditor.gotoLine(1);
+        }).fail((xhr, status, error) => {
+            displayErrorInBanner(xhr);
+            $("#saml2ProtocolEditorContainer").addClass("d-none");
+        });
+    });
+
+}
+
+function showOidcJwks() {
+    $.get(`${casServerPrefix}/oidc/jwks`, response => {
+        let oidcOpConfigurationDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("oidcOpConfigurationDialog"));
+        const editor = initializeAceEditor("oidcOpConfigurationDialogEditor", "json");
+        editor.setValue(JSON.stringify(response, null, 2));
+        editor.gotoLine(1);
+        editor.setReadOnly(true);
+        oidcOpConfigurationDialog["open"]();
+    }).fail((xhr, status, error) => {
+        console.error("Error fetching data:", error);
+        displayErrorInBanner(xhr);
+    });
+}
+
+async function initializeOidcProtocolOperations() {
+    $("button[name=oidcOpConfigurationButton]").off().on("click", () => {
+        hideErrorInBanner();
+        $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, response => {
+            let oidcOpConfigurationDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("oidcOpConfigurationDialog"));
+            const editor = initializeAceEditor("oidcOpConfigurationDialogEditor", "json");
+            editor.setValue(JSON.stringify(response, null, 2));
+            editor.gotoLine(1);
+            editor.setReadOnly(true);
+            oidcOpConfigurationDialog["open"]();
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr);
+        });
+    });
+
+    $("button[name=oidcKeyRotationButton]").off().on("click", () => {
+        hideErrorInBanner();
+        swal({
+            title: "Are you sure you want to rotate keys?",
+            text: "Once rotated, the change will take effect immediately.",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true
+        })
+            .then((willDo) => {
+                if (willDo) {
+                    $("#oidcKeyRotationButton").prop("disabled", true);
+                    $.get(`${actuatorEndpoints.oidcjwks}/rotate`, response => {
+                        swal({
+                            title: "Done!",
+                            text: "Keys in the OpenID Connect keystore are successfully rotated.",
+                            buttons: false,
+                            icon: "success",
+                            timer: 1000
+                        });
+                        $("#oidcKeyRotationButton").prop("disabled", false);
+                    }).fail((xhr, status, error) => {
+                        console.error("Error fetching data:", error);
+                        displayErrorInBanner(xhr);
+                        $("#oidcKeyRotationButton").prop("disabled", false);
+                    });
+                }
+            });
+    });
+
+    $("button[name=oidcKeyRevocationButton]").off().on("click", () => {
+        hideErrorInBanner();
+        swal({
+            title: "Are you sure you want to revoke keys?",
+            text: "Once revoked, the change will take effect immediately.",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true
+        })
+            .then((willDo) => {
+                if (willDo) {
+                    $("#oidcKeyRevocationButton").prop("disabled", true);
+                    $.get(`${actuatorEndpoints.oidcjwks}/revoke`, response => {
+                        swal({
+                            title: "Done!",
+                            text: "Keys in the OpenID Connect keystore are successfully revoked.",
+                            buttons: false,
+                            icon: "success",
+                            timer: 1000
+                        });
+                        $("#oidcKeyRevocationButton").prop("disabled", false);
+                    }).fail((xhr, status, error) => {
+                        console.error("Error fetching data:", error);
+                        displayErrorInBanner(xhr);
+                        $("#oidcKeyRevocationButton").prop("disabled", false);
+                    });
+                }
+            });
+    });
+
+}
+
 async function initializeSAML2ProtocolOperations() {
     $("button[name=saml2ProtocolPostButton]").off().on("click", () => {
         const form = document.getElementById("fmSaml2Protocol");
@@ -2372,8 +2497,7 @@ async function initializeSAML2ProtocolOperations() {
             $("#saml2ProtocolEditorContainer").addClass("d-none");
         });
     });
-
-
+    
     $("button[name=saml2ProtocolLogoutButton]").off().on("click", () => {
         const entityId = document.getElementById("saml2ProtocolEntityId");
         if (!entityId.checkValidity()) {
@@ -2500,6 +2624,8 @@ async function initializePalantir() {
             initializeConsentOperations(),
             initializeCasProtocolOperations(),
             initializeSAML2ProtocolOperations(),
+            initializeSAML1ProtocolOperations(),
+            initializeOidcProtocolOperations(),
             initializeThrottlesOperations()
         ]);
         setTimeout(() => {
@@ -2549,17 +2675,24 @@ async function initializePalantir() {
                 $(`#attribute-tab-${Tabs.CONSENT}`).addClass("d-none");
             }
             if (!actuatorEndpoints.casvalidate) {
+                $("#casprotocol").parent().remove();
                 $("#casProtocolContainer").addClass("d-none");
             }
             if (!actuatorEndpoints.samlpostprofileresponse) {
+                $("#saml2protocol").parent().remove();
                 $("#saml2ProtocolContainer").addClass("d-none");
+            }
+            if (!actuatorEndpoints.samlvalidate) {
+                $("#saml1ProtocolContainer").addClass("d-none");
+                $("#saml1protocol").parent().remove();
             }
             if (!actuatorEndpoints.casconfig) {
                 $("#config-encryption-tab").addClass("d-none");
-                $("#casConfigSecurity").addClass("d-none");
+                $("#casConfigSecurity").parent().remove();
             }
             
-            if (!actuatorEndpoints.casvalidate && !actuatorEndpoints.samlpostprofileresponse) {
+            if (!actuatorEndpoints.samlvalidate && !actuatorEndpoints.casvalidate
+                && !actuatorEndpoints.samlpostprofileresponse) {
                 $("#protocolsTabButton").addClass("d-none");
                 $(`#attribute-tab-${Tabs.PROTOCOLS}`).addClass("d-none");
             }

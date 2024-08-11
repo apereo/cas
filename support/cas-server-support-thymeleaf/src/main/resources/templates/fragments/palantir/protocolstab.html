@@ -10,87 +10,90 @@
     <div class="attribute-tab w-100 d-none" id="attribute-tab-11">
         <div class="jqueryui-tabs">
           <ul>
-            <li><a href="#casprotocol-tab">CAS Protocol</a></li>
-            <li><a href="#saml2protocol-tab">SAML2 Protocol</a></li>
+            <li><a id="casprotocol" href="#casprotocol-tab">CAS Protocol</a></li>
+            <li><a id="saml1protocol" href="#saml1protocol-tab">SAML1 Protocol</a></li>
+            <li><a id="saml2protocol" href="#saml2protocol-tab">SAML2 Protocol</a></li>
+            <li><a id="oidcprotocol" href="#oidcprotocol-tab">OpenID Connect Protocol</a></li>
           </ul>
 
             <div id="casprotocol-tab">
               <section id="casProtocolContainer">
-            <p>You can simulate CAS protocol validation responses for CAS-enabled client applications.</p>
-            <form id="fmCasProtocol" class="d-block">
-                <section class="cas-field form-group my-3 mdc-input-group d-flex">
-                    <div class="mdc-input-group-field mdc-input-group-field-append w-100">
-                        <label for="casProtocolService"
-                               class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
-                            <span class="mdc-notched-outline">
-                                <span class="mdc-notched-outline__leading"></span>
-                                <span class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Service</span>
+                <p>You can simulate CAS protocol validation responses for CAS-enabled client applications.</p>
+                <form id="fmCasProtocol" class="d-block">
+                    <section class="cas-field form-group my-3 mdc-input-group d-flex">
+                        <div class="mdc-input-group-field mdc-input-group-field-append w-100">
+                            <label for="casProtocolService"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Service</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
                                 </span>
-                                <span class="mdc-notched-outline__trailing"></span>
-                            </span>
-                            <input class="mdc-text-field__input form-control" type="text"
-                                   name="casProtocolService" data-param-name="service" tabindex="0"
-                                   id="casProtocolService" size="50" autocomplete="off" required/>
-                        </label>
-                        <label for="casProtocolUsername"
-                               class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
-                            <span class="mdc-notched-outline">
-                                <span class="mdc-notched-outline__leading"></span>
-                                <span class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Username</span>
+                                <input class="mdc-text-field__input form-control" type="text"
+                                       name="casProtocolService" data-param-name="service" tabindex="0"
+                                       id="casProtocolService" size="50" autocomplete="off" required/>
+                            </label>
+                            <label for="casProtocolUsername"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Username</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
                                 </span>
-                                <span class="mdc-notched-outline__trailing"></span>
-                            </span>
-                            <input class="mdc-text-field__input form-control" type="text"
-                                   name="casProtocolUsername" data-param-name="username"
-                                   tabindex="0" id="casProtocolUsername" size="50" autocomplete="off" required/>
-                        </label>
-                        <label for="casProtocolPassword"
-                               class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
-                            <span class="mdc-notched-outline">
-                                <span class="mdc-notched-outline__leading"></span>
-                                <span class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Password</span>
+                                <input class="mdc-text-field__input form-control" type="text"
+                                       name="casProtocolUsername" data-param-name="username"
+                                       tabindex="0" id="casProtocolUsername" size="50" autocomplete="off" required/>
+                            </label>
+                            <label for="casProtocolPassword"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Password</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
                                 </span>
-                                <span class="mdc-notched-outline__trailing"></span>
-                            </span>
-                            <input class="mdc-text-field__input form-control pwd" type="password"
-                                   name="casProtocolPassword" data-param-name="password" tabindex="0"
-                                   id="casProtocolPassword" size="50" autocomplete="off"/>
-                            <button
-                                    class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
-                                    tabindex="-1"
-                                    type="button">
-                                <i class="mdi mdi-eye fas fa-eye reveal-password-icon" style="vertical-align: middle;"
-                                   aria-hidden="true"></i>
-                                <span class="visually-hidden">Toggle Token</span>
-                            </button>
-                        </label>
-                    </div>
+                                <input class="mdc-text-field__input form-control pwd" type="password"
+                                       name="casProtocolPassword" data-param-name="password" tabindex="0"
+                                       id="casProtocolPassword" size="50" autocomplete="off"/>
+                                <button
+                                        class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
+                                        tabindex="-1"
+                                        type="button">
+                                    <i class="mdi mdi-eye fas fa-eye reveal-password-icon"
+                                       style="vertical-align: middle;"
+                                       aria-hidden="true"></i>
+                                    <span class="visually-hidden">Toggle Token</span>
+                                </button>
+                            </label>
+                        </div>
 
+                    </section>
+                    <div class="d-flex">
+                        <button type="button" name="casProtocolV1Button" id="casProtocolV1Button"
+                                class="mdc-button mdc-button--raised">
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
+                                                               aria-hidden="true"></i>V1 Protocol</span>
+                        </button>
+                        <button type="button" name="casProtocolV2Button" id="casProtocolV2Button"
+                                class="mdc-button mdc-button--raised">
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
+                                                               aria-hidden="true"></i>V2 Protocol</span>
+                        </button>
+                        <button type="button" name="casProtocolV3Button" id="casProtocolV3Button"
+                                class="mdc-button mdc-button--raised">
+                            <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
+                                                               aria-hidden="true"></i>V3 Protocol</span>
+                        </button>
+                    </div>
+                </form>
+                <section class="my-3 d-flex h-250px d-none" id="casProtocolEditorContainer">
+                      <pre class="ace-editor ace-relative w-100 h-100" id="casProtocolEditor"></pre>
                 </section>
-                <div class="d-flex">
-                    <button type="button" name="casProtocolV1Button" id="casProtocolV1Button"
-                            class="mdc-button mdc-button--raised">
-                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
-                                                           aria-hidden="true"></i>V1 Protocol</span>
-                    </button>
-                    <button type="button" name="casProtocolV2Button" id="casProtocolV2Button"
-                            class="mdc-button mdc-button--raised">
-                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
-                                                           aria-hidden="true"></i>V2 Protocol</span>
-                    </button>
-                    <button type="button" name="casProtocolV3Button" id="casProtocolV3Button"
-                            class="mdc-button mdc-button--raised">
-                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
-                                                           aria-hidden="true"></i>V3 Protocol</span>
-                    </button>
-                </div>
-            </form>
-            <section class="my-3 d-flex h-250px d-none" id="casProtocolEditorContainer">
-                  <pre class="ace-editor ace-relative w-100 h-100" id="casProtocolEditor"></pre>
-            </section>
             </section>
           </div>
 
@@ -228,6 +231,118 @@
         </section>
           </div>
 
+            <div id="saml1protocol-tab">
+                
+                <section id="saml1ProtocolContainer">
+                    <p>You can simulate SAML1 responses for SAML1 service providers.</p>
+
+                    <form id="fmSaml1Protocol" class="d-block">
+                        <section class="saml1-field form-group my-3 mdc-input-group d-flex">
+                            <div class="mdc-input-group-field mdc-input-group-field-append w-100">
+                                <label for="saml1ProtocolService"
+                                       class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                    <span class="mdc-notched-outline">
+                                        <span class="mdc-notched-outline__leading"></span>
+                                        <span class="mdc-notched-outline__notch">
+                                            <span class="mdc-floating-label">Service</span>
+                                        </span>
+                                        <span class="mdc-notched-outline__trailing"></span>
+                                    </span>
+                                    <input class="mdc-text-field__input form-control" type="text"
+                                           name="saml1ProtocolService" data-param-name="service" tabindex="0"
+                                           id="saml1ProtocolService" size="50" autocomplete="off" required/>
+                                </label>
+
+                                <label for="saml1ProtocolUsername"
+                                       class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                    <span class="mdc-notched-outline">
+                                        <span class="mdc-notched-outline__leading"></span>
+                                        <span class="mdc-notched-outline__notch">
+                                            <span class="mdc-floating-label">Username</span>
+                                        </span>
+                                        <span class="mdc-notched-outline__trailing"></span>
+                                    </span>
+                                    <input class="mdc-text-field__input form-control" type="text"
+                                           name="saml1ProtocolUsername" data-param-name="username"
+                                           tabindex="0" id="saml1ProtocolUsername" size="50" autocomplete="off" required/>
+                                </label>
+                                <label for="saml1ProtocolPassword"
+                                       class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                    <span class="mdc-notched-outline">
+                                        <span class="mdc-notched-outline__leading"></span>
+                                        <span class="mdc-notched-outline__notch">
+                                            <span class="mdc-floating-label">Password</span>
+                                        </span>
+                                        <span class="mdc-notched-outline__trailing"></span>
+                                    </span>
+                                    <input class="mdc-text-field__input form-control pwd" type="password"
+                                           name="saml1ProtocolPassword" data-param-name="password" tabindex="0"
+                                           id="saml1ProtocolPassword" size="50" autocomplete="off"/>
+                                    <button
+                                            class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
+                                            tabindex="-1"
+                                            type="button">
+                                        <i class="mdi mdi-eye fas fa-eye reveal-password-icon" style="vertical-align: middle;"
+                                           aria-hidden="true"></i>
+                                        <span class="visually-hidden">Toggle Token</span>
+                                    </button>
+                                </label>
+                            </div>
+
+                        </section>
+                        <div class="d-flex">
+                            <button type="button" name="saml1ProtocolButton" id="saml1ProtocolButton"
+                                    class="mdc-button mdc-button--raised">
+                                <span class="mdc-button__label">
+                                    <i class="mdc-tab__icon mdi mdi-check-all" aria-hidden="true"></i>Submit</span>
+                            </button>
+                        </div>
+                    </form>
+                    <section class="my-3 d-flex h-450px d-none" id="saml1ProtocolEditorContainer">
+                        <pre class="ace-editor ace-relative w-100 h-100 mr-2" id="saml1ProtocolEditor"></pre>
+                        <pre class="ace-editor ace-relative w-100 h-100" id="saml1ProtocolServiceEditor"></pre>
+                    </section>
+                </section>
+            </div>
+
+            <div id="oidcprotocol-tab">
+                <h3>Key Rotation</h3>
+                <p>You can instruct CAS to rotate or revoke keys in the <a href="javascript:showOidcJwks()">OpenID Connect JSON web keystore (JWKS).</a></p>
+
+                <div class="d-flex">
+                    <button type="button" name="oidcKeyRotationButton" id="oidcKeyRotationButton" class="mdc-button mdc-button--raised">
+                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-rotate-3d-variant" aria-hidden="true"></i>Rotate</span>
+                    </button>
+                    <button type="button" name="oidcKeyRevocationButton" id="oidcKeyRevocationButton" class="mdc-button mdc-button--raised">
+                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-trash-can" aria-hidden="true"></i>Revoke</span>
+                    </button>
+                </div>
+                <p>
+                
+                <h3>Discovery Profile</h3>
+                <p>You can examine the discovery profile of CAS as an OpenID Connect Provider (OP).</p>
+                 <div class="d-flex">
+
+                    <button type="button" name="oidcOpConfigurationButton" id="oidcOpConfigurationButton"
+                            class="mdc-button mdc-button--raised">
+                        <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-cog" aria-hidden="true"></i>Discovery Profile</span>
+                    </button>
+                </div>
+
+                <div class="mdc-dialog modal" id="oidcOpConfigurationDialog" role="alertdialog"
+                     aria-modal="true" aria-labelledby="oidcOpConfigurationDialog-title"
+                     aria-describedby="dialog-content">
+                        <div class="mdc-dialog__container w-100 modal-dialog">
+                            <div class="mdc-dialog__surface mw-100 w-75 modal-content min-height-60">
+                                <div class="mdc-dialog__content modal-body" id="oidcOpConfigurationDialog-content">
+                                    <div class="ace-editor ace-absolute" id="oidcOpConfigurationDialogEditor"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mdc-dialog__scrim"></div>
+                </div>
+
+            </div>
         </div>
     </div>
 </span>

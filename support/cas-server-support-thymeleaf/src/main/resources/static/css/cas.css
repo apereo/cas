@@ -393,6 +393,10 @@ form button i.mdi {
 .pl-2 {
     padding-left: 0.8rem;
 }
+
+.mr-2 {
+    margin-right: 2px;
+}
 .pr-2 {
     padding-right: 0.8rem;
 }
