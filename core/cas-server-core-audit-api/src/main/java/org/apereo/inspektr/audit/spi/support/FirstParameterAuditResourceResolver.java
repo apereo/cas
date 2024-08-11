@@ -61,7 +61,7 @@ public class FirstParameterAuditResourceResolver implements AuditResourceResolve
      * @param args the args
      * @return the string[]
      */
-    private String[] toResources(final Object[] args) {
+    protected String[] toResources(final Object[] args) {
         return this.resourcePostProcessor.apply(new String[]{toResourceString(args[0])});
     }
 }
