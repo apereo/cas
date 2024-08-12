@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import java.nio.file.Files;
 import org.apereo.cas.configuration.model.core.cache.ExpiringSimpleCacheProperties;
 import org.apereo.cas.configuration.model.core.cache.SimpleCacheProperties;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
@@ -95,7 +96,7 @@ public class Beans {
      * @return the temp file path
      */
     public static String getTempFilePath(final String prefix, final String suffix) {
-        return Unchecked.supplier(() -> File.createTempFile(prefix, suffix).getCanonicalPath()).get();
+        return Unchecked.supplier(() -> Files.createTempFile(prefix, suffix).toFile().getCanonicalPath()).get();
     }
 
     /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
+import java.nio.file.Files;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyDeviceRegistrationRequest;
@@ -111,7 +112,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasRestActuatorEndpoint 
             Unchecked.function(entry -> {
                 val acct = (YubiKeyAccount) entry;
                 val fileName = String.format("%s-%s", acct.getUsername(), acct.getId());
-                val sourceFile = File.createTempFile(fileName, ".json");
+                val sourceFile = Files.createTempFile(fileName, ".json").toFile();
                 MAPPER.writeValue(sourceFile, acct);
                 return sourceFile;
             }), "yubikeybaccts");

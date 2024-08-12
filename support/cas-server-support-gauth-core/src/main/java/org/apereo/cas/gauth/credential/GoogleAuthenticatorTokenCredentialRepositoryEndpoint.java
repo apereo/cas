@@ -1,5 +1,6 @@
 package org.apereo.cas.gauth.credential;
 
+import java.nio.file.Files;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
@@ -110,7 +111,7 @@ public class GoogleAuthenticatorTokenCredentialRepositoryEndpoint extends BaseCa
             Unchecked.function(entry -> {
                 val acct = (GoogleAuthenticatorAccount) entry;
                 val fileName = String.format("%s-%s", acct.getName(), acct.getId());
-                val sourceFile = File.createTempFile(fileName, ".json");
+                val sourceFile = Files.createTempFile(fileName, ".json").toFile();
                 serializer.to(sourceFile, acct);
                 return sourceFile;
             }), "gauthaccts");
