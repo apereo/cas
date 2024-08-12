@@ -1,5 +1,6 @@
 package org.apereo.cas.consent;
 
+import java.nio.file.Files;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -120,7 +121,7 @@ public class AttributeConsentReportEndpoint extends BaseCasRestActuatorEndpoint 
             Unchecked.function(entry -> {
                 val acct = (ConsentDecision) entry;
                 val fileName = String.format("%s-%s", acct.getPrincipal(), acct.getId());
-                val sourceFile = File.createTempFile(fileName, ".json");
+                val sourceFile = Files.createTempFile(fileName, ".json").toFile();
                 MAPPER.writeValue(sourceFile, acct);
                 return sourceFile;
             }), "attrconsent");

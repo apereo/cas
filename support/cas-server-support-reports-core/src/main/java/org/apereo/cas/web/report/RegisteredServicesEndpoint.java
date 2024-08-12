@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import java.nio.file.Files;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -221,7 +222,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
             Unchecked.function(entry -> {
                 val service = (RegisteredService) entry;
                 val fileName = String.format("%s-%s", service.getName(), service.getId());
-                val sourceFile = File.createTempFile(fileName, ".json");
+                val sourceFile = Files.createTempFile(fileName, ".json").toFile();
                 serializer.to(sourceFile, service);
                 return sourceFile;
             }), "services");
@@ -247,7 +248,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         val registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
         val registeredService = servicesManager.getObject().findServiceBy(id);
         val fileName = String.format("%s-%s", registeredService.getName(), registeredService.getId());
-        val serviceFile = File.createTempFile(fileName, ".json");
+        val serviceFile = Files.createTempFile(fileName, ".json").toFile();
         registeredServiceSerializer.to(serviceFile, registeredService);
         val headers = new HttpHeaders();
         val resource = new TemporaryFileSystemResource(serviceFile);

@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.web;
 
+import java.nio.file.Files;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -160,7 +161,7 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
             Unchecked.function(entry -> {
                 val acct = (MultifactorAuthenticationTrustRecord) entry;
                 val fileName = String.format("%s-%s", acct.getPrincipal(), acct.getName());
-                val sourceFile = File.createTempFile(fileName, ".json");
+                val sourceFile = Files.createTempFile(fileName, ".json").toFile();
                 MAPPER.writeValue(sourceFile, acct);
                 return sourceFile;
             }), "mfatrusteddevices-" + username);
@@ -184,7 +185,7 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
             Unchecked.function(entry -> {
                 val acct = (MultifactorAuthenticationTrustRecord) entry;
                 val fileName = String.format("%s-%s", acct.getPrincipal(), acct.getName());
-                val sourceFile = File.createTempFile(fileName, ".json");
+                val sourceFile = Files.createTempFile(fileName, ".json").toFile();
                 MAPPER.writeValue(sourceFile, acct);
                 return sourceFile;
             }), "mfatrusteddevices");

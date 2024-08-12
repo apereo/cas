@@ -206,7 +206,7 @@ public class CompressionUtils {
                                              final String prefix) {
         return Unchecked.supplier(() -> {
             val date = LocalDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm"));
-            val file = File.createTempFile(String.format("%s-%s", prefix, date), ".zip");
+            val file = Files.createTempFile(String.format("%s-%s", prefix, date), ".zip").toFile();
             Files.deleteIfExists(file.toPath());
             val env = new HashMap<String, Object>();
             env.put("create", "true");

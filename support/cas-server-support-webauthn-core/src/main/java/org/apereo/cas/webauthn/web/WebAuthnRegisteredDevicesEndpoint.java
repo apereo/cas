@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn.web;
 
+import java.nio.file.Files;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CompressionUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -129,7 +130,7 @@ public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoi
                 val acct = (CredentialRegistration) entry;
                 val ba = acct.getCredential().getCredentialId().getBase64Url();
                 val fileName = String.format("%s-%s", acct.getUsername(), ba);
-                val sourceFile = File.createTempFile(fileName, ".json");
+                val sourceFile = Files.createTempFile(fileName, ".json").toFile();
                 WebAuthnUtils.getObjectMapper().writeValue(sourceFile, acct);
                 return sourceFile;
             }), "webauthnbaccts");
