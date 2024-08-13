@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,6 +37,7 @@ import java.util.Map;
 @Setter
 @NoArgsConstructor
 @Accessors(chain = true)
+@AllArgsConstructor
 public class CasEvent implements Serializable {
 
     /**

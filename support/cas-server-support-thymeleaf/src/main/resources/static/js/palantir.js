@@ -2788,9 +2788,13 @@ async function initializePalantir() {
                 $("#config-encryption-tab").addClass("d-none");
                 $("#casConfigSecurity").parent().remove();
             }
-            
+            if (!actuatorEndpoints.oidcjwks) {
+                $("#oidcprotocol").parent().remove();
+                $("#oidcProtocolContainer").addClass("d-none");
+            }
+
             if (!actuatorEndpoints.samlvalidate && !actuatorEndpoints.casvalidate
-                && !actuatorEndpoints.samlpostprofileresponse) {
+                && !actuatorEndpoints.samlpostprofileresponse && !actuatorEndpoints.oidcjwks) {
                 $("#protocolsTabButton").addClass("d-none");
                 $(`#attribute-tab-${Tabs.PROTOCOLS}`).addClass("d-none");
             }
