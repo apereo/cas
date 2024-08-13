@@ -1,19 +1,17 @@
 package org.apereo.cas.support.events.dao;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
-
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -21,7 +19,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapKeyColumn;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.HashMap;
@@ -37,7 +34,7 @@ import java.util.Map;
 @ToString
 @Getter
 @Setter
-@AllArgsConstructor
+@NoArgsConstructor
 @Accessors(chain = true)
 public class CasEvent implements Serializable {
 
@@ -114,10 +111,6 @@ public class CasEvent implements Serializable {
     @Column(name = "value")
     @CollectionTable(name = "events_properties", joinColumns = @JoinColumn(name = "eventId"))
     private Map<String, String> properties = new HashMap<>(0);
-
-    public CasEvent() {
-        this.id = System.currentTimeMillis();
-    }
 
     /**
      * Put timestamp.

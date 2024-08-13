@@ -10,6 +10,7 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
+import org.assertj.core.util.CanIgnoreReturnValue;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -70,8 +71,10 @@ class RegisteredServiceTests {
         private static final long serialVersionUID = 1L;
 
         @Override
-        public void setServiceId(final String id) {
+        @CanIgnoreReturnValue
+        public BaseRegisteredService setServiceId(final String id) {
             serviceId = id;
+            return this;
         }
 
         @Override

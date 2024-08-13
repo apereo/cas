@@ -43,7 +43,8 @@ class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     void verifyLargeDataset() throws Throwable {
         newServiceRegistry.save(
             () -> {
-                val svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
+                val svc = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true)
+                    .setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
                 svc.setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
                 return svc;
             },
@@ -61,7 +62,8 @@ class JpaServiceRegistryTests extends AbstractServiceRegistryTests {
     void verifySaveInStreams() throws Throwable {
         var servicesToImport = Stream.<RegisteredService>empty();
         for (int i = 0; i < 1000; i++) {
-            val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true);
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString(), true)
+                .setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
             registeredService.setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
             servicesToImport = Stream.concat(servicesToImport, Stream.of(registeredService));
         }

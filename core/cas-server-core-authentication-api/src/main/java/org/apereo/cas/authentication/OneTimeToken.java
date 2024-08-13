@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.apache.commons.lang3.builder.CompareToBuilder;
@@ -30,6 +31,7 @@ import java.time.ZoneId;
 @Getter
 @Setter
 @EqualsAndHashCode
+@NoArgsConstructor
 public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
 
     @Serial
@@ -49,12 +51,7 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
     @Column(nullable = false)
     private LocalDateTime issuedDateTime = LocalDateTime.now(ZoneId.systemDefault());
 
-    public OneTimeToken() {
-        setId(System.currentTimeMillis());
-    }
-
     public OneTimeToken(final Integer token, final String userId) {
-        this();
         this.token = token;
         this.userId = userId;
     }
