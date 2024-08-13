@@ -1,6 +1,7 @@
 package org.apereo.cas.audit.spi.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
@@ -26,6 +27,7 @@ import java.util.Locale;
 @Accessors(chain = true)
 @Getter
 @Setter
+@NoArgsConstructor
 public class AuditTrailEntity {
 
     @org.springframework.data.annotation.Id
@@ -68,8 +70,4 @@ public class AuditTrailEntity {
 
     @Column(name = "AUD_EXTRA_INFO", columnDefinition = "longvarchar")
     private String extraInfo;
-
-    public AuditTrailEntity() {
-        this.id = System.currentTimeMillis();
-    }
 }

@@ -11,6 +11,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.springframework.data.annotation.Id;
@@ -37,6 +38,7 @@ import java.util.Set;
 @Setter
 @EqualsAndHashCode(exclude = "id")
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@Accessors(chain = true)
 public abstract class BaseRegisteredService implements RegisteredService {
 
     @Serial

@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.val;
@@ -39,6 +40,7 @@ import java.util.Date;
 @Getter
 @Setter
 @EqualsAndHashCode
+@NoArgsConstructor
 public class MultifactorAuthenticationTrustRecord implements Comparable<MultifactorAuthenticationTrustRecord>, Serializable {
     private static final int YEARS_TO_KEEP_RECORD_AS_FOREVER = 100;
 
@@ -81,10 +83,6 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     @JsonProperty("multifactorAuthenticationProvider")
     @Column(name = "multifactorAuthenticationProvider", nullable = true)
     private String multifactorAuthenticationProvider;
-    
-    public MultifactorAuthenticationTrustRecord() {
-        this.id = System.currentTimeMillis();
-    }
 
     /**
      * New instance of authentication trust record.

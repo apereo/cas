@@ -51,7 +51,7 @@ class JpaConsentRepositoryTests extends BaseConsentRepositoryTests {
     @Test
     void verifyLargeDataset() throws Throwable {
         val principal = UUID.randomUUID().toString();
-        for (int i = 0; i < COUNT; i++) {
+        for (var i = 0; i < COUNT; i++) {
             val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId());
             val decision = BUILDER.build(service, registeredService, principal,

@@ -1,12 +1,11 @@
 package org.apereo.cas.consent;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,7 +24,7 @@ import java.io.Serial;
 @Setter
 @Entity
 @Table(name = "ConsentDecision")
-@AllArgsConstructor
+@NoArgsConstructor
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public class JpaConsentDecision extends ConsentDecision {
     @Serial
@@ -35,8 +34,4 @@ public class JpaConsentDecision extends ConsentDecision {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long id = -1;
-
-    public JpaConsentDecision() {
-        this.id = System.currentTimeMillis();
-    }
 }

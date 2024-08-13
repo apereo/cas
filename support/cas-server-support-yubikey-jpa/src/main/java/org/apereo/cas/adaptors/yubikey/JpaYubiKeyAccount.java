@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.yubikey;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
@@ -28,6 +29,7 @@ import java.util.List;
 @Table(name = "YubiKeyAccount")
 @SuperBuilder
 @Accessors(chain = true)
+@NoArgsConstructor
 public class JpaYubiKeyAccount extends YubiKeyAccount {
     @Serial
     private static final long serialVersionUID = 8996204730235225057L;
@@ -37,10 +39,6 @@ public class JpaYubiKeyAccount extends YubiKeyAccount {
     @GenericGenerator(name = "native", strategy = "native")
     @Builder.Default
     private long id = -1;
-
-    public JpaYubiKeyAccount() {
-        this.id = System.currentTimeMillis();
-    }
 
     public JpaYubiKeyAccount(final long id,
                              final List<YubiKeyRegisteredDevice> deviceIdentifiers,

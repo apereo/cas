@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.ObjectUtils;
 
 import java.io.Serial;
@@ -21,6 +22,7 @@ import java.util.Set;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Getter
 @Setter
+@Accessors(chain = true)
 public class CasRegisteredService extends BaseWebBasedRegisteredService implements CasModelRegisteredService {
 
     /**

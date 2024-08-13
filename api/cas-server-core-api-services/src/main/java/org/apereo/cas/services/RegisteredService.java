@@ -81,8 +81,9 @@ public interface RegisteredService extends RegisteredServiceDefinition, Comparab
      * matches.
      *
      * @param evaluationOrder the service evaluation order
+     * @return the evaluation order
      */
-    void setEvaluationOrder(int evaluationOrder);
+    RegisteredService setEvaluationOrder(int evaluationOrder);
 
     /**
      * Get the name of the attribute this service prefers to consume as username.

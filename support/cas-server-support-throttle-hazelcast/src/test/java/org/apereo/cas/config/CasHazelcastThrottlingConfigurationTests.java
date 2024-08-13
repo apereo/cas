@@ -34,7 +34,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasHazelcastThrottlingAutoConfiguration.class
-})
+},
+    properties = {
+        "cas.authn.throttle.hazelcast.cluster.network.port-auto-increment=false",
+        "cas.authn.throttle.hazelcast.cluster.network.port=5710",
+        "cas.authn.throttle.hazelcast.cluster.instance-name=throttlehzstore"
+    })
 @Tag("Hazelcast")
 @ExtendWith(CasTestExtension.class)
 class CasHazelcastThrottlingConfigurationTests {
