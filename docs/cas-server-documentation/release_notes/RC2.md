@@ -83,7 +83,7 @@ avoid accidents and mistakes made when a test run is incorrectly skipped. As the
 we expect the model to improve and learn more efficiently.
 
 This capability is provided by [Develocity](https://gradle.com/develocity/) to the Apereo CAS project for free and is proving
-to be extremely valuable in cutting down test execution time and therefor resulting in a quicker feedback loop. 
+to be extremely valuable in cutting down test execution time and therefore resulting in a quicker feedback loop. 
 
 ### Startup Time Improvements
 
