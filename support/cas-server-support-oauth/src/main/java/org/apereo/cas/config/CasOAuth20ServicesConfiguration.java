@@ -9,7 +9,6 @@ import org.apereo.cas.services.ServicesManagerRegisteredServiceLocator;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuth20ServiceRegistry;
 import org.apereo.cas.support.oauth.services.OAuth20ServicesManagerRegisteredServiceLocator;
-import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.val;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -42,7 +41,6 @@ class CasOAuth20ServicesConfiguration {
             val oAuthCallbackUrl = casProperties.getServer().getPrefix()
                                    + OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
             val service = new CasRegisteredService();
-            service.setId(RandomUtils.nextInt());
             service.setEvaluationOrder(Ordered.HIGHEST_PRECEDENCE);
             service.setName(service.getClass().getSimpleName());
             service.setDescription("OAuth Authentication Callback Request URL");

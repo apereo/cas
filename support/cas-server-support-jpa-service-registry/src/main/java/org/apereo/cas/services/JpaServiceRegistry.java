@@ -63,7 +63,8 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
             if (entityManager.contains(entity)) {
                 entityManager.remove(entity);
             } else {
-                entityManager.remove(entityManager.merge(entity));
+                val mergedEntity = entityManager.merge(entity);
+                entityManager.remove(mergedEntity);
             }
         });
         return true;
@@ -198,16 +199,11 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
     }
 
 
-    /**
-     * From registered service.
-     *
-     * @param service the service
-     * @return the jpa registered service entity
-     */
-    private JpaRegisteredServiceEntity fromRegisteredService(final RegisteredService service) {
+    protected JpaRegisteredServiceEntity fromRegisteredService(final RegisteredService service) {
         val jsonBody = serializer.toString(service);
+        val identifier = service.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE ? 0L : service.getId();
         return JpaRegisteredServiceEntity.builder()
-            .id(service.getId())
+            .id(identifier)
             .name(service.getName())
             .serviceId(service.getServiceId())
             .evaluationOrder(service.getEvaluationOrder())
@@ -215,7 +211,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
             .build();
     }
 
-    private RegisteredService toRegisteredService(final JpaRegisteredServiceEntity entity) {
+    protected RegisteredService toRegisteredService(final JpaRegisteredServiceEntity entity) {
         val service = serializer.from(entity.getBody());
         service.setId(entity.getId());
         LOGGER.trace("Converted JPA entity [{}] to [{}]", this, service);

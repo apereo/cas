@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.springframework.data.annotation.Id;
 
@@ -32,6 +33,7 @@ import java.time.ZoneId;
 @Setter
 @EqualsAndHashCode
 @NoArgsConstructor
+@Accessors(chain = true)
 public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
 
     @Serial

@@ -28,6 +28,7 @@ public class DynamoDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
+        registeredService.assignIdIfNecessary();
         invokeServiceRegistryListenerPreSave(registeredService);
         dbTableService.put(registeredService);
         return registeredService;

@@ -3,7 +3,6 @@ package org.apereo.cas.services.resource;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceDefinition;
 import org.apereo.cas.services.ResourceBasedServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryListener;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
@@ -192,10 +191,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     @Override
     public RegisteredService save(final RegisteredService service) {
-        if (service.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE) {
-            LOGGER.debug("Service id not set. Calculating id based on system time...");
-            service.setId(System.currentTimeMillis());
-        }
+        service.assignIdIfNecessary();
         val fileName = getRegisteredServiceFileName(service);
         try (val out = Files.newOutputStream(fileName.toPath())) {
             invokeServiceRegistryListenerPreSave(service);
