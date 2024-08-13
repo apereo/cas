@@ -95,7 +95,6 @@ public abstract class AbstractCasEventRepositoryTests {
         val ticket = new MockTicketGrantingTicket(user);
         val event = new CasTicketGrantingTicketCreatedEvent(this, ticket, null);
         val dto = new CasEvent();
-        dto.setId(System.currentTimeMillis());
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
         dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().format(DateTimeFormatter.ISO_ZONED_DATE_TIME));

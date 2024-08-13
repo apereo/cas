@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,7 +17,6 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.jooq.lambda.Unchecked;
-
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -24,7 +24,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -63,8 +62,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @Id
     @Transient
     @JsonProperty("id")
-    @Builder.Default
-    private long id = System.currentTimeMillis();
+    private long id;
 
     @Column(nullable = false, length = 2048)
     @JsonProperty("secretKey")
@@ -128,5 +126,18 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @JsonIgnore
     public String toJson() {
         return FunctionUtils.doUnchecked(() -> MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(this));
+    }
+
+    /**
+     * Assign id if undefined.
+     *
+     * @return the registered service
+     */
+    @CanIgnoreReturnValue
+    public OneTimeTokenAccount assignIdIfNecessary() {
+        if (getId() <= 0) {
+            setId(System.currentTimeMillis());
+        }
+        return this;
     }
 }

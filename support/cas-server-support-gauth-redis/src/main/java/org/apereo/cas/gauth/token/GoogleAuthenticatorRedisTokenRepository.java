@@ -32,13 +32,15 @@ public class GoogleAuthenticatorRedisTokenRepository extends BaseOneTimeTokenRep
     private final long scanCount;
 
     @Override
-    public void store(final GoogleAuthenticatorToken token) {
+    public GoogleAuthenticatorToken store(final GoogleAuthenticatorToken token) {
+        token.assignIdIfNecessary();
         val redisKey = getGoogleAuthenticatorTokenRedisKey(token);
         LOGGER.trace("Saving token [{}] using key [{}]", token, redisKey);
         val ops = this.template.boundValueOps(redisKey);
         ops.set(token);
         ops.expire(Duration.ofSeconds(this.expireTokensInSeconds));
         LOGGER.trace("Saved token [{}]", token);
+        return token;
     }
 
     @Override

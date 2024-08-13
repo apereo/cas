@@ -49,6 +49,7 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository imple
 
     @Override
     public CasEvent saveInternal(final CasEvent event) {
+        event.assignIdIfNecessary();
         influxDbConnectionFactory.write(MEASUREMENT,
             Map.of("value", event.getEventId()),
             Map.of(

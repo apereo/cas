@@ -1,6 +1,7 @@
 package org.apereo.cas.support.events.dao;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
+import org.apereo.cas.services.RegisteredServiceDefinition;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -93,7 +94,7 @@ public class CasEvent implements Serializable {
     @Id
     @JsonProperty
     @Transient
-    private long id = -1;
+    private long id;
 
     @JsonProperty("type")
     @Column(nullable = false)
@@ -268,12 +269,10 @@ public class CasEvent implements Serializable {
     private CasEvent putGeoLatitude(final String s) {
         return put(FIELD_GEO_LATITUDE, s);
     }
-
-
+    
     private CasEvent putGeoLongitude(final String s) {
         return put(FIELD_GEO_LONGITUDE, s);
     }
-
 
     private CasEvent putGeoAccuracy(final String s) {
         return put(FIELD_GEO_ACCURACY, s);
@@ -281,5 +280,18 @@ public class CasEvent implements Serializable {
 
     private CasEvent putGeoTimestamp(final String s) {
         return put(FIELD_GEO_TIMESTAMP, s);
+    }
+
+    /**
+     * Assign id if undefined.
+     *
+     * @return the registered service
+     */
+    @CanIgnoreReturnValue
+    public CasEvent assignIdIfNecessary() {
+        if (getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE) {
+            setId(System.currentTimeMillis());
+        }
+        return this;
     }
 }

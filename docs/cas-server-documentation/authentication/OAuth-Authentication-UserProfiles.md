@@ -73,3 +73,19 @@ how to register configurations into the CAS runtime.
 
 {% endtabs %}
 
+## Per Application
+
+The user profile renderer may also be controlled on a per-application basis:
+
+```json
+{
+  "@class" : "org.apereo.cas.support.oauth.services.OAuthRegisteredService",
+  "clientId": "clientid",
+  "clientSecret": "clientSecret",
+  "serviceId" : "^(https|imaps)://<redirect-uri>.*",
+  "name" : "OAuthService",
+  "id" : 100,
+  "userProfileViewType": "FLAT"
+}
+```
+

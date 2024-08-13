@@ -48,12 +48,12 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     }
 
     @Override
-    public void store(final GoogleAuthenticatorToken token) {
-        FunctionUtils.doUnchecked(__ -> {
+    public GoogleAuthenticatorToken store(final GoogleAuthenticatorToken token) {
+        return FunctionUtils.doUnchecked(() -> {
             val gToken = new JpaGoogleAuthenticatorToken();
             BeanUtils.copyProperties(gToken, token);
             gToken.setUserId(gToken.getUserId().trim().toLowerCase(Locale.ENGLISH));
-            entityManager.merge(gToken);
+            return entityManager.merge(gToken);
         });
     }
 

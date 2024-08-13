@@ -62,6 +62,7 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseGo
 
     @Override
     public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
+        account.assignIdIfNecessary();
         return lock.tryLock(() -> {
             val encoded = encode(account);
             val records = accounts.getOrDefault(account.getUsername().trim().toLowerCase(Locale.ENGLISH), new ArrayList<>());
