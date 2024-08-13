@@ -1,11 +1,11 @@
 package org.apereo.cas.services;
 
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,6 +34,7 @@ import java.io.Serializable;
 @SuperBuilder
 @NoArgsConstructor
 @Slf4j
+@Accessors(chain = true)
 public class JpaRegisteredServiceEntity implements Serializable {
     /**
      * Th JPA entity name.
@@ -46,8 +47,7 @@ public class JpaRegisteredServiceEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "service_sequence")
     @SequenceGenerator(name = "service_sequence", allocationSize = 100)
-    @Builder.Default
-    private long id = RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE;
+    private long id;
 
     @Column(nullable = false)
     private String serviceId;

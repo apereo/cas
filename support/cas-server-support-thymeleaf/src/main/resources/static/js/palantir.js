@@ -1534,7 +1534,7 @@ async function initializeAllCharts() {
             plugins: {
                 title: {
                     display: true,
-                    text: 'HTTP Request/Responses (Date)'
+                    text: 'HTTP Requests/Responses (Date)'
                 }
             }
         }
@@ -1561,7 +1561,7 @@ async function initializeAllCharts() {
             plugins: {
                 title: {
                     display: true,
-                    text: 'HTTP Request/Responses (URL)'
+                    text: 'HTTP Requests/Responses (URL)'
                 }
             }
         }

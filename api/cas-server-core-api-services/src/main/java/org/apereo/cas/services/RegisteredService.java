@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import org.springframework.core.Ordered;
 
 import java.util.List;
@@ -199,5 +200,18 @@ public interface RegisteredService extends RegisteredServiceDefinition, Comparab
      * values or object instances, etc.
      */
     default void initialize() {
+    }
+
+    /**
+     * Assign id if undefined.
+     *
+     * @return the registered service
+     */
+    @CanIgnoreReturnValue
+    default RegisteredService assignIdIfNecessary() {
+        if (getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE) {
+            setId(System.currentTimeMillis());
+        }
+        return this;
     }
 }
