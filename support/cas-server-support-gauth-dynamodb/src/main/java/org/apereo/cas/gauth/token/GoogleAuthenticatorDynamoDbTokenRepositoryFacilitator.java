@@ -64,9 +64,10 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
     }
 
     private static GoogleAuthenticatorToken extractAttributeValuesFrom(final Map<String, AttributeValue> item) {
-        return FunctionUtils.doUnchecked(() ->
-            MAPPER.readValue(item.get(ColumnNames.BODY.getColumnName()).s(), new TypeReference<>() {
-            }));
+        return FunctionUtils.doUnchecked(() -> {
+            val bodyValue = item.get(ColumnNames.BODY.getColumnName());
+            return bodyValue != null ? MAPPER.readValue(bodyValue.s(), new TypeReference<>() {}) : null;
+        });
     }
 
     /**
@@ -112,13 +113,15 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
      * Store.
      *
      * @param token the token
+     * @return the one time token
      */
-    public void store(final OneTimeToken token) {
+    public OneTimeToken store(final OneTimeToken token) {
         val values = buildTableAttributeValuesMap(token);
         val putItemRequest = PutItemRequest.builder().tableName(dynamoDbProperties.getTokenTableName()).item(values).build();
         LOGGER.debug("Submitting put request [{}] for record [{}]", putItemRequest, token);
         val putItemResult = amazonDynamoDBClient.putItem(putItemRequest);
         LOGGER.debug("Record added with result [{}]", putItemResult);
+        return token;
     }
 
     /**

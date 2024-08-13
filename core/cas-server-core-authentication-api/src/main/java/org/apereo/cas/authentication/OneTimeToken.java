@@ -2,19 +2,17 @@ package org.apereo.cas.authentication;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.experimental.Accessors;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.springframework.data.annotation.Id;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -33,7 +31,6 @@ import java.time.ZoneId;
 @Setter
 @EqualsAndHashCode
 @NoArgsConstructor
-@Accessors(chain = true)
 public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
 
     @Serial
@@ -66,5 +63,18 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
             .append(issuedDateTime, o.getIssuedDateTime())
             .append(id, o.id)
             .build();
+    }
+
+    /**
+     * Assign id if undefined.
+     *
+     * @return the registered service
+     */
+    @CanIgnoreReturnValue
+    public OneTimeToken assignIdIfNecessary() {
+        if (getId() <= 0) {
+            setId(System.currentTimeMillis());
+        }
+        return this;
     }
 }

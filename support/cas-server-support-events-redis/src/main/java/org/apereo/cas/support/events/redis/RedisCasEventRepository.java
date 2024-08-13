@@ -147,6 +147,7 @@ public class RedisCasEventRepository extends AbstractCasEventRepository {
 
     @Override
     public CasEvent saveInternal(final CasEvent event) {
+        event.assignIdIfNecessary();
         val key = getKey(event.getType(), event.getPrincipalId(), String.valueOf(event.getTimestamp()));
         LOGGER.trace("Saving event record based on key [{}]", key);
         val ops = this.template.boundValueOps(key);
