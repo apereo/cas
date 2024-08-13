@@ -693,7 +693,7 @@ span button.toolbar {
 .border-rounded {
     border-color: #153e50;
     border: 1px solid var(--cas-theme-primary, #153e50);
-    border-radius: 4px;
+    border-radius: 8px;
 }
 
 .border-bottom {
