@@ -306,6 +306,93 @@
             </div>
 
             <div id="oidcprotocol-tab">
+                <div>
+                    <h3>OpenID Connect Issuer</h3>
+                    <p>The Issuer in OpenID Connect is a unique identifier for CAS, typically in the form of a URL,
+                        which provides id tokens, access tokens and more to OpenID Connect relying parties.</p>
+                    <pre><code id="oidcIssuer" class="border-rounded language-html"></code></pre>
+                </div>
+
+                <p>You can simulate OpenID connect responses to relying party applications and clients.</p>
+
+                <form id="fmOidcProtocol" class="d-block">
+                    <section class="oidc-field form-group my-3 mdc-input-group d-flex">
+                        <div class="mdc-input-group-field mdc-input-group-field-append w-100">
+                            <label for="oidcProtocolClientId"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Client ID</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control" type="text"
+                                       name="oidcProtocolClientId" data-param-name="entityId" tabindex="0"
+                                       id="oidcProtocolClientId" size="50" autocomplete="off" required/>
+                            </label>
+                            <label for="oidcProtocolClientSecret"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Client Secret</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+                                <input class="mdc-text-field__input form-control pwd" type="password"
+                                       name="oidcProtocolClientSecret" data-param-name="password" tabindex="0"
+                                       id="oidcProtocolClientSecret" size="50" autocomplete="off" required/>
+                                <button
+                                        class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
+                                        tabindex="-1"
+                                        type="button">
+                                    <i class="mdi mdi-eye fas fa-eye reveal-password-icon" style="vertical-align: middle;"
+                                       aria-hidden="true"></i>
+                                    <span class="visually-hidden">Toggle Token</span>
+                                </button>
+                            </label>
+                            <div id="oidcProtocolScopesTooltip" class="mdc-tooltip" role="tooltip" aria-hidden="true">
+                                <div class="mdc-tooltip__surface mdc-tooltip__surface-animation">
+                                    OpenID Connect scopes are used to request specific sets of information about the authenticated user
+                                    and must be separated by spaces. The default scope is <code>openid</code>.
+                                </div>
+                            </div>
+                            <label for="oidcProtocolScopes"
+                                   class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
+                                <span class="mdc-notched-outline">
+                                    <span class="mdc-notched-outline__leading"></span>
+                                    <span class="mdc-notched-outline__notch">
+                                        <span class="mdc-floating-label">Scope(s)</span>
+                                    </span>
+                                    <span class="mdc-notched-outline__trailing"></span>
+                                </span>
+
+                                <input class="mdc-text-field__input form-control"
+                                       aria-describedby="oidcProtocolScopesTooltip"
+                                       type="text" value="openid"
+                                       name="oidcProtocolScopes" data-param-name="scope" tabindex="0"
+                                       id="oidcProtocolScopes" size="50" autocomplete="off" required/>
+                            </label>
+                        </div>
+
+                    </section>
+                    <div class="d-flex">
+                        <button type="button" name="oidcProtocolButton" id="oidcProtocolButton"
+                                class="mdc-button mdc-button--raised">
+                            <span class="mdc-button__label">
+                                <i class="mdc-tab__icon mdi mdi-swap-horizontal" aria-hidden="true"></i>Exchange</span>
+                        </button>
+                    </div>
+
+                    <section class="mb-4 d-flex h-450px d-none" id="oidcProtocolEditorContainer">
+                        <pre class="ace-editor ace-relative w-100 h-100" id="oidcProtocolEditorTokens"></pre>
+                        <pre class="ace-editor ace-relative w-100 h-100" id="oidcProtocolEditorIdTokenClaims"></pre>
+                        <pre class="ace-editor ace-relative w-100 h-100" id="oidcProtocolEditorProfile"></pre>
+                    </section>
+                </form>
+                <p>
+
                 <h3>Key Rotation</h3>
                 <p>You can instruct CAS to rotate or revoke keys in the <a href="javascript:showOidcJwks()">OpenID Connect JSON web keystore (JWKS).</a></p>
 

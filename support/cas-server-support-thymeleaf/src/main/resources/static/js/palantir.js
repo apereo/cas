@@ -2394,6 +2394,11 @@ function showOidcJwks() {
 }
 
 async function initializeOidcProtocolOperations() {
+    $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, response => {
+        hljs.highlightAll();
+        $("#oidcIssuer").text(response.issuer);
+    });
+
     $("button[name=oidcOpConfigurationButton]").off().on("click", () => {
         hideErrorInBanner();
         $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, response => {
@@ -2468,6 +2473,99 @@ async function initializeOidcProtocolOperations() {
                 }
             });
     });
+
+
+
+    $("button[name=oidcProtocolButton]").off().on("click", () => {
+        hideErrorInBanner();
+        const oidcForm = document.getElementById("fmOidcProtocol");
+        if (!oidcForm.checkValidity()) {
+            oidcForm.reportValidity();
+            return false;
+        }
+
+        function decodeJWT(token) {
+            const parts = token.split('.');
+            if (parts.length === 3) {
+                const header = JSON.parse(atob(parts[0]));
+                const payload = JSON.parse(atob(parts[1]));
+                const signature = parts[2];
+                return {
+                    header: header,
+                    payload: payload,
+                    signature: signature
+                };
+            }
+            return {};
+        }
+        
+        /*
+        <section class="my-3 d-flex h-450px d-none" id="oidcProtocolEditorContainer">
+                        <pre class="ace-editor ace-relative w-100 h-100" id="oidcProtocolEditorTokens"></pre>
+                        <pre class="ace-editor ace-relative w-100 h-100 d-none" id="oidcProtocolEditorIdTokenClaims"></pre>
+                        <pre class="ace-editor ace-relative w-100 h-100 d-none" id="oidcProtocolEditorProfile"></pre>
+                    </section>
+         */
+        
+        $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, oidcConfiguration => {
+
+            const clientId = $("#oidcProtocolClientId").val();
+            const clientSecret = $("#oidcProtocolClientSecret").val();
+            const scopes = encodeURIComponent($("#oidcProtocolScopes").val());
+
+            $.ajax({
+                url: `${oidcConfiguration.token_endpoint}?grant_type=client_credentials&scope=${scopes}`,
+                type: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Basic ${btoa(`${clientId}:${clientSecret}`)}`
+                },
+                success: (response, textStatus, xhr) => {
+                    console.log(response);
+                    const oidcProtocolEditorTokens = initializeAceEditor("oidcProtocolEditorTokens", "json");
+                    oidcProtocolEditorTokens.setReadOnly(true);
+                    oidcProtocolEditorTokens.setValue(JSON.stringify(response, null, 2));
+                    oidcProtocolEditorTokens.gotoLine(1);
+                    
+                    const oidcProtocolEditorIdTokenClaims = initializeAceEditor("oidcProtocolEditorIdTokenClaims", "json");
+                    oidcProtocolEditorIdTokenClaims.setReadOnly(true);
+                    const idToken = response.id_token;
+                    const decodedIdToken = decodeJWT(idToken);
+                    oidcProtocolEditorIdTokenClaims.setValue(JSON.stringify(decodedIdToken.payload, null, 2));
+                    oidcProtocolEditorIdTokenClaims.gotoLine(1);
+
+
+                    const oidcProtocolEditorProfile = initializeAceEditor("oidcProtocolEditorProfile", "json");
+                    oidcProtocolEditorProfile.setReadOnly(true);
+                    const accessToken = response.access_token;
+
+                    $.post(`${oidcConfiguration.userinfo_endpoint}`, {
+                        access_token: accessToken
+                    }, data => {
+                        oidcProtocolEditorProfile.setValue(JSON.stringify(data, null, 2));
+                        oidcProtocolEditorProfile.gotoLine(1);
+                    }).fail((xhr, status, error) => {
+                        console.error("Error fetching data:", error);
+                        displayErrorInBanner(xhr);
+                    });
+                    $("#oidcProtocolEditorContainer").removeClass("d-none");
+                },
+                error: (xhr, textStatus, errorThrown) => {
+                    $("#oidcProtocolEditorContainer").addClass("d-none");
+                    console.error("Error fetching data:", errorThrown);
+                    displayErrorInBanner(xhr);
+                }
+            });
+
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr);
+            $("#oidcProtocolEditorContainer").addClass("d-none");
+        });
+        
+        
+    });
+    
 
 }
 
