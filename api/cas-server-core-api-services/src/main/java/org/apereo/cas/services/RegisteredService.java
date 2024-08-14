@@ -210,7 +210,7 @@ public interface RegisteredService extends RegisteredServiceDefinition, Comparab
     @CanIgnoreReturnValue
     default RegisteredService assignIdIfNecessary() {
         if (getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE) {
-            setId(System.currentTimeMillis());
+            setId(System.nanoTime());
         }
         return this;
     }

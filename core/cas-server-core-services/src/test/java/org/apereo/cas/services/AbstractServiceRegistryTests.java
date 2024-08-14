@@ -44,14 +44,12 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import static org.awaitility.Awaitility.*;
@@ -233,7 +231,7 @@ public abstract class AbstractServiceRegistryTests {
             serviceRegistry.save(buildRegisteredServiceInstance(400, type)
                 .setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE));
             serviceRegistry.save(buildRegisteredServiceInstance(401, type)
-                    .setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE));
+                .setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE));
             val services = serviceRegistry.load();
             services.forEach(registeredService -> serviceRegistry.delete(registeredService));
             assertEquals(0, serviceRegistry.load().size());
@@ -527,11 +525,11 @@ public abstract class AbstractServiceRegistryTests {
                 .mapToObj(i -> buildRegisteredServiceInstance(RandomUtils.nextInt(), type)
                     .setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE))
                 .map(r -> serviceRegistry.save(r))
-                .collect(Collectors.toCollection(() -> new ArrayList<>(5)));
+                .toList();
 
             list.forEach(Unchecked.consumer(r2 -> {
-                Thread.sleep(500);
-                serviceRegistry.delete(r2);
+                Thread.sleep(1000);
+                assertTrue(serviceRegistry.delete(r2));
                 Thread.sleep(2000);
                 assertNull(serviceRegistry.findServiceById(r2.getId()));
             }));
@@ -688,6 +686,7 @@ public abstract class AbstractServiceRegistryTests {
     protected Stream<Class<? extends BaseWebBasedRegisteredService>> getRegisteredServiceTypes() {
         return Stream.of(CasRegisteredService.class);
     }
+
     @ImportAutoConfiguration({
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
