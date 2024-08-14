@@ -39,15 +39,16 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
         invokeServiceRegistryListenerPreSave(registeredService);
         val svc = findServiceById(registeredService.getId());
         if (svc != null) {
-            this.registeredServices.remove(svc);
+            registeredServices.remove(svc);
         }
-        this.registeredServices.add(registeredService);
+        registeredServices.add(registeredService);
         return registeredService;
     }
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
-        return !registeredServices.contains(registeredService) || this.registeredServices.remove(registeredService);
+        return !registeredServices.contains(registeredService)
+            || registeredServices.removeIf(rs -> rs.getId() == registeredService.getId());
     }
 
     @Override
@@ -77,7 +78,7 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        return this.registeredServices.stream().filter(r -> r.getId() == id).findFirst().orElse(null);
+        return registeredServices.stream().filter(r -> r.getId() == id).findFirst().orElse(null);
     }
 
     @Override
