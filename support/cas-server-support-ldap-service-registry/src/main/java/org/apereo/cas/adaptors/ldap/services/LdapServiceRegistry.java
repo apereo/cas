@@ -142,6 +142,7 @@ public class LdapServiceRegistry extends AbstractServiceRegistry implements Disp
     }
 
     private RegisteredService insert(final RegisteredService rs) {
+        rs.assignIdIfNecessary();
         val entry = this.ldapServiceMapper.mapFromRegisteredService(ldapProperties.getBaseDn(), rs);
         connectionFactory.executeAddOperation(entry);
         return rs;

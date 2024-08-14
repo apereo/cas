@@ -57,6 +57,7 @@ public class RestfulServiceRegistry extends AbstractServiceRegistry {
     public RegisteredService save(final RegisteredService registeredService) {
         HttpResponse response = null;
         try {
+            registeredService.assignIdIfNecessary();
             invokeServiceRegistryListenerPreSave(registeredService);
             val entity = this.serializer.toString(registeredService);
             val exec = HttpExecutionRequest.builder()

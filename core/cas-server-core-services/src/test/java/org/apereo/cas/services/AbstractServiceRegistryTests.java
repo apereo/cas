@@ -162,14 +162,14 @@ public abstract class AbstractServiceRegistryTests {
         getRegisteredServiceTypes().forEach(type -> {
             val registeredService = buildRegisteredServiceInstance(100, type)
                 .setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
-            serviceRegistry.save(registeredService);
+            val savedService = serviceRegistry.save(registeredService);
             val services = serviceRegistry.load();
-            assertTrue(services.stream().anyMatch(svc -> svc.equals(registeredService)));
+            assertTrue(services.stream().anyMatch(svc -> svc.equals(savedService)));
             val registeredService2 = buildRegisteredServiceInstance(101, type)
                 .setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
-            serviceRegistry.save(registeredService2);
+            val savedService2 = serviceRegistry.save(registeredService2);
             val services2 = serviceRegistry.load();
-            assertTrue(services2.stream().anyMatch(svc -> svc.equals(registeredService)));
+            assertTrue(services2.stream().anyMatch(svc -> svc.equals(savedService2)));
         });
     }
 

@@ -1,15 +1,12 @@
 package org.apereo.cas.services;
 
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
-
 import lombok.ToString;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ConfigurableApplicationContext;
-
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -38,9 +35,7 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
-        if (registeredService.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE) {
-            registeredService.setId(findHighestId() + 1);
-        }
+        registeredService.assignIdIfNecessary();
         invokeServiceRegistryListenerPreSave(registeredService);
         val svc = findServiceById(registeredService.getId());
         if (svc != null) {
@@ -88,14 +83,5 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
     @Override
     public long size() {
         return registeredServices.size();
-    }
-
-    /**
-     * This isn't super-fast but we don't expect thousands of services.
-     *
-     * @return the highest service id in the list of registered services
-     */
-    private long findHighestId() {
-        return this.registeredServices.stream().map(RegisteredService::getId).max(Comparator.naturalOrder()).orElse(0L);
     }
 }
