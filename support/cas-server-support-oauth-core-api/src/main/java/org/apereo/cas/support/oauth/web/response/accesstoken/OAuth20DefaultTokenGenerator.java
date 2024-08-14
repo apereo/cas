@@ -324,7 +324,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         val refreshToken = refreshTokenFactory.create(tokenRequestContext.getService(),
             tokenRequestContext.getAuthentication(),
             ticketGrantingTicket,
-            tokenRequestContext.getScopes(),
+            tokenRequestContext.getToken().getScopes(),
             tokenRequestContext.getRegisteredService().getClientId(),
             accessTokenId,
             tokenRequestContext.getClaims(),
