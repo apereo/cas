@@ -1,0 +1,15 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "id": 2,
+  "serviceId": "^https://.*",
+  "name": "CAS",
+  "description": "A CAS service definition that requires certain original attributes to be renamed and remapped prior to release.",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnMappedAttributeReleasePolicy",
+    "allowedAttributes": {
+      "@class": "java.util.TreeMap",
+      "eduPersonAffiliation": "affiliation",
+      "groupMembership": "group"
+    }
+  }
+}

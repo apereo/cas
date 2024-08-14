@@ -117,8 +117,8 @@ class GoogleAuthenticatorAuthenticationHandlerTests {
             .validationCode(account.getVerificationCode())
             .scratchCodes(new ArrayList<>(account.getScratchCodes()))
             .build();
-        credential.setAccountId(toSave.getId());
         tokenCredentialRepository.save(toSave);
+        credential.setAccountId(toSave.getId());
         val result = handler.authenticate(credential, mock(Service.class));
         assertNotNull(result);
         assertNotNull(tokenRepository.get("casuser", Integer.valueOf(credential.getToken())));

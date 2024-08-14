@@ -17,6 +17,7 @@ import org.springframework.boot.actuate.endpoint.web.annotation.ControllerEndpoi
 import org.springframework.boot.actuate.endpoint.web.annotation.ServletEndpointsSupplier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -42,6 +43,7 @@ class CasPalantirWebMvcConfiguration {
     @ConditionalOnMissingBean(name = "palantirDashboardController")
     @SuppressWarnings("removal")
     public DashboardController palantirDashboardController(
+        final ConfigurableApplicationContext applicationContext,
         final WebEndpointsSupplier webEndpointsSupplier,
         final ServletEndpointsSupplier servletEndpointsSupplier,
         final ControllerEndpointsSupplier controllerEndpointsSupplier,
@@ -56,7 +58,7 @@ class CasPalantirWebMvcConfiguration {
         
         return new DashboardController(casProperties,
             new EndpointLinksResolver(allEndpoints, webEndpointProperties.getBasePath()),
-            webEndpointProperties);
+            webEndpointProperties, applicationContext);
     }
 
     @Bean

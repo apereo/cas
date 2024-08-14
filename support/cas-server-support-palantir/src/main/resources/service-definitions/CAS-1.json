@@ -1,0 +1,18 @@
+{
+  "@class": "org.apereo.cas.services.CasRegisteredService",
+  "id": 1,
+  "serviceId": "^https://.*",
+  "name": "CAS",
+  "description": "A CAS service definition which is authorized to receive a set of allowed attributes.",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "authorizedToReleaseAuthenticationAttributes": false,
+    "allowedAttributes": [
+      "java.util.ArrayList",
+      [
+        "mail",
+        "uid"
+      ]
+    ]
+  }
+}

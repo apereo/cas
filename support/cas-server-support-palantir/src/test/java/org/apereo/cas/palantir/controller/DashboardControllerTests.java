@@ -2,6 +2,7 @@ package org.apereo.cas.palantir.controller;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
+import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -42,7 +44,18 @@ class DashboardControllerTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        mvc.perform(get("/palantir/dashboard")).andExpect(status().isOk());
+        val model = mvc.perform(get("/palantir/dashboard"))
+            .andExpect(status().isOk())
+            .andReturn()
+            .getModelAndView()
+            .getModel();
+        assertNotNull(model.get("casServerPrefix"));
+        assertTrue(model.containsKey("authentication"));
+        assertTrue(model.containsKey("httpRequestMethod"));
+        assertTrue(model.containsKey("httpRequestSecure"));
+        assertTrue(model.containsKey("actuatorEndpoints"));
+        assertTrue(model.containsKey("serviceDefinitions"));
+        
         mvc.perform(get("/palantir/")).andExpect(status().isOk());
         mvc.perform(get("/palantir")).andExpect(status().isOk());
     }

@@ -1291,8 +1291,11 @@ function initializeServiceButtons() {
 
     $("button[name=saveService]").off().on("click", () => {
         if (actuatorEndpoints.registeredservices) {
+            const editServiceDialogElement = document.getElementById("editServiceDialog");
+            const isNewService = $(editServiceDialogElement).attr("newService") === "true";
+
             swal({
-                title: "Are you sure you want to update this entry?",
+                title: `Are you sure you want to ${isNewService ? "create" : "update"} this entry?`,
                 text: "Once updated, you may not be able to revert this entry.",
                 icon: "warning",
                 buttons: true,
@@ -1301,10 +1304,6 @@ function initializeServiceButtons() {
                 .then((willUpdate) => {
                     if (willUpdate) {
                         const value = editor.getValue();
-
-                        const editServiceDialogElement = document.getElementById("editServiceDialog");
-                        const isNewService = $(editServiceDialogElement).attr("newService") === "true";
-
                         $.ajax({
                             url: `${actuatorEndpoints.registeredservices}`,
                             type: isNewService ? "POST" : "PUT",
@@ -1378,11 +1377,45 @@ async function initializeServicesOperations() {
             $("#applicationsTable td").addClass("mdc-data-table__cell");
         }
     });
-
     applicationsTable.on("click", "tbody tr", e => e.currentTarget.classList.remove("selected"));
-
     fetchServices();
     initializeFooterButtons();
+    
+    let serviceDefinitionsEntries = "";
+    for (let type in serviceDefinitions) {
+        serviceDefinitionsEntries += `<h3>${type}</h3>`;
+        const entries = serviceDefinitions[type];
+        serviceDefinitionsEntries += "<div>";
+        for (const entry of entries) {
+            const definition = JSON.parse(entry);
+            serviceDefinitionsEntries += `<a class="mr-4" name="serviceDefinitionEntry" title="${definition.description}" data-type="${type}" data-id="${definition.id}" href="#">${definition.name}-${definition.id}</a>`;
+        }
+        serviceDefinitionsEntries += "</div>";
+    }
+    $("#serviceTemplatesContainer")
+        .html(serviceDefinitionsEntries)
+        .accordion({
+            collapsible: true,
+            heightStyle: "content"
+        });
+    $(document).tooltip();
+
+    $("a[name=serviceDefinitionEntry]").off().on("click", function () {
+        let type = $(this).data("type");
+        let id = $(this).data("id");
+        console.log("Selected service definition:", type, id);
+        const entries = serviceDefinitions[type];
+        for (const entry of entries) {
+            const definition = JSON.parse(entry);
+            if (definition.id === id) {
+                const serviceEditor = initializeAceEditor("serviceEditor", "json");
+                serviceEditor.setReadOnly(false);
+                serviceEditor.setValue(JSON.stringify(definition, null, 2));
+                serviceEditor.gotoLine(1);
+            }
+        }
+    });
+    
 }
 
 async function initializeAllCharts() {
@@ -2473,8 +2506,7 @@ async function initializeOidcProtocolOperations() {
                 }
             });
     });
-
-
+    
 
     $("button[name=oidcProtocolButton]").off().on("click", () => {
         hideErrorInBanner();
@@ -2498,15 +2530,7 @@ async function initializeOidcProtocolOperations() {
             }
             return {};
         }
-        
-        /*
-        <section class="my-3 d-flex h-450px d-none" id="oidcProtocolEditorContainer">
-                        <pre class="ace-editor ace-relative w-100 h-100" id="oidcProtocolEditorTokens"></pre>
-                        <pre class="ace-editor ace-relative w-100 h-100 d-none" id="oidcProtocolEditorIdTokenClaims"></pre>
-                        <pre class="ace-editor ace-relative w-100 h-100 d-none" id="oidcProtocolEditorProfile"></pre>
-                    </section>
-         */
-        
+
         $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, oidcConfiguration => {
 
             const clientId = $("#oidcProtocolClientId").val();
@@ -2845,6 +2869,7 @@ function activateDashboardTab(idx) {
 
 document.addEventListener("DOMContentLoaded", () => {
     $(".jqueryui-tabs").tabs();
+    $(".jqueryui-menu").menu();
 
     $("nav.sidebar-navigation ul li").off().on("click", function () {
         hideErrorInBanner();

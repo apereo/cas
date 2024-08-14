@@ -397,6 +397,9 @@ form button i.mdi {
 .mr-2 {
     margin-right: 2px;
 }
+.mr-4 {
+    margin-right: 4px;
+}
 .pr-2 {
     padding-right: 0.8rem;
 }
@@ -583,6 +586,10 @@ span button.toolbar {
 
 .w-auto {
     width: auto;
+}
+
+.h-750px {
+    height: 750px;
 }
 
 .h-450px {

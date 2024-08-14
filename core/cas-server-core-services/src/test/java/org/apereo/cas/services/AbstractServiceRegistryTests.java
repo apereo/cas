@@ -176,8 +176,8 @@ public abstract class AbstractServiceRegistryTests {
     @Test
     void verifyUpdatingServices() {
         getRegisteredServiceTypes().forEach(type -> {
-            serviceRegistry.save(buildRegisteredServiceInstance(200, type)
-                .setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE));
+            val toSave = buildRegisteredServiceInstance(200, type).setId(RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE);
+            serviceRegistry.save(toSave);
             val services = serviceRegistry.load();
             assertFalse(services.isEmpty());
             val rs = (BaseRegisteredService) serviceRegistry.findServiceById(services.iterator().next().getId());
