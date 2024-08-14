@@ -1,7 +1,6 @@
 package org.apereo.cas.support.events.dao;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
-import org.apereo.cas.services.RegisteredServiceDefinition;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -289,7 +288,7 @@ public class CasEvent implements Serializable {
      */
     @CanIgnoreReturnValue
     public CasEvent assignIdIfNecessary() {
-        if (getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE) {
+        if (getId() <= 0) {
             setId(System.currentTimeMillis());
         }
         return this;

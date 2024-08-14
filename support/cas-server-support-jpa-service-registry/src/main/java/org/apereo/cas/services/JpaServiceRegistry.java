@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.configuration.support.JpaPersistenceUnitProvider;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
@@ -14,6 +15,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.support.TransactionOperations;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.Collection;
@@ -186,16 +188,20 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
     }
 
     private RegisteredService saveInternal(final RegisteredService registeredService) {
-        val isNew = registeredService.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE;
         invokeServiceRegistryListenerPreSave(registeredService);
 
         val entity = fromRegisteredService(registeredService);
-        if (isNew) {
-            entityManager.persist(entity);
-            return toRegisteredService(entity);
+        val foundEntity = entityManager.find(JpaRegisteredServiceEntity.class, entity.getId());
+        if (foundEntity == null) {
+            try {
+                entityManager.persist(entity.setId(0));
+                return toRegisteredService(entity);
+            } catch (final EntityExistsException e) {
+                LoggingUtils.error(LOGGER, e);
+            }
         }
-        val r = entityManager.merge(entity);
-        return toRegisteredService(r);
+        val storedEntity = entityManager.merge(entity);
+        return toRegisteredService(storedEntity);
     }
 
 

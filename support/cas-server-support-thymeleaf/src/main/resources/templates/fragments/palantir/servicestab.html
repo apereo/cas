@@ -54,7 +54,13 @@
                 <div class="mdc-dialog__container w-100 modal-dialog">
                     <div class="mdc-dialog__surface mw-100 w-75 modal-content min-height-60">
                         <div class="mdc-dialog__content modal-body" id="edit-service-dialog-content">
-                            <div class="ace-editor ace-absolute" id="serviceEditor"></div>
+
+                            <section class="d-flex h-750px" id="serviceEditorContainer">
+                                <div id="serviceTemplatesContainer" class="w-25 py-3 mr-2 jqueryui-accordion">
+                                    
+                                </div>
+                                <pre class="ace-editor ace-relative w-100 h-100" id="serviceEditor"></pre>
+                            </section>
                         </div>
                         
                         <footer class="mdc-dialog__actions modal-footer pr-4">
