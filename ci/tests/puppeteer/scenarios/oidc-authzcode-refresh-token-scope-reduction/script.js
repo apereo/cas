@@ -71,7 +71,7 @@ async function introspect(token, scopes) {
     await cas.log(`Introspecting token ${token}`);
     await cas.doGet(`https://localhost:8443/cas/oidc/introspect?token=${token}`,
         (res) => {
-            cas.log({"introspect": res.data, "scopes": scopes});
+            cas.log({"introspect": res.data, scopes});
             assert(res.data.active === true);
             assert(res.data.aud === "client");
             assert(res.data.sub === "casuser");
