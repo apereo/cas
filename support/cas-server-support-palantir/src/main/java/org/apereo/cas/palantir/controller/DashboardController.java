@@ -79,7 +79,9 @@ public class DashboardController {
         for (val resource : resources) {
             val contents = new String(FileCopyUtils.copyToByteArray(resource.getInputStream()), StandardCharsets.UTF_8);
             val definition = serializer.from(contents);
-            jsonFilesMap.computeIfAbsent(definition.getFriendlyName(), __ -> new ArrayList<>()).add(contents);
+            if (definition != null) {
+                jsonFilesMap.computeIfAbsent(definition.getFriendlyName(), __ -> new ArrayList<>()).add(contents);
+            }
         }
         return jsonFilesMap;
     }
