@@ -1,0 +1,21 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : ".+",
+  "name" : "SAML2",
+  "id" : 2,
+  "description": "SAML2 service definition that uses InCommon's MDQ service to fetch service provider metadata and uses a chain to release the R&S attribute bundle to SAML2 service providers as necessary.",
+  "requireSignedRoot": true,
+  "metadataSignatureLocation": "file:/path/to/inc-md-cert-mdq.pem",
+  "metadataLocation" : "http://mdq.incommon.org/entities/{0}",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "policies": [ "java.util.ArrayList",
+      [
+        {
+          "@class": "org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy",
+          "useUniformResourceName": false
+        }
+      ]
+    ]
+  }
+}

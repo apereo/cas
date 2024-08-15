@@ -14,7 +14,7 @@ services:
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
   kafka:
-    image: 'bitnami/kafka:3.6.2'
+    image: 'bitnami/kafka:3.7.1'
     networks:
       - kafka-net
     ports:

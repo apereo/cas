@@ -819,6 +819,13 @@ select.palantir {
 
 /** jQuery UI **/
 
+.ui-tooltip {
+    background-color: var(--cas-theme-primary) !important;
+    color: whitesmoke;
+    min-width: 450px !important;
+    max-width: 600px;
+}
+
 .ui-tabs-active {
     background: var(--cas-theme-primary) !important;
 }
