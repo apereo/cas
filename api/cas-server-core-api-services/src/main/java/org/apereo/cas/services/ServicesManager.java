@@ -40,7 +40,9 @@ public interface ServicesManager extends Ordered, NamedObject {
      * @param registeredService the {@link RegisteredService} to update or add.
      * @return newly persisted {@link RegisteredService} instance
      */
-    RegisteredService save(RegisteredService registeredService);
+    default RegisteredService save(final RegisteredService registeredService) {
+        return save(registeredService, true);
+    }
 
     /**
      * Register a service with CAS, or update an existing an entry.

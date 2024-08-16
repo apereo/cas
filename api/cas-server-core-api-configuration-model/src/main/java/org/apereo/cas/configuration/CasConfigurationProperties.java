@@ -39,6 +39,7 @@ import org.apereo.cas.configuration.model.support.email.EmailProvidersProperties
 import org.apereo.cas.configuration.model.support.firebase.GoogleFirebaseCloudMessagingProperties;
 import org.apereo.cas.configuration.model.support.geo.GeoLocationProperties;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
+import org.apereo.cas.configuration.model.support.javers.JaversProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.saml.SamlCoreProperties;
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
@@ -368,4 +369,10 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private CasServerCoreProperties core = new CasServerCoreProperties();
+
+    /**
+     * Javers settings.
+     */
+    @NestedConfigurationProperty
+    private JaversProperties javers = new JaversProperties();
 }

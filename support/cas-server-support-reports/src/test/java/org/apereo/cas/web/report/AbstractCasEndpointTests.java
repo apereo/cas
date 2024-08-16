@@ -91,9 +91,9 @@ public abstract class AbstractCasEndpointTests {
         WebEndpointAutoConfiguration.class,
         ServletWebServerFactoryAutoConfiguration.class,
         DispatcherServletAutoConfiguration.class,
-
         ServletEndpointManagementContextConfiguration.class,
         WebMvcEndpointManagementContextConfiguration.class,
+        
         CasReportsAutoConfiguration.class,
         CasCoreLoggingAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
