@@ -25,7 +25,6 @@ import java.util.List;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class JdbcAuthenticationProperties implements Serializable {
 
     @Serial

@@ -28,6 +28,17 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback", module: "logback-classic")
                 }
         ],
+        javersmongo: [
+                dependencies.create("org.javers:javers-spring-boot-starter-mongo:$javersVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter-logging")
+                    exclude(group: "org.springframework.boot", module: "spring-boot-starter")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                }
+        ],
         permitio          : [
                 dependencies.create("io.permit:permit-sdk-java:$permitioVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
