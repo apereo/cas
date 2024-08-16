@@ -38,7 +38,6 @@ public abstract class BaseEntityHistoryTests {
         UserDetailsServiceAutoConfiguration.class,
         EndpointAutoConfiguration.class,
         WebEndpointAutoConfiguration.class,
-        AopAutoConfiguration.class,
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
         ServletWebServerFactoryAutoConfiguration.class,
