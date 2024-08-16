@@ -1,6 +1,8 @@
 {
   "dependencies": "json-service-registry,service-registry-stream-kafka,reports",
-
+  "conditions": {
+    "docker": "true"
+  },
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
   "properties": [
     "--logging.level.org.apereo.cas=warn",

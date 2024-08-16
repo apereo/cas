@@ -1,9 +1,15 @@
 {
-  "dependencies": "reports,jpa-service-registry",
+  "dependencies": "reports,jpa-service-registry,javers",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
-
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--cas.service-registry.core.init-from-json=false",
+
     "--cas.authn.accept.name=STATIC",
 
     "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
@@ -13,6 +19,8 @@
     "--management.endpoint.health.show-details=always",
     "--management.endpoints.enabled-by-default=true",
 
+    "--cas.javers.mongo.client-uri=mongodb://root:secret@localhost:27017/cas?authSource=admin",
+    
     "--cas.service-registry.jpa.ddl-auto=create",
     "--cas.service-registry.jpa.user=root",
     "--cas.service-registry.jpa.password=password",
@@ -20,5 +28,5 @@
     "--cas.service-registry.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "--cas.service-registry.jpa.dialect=org.hibernate.dialect.MySQLDialect"
   ],
-  "initScript": "${PWD}/ci/tests/mysql/run-mysql-server.sh"
+  "initScript": "${PWD}/ci/tests/mysql/run-mysql-server.sh,${PWD}/ci/tests/mongodb/run-mongodb-server.sh"
 }
