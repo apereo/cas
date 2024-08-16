@@ -46,7 +46,9 @@ public class EntityHistoryEndpoint extends BaseCasRestActuatorEndpoint {
      * @return the list
      */
     @GetMapping(path = "/registeredServices/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Get history for a service by id", parameters = @Parameter(name = "id", required = true, in = ParameterIn.PATH))
+    @Operation(summary = "Get history for a service by id", parameters = @Parameter(
+        description = "The service numeric id",
+        name = "id", required = true, in = ParameterIn.PATH))
     public List<HistoricalEntity> historyByServiceId(@PathVariable("id") final long id) {
         val registeredService = servicesManager.getObject().findServiceBy(id);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
@@ -60,7 +62,9 @@ public class EntityHistoryEndpoint extends BaseCasRestActuatorEndpoint {
      * @return the response entity
      */
     @GetMapping(path = "/registeredServices/{id}/changelog", produces = MediaType.TEXT_PLAIN_VALUE)
-    @Operation(summary = "Get history changelog for a service by id", parameters = @Parameter(name = "id", required = true, in = ParameterIn.PATH))
+    @Operation(summary = "Get history changelog for a service by id", parameters = @Parameter(
+        description = "The service numeric id",
+        name = "id", required = true, in = ParameterIn.PATH))
     public ResponseEntity serviceIdHistoryChangeLog(@PathVariable("id") final long id) {
         val registeredService = servicesManager.getObject().findServiceBy(id);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
