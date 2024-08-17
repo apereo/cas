@@ -163,7 +163,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
     }
 
     @Override
-    public Stream<? extends Ticket> stream() {
+    public Stream<? extends Ticket> stream(final TicketRegistryStreamCriteria criteria) {
         return ticketCatalog.findAll()
             .stream()
             .map(this::getIgniteCacheFromMetadata)
@@ -171,6 +171,8 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
                 val it = cache.query(new ScanQuery<>()).spliterator();
                 return StreamSupport.stream(it, false);
             })
+            .skip(criteria.getFrom())
+            .limit(criteria.getCount())
             .map(Cache.Entry::getValue)
             .map(IgniteTicketDocument.class::cast)
             .map(object -> decodeTicket(object.getTicket()))

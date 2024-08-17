@@ -52,7 +52,6 @@ class HazelcastTicketRegistryTests {
     @TestPropertySource(
         properties = {
             "cas.ticket.registry.hazelcast.core.enable-jet=false",
-            "cas.ticket.registry.hazelcast.page-size=0",
             "cas.ticket.registry.hazelcast.cluster.network.port-auto-increment=false",
             "cas.ticket.registry.hazelcast.cluster.network.port=5707",
             "cas.ticket.registry.hazelcast.cluster.core.instance-name=testjetlessinstance"
@@ -122,7 +121,6 @@ class HazelcastTicketRegistryTests {
     })
     @TestPropertySource(
         properties = {
-            "cas.ticket.registry.hazelcast.page-size=0",
             "cas.ticket.registry.hazelcast.cluster.network.port-auto-increment=false",
             "cas.ticket.registry.hazelcast.cluster.network.port=5705",
             "cas.ticket.registry.hazelcast.cluster.core.instance-name=loadtestinstance"

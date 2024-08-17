@@ -261,20 +261,14 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     }
 
     @Override
-    public Stream<? extends Ticket> stream() {
+    public Stream<? extends Ticket> stream(final TicketRegistryStreamCriteria criteria) {
         return ticketCatalog
             .findAll()
             .stream()
             .map(metadata -> getTicketMapInstanceByMetadata(metadata).values())
-            .flatMap(tickets -> {
-                var resultStream = tickets
-                    .stream()
-                    .map(HazelcastTicketDocument::getTicket);
-                if (properties.getPageSize() > 0) {
-                    resultStream = resultStream.limit(properties.getPageSize());
-                }
-                return resultStream;
-            })
+            .flatMap(tickets -> tickets.stream().map(HazelcastTicketDocument::getTicket))
+            .skip(criteria.getFrom())
+            .limit(criteria.getCount())
             .map(this::decodeTicket);
     }
     

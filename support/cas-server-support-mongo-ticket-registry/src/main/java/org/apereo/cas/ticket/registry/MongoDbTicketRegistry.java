@@ -180,12 +180,14 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Stream<Ticket> stream() {
+    public Stream<Ticket> stream(final TicketRegistryStreamCriteria criteria) {
         return ticketCatalog
             .findAll()
             .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .flatMap(map -> mongoTemplate.stream(new Query(), MongoDbTicketDocument.class, map))
+            .skip(criteria.getFrom())
+            .limit(criteria.getCount())
             .map(ticket -> decodeTicket(deserializeTicket(ticket.getJson(), ticket.getType())));
     }
 

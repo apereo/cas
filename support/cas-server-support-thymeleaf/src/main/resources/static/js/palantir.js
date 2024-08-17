@@ -2499,6 +2499,20 @@ async function initializeSAML1ProtocolOperations() {
 
 }
 
+function showSaml2IdPMetadata() {
+    $.get(`${casServerPrefix}/idp/metadata`, response => {
+        let oidcOpConfigurationDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("saml2MetadataDialog"));
+        const editor = initializeAceEditor("saml2MetadataDialogEditor", "xml");
+        editor.setValue(new XMLSerializer().serializeToString(response));
+        editor.gotoLine(1);
+        editor.setReadOnly(true);
+        oidcOpConfigurationDialog["open"]();
+    }).fail((xhr, status, error) => {
+        console.error("Error fetching data:", error);
+        displayErrorInBanner(xhr);
+    });
+}
+
 function showOidcJwks() {
     $.get(`${casServerPrefix}/oidc/jwks`, response => {
         let oidcOpConfigurationDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("oidcOpConfigurationDialog"));
@@ -2681,6 +2695,17 @@ async function initializeOidcProtocolOperations() {
 }
 
 async function initializeSAML2ProtocolOperations() {
+
+    if (actuatorEndpoints.info) {
+        $.get(actuatorEndpoints.info, response => {
+            hljs.highlightAll();
+            $("#saml2EntityId").text(response.saml2.entityId);
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayErrorInBanner(xhr);
+        });
+    }
+    
     $("button[name=saml2ProtocolPostButton]").off().on("click", () => {
         const form = document.getElementById("fmSaml2Protocol");
         if (!form.reportValidity()) {

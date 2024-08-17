@@ -4,9 +4,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-
 import org.jooq.lambda.Unchecked;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -163,8 +161,17 @@ public interface TicketRegistry {
      *
      * @return the tickets stream
      */
-    default Stream<? extends Ticket> stream() {
+    default Stream<? extends Ticket> stream(final TicketRegistryStreamCriteria criteria) {
         return getTickets().parallelStream();
+    }
+
+    /**
+     * Stream stream.
+     *
+     * @return the stream
+     */
+    default Stream<? extends Ticket> stream() {
+        return stream(TicketRegistryStreamCriteria.builder().build());
     }
 
     /**
@@ -185,8 +192,8 @@ public interface TicketRegistry {
      */
     default Stream<? extends Ticket> getSessionsFor(final String principalId) {
         return getTickets(ticket -> ticket instanceof TicketGrantingTicket
-                                    && !ticket.isExpired()
-                                    && ((AuthenticationAwareTicket) ticket).getAuthentication().getPrincipal().getId().equals(principalId));
+            && !ticket.isExpired()
+            && ((AuthenticationAwareTicket) ticket).getAuthentication().getPrincipal().getId().equals(principalId));
     }
 
     /**
@@ -210,6 +217,7 @@ public interface TicketRegistry {
      * This operations allows one to interact with the registry
      * in raw form without a lot of post-processing of the ticket objects.
      * Registry implementations are to decide which criteria options they wish to support.
+     *
      * @param criteria the criteria
      * @return the results
      */
