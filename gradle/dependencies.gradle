@@ -3547,6 +3547,9 @@ ext.libraries = [
                 },
                 dependencies.create("org.webjars.npm:jquery-ui:$jqueryUiVersion") {
                     exclude(group: "org.webjars", module: "jquery")
+                },
+                dependencies.create("org.webjars.npm:animate.css:$animateCssVersion") {
+                    exclude(group: "org.webjars", module: "jquery")
                 }
         ],
         webjars                    : [
