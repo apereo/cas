@@ -104,11 +104,12 @@ function fetchServices(callback) {
                     1: `${serviceDetails}`,
                     2: `${serviceIdDetails}`,
                     3: `<span serviceId='${service.id}' class="text-wrap">${service.description ?? ""}</span>`,
-                    4: `<span serviceId='${service.id}'>${serviceButtons.trim()}</span>`
+                    4: `<span serviceId='${service.id}'>${serviceButtons.trim()}</span>`,
+                    5: `${service.id}`,
                 });
             }
-            applicationsTable.draw();
 
+            applicationsTable.search("").draw();
             servicesChart.data.datasets[0].data = serviceCountByType;
             servicesChart.update();
 
@@ -119,13 +120,33 @@ function fetchServices(callback) {
             initializeServiceButtons();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
 }
 
-function initializeFooterButtons() {
+function selectSidebarMenuTab(tab) {
+    const applicationMenuItem = $(`nav.sidebar-navigation ul li[data-tab-index=${tab}]`);
+    selectSidebarMenuButton(applicationMenuItem);
+}
 
+function navigateToApplication(serviceIdToFind) {
+    let applicationsTable = $("#applicationsTable").DataTable();
+    applicationsTable.search(String(serviceIdToFind));
+    const foundRows = applicationsTable.rows({ search: 'applied' }).count();
+    if (foundRows > 0) {
+        const matchingRows = applicationsTable.rows({ search: 'applied' });
+        matchingRows.nodes().to$().addClass('selected');
+        applicationsTable.draw();
+        activateDashboardTab(Tabs.APPLICATIONS);
+        selectSidebarMenuTab(Tabs.APPLICATIONS);
+    } else {
+        displayBanner(`Could not find a registered service with id ${serviceIdToFind}`);
+        applicationsTable.search('').draw();
+    }
+}
+
+function initializeFooterButtons() {
     $("button[name=newService]").off().on("click", () => {
         if (actuatorEndpoints.registeredservices) {
             const editServiceDialogElement = document.getElementById("editServiceDialog");
@@ -170,7 +191,7 @@ function initializeFooterButtons() {
                                     },
                                     error: (xhr, status, error) => {
                                         console.error("File upload failed:", error);
-                                        displayErrorInBanner(xhr);
+                                        displayBanner(xhr);
                                     }
                                 });
                             };
@@ -227,9 +248,19 @@ async function initializeAccessStrategyOperations() {
     const accessStrategyEditor = initializeAceEditor("accessStrategyEditor");
     accessStrategyEditor.setReadOnly(true);
 
+    const accessStrategyAttributesTable = $("#accessStrategyAttributesTable").DataTable({
+        pageLength: 10,
+        drawCallback: settings => {
+            $("#accessStrategyAttributesTable tr").addClass("mdc-data-table__row");
+            $("#accessStrategyAttributesTable td").addClass("mdc-data-table__cell");
+        }
+    });
+             
     $("button[name=accessStrategyButton]").off().on("click", () => {
         if (actuatorEndpoints.serviceaccess) {
-            $("#serviceAccessResultDiv").hide();
+            hideBanner();
+            accessStrategyAttributesTable.clear();
+            
             const form = document.getElementById("fmAccessStrategy");
             if (!form.reportValidity()) {
                 return false;
@@ -249,54 +280,65 @@ async function initializeAccessStrategyOperations() {
                 data: $.param(renamedData),
                 success: (response, status, xhr) => {
                     $("#accessStrategyEditorContainer").removeClass("d-none");
-                    $("#serviceAccessResultDiv")
-                        .show()
-                        .addClass("banner-success")
-                        .removeClass("banner-danger");
-                    $("#serviceAccessResultDiv #serviceAccessResult").text(`Status ${xhr.status}: Service is authorized.`);
-                    accessStrategyEditor.setValue(JSON.stringify(response, null, 2));
+                    $("#accessStrategyAttributesContainer").removeClass("d-none");
+
+                    accessStrategyEditor.setValue(JSON.stringify(response.registeredService, null, 2));
                     accessStrategyEditor.gotoLine(1);
+
+                    for (const [key, value] of Object.entries(response.authentication.principal.attributes)) {
+                        accessStrategyAttributesTable.row.add({
+                            0: `<code>${key}</code>`,
+                            1: `<code>${value}</code>`
+                        });
+                    }
+                    accessStrategyAttributesTable.draw();
+                    updateNavigationSidebar();
+                    $("#authorizedServiceNavigation").off().on("click", () => {
+                        navigateToApplication(response.registeredService.id);
+                    });
                 },
                 error: (xhr, status, error) => {
-                    $("#serviceAccessResultDiv")
-                        .show()
-                        .removeClass("banner-success")
-                        .addClass("banner-danger");
                     $("#accessStrategyEditorContainer").addClass("d-none");
-                    $("#serviceAccessResultDiv #serviceAccessResult").text(`Status ${xhr.status}: Service is unauthorized.`);
+                    $("#accessStrategyAttributesContainer").addClass("d-none");
+                    displayBanner(`Status ${xhr.status}: Service is unauthorized.`);
                 }
             });
         }
     });
 }
 
-function hideErrorInBanner() {
+function hideBanner() {
     const snackbar = new mdc.snackbar.MDCSnackbar(document.getElementById("errorBanner"));
     snackbar.close();
 }
 
-function displayErrorInBanner(error) {
+function displayBanner(error) {
     let message = "";
-    switch (error.status) {
-    case 401:
-        message = "You are not authorized to access this resource. Are you sure you are authenticated?";
-        break;
-    case 403:
-        message = "You are forbidden from accessing this resource. Are you sure you have the necessary permissions and the entry is correctly regstered with CAS?";
-        break;
-    case 400:
-    case 500:
-        message = "Unable to process or accept the request. Check CAS server logs for details.";
-        break;
-    case 0:
-        message = "Unable to contact the CAS server. Are you sure the server is reachable?";
-        break;
-    default:
-        message = `HTTP error: ${error.status}. `;
-        break;
+    if (error.hasOwnProperty("status")) {
+        switch (error.status) {
+        case 401:
+            message = "You are not authorized to access this resource. Are you sure you are authenticated?";
+            break;
+        case 403:
+            message = "You are forbidden from accessing this resource. Are you sure you have the necessary permissions and the entry is correctly regstered with CAS?";
+            break;
+        case 400:
+        case 500:
+            message = "Unable to process or accept the request. Check CAS server logs for details.";
+            break;
+        case 0:
+            message = "Unable to contact the CAS server. Are you sure the server is reachable?";
+            break;
+        default:
+            message = `HTTP error: ${error.status}. `;
+            break;
+        }
     }
     if (error.hasOwnProperty("path")) {
         message += `Unable to make an API call to ${error.path}. Is the endpoint enabled and available?`;
+    }
+    if (typeof error === "string") {
+        message = error;
     }
     const snackbar = new mdc.snackbar.MDCSnackbar(document.getElementById("errorBanner"));
     snackbar.labelText = message;
@@ -308,7 +350,7 @@ function initializeJvmMetrics() {
         return new Promise((resolve, reject) =>
             $.get(`${actuatorEndpoints.metrics}/${metricName}`, response => resolve(response.measurements[0].value)).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
                 reject(error);
             })
         );
@@ -342,7 +384,7 @@ function initializeJvmMetrics() {
                 resolve(threadData);
             }).fail((xhr, status, error) => {
                 console.error("Error thread dump:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
                 reject(error);
             }));
 
@@ -444,7 +486,7 @@ async function initializeScheduledTasksOperations() {
             scheduledtasks.draw();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
 
@@ -470,7 +512,7 @@ async function initializeScheduledTasksOperations() {
             threadDumpTable.draw();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
 
@@ -504,14 +546,14 @@ async function initializeTicketsOperations() {
                     })
                     .fail((xhr, status, error) => {
                         console.error("Error fetching data:", error);
-                        displayErrorInBanner(xhr);
+                        displayBanner(xhr);
                     });
             }
         }
     });
 
     $("button#cleanTicketsButton").off().on("click", () => {
-        hideErrorInBanner();
+        hideBanner();
         if (actuatorEndpoints.ticketregistry) {
             $.ajax({
                 url: `${actuatorEndpoints.ticketregistry}/clean`,
@@ -522,7 +564,7 @@ async function initializeTicketsOperations() {
                 },
                 error: (xhr, status, error) => {
                     console.log(`Error: ${status} / ${error} / ${xhr.responseText}`);
-                    displayErrorInBanner(xhr);
+                    displayBanner(xhr);
                 }
             });
         }
@@ -583,7 +625,7 @@ async function initializeTicketsOperations() {
             ticketDefinitions.selectedIndex = 0;
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
 
@@ -634,7 +676,7 @@ async function initializeTicketsOperations() {
             ticketExpirationPoliciesTable.draw();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
 }
@@ -712,7 +754,7 @@ async function initializeSsoSessionOperations() {
                             },
                             error: (xhr, status, error) => {
                                 console.error("Error fetching data:", error);
-                                displayErrorInBanner(xhr);
+                                displayBanner(xhr);
                             }
                         });
                     }
@@ -817,7 +859,7 @@ async function initializeSsoSessionOperations() {
                                         },
                                         error: (xhr, status, error) => {
                                             console.error("Error fetching data:", error);
-                                            displayErrorInBanner(xhr);
+                                            displayBanner(xhr);
                                         }
                                     });
                                 }
@@ -826,7 +868,7 @@ async function initializeSsoSessionOperations() {
                 },
                 error: (xhr, status, error) => {
                     console.error("Error fetching data:", error);
-                    displayErrorInBanner(xhr);
+                    displayBanner(xhr);
                 }
             });
         }
@@ -883,7 +925,7 @@ async function initializeLoggingOperations() {
         if (actuatorEndpoints.loggingConfig) {
             $.get(actuatorEndpoints.loggingConfig, response => callback(response)).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
             });
         }
     }
@@ -929,7 +971,7 @@ async function initializeLoggingOperations() {
                             },
                             error: (xhr, status, error) => {
                                 console.error("Failed", error);
-                                displayErrorInBanner(xhr);
+                                displayBanner(xhr);
                             }
                         });
                     }
@@ -1079,7 +1121,7 @@ async function initializeSystemOperations() {
                 httpRequestsByUrlChart.update();
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
             });
 
             $("#downloadHeapDumpButton").off().on("click", () => {
@@ -1133,7 +1175,7 @@ async function initializeSystemOperations() {
                 systemHealthChart.update();
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
             });
         }
     }
@@ -1153,7 +1195,7 @@ async function initializeSystemOperations() {
         if (actuatorEndpoints.info) {
             $.get(actuatorEndpoints.info, response => callback(response)).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
             });
         }
     }
@@ -1178,7 +1220,7 @@ async function initializeSystemOperations() {
                 $("#httpRequestsMaxTime").text(`${maxTime}s`);
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
             });
             $.get(`${actuatorEndpoints.metrics}/http.server.requests.active`, response => {
                 let active = response.measurements[0].value;
@@ -1187,7 +1229,7 @@ async function initializeSystemOperations() {
                 $("#httpRequestsDuration").text(`${duration}s`);
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
             });
         }
         configureHttpRequestResponses().then(configureAuditEventsChart());
@@ -1289,7 +1331,7 @@ function initializeServiceButtons() {
 
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
             });
 
         });
@@ -1308,7 +1350,7 @@ function initializeServiceButtons() {
             dialog["open"]();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     });
 
@@ -1337,7 +1379,7 @@ function initializeServiceButtons() {
                             },
                             error: (xhr, status, error) => {
                                 console.error("Error deleting resource:", error);
-                                displayErrorInBanner(xhr);
+                                displayBanner(xhr);
                             }
                         });
                     }
@@ -1357,7 +1399,7 @@ function initializeServiceButtons() {
                 editServiceDialog["open"]();
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
             });
         }
     });
@@ -1392,11 +1434,12 @@ function initializeServiceButtons() {
                                     $(`#applicationsTable tr td span[serviceId=${newServiceId}]`).each(function () {
                                         $(this).closest("tr").addClass("selected");
                                     });
+                                    updateNavigationSidebar();
                                 });
                             },
                             error: (xhr, status, error) => {
                                 console.error("Update failed:", error);
-                                displayErrorInBanner(xhr);
+                                displayBanner(xhr);
                             }
                         });
                     }
@@ -1428,7 +1471,7 @@ function initializeServiceButtons() {
                 editServiceDialog["open"]();
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
             });
         }
     });
@@ -1443,7 +1486,8 @@ async function initializeServicesOperations() {
             {width: "10%", targets: 1},
             {width: "17%", targets: 2},
             {width: "56%", targets: 3},
-            {width: "12%", targets: 4}
+            {width: "12%", targets: 4},
+            {visible: false, targets: 5}
         ],
         drawCallback: settings => {
             $("#applicationsTable tr").addClass("mdc-data-table__row");
@@ -1485,8 +1529,8 @@ async function initializeServicesOperations() {
         .accordion({
             collapsible: true,
             heightStyle: "content"
-        });
-    $(document).tooltip();
+        })
+        .tooltip();
 
     $("a[name=serviceDefinitionEntry]").off().on("click", function () {
         let type = $(this).data("type");
@@ -1781,7 +1825,7 @@ async function initializePersonDirectoryOperations() {
                             },
                             error: (xhr, status, error) => {
                                 console.error("Error fetching data:", error);
-                                displayErrorInBanner(xhr);
+                                displayBanner(xhr);
                             }
                         });
                     }
@@ -1815,7 +1859,7 @@ async function initializePersonDirectoryOperations() {
                 },
                 error: (xhr, status, error) => {
                     console.error("Error fetching data:", error);
-                    displayErrorInBanner(xhr);
+                    displayBanner(xhr);
                 }
             });
         }
@@ -1868,7 +1912,7 @@ async function initializeAuthenticationOperations() {
             authenticationHandlersTable.draw();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
 
@@ -1898,7 +1942,7 @@ async function initializeAuthenticationOperations() {
             authenticationPoliciesTable.draw();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
 
@@ -2107,7 +2151,7 @@ async function initializeConsentOperations() {
                                 },
                                 error: (xhr, status, error) => {
                                     console.error("Error fetching data:", error);
-                                    displayErrorInBanner(xhr);
+                                    displayBanner(xhr);
                                 }
                             });
                         }
@@ -2116,7 +2160,7 @@ async function initializeConsentOperations() {
 
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
 
 
@@ -2170,7 +2214,7 @@ async function initializeConfigurationOperations() {
     });
 
     function encryptOrDecryptConfig(op) {
-        hideErrorInBanner();
+        hideBanner();
         $("#configEncryptionResult").addClass("d-none");
 
         const form = document.getElementById("fmConfigEncryption");
@@ -2188,7 +2232,7 @@ async function initializeConfigurationOperations() {
                 hljs.highlightAll();
                 $("#configEncryptionResult").removeClass("d-none");
             }).fail((xhr, status, error) => {
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
                 $("#configEncryptionResult").addClass("d-none");
             });
         }
@@ -2227,7 +2271,7 @@ async function initializeConfigurationOperations() {
 
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
 
@@ -2292,7 +2336,7 @@ async function initializeConfigurationOperations() {
             configPropsTable.draw();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
 
@@ -2321,7 +2365,7 @@ async function initializeCasProtocolOperations() {
             editor.gotoLine(1);
             $("#casProtocolEditorContainer").removeClass("d-none");
         }).fail((xhr, status, error) => {
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
             $("#casProtocolEditorContainer").addClass("d-none");
         });
     }
@@ -2395,7 +2439,7 @@ async function initializeThrottlesOperations() {
                                 },
                                 error: (xhr, status, error) => {
                                     console.error("Error fetching data:", error);
-                                    displayErrorInBanner(xhr);
+                                    displayBanner(xhr);
                                 }
                             });
                         }
@@ -2403,7 +2447,7 @@ async function initializeThrottlesOperations() {
             });
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
 
@@ -2430,7 +2474,7 @@ async function initializeThrottlesOperations() {
                                 fetchThrottledAttempts();
                             },
                             error: (jqXHR, textStatus, errorThrown) => {
-                                displayErrorInBanner(jqXHR);
+                                displayBanner(jqXHR);
                             }
                         });
                     }
@@ -2457,7 +2501,7 @@ async function initializeThrottlesOperations() {
                                 fetchThrottledAttempts();
                             },
                             error: (jqXHR, textStatus, errorThrown) => {
-                                displayErrorInBanner(jqXHR);
+                                displayBanner(jqXHR);
                             }
                         });
                     }
@@ -2492,7 +2536,7 @@ async function initializeSAML1ProtocolOperations() {
             serviceEditor.setValue(JSON.stringify(data.registeredService, null, 2));
             serviceEditor.gotoLine(1);
         }).fail((xhr, status, error) => {
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
             $("#saml2ProtocolEditorContainer").addClass("d-none");
         });
     });
@@ -2509,7 +2553,7 @@ function showSaml2IdPMetadata() {
         oidcOpConfigurationDialog["open"]();
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
-        displayErrorInBanner(xhr);
+        displayBanner(xhr);
     });
 }
 
@@ -2523,7 +2567,7 @@ function showOidcJwks() {
         oidcOpConfigurationDialog["open"]();
     }).fail((xhr, status, error) => {
         console.error("Error fetching data:", error);
-        displayErrorInBanner(xhr);
+        displayBanner(xhr);
     });
 }
 
@@ -2534,7 +2578,7 @@ async function initializeOidcProtocolOperations() {
     });
 
     $("button[name=oidcOpConfigurationButton]").off().on("click", () => {
-        hideErrorInBanner();
+        hideBanner();
         $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, response => {
             let oidcOpConfigurationDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("oidcOpConfigurationDialog"));
             const editor = initializeAceEditor("oidcOpConfigurationDialogEditor", "json");
@@ -2544,12 +2588,12 @@ async function initializeOidcProtocolOperations() {
             oidcOpConfigurationDialog["open"]();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     });
 
     $("button[name=oidcKeyRotationButton]").off().on("click", () => {
-        hideErrorInBanner();
+        hideBanner();
         swal({
             title: "Are you sure you want to rotate keys?",
             text: "Once rotated, the change will take effect immediately.",
@@ -2571,7 +2615,7 @@ async function initializeOidcProtocolOperations() {
                         $("#oidcKeyRotationButton").prop("disabled", false);
                     }).fail((xhr, status, error) => {
                         console.error("Error fetching data:", error);
-                        displayErrorInBanner(xhr);
+                        displayBanner(xhr);
                         $("#oidcKeyRotationButton").prop("disabled", false);
                     });
                 }
@@ -2579,7 +2623,7 @@ async function initializeOidcProtocolOperations() {
     });
 
     $("button[name=oidcKeyRevocationButton]").off().on("click", () => {
-        hideErrorInBanner();
+        hideBanner();
         swal({
             title: "Are you sure you want to revoke keys?",
             text: "Once revoked, the change will take effect immediately.",
@@ -2601,7 +2645,7 @@ async function initializeOidcProtocolOperations() {
                         $("#oidcKeyRevocationButton").prop("disabled", false);
                     }).fail((xhr, status, error) => {
                         console.error("Error fetching data:", error);
-                        displayErrorInBanner(xhr);
+                        displayBanner(xhr);
                         $("#oidcKeyRevocationButton").prop("disabled", false);
                     });
                 }
@@ -2610,7 +2654,7 @@ async function initializeOidcProtocolOperations() {
 
 
     $("button[name=oidcProtocolButton]").off().on("click", () => {
-        hideErrorInBanner();
+        hideBanner();
         const oidcForm = document.getElementById("fmOidcProtocol");
         if (!oidcForm.checkValidity()) {
             oidcForm.reportValidity();
@@ -2671,20 +2715,20 @@ async function initializeOidcProtocolOperations() {
                         oidcProtocolEditorProfile.gotoLine(1);
                     }).fail((xhr, status, error) => {
                         console.error("Error fetching data:", error);
-                        displayErrorInBanner(xhr);
+                        displayBanner(xhr);
                     });
                     $("#oidcProtocolEditorContainer").removeClass("d-none");
                 },
                 error: (xhr, textStatus, errorThrown) => {
                     $("#oidcProtocolEditorContainer").addClass("d-none");
                     console.error("Error fetching data:", errorThrown);
-                    displayErrorInBanner(xhr);
+                    displayBanner(xhr);
                 }
             });
 
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
             $("#oidcProtocolEditorContainer").addClass("d-none");
         });
 
@@ -2702,7 +2746,7 @@ async function initializeSAML2ProtocolOperations() {
             $("#saml2EntityId").text(response.saml2.entityId);
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
     
@@ -2727,7 +2771,7 @@ async function initializeSAML2ProtocolOperations() {
             $("#saml2ProtocolEditorContainer").removeClass("d-none");
             $("#saml2ProtocolLogoutEditor").addClass("d-none");
         }).fail((xhr, status, error) => {
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
             $("#saml2ProtocolEditorContainer").addClass("d-none");
         });
     });
@@ -2760,7 +2804,7 @@ async function initializeSAML2ProtocolOperations() {
                 $("#saml2ProtocolLogoutEditor").removeClass("d-none");
             },
             error: (jqXHR, textStatus, errorThrown) => {
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
                 $("#saml2ProtocolEditorContainer").addClass("d-none");
                 $("#saml2ProtocolLogoutEditor").addClass("d-none");
             }
@@ -2769,7 +2813,7 @@ async function initializeSAML2ProtocolOperations() {
 
 
     $("button[name=saml2MetadataCacheInvalidateButton]").off().on("click", () => {
-        hideErrorInBanner();
+        hideBanner();
         $("#saml2MetadataCacheEditorContainer").addClass("d-none");
 
         swal({
@@ -2798,7 +2842,7 @@ async function initializeSAML2ProtocolOperations() {
                             });
                         },
                         error: (jqXHR, textStatus, errorThrown) => {
-                            displayErrorInBanner(jqXHR);
+                            displayBanner(jqXHR);
                         }
                     });
                 }
@@ -2806,7 +2850,7 @@ async function initializeSAML2ProtocolOperations() {
     });
 
     $("button[name=saml2MetadataCacheFetchButton]").off().on("click", function () {
-        hideErrorInBanner();
+        hideBanner();
 
         $(this).prop("disabled", true);
         $.ajax({
@@ -2831,7 +2875,7 @@ async function initializeSAML2ProtocolOperations() {
                 $(this).prop("disabled", false);
             },
             error: (jqXHR, textStatus, errorThrown) => {
-                displayErrorInBanner(jqXHR);
+                displayBanner(jqXHR);
                 $("#saml2MetadataCacheEditorContainer").addClass("d-none");
                 $("#saml2MetadataCacheDetails").addClass("d-none");
                 $(this).prop("disabled", false);
@@ -2979,17 +3023,22 @@ function activateDashboardTab(idx) {
     }
 }
 
+function selectSidebarMenuButton(selectedItem) {
+    $("nav.sidebar-navigation ul li").removeClass("active");
+    $(selectedItem).addClass("active");
+    const index = $(selectedItem).data("tab-index");
+    console.log("Tracking tab", index);
+    window.localStorage.setItem("PalantirSelectedTab", index);
+    return index;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     $(".jqueryui-tabs").tabs();
     $(".jqueryui-menu").menu();
 
     $("nav.sidebar-navigation ul li").off().on("click", function () {
-        hideErrorInBanner();
-        $("li").removeClass("active");
-        $(this).addClass("active");
-        const index = $(this).data("tab-index");
-        console.log("Tracking tab", index);
-        window.localStorage.setItem("PalantirSelectedTab", index);
+        hideBanner();
+        const index = selectSidebarMenuButton(this);
         activateDashboardTab(index);
     });
     swal({
@@ -3006,7 +3055,7 @@ document.addEventListener("DOMContentLoaded", () => {
             text: "Palantir has been successfully initialized and is ready for use.",
             buttons: false,
             icon: "success",
-            timer: 1000
+            timer: 700,
         });
     });
 });

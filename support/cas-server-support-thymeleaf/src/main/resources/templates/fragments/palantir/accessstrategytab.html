@@ -24,7 +24,8 @@
                             <span class="mdc-notched-outline__trailing"></span>
                         </span>
                         <input class="mdc-text-field__input form-control" type="text"
-                               name="accessService" data-param-name="service" tabindex="0" id="accessService" size="50" autocomplete="off" required />
+                               name="accessService" data-param-name="service" tabindex="0" id="accessService" size="50"
+                               autocomplete="off" required value="https://mmoayyed.unicon.net:8443/cas/palantir/dashboard?continue"/>
                     </label>
                     <label for="accessUsername"
                            class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
@@ -36,7 +37,8 @@
                             <span class="mdc-notched-outline__trailing"></span>
                         </span>
                         <input class="mdc-text-field__input form-control" type="text"
-                               name="accessUsername" data-param-name="username" tabindex="0" id="accessUsername" size="50" autocomplete="off" required/>
+                               name="accessUsername" data-param-name="username" tabindex="0" id="accessUsername"
+                               size="50" autocomplete="off" required value="Misagh"/>
                     </label>
                     <label for="accessPassword"
                            class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
@@ -48,12 +50,14 @@
                             <span class="mdc-notched-outline__trailing"></span>
                         </span>
                         <input class="mdc-text-field__input form-control pwd" type="password"
-                               name="accessPassword" data-param-name="password" tabindex="0" id="accessPassword" size="50" autocomplete="off"/>
+                               name="accessPassword" data-param-name="password" tabindex="0" id="accessPassword"
+                               size="50" autocomplete="off"/>
                         <button
                                 class="reveal-password align-self-end mdc-button mdc-button--raised btn btn-primary mdc-input-group-append mdc-icon-button"
                                 tabindex="-1"
                                 type="button">
-                            <i class="mdi mdi-eye fas fa-eye reveal-password-icon" style="vertical-align: middle;" aria-hidden="true"></i>
+                            <i class="mdi mdi-eye fas fa-eye reveal-password-icon" style="vertical-align: middle;"
+                               aria-hidden="true"></i>
                             <span class="visually-hidden">Toggle Token</span>
                         </button>
                     </label>
@@ -67,7 +71,8 @@
                             <span class="mdc-notched-outline__trailing"></span>
                         </span>
                         <input class="mdc-text-field__input form-control" type="text"
-                               name="accessClientId" data-param-name="client_id" tabindex="0" id="accessClientId" size="50" autocomplete="off"/>
+                               name="accessClientId" data-param-name="client_id" tabindex="0" id="accessClientId"
+                               size="50" autocomplete="off"/>
                     </label>
                     <label for="accessEntityId"
                            class="mdc-text-field mdc-text-field--outlined control-label mdc-text-field--with-trailing-icon mb-2">
@@ -79,27 +84,42 @@
                             <span class="mdc-notched-outline__trailing"></span>
                         </span>
                         <input class="mdc-text-field__input form-control" type="text"
-                               name="accessEntityId" data-param-name="entityId" tabindex="0" id="accessEntityId" size="50" autocomplete="off"/>
+                               name="accessEntityId" data-param-name="entityId" tabindex="0" id="accessEntityId"
+                               size="50" autocomplete="off"/>
                     </label>
                 </div>
                 
             </section>
             <div class="d-flex">
-                <button type="button" name="accessStrategyButton" id="accessStrategyButton" class="mdc-button mdc-button--raised">
+                <button type="button" name="accessStrategyButton" id="accessStrategyButton"
+                        class="mdc-button mdc-button--raised">
                     <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all" aria-hidden="true"></i>Verify</span>
                 </button>
             </div>
         </form>
-        <hr>
 
-        <div id="serviceAccessResultDiv" class="banner p-2" role="alert" style="display: none">
-            <span class="mdi mdi-information" aria-hidden="true"></span>&nbsp;
-            <strong id="serviceAccessResult"></strong>
+        <div id="accessStrategyAttributesContainer" class="d-none py-3">
+            <h3>Attributes</h3>
+            <table id="accessStrategyAttributesTable" class="mdc-data-table__table table table-striped noborder">
+                <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Name</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Value(s)</th>
+                    </tr>
+                </thead>
+                <tbody class="mdc-data-table__content">
+                </tbody>
+            </table>
         </div>
-        
-        <section class="my-3 d-flex h-350px d-none" id="accessStrategyEditorContainer">
-              <pre class="ace-editor ace-relative w-100 h-100" id="accessStrategyEditor"></pre>
-        </section>
+
+        <span id="accessStrategyEditorContainer" class="d-none">
+            <h3>Registered Service</h3>
+            <p>This is the registered service definition that authorized the request. You can
+                <a id="authorizedServiceNavigation" href="#">navigate to it</a>.</p>
+            <section class="my-3 d-flex h-350px">
+                <pre class="ace-editor ace-relative w-100 h-100" id="accessStrategyEditor"></pre>
+            </section>
+        </span>
     </div>
 </span>
 </body>
