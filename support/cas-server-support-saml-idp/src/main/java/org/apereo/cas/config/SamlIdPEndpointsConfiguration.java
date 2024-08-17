@@ -55,12 +55,14 @@ import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPProfileCallback
 import org.apereo.cas.support.saml.web.idp.profile.sso.UrlDecodingHTTPRedirectDeflateDecoder;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.DefaultSSOSamlHttpRequestExtractor;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
+import org.apereo.cas.support.saml.web.idp.web.SamlIdPInfoEndpointContributor;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.InternalTicketValidator;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -86,6 +88,7 @@ import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -537,6 +540,14 @@ class SamlIdPEndpointsConfiguration {
                     jeeSessionStore.setPrefix(SAML_SERVER_SUPPORT_PREFIX);
                     return jeeSessionStore;
             }
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "samlIdPInfoEndpointContributor")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public InfoContributor samlIdPInfoEndpointContributor(
+            final CasConfigurationProperties casProperties) {
+            return new SamlIdPInfoEndpointContributor(casProperties);
         }
     }
 

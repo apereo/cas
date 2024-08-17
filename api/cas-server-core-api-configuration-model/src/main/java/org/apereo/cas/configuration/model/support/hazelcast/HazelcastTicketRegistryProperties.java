@@ -27,11 +27,6 @@ public class HazelcastTicketRegistryProperties extends BaseHazelcastProperties {
     private static final long serialVersionUID = -1095208036374406772L;
 
     /**
-     * Page size is used by a special Predicate which helps to get a page-by-page result of a query.
-     */
-    private long pageSize = 500;
-
-    /**
      * Crypto settings for the registry.
      */
     @NestedConfigurationProperty

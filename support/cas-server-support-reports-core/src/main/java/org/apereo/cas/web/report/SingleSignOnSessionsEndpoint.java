@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistryStreamCriteria;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.cas.util.LoggingUtils;
@@ -274,7 +275,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
 
     private Stream<Map<String, Object>> getActiveSsoSessions(final SsoSessionsRequest ssoSessionsRequest) {
         val option = Optional.ofNullable(ssoSessionsRequest.getType()).map(SsoSessionReportOptions::valueOf).orElse(SsoSessionReportOptions.ALL);
-        return getNonExpiredTicketGrantingTickets(ssoSessionsRequest.getFrom(), ssoSessionsRequest.getCount())
+        return getNonExpiredTicketGrantingTickets(ssoSessionsRequest)
             .map(TicketGrantingTicket.class::cast)
             .filter(tgt -> !(option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null))
             .filter(tgt -> StringUtils.isBlank(ssoSessionsRequest.getUsername())
@@ -336,18 +337,15 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
         return sso;
     }
 
-    private Stream<? extends Ticket> getNonExpiredTicketGrantingTickets(final long from, final long count) {
-        var ticketsStream = ticketRegistryProvider
+    private Stream<? extends Ticket> getNonExpiredTicketGrantingTickets(
+        final SsoSessionsRequest ssoSessionsRequest) {
+        return ticketRegistryProvider
             .getObject()
-            .stream()
+            .stream(TicketRegistryStreamCriteria.builder()
+                .count(ssoSessionsRequest.getCount())
+                .from(ssoSessionsRequest.getFrom())
+                .build())
             .filter(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired());
-        if (from > 0) {
-            ticketsStream = ticketsStream.skip(from);
-        }
-        if (count > 0) {
-            ticketsStream = ticketsStream.limit(count);
-        }
-        return ticketsStream;
     }
 
 }

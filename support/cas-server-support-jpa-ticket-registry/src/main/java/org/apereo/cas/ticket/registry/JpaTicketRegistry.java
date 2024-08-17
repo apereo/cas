@@ -158,13 +158,15 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * @return streamable results
      */
     @Override
-    public Stream<? extends Ticket> stream() {
+    public Stream<? extends Ticket> stream(final TicketRegistryStreamCriteria criteria) {
         val factory = getJpaTicketEntityFactory();
         val sql = String.format("SELECT t FROM %s t", factory.getEntityName());
         val query = entityManager.createQuery(sql, factory.getType());
         query.setLockMode(LockModeType.NONE);
         return jpaBeanFactory
             .streamQuery(query)
+            .skip(criteria.getFrom())
+            .limit(criteria.getCount())
             .map(BaseTicketEntity.class::cast)
             .map(factory::toTicket)
             .map(this::decodeTicket);
