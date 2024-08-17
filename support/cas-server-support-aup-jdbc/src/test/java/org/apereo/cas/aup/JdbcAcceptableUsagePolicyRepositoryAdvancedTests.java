@@ -78,7 +78,7 @@ class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptabl
 
     @Test
     void verifyRepositoryPolicyText() throws Throwable {
-        val service = (BaseWebBasedRegisteredService) RegisteredServiceTestUtils.getRegisteredService();
+        val service = RegisteredServiceTestUtils.getRegisteredService();
         val policy = new DefaultRegisteredServiceAcceptableUsagePolicy();
         policy.setMessageCode("aup.code");
         policy.setText("aup text here");

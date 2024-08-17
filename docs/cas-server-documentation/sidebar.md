@@ -501,7 +501,7 @@ layout: null
     *   [Response Type](/cas/{{ version }}/services/Configuring-Service-Response-Type.html)
     *   [Single Sign-on Policy](/cas/{{ version }}/services/Configuring-Service-SSO-Policy.html)
     *   [Matching Strategy](/cas/{{ version }}/services/Configuring-Service-Matching-Strategy.html)
-    *   [History & Versions](/cas/{{ version }}/services/Configuring-Service-Version-History.md)
+    *   [History & Versions](/cas/{{ version }}/services/Configuring-Service-Version-History.html)
     *   [HTTP Security Headers](/cas/{{ version }}/services/Configuring-Service-Http-Security-Headers.html)
     *   [Contacts & Owners](/cas/{{ version }}/services/Configuring-Service-Contacts.html)
     *   [Expiration Policy](/cas/{{ version }}/services/Configuring-Service-Expiration-Policy.html)

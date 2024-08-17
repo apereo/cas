@@ -62,7 +62,7 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
                 .sendRequest();
 
             if (response.isSuccess() && response.getResource().getTotalResults() > 0) {
-                val user = (User) response.getResource().getListedResources().getFirst();
+                val user = response.getResource().getListedResources().getFirst();
                 return updateUserResource(user, principal, credential, registeredService);
             }
             return createUserResource(principal, credential, registeredService);

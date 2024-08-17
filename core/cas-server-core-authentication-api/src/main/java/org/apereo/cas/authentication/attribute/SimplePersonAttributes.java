@@ -93,7 +93,7 @@ public class SimplePersonAttributes implements PersonAttributes {
                     val matcher = arrayPattern.matcher(values);
                     if (matcher.matches()) {
                         val groups = matcher.group(1).split(",");
-                        value = List.of((Object[]) groups);
+                        value = List.of(groups);
                         LOGGER.trace("Converted SQL array values [{}]", values);
                     }
                 }

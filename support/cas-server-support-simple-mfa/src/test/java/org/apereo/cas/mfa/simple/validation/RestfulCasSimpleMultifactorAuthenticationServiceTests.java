@@ -82,7 +82,7 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
             webServer.start();
             val mfaFactory = (CasSimpleMultifactorAuthenticationTicketFactory)
                 defaultTicketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
-            var token = (CasSimpleMultifactorAuthenticationTicket) mfaFactory.create(tokenId, service, Map.of());
+            var token = mfaFactory.create(tokenId, service, Map.of());
             assertDoesNotThrow(() -> multifactorAuthenticationService.store(token));
         }
         try (val webServer = new MockWebServer(9229,
@@ -90,7 +90,7 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
             webServer.start();
             val mfaFactory = (CasSimpleMultifactorAuthenticationTicketFactory)
                 defaultTicketFactory.get(CasSimpleMultifactorAuthenticationTicket.class);
-            var token = (CasSimpleMultifactorAuthenticationTicket) mfaFactory.create(tokenId, service, Map.of());
+            var token = mfaFactory.create(tokenId, service, Map.of());
             assertThrows(FailedLoginException.class, () -> multifactorAuthenticationService.store(token));
         }
     }

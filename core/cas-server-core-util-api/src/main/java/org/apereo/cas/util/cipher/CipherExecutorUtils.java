@@ -32,7 +32,7 @@ public class CipherExecutorUtils {
         return supplier(() -> {
             val ctor = cipherClass.getDeclaredConstructor(String.class, String.class,
                 String.class, int.class, int.class);
-            val cipher = (T) ctor.newInstance(crypto.getEncryption().getKey(),
+            val cipher = ctor.newInstance(crypto.getEncryption().getKey(),
                 crypto.getSigning().getKey(),
                 crypto.getAlg(),
                 crypto.getSigning().getKeySize(),
@@ -57,7 +57,7 @@ public class CipherExecutorUtils {
             val ctor = cipherClass.getDeclaredConstructor(String.class, String.class,
                 String.class, boolean.class, boolean.class, int.class, int.class);
             val resolver = SpringExpressionLanguageValueResolver.getInstance();
-            val cipher = (T) ctor.newInstance(
+            val cipher = ctor.newInstance(
                 resolver.resolve(crypto.getEncryption().getKey()),
                 resolver.resolve(crypto.getSigning().getKey()),
                 resolver.resolve(crypto.getAlg()),

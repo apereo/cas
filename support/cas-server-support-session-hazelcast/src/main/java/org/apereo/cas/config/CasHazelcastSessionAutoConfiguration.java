@@ -65,7 +65,7 @@ public class CasHazelcastSessionAutoConfiguration {
         serializerConfig.setImplementation(new HazelcastSessionSerializer()).setTypeClass(MapSession.class);
         config.getSerializationConfig().addSerializerConfig(serializerConfig);
 
-        val duration = (Duration) ObjectUtils.defaultIfNull(sessionProperties.getTimeout(),
+        val duration = ObjectUtils.defaultIfNull(sessionProperties.getTimeout(),
             serverProperties.getServlet().getSession().getTimeout());
 
         val hazelcastInstance = HazelcastInstanceFactory.getOrCreateHazelcastInstance(config);

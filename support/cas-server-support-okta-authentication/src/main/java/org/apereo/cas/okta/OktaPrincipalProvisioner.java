@@ -49,7 +49,7 @@ public class OktaPrincipalProvisioner implements PrincipalProvisioner {
     }
 
     protected boolean createUser(final Principal principal, final Credential credential) {
-        val createUserRequest = (CreateUserRequest) oktaClient.instantiate(CreateUserRequest.class);
+        val createUserRequest = oktaClient.instantiate(CreateUserRequest.class);
         val initialUserProfile = oktaClient.instantiate(UserProfile.class);
         initialUserProfile.setLogin(principal.getId());
         val userProfile = mapPrincipalToUserProfile(initialUserProfile, principal, credential);

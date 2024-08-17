@@ -147,7 +147,7 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
         val results = toSave.peek(ticket -> {
             val ticketDefinition = ticketCatalog.find(ticket);
             val document = getCosmosDbTicketDocument(ticket, ticketDefinition);
-            val commands = (List<CosmosItemOperation>) operations.getOrDefault(ticketDefinition.getProperties().getStorageName(), new ArrayList<>());
+            val commands = operations.getOrDefault(ticketDefinition.getProperties().getStorageName(), new ArrayList<>());
             commands.add(CosmosBulkOperations.getCreateItemOperation(document, new PartitionKey(ticketDefinition.getPrefix())));
             operations.put(ticketDefinition.getProperties().getStorageName(), commands);
         }).toList();
