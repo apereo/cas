@@ -35,7 +35,7 @@ class RegexAttributeInterruptInquirerTests {
     @Test
     void verifyInterruptSkippedWithServicePolicy() throws Throwable {
         val inquirer = new RegexAttributeInterruptInquirer("member..", "CA.|system");
-        val registeredService = (BaseWebBasedRegisteredService) RegisteredServiceTestUtils.getRegisteredService();
+        val registeredService = RegisteredServiceTestUtils.getRegisteredService();
         registeredService.setWebflowInterruptPolicy(new DefaultRegisteredServiceWebflowInterruptPolicy().setEnabled(false));
         val response = inquirer.inquire(CoreAuthenticationTestUtils.getAuthentication("casuser"),
             registeredService,

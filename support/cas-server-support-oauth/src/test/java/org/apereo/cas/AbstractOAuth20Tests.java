@@ -824,13 +824,11 @@ public abstract class AbstractOAuth20Tests {
 
         @Bean
         public List inMemoryRegisteredServices() {
-            val svc1 = (OAuthRegisteredService)
-                RegisteredServiceTestUtils.getRegisteredService("^(https?|imaps?)://.*", OAuthRegisteredService.class);
+            val svc1 = RegisteredServiceTestUtils.getRegisteredService("^(https?|imaps?)://.*", OAuthRegisteredService.class);
             svc1.setClientId(UUID.randomUUID().toString());
             svc1.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
 
-            val svc2 = (OAuthRegisteredService)
-                RegisteredServiceTestUtils.getRegisteredService("https://example.org/jwt-access-token", OAuthRegisteredService.class);
+            val svc2 = RegisteredServiceTestUtils.getRegisteredService("https://example.org/jwt-access-token", OAuthRegisteredService.class);
             svc2.setClientId(UUID.randomUUID().toString());
             svc2.setJwtAccessToken(true);
 

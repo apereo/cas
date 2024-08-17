@@ -292,7 +292,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
             .entrySet()
             .stream()
             .map(entry -> {
-                val entryValues = (List) entry.getValue();
+                val entryValues = entry.getValue();
                 val valueList = entryValues.stream().map(Object::toString).collect(Collectors.joining(","));
                 return Pair.of(entry.getKey(), valueList);
             })

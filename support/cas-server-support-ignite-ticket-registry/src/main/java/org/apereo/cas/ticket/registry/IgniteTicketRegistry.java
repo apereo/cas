@@ -82,7 +82,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
             .entrySet()
             .stream()
             .map(entry -> {
-                val entryValues = (List) entry.getValue();
+                val entryValues = entry.getValue();
                 val valueList = entryValues.stream().map(Object::toString).collect(Collectors.joining(","));
                 return String.format("[%s:{%s}]", entry.getKey(), valueList);
             })

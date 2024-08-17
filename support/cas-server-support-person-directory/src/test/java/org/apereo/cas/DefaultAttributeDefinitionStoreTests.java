@@ -211,7 +211,7 @@ class DefaultAttributeDefinitionStoreTests {
                 .service(CoreAuthenticationTestUtils.getService())
                 .attributes(Map.of())
                 .build();
-            var values = (Optional<Pair<AttributeDefinition, List<Object>>>) store.resolveAttributeValues("whatever", context);
+            var values = store.resolveAttributeValues("whatever", context);
             assertTrue(values.isEmpty());
         }
     }

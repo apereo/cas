@@ -67,7 +67,7 @@ public class JpaConsentRepository implements ConsentRepository {
 
     @Override
     public ConsentDecision storeConsentDecision(final ConsentDecision decision) {
-        val account = (JpaConsentDecision) ObjectUtils.defaultIfNull(
+        val account = ObjectUtils.defaultIfNull(
             this.entityManager.find(JpaConsentDecision.class, decision.getId()), new JpaConsentDecision());
         account.setAttributes(decision.getAttributes());
         account.setCreatedDate(decision.getCreatedDate());

@@ -127,8 +127,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
             @Parameter(name = "count", schema = @Schema(type = "integer"), in = ParameterIn.QUERY, description = "Total number of sessions to return")
         })
     public Map<String, Object> getSsoSessions(
-        @Valid
-        @ModelAttribute final SsoSessionsRequest ssoSessionsRequest) {
+        @ModelAttribute final @Valid SsoSessionsRequest ssoSessionsRequest) {
         val sessionsMap = new HashMap<String, Object>();
         val activeSsoSessions = getActiveSsoSessions(ssoSessionsRequest).toList();
         sessionsMap.put("activeSsoSessions", activeSsoSessions);
@@ -183,7 +182,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
         })
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> destroySsoSessions(
-        @Valid final SsoSessionsRequest ssoSessionsRequest,
+        final @Valid SsoSessionsRequest ssoSessionsRequest,
         final HttpServletRequest request,
         final HttpServletResponse response) {
         if (StringUtils.isBlank(ssoSessionsRequest.getUsername()) && StringUtils.isBlank(ssoSessionsRequest.getType())) {

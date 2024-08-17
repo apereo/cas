@@ -133,7 +133,7 @@ public class WebUtils {
      * @return the http servlet request
      */
     public static HttpServletRequest getHttpServletRequestFromExternalWebflowContext() {
-        val servletExternalContext = (ExternalContext) ExternalContextHolder.getExternalContext();
+        val servletExternalContext = ExternalContextHolder.getExternalContext();
         if (servletExternalContext != null) {
             return (HttpServletRequest) servletExternalContext.getNativeRequest();
         }
@@ -157,7 +157,7 @@ public class WebUtils {
      * @return the http servlet response
      */
     public static HttpServletResponse getHttpServletResponseFromExternalWebflowContext() {
-        val servletExternalContext = (ExternalContext) ExternalContextHolder.getExternalContext();
+        val servletExternalContext = ExternalContextHolder.getExternalContext();
         if (servletExternalContext != null) {
             return (HttpServletResponse) servletExternalContext.getNativeResponse();
         }
