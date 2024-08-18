@@ -26,7 +26,6 @@ import org.springframework.session.MapSession;
 import org.springframework.session.hazelcast.HazelcastIndexedSessionRepository;
 import org.springframework.session.hazelcast.HazelcastSessionSerializer;
 import org.springframework.session.hazelcast.config.annotation.web.http.EnableHazelcastHttpSession;
-import java.time.Duration;
 
 /**
  * This is {@link CasHazelcastSessionAutoConfiguration}.

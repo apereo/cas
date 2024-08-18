@@ -6,7 +6,6 @@ import lombok.val;
 import org.apache.cxf.rt.security.claims.Claim;
 import org.apache.cxf.rt.security.claims.ClaimCollection;
 import org.apache.cxf.sts.claims.ClaimsParameters;
-import org.apache.cxf.sts.claims.ProcessedClaim;
 import org.apache.cxf.sts.request.TokenRequirements;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
