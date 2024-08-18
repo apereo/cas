@@ -32,6 +32,8 @@ let httpRequestsByUrlChart = null;
 let auditEventsChart = null;
 let threadDumpChart = null;
 
+const CAS_FEATURES = [];
+
 function fetchServices(callback) {
     if (actuatorEndpoints.registeredservices) {
         $.get(actuatorEndpoints.registeredservices, response => {
@@ -245,6 +247,14 @@ function initializeFooterButtons() {
  * Initialization Functions
  */
 async function initializeAccessStrategyOperations() {
+
+    if (!CAS_FEATURES.includes("SAMLIdentityProvider")) {
+        $("#accessEntityIdLabel").addClass("d-none");
+    }
+    if (!CAS_FEATURES.includes("OpenIDConnect") && !CAS_FEATURES.includes("OAuth")) {
+        $("#accessClientIdLabel").addClass("d-none");
+    }
+
     const accessStrategyEditor = initializeAceEditor("accessStrategyEditor");
     accessStrategyEditor.setReadOnly(true);
 
@@ -1268,27 +1278,37 @@ async function initializeSystemOperations() {
         configureStatistics();
     }, DEFAULT_INTERVAL);
 
-    if (actuatorEndpoints.casFeatures) {
-        $.get(actuatorEndpoints.casFeatures, response => {
-            console.log(response);
-            $("#casFeaturesChipset").empty();
-            for (const element of response) {
-                let feature = `
-                            <div class="mdc-chip" role="row">
-                                <div class="mdc-chip__ripple"></div>
-                                <span role="gridcell">
-                                  <span class="mdc-chip__text">${element.trim().replace("CasFeatureModule.", "")}</span>
-                                </span>
-                            </div>
-                        `.trim();
-                $("#casFeaturesChipset").append($(feature));
-            }
-        });
-    }
-
     configureSystemData();
     configureStatistics();
     configureHealthChart();
+    
+}
+
+async function initializeCasFeatures() {
+    return new Promise((resolve, reject) => {
+        if (actuatorEndpoints.casFeatures) {
+            $.get(actuatorEndpoints.casFeatures, response => {
+                console.log(response);
+                $("#casFeaturesChipset").empty();
+                for (const element of response) {
+                    const featureName = element.trim().replace("CasFeatureModule.", "");
+                    CAS_FEATURES.push(featureName);
+
+                    let feature = `
+                            <div class="mdc-chip" role="row">
+                                <div class="mdc-chip__ripple"></div>
+                                <span role="gridcell">
+                                  <span class="mdc-chip__text">${featureName}</span>
+                                </span>
+                            </div>
+                        `.trim();
+                    $("#casFeaturesChipset").append($(feature));
+                }
+                resolve();
+            });
+        }
+    });
+
 }
 
 function initializeServiceButtons() {
@@ -2572,340 +2592,342 @@ function showOidcJwks() {
 }
 
 async function initializeOidcProtocolOperations() {
-    $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, response => {
-        hljs.highlightAll();
-        $("#oidcIssuer").text(response.issuer);
-    });
-
-    $("button[name=oidcOpConfigurationButton]").off().on("click", () => {
-        hideBanner();
+    if (CAS_FEATURES.includes("OpenIDConnect")) {
         $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, response => {
-            let oidcOpConfigurationDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("oidcOpConfigurationDialog"));
-            const editor = initializeAceEditor("oidcOpConfigurationDialogEditor", "json");
-            editor.setValue(JSON.stringify(response, null, 2));
-            editor.gotoLine(1);
-            editor.setReadOnly(true);
-            oidcOpConfigurationDialog["open"]();
-        }).fail((xhr, status, error) => {
-            console.error("Error fetching data:", error);
-            displayBanner(xhr);
-        });
-    });
-
-    $("button[name=oidcKeyRotationButton]").off().on("click", () => {
-        hideBanner();
-        swal({
-            title: "Are you sure you want to rotate keys?",
-            text: "Once rotated, the change will take effect immediately.",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true
-        })
-            .then((willDo) => {
-                if (willDo) {
-                    $("#oidcKeyRotationButton").prop("disabled", true);
-                    $.get(`${actuatorEndpoints.oidcjwks}/rotate`, response => {
-                        swal({
-                            title: "Done!",
-                            text: "Keys in the OpenID Connect keystore are successfully rotated.",
-                            buttons: false,
-                            icon: "success",
-                            timer: 1000
-                        });
-                        $("#oidcKeyRotationButton").prop("disabled", false);
-                    }).fail((xhr, status, error) => {
-                        console.error("Error fetching data:", error);
-                        displayBanner(xhr);
-                        $("#oidcKeyRotationButton").prop("disabled", false);
-                    });
-                }
-            });
-    });
-
-    $("button[name=oidcKeyRevocationButton]").off().on("click", () => {
-        hideBanner();
-        swal({
-            title: "Are you sure you want to revoke keys?",
-            text: "Once revoked, the change will take effect immediately.",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true
-        })
-            .then((willDo) => {
-                if (willDo) {
-                    $("#oidcKeyRevocationButton").prop("disabled", true);
-                    $.get(`${actuatorEndpoints.oidcjwks}/revoke`, response => {
-                        swal({
-                            title: "Done!",
-                            text: "Keys in the OpenID Connect keystore are successfully revoked.",
-                            buttons: false,
-                            icon: "success",
-                            timer: 1000
-                        });
-                        $("#oidcKeyRevocationButton").prop("disabled", false);
-                    }).fail((xhr, status, error) => {
-                        console.error("Error fetching data:", error);
-                        displayBanner(xhr);
-                        $("#oidcKeyRevocationButton").prop("disabled", false);
-                    });
-                }
-            });
-    });
-
-
-    $("button[name=oidcProtocolButton]").off().on("click", () => {
-        hideBanner();
-        const oidcForm = document.getElementById("fmOidcProtocol");
-        if (!oidcForm.checkValidity()) {
-            oidcForm.reportValidity();
-            return false;
-        }
-
-        function decodeJWT(token) {
-            const parts = token.split(".");
-            if (parts.length === 3) {
-                const header = JSON.parse(atob(parts[0]));
-                const payload = JSON.parse(atob(parts[1]));
-                const signature = parts[2];
-                return {
-                    header: header,
-                    payload: payload,
-                    signature: signature
-                };
-            }
-            return {};
-        }
-
-        $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, oidcConfiguration => {
-
-            const clientId = $("#oidcProtocolClientId").val();
-            const clientSecret = $("#oidcProtocolClientSecret").val();
-            const scopes = encodeURIComponent($("#oidcProtocolScopes").val());
-
-            $.ajax({
-                url: `${oidcConfiguration.token_endpoint}?grant_type=client_credentials&scope=${scopes}`,
-                type: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Basic ${btoa(`${clientId}:${clientSecret}`)}`
-                },
-                success: (response, textStatus, xhr) => {
-                    console.log(response);
-                    const oidcProtocolEditorTokens = initializeAceEditor("oidcProtocolEditorTokens", "json");
-                    oidcProtocolEditorTokens.setReadOnly(true);
-                    oidcProtocolEditorTokens.setValue(JSON.stringify(response, null, 2));
-                    oidcProtocolEditorTokens.gotoLine(1);
-
-                    const oidcProtocolEditorIdTokenClaims = initializeAceEditor("oidcProtocolEditorIdTokenClaims", "json");
-                    oidcProtocolEditorIdTokenClaims.setReadOnly(true);
-                    const idToken = response.id_token;
-                    const decodedIdToken = decodeJWT(idToken);
-                    oidcProtocolEditorIdTokenClaims.setValue(JSON.stringify(decodedIdToken.payload, null, 2));
-                    oidcProtocolEditorIdTokenClaims.gotoLine(1);
-
-
-                    const oidcProtocolEditorProfile = initializeAceEditor("oidcProtocolEditorProfile", "json");
-                    oidcProtocolEditorProfile.setReadOnly(true);
-                    const accessToken = response.access_token;
-
-                    $.post(`${oidcConfiguration.userinfo_endpoint}`, {
-                        access_token: accessToken
-                    }, data => {
-                        oidcProtocolEditorProfile.setValue(JSON.stringify(data, null, 2));
-                        oidcProtocolEditorProfile.gotoLine(1);
-                    }).fail((xhr, status, error) => {
-                        console.error("Error fetching data:", error);
-                        displayBanner(xhr);
-                    });
-                    $("#oidcProtocolEditorContainer").removeClass("d-none");
-                },
-                error: (xhr, textStatus, errorThrown) => {
-                    $("#oidcProtocolEditorContainer").addClass("d-none");
-                    console.error("Error fetching data:", errorThrown);
-                    displayBanner(xhr);
-                }
-            });
-
-        }).fail((xhr, status, error) => {
-            console.error("Error fetching data:", error);
-            displayBanner(xhr);
-            $("#oidcProtocolEditorContainer").addClass("d-none");
-        });
-
-
-    });
-
-
-}
-
-async function initializeSAML2ProtocolOperations() {
-
-    if (actuatorEndpoints.info) {
-        $.get(actuatorEndpoints.info, response => {
             hljs.highlightAll();
-            $("#saml2EntityId").text(response.saml2.entityId);
-        }).fail((xhr, status, error) => {
-            console.error("Error fetching data:", error);
-            displayBanner(xhr);
+            $("#oidcIssuer").text(response.issuer);
         });
-    }
-    
-    $("button[name=saml2ProtocolPostButton]").off().on("click", () => {
-        const form = document.getElementById("fmSaml2Protocol");
-        if (!form.reportValidity()) {
-            return false;
-        }
-        const username = $("#saml2ProtocolUsername").val();
-        const password = $("#saml2ProtocolPassword").val();
-        const entityId = $("#saml2ProtocolEntityId").val();
 
-        $.post(`${actuatorEndpoints.samlpostprofileresponse}`, {
-            username: username,
-            password: password,
-            entityId: entityId
-        }, data => {
-            const editor = initializeAceEditor("saml2ProtocolEditor", "xml");
-            editor.setReadOnly(true);
-            editor.setValue(new XMLSerializer().serializeToString(data));
-            editor.gotoLine(1);
-            $("#saml2ProtocolEditorContainer").removeClass("d-none");
-            $("#saml2ProtocolLogoutEditor").addClass("d-none");
-        }).fail((xhr, status, error) => {
-            displayBanner(xhr);
-            $("#saml2ProtocolEditorContainer").addClass("d-none");
-        });
-    });
-
-    $("button[name=saml2ProtocolLogoutButton]").off().on("click", () => {
-        const entityId = document.getElementById("saml2ProtocolEntityId");
-        if (!entityId.checkValidity()) {
-            entityId.reportValidity();
-            return false;
-        }
-        $.ajax({
-            url: `${actuatorEndpoints.samlpostprofileresponse}/logout/post`,
-            type: "POST",
-            data: {
-                entityId: $("#saml2ProtocolEntityId").val()
-            },
-            success: (response, textStatus, jqXHR) => {
-                const saml2ProtocolEditor = initializeAceEditor("saml2ProtocolEditor", "html");
-                saml2ProtocolEditor.setReadOnly(true);
-                saml2ProtocolEditor.setValue(response);
-                saml2ProtocolEditor.gotoLine(1);
-
-                const logoutRequest = atob(jqXHR.getResponseHeader("LogoutRequest"));
-                const saml2ProtocolLogoutEditor = initializeAceEditor("saml2ProtocolLogoutEditor", "xml");
-                saml2ProtocolLogoutEditor.setReadOnly(true);
-                saml2ProtocolLogoutEditor.setValue(logoutRequest);
-                saml2ProtocolLogoutEditor.gotoLine(1);
-
-                $("#saml2ProtocolEditorContainer").removeClass("d-none");
-                $("#saml2ProtocolLogoutEditor").removeClass("d-none");
-            },
-            error: (jqXHR, textStatus, errorThrown) => {
+        $("button[name=oidcOpConfigurationButton]").off().on("click", () => {
+            hideBanner();
+            $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, response => {
+                let oidcOpConfigurationDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("oidcOpConfigurationDialog"));
+                const editor = initializeAceEditor("oidcOpConfigurationDialogEditor", "json");
+                editor.setValue(JSON.stringify(response, null, 2));
+                editor.gotoLine(1);
+                editor.setReadOnly(true);
+                oidcOpConfigurationDialog["open"]();
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
                 displayBanner(xhr);
-                $("#saml2ProtocolEditorContainer").addClass("d-none");
-                $("#saml2ProtocolLogoutEditor").addClass("d-none");
-            }
+            });
         });
-    });
 
-
-    $("button[name=saml2MetadataCacheInvalidateButton]").off().on("click", () => {
-        hideBanner();
-        $("#saml2MetadataCacheEditorContainer").addClass("d-none");
-
-        swal({
-            title: "Are you sure you want to invalidate the cache entry?",
-            text: "Once deleted, the change will take effect immediately.",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true
-        })
-            .then((willDelete) => {
-                if (willDelete) {
-                    $.ajax({
-                        url: `${actuatorEndpoints.samlidpregisteredservicemetadatacache}`,
-                        type: "DELETE",
-                        data: {
-                            entityId: $("#saml2MetadataCacheEntityId").val(),
-                            serviceId: $("#saml2MetadataCacheService").val()
-                        },
-                        success: (response, textStatus, jqXHR) => {
+        $("button[name=oidcKeyRotationButton]").off().on("click", () => {
+            hideBanner();
+            swal({
+                title: "Are you sure you want to rotate keys?",
+                text: "Once rotated, the change will take effect immediately.",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true
+            })
+                .then((willDo) => {
+                    if (willDo) {
+                        $("#oidcKeyRotationButton").prop("disabled", true);
+                        $.get(`${actuatorEndpoints.oidcjwks}/rotate`, response => {
                             swal({
-                                title: "Cached metadata record(s) removed.",
-                                text: "Cached metadata entry has been removed successfully.",
+                                title: "Done!",
+                                text: "Keys in the OpenID Connect keystore are successfully rotated.",
                                 buttons: false,
                                 icon: "success",
                                 timer: 1000
                             });
-                        },
-                        error: (jqXHR, textStatus, errorThrown) => {
-                            displayBanner(jqXHR);
-                        }
-                    });
-                }
-            });
-    });
-
-    $("button[name=saml2MetadataCacheFetchButton]").off().on("click", function () {
-        hideBanner();
-
-        $(this).prop("disabled", true);
-        $.ajax({
-            url: `${actuatorEndpoints.samlidpregisteredservicemetadatacache}`,
-            type: "GET",
-            data: {
-                entityId: $("#saml2MetadataCacheEntityId").val(),
-                serviceId: $("#saml2MetadataCacheService").val()
-            },
-            success: (response, textStatus, jqXHR) => {
-                console.log(response);
-
-                const editor = initializeAceEditor("saml2MetadataCacheEditor", "xml");
-                editor.setReadOnly(true);
-                for (const [entityId, entry] of Object.entries(response)) {
-                    editor.setValue(entry.metadata);
-                    $("#saml2MetadataCacheDetails").html(`<i class="mdc-tab__icon mdi mdi-clock" aria-hidden="true"></i> Cache Instant: <code>${entry.cachedInstant}</code>`);
-                }
-                editor.gotoLine(1);
-                $("#saml2MetadataCacheEditorContainer").removeClass("d-none");
-                $("#saml2MetadataCacheDetails").removeClass("d-none");
-                $(this).prop("disabled", false);
-            },
-            error: (jqXHR, textStatus, errorThrown) => {
-                displayBanner(jqXHR);
-                $("#saml2MetadataCacheEditorContainer").addClass("d-none");
-                $("#saml2MetadataCacheDetails").addClass("d-none");
-                $(this).prop("disabled", false);
-            }
+                            $("#oidcKeyRotationButton").prop("disabled", false);
+                        }).fail((xhr, status, error) => {
+                            console.error("Error fetching data:", error);
+                            displayBanner(xhr);
+                            $("#oidcKeyRotationButton").prop("disabled", false);
+                        });
+                    }
+                });
         });
 
-    });
+        $("button[name=oidcKeyRevocationButton]").off().on("click", () => {
+            hideBanner();
+            swal({
+                title: "Are you sure you want to revoke keys?",
+                text: "Once revoked, the change will take effect immediately.",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true
+            })
+                .then((willDo) => {
+                    if (willDo) {
+                        $("#oidcKeyRevocationButton").prop("disabled", true);
+                        $.get(`${actuatorEndpoints.oidcjwks}/revoke`, response => {
+                            swal({
+                                title: "Done!",
+                                text: "Keys in the OpenID Connect keystore are successfully revoked.",
+                                buttons: false,
+                                icon: "success",
+                                timer: 1000
+                            });
+                            $("#oidcKeyRevocationButton").prop("disabled", false);
+                        }).fail((xhr, status, error) => {
+                            console.error("Error fetching data:", error);
+                            displayBanner(xhr);
+                            $("#oidcKeyRevocationButton").prop("disabled", false);
+                        });
+                    }
+                });
+        });
+
+        $("button[name=oidcProtocolButton]").off().on("click", () => {
+            hideBanner();
+            const oidcForm = document.getElementById("fmOidcProtocol");
+            if (!oidcForm.checkValidity()) {
+                oidcForm.reportValidity();
+                return false;
+            }
+
+            function decodeJWT(token) {
+                const parts = token.split(".");
+                if (parts.length === 3) {
+                    const header = JSON.parse(atob(parts[0]));
+                    const payload = JSON.parse(atob(parts[1]));
+                    const signature = parts[2];
+                    return {
+                        header: header,
+                        payload: payload,
+                        signature: signature
+                    };
+                }
+                return {};
+            }
+
+            $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, oidcConfiguration => {
+
+                const clientId = $("#oidcProtocolClientId").val();
+                const clientSecret = $("#oidcProtocolClientSecret").val();
+                const scopes = encodeURIComponent($("#oidcProtocolScopes").val());
+
+                $.ajax({
+                    url: `${oidcConfiguration.token_endpoint}?grant_type=client_credentials&scope=${scopes}`,
+                    type: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Basic ${btoa(`${clientId}:${clientSecret}`)}`
+                    },
+                    success: (response, textStatus, xhr) => {
+                        console.log(response);
+                        const oidcProtocolEditorTokens = initializeAceEditor("oidcProtocolEditorTokens", "json");
+                        oidcProtocolEditorTokens.setReadOnly(true);
+                        oidcProtocolEditorTokens.setValue(JSON.stringify(response, null, 2));
+                        oidcProtocolEditorTokens.gotoLine(1);
+
+                        const oidcProtocolEditorIdTokenClaims = initializeAceEditor("oidcProtocolEditorIdTokenClaims", "json");
+                        oidcProtocolEditorIdTokenClaims.setReadOnly(true);
+                        const idToken = response.id_token;
+                        const decodedIdToken = decodeJWT(idToken);
+                        oidcProtocolEditorIdTokenClaims.setValue(JSON.stringify(decodedIdToken.payload, null, 2));
+                        oidcProtocolEditorIdTokenClaims.gotoLine(1);
+
+
+                        const oidcProtocolEditorProfile = initializeAceEditor("oidcProtocolEditorProfile", "json");
+                        oidcProtocolEditorProfile.setReadOnly(true);
+                        const accessToken = response.access_token;
+
+                        $.post(`${oidcConfiguration.userinfo_endpoint}`, {
+                            access_token: accessToken
+                        }, data => {
+                            oidcProtocolEditorProfile.setValue(JSON.stringify(data, null, 2));
+                            oidcProtocolEditorProfile.gotoLine(1);
+                        }).fail((xhr, status, error) => {
+                            console.error("Error fetching data:", error);
+                            displayBanner(xhr);
+                        });
+                        $("#oidcProtocolEditorContainer").removeClass("d-none");
+                    },
+                    error: (xhr, textStatus, errorThrown) => {
+                        $("#oidcProtocolEditorContainer").addClass("d-none");
+                        console.error("Error fetching data:", errorThrown);
+                        displayBanner(xhr);
+                    }
+                });
+
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayBanner(xhr);
+                $("#oidcProtocolEditorContainer").addClass("d-none");
+            });
+
+
+        });
+    }
+}
+
+async function initializeSAML2ProtocolOperations() {
+    if (CAS_FEATURES.includes("SAMLIdentityProvider")) {
+        if (actuatorEndpoints.info) {
+            $.get(actuatorEndpoints.info, response => {
+                hljs.highlightAll();
+                $("#saml2EntityId").text(response.saml2.entityId);
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayBanner(xhr);
+            });
+        }
+
+        $("button[name=saml2ProtocolPostButton]").off().on("click", () => {
+            const form = document.getElementById("fmSaml2Protocol");
+            if (!form.reportValidity()) {
+                return false;
+            }
+            const username = $("#saml2ProtocolUsername").val();
+            const password = $("#saml2ProtocolPassword").val();
+            const entityId = $("#saml2ProtocolEntityId").val();
+
+            $.post(`${actuatorEndpoints.samlpostprofileresponse}`, {
+                username: username,
+                password: password,
+                entityId: entityId
+            }, data => {
+                const editor = initializeAceEditor("saml2ProtocolEditor", "xml");
+                editor.setReadOnly(true);
+                editor.setValue(new XMLSerializer().serializeToString(data));
+                editor.gotoLine(1);
+                $("#saml2ProtocolEditorContainer").removeClass("d-none");
+                $("#saml2ProtocolLogoutEditor").addClass("d-none");
+            }).fail((xhr, status, error) => {
+                displayBanner(xhr);
+                $("#saml2ProtocolEditorContainer").addClass("d-none");
+            });
+        });
+
+        $("button[name=saml2ProtocolLogoutButton]").off().on("click", () => {
+            const entityId = document.getElementById("saml2ProtocolEntityId");
+            if (!entityId.checkValidity()) {
+                entityId.reportValidity();
+                return false;
+            }
+            $.ajax({
+                url: `${actuatorEndpoints.samlpostprofileresponse}/logout/post`,
+                type: "POST",
+                data: {
+                    entityId: $("#saml2ProtocolEntityId").val()
+                },
+                success: (response, textStatus, jqXHR) => {
+                    const saml2ProtocolEditor = initializeAceEditor("saml2ProtocolEditor", "html");
+                    saml2ProtocolEditor.setReadOnly(true);
+                    saml2ProtocolEditor.setValue(response);
+                    saml2ProtocolEditor.gotoLine(1);
+
+                    const logoutRequest = atob(jqXHR.getResponseHeader("LogoutRequest"));
+                    const saml2ProtocolLogoutEditor = initializeAceEditor("saml2ProtocolLogoutEditor", "xml");
+                    saml2ProtocolLogoutEditor.setReadOnly(true);
+                    saml2ProtocolLogoutEditor.setValue(logoutRequest);
+                    saml2ProtocolLogoutEditor.gotoLine(1);
+
+                    $("#saml2ProtocolEditorContainer").removeClass("d-none");
+                    $("#saml2ProtocolLogoutEditor").removeClass("d-none");
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    displayBanner(xhr);
+                    $("#saml2ProtocolEditorContainer").addClass("d-none");
+                    $("#saml2ProtocolLogoutEditor").addClass("d-none");
+                }
+            });
+        });
+        
+        $("button[name=saml2MetadataCacheInvalidateButton]").off().on("click", () => {
+            hideBanner();
+            $("#saml2MetadataCacheEditorContainer").addClass("d-none");
+
+            swal({
+                title: "Are you sure you want to invalidate the cache entry?",
+                text: "Once deleted, the change will take effect immediately.",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        $.ajax({
+                            url: `${actuatorEndpoints.samlidpregisteredservicemetadatacache}`,
+                            type: "DELETE",
+                            data: {
+                                entityId: $("#saml2MetadataCacheEntityId").val(),
+                                serviceId: $("#saml2MetadataCacheService").val()
+                            },
+                            success: (response, textStatus, jqXHR) => {
+                                swal({
+                                    title: "Cached metadata record(s) removed.",
+                                    text: "Cached metadata entry has been removed successfully.",
+                                    buttons: false,
+                                    icon: "success",
+                                    timer: 1000
+                                });
+                            },
+                            error: (jqXHR, textStatus, errorThrown) => {
+                                displayBanner(jqXHR);
+                            }
+                        });
+                    }
+                });
+        });
+
+        $("button[name=saml2MetadataCacheFetchButton]").off().on("click", function () {
+            hideBanner();
+
+            $(this).prop("disabled", true);
+            $.ajax({
+                url: `${actuatorEndpoints.samlidpregisteredservicemetadatacache}`,
+                type: "GET",
+                data: {
+                    entityId: $("#saml2MetadataCacheEntityId").val(),
+                    serviceId: $("#saml2MetadataCacheService").val()
+                },
+                success: (response, textStatus, jqXHR) => {
+                    console.log(response);
+
+                    const editor = initializeAceEditor("saml2MetadataCacheEditor", "xml");
+                    editor.setReadOnly(true);
+                    for (const [entityId, entry] of Object.entries(response)) {
+                        editor.setValue(entry.metadata);
+                        $("#saml2MetadataCacheDetails").html(`<i class="mdc-tab__icon mdi mdi-clock" aria-hidden="true"></i> Cache Instant: <code>${entry.cachedInstant}</code>`);
+                    }
+                    editor.gotoLine(1);
+                    $("#saml2MetadataCacheEditorContainer").removeClass("d-none");
+                    $("#saml2MetadataCacheDetails").removeClass("d-none");
+                    $(this).prop("disabled", false);
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    displayBanner(jqXHR);
+                    $("#saml2MetadataCacheEditorContainer").addClass("d-none");
+                    $("#saml2MetadataCacheDetails").addClass("d-none");
+                    $(this).prop("disabled", false);
+                }
+            });
+
+        });
+    }
 }
 
 async function initializePalantir() {
     try {
-        await Promise.all([
-            initializeAllCharts(),
-            initializeScheduledTasksOperations(),
-            initializeServicesOperations(),
-            initializeAccessStrategyOperations(),
-            initializeTicketsOperations(),
-            initializeSystemOperations(),
-            initializeLoggingOperations(),
-            initializeSsoSessionOperations(),
-            initializeConfigurationOperations(),
-            initializePersonDirectoryOperations(),
-            initializeAuthenticationOperations(),
-            initializeConsentOperations(),
-            initializeCasProtocolOperations(),
-            initializeSAML2ProtocolOperations(),
-            initializeSAML1ProtocolOperations(),
-            initializeOidcProtocolOperations(),
-            initializeThrottlesOperations()
-        ]);
+        await initializeCasFeatures().then(() => {
+            Promise.all([
+                initializeAllCharts(),
+                initializeScheduledTasksOperations(),
+                initializeServicesOperations(),
+                initializeAccessStrategyOperations(),
+                initializeTicketsOperations(),
+                initializeSystemOperations(),
+                initializeLoggingOperations(),
+                initializeSsoSessionOperations(),
+                initializeConfigurationOperations(),
+                initializePersonDirectoryOperations(),
+                initializeAuthenticationOperations(),
+                initializeConsentOperations(),
+                initializeCasProtocolOperations(),
+                initializeSAML2ProtocolOperations(),
+                initializeSAML1ProtocolOperations(),
+                initializeOidcProtocolOperations(),
+                initializeThrottlesOperations()
+            ]);
+        });
+
         setTimeout(() => {
             if (!actuatorEndpoints.registeredservices) {
                 $("#applicationsTabButton").addClass("d-none");
