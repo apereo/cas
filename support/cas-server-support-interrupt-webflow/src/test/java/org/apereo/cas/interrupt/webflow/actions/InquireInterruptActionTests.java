@@ -11,7 +11,6 @@ import org.apereo.cas.interrupt.InterruptInquiryExecutionPlanConfigurer;
 import org.apereo.cas.interrupt.InterruptResponse;
 import org.apereo.cas.interrupt.InterruptTrackingEngine;
 import org.apereo.cas.interrupt.webflow.InterruptUtils;
-import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;

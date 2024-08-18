@@ -43,7 +43,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.engine.Flow;
