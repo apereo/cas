@@ -9,7 +9,7 @@ itsdangerous==2.2.0
 locust==2.31.3
 MarkupSafe==2.1.5
 msgpack-python==0.5.6
-pyzmq==26.1.0
+pyzmq==26.1.1
 pip==24.2
 six==1.16.0
 setuptools==72.2.0
