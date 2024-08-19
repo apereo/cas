@@ -82,6 +82,17 @@
                 </button>
             </span>
 
+            <span th:if="${#strings.equalsIgnoreCase(recaptchaVersion, 'FRIENDLY_CAPTCHA')}" th:remove="tag">
+                <button class="mdc-button mdc-button--raised btn btn-primary btn btn-primary"
+                        th:name="${name ?: 'submitBtn'}"
+                        th:id="${id ?: 'submitBtn'}"
+                        accesskey="l"
+                        type="submit"
+                        value="Login5">
+                    <span class="mdc-button__label" th:text="#{${messageKey}}">Login</span>
+                </button>
+            </span>
+
         </span>
 
     </th:block>

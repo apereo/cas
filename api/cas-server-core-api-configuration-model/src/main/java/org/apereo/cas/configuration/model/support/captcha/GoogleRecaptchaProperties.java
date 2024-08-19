@@ -132,6 +132,10 @@ public class GoogleRecaptchaProperties implements CasFeatureModule, Serializable
          * with just a simple snippet of free code. Moreover, Turnstile stops abuse and confirms
          * visitors are real without the data privacy concerns or awful user experience of CAPTCHAs.
          */
-        TURNSTILE
+        TURNSTILE,
+        /**
+         * Friendly captcha is a European alternative, accessible and GDPR compliant.
+         */
+        FRIENDLY_CAPTCHA
     }
 }
