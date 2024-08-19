@@ -322,7 +322,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
         val ticketGrantingTicket = tokenRequestContext.getTicketGrantingTicket() == null || tokenRequestContext.getTicketGrantingTicket().isExpired()
             ? null : tokenRequestContext.getTicketGrantingTicket();
         val scopes = tokenRequestContext.getGrantType() == OAuth20GrantTypes.REFRESH_TOKEN
-                ? tokenRequestContext.getToken().getScopes() : tokenRequestContext.getScopes();
+            ? tokenRequestContext.getToken().getScopes() : tokenRequestContext.getScopes();
         val refreshToken = refreshTokenFactory.create(tokenRequestContext.getService(),
             tokenRequestContext.getAuthentication(),
             ticketGrantingTicket,
