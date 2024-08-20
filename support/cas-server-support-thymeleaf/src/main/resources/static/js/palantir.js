@@ -1021,6 +1021,28 @@ async function initializeLoggingOperations() {
             updateLoggersTable();
         }
     });
+
+    if (actuatorEndpoints.cloudwatchlogs) {
+        setInterval(() => {
+            const logDataStream = $("#logDataStream");
+            $.ajax({
+                url: `${actuatorEndpoints.cloudwatchlogs}/stream`,
+                type: 'GET',
+                dataType: 'json',
+                success: logEvents => {
+                    logDataStream.empty();
+                    logEvents.forEach(log => {
+                        let className = `log-${log.level.toLowerCase()}`;
+                        const logEntry = `<div>${new Date(log.timestamp).toLocaleString()} - <span class='${className}'>[${log.level}]</span> - ${log.message}</div>`;
+                        logDataStream.append($(logEntry));
+                    });
+                    logDataStream.scrollTop(logDataStream.prop("scrollHeight"));
+                }
+            });
+        }, 1000);
+    } else {
+        $("#loggingDataStreamOps").parent().addClass("d-none");
+    }
 }
 
 async function initializeSystemOperations() {

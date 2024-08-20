@@ -8,17 +8,29 @@
 <body>
 <span th:fragment="main">
     <div class="attribute-tab w-100 d-none" id="attribute-tab-5">
-        <h3>Logger Configuration</h3>
-        <table id="loggersTable" class="mdc-data-table__table table table-striped noborder">
-            <thead>
-            <tr class="mdc-data-table__header-row">
-                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Logger</th>
-                <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Level</th>
-            </tr>
-            </thead>
-            <tbody class="mdc-data-table__content">
-            </tbody>
-        </table>
+
+        <div class="jqueryui-tabs">
+            <ul>
+                <li><a id="loggingConfigurationOps" href="#logconfiguration-tab">Loggers</a></li>
+                <li><a id="loggingDataStreamOps" href="#logdatastream-tab">Log Events</a></li>
+            </ul>
+            <div id="logconfiguration-tab">
+                <table id="loggersTable" class="mdc-data-table__table table table-striped noborder">
+                    <thead>
+                    <tr class="mdc-data-table__header-row">
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Logger</th>
+                        <th class="mdc-data-table__header-cell" role="columnheader" scope="col">Level</th>
+                    </tr>
+                    </thead>
+                    <tbody class="mdc-data-table__content">
+                    </tbody>
+                </table>
+            </div>
+            <div id="logdatastream-tab">
+                <pre><code id="logDataStream" style="height: 70vh; overflow-y: scroll;"
+                           class="border-rounded language-json"></code></pre>
+            </div>
+        </div>
     </div>
 </span>
 </body>

@@ -48,3 +48,11 @@ AWS credentials are fetched from the following sources automatically, where rele
 `createIfNeeded`, `createLogGroupIfNeeded`, and `createLogStreamIfNeeded` are optional; `createIfNeeded` will default to
  `true` while `createLogGroupIfNeeded` and `createLogStreamIfNeeded` default to `false`. Any `true` value will take
  precedence (i.e., set all to `false` to not create anything).
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="cloudWatchLogs" %}
+
+{% include_cached casproperties.html properties="cas.logging.cloud-watch" %}
