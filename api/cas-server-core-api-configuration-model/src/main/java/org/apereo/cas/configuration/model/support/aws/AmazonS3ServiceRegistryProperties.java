@@ -18,7 +18,6 @@ import java.io.Serial;
 @Setter
 @RequiresModule(name = "cas-server-support-aws-s3-service-registry")
 @Accessors(chain = true)
-
 public class AmazonS3ServiceRegistryProperties extends BaseAmazonWebServicesProperties {
     @Serial
     private static final long serialVersionUID = -6790277338807046269L;

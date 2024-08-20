@@ -1,9 +1,11 @@
 package org.apereo.cas.support.saml.web.idp.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -20,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML2")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ExtendWith(CasTestExtension.class)
 public class SamlIdPInfoEndpointContributorTests {
     @Autowired
     private CasConfigurationProperties casProperties;

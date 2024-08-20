@@ -98,7 +98,7 @@ If you (or your employer) benefit from this project, please consider becoming a 
 
 [cascodecov]: https://codecov.io/gh/apereo/cas
 [devlocity]: https://develocity.apereo.org
-[maintenance]: https://apereo.github.io/cas/development/developer/Maintenance-Policy.html
+[maintenance]: https://apereo.github.io/cas/developer/Maintenance-Policy.html
 [releaseschedule]: https://github.com/apereo/cas/milestones
 [wiki]: https://apereo.github.io/cas
 [githubreleases]: https://github.com/apereo/cas/releases
@@ -112,7 +112,7 @@ If you (or your employer) benefit from this project, please consider becoming a 
 [casgitter]: https://gitter.im/apereo/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 [casslack]: https://apereo.slack.com/
 [blog]: https://apereo.github.io/
-[casbuildprocess]: https://apereo.github.io/cas/development/developer/Build-Process.html
+[casbuildprocess]: https://apereo.github.io/cas/developer/Build-Process.html
 [githubcontributors]: https://github.com/apereo/cas/graphs/contributors
 [casjavadocs]: https://www.javadoc.io/doc/org.apereo.cas
 [apereocas]: https://www.apereo.org/projects/cas

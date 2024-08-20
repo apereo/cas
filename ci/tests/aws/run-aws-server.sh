@@ -18,6 +18,18 @@ if [ $retVal == 0 ]; then
     echo "Verifying email identity..."
     docker exec localstack bash -c "awslocal ses verify-email-identity --email hello@example.com"
     echo "Verified email identity."
+
+    echo "Create Log group..."
+    docker exec localstack bash -c "awslocal logs create-log-group --log-group-name cas-log-group"
+    docker exec localstack bash -c "awslocal logs create-log-stream --log-group-name cas-log-group --log-stream-name cas-log-stream"
+    
+    for i in {1..50} ; do
+        docker exec localstack bash -c "awslocal logs put-log-events \
+          --log-group-name cas-log-group \
+          --log-stream-name cas-log-stream \
+          --log-events timestamp=$(date +%s)000,message=\"This is a test log message with id ${i}\""
+    done
+    
     echo "localstack docker container is running."
 else
     echo "localstack docker container failed to start."

@@ -4,7 +4,7 @@
   "clientSecret": "...",
   "serviceId": "^https://.*",
   "name": "OIDC",
-  "id": 1,
+  "id": 2,
   "description": "OpenID Connect service definition that allows the client to use the authorization code grant flow and directly controls the attribute release policy regardless of scopes.",
   "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code", "client_credentials" ] ],
   "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
