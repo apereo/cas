@@ -54,6 +54,16 @@ ext.libraries = [
                     exclude(group: "ch.qos.logback.contrib", module: "logback-json-classic")
                     exclude(group: "com.google.cloud", module: "google-cloud-logging-logback")
                     exclude(group: "net.logstash.logback", module: "logstash-logback-encoder")
+                },
+                dependencies.create("com.google.cloud:google-cloud-logging:$googleCloudLoggingVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "commons-codec", module: "commons-codec")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                    exclude(group: "ch.qos.logback.contrib", module: "logback-json-classic")
+                    exclude(group: "com.google.cloud", module: "google-cloud-logging-logback")
+                    exclude(group: "net.logstash.logback", module: "logstash-logback-encoder")
                 }
         ],
         googlecloudsecretsmanager  : [

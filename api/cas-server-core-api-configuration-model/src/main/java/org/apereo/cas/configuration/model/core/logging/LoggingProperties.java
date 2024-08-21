@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.logging;
 
 import org.apereo.cas.configuration.model.support.aws.AmazonCloudWatchLogsProperties;
+import org.apereo.cas.configuration.model.support.aws.GoogleCloudLogsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -37,4 +38,10 @@ public class LoggingProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AmazonCloudWatchLogsProperties cloudwatch = new AmazonCloudWatchLogsProperties();
+
+    /**
+     * Google Cloud logs settings.
+     */
+    @NestedConfigurationProperty
+    private GoogleCloudLogsProperties gcp = new GoogleCloudLogsProperties();
 }

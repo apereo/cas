@@ -1022,23 +1022,30 @@ async function initializeLoggingOperations() {
         }
     });
 
-    if (actuatorEndpoints.cloudwatchlogs) {
+    if (actuatorEndpoints.cloudwatchlogs || actuatorEndpoints.gcpLogs) {
         setInterval(() => {
             const logDataStream = $("#logDataStream");
-            $.ajax({
-                url: `${actuatorEndpoints.cloudwatchlogs}/stream`,
-                type: 'GET',
-                dataType: 'json',
-                success: logEvents => {
-                    logDataStream.empty();
-                    logEvents.forEach(log => {
-                        let className = `log-${log.level.toLowerCase()}`;
-                        const logEntry = `<div>${new Date(log.timestamp).toLocaleString()} - <span class='${className}'>[${log.level}]</span> - ${log.message}</div>`;
-                        logDataStream.append($(logEntry));
+
+            async function fetchLogsFrom(endpoint) {
+                if (endpoint) {
+                    $.ajax({
+                        url: `${endpoint}/stream`,
+                        type: "GET",
+                        dataType: "json",
+                        success: logEvents => {
+                            logDataStream.empty();
+                            logEvents.forEach(log => {
+                                let className = `log-${log.level.toLowerCase()}`;
+                                const logEntry = `<div>${new Date(log.timestamp).toLocaleString()} - <span class='${className}'>[${log.level}]</span> - ${log.message}</div>`;
+                                logDataStream.append($(logEntry));
+                            });
+                            logDataStream.scrollTop(logDataStream.prop("scrollHeight"));
+                        }
                     });
-                    logDataStream.scrollTop(logDataStream.prop("scrollHeight"));
                 }
-            });
+            }
+            fetchLogsFrom(actuatorEndpoints.cloudwatchlogs);
+            fetchLogsFrom(actuatorEndpoints.gcpLogs);
         }, 1000);
     } else {
         $("#loggingDataStreamOps").parent().addClass("d-none");
