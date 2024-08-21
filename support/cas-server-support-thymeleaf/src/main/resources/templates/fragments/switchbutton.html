@@ -14,7 +14,8 @@
 <main>
     <th:div th:fragment="switchbutton (id,label)">
         <div th:id="${id + 'SwitchButtonPanel'}" style="display: none">
-            <button th:id="${id + 'Button'}" th:name="${id + 'Button'}" class="mdc-switch mdc-switch--unselected"
+            <button th:id="${id + 'Button'}" th:name="${id + 'Button'}"
+                    class="mdc-switch mdc-switch--unselected"
                     type="button" role="switch" aria-checked="false">
                 <div class="mdc-switch__track"></div>
                 <div class="mdc-switch__handle-track">

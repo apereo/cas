@@ -52,7 +52,7 @@ public class CloudWatchLogsEndpointTests {
 
     @Test
     void verifyOperation() throws Exception {
-        val events = cloudWatchLogsEndpoint.fetchLogEntries(20);
+        val events = cloudWatchLogsEndpoint.fetchLogEntries(20, "info");
         assertFalse(events.isEmpty());
     }
 }

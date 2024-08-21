@@ -15,6 +15,7 @@ dependencies {
     implementation project(":core:cas-server-core-events-api")
     implementation project(":core:cas-server-core-notifications-api")
 
+    testImplementation libraries.metrics
 
     testImplementation project(":core:cas-server-core-notifications")
     testImplementation project(":core:cas-server-core-configuration")

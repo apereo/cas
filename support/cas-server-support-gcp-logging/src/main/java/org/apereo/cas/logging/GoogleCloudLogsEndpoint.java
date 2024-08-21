@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
@@ -41,15 +42,25 @@ public class GoogleCloudLogsEndpoint extends BaseCasRestActuatorEndpoint {
      * Fetch log entries as a list.
      *
      * @param count the count
+     * @param level the level
      * @return the list
      */
     @GetMapping(path = "/stream", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Fetch the last X number of log entries from GCP",
-        parameters = @Parameter(name = "count", in = ParameterIn.QUERY, description = "The number of log entries to fetch", required = false))
-    public List<LogEvent> fetchLogEntries(@RequestParam(name = "count", required = false, defaultValue = "50") final int count) {
+        parameters = {
+            @Parameter(name = "count", in = ParameterIn.QUERY, description = "The number of log entries to fetch", required = false),
+            @Parameter(name = "level", in = ParameterIn.QUERY, description = "The log level to filter statements", required = false)
+        })
+    public List<LogEvent> fetchLogEntries(
+        @RequestParam(name = "count", required = false, defaultValue = "50") final int count,
+        @RequestParam(name = "level", required = false) final String level) {
         val logName = casProperties.getLogging().getGcp().getLogName();
+        var filter = "logName=" + logName;
+        if (StringUtils.isNotBlank(level)) {
+            filter += " AND severity=" + level.toUpperCase(Locale.ENGLISH);
+        }
         val logEntries = loggingService.listLogEntries(
-            Logging.EntryListOption.filter("logName=" + logName),
+            Logging.EntryListOption.filter(filter),
             Logging.EntryListOption.sortOrder(Logging.SortingField.TIMESTAMP, Logging.SortingOrder.DESCENDING),
             Logging.EntryListOption.pageSize(count)
         ).iterateAll().iterator();

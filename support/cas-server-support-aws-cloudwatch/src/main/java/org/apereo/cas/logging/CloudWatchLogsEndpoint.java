@@ -50,8 +50,12 @@ public class CloudWatchLogsEndpoint extends BaseCasRestActuatorEndpoint {
      */
     @GetMapping(path = "/stream", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Fetch the last X number of log entries from AWS cloud watch",
-        parameters = @Parameter(name = "count", in = ParameterIn.QUERY, description = "The number of log entries to fetch", required = false))
-    public List<LogEvent> fetchLogEntries(@RequestParam(name = "count", required = false, defaultValue = "50") final int count) {
+        parameters = {
+            @Parameter(name = "count", in = ParameterIn.QUERY, description = "The number of log entries to fetch", required = false),
+            @Parameter(name = "level", in = ParameterIn.QUERY, description = "The log level to filter statements", required = false)
+        })
+    public List<LogEvent> fetchLogEntries(@RequestParam(name = "count", required = false, defaultValue = "50") final int count,
+                                          @RequestParam(name = "level", required = false) final String level) {
         val cloudwatch = casProperties.getLogging().getCloudwatch();
         val logEventsRequest = GetLogEventsRequest
             .builder()
@@ -75,6 +79,7 @@ public class CloudWatchLogsEndpoint extends BaseCasRestActuatorEndpoint {
                 }
                 return new LogEvent(message, DateTimeUtils.zonedDateTimeOf(event.timestamp()), logLevel);
             })
+            .filter(event -> StringUtils.isBlank(level) || event.level().equalsIgnoreCase(level))
             .toList();
     }
 

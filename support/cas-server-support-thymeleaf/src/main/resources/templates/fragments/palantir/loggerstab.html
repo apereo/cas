@@ -27,8 +27,52 @@
                 </table>
             </div>
             <div id="logdatastream-tab">
-                <pre><code id="logDataStream" style="height: 70vh; overflow-y: scroll;"
-                           class="border-rounded language-json"></code></pre>
+                <p>The latest log statements from CAS application displayed and streamed here.</p>
+
+                <div class="d-flex">
+                    <label for="logLevelFilter">
+                        Log Level:
+                        <select id="logLevelFilter" class="jqueryui-selectmenu">
+                            <option value="" selected>DEFAULT</option>
+                            <option value="TRACE">TRACE</option>
+                            <option value="DEBUG">DEBUG</option>
+                            <option value="INFO">INFO</option>
+                            <option value="WARN">WARN</option>
+                            <option value="ERROR">ERROR</option>
+                        </select>
+                    </label>
+                    <label for="logCountFilter" class="pl-2">
+                        Entries:
+                        <select id="logCountFilter" class="jqueryui-selectmenu">
+                            <option value="5">Last 5 Entries</option>
+                            <option value="15">Last 15 Entries</option>
+                            <option value="25" selected>Last 25 Entries</option>
+                            <option value="50">Last 50 Entries</option>
+                            <option value="100">Last 100 Entries</option>
+                            <option value="150">Last 150 Entries</option>
+                            <option value="200">Last 200 Entries</option>
+                            <option value="500">Last 500 Entries</option>
+                        </select>
+                    </label>
+                    <label for="logRefreshFilter" class="pl-2">
+                        Refresh:
+                        <select id="logRefreshFilter" class="jqueryui-selectmenu">
+                            <option value="1000" selected>Every 1 Seconds</option>
+                            <option value="5000">Every 5 Seconds</option>
+                            <option value="15000">Every 10 Seconds</option>
+                            <option value="30000">Every 30 Seconds</option>
+                            <option value="60000">Every 60 Seconds</option>
+                        </select>
+                    </label>
+                </div>
+                
+                <div class="d-flex">
+                    <pre><code id="logDataStream" style="height: 75vh; overflow-y: scroll;overflow-x: hidden;"
+                               class="border-rounded language-json text-wrap"></code></pre>
+                    <pre><code id="logFileStream" style="height: 75vh; overflow-y: scroll;overflow-x: hidden;"
+                               class="border-rounded language-json text-wrap"></code></pre>
+                </div>
+                <div th:replace="~{fragments/switchbutton :: switchbutton (id='scrollLogs', label='screen.checkbox.scrolllogs.title')}"/>
             </div>
         </div>
     </div>

@@ -1,5 +1,6 @@
 package org.apereo.cas.logging;
 
+import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.core.Filter;
@@ -14,6 +15,8 @@ import org.apache.logging.log4j.core.config.plugins.PluginConfiguration;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 /**
  * This is {@link CasAppender}.
@@ -27,23 +30,23 @@ public class CasAppender extends AbstractAppender {
 
     private final AppenderRef appenderRef;
 
-    /**
-     * Instantiates a new CAS appender.
-     *
-     * @param name        the name
-     * @param config      the config
-     * @param appenderRef the appender ref
-     */
-    public CasAppender(final String name, final Configuration config, final AppenderRef appenderRef) {
-        super(name, null, PatternLayout.createDefaultLayout(), false, Property.EMPTY_ARRAY);
-        this.config = config;
-        this.appenderRef = appenderRef;
+    @Getter
+    private final Queue<LogEvent> logEvents;
+
+    private final int maxLogEntries;
+
+    public CasAppender(final String name, final Configuration config,
+                       final AppenderRef appenderRef, final int maxEntries) {
+        this(name, config, appenderRef, null, maxEntries);
     }
 
-    public CasAppender(final String name, final Configuration config, final AppenderRef appenderRef, final Filter filter) {
+    public CasAppender(final String name, final Configuration config, final AppenderRef appenderRef,
+                       final Filter filter, final int maxEntries) {
         super(name, filter, PatternLayout.createDefaultLayout(), false, Property.EMPTY_ARRAY);
         this.config = config;
         this.appenderRef = appenderRef;
+        this.maxLogEntries = maxEntries;
+        this.logEvents = maxEntries <= 0 ? new ArrayDeque<>() : new ArrayDeque<>(maxEntries);
     }
 
     /**
@@ -59,18 +62,25 @@ public class CasAppender extends AbstractAppender {
     public static CasAppender build(@PluginAttribute("name") final String name,
                                     @PluginElement("AppenderRef") final AppenderRef appenderRef,
                                     @PluginElement("Filter") final Filter filter,
-                                    @PluginConfiguration final Configuration config) {
-        return new CasAppender(name, config, appenderRef, filter);
+                                    @PluginConfiguration final Configuration config,
+                                    @PluginAttribute("maxEntries") final int maxEntries) {
+        return new CasAppender(name, config, appenderRef, filter, maxEntries);
     }
 
     @Override
     public void append(final LogEvent logEvent) {
-        val refName = this.appenderRef.getRef();
+        val refName = appenderRef.getRef();
         if (StringUtils.isNotBlank(refName)) {
-            val appender = this.config.getAppender(refName);
+            val appender = config.getAppender(refName);
             if (appender != null) {
                 val newLogEvent = LoggingUtils.prepareLogEvent(logEvent);
                 appender.append(newLogEvent);
+                if (maxLogEntries > 0) {
+                    if (logEvents.size() >= maxLogEntries) {
+                        logEvents.poll();
+                    }
+                    logEvents.add(newLogEvent.toImmutable());
+                }
             } else {
                 LOGGER.warn("No log appender could be found for [{}]", refName);
             }
