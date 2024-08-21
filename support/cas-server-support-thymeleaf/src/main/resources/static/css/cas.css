@@ -155,23 +155,23 @@ header > nav .cas-brand .cas-logo {
     font-weight: bold;
 }
 
-.log-debug {
+.log-none, .log-debug {
     color: dodgerblue;
     font-weight: bold;
 }
 
-.log-info {
+.log-default, .log-notice, .log-info {
     color: limegreen;
     font-weight: bold;
 }
 
-.log-warn {
+.log-warning, .log-alert, .log-warn {
     color: orange;
     font-weight: bold;
 }
 
-.log-error {
-    color: red;
+.log-fatal, .log-emergency, .log-critical, .log-error {
+    color: orangered;
     font-weight: bold;
 }
 

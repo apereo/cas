@@ -75,3 +75,11 @@ This is an example of the logging configuration:
 
 </Configuration>
 ```
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="gcpLogs" %}
+
+{% include_cached casproperties.html properties="cas.logging.gcp" %}

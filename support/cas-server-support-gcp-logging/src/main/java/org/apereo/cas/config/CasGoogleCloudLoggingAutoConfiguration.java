@@ -3,15 +3,20 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.logging.GoogleCloudLoggingWebInterceptor;
+import org.apereo.cas.logging.GoogleCloudLogsEndpoint;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import com.google.cloud.logging.Logging;
+import com.google.cloud.logging.LoggingOptions;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -60,4 +65,19 @@ public class CasGoogleCloudLoggingAutoConfiguration {
         return plan -> plan.registerWebflowInterceptor(new RefreshableHandlerInterceptor(googleCloudLoggingInterceptor));
     }
 
+    @Bean
+    @ConditionalOnAvailableEndpoint
+    public GoogleCloudLogsEndpoint googleCloudLogsEndpoint(
+        @Qualifier("googleCloudLoggingService") final Logging googleCloudLoggingService,
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext) {
+        return new GoogleCloudLogsEndpoint(casProperties, applicationContext, googleCloudLoggingService);
+    }
+
+    @Bean
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "googleCloudLoggingService")
+    public Logging googleCloudLoggingService() {
+        return LoggingOptions.getDefaultInstance().getService();
+    }
 }

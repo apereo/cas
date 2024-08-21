@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import software.amazon.awssdk.core.SdkSystemSetting;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 4566)
 @SpringBootTest(
     classes = {
+        RefreshAutoConfiguration.class,
         CasAmazonCoreAutoConfiguration.class,
         CasAmazonCloudWatchAutoConfiguration.class
     },
@@ -51,6 +53,6 @@ public class CloudWatchLogsEndpointTests {
     @Test
     void verifyOperation() throws Exception {
         val events = cloudWatchLogsEndpoint.fetchLogEntries(20);
-        assertTrue(!events.isEmpty());
+        assertFalse(events.isEmpty());
     }
 }

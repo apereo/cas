@@ -39,6 +39,6 @@ class HostNameBasedUniqueTicketIdGeneratorTests {
         val id1 = generator.getNewTicketId("TEST");
         val id2 = generator.getNewTicketId("TEST");
         assertNotSame(id1, id2);
-        assertTrue(!id2.endsWith("off"));
+        assertFalse(id2.endsWith("off"));
     }
 }

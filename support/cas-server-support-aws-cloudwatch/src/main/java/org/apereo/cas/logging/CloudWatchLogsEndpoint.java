@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 @Endpoint(id = "cloudWatchLogs", enableByDefault = false)
 @Slf4j
 public class CloudWatchLogsEndpoint extends BaseCasRestActuatorEndpoint {
-    private static final Pattern LOG_LEVEL_PATTERN = Pattern.compile(".*(\\[*(ERROR|DEBUG|INFO|WARN|TRACE)\\]*).*", Pattern.CASE_INSENSITIVE);
+    private static final Pattern LOG_LEVEL_PATTERN = Pattern.compile("(\\[*(FATAL|CRITICAL|NOTICE|WARNING|ERROR|DEBUG|INFO|WARN|TRACE)\\]*)\\s", Pattern.CASE_INSENSITIVE);
 
     private final ObjectProvider<CloudWatchLogsClient> awsLogsClient;
 
@@ -51,7 +51,6 @@ public class CloudWatchLogsEndpoint extends BaseCasRestActuatorEndpoint {
     @GetMapping(path = "/stream", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Fetch the last X number of log entries from AWS cloud watch",
         parameters = @Parameter(name = "count", in = ParameterIn.QUERY, description = "The number of log entries to fetch", required = false))
-    @SuppressWarnings("FutureReturnValueIgnored")
     public List<LogEvent> fetchLogEntries(@RequestParam(name = "count", required = false, defaultValue = "50") final int count) {
         val cloudwatch = casProperties.getLogging().getCloudwatch();
         val logEventsRequest = GetLogEventsRequest
@@ -67,12 +66,12 @@ public class CloudWatchLogsEndpoint extends BaseCasRestActuatorEndpoint {
             .events()
             .stream()
             .map(event -> {
-                var message = event.message();
+                var message = event.message().trim();
                 val matcher = LOG_LEVEL_PATTERN.matcher(message);
                 var logLevel = "INFO";
                 if (matcher.find()) {
                     logLevel = matcher.group(2).toUpperCase(Locale.ENGLISH);
-                    message = StringUtils.remove(message, matcher.group(1));
+                    message = StringUtils.remove(message, matcher.group(1)).trim();
                 }
                 return new LogEvent(message, DateTimeUtils.zonedDateTimeOf(event.timestamp()), logLevel);
             })

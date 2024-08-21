@@ -22,12 +22,16 @@ if [ $retVal == 0 ]; then
     echo "Create Log group..."
     docker exec localstack bash -c "awslocal logs create-log-group --log-group-name cas-log-group"
     docker exec localstack bash -c "awslocal logs create-log-stream --log-group-name cas-log-group --log-stream-name cas-log-stream"
+
+    words=("info" "debug" "trace" "warn" "error")
     
-    for i in {1..50} ; do
+    for i in {1..25} ; do
+        random_index=$((RANDOM % 5))
+        logLevel=${words[$random_index]}
         docker exec localstack bash -c "awslocal logs put-log-events \
           --log-group-name cas-log-group \
           --log-stream-name cas-log-stream \
-          --log-events timestamp=$(date +%s)000,message=\"This is a test log message with id ${i}\""
+          --log-events '[{\"timestamp\": '\"$(date +%s000)\"', \"message\": \"[${logLevel}] This is a ${logLevel} log message, id: ${i}\"}]'" >/dev/null 2>&1
     done
     
     echo "localstack docker container is running."
