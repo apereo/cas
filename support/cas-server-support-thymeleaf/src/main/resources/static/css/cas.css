@@ -597,6 +597,10 @@ span button.toolbar {
     width: 33%;
 }
 
+.w-10 {
+    width: 10% !important;
+}
+
 .w-25 {
     width: 25%;
 }
@@ -851,6 +855,10 @@ select.palantir {
 
 
 /** jQuery UI **/
+
+.ui-selectmenu-open {
+    background: var(--mdc-theme-background);
+}
 
 .ui-tooltip {
     background-color: var(--cas-theme-primary) !important;

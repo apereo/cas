@@ -1,22 +1,23 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.logging.web.LoggingConfigurationEndpoint;
-
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,6 +31,8 @@ import static org.junit.jupiter.api.Assertions.*;
     "logging.config=file:${java.io.tmpdir}/log4j2.xml"
 })
 @Tag("ActuatorEndpoint")
+@Slf4j
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("loggingConfigurationEndpoint")
@@ -45,6 +48,7 @@ class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
+    @Order(1)
     void verifyOperation() throws Throwable {
         assertNotNull(loggingConfigurationEndpoint);
         val configuration = loggingConfigurationEndpoint.configuration();
@@ -54,9 +58,10 @@ class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests {
     }
 
     @Test
-    void verifyUpdateOperation() throws Throwable {
-        assertNotNull(loggingConfigurationEndpoint);
-        assertDoesNotThrow(() ->
-            loggingConfigurationEndpoint.updateLoggerLevel("org.apereo", "WARN", false));
+    @Order(10)
+    void verifyStreamOperation() throws Throwable {
+        LOGGER.warn("This is a test warning");
+        val entries = loggingConfigurationEndpoint.getLogEntries(10, "warn");
+        assertFalse(entries.isEmpty());
     }
 }

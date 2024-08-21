@@ -1,4 +1,4 @@
-const DEFAULT_INTERVAL = 15000;
+const DEFAULT_INTERVAL = 5000;
 
 /**
  * Internal Functions
@@ -31,6 +31,8 @@ let httpRequestResponsesChart = null;
 let httpRequestsByUrlChart = null;
 let auditEventsChart = null;
 let threadDumpChart = null;
+
+let currentActiveTab = Tabs.APPLICATIONS;
 
 const CAS_FEATURES = [];
 
@@ -107,7 +109,7 @@ function fetchServices(callback) {
                     2: `${serviceIdDetails}`,
                     3: `<span serviceId='${service.id}' class="text-wrap">${service.description ?? ""}</span>`,
                     4: `<span serviceId='${service.id}'>${serviceButtons.trim()}</span>`,
-                    5: `${service.id}`,
+                    5: `${service.id}`
                 });
             }
 
@@ -135,16 +137,16 @@ function selectSidebarMenuTab(tab) {
 function navigateToApplication(serviceIdToFind) {
     let applicationsTable = $("#applicationsTable").DataTable();
     applicationsTable.search(String(serviceIdToFind));
-    const foundRows = applicationsTable.rows({ search: 'applied' }).count();
+    const foundRows = applicationsTable.rows({search: "applied"}).count();
     if (foundRows > 0) {
-        const matchingRows = applicationsTable.rows({ search: 'applied' });
-        matchingRows.nodes().to$().addClass('selected');
+        const matchingRows = applicationsTable.rows({search: "applied"});
+        matchingRows.nodes().to$().addClass("selected");
         applicationsTable.draw();
         activateDashboardTab(Tabs.APPLICATIONS);
         selectSidebarMenuTab(Tabs.APPLICATIONS);
     } else {
         displayBanner(`Could not find a registered service with id ${serviceIdToFind}`);
-        applicationsTable.search('').draw();
+        applicationsTable.search("").draw();
     }
 }
 
@@ -265,12 +267,12 @@ async function initializeAccessStrategyOperations() {
             $("#accessStrategyAttributesTable td").addClass("mdc-data-table__cell");
         }
     });
-             
+
     $("button[name=accessStrategyButton]").off().on("click", () => {
         if (actuatorEndpoints.serviceaccess) {
             hideBanner();
             accessStrategyAttributesTable.clear();
-            
+
             const form = document.getElementById("fmAccessStrategy");
             if (!form.reportValidity()) {
                 return false;
@@ -366,7 +368,7 @@ function initializeJvmMetrics() {
         );
     }
 
-    async function fetchJvmMetrics() {
+    async function fetchJvmThreadsMetrics() {
         const promises = [
             "jvm.threads.daemon",
             "jvm.threads.live",
@@ -401,7 +403,7 @@ function initializeJvmMetrics() {
     }
 
     if (actuatorEndpoints.metrics) {
-        fetchJvmMetrics()
+        fetchJvmThreadsMetrics()
             .then(payload => {
                 jvmThreadsChart.data.datasets[0].data = payload;
                 jvmThreadsChart.update();
@@ -502,7 +504,11 @@ async function initializeScheduledTasksOperations() {
 
     if (actuatorEndpoints.metrics) {
         initializeJvmMetrics();
-        setInterval(() => initializeJvmMetrics(), DEFAULT_INTERVAL);
+        setInterval(() => {
+            if (currentActiveTab === Tabs.TASKS) {
+                initializeJvmMetrics();
+            }
+        }, DEFAULT_INTERVAL);
     }
 
     function fetchThreadDump() {
@@ -529,7 +535,11 @@ async function initializeScheduledTasksOperations() {
 
     if (actuatorEndpoints.threaddump) {
         fetchThreadDump();
-        setInterval(() => fetchThreadDump(), DEFAULT_INTERVAL);
+        setInterval(() => {
+            if (currentActiveTab === Tabs.TASKS) {
+                fetchThreadDump();
+            }
+        }, DEFAULT_INTERVAL);
     }
 }
 
@@ -932,8 +942,8 @@ async function initializeLoggingOperations() {
     }
 
     function fetchLoggerData(callback) {
-        if (actuatorEndpoints.loggingConfig) {
-            $.get(actuatorEndpoints.loggingConfig, response => callback(response)).fail((xhr, status, error) => {
+        if (actuatorEndpoints.loggingconfig) {
+            $.get(actuatorEndpoints.loggingconfig, response => callback(response)).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
                 displayBanner(xhr);
             });
@@ -1022,31 +1032,105 @@ async function initializeLoggingOperations() {
         }
     });
 
-    if (actuatorEndpoints.cloudwatchlogs || actuatorEndpoints.gcpLogs) {
-        setInterval(() => {
-            const logDataStream = $("#logDataStream");
+    if (currentActiveTab === Tabs.LOGGING) {
+        updateLoggersTable();
+    }
 
-            async function fetchLogsFrom(endpoint) {
-                if (endpoint) {
-                    $.ajax({
-                        url: `${endpoint}/stream`,
-                        type: "GET",
-                        dataType: "json",
-                        success: logEvents => {
-                            logDataStream.empty();
-                            logEvents.forEach(log => {
-                                let className = `log-${log.level.toLowerCase()}`;
-                                const logEntry = `<div>${new Date(log.timestamp).toLocaleString()} - <span class='${className}'>[${log.level}]</span> - ${log.message}</div>`;
-                                logDataStream.append($(logEntry));
-                            });
+    const logEndpoints = [actuatorEndpoints.cloudwatchlogs, actuatorEndpoints.gcplogs, actuatorEndpoints.loggingconfig, actuatorEndpoints.logfile];
+    const hasLogEndpoint = logEndpoints.some(element => element !== undefined);
+
+    if (hasLogEndpoint) {
+        const scrollSwitch = new mdc.switchControl.MDCSwitch(document.getElementById("scrollLogsButton"));
+        scrollSwitch.selected = true;
+
+        if (actuatorEndpoints.logfile) {
+            $("#logFileStream").parent().addClass("w-50");
+            $("#logDataStream").parent().addClass("w-50");
+        } else {
+            $("#logFileStream").parent().addClass("d-none");
+            $("#logDataStream").parent().addClass("w-100");
+        }
+
+        async function fetchLogsFrom(endpoint) {
+            if (endpoint) {
+                const logDataStream = $("#logDataStream");
+                const level = $("#logLevelFilter").val();
+                const count = $("#logCountFilter").val();
+                console.log("Fetching log data", endpoint, level);
+                $.ajax({
+                    url: `${endpoint}/stream?level=${level}&count=${count}`,
+                    type: "GET",
+                    dataType: "json",
+                    success: logEvents => {
+                        logDataStream.empty();
+                        logEvents.forEach(log => {
+                            let className = `log-${log.level.toLowerCase()}`;
+                            const logEntry = `<div>${new Date(log.timestamp).toLocaleString()} - <span class='${className}'>[${log.level}]</span> - ${log.message}</div>`;
+                            logDataStream.append($(logEntry));
+                        });
+                        if (scrollSwitch.selected) {
                             logDataStream.scrollTop(logDataStream.prop("scrollHeight"));
+                        }
+                    },
+                    error: (xhr, status, error) => {
+                        console.error("Streaming logs failed:", error);
+                    }
+                });
+            }
+        }
+
+        function startStreamingLogFile() {
+            return setInterval(() => {
+                if (currentActiveTab === Tabs.LOGGING) {
+                    const logFileStream = $("#logFileStream");
+                    console.log("Fetching log data from", actuatorEndpoints.logfile);
+                    $.ajax({
+                        url: actuatorEndpoints.logfile,
+                        type: "GET",
+                        success: response => {
+                            logFileStream.empty();
+                            logFileStream.text(response);
+                            if (scrollSwitch.selected) {
+                                logFileStream.scrollTop(logFileStream.prop("scrollHeight"));
+                            }
+                        },
+                        error: (xhr, status, error) => {
+                            console.error("Streaming logs failed:", error);
                         }
                     });
                 }
+            }, $("#logRefreshFilter").val())
+        }
+
+        function startStreamingLogData() {
+            return setInterval(() => {
+                if (currentActiveTab === Tabs.LOGGING) {
+                    fetchLogsFrom(actuatorEndpoints.cloudwatchlogs);
+                    fetchLogsFrom(actuatorEndpoints.gcplogs);
+                    fetchLogsFrom(actuatorEndpoints.loggingconfig);
+                }
+            }, $("#logRefreshFilter").val())
+        }
+
+        let refreshStreamInterval = startStreamingLogData();
+
+        let refreshLogFileInterval = undefined;
+        if (actuatorEndpoints.logfile) {
+            refreshLogFileInterval = startStreamingLogFile();
+        }
+
+        $("#logRefreshFilter").selectmenu({
+            change: (event, data) => {
+                clearInterval(refreshStreamInterval);
+                refreshStreamInterval = startStreamingLogData();
+                
+                if (refreshLogFileInterval) {
+                    clearInterval(refreshLogFileInterval);
+                    refreshLogFileInterval = startStreamingLogFile()
+                }
             }
-            fetchLogsFrom(actuatorEndpoints.cloudwatchlogs);
-            fetchLogsFrom(actuatorEndpoints.gcpLogs);
-        }, 1000);
+        });
+
     } else {
         $("#loggingDataStreamOps").parent().addClass("d-none");
     }
@@ -1222,6 +1306,7 @@ async function initializeSystemOperations() {
     function configureStatistics() {
         if (actuatorEndpoints.statistics) {
             $.get(actuatorEndpoints.statistics, response => {
+                console.log("Updating statistics");
                 const expired = response.expiredTickets;
                 const valid = response.validTickets;
                 statisticsChart.data.datasets[0].data = [valid, expired];
@@ -1241,6 +1326,7 @@ async function initializeSystemOperations() {
 
     function configureSystemData() {
         fetchSystemData(response => {
+            console.log("Updating JVM memory");
             const maximum = convertMemoryToGB(response.systemInfo["JVM Maximum Memory"]);
             const free = convertMemoryToGB(response.systemInfo["JVM Free Memory"]);
             const total = convertMemoryToGB(response.systemInfo["JVM Total Memory"]);
@@ -1301,16 +1387,19 @@ async function initializeSystemOperations() {
         }
     });
 
+
     setInterval(() => {
-        configureSystemData();
-        configureHealthChart();
-        configureStatistics();
+        if (currentActiveTab === Tabs.SYSTEM) {
+            configureSystemData();
+            configureHealthChart();
+            configureStatistics();
+        }
     }, DEFAULT_INTERVAL);
 
     configureSystemData();
     configureStatistics();
     configureHealthChart();
-    
+
 }
 
 async function initializeCasFeatures() {
@@ -1354,7 +1443,7 @@ function initializeServiceButtons() {
                 const editor = initializeAceEditor("entityHistoryEditor", "json");
                 editor.setValue("");
                 editor.setReadOnly(true);
-                
+
                 for (const item of response) {
                     entityHistoryTable.row.add({
                         0: `<code>${item.id}</code>`,
@@ -1558,7 +1647,7 @@ async function initializeServicesOperations() {
             $("#entityHistoryTable td").addClass("mdc-data-table__cell");
         }
     });
-    
+
     fetchServices();
     initializeFooterButtons();
 
@@ -2858,7 +2947,7 @@ async function initializeSAML2ProtocolOperations() {
                 }
             });
         });
-        
+
         $("button[name=saml2MetadataCacheInvalidateButton]").off().on("click", () => {
             hideBanner();
             $("#saml2MetadataCacheEditorContainer").addClass("d-none");
@@ -2935,28 +3024,6 @@ async function initializeSAML2ProtocolOperations() {
 
 async function initializePalantir() {
     try {
-        await initializeCasFeatures().then(() => {
-            Promise.all([
-                initializeAllCharts(),
-                initializeScheduledTasksOperations(),
-                initializeServicesOperations(),
-                initializeAccessStrategyOperations(),
-                initializeTicketsOperations(),
-                initializeSystemOperations(),
-                initializeLoggingOperations(),
-                initializeSsoSessionOperations(),
-                initializeConfigurationOperations(),
-                initializePersonDirectoryOperations(),
-                initializeAuthenticationOperations(),
-                initializeConsentOperations(),
-                initializeCasProtocolOperations(),
-                initializeSAML2ProtocolOperations(),
-                initializeSAML1ProtocolOperations(),
-                initializeOidcProtocolOperations(),
-                initializeThrottlesOperations()
-            ]);
-        });
-
         setTimeout(() => {
             if (!actuatorEndpoints.registeredservices) {
                 $("#applicationsTabButton").addClass("d-none");
@@ -2991,7 +3058,7 @@ async function initializePalantir() {
                 $("#ssoSessionsTabButton").addClass("d-none");
                 $(`#attribute-tab-${Tabs.SSO_SESSIONS}`).addClass("d-none");
             }
-            if (!actuatorEndpoints.loggingConfig || !actuatorEndpoints.loggers) {
+            if (!actuatorEndpoints.loggingconfig || !actuatorEndpoints.loggers) {
                 $("#loggingTabButton").addClass("d-none");
                 $(`#attribute-tab-${Tabs.LOGGING}`).addClass("d-none");
             }
@@ -3056,6 +3123,27 @@ async function initializePalantir() {
                 console.log("Activating Tab", selectedTab);
                 $(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).click();
                 activateDashboardTab(selectedTab);
+                initializeCasFeatures().then(() => {
+                    Promise.all([
+                        initializeAllCharts(),
+                        initializeScheduledTasksOperations(),
+                        initializeServicesOperations(),
+                        initializeAccessStrategyOperations(),
+                        initializeTicketsOperations(),
+                        initializeSystemOperations(),
+                        initializeLoggingOperations(),
+                        initializeSsoSessionOperations(),
+                        initializeConfigurationOperations(),
+                        initializePersonDirectoryOperations(),
+                        initializeAuthenticationOperations(),
+                        initializeConsentOperations(),
+                        initializeCasProtocolOperations(),
+                        initializeSAML2ProtocolOperations(),
+                        initializeSAML1ProtocolOperations(),
+                        initializeOidcProtocolOperations(),
+                        initializeThrottlesOperations()
+                    ]);
+                });
             }
         }, 2);
         $("#dashboard").removeClass("d-none");
@@ -3068,6 +3156,8 @@ function activateDashboardTab(idx) {
     try {
         let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
         tabs.activateTab(Number(idx));
+        console.log("Activated tab", idx);
+        currentActiveTab = Number(idx);
         updateNavigationSidebar();
     } catch (e) {
         console.error("An error occurred while activating tab:", e);
@@ -3086,6 +3176,7 @@ function selectSidebarMenuButton(selectedItem) {
 document.addEventListener("DOMContentLoaded", () => {
     $(".jqueryui-tabs").tabs();
     $(".jqueryui-menu").menu();
+    $(".jqueryui-selectmenu").selectmenu();
 
     $("nav.sidebar-navigation ul li").off().on("click", function () {
         hideBanner();
@@ -3106,7 +3197,7 @@ document.addEventListener("DOMContentLoaded", () => {
             text: "Palantir has been successfully initialized and is ready for use.",
             buttons: false,
             icon: "success",
-            timer: 700,
+            timer: 700
         });
     });
 });
