@@ -9,6 +9,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import com.google.cloud.logging.Logging;
 import com.google.cloud.logging.LoggingOptions;
+import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -77,7 +78,8 @@ public class CasGoogleCloudLoggingAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "googleCloudLoggingService")
-    public Logging googleCloudLoggingService() {
-        return LoggingOptions.getDefaultInstance().getService();
+    public Logging googleCloudLoggingService(final CasConfigurationProperties casProperties) {
+        val projectId = casProperties.getLogging().getGcp().getProjectId();
+        return LoggingOptions.newBuilder().setProjectId(projectId).build().getService();
     }
 }

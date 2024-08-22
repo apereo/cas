@@ -32,4 +32,12 @@ public class GoogleCloudLogsProperties implements Serializable {
      */
     @RequiredProperty
     private String logName;
+
+    /**
+     * A Project ID is a unique identifier assigned to a specific project within your GCP environment.
+     * The Project ID is globally unique across all GCP projects, meaning no two projects can have the same Project ID.
+     * The Project ID is used in various API calls, configurations, and URLs to uniquely identify your CAS project.
+     */
+    @RequiredProperty
+    private String projectId;
 }

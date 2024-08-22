@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreUtilAutoConfiguration.class,
     CasCoreScriptingAutoConfiguration.class,
     CasGoogleCloudLoggingAutoConfiguration.class
-})
+}, properties = "cas.logging.gcp.project-id=${random.uuid}")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class GoogleCloudAppenderTests {
 
