@@ -78,6 +78,7 @@ dependencies {
     implementation project(":support:cas-server-support-validation")
     implementation project(":support:cas-server-support-thymeleaf")
     implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-metrics")
     implementation project(":support:cas-server-support-actions-core")
     implementation project(":support:cas-server-support-pm-webflow")
 
@@ -171,26 +172,6 @@ graalvmNative {
             buildArgs.add('--enable-url-protocols=jar,file,resource,http,https')
         }
     }
-
-    /*
-    agent {
-        defaultMode = "direct"
-        enabled = true
-        builtinCallerFilter = false
-        builtinHeuristicFilter = false
-        enableExperimentalPredefinedClasses = true
-        enableExperimentalUnsafeAllocationTracing = false
-        trackReflectionMetadata = false
-        modes {
-            standard {
-            }
-            direct {
-                options.add("config-output-dir={output_dir}")
-                options.add("experimental-configuration-with-origins")
-            }
-        }
-    }
-     */
 }
 
 processAot {

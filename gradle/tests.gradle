@@ -114,7 +114,7 @@ enum TestCategories {
     
     TestCategories() {
         parallelEnabled = false
-        ptsEnabled = false
+        this.ptsEnabled = false
     }
 
     TestCategories(boolean parallelEnabled) {
@@ -192,7 +192,8 @@ TestCategories.values().each({ testCategory ->
                     includeTags testCategory.name()
                 }
 
-                def ptsEnabled = shouldWeTest && testCategory.ptsEnabled && Boolean.valueOf(System.getenv("PTS_ENABLED") ?: "true") && !rootProject.publishReleases
+
+                def ptsEnabled = shouldWeTest && testCategory.ptsEnabled && Boolean.valueOf(System.getProperty("PTS_ENABLED") ?: "true") && !rootProject.publishReleases
                 predictiveSelection {
                     enabled = ptsEnabled
                     mode = PredictiveTestSelectionMode.valueOf(System.getenv("PTS_MODE") ?: "RELEVANT_TESTS")
