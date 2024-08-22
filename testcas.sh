@@ -62,6 +62,10 @@ while (( "$#" )); do
         parallel="--no-parallel "
         shift
         ;;
+    --no-pts)
+        flags+=" -DPTS_ENABLED=false "
+        shift
+        ;;
     --with-coverage)
         currentDir=`pwd`
         case "${currentDir}" in
