@@ -12,7 +12,6 @@ import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.text.MessageSanitizer;
-
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -25,6 +24,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.integration.transaction.PseudoTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * This is {@link CasCoreEventsAutoConfiguration}.
@@ -86,6 +87,13 @@ public class CasCoreEventsAutoConfiguration {
                 .supply(() -> NoOpCasEventRepository.INSTANCE)
                 .otherwiseProxy()
                 .get();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "transactionManagerEvents")
+        public PlatformTransactionManager transactionManagerEvents() {
+            return new PseudoTransactionManager();
         }
     }
 

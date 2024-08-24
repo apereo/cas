@@ -14,9 +14,11 @@ import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationVerifiedEvent;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.apereo.inspektr.common.web.ClientInfo;
+import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Clock;
@@ -32,6 +34,8 @@ import java.util.Objects;
  */
 @Getter
 @RequiredArgsConstructor
+@Slf4j
+@Transactional(readOnly = true, value = CasEventRepository.TRANSACTION_MANAGER_EVENTS)
 public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEvaluator {
     private final List<AuthenticationRequestRiskCalculator> calculators;
     private final CasConfigurationProperties casProperties;
@@ -46,6 +50,9 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
                                             final ClientInfo clientInfo) {
 
         if (calculators.isEmpty()) {
+            LOGGER.warn("No risk calculators are available to evaluate authentication risk. "
+                + "CAS will proceed to regard the authentication attempt as highly risky. Examine your configuration "
+                + "and ensure at least one risk calculator is available and enabled to correctly assess authentication risk.");
             return AuthenticationRiskScore.highestRiskScore();
         }
 
@@ -55,12 +62,14 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
             .filter(Objects::nonNull)
             .toList();
 
+        LOGGER.debug("Collected [{}] risk scores from [{}] risk calculators", scores.size(), calculators.size());
         val sum = scores
             .stream()
             .map(AuthenticationRiskScore::getScore)
             .filter(Objects::nonNull)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
         val score = sum.divide(BigDecimal.valueOf(calculators.size()), 2, RoundingMode.UP);
+        LOGGER.debug("Final authentication risk score is calculated as [{}]", score);
         return new AuthenticationRiskScore(score).withClientInfo(clientInfo);
     }
 
@@ -69,6 +78,7 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
                                               final Authentication authentication,
                                               final RegisteredService service) {
         val threshold = casProperties.getAuthn().getAdaptive().getRisk().getCore().getThreshold();
+        LOGGER.trace("Comparing risk score [{}] against threshold [{}]", score, threshold);
         return score.isRiskGreaterThan(threshold) && !isRiskyAuthenticationAcceptable(authentication, score);
     }
 

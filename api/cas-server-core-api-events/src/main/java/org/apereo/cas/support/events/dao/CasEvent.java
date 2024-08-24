@@ -110,9 +110,9 @@ public class CasEvent implements Serializable {
     @JsonProperty("properties")
     @ElementCollection
     @MapKeyColumn(name = "name")
-    @Column(name = "value")
+    @Column(name = "value", length = 4_000)
     @CollectionTable(name = "events_properties", joinColumns = @JoinColumn(name = "eventId"))
-    private Map<String, String> properties = new HashMap<>(0);
+    private Map<String, String> properties = new HashMap<>();
 
     /**
      * Put timestamp.
