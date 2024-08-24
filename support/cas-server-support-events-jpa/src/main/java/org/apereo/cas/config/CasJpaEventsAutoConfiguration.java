@@ -128,6 +128,7 @@ public class CasJpaEventsAutoConfiguration {
     static class JpaEventsTransactionConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "jpaTransactionManagerEvents")
         public PlatformTransactionManager transactionManagerEvents(
             @Qualifier("eventsEntityManagerFactory")
             final EntityManagerFactory emf) {
@@ -154,7 +155,7 @@ public class CasJpaEventsAutoConfiguration {
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
             final JpaBeanFactory jpaBeanFactory,
             final CasConfigurationProperties casProperties,
-            @Qualifier("transactionManagerEvents")
+            @Qualifier(CasEventRepository.TRANSACTION_MANAGER_EVENTS)
             final PlatformTransactionManager transactionManager,
             @Qualifier("jpaEventRepositoryFilter")
             final CasEventRepositoryFilter jpaEventRepositoryFilter) {
