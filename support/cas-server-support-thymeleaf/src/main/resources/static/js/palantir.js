@@ -1,4 +1,4 @@
-const DEFAULT_INTERVAL = 5000;
+const DEFAULT_INTERVAL = 15000;
 
 /**
  * Internal Functions
@@ -16,7 +16,8 @@ const Tabs = {
     AUTHENTICATION: 9,
     CONSENT: 10,
     PROTOCOLS: 11,
-    THROTTLES: 12
+    THROTTLES: 12,
+    MFA: 13
 };
 
 /**
@@ -168,15 +169,15 @@ function initializeFooterButtons() {
         if (actuatorEndpoints.registeredservices) {
             $("#serviceFileInput").click();
             $("#serviceFileInput").change(event =>
-                swal({
+                Swal.fire({
                     title: "Are you sure you want to import this entry?",
                     text: "Once imported, the entry should take immediate effect.",
                     icon: "warning",
-                    buttons: true,
-                    dangerMode: true
+                    showConfirmButton: true,
+                    showDenyButton: true
                 })
-                    .then((willImport) => {
-                        if (willImport) {
+                    .then((result) => {
+                        if (result.isConfirmed) {
                             const file = event.target.files[0];
                             const reader = new FileReader();
                             reader.readAsText(file);
@@ -752,15 +753,16 @@ async function initializeSsoSessionOperations() {
                 return false;
             }
 
-            swal({
+            Swal.fire({
                 title: "Are you sure you want to delete all sessions for the user?",
                 text: "Once deleted, you may not be able to recover this entry.",
                 icon: "warning",
-                buttons: true,
-                dangerMode: true
+                showConfirmButton: true,
+                showDenyButton: true
+                
             })
-                .then((willDelete) => {
-                    if (willDelete) {
+                .then((result) => {
+                    if (result.isConfirmed) {
                         const username = $("#ssoSessionUsername").val();
 
                         $.ajax({
@@ -858,15 +860,15 @@ async function initializeSsoSessionOperations() {
                         const ticket = $(this).data("ticketgrantingticket");
                         console.log("Removing ticket-granting ticket:", ticket);
 
-                        swal({
+                        Swal.fire({
                             title: "Are you sure you want to delete this session?",
                             text: "Once deleted, you may not be able to recover this entry.",
                             icon: "warning",
-                            buttons: true,
-                            dangerMode: true
+                            showConfirmButton: true,
+                            showDenyButton: true
                         })
-                            .then((willDelete) => {
-                                if (willDelete) {
+                            .then((result) => {
+                                if (result.isConfirmed) {
                                     $.ajax({
                                         url: `${actuatorEndpoints.ssosessions}/${ticket}`,
                                         type: "DELETE",
@@ -941,6 +943,33 @@ async function initializeLoggingOperations() {
         return background;
     }
 
+    function handleLoggerLevelSelectionChange() {
+        $("select[name=loggerLevelSelect]").off().on("change", function () {
+            if (actuatorEndpoints.loggers) {
+                const logger = $(this).data("logger");
+                const level = $(this).val();
+                console.log("Logger:", logger, "Level:", level);
+                const loggerData = {
+                    "configuredLevel": level
+                };
+                $.ajax({
+                    url: `${actuatorEndpoints.loggers}/${logger}`,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(loggerData),
+                    success: response => {
+                        console.log("Update successful:", response);
+                        $(this).css("background-color", determineLoggerColor(level));
+                    },
+                    error: (xhr, status, error) => {
+                        console.error("Failed", error);
+                        displayBanner(xhr);
+                    }
+                });
+            }
+        });
+    }
+    
     function fetchLoggerData(callback) {
         if (actuatorEndpoints.loggingconfig) {
             $.get(actuatorEndpoints.loggingconfig, response => callback(response)).fail((xhr, status, error) => {
@@ -970,34 +999,7 @@ async function initializeLoggingOperations() {
                     1: `${loggerLevel.trim()}`
                 });
             }
-
-            function handleLoggerLevelSelectionChange() {
-                $("select[name=loggerLevelSelect]").off().on("change", function () {
-                    if (actuatorEndpoints.loggers) {
-                        const logger = $(this).data("logger");
-                        const level = $(this).val();
-                        console.log("Logger:", logger, "Level:", level);
-                        const loggerData = {
-                            "configuredLevel": level
-                        };
-                        $.ajax({
-                            url: `${actuatorEndpoints.loggers}/${logger}`,
-                            type: "POST",
-                            contentType: "application/json",
-                            data: JSON.stringify(loggerData),
-                            success: response => {
-                                console.log("Update successful:", response);
-                                $(this).css("background-color", determineLoggerColor(level));
-                            },
-                            error: (xhr, status, error) => {
-                                console.error("Failed", error);
-                                displayBanner(xhr);
-                            }
-                        });
-                    }
-                });
-            }
-
+            
             console.log(response);
 
             loggersTable.clear();
@@ -1007,18 +1009,24 @@ async function initializeLoggingOperations() {
             loggersTable.draw();
 
             $("#newLoggerButton").off().on("click", () =>
-                swal({
-                    content: "input",
-                    buttons: true,
+                Swal.fire({
+                    input: "text",
+                    inputAttributes: {
+                        autocapitalize: "off"
+                    },
+                    showConfirmButton: true,
+                    showDenyButton: true,
                     icon: "success",
                     title: "What's the name of the new logger?",
                     text: "The new logger will only be effective at runtime and will not be persisted."
                 })
-                    .then((value) => {
-                        addLoggerToTable({name: value, level: "WARN"});
-                        loggersTable.draw();
-                        handleLoggerLevelSelectionChange();
-                        loggersTable.search(value).draw();
+                    .then((result) => {
+                        if (result.isConfirmed) {
+                            addLoggerToTable({name: result.value, level: "INFO"});
+                            loggersTable.draw();
+                            handleLoggerLevelSelectionChange();
+                            loggersTable.search(result.value).draw();
+                        }
                     }));
             handleLoggerLevelSelectionChange();
         });
@@ -1130,10 +1138,11 @@ async function initializeLoggingOperations() {
                 }
             }
         });
-
+        
     } else {
         $("#loggingDataStreamOps").parent().addClass("d-none");
     }
+    
 }
 
 async function initializeSystemOperations() {
@@ -1464,7 +1473,7 @@ function initializeServiceButtons() {
                     const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("viewEntityHistoryDialog"));
                     dialog["open"]();
                 } else {
-                    swal("No History!", "There are no changes recorded for this application definition.", "info");
+                    Swal.fire("No History!", "There are no changes recorded for this application definition.", "info");
                 }
 
             }).fail((xhr, status, error) => {
@@ -1496,15 +1505,15 @@ function initializeServiceButtons() {
     $("button[name=deleteService]").off().on("click", function () {
         let serviceId = $(this).parent().attr("serviceId");
         if (actuatorEndpoints.registeredservices) {
-            swal({
+            Swal.fire({
                 title: "Are you sure you want to delete this entry?",
                 text: "Once deleted, you may not be able to recover this entry.",
                 icon: "warning",
-                buttons: true,
-                dangerMode: true
+                showConfirmButton: true,
+                showDenyButton: true
             })
-                .then((willDelete) => {
-                    if (willDelete) {
+                .then((result) => {
+                    if (result.isConfirmed) {
                         $.ajax({
                             url: `${actuatorEndpoints.registeredservices}/${serviceId}`,
                             type: "DELETE",
@@ -1547,15 +1556,15 @@ function initializeServiceButtons() {
             const editServiceDialogElement = document.getElementById("editServiceDialog");
             const isNewService = $(editServiceDialogElement).attr("newService") === "true";
 
-            swal({
+            Swal.fire({
                 title: `Are you sure you want to ${isNewService ? "create" : "update"} this entry?`,
                 text: "Once updated, you may not be able to revert this entry.",
                 icon: "warning",
-                buttons: true,
-                dangerMode: true
+                showConfirmButton: true,
+                showDenyButton: true
             })
-                .then((willUpdate) => {
-                    if (willUpdate) {
+                .then((result) => {
+                    if (result.isConfirmed) {
                         const value = editor.getValue();
                         $.ajax({
                             url: `${actuatorEndpoints.registeredservices}`,
@@ -1944,15 +1953,15 @@ async function initializePersonDirectoryOperations() {
                 return false;
             }
             const username = $("#personUsername").val();
-            swal({
+            Swal.fire({
                 title: `Are you sure you want to delete the cache for ${username}?`,
                 text: `Once the cached entry is removed, attribute repositories would be forced to fetch attributes for ${username} again`,
                 icon: "warning",
-                buttons: true,
-                dangerMode: true
+                showConfirmButton: true,
+                showDenyButton: true
             })
-                .then((willClear) => {
-                    if (willClear) {
+                .then((result) => {
+                    if (result.isConfirmed) {
                         personDirectoryTable.clear();
                         $.ajax({
                             url: `${actuatorEndpoints.persondirectory}/cache/${username}`,
@@ -2270,15 +2279,15 @@ async function initializeConsentOperations() {
             $("button[name=deleteConsent]").off().on("click", function () {
                 const id = $(this).attr("consentId");
                 const principal = $(this).attr("principal");
-                swal({
+                Swal.fire({
                     title: `Are you sure you want to delete this entry for ${principal}?`,
                     text: "Once deleted, you may not be able to recover this entry.",
                     icon: "warning",
-                    buttons: true,
-                    dangerMode: true
+                    showConfirmButton: true,
+                    showDenyButton: true
                 })
-                    .then((willDelete) => {
-                        if (willDelete) {
+                    .then((result) => {
+                        if (result.isConfirmed) {
                             $.ajax({
                                 url: `${actuatorEndpoints.attributeconsent}/${principal}/${id}`,
                                 type: "DELETE",
@@ -2513,6 +2522,70 @@ async function initializeCasProtocolOperations() {
     $("button[name=casProtocolV3Button]").off().on("click", () => buildCasProtocolPayload("p3/serviceValidate", "xml"));
 }
 
+async function initializeMultifactorOperations() {
+    const mfaDevicesTable = $("#mfaDevicesTable").DataTable({
+        pageLength: 10,
+        autoWidth: true,
+        columnDefs: [
+            {visible: false, targets: 8}
+        ],
+        drawCallback: settings => {
+            $("#mfaDevicesTable tr").addClass("mdc-data-table__row");
+            $("#mfaDevicesTable td").addClass("mdc-data-table__cell");
+        }
+    });
+    
+    $("#mfaDevicesButton").off().on("click", () => {
+        function fetchMfaDevicesFromDuoSecurity() {
+            const username = $("#mfaUsername").val();
+            $("#mfaDevicesButton").prop("disabled", true);
+            Swal.fire({
+                icon: "info",
+                title: `Fetching Devices for ${username}`,
+                text: "Please wait while registered multifactor devices are retrieved...",
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.get(`${actuatorEndpoints.mfadevices}/${username}`, response => {
+                console.log(response);
+                for (const device of Object.values(response)) {
+                    mfaDevicesTable.row.add({
+                        0: `<code>${device.name ?? "N/A"}</code>`,
+                        1: `<code>${device.type ?? "N/A"}</code>`,
+                        2: `<code>${device.id ?? "N/A"}</code>`,
+                        3: `<code>${device.number ?? "N/A"}</code>`,
+                        4: `<code>${device.model ?? "N/A"}</code>`,
+                        5: `<code>${device.lastUsedDateTime ?? "N/A"}</code>`,
+                        6: `<code>${device.expirationDateTime ?? "N/A"}</code>`,
+                        7: `<code>${device.source ?? "N/A"}</code>`,
+                        8: `<span>${device.payload}</span>`,
+                    });
+                }
+                mfaDevicesTable.draw();
+                $("#mfaDevicesButton").prop("disabled", false);
+                Swal.close();
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayBanner(xhr);
+                $("#mfaDevicesButton").prop("disabled", true);
+            });
+        }
+
+        mfaDevicesTable.clear();
+        const fmMfaDevices = document.getElementById("fmMfaDevices");
+        if (!fmMfaDevices.checkValidity()) {
+            fmMfaDevices.reportValidity();
+            return false;
+        }
+        
+        fetchMfaDevicesFromDuoSecurity();
+    });
+}
+
 async function initializeThrottlesOperations() {
     const throttlesTable = $("#throttlesTable").DataTable({
         pageLength: 10,
@@ -2558,15 +2631,15 @@ async function initializeThrottlesOperations() {
 
             $("button[name=removeThrottledAttempt]").off().on("click", function () {
                 const key = $(this).data("key");
-                swal({
+                Swal.fire({
                     title: "Are you sure you want to delete this entry?",
                     text: "Once deleted, you may not be able to recover this entry.",
                     icon: "warning",
-                    buttons: true,
-                    dangerMode: true
+                    showConfirmButton: true,
+                    showDenyButton: true
                 })
-                    .then((willDelete) => {
-                        if (willDelete) {
+                    .then((result) => {
+                        if (result.isConfirmed) {
                             $.ajax({
                                 url: `${actuatorEndpoints.throttles}/${key}`,
                                 type: "DELETE",
@@ -2593,15 +2666,15 @@ async function initializeThrottlesOperations() {
         fetchThrottledAttempts();
 
         $("button[name=releaseThrottlesButton]").off().on("click", () => {
-            swal({
+            Swal.fire({
                 title: "Are you sure you want to release throttled entries?",
                 text: "Released entries, when eligible, will be removed from the authentication throttling store.",
                 icon: "warning",
-                buttons: true,
-                dangerMode: true
+                showConfirmButton: true,
+                showDenyButton: true
             })
-                .then((willDelete) => {
-                    if (willDelete) {
+                .then((result) => {
+                    if (result.isConfirmed) {
                         $.ajax({
                             url: `${actuatorEndpoints.throttles}`,
                             type: "DELETE",
@@ -2620,15 +2693,15 @@ async function initializeThrottlesOperations() {
         });
 
         $("button[name=clearThrottlesButton]").off().on("click", () => {
-            swal({
+            Swal.fire({
                 title: "Are you sure you want to clear throttled entries?",
                 text: "All entries will be removed from the authentication throttling store.",
                 icon: "warning",
-                buttons: true,
-                dangerMode: true
+                showConfirmButton: true,
+                showDenyButton: true
             })
-                .then((willDelete) => {
-                    if (willDelete) {
+                .then((result) => {
+                    if (result.isConfirmed) {
                         $.ajax({
                             url: `${actuatorEndpoints.throttles}`,
                             type: "DELETE",
@@ -2733,21 +2806,20 @@ async function initializeOidcProtocolOperations() {
 
         $("button[name=oidcKeyRotationButton]").off().on("click", () => {
             hideBanner();
-            swal({
+            Swal.fire({
                 title: "Are you sure you want to rotate keys?",
                 text: "Once rotated, the change will take effect immediately.",
                 icon: "warning",
-                buttons: true,
-                dangerMode: true
+                showConfirmButton: true,
+                showDenyButton: true
             })
-                .then((willDo) => {
-                    if (willDo) {
+                .then((result) => {
+                    if (result.isConfirmed) {
                         $("#oidcKeyRotationButton").prop("disabled", true);
                         $.get(`${actuatorEndpoints.oidcjwks}/rotate`, response => {
-                            swal({
+                            Swal.fire({
                                 title: "Done!",
                                 text: "Keys in the OpenID Connect keystore are successfully rotated.",
-                                buttons: false,
                                 icon: "success",
                                 timer: 1000
                             });
@@ -2763,21 +2835,21 @@ async function initializeOidcProtocolOperations() {
 
         $("button[name=oidcKeyRevocationButton]").off().on("click", () => {
             hideBanner();
-            swal({
+            Swal.fire({
                 title: "Are you sure you want to revoke keys?",
                 text: "Once revoked, the change will take effect immediately.",
                 icon: "warning",
-                buttons: true,
-                dangerMode: true
+                showConfirmButton: true,
+                showDenyButton: true
             })
                 .then((willDo) => {
                     if (willDo) {
                         $("#oidcKeyRevocationButton").prop("disabled", true);
                         $.get(`${actuatorEndpoints.oidcjwks}/revoke`, response => {
-                            swal({
+                            Swal.fire({
                                 title: "Done!",
                                 text: "Keys in the OpenID Connect keystore are successfully revoked.",
-                                buttons: false,
+                                showConfirmButton: false,
                                 icon: "success",
                                 timer: 1000
                             });
@@ -2952,15 +3024,15 @@ async function initializeSAML2ProtocolOperations() {
             hideBanner();
             $("#saml2MetadataCacheEditorContainer").addClass("d-none");
 
-            swal({
+            Swal.fire({
                 title: "Are you sure you want to invalidate the cache entry?",
                 text: "Once deleted, the change will take effect immediately.",
                 icon: "warning",
-                buttons: true,
-                dangerMode: true
+                showConfirmButton: true,
+                showDenyButton: true
             })
-                .then((willDelete) => {
-                    if (willDelete) {
+                .then((result) => {
+                    if (result.isConfirmed) {
                         $.ajax({
                             url: `${actuatorEndpoints.samlidpregisteredservicemetadatacache}`,
                             type: "DELETE",
@@ -2969,10 +3041,10 @@ async function initializeSAML2ProtocolOperations() {
                                 serviceId: $("#saml2MetadataCacheService").val()
                             },
                             success: (response, textStatus, jqXHR) => {
-                                swal({
+                                Swal.fire({
                                     title: "Cached metadata record(s) removed.",
                                     text: "Cached metadata entry has been removed successfully.",
-                                    buttons: false,
+                                    showConfirmButton: false,
                                     icon: "success",
                                     timer: 1000
                                 });
@@ -3102,16 +3174,21 @@ async function initializePalantir() {
                 $(`#attribute-tab-${Tabs.THROTTLES}`).addClass("d-none");
             }
 
+            if (!actuatorEndpoints.mfadevices) {
+                $("#mfaTabButton").addClass("d-none");
+                $(`#attribute-tab-${Tabs.MFA}`).addClass("d-none");
+            }
+            
             let visibleCount = $("nav.sidebar-navigation ul li:visible").length;
             console.log("Number of visible list items:", visibleCount);
 
             if (visibleCount === 0) {
                 $("#dashboard").hide();
-                swal({
+                Swal.fire({
                     title: "Palantir is unavailable!",
                     text: `Palantir requires a number of actuator endpoints to be enabled and exposed, and your CAS deployment fails to do so.`,
                     icon: "warning",
-                    buttons: false
+                    showConfirmButton: false
                 });
             } else {
 
@@ -3141,7 +3218,8 @@ async function initializePalantir() {
                         initializeSAML2ProtocolOperations(),
                         initializeSAML1ProtocolOperations(),
                         initializeOidcProtocolOperations(),
-                        initializeThrottlesOperations()
+                        initializeThrottlesOperations(),
+                        initializeMultifactorOperations(),
                     ]);
                 });
             }
@@ -3183,21 +3261,22 @@ document.addEventListener("DOMContentLoaded", () => {
         const index = selectSidebarMenuButton(this);
         activateDashboardTab(index);
     });
-    swal({
+    Swal.fire({
         icon: "info",
         title: "Initializing Palantir",
-        text: "Please wait while Palantir is being initialized...",
+        text: "Please wait while Palantir is initializing...",
         allowOutsideClick: false,
-        buttons: false
+        showConfirmButton: false
     });
+
     initializePalantir().then(r => {
         console.log("Palantir ready!");
-        swal({
+        Swal.fire({
             title: "Palantir is ready!",
-            text: "Palantir has been successfully initialized and is ready for use.",
-            buttons: false,
+            text: "Palantir is successfully initialized and is ready for use.",
+            showConfirmButton: false,
             icon: "success",
-            timer: 700
+            timer: 800
         });
     });
 });

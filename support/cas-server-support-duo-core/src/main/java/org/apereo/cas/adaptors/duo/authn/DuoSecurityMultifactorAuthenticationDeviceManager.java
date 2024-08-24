@@ -10,6 +10,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -57,6 +58,7 @@ public class DuoSecurityMultifactorAuthenticationDeviceManager implements Multif
                     .payload(device.toJson())
                     .lastUsedDateTime(device.getLastSeen())
                     .source("Duo Security")
+                    .details(Map.of("providerId", acct.getProviderId()))
                     .build();
             })
             .collect(Collectors.toList());

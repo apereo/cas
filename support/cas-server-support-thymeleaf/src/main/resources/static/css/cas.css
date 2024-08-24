@@ -730,6 +730,9 @@ span button.toolbar {
     margin-top: 0;
 }
 
+.ml-2 {
+    margin-left: 0.5rem;
+}
 .border-rounded {
     border-color: #153e50;
     border: 1px solid var(--cas-theme-primary, #153e50);
@@ -855,6 +858,10 @@ select.palantir {
 
 
 /** jQuery UI **/
+
+.swal2-confirm {
+    background-color: var(--cas-theme-button-bg);
+}
 
 .ui-selectmenu-open {
     background: var(--mdc-theme-background);

@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreScriptingAutoConfiguration.class
 }, properties = "spring.profiles.active=test")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class GroovyConfigurationPropertiesLoaderTests {
+class GroovyConfigurationPropertiesLoaderTests {
 
     @Autowired
     private Environment environment;

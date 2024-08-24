@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pac4j.core.lazy-init=true",
     "cas.custom.properties.delegation-test.enabled=false"
 })
-public class DelegatedClientCasBuilderTests extends BaseDelegatedClientFactoryTests {
+class DelegatedClientCasBuilderTests extends BaseDelegatedClientFactoryTests {
     @Test
     void verifyFactoryForCasClientsHavingLoginInDomain() throws Throwable {
         val clients = delegatedIdentityProviderFactory.build();
