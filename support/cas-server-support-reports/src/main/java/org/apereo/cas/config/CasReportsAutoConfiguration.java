@@ -37,6 +37,7 @@ import org.apereo.cas.web.report.CasProtocolValidationEndpoint;
 import org.apereo.cas.web.report.CasReleaseAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasResolveAttributesReportEndpoint;
 import org.apereo.cas.web.report.CasRuntimeModulesEndpoint;
+import org.apereo.cas.web.report.MultifactorAuthenticationDevicesEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationHandlersEndpoint;
 import org.apereo.cas.web.report.RegisteredAuthenticationPoliciesEndpoint;
 import org.apereo.cas.web.report.RegisteredServiceAccessEndpoint;
@@ -354,6 +355,19 @@ public class CasReportsAutoConfiguration {
         @ConditionalOnAvailableEndpoint(endpoint = HttpExchangesEndpoint.class)
         public HttpExchangeRepository exchangeRepository() {
             return new InMemoryHttpExchangeRepository();
+        }
+    }
+
+    @Configuration(value = "MultifactorDevicesEndpointsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class MultifactorDevicesEndpointsConfiguration {
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public MultifactorAuthenticationDevicesEndpoint multifactorAuthenticationDevicesEndpoint(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return new MultifactorAuthenticationDevicesEndpoint(casProperties, applicationContext);
         }
     }
 }

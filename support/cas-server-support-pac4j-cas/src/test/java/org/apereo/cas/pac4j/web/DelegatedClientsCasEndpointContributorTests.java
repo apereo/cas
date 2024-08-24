@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @Tag("Delegation")
 @ExtendWith(CasTestExtension.class)
-public class DelegatedClientsCasEndpointContributorTests {
+class DelegatedClientsCasEndpointContributorTests {
     @Autowired
     @Qualifier("delegatedClientsCasEndpointContributor")
     private DelegatedClientsEndpointContributor delegatedClientsOidcEndpointContributor;

@@ -12,8 +12,6 @@ import org.springframework.boot.actuate.endpoint.annotation.EndpointDiscoverer;
 import org.springframework.boot.actuate.endpoint.invoke.OperationInvoker;
 import org.springframework.boot.actuate.endpoint.invoke.ParameterValueMapper;
 import org.springframework.boot.actuate.endpoint.web.PathMapper;
-import org.springframework.boot.actuate.endpoint.web.annotation.ControllerEndpointsSupplier;
-import org.springframework.boot.actuate.endpoint.web.annotation.ExposableControllerEndpoint;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.MergedAnnotations;
 import java.util.Collection;
@@ -25,14 +23,13 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-public class RestActuatorEndpointDiscoverer extends EndpointDiscoverer<ExposableControllerEndpoint, Operation>
-    implements ControllerEndpointsSupplier {
+public class RestActuatorEndpointDiscoverer extends EndpointDiscoverer<RestActuatorControllerEndpoint, Operation> {
     private final List<PathMapper> endpointPathMappers;
 
     public RestActuatorEndpointDiscoverer(final ApplicationContext applicationContext, final List<PathMapper> endpointPathMappers,
-                                          final Collection<EndpointFilter<ExposableControllerEndpoint>> filters) {
+                                          final Collection<EndpointFilter<RestActuatorControllerEndpoint>> filters) {
         super(applicationContext, ParameterValueMapper.NONE, List.of(), filters);
-        this.endpointPathMappers = endpointPathMappers;
+        this.endpointPathMappers = List.copyOf(endpointPathMappers);
     }
 
     @Override
@@ -42,37 +39,32 @@ public class RestActuatorEndpointDiscoverer extends EndpointDiscoverer<Exposable
     }
 
     @Override
-    protected ExposableControllerEndpoint createEndpoint(final Object endpointBean,
-                                                         final EndpointId id,
-                                                         final boolean enabledByDefault,
-                                                         final Collection<Operation> operations) {
+    protected RestActuatorControllerEndpoint createEndpoint(final Object endpointBean,
+                                                            final EndpointId id,
+                                                            final boolean enabledByDefault,
+                                                            final Collection<Operation> operations) {
         val rootPath = PathMapper.getRootPath(this.endpointPathMappers, id);
         return new DiscoveredRestActuatorEndpoint(this, endpointBean, id, rootPath, enabledByDefault);
     }
 
     @Override
     protected Operation createOperation(final EndpointId endpointId, final DiscoveredOperationMethod operationMethod, final OperationInvoker invoker) {
-        throw new IllegalStateException("RestActuatorEndpoint must not declare operations");
+        throw new IllegalStateException("RestActuatorEndpoint " + endpointId.toString() + " must not declare operations");
     }
 
     @Override
     protected EndpointDiscoverer.OperationKey createOperationKey(final Operation operation) {
-        throw new IllegalStateException("RestActuatorEndpoint must not declare operations");
+        throw new IllegalStateException("RestActuatorEndpoint must not declare operation: " + operation.toString());
     }
 
     @Getter
-    private static class DiscoveredRestActuatorEndpoint extends AbstractDiscoveredEndpoint<Operation> implements ExposableControllerEndpoint {
+    private static class DiscoveredRestActuatorEndpoint extends AbstractDiscoveredEndpoint<Operation> implements RestActuatorControllerEndpoint {
         private final String rootPath;
 
         DiscoveredRestActuatorEndpoint(final EndpointDiscoverer<?, ?> discoverer, final Object endpointBean,
                                        final EndpointId id, final String rootPath, final boolean enabledByDefault) {
             super(discoverer, endpointBean, id, enabledByDefault, List.of());
             this.rootPath = rootPath;
-        }
-
-        @Override
-        public Object getController() {
-            return this.getEndpointBean();
         }
     }
 }

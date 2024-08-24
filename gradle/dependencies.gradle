@@ -3565,7 +3565,7 @@ ext.libraries = [
                     exclude(group: "org.webjars", module: "popper.js")
                     exclude(group: "org.webjars", module: "jquery")
                 },
-                dependencies.create("org.webjars.npm:sweetalert:$sweetAlertVersion") {
+                dependencies.create("org.webjars.npm:sweetalert2:$sweetAlertVersion") {
                     exclude(group: "org.webjars", module: "jquery")
                 },
                 dependencies.create("org.webjars.npm:jquery-ui:$jqueryUiVersion") {

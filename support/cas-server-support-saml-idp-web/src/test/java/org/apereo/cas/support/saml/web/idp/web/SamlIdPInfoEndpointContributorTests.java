@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ExtendWith(CasTestExtension.class)
-public class SamlIdPInfoEndpointContributorTests {
+class SamlIdPInfoEndpointContributorTests {
     @Autowired
     private CasConfigurationProperties casProperties;
     

@@ -67,7 +67,7 @@ import static org.mockito.Mockito.*;
 @Tag("Events")
 @ExtendWith(CasTestExtension.class)
 @ResourceLock(value = "casEventRepository", mode = ResourceAccessMode.READ_WRITE)
-public class CasAuthenticationEventListenerTests {
+class CasAuthenticationEventListenerTests {
     private static final String REMOTE_ADDR_IP = "123.456.789.010";
     private static final String LOCAL_ADDR_IP = "123.456.789.000";
     private static final int NUM_TO_USE_IP1 = 10;

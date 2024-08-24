@@ -26,6 +26,7 @@ const cas = require("../../cas.js");
 
         "configurationMetadata",
         "events",
+        "mfaDevices/casuser",
         "loggingConfig",
         "registeredServices",
         "registeredServices/10000001",

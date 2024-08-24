@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreScriptingAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class GroovyExecutableCompiledScriptFactoryTests {
+class GroovyExecutableCompiledScriptFactoryTests {
 
     @Autowired
     @Qualifier(ScriptResourceCacheManager.BEAN_NAME)

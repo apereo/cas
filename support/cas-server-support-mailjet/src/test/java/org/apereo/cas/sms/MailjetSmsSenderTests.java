@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Tag("SMS")
 @ExtendWith(CasTestExtension.class)
-public class MailjetSmsSenderTests {
+class MailjetSmsSenderTests {
     @Autowired
     @Qualifier(SmsSender.BEAN_NAME)
     private SmsSender smsSender;

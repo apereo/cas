@@ -12,7 +12,7 @@ import org.springframework.aot.hint.RuntimeHints;
  * @since 7.1.0
  */
 @Tag("Native")
-public class JpaRuntimeHintsTests {
+class JpaRuntimeHintsTests {
 
     @Test
     void verifyHints() throws Throwable {

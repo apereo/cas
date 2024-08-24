@@ -9,12 +9,7 @@ import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
-import org.springframework.boot.actuate.endpoint.ExposableEndpoint;
 import org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver;
-import org.springframework.boot.actuate.endpoint.web.ExposableWebEndpoint;
-import org.springframework.boot.actuate.endpoint.web.WebEndpointsSupplier;
-import org.springframework.boot.actuate.endpoint.web.annotation.ControllerEndpointsSupplier;
-import org.springframework.boot.actuate.endpoint.web.annotation.ServletEndpointsSupplier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -26,8 +21,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import jakarta.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * This is {@link CasPalantirWebMvcConfiguration}.
@@ -41,24 +34,12 @@ import java.util.Collection;
 class CasPalantirWebMvcConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "palantirDashboardController")
-    @SuppressWarnings("removal")
     public DashboardController palantirDashboardController(
         final ConfigurableApplicationContext applicationContext,
-        final WebEndpointsSupplier webEndpointsSupplier,
-        final ServletEndpointsSupplier servletEndpointsSupplier,
-        final ControllerEndpointsSupplier controllerEndpointsSupplier,
+        final EndpointLinksResolver endpointLinksResolver,
         final WebEndpointProperties webEndpointProperties,
         final CasConfigurationProperties casProperties) {
-
-        val allEndpoints = new ArrayList<ExposableEndpoint<?>>();
-        Collection<ExposableWebEndpoint> webEndpoints = webEndpointsSupplier.getEndpoints();
-        allEndpoints.addAll(webEndpoints);
-        allEndpoints.addAll(servletEndpointsSupplier.getEndpoints());
-        allEndpoints.addAll(controllerEndpointsSupplier.getEndpoints());
-        
-        return new DashboardController(casProperties,
-            new EndpointLinksResolver(allEndpoints, webEndpointProperties.getBasePath()),
-            webEndpointProperties, applicationContext);
+        return new DashboardController(casProperties, endpointLinksResolver, webEndpointProperties, applicationContext);
     }
 
     @Bean
