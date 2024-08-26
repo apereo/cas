@@ -29,7 +29,7 @@ class RestActuatorEndpointDiscovererTests extends AbstractCasEndpointTests {
     private MyTestConfiguration.MyEndpoint myEndpoint;
 
     @Autowired
-    @Qualifier("controllerEndpointDiscoverer")
+    @Qualifier("restControllerEndpointDiscoverer")
     private RestActuatorEndpointDiscoverer controllerEndpointDiscoverer;
 
     @Test
