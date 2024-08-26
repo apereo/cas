@@ -25,6 +25,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -48,6 +50,8 @@ import static org.mockito.Mockito.*;
     AuthenticationAttributeReleasePolicyTests.CasCoreAuthenticationSupportTestConfiguration.class,
     RefreshAutoConfiguration.class,
     WebMvcAutoConfiguration.class,
+    EndpointAutoConfiguration.class,
+    WebEndpointAutoConfiguration.class,
     ObservationAutoConfiguration.class,
     CasPersonDirectoryTestConfiguration.class,
     CasCoreServicesAutoConfiguration.class,

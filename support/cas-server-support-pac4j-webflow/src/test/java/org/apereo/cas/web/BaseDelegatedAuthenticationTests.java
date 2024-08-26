@@ -23,6 +23,8 @@ import org.apereo.cas.support.pac4j.authentication.clients.DelegatedAuthenticati
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.flow.DelegatedClientWebflowCustomizer;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
@@ -61,8 +63,11 @@ public abstract class BaseDelegatedAuthenticationTests {
         CasThymeleafAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreAuditAutoConfiguration.class,
+
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
+        EndpointAutoConfiguration.class,
+        WebEndpointAutoConfiguration.class,
         ThymeleafAutoConfiguration.class,
         MockMvcAutoConfiguration.class,
         ErrorMvcAutoConfiguration.class,

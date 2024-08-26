@@ -4,6 +4,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcRegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcScopeFreeAttributeReleasePolicy;
 import org.apereo.cas.oidc.scopes.OidcAttributeReleasePolicyFactory;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
@@ -12,11 +13,9 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceChainingAttributeReleasePolicy;
 import org.apereo.cas.services.ServiceRegistryListener;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,10 +47,10 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
         val policy = registeredService.getAttributeReleasePolicy();
         val matchingPolicies = new ArrayList<RegisteredServiceAttributeReleasePolicy>();
 
-        if (policy instanceof RegisteredServiceChainingAttributeReleasePolicy chainedPolicy) {
+        if (policy instanceof final RegisteredServiceChainingAttributeReleasePolicy chainedPolicy) {
             val policiesToAdd = buildMatchingPolicies(givenScope, chainedPolicy.getPolicies());
             matchingPolicies.addAll(policiesToAdd);
-        } else if (policy instanceof OidcRegisteredServiceAttributeReleasePolicy oidcPolicy) {
+        } else if (policy instanceof final OidcRegisteredServiceAttributeReleasePolicy oidcPolicy) {
             val policiesToAdd = buildMatchingPolicies(givenScope, List.of(oidcPolicy));
             matchingPolicies.addAll(policiesToAdd);
         }
@@ -73,25 +72,25 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
             .filter(OidcRegisteredServiceAttributeReleasePolicy.class::isInstance)
             .map(OidcRegisteredServiceAttributeReleasePolicy.class::cast)
             .filter(policy -> policy.getScopeType().equalsIgnoreCase(givenScope)
-                         || (policy instanceof OidcCustomScopeAttributeReleasePolicy customPolicy && customPolicy.getScopeName().equals(givenScope)))
+                || (policy instanceof final OidcCustomScopeAttributeReleasePolicy customPolicy && customPolicy.getScopeName().equals(givenScope)))
             .toList();
     }
 
     @Override
     public RegisteredService postLoad(final RegisteredService registeredService) {
-        if (registeredService instanceof OidcRegisteredService oidcService) {
+        if (registeredService instanceof final OidcRegisteredService oidcService) {
             return reconcile(oidcService);
         }
         return registeredService;
     }
 
     protected RegisteredService reconcile(final OidcRegisteredService oidcService) {
-        LOGGER.trace("Reconciling OpenId Connect scopes and claims for [{}]", oidcService.getServiceId());
+        LOGGER.trace("Reconciling OpenID Connect scopes and claims for [{}]", oidcService.getServiceId());
 
         val definedServiceScopes = oidcService.getScopes();
         if (definedServiceScopes.isEmpty()) {
             LOGGER.trace("Registered service [{}] does not define any scopes to control attribute release policies. "
-                         + "CAS will allow the existing attribute release policies assigned to the service to operate without a scope.",
+                    + "CAS will allow the existing attribute release policies assigned to the service to operate without a scope.",
                 oidcService.getServiceId());
             return oidcService;
         }
@@ -107,7 +106,7 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
                 .noneMatch(scope -> scope.getScope().trim().equalsIgnoreCase(givenScope.trim()));
             if (userDefinedScope) {
                 LOGGER.debug("[{}] appears to be a user-defined scope and does not match any of the predefined standard scopes. "
-                             + "Checking [{}] against user-defined scopes provided as [{}]", givenScope, givenScope, userScopes);
+                    + "Checking [{}] against user-defined scopes provided as [{}]", givenScope, givenScope, userScopes);
                 userScopes
                     .stream()
                     .filter(scope -> scope.getScopeName().equals(givenScope.trim()))
@@ -135,21 +134,23 @@ public class OidcServiceRegistryListener implements ServiceRegistryListener {
             addAttributeReleasePolicy(policyChain, userPolicy, userPolicy.getScopeName(), oidcService);
         }
 
-        val scopeFree = definedServiceScopes.isEmpty() || (definedServiceScopes.size() == 1
-                                                           && definedServiceScopes.contains(OidcConstants.StandardScopes.OPENID.getScope()));
+        val scopeFree = definedServiceScopes.isEmpty()
+            || (definedServiceScopes.size() == 1 && definedServiceScopes.contains(OidcConstants.StandardScopes.OPENID.getScope()))
+            || oidcService.getAttributeReleasePolicy() instanceof OidcScopeFreeAttributeReleasePolicy
+            || (oidcService.getAttributeReleasePolicy() instanceof final RegisteredServiceChainingAttributeReleasePolicy chain
+                && chain.getPolicies().stream().anyMatch(OidcScopeFreeAttributeReleasePolicy.class::isInstance));
         if (scopeFree) {
             LOGGER.trace("Service definition [{}] will use the assigned attribute release policy without scopes", oidcService.getName());
 
-            if (oidcService.getAttributeReleasePolicy() instanceof RegisteredServiceChainingAttributeReleasePolicy chain) {
+            if (oidcService.getAttributeReleasePolicy() instanceof final RegisteredServiceChainingAttributeReleasePolicy chain) {
                 policyChain.addPolicies(chain.getPolicies().toArray(new RegisteredServiceAttributeReleasePolicy[0]));
             } else {
                 policyChain.addPolicies(oidcService.getAttributeReleasePolicy());
             }
         }
-
         if (policyChain.getPolicies().isEmpty()) {
             LOGGER.debug("No attribute release policy could be determined based on given scopes. "
-                         + "No claims/attributes will be released to [{}]", oidcService.getServiceId());
+                + "No claims/attributes will be released to [{}]", oidcService.getServiceId());
             oidcService.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
         } else {
             if (policyChain.size() == 1) {

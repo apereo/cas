@@ -47,6 +47,7 @@ import static org.mockito.Mockito.*;
     WebEndpointAutoConfiguration.class,
     EndpointAutoConfiguration.class,
     WebClientAutoConfiguration.class,
+    WebEndpointAutoConfiguration.class,
     DispatcherServletAutoConfiguration.class,
 
     AdminServerMarkerConfiguration.class,

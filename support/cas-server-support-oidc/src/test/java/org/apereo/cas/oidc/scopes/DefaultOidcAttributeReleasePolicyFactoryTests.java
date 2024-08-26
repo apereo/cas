@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.scopes;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcScopeFreeAttributeReleasePolicy;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -38,14 +39,24 @@ class DefaultOidcAttributeReleasePolicyFactoryTests extends AbstractOidcTests {
     @Test
     void verifyEffectivePolicies() throws Throwable {
         val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
-        registeredService.setAttributeReleasePolicy(
-            new OidcCustomScopeAttributeReleasePolicy("eduPerson", List.of("uid")));
+
+        val chain = new ChainingAttributeReleasePolicy();
+        chain.addPolicies(new OidcCustomScopeAttributeReleasePolicy("eduPerson", List.of("uid")));
+        chain.addPolicies(
+            new OidcScopeFreeAttributeReleasePolicy(List.of("sys_user")),
+            new OidcScopeFreeAttributeReleasePolicy(List.of("dev_user")),
+            new OidcScopeFreeAttributeReleasePolicy(List.of("adm_user")));
+        registeredService.setAttributeReleasePolicy(chain);
+        
         val policies = oidcAttributeReleasePolicyFactory.resolvePolicies(registeredService);
+        assertEquals(10, policies.size());
         assertTrue(policies.containsKey("eduPerson"));
         assertTrue(policies.containsKey(OidcConstants.StandardScopes.EMAIL.getScope()));
         assertTrue(policies.containsKey(OidcConstants.StandardScopes.PROFILE.getScope()));
         assertTrue(policies.containsKey(OidcConstants.StandardScopes.OPENID.getScope()));
         assertTrue(policies.containsKey(OidcConstants.StandardScopes.ADDRESS.getScope()));
+        val count = policies.values().stream().filter(OidcScopeFreeAttributeReleasePolicy.class::isInstance).count();
+        assertEquals(3, count);
     }
 
     @Test

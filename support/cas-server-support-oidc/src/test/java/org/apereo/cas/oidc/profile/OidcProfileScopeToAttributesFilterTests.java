@@ -5,6 +5,8 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcScopeFreeAttributeReleasePolicy;
+import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.util.CollectionUtils;
@@ -13,6 +15,7 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -187,5 +190,37 @@ class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
         val principal = profileScopeToAttributesFilter.filter(CoreAuthenticationTestUtils.getService(),
             original, service, accessToken);
         assertTrue(principal.getAttributes().isEmpty());
+    }
+
+    @Test
+    void verifyFilterWithScopeFreePolicyAndScopes() throws Throwable {
+        val registeredService = getOidcRegisteredService(UUID.randomUUID().toString());
+        val accessToken = mock(OAuth20AccessToken.class);
+        when(accessToken.getTicketGrantingTicket()).thenReturn(new MockTicketGrantingTicket(UUID.randomUUID().toString()));
+        when(accessToken.getScopes()).thenReturn(CollectionUtils.wrapSet(
+            OidcConstants.StandardScopes.OPENID.getScope(),
+            OidcConstants.StandardScopes.PHONE.getScope(),
+            OidcConstants.StandardScopes.PROFILE.getScope(),
+            OidcConstants.StandardScopes.ADDRESS.getScope(),
+            OidcConstants.StandardScopes.EMAIL.getScope()));
+
+        registeredService.setAttributeReleasePolicy(new ChainingAttributeReleasePolicy()
+            .addPolicies(new OidcScopeFreeAttributeReleasePolicy(List.of("sys_id"))));
+        val original = CoreAuthenticationTestUtils.getPrincipal(
+            CollectionUtils.wrap(
+                "sys_id", UUID.randomUUID().toString(),
+                "email", "casuser@example.org",
+                "address", "1234 Main Street",
+                "phone", "123445677",
+                "name", "CAS",
+                "gender", "male"));
+        val principal = profileScopeToAttributesFilter.filter(
+            CoreAuthenticationTestUtils.getService(), original, registeredService, accessToken);
+        val attributes = principal.getAttributes();
+        assertTrue(attributes.containsKey("name"));
+        assertTrue(attributes.containsKey("gender"));
+        assertTrue(attributes.containsKey("email"));
+        assertTrue(attributes.containsKey("sys_id"));
+        assertEquals(4, attributes.size());
     }
 }

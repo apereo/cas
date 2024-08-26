@@ -9,6 +9,8 @@ import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -28,6 +30,8 @@ class InterruptWebflowConfigurerTests {
     @ImportAutoConfiguration({
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class,
+        EndpointAutoConfiguration.class,
+        WebEndpointAutoConfiguration.class,
         CasInterruptAutoConfiguration.class,
         CasInterruptWebflowAutoConfiguration.class
     })

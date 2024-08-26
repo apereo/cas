@@ -34,6 +34,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -78,7 +80,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     }
 
     protected void verifyFetchingPolicy(final RegisteredService service,
-        final Authentication authentication, final boolean expectPolicyFound) throws Exception {
+                                        final Authentication authentication, final boolean expectPolicyFound) throws Exception {
         val context = MockRequestContext.create();
         val flowDefinition = mock(Flow.class);
         when(flowDefinition.getApplicationContext()).thenReturn(applicationContext);
@@ -90,7 +92,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
     }
 
     protected void verifyRepositoryAction(final String actualPrincipalId,
-        final Map<String, List<Object>> profileAttributes) throws Throwable {
+                                          final Map<String, List<Object>> profileAttributes) throws Throwable {
         val credential = getCredential(actualPrincipalId);
         val context = getRequestContext(actualPrincipalId, profileAttributes, credential);
 
@@ -100,7 +102,7 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
             assertTrue(getAcceptableUsagePolicyRepository().verify(context).isAccepted());
         }
     }
-    
+
     protected static UsernamePasswordCredential getCredential(final String actualPrincipalId) {
         return CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(actualPrincipalId);
     }
@@ -116,9 +118,13 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         WebUtils.putTicketGrantingTicketInScopes(context, tgt);
         return context;
     }
+
+    @SpringBootConfiguration(proxyBeanMethods = false)
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
+        EndpointAutoConfiguration.class,
+        WebEndpointAutoConfiguration.class,
         AopAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
@@ -135,7 +141,6 @@ public abstract class BaseAcceptableUsagePolicyRepositoryTests {
         CasCoreAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class})
-    @SpringBootConfiguration(proxyBeanMethods = false)
     @Import({CasRegisteredServicesTestConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
         CasPersonDirectoryTestConfiguration.class})

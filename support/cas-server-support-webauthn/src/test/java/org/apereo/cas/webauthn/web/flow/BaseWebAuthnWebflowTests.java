@@ -19,6 +19,7 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasSupportActionsAutoConfiguration;
 import org.apereo.cas.config.CasWebAuthnAutoConfiguration;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -36,6 +37,7 @@ public abstract class BaseWebAuthnWebflowTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
+        WebEndpointAutoConfiguration.class,
         SecurityAutoConfiguration.class,
         AopAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,

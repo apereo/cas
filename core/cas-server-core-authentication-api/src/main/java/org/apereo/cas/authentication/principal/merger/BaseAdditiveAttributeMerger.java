@@ -38,7 +38,7 @@ public abstract class BaseAdditiveAttributeMerger implements AttributeMerger {
         for (val toModifyPerson : toModify) {
             toModifyPeople.put(toModifyPerson.getName(), toModifyPerson);
         }
-        for (var toConsiderPerson : toConsider) {
+        for (val toConsiderPerson : toConsider) {
             val toConsiderName = toConsiderPerson.getName();
             val toModifyPerson = toModifyPeople.get(toConsiderName);
 

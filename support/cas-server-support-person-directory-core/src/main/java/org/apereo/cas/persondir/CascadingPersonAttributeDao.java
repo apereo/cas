@@ -74,7 +74,7 @@ public class CascadingPersonAttributeDao extends AbstractAggregatingDefaultQuery
         }
 
         Set<PersonAttributes> mergedPeopleResults = null;
-        for (var person : resultPeople) {
+        for (val person : resultPeople) {
             val queryAttributes = new LinkedHashMap<String, List<Object>>();
             val userName = person.getName();
             if (userName != null) {

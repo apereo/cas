@@ -34,8 +34,22 @@ The following endpoints are provided:
 The `log4j2.xml` file use by CAS includes custom Log4j2 plugins:
 
 - `CasAppender`: The CasAppender wraps another regular appender and removes sensitive values from the log entries
-such as Ticket Granting Tickets or Proxy Granting Tickets.
-  
+such as Ticket Granting Tickets or Proxy Granting Tickets. It may be used via the following Log4j2 configuration template:
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration monitorInterval="2" packages="org.apereo.cas.logging">
+  <!-- Wrap the console appender inside -->
+  <CasAppender name="casConsole" maxEntries="50">
+      <AppenderRef ref="console" />
+  </CasAppender>
+</Configuration>
+```
+                                           
+The `maxEntries` attribute indicates the maximum number of latest log entries to keep in an in-memory cache. 
+When the cache is full, the oldest entries are removed. By default, nothing is kept in the cache. This ability
+is useful when you want to stream the latest log entries via actuator endpoints, etc.
+
 - `ExceptionOnlyFilter`: In order to allow CAS to freely log unexpected errors at WARN and ERROR without obscuring everything 
   with stacktraces, exceptions in the logs are disabled by default but there are log4j2.xml properties that can
   turn them back on. By default, all exceptions are written to a dedicated stacktrace rolling log file

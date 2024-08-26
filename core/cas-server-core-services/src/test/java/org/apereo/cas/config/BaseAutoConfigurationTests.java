@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
 import org.springframework.boot.actuate.autoconfigure.observation.ObservationAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -20,6 +22,8 @@ public abstract class BaseAutoConfigurationTests {
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
+        EndpointAutoConfiguration.class,
+        WebEndpointAutoConfiguration.class,
         ObservationAutoConfiguration.class,
         CasCoreMonitorAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
