@@ -64,6 +64,8 @@ class CasEurekaDiscoveryClientTests {
         CasCoreWebAutoConfiguration.class,
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
+        EndpointAutoConfiguration.class,
+        WebEndpointAutoConfiguration.class,
         UtilAutoConfiguration.class,
         DiscoveryClientOptionalArgsConfiguration.class,
         EurekaClientAutoConfiguration.class
