@@ -62,6 +62,11 @@ while (( "$#" )); do
         parallel="--no-parallel "
         shift
         ;;
+    --pts)
+        printf "Running tests with predictive test selection mode: ${GREEN}$2${ENDCOLOR}\n"
+        flags+=" -Dpts.mode=$2 "
+        shift 2
+        ;;
     --no-pts)
         flags+=" -DPTS_ENABLED=false "
         shift
