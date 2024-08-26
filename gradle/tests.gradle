@@ -1,5 +1,6 @@
 import java.util.regex.Pattern
 import com.gradle.develocity.agent.gradle.test.*
+import com.gradle.develocity.agent.gradle.internal.test.*
 
 enum TestCategories {
     ActiveDirectory(false, true),
@@ -192,11 +193,12 @@ TestCategories.values().each({ testCategory ->
                     includeTags testCategory.name()
                 }
 
-                def ptsEnabled = shouldWeTest && testCategory.ptsEnabled && Boolean.valueOf(System.getenv("PTS_ENABLED") ?: "true") && !rootProject.publishReleases
+                def ptsEnabled = shouldWeTest && testCategory.ptsEnabled && Boolean.valueOf(System.getProperty("PTS_ENABLED") ?: "true") && !rootProject.publishReleases
                 develocity.predictiveTestSelection {
                     enabled = ptsEnabled
-                    mode = PredictiveTestSelectionMode.valueOf(System.getenv("PTS_MODE") ?: "RELEVANT_TESTS")
-                    profile = PredictiveTestSelectionProfile.valueOf(System.getenv("PTS_PROFILE") ?: "FAST")
+                    // Enable PTS with code coverage support
+                    this as PredictiveTestSelectionConfigurationInternal
+                    mergeCodeCoverage = true
                 }
                 logger.info "Predictive test selection for ${project.name} with task ${taskName} is ${ptsEnabled ? 'enabled' : 'disabled'}."
 
