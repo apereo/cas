@@ -697,7 +697,6 @@ public abstract class AbstractServiceRegistryTests {
         RefreshAutoConfiguration.class,
         ServletWebServerFactoryAutoConfiguration.class,
         DispatcherServletAutoConfiguration.class,
-        EndpointAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
         CasCoreScriptingAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
