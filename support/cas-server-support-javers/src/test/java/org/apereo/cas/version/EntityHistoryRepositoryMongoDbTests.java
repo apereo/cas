@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseEntityHistoryTests.SharedTestConfiguration.class,
     properties = "cas.javers.mongo.client-uri=mongodb://root:secret@localhost:27017/cas?authSource=admin")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class EntityHistoryRepositoryMongoDbTests {
+class EntityHistoryRepositoryMongoDbTests {
     @Autowired
     @Qualifier("objectVersionRepository")
     private EntityHistoryRepository objectVersionRepository;

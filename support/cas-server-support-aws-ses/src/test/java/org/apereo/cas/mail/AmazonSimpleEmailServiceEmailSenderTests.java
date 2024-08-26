@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("AmazonWebServices")
 @ExtendWith(CasTestExtension.class)
 @Getter
-public class AmazonSimpleEmailServiceEmailSenderTests {
+class AmazonSimpleEmailServiceEmailSenderTests {
     @Autowired
     @Qualifier(EmailSender.BEAN_NAME)
     private EmailSender emailSender;
