@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Mail")
 @ExtendWith(CasTestExtension.class)
 @Getter
-public class MailjetEmailSenderTests {
+class MailjetEmailSenderTests {
     @Autowired
     @Qualifier(EmailSender.BEAN_NAME)
     private EmailSender emailSender;

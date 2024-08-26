@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "cas.javers.mongo.client-uri=mongodb://root:secret@localhost:27017/cas?authSource=admin"
     }, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class EntityHistoryEndpointTests extends BaseEntityHistoryTests {
+class EntityHistoryEndpointTests extends BaseEntityHistoryTests {
     @Autowired
     @Qualifier("mockMvc")
     private MockMvc mockMvc;
