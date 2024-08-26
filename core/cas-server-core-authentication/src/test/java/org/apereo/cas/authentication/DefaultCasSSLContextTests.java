@@ -13,8 +13,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.WebProperties;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -33,7 +36,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
 class DefaultCasSSLContextTests {
 
-    @ImportAutoConfiguration({RefreshAutoConfiguration.class, CasCoreWebAutoConfiguration.class})
+    @ImportAutoConfiguration({
+        RefreshAutoConfiguration.class,
+        WebMvcAutoConfiguration.class,
+        EndpointAutoConfiguration.class,
+        WebEndpointAutoConfiguration.class,
+        CasCoreWebAutoConfiguration.class
+    })
     @SpringBootConfiguration(proxyBeanMethods = false)
     @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
     public static class SharedTestConfiguration {

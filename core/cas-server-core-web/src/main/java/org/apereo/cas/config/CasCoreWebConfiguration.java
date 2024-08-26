@@ -198,7 +198,7 @@ class CasCoreWebConfiguration {
     }
 
     @Configuration(value = "CasCoreWebEndpointsConfiguration", proxyBeanMethods = false)
-    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @EnableConfigurationProperties({CasConfigurationProperties.class, CorsEndpointProperties.class, WebProperties.class})
     static class CasCoreWebEndpointsConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

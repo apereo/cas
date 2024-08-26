@@ -149,7 +149,7 @@ public abstract class AbstractQueryPersonAttributeDao<QB> extends AbstractDefaul
         QB queryBuilder = null;
 
         if (queryAttributeMapping != null && !queryAttributeMapping.isEmpty()) {
-            for (var queryAttrEntry : queryAttributeMapping.entrySet()) {
+            for (val queryAttrEntry : queryAttributeMapping.entrySet()) {
                 var queryAttr = queryAttrEntry.getKey();
                 var queryValues = query.get(queryAttr);
                 if (queryValues != null) {
@@ -212,7 +212,7 @@ public abstract class AbstractQueryPersonAttributeDao<QB> extends AbstractDefaul
                 }
                 if (resultKeys.size() == 1 && resultKeys.stream().allMatch(s -> !s.isEmpty() && s.charAt(s.length() - 1) == ';')) {
                     var allKeys = personAttributes.keySet().stream().filter(name -> name.startsWith(dataKey + ';')).toList();
-                    for (var resultKey : allKeys) {
+                    for (val resultKey : allKeys) {
                         var value = personAttributes.get(resultKey);
                         value = canonicalizeAttribute(resultKey, value, caseInsensitiveResultAttributes);
                         mappedAttributes.put(resultKey, value);

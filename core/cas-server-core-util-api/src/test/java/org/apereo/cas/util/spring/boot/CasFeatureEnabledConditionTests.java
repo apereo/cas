@@ -10,6 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -83,6 +85,8 @@ class CasFeatureEnabledConditionTests {
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
+        EndpointAutoConfiguration.class,
+        WebEndpointAutoConfiguration.class,
         CasFeatureModuleFeature1TestConfiguration.class
     })
     class Feature1EnabledTests {
@@ -100,6 +104,8 @@ class CasFeatureEnabledConditionTests {
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
+        EndpointAutoConfiguration.class,
+        WebEndpointAutoConfiguration.class,
         CasFeatureModuleFeature1TestConfiguration.class
     })
     class Feature1DisabledTests {
@@ -116,6 +122,8 @@ class CasFeatureEnabledConditionTests {
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
+        EndpointAutoConfiguration.class,
+        WebEndpointAutoConfiguration.class,
         CasFeatureModuleFeature1TestConfiguration.class
     })
     class Feature1EnabledUndefinedTests {
@@ -132,6 +140,8 @@ class CasFeatureEnabledConditionTests {
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
+        EndpointAutoConfiguration.class,
+        WebEndpointAutoConfiguration.class,
         CasFeatureModuleDisabledByDefaultTestConfiguration.class
     })
     class Feature3DisabledByDefaultTests {
@@ -148,6 +158,8 @@ class CasFeatureEnabledConditionTests {
     @SpringBootTest(classes = {
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
+        EndpointAutoConfiguration.class,
+        WebEndpointAutoConfiguration.class,
         CasFeatureModuleMultipleConditionsTestConfiguration.class
     })
     @TestPropertySource(properties = {

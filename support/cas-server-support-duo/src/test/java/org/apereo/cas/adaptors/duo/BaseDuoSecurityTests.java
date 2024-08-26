@@ -31,6 +31,8 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
@@ -87,6 +89,8 @@ public abstract class BaseDuoSecurityTests {
     @ImportAutoConfiguration({
         RefreshAutoConfiguration.class,
         WebMvcAutoConfiguration.class,
+        EndpointAutoConfiguration.class,
+        WebEndpointAutoConfiguration.class,
         AopAutoConfiguration.class,
         CasMultifactorAuthnTrustAutoConfiguration.class,
         CasDuoSecurityAutoConfiguration.class,

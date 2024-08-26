@@ -12,6 +12,7 @@ import org.apereo.cas.oidc.claims.OidcOpenIdScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcRegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcScopeFreeAttributeReleasePolicy;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.util.ReflectionUtils;
@@ -24,6 +25,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -99,11 +101,18 @@ public class DefaultOidcAttributeReleasePolicyFactory implements OidcAttributeRe
         } else if (registeredService.getAttributeReleasePolicy() instanceof final OidcRegisteredServiceAttributeReleasePolicy policy) {
             listOfOidcPolicies.add(policy);
         }
-        listOfOidcPolicies.stream()
+        listOfOidcPolicies
+            .stream()
             .filter(OidcCustomScopeAttributeReleasePolicy.class::isInstance)
             .map(OidcCustomScopeAttributeReleasePolicy.class::cast)
             .filter(policy -> !policies.containsKey(policy.getScopeName()))
             .forEach(policy -> policies.put(policy.getScopeName(), policy));
+        listOfOidcPolicies
+            .stream()
+            .filter(OidcScopeFreeAttributeReleasePolicy.class::isInstance)
+            .map(OidcScopeFreeAttributeReleasePolicy.class::cast)
+            .forEach(policy -> policies.put(UUID.randomUUID().toString(), policy));
+
         LOGGER.debug("Final set of scopes mapped to attribute release policies are [{}]", policies.keySet());
         return policies;
     }

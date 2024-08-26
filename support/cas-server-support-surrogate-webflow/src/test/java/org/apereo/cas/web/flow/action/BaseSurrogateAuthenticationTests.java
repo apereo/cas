@@ -23,6 +23,8 @@ import org.apereo.cas.config.CasSurrogateAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
+import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
@@ -58,7 +60,10 @@ public abstract class BaseSurrogateAuthenticationTests {
         CasCoreCookieAutoConfiguration.class,
         CasCoreSamlAutoConfiguration.class,
         CasDelegatedAuthenticationAutoConfiguration.class,
+        
         WebMvcAutoConfiguration.class,
+        EndpointAutoConfiguration.class,
+        WebEndpointAutoConfiguration.class,
         MailSenderAutoConfiguration.class,
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class

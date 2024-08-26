@@ -4,15 +4,12 @@ import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
-import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
-import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +31,13 @@ public class MultifactorAuthenticationDevicesEndpoint extends BaseCasRestActuato
         super(casProperties, applicationContext);
     }
 
+    /**
+     * All mfa devices for user.
+     *
+     * @param username the username
+     * @return the list
+     * @throws Throwable the throwable
+     */
     @GetMapping(value = "/{username}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get all present and registered MFA devices for a given user",
         parameters = @Parameter(name = "username", description = "The user that owns registered multifactor devices", in = ParameterIn.PATH))

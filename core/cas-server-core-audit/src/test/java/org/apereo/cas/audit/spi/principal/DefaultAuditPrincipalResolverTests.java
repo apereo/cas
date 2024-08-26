@@ -57,7 +57,7 @@ class DefaultAuditPrincipalResolverTests {
     @ParameterizedTest
     @MethodSource("getAuditParameters")
     void verifyOperation(final Object argument, final Object returnValue) throws Exception {
-        if (argument instanceof MockRequestContext ctx) {
+        if (argument instanceof final MockRequestContext ctx) {
             ctx.setApplicationContext(applicationContext);
         }
         val jp = mockJoinPointWithFirstArg(argument);
