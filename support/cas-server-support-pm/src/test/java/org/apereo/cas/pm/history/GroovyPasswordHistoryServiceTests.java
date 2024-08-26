@@ -69,7 +69,6 @@ class GroovyPasswordHistoryServiceTests {
         assertTrue(passwordHistoryService.store(request));
         assertTrue(passwordHistoryService.fetchAll().isEmpty());
         assertTrue(passwordHistoryService.fetch("casuser").isEmpty());
-
         assertDoesNotThrow(() -> {
             passwordHistoryService.remove("casuser");
             passwordHistoryService.removeAll();
