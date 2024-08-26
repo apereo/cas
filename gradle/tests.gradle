@@ -1,5 +1,5 @@
 import java.util.regex.Pattern
-import com.gradle.enterprise.gradleplugin.testselection.*
+import com.gradle.develocity.agent.gradle.test.*
 
 enum TestCategories {
     ActiveDirectory(false, true),
@@ -114,7 +114,7 @@ enum TestCategories {
     
     TestCategories() {
         parallelEnabled = false
-        this.ptsEnabled = false
+        ptsEnabled = false
     }
 
     TestCategories(boolean parallelEnabled) {
@@ -192,9 +192,8 @@ TestCategories.values().each({ testCategory ->
                     includeTags testCategory.name()
                 }
 
-
-                def ptsEnabled = shouldWeTest && testCategory.ptsEnabled && Boolean.valueOf(System.getProperty("PTS_ENABLED") ?: "true") && !rootProject.publishReleases
-                predictiveSelection {
+                def ptsEnabled = shouldWeTest && testCategory.ptsEnabled && Boolean.valueOf(System.getenv("PTS_ENABLED") ?: "true") && !rootProject.publishReleases
+                develocity.predictiveTestSelection {
                     enabled = ptsEnabled
                     mode = PredictiveTestSelectionMode.valueOf(System.getenv("PTS_MODE") ?: "RELEVANT_TESTS")
                     profile = PredictiveTestSelectionProfile.valueOf(System.getenv("PTS_PROFILE") ?: "FAST")
@@ -303,7 +302,7 @@ tasks.withType(Test).configureEach {
     
     def skipRetry = providers.systemProperty('skipTestRetry').present
     if (!skipRetry) {
-        retry {
+        develocity.testRetry {
             maxRetries = 3
             maxFailures = 5
             failOnPassedAfterRetry = false
