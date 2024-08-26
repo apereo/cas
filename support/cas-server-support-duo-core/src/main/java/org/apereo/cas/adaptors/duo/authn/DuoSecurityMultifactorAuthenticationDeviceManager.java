@@ -58,7 +58,7 @@ public class DuoSecurityMultifactorAuthenticationDeviceManager implements Multif
                     .payload(device.toJson())
                     .lastUsedDateTime(device.getLastSeen())
                     .source("Duo Security")
-                    .details(Map.of("providerId", acct.getProviderId()))
+                    .details(Map.of("providerId", Objects.requireNonNull(acct.getProviderId(), "Provider ID cannot be null")))
                     .build();
             })
             .collect(Collectors.toList());

@@ -81,7 +81,8 @@ class DuoSecurityMultifactorAccountProfileWebflowConfigurerTests extends BaseWeb
     static class DuoSecurityTestConfiguration {
         @Bean
         public DuoSecurityMultifactorAuthenticationProvider dummyDuoSecurityProvider() throws Exception {
-            val acct = new DuoSecurityUserAccount(UUID.randomUUID().toString());
+            val acct = new DuoSecurityUserAccount(UUID.randomUUID().toString())
+                .setProviderId(DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
             acct.setDevices(List.of(DuoSecurityUserDevice.builder()
                 .id(UUID.randomUUID().toString())
                 .model("Samsung S20")
