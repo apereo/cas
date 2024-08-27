@@ -95,18 +95,20 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
 
     @SuppressWarnings("LongFloatConversion")
     protected JwtClaims buildJwtClaims(final IdTokenGenerationContext context) throws Throwable {
-        LOGGER.trace("Attempting to produce claims for the id token [{}]", context.getAccessToken());
-        val authentication = context.getAccessToken().getAuthentication();
-        val activePrincipal = buildPrincipalForAttributeFilter(context.getAccessToken(), context.getRegisteredService());
+        val accessToken = context.getAccessToken();
+        
+        LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);
+        val authentication = accessToken.getAuthentication();
+        val activePrincipal = buildPrincipalForAttributeFilter(accessToken, context.getRegisteredService());
         val principal = getConfigurationContext().getProfileScopeToAttributesFilter()
-            .filter(context.getAccessToken().getService(),
-                activePrincipal, context.getRegisteredService(), context.getAccessToken());
+            .filter(accessToken.getService(),
+                activePrincipal, context.getRegisteredService(), accessToken);
         LOGGER.debug("Principal to use to build the ID token is [{}]", principal);
 
         val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
         val claims = new JwtClaims();
 
-        val jwtId = getJwtId(context.getAccessToken());
+        val jwtId = getJwtId(accessToken);
         LOGGER.debug("Calculated ID token jti claim to be [{}]", jwtId);
         claims.setJwtId(jwtId);
 
@@ -114,7 +116,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val oidcRegisteredService = (OidcRegisteredService) context.getRegisteredService();
         claims.setIssuer(getConfigurationContext().getIssuerService().determineIssuer(Optional.of(oidcRegisteredService)));
         val audience = context.getRegisteredService().getAudience().isEmpty()
-            ? List.of(context.getAccessToken().getClientId())
+            ? List.of(accessToken.getClientId())
             : new ArrayList<>(context.getRegisteredService().getAudience());
         claims.setAudience(audience);
         LOGGER.debug("Calculated ID token aud claim to be [{}]", audience);
@@ -136,9 +138,9 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val attributes = authentication.getAttributes();
         claims.setStringClaim(OAuth20Constants.CLIENT_ID, context.getRegisteredService().getClientId());
 
-        var authTime = context.getAccessToken().isStateless() || context.getAccessToken().getTicketGrantingTicket() == null
+        val authTime = accessToken.isStateless() || accessToken.getTicketGrantingTicket() == null
             ? authentication.getAuthenticationDate().toEpochSecond()
-            : ((AuthenticationAwareTicket) context.getAccessToken().getTicketGrantingTicket()).getAuthentication().getAuthenticationDate().toEpochSecond();
+            : ((AuthenticationAwareTicket) accessToken.getTicketGrantingTicket()).getAuthentication().getAuthenticationDate().toEpochSecond();
         claims.setClaim(OidcConstants.CLAIM_AUTH_TIME, authTime);
 
         if (attributes.containsKey(OAuth20Constants.STATE)) {
@@ -147,11 +149,11 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         if (attributes.containsKey(OAuth20Constants.NONCE)) {
             setClaim(claims, OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).getFirst());
         }
-        generateAccessTokenHash(context.getAccessToken(), oidcRegisteredService, claims);
+        generateAccessTokenHash(accessToken, oidcRegisteredService, claims);
 
         val includeClaims = context.getResponseType() != OAuth20ResponseTypes.CODE && context.getGrantType() != OAuth20GrantTypes.AUTHORIZATION_CODE;
-        if (includeClaims || oidc.getIdToken().isIncludeIdTokenClaims()) {
-            FunctionUtils.doIf(oidc.getIdToken().isIncludeIdTokenClaims(),
+        if (includeClaims || includeClaimsInIdTokenForcefully(context)) {
+            FunctionUtils.doIf(includeClaimsInIdTokenForcefully(context),
                     __ -> LOGGER.warn("Individual claims requested by OpenID scopes are forced to be included in the ID token. "
                         + "This is a violation of the OpenID Connect specification and a workaround via dedicated CAS configuration. "
                         + "Claims should be requested from the userinfo/profile endpoints in exchange for an access token."))
@@ -169,6 +171,12 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         }
 
         return claims;
+    }
+
+    private boolean includeClaimsInIdTokenForcefully(final IdTokenGenerationContext context) {
+        val oidcService = (OidcRegisteredService) context.getRegisteredService();
+        val properties = getConfigurationContext().getCasProperties().getAuthn().getOidc();
+        return properties.getIdToken().isIncludeIdTokenClaims() || oidcService.isIncludeIdTokenClaims();
     }
 
     private void generateCibaClaims(final IdTokenGenerationContext context, final JwtClaims claims) throws Throwable {

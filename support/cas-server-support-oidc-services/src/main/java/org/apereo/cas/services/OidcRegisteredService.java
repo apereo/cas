@@ -49,6 +49,9 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @JacksonInject("encryptIdToken")
     private boolean encryptIdToken;
 
+    @JacksonInject("includeIdTokenClaims")
+    private boolean includeIdTokenClaims;
+
     @JacksonInject("idTokenEncryptionOptional")
     private boolean idTokenEncryptionOptional;
 
