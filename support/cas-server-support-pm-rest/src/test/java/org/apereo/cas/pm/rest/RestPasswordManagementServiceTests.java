@@ -11,6 +11,7 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
 import org.apereo.cas.config.CasRestPasswordManagementAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -63,7 +64,10 @@ class RestPasswordManagementServiceTests {
         CasCoreAuditAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
-        CasCoreScriptingAutoConfiguration.class
+        CasCoreScriptingAutoConfiguration.class,
+        CasCoreWebflowAutoConfiguration.class,
+        CasCoreMultifactorAuthenticationAutoConfiguration.class,
+        CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
