@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -29,7 +30,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Webflow")
 @ExtendWith(CasTestExtension.class)
 @SpringBootTestAutoConfigurations
-@SpringBootTest(classes = MultifactorAuthenticationWebflowUtilsTests.MultifactorAuthenticationTestConfiguration.class)
+@SpringBootTest(classes = {
+    AopAutoConfiguration.class,
+    MultifactorAuthenticationWebflowUtilsTests.MultifactorAuthenticationTestConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class MultifactorAuthenticationWebflowUtilsTests {
 

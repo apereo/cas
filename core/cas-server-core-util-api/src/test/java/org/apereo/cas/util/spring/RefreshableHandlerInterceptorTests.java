@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -33,7 +34,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Simple")
 @ExtendWith(CasTestExtension.class)
 @SpringBootTestAutoConfigurations
-@SpringBootTest(classes = RefreshableHandlerInterceptorTests.RefreshableHandlerInterceptorTestConfiguration.class)
+@SpringBootTest(classes = {
+    AopAutoConfiguration.class,
+    RefreshableHandlerInterceptorTests.RefreshableHandlerInterceptorTestConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class RefreshableHandlerInterceptorTests {
     @Autowired

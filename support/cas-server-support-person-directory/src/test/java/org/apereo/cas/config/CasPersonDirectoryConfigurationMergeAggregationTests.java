@@ -18,22 +18,24 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class, properties = {
-    "cas.authn.attribute-repository.stub.attributes.uid=cas",
-    "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
-    "cas.authn.attribute-repository.stub.attributes.eppn=casuser",
+@SpringBootTest(
+    classes = BasePrincipalAttributeRepositoryTests.SharedTestConfiguration.class,
+    properties = {
+        "cas.authn.attribute-repository.stub.attributes.uid=cas",
+        "cas.authn.attribute-repository.stub.attributes.givenName=apereo-cas",
+        "cas.authn.attribute-repository.stub.attributes.eppn=casuser",
 
-    "cas.authn.attribute-repository.groovy[0].location=classpath:/GroovyAttributeRepository.groovy",
-    "cas.authn.attribute-repository.groovy[0].order=1",
+        "cas.authn.attribute-repository.groovy[0].location=classpath:/GroovyAttributeRepository.groovy",
+        "cas.authn.attribute-repository.groovy[0].order=1",
 
-    "cas.authn.attribute-repository.json[0].location=classpath:/json-attribute-repository.json",
-    "cas.authn.attribute-repository.json[0].order=2",
+        "cas.authn.attribute-repository.json[0].location=classpath:/json-attribute-repository.json",
+        "cas.authn.attribute-repository.json[0].order=2",
 
-    "cas.authn.attribute-repository.core.aggregation=MERGE",
-    "cas.authn.attribute-repository.core.merger=MULTIVALUED",
-    
-    "cas.authn.attribute-repository.core.expiration-time=0"
-})
+        "cas.authn.attribute-repository.core.aggregation=MERGE",
+        "cas.authn.attribute-repository.core.merger=MULTIVALUED",
+
+        "cas.authn.attribute-repository.core.expiration-time=0"
+    })
 @Tag("Attributes")
 @ExtendWith(CasTestExtension.class)
 class CasPersonDirectoryConfigurationMergeAggregationTests {
