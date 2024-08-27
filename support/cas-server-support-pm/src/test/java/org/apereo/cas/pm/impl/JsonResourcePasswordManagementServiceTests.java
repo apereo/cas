@@ -4,13 +4,17 @@ import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
 import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.pm.PasswordChangeRequest;
@@ -49,6 +53,10 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreScriptingAutoConfiguration.class,
+    CasCoreCookieAutoConfiguration.class,
+    CasCoreWebflowAutoConfiguration.class,
+    CasCoreMultifactorAuthenticationAutoConfiguration.class,
+    CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasPasswordManagementAutoConfiguration.class
 },
     properties = {

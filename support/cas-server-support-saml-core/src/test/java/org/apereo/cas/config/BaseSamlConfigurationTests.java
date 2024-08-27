@@ -25,7 +25,11 @@ public abstract class BaseSamlConfigurationTests {
         CasPersonDirectoryAutoConfiguration.class,
         CasCoreNotificationsAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class,
-        CasCoreAutoConfiguration.class
+        CasCoreAutoConfiguration.class,
+        CasCoreCookieAutoConfiguration.class,
+        CasCoreWebflowAutoConfiguration.class,
+        CasCoreMultifactorAuthenticationAutoConfiguration.class,
+        CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {

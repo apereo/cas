@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -44,7 +45,10 @@ import static org.mockito.Mockito.*;
  * @since 6.1
  */
 @SpringBootTestAutoConfigurations
-@SpringBootTest(classes = ClientFlowExecutionRepositoryTests.WebflowTestConfiguration.class)
+@SpringBootTest(classes = {
+    AopAutoConfiguration.class,
+    ClientFlowExecutionRepositoryTests.WebflowTestConfiguration.class
+})
 @Tag("Webflow")
 @ExtendWith(CasTestExtension.class)
 class ClientFlowExecutionRepositoryTests {
