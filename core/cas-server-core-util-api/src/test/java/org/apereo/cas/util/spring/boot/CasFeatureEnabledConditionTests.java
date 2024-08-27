@@ -10,13 +10,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.TestPropertySource;
@@ -82,13 +78,8 @@ class CasFeatureEnabledConditionTests {
 
     @Nested
     @TestPropertySource(properties = "CasFeatureModule.AcceptableUsagePolicy.feature1.enabled=true")
-    @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        EndpointAutoConfiguration.class,
-        WebEndpointAutoConfiguration.class,
-        CasFeatureModuleFeature1TestConfiguration.class
-    })
+    @SpringBootTestAutoConfigurations
+    @SpringBootTest(classes = CasFeatureModuleFeature1TestConfiguration.class)
     class Feature1EnabledTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
@@ -101,13 +92,8 @@ class CasFeatureEnabledConditionTests {
 
     @Nested
     @TestPropertySource(properties = "CasFeatureModule.AcceptableUsagePolicy.feature1.enabled=false")
-    @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        EndpointAutoConfiguration.class,
-        WebEndpointAutoConfiguration.class,
-        CasFeatureModuleFeature1TestConfiguration.class
-    })
+    @SpringBootTestAutoConfigurations
+    @SpringBootTest(classes = CasFeatureModuleFeature1TestConfiguration.class)
     class Feature1DisabledTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
@@ -119,13 +105,8 @@ class CasFeatureEnabledConditionTests {
     }
 
     @Nested
-    @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        EndpointAutoConfiguration.class,
-        WebEndpointAutoConfiguration.class,
-        CasFeatureModuleFeature1TestConfiguration.class
-    })
+    @SpringBootTestAutoConfigurations
+    @SpringBootTest(classes = CasFeatureModuleFeature1TestConfiguration.class)
     class Feature1EnabledUndefinedTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
@@ -137,13 +118,8 @@ class CasFeatureEnabledConditionTests {
     }
 
     @Nested
-    @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        EndpointAutoConfiguration.class,
-        WebEndpointAutoConfiguration.class,
-        CasFeatureModuleDisabledByDefaultTestConfiguration.class
-    })
+    @SpringBootTestAutoConfigurations
+    @SpringBootTest(classes = CasFeatureModuleDisabledByDefaultTestConfiguration.class)
     class Feature3DisabledByDefaultTests {
         @Autowired
         private ConfigurableApplicationContext applicationContext;
@@ -155,13 +131,8 @@ class CasFeatureEnabledConditionTests {
     }
 
     @Nested
-    @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        EndpointAutoConfiguration.class,
-        WebEndpointAutoConfiguration.class,
-        CasFeatureModuleMultipleConditionsTestConfiguration.class
-    })
+    @SpringBootTestAutoConfigurations
+    @SpringBootTest(classes = CasFeatureModuleMultipleConditionsTestConfiguration.class)
     @TestPropertySource(properties = {
         "CasFeatureModule.AcceptableUsagePolicy.feature3.enabled=true",
         "CasFeatureModule.AcceptableUsagePolicy.feature4.enabled=true"
@@ -177,11 +148,8 @@ class CasFeatureEnabledConditionTests {
     }
 
     @Nested
-    @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        CasFeatureModuleFeatureSelectedTestConfiguration.class
-    }, properties = CasFeatureEnabledCondition.PROPERTY_SELECTED_FEATURE_MODULES
+    @SpringBootTestAutoConfigurations
+    @SpringBootTest(classes = CasFeatureModuleFeatureSelectedTestConfiguration.class, properties = CasFeatureEnabledCondition.PROPERTY_SELECTED_FEATURE_MODULES
         + "=CasFeatureModule.AcceptableUsagePolicy.feature1.enabled=true,"
         + "CasFeatureModule.SAMLIdentityProvider.enabled=true")
     class SelectedFeatureConditionsTests {

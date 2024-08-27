@@ -5,15 +5,14 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
 import java.net.URI;
 import static java.nio.charset.StandardCharsets.*;
@@ -26,12 +25,8 @@ import static org.springframework.http.HttpStatus.*;
  * @author Jérôme Rautureau
  * @since 6.5.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasSmsModeSmsAutoConfiguration.class
-},
-    properties = "cas.sms-provider.sms-mode.url=http://localhost:${random.int[4000,9999]}")
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = CasSmsModeSmsAutoConfiguration.class, properties = "cas.sms-provider.sms-mode.url=http://localhost:${random.int[4000,9999]}")
 @Tag("SMS")
 @ExtendWith(CasTestExtension.class)
 class SmsModeSmsSenderTests {

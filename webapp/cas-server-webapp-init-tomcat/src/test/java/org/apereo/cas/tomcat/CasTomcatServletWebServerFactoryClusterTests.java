@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.apache.catalina.ha.tcp.SimpleTcpCluster;
 import org.apache.catalina.tribes.group.GroupChannel;
@@ -20,7 +21,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer;
 import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.http.HttpMethod;
 import java.util.Map;
 import java.util.UUID;
@@ -32,19 +32,15 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Hal Deadman
  * @since 6.2.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    CasEmbeddedContainerTomcatAutoConfiguration.class
-},
-    properties = {
-        "server.port=8183",
-        "server.ssl.enabled=false",
-        "cas.server.tomcat.remote-user-valve.remote-user-header=REMOTE_USER",
-        "cas.server.tomcat.remote-user-valve.allowed-ip-address-regex=.+",
-        "cas.server.tomcat.clustering.enabled=true",
-        "cas.server.tomcat.clustering.clustering-type=DEFAULT"
-    },
-    webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = CasEmbeddedContainerTomcatAutoConfiguration.class, properties = {
+    "server.port=8183",
+    "server.ssl.enabled=false",
+    "cas.server.tomcat.remote-user-valve.remote-user-header=REMOTE_USER",
+    "cas.server.tomcat.remote-user-valve.allowed-ip-address-regex=.+",
+    "cas.server.tomcat.clustering.enabled=true",
+    "cas.server.tomcat.clustering.clustering-type=DEFAULT"
+}, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @EnableConfigurationProperties({CasConfigurationProperties.class, ServerProperties.class})
 @Tag("WebApp")
 @ExtendWith(CasTestExtension.class)

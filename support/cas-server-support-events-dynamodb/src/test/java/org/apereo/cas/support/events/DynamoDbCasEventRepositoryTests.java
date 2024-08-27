@@ -3,6 +3,7 @@ package org.apereo.cas.support.events;
 import org.apereo.cas.config.CasEventsDynamoDbRepositoryAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import software.amazon.awssdk.core.SdkSystemSetting;
 
 /**
@@ -21,16 +21,13 @@ import software.amazon.awssdk.core.SdkSystemSetting;
  */
 @Tag("DynamoDb")
 @ExtendWith(CasTestExtension.class)
-@SpringBootTest(classes = {
-    CasEventsDynamoDbRepositoryAutoConfiguration.class,
-    RefreshAutoConfiguration.class
-},
-    properties = {
-        "cas.events.dynamo-db.endpoint=http://localhost:8000",
-        "cas.events.dynamo-db.drop-tables-on-startup=true",
-        "cas.events.dynamo-db.local-instance=true",
-        "cas.events.dynamo-db.region=us-east-1"
-    })
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = CasEventsDynamoDbRepositoryAutoConfiguration.class, properties = {
+    "cas.events.dynamo-db.endpoint=http://localhost:8000",
+    "cas.events.dynamo-db.drop-tables-on-startup=true",
+    "cas.events.dynamo-db.local-instance=true",
+    "cas.events.dynamo-db.region=us-east-1"
+})
 @Getter
 @EnabledIfListeningOnPort(port = 8000)
 class DynamoDbCasEventRepositoryTests extends AbstractCasEventRepositoryTests {

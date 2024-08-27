@@ -20,6 +20,7 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
@@ -27,10 +28,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import java.io.Serial;
@@ -79,12 +78,11 @@ class RegisteredServiceAttributeReleasePolicyTests {
     }
 
     @Nested
+    @SpringBootTestAutoConfigurations
     @SpringBootTest(classes = {
         CommonTestConfiguration.class,
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
-    CasCoreScriptingAutoConfiguration.class
+        CasCoreScriptingAutoConfiguration.class
     })
     class DefaultTests {
         @Autowired
@@ -350,13 +348,12 @@ class RegisteredServiceAttributeReleasePolicyTests {
     }
 
     @Nested
+    @SpringBootTestAutoConfigurations
     @SpringBootTest(classes = {
         CommonTestConfiguration.class,
         AttributeRepositoryTests.AttributeRepositoryTestConfiguration.class,
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
-    CasCoreScriptingAutoConfiguration.class
+        CasCoreScriptingAutoConfiguration.class
     })
     class AttributeRepositoryTests {
         @Autowired

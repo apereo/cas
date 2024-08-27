@@ -2,12 +2,12 @@ package org.apereo.cas.util.spring;
 
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -17,10 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Tag("Simple")
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class
-})
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = CasCoreUtilAutoConfiguration.class)
 @ExtendWith(CasTestExtension.class)
 class SpringExpressionLanguageValueResolverTests {
     @Test

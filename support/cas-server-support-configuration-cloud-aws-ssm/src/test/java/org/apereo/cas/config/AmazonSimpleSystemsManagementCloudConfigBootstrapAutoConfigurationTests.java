@@ -4,16 +4,15 @@ import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.test.context.ActiveProfiles;
 import software.amazon.awssdk.regions.Region;
@@ -28,11 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfiguration.class
-}, properties = {
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfiguration.class, properties = {
     "cas.spring.cloud.aws.ssm.endpoint=" + AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfigurationTests.ENDPOINT,
     "cas.spring.cloud.aws.ssm.region=us-east-1",
     "cas.spring.cloud.aws.ssm.credential-access-key=" + AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfigurationTests.CREDENTIAL_ACCESS_KEY,
