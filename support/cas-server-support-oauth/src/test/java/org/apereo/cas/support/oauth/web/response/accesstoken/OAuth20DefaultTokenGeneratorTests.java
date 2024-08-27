@@ -1,6 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
 import org.apereo.cas.AbstractOAuth20Tests;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
@@ -35,6 +36,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link OAuth20DefaultTokenGeneratorTests}.
@@ -312,6 +314,41 @@ class OAuth20DefaultTokenGeneratorTests extends AbstractOAuth20Tests {
         assertNotEquals(jwt.getExpirationTime().getValue(), refreshedJwt.getExpirationTime().getValue());
     }
     
+    @Test
+    void verifyRefreshTokenIsRefreshedWithAllScopes() throws Throwable {
+        val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
+        registeredService.setGenerateRefreshToken(true);
+        registeredService.setRenewRefreshToken(true);
+        registeredService.setScopes(Set.of("openid", "email", "profile"));
+        servicesManager.save(registeredService);
+        val service = RegisteredServiceTestUtils.getService(SERVICE_URL);
+
+        val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
+        val refreshToken = getRefreshToken(registeredService.getServiceId(), registeredService.getClientId());
+        when(refreshToken.getScopes()).thenReturn(Set.of("email", "openid"));
+        ticketRegistry.addTicket(refreshToken);
+
+        val context = AccessTokenRequestContext.builder()
+                .authentication(authentication)
+                .service(service)
+                .scopes(Set.of("email"))
+                .token(refreshToken)
+                .grantType(OAuth20GrantTypes.REFRESH_TOKEN)
+                .generateRefreshToken(true)
+                .registeredService(registeredService)
+                .ticketGrantingTicket(refreshToken.getTicketGrantingTicket())
+                .build();
+        val response = oauthTokenGenerator.generate(context);
+        assertTrue(response.getRefreshToken().isPresent());
+        val ticket = response.getRefreshToken().get();
+        assertInstanceOf(OAuth20RefreshToken.class, ticket);
+        assertEquals(Set.of("openid", "email"), ((OAuth20RefreshToken) ticket).getScopes());
+        assertTrue(response.getAccessToken().isPresent());
+        val ticket2 = response.getAccessToken().get();
+        assertInstanceOf(OAuth20AccessToken.class, ticket2);
+        assertEquals(Set.of("email"), ((OAuth20AccessToken) ticket2).getScopes());
+    }
+
     @Test
     void verifyCustomizedRefreshTokenWithNullAuthentication() throws Throwable {
         val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
