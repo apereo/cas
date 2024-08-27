@@ -19,17 +19,13 @@ import org.apereo.cas.config.CasOneTimeTokenAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.Getter;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 /**
  * This is {@link BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests}.
@@ -50,12 +46,9 @@ public abstract class BaseLdapGoogleAuthenticatorTokenCredentialRepositoryTests 
     public void cleanUp() {
         getRegistry().deleteAll();
     }
+
+    @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        EndpointAutoConfiguration.class,
-        WebEndpointAutoConfiguration.class,
-        AopAutoConfiguration.class,
         CasGoogleAuthenticatorLdapAutoConfiguration.class,
         CasOneTimeTokenAuthenticationAutoConfiguration.class,
         CasGoogleAuthenticatorAutoConfiguration.class,

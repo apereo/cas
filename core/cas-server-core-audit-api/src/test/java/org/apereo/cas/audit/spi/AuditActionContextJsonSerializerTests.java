@@ -1,6 +1,7 @@
 package org.apereo.cas.audit.spi;
 
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Audits")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @ExtendWith(CasTestExtension.class)
+@SpringBootTestAutoConfigurations
 class AuditActionContextJsonSerializerTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;

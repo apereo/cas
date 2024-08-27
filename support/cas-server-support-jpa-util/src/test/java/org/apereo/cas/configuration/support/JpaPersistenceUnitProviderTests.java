@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.support;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.orm.jpa.EntityManagerFactoryInfo;
@@ -31,10 +31,8 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Hibernate")
 @ExtendWith(CasTestExtension.class)
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    JpaPersistenceUnitProviderTests.JpaTestConfiguration.class
-})
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = JpaPersistenceUnitProviderTests.JpaTestConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class JpaPersistenceUnitProviderTests {
     @Autowired

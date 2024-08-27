@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal.provision;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -12,7 +13,6 @@ import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 
 /**
@@ -23,10 +23,8 @@ import org.springframework.core.io.ClassPathResource;
  */
 @Tag("Groovy")
 @ExtendWith(CasTestExtension.class)
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    CasCoreScriptingAutoConfiguration.class
-})
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = CasCoreScriptingAutoConfiguration.class)
 class GroovyDelegatedClientUserProfileProvisionerTests {
     @Test
     void verifyOperation() throws Throwable {

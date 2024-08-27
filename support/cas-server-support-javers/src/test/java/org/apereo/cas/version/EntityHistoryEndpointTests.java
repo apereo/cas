@@ -5,6 +5,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 27017)
 @AutoConfigureMockMvc
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = BaseEntityHistoryTests.SharedTestConfiguration.class,
     properties = {
         "server.port=8080",

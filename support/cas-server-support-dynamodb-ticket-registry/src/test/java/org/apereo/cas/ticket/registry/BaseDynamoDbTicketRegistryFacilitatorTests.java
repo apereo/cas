@@ -13,14 +13,11 @@ import org.apereo.cas.config.CasDynamoDbCoreAutoConfiguration;
 import org.apereo.cas.config.CasDynamoDbTicketRegistryAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import software.amazon.awssdk.core.SdkSystemSetting;
 
 /**
@@ -29,6 +26,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
     CasDynamoDbCoreAutoConfiguration.class,
     CasDynamoDbTicketRegistryAutoConfiguration.class,
@@ -41,11 +39,7 @@ import software.amazon.awssdk.core.SdkSystemSetting;
     CasCoreUtilAutoConfiguration.class,
     CasCoreScriptingAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
-    CasPersonDirectoryAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    EndpointAutoConfiguration.class,
-    WebEndpointAutoConfiguration.class,
-    RefreshAutoConfiguration.class
+    CasPersonDirectoryAutoConfiguration.class
 },
     properties = {
         "cas.ticket.registry.dynamo-db.endpoint=http://localhost:8000",

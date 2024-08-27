@@ -3,13 +3,13 @@ package org.apereo.cas.logging;
 import org.apereo.cas.config.CasAmazonCloudWatchAutoConfiguration;
 import org.apereo.cas.config.CasAmazonCoreAutoConfiguration;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import software.amazon.awssdk.core.SdkSystemSetting;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("AmazonWebServices")
 @EnabledIfListeningOnPort(port = 4566)
+@SpringBootTestAutoConfigurations
 @SpringBootTest(
     classes = {
-        RefreshAutoConfiguration.class,
         CasAmazonCoreAutoConfiguration.class,
         CasAmazonCloudWatchAutoConfiguration.class
     },
