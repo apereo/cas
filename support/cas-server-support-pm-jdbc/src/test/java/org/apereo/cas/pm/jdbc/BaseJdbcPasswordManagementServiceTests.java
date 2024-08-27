@@ -10,6 +10,7 @@ import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasHibernateJpaAutoConfiguration;
 import org.apereo.cas.config.CasJdbcPasswordManagementAutoConfiguration;
 import org.apereo.cas.config.CasPasswordManagementAutoConfiguration;
@@ -46,6 +47,10 @@ import javax.sql.DataSource;
     CasCoreLogoutAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasHibernateJpaAutoConfiguration.class,
+    CasCoreCookieAutoConfiguration.class,
+    CasCoreWebflowAutoConfiguration.class,
+    CasCoreMultifactorAuthenticationAutoConfiguration.class,
+    CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasJdbcPasswordManagementAutoConfiguration.class,
     CasPasswordManagementAutoConfiguration.class
 }, properties = {
