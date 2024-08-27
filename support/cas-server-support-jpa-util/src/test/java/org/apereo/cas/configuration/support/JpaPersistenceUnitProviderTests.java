@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junitpioneer.jupiter.SetSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -32,7 +33,10 @@ import static org.mockito.Mockito.*;
 @Tag("Hibernate")
 @ExtendWith(CasTestExtension.class)
 @SpringBootTestAutoConfigurations
-@SpringBootTest(classes = JpaPersistenceUnitProviderTests.JpaTestConfiguration.class)
+@SpringBootTest(classes = {
+    AopAutoConfiguration.class,
+    JpaPersistenceUnitProviderTests.JpaTestConfiguration.class
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class JpaPersistenceUnitProviderTests {
     @Autowired

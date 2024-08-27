@@ -21,6 +21,7 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -42,7 +43,10 @@ import static org.mockito.Mockito.*;
 class SamlRegisteredServiceAttributeReleasePolicyTests {
     @Nested
     @SpringBootTestAutoConfigurations
-    @SpringBootTest(classes = DefaultTests.SamlTestConfiguration.class)
+    @SpringBootTest(classes = {
+        AopAutoConfiguration.class,
+        DefaultTests.SamlTestConfiguration.class
+    })
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     class DefaultTests {
         @Autowired
@@ -145,7 +149,10 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
 
     @Nested
     @SpringBootTestAutoConfigurations
-    @SpringBootTest(classes = NoServiceProvider.SamlTestConfiguration.class)
+    @SpringBootTest(classes = {
+        AopAutoConfiguration.class,
+        NoServiceProvider.SamlTestConfiguration.class
+    })
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public class NoServiceProvider {
         @Autowired

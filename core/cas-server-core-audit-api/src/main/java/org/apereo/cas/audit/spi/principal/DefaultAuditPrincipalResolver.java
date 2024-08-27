@@ -35,7 +35,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DefaultAuditPrincipalResolver implements PrincipalResolver {
     private final AuditPrincipalIdProvider auditPrincipalIdProvider;
-
+    private final CasWebflowCredentialProvider webflowCredentialProvider;
+    
     @Override
     public String resolveFrom(final JoinPoint auditTarget, final Object returnValue) {
         LOGGER.trace("Resolving principal at audit point [{}]", auditTarget);
@@ -151,10 +152,7 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
 
     protected String getPrincipalFromRequestContext(final JoinPoint auditTarget, final Object returnValue,
                                                     final Exception exception, final RequestContext requestContext) {
-
-        val applicationContext = requestContext.getActiveFlow().getApplicationContext();
-        val credentialProvider = applicationContext.getBean(CasWebflowCredentialProvider.BEAN_NAME, CasWebflowCredentialProvider.class);
-        val credentials = credentialProvider.extract(requestContext);
+        val credentials = webflowCredentialProvider.extract(requestContext);
         val credentialId = credentials.stream().map(Credential::getId).findFirst().orElse(UNKNOWN_USER);
 
         val authentication = WebUtils.getAuthentication(requestContext);

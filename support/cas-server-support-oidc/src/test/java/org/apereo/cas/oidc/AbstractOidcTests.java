@@ -128,9 +128,6 @@ import static org.mockito.Mockito.*;
 @SpringBootTest(classes = AbstractOidcTests.SharedTestConfiguration.class,
     properties = {
         "spring.threads.virtual.enabled=true",
-
-        "spring.mvc.pathmatch.matching-strategy=ant-path-matcher",
-
         "cas.audit.slf4j.use-single-line=true",
 
         "cas.server.name=https://sso.example.org/",

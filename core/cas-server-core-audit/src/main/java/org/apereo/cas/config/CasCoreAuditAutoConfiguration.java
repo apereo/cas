@@ -29,6 +29,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import org.apereo.cas.util.text.MessageSanitizer;
+import org.apereo.cas.web.flow.CasWebflowCredentialProvider;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditTrailManagementAspect;
@@ -90,9 +91,11 @@ public class CasCoreAuditAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PrincipalResolver auditablePrincipalResolver(
+            @Qualifier(CasWebflowCredentialProvider.BEAN_NAME)
+            final CasWebflowCredentialProvider casWebflowCredentialProvider,
             @Qualifier("auditPrincipalIdProvider")
             final AuditPrincipalIdProvider auditPrincipalIdProvider) {
-            return new DefaultAuditPrincipalResolver(auditPrincipalIdProvider);
+            return new DefaultAuditPrincipalResolver(auditPrincipalIdProvider, casWebflowCredentialProvider);
         }
 
         @ConditionalOnMissingBean(name = "auditPrincipalIdProvider")

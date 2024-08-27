@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -78,7 +79,10 @@ class CachingPrincipalAttributesRepositoryTests {
 
     @Nested
     @SpringBootTestAutoConfigurations
-    @SpringBootTest(classes = CacheTestConfiguration.class)
+    @SpringBootTest(classes = {
+        AopAutoConfiguration.class,
+        CacheTestConfiguration.class
+    })
     class MergingTests {
         private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
             .defaultTypingEnabled(true).build().toObjectMapper();

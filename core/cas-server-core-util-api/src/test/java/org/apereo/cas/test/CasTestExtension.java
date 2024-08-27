@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 public class CasTestExtension implements BeforeAllCallback {
     @Override
     public void beforeAll(final ExtensionContext extensionContext) {
+        System.setProperty("spring.mvc.pathmatch.matching-strategy", "ant-path-matcher");
         System.setProperty("spring.main.allow-bean-definition-overriding", "true");
         System.setProperty("spring.main.banner-mode", "off");
     }
