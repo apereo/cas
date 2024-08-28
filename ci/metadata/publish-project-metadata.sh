@@ -37,10 +37,7 @@ function publishProjectModules() {
   coords="\"collection\":\"$collectionName\",\"database\":\"apereocas\",\"dataSource\":\"cascluster\"";
   
   echo "Removing previous records for ${casVersion} from ${coords}"
-  execPostRequestWithHttpie "deleteMany" "{${coords},\"filter\":{\"version\":{\"\$eq\":\"$casVersion\"}}}"
-
-  echo "Removing SNAPSHOT records for ${casVersion} from ${coords}"
-  execPostRequestWithHttpie "deleteMany" "{${coords},\"filter\":{\"version\":{\"\$regex\":\"-SNAPSHOT\$\"}}}"
+  execPostRequestWithHttpie "deleteMany" "{${coords},\"filter\":{}}"
 
   echo "Uploading module records for ${casVersion} to ${coords}"
   input=$(cat build/modules.json)
