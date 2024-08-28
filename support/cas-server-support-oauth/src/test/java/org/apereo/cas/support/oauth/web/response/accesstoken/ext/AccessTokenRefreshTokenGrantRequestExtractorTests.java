@@ -1,16 +1,14 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import org.apereo.cas.AbstractOAuth20Tests;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
-import lombok.val;
 import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
+import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.pac4j.core.context.WebContext;
 import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -30,11 +28,11 @@ import static org.mockito.Mockito.*;
  */
 @Tag("OAuth")
 class AccessTokenRefreshTokenGrantRequestExtractorTests extends AbstractOAuth20Tests {
+    private static final String CLIENT_ID = "client_id";
+
     @Autowired
     @Qualifier("accessTokenRefreshTokenGrantRequestExtractor")
     private AccessTokenGrantRequestExtractor extractor;
-
-    private static final String CLIENT_ID = "client_id";
 
     @Test
     void verifyNoService() throws Throwable {

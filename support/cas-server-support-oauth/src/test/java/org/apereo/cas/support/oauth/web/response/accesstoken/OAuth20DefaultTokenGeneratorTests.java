@@ -1,7 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
 import org.apereo.cas.AbstractOAuth20Tests;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
