@@ -240,6 +240,9 @@ public class CasPullRequestListener implements PullRequestListener {
 
         if (pr.isDraft() || pr.isWorkInProgress()) {
             log.info("Pull request {} is a work-in-progress or is under review", pr);
+            if (!pr.isLabeledAs(CasLabels.LABEL_WIP)) {
+                repository.labelPullRequestAs(pr, CasLabels.LABEL_WIP);
+            }
             return true;
         }
 

@@ -8,7 +8,7 @@ import org.apereo.cas.github.PullRequest;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
+@FunctionalInterface
 public interface PullRequestListener {
-    default void onOpenPullRequest(final PullRequest pr) {
-    }
+    void onOpenPullRequest(PullRequest pr);
 }
