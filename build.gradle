@@ -575,7 +575,7 @@ tasks.register('publishProjectModules') {
             }
             results += [
                 name: it.name,
-                version: it.version,
+                version: it.version.replaceAll("-SNAPSHOT", ""),
                 group: it.group,
                 description: it.description,
                 details: metadata
