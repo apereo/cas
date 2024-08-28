@@ -36,6 +36,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-web-api")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-tickets-api")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-services")
