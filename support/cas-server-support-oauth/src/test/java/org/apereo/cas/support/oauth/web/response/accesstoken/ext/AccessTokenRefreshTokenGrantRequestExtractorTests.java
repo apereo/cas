@@ -7,6 +7,7 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.jee.context.JEEContext;
@@ -71,7 +72,7 @@ class AccessTokenRefreshTokenGrantRequestExtractorTests extends AbstractOAuth20T
         var result = extractor.extract(new JEEContext(request, new MockHttpServletResponse()));
         assertEquals(Set.of("email"), result.getScopes());
 
-        request.setParameter(OAuth20Constants.SCOPE, "");
+        request.setParameter(OAuth20Constants.SCOPE, StringUtils.EMPTY);
         result = extractor.extract(new JEEContext(request, new MockHttpServletResponse()));
         assertEquals(Set.of("openid", "email"), result.getScopes());
 
