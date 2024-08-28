@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * This is {@link DynamoDbCloudConfigBootstrapAutoConfiguration}.
+ * This is {@link CasDynamoDbCloudConfigBootstrapAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -41,7 +41,7 @@ import java.util.Properties;
 @Getter
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "dynamodb")
 @AutoConfiguration
-public class DynamoDbCloudConfigBootstrapAutoConfiguration implements PropertySourceLocator {
+public class CasDynamoDbCloudConfigBootstrapAutoConfiguration implements PropertySourceLocator {
 
     /**
      * Configuration table name.
@@ -98,7 +98,7 @@ public class DynamoDbCloudConfigBootstrapAutoConfiguration implements PropertySo
 
             result.items()
                 .stream()
-                .map(DynamoDbCloudConfigBootstrapAutoConfiguration::retrieveSetting)
+                .map(CasDynamoDbCloudConfigBootstrapAutoConfiguration::retrieveSetting)
                 .forEach(p -> props.put(p.getKey(), p.getValue()));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);

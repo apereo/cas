@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.config.MongoDbCloudConfigBootstrapAutoConfiguration;
+import org.apereo.cas.config.CasMongoDbCloudConfigBootstrapAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -19,7 +19,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link MongoDbCloudConfigBootstrapAutoConfigurationTests}.
+ * This is {@link CasMongoDbCloudConfigBootstrapAutoConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
@@ -29,8 +29,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 27017)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @SpringBootTestAutoConfigurations
-@SpringBootTest(classes = MongoDbCloudConfigBootstrapAutoConfiguration.class, properties = "cas.spring.cloud.mongo.uri=" + MongoDbCloudConfigBootstrapAutoConfigurationTests.MONGODB_URI)
-class MongoDbCloudConfigBootstrapAutoConfigurationTests {
+@SpringBootTest(classes = CasMongoDbCloudConfigBootstrapAutoConfiguration.class, properties = "cas.spring.cloud.mongo.uri=" + CasMongoDbCloudConfigBootstrapAutoConfigurationTests.MONGODB_URI)
+class CasMongoDbCloudConfigBootstrapAutoConfigurationTests {
     static final String MONGODB_URI = "mongodb://root:secret@localhost:27017/admin";
 
     private static final String STATIC_AUTHN_USERS = "casuser::WHATEVER";

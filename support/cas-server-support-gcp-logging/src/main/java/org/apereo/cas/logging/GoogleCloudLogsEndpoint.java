@@ -19,6 +19,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * This is {@link GoogleCloudLogsEndpoint}.
@@ -53,12 +54,19 @@ public class GoogleCloudLogsEndpoint extends BaseCasRestActuatorEndpoint {
         })
     public List<LogEvent> fetchLogEntries(
         @RequestParam(name = "count", required = false, defaultValue = "50") final int count,
-        @RequestParam(name = "level", required = false) final String level) {
-        val logName = casProperties.getLogging().getGcp().getLogName();
-        var filter = "logName=" + logName;
-        if (StringUtils.isNotBlank(level)) {
-            filter += " AND severity=" + level.toUpperCase(Locale.ENGLISH);
+        @RequestParam(name = "level", required = false, defaultValue = "INFO") final String level) {
+
+        val filterBuilder = new StringBuilder("severity=" + level.toUpperCase(Locale.ENGLISH));
+        val properties = casProperties.getLogging().getGcp();
+        if (StringUtils.isNotBlank(properties.getLogName())) {
+            filterBuilder.append(" AND logName=").append(properties.getLogName());
         }
+        for (val label : properties.getLabels().entrySet()) {
+            filterBuilder.append(" AND resource.labels.").append(label.getKey()).append('=').append(label.getValue());
+        }
+        val filter = filterBuilder.toString();
+        LOGGER.trace("Using filter [{}]", filter);
+        
         val logEntries = loggingService.listLogEntries(
             Logging.EntryListOption.filter(filter),
             Logging.EntryListOption.sortOrder(Logging.SortingField.TIMESTAMP, Logging.SortingOrder.DESCENDING),
@@ -66,16 +74,17 @@ public class GoogleCloudLogsEndpoint extends BaseCasRestActuatorEndpoint {
         ).iterateAll().iterator();
 
         val logEvents = new ArrayList<LogEvent>();
-        while (logEntries.hasNext()) {
+        while (logEntries.hasNext() && logEvents.size() < count) {
             val logEntry = logEntries.next();
             val event = new LogEvent(logEntry.getPayload().getData().toString(),
                 DateTimeUtils.zonedDateTimeOf(logEntry.getInstantTimestamp()),
-                logEntry.getSeverity().name().toUpperCase(Locale.ENGLISH));
+                logEntry.getSeverity().name().toUpperCase(Locale.ENGLISH),
+                logEntry.getLabels());
             logEvents.add(event);
         }
         return logEvents;
     }
 
-    public record LogEvent(String message, ZonedDateTime timestamp, String level) {
+    public record LogEvent(String message, ZonedDateTime timestamp, String level, Map<String, String> labels) {
     }
 }

@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.config.RestfulCloudConfigBootstrapAutoConfiguration;
+import org.apereo.cas.config.CasRestfulCloudConfigBootstrapAutoConfiguration;
 import org.apereo.cas.config.RestfulPropertySourceLocator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
@@ -24,17 +24,17 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link RestfulCloudConfigBootstrapAutoConfigurationTests}.
+ * This is {@link CasRestfulCloudConfigBootstrapAutoConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @SpringBootTestAutoConfigurations
-@SpringBootTest(classes = RestfulCloudConfigBootstrapAutoConfiguration.class)
+@SpringBootTest(classes = CasRestfulCloudConfigBootstrapAutoConfiguration.class)
 @Tag("RestfulApi")
 @ExtendWith(CasTestExtension.class)
-class RestfulCloudConfigBootstrapAutoConfigurationTests {
+class CasRestfulCloudConfigBootstrapAutoConfigurationTests {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 

@@ -1,7 +1,7 @@
 package org.apereo.cas;
 
 import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
-import org.apereo.cas.config.AmazonSecretsManagerCloudConfigBootstrapAutoConfiguration;
+import org.apereo.cas.config.CasAmazonSecretsManagerCloudConfigBootstrapAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -25,24 +25,24 @@ import software.amazon.awssdk.services.secretsmanager.model.PutSecretValueReques
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link AmazonSecretsManagerCloudConfigBootstrapAutoConfigurationTests}.
+ * This is {@link CasAmazonSecretsManagerCloudConfigBootstrapAutoConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
 @SpringBootTestAutoConfigurations
-@SpringBootTest(classes = AmazonSecretsManagerCloudConfigBootstrapAutoConfiguration.class, properties = {
+@SpringBootTest(classes = CasAmazonSecretsManagerCloudConfigBootstrapAutoConfiguration.class, properties = {
     "cas.spring.cloud.aws.secrets-manager.region=us-east-1",
-    "cas.spring.cloud.aws.secrets-manager.endpoint=" + AmazonSecretsManagerCloudConfigBootstrapAutoConfigurationTests.ENDPOINT,
-    "cas.spring.cloud.aws.secrets-manager.credential-access-key=" + AmazonSecretsManagerCloudConfigBootstrapAutoConfigurationTests.CREDENTIAL_ACCESS_KEY,
-    "cas.spring.cloud.aws.secrets-manager.credential-secret-key=" + AmazonSecretsManagerCloudConfigBootstrapAutoConfigurationTests.CREDENTIAL_SECRET_KEY
+    "cas.spring.cloud.aws.secrets-manager.endpoint=" + CasAmazonSecretsManagerCloudConfigBootstrapAutoConfigurationTests.ENDPOINT,
+    "cas.spring.cloud.aws.secrets-manager.credential-access-key=" + CasAmazonSecretsManagerCloudConfigBootstrapAutoConfigurationTests.CREDENTIAL_ACCESS_KEY,
+    "cas.spring.cloud.aws.secrets-manager.credential-secret-key=" + CasAmazonSecretsManagerCloudConfigBootstrapAutoConfigurationTests.CREDENTIAL_SECRET_KEY
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnabledIfListeningOnPort(port = 4566)
 @Tag("AmazonWebServices")
 @ExtendWith(CasTestExtension.class)
 @Slf4j
-class AmazonSecretsManagerCloudConfigBootstrapAutoConfigurationTests {
+class CasAmazonSecretsManagerCloudConfigBootstrapAutoConfigurationTests {
 
     static final String ENDPOINT = "http://localhost:4566";
 
@@ -63,12 +63,12 @@ class AmazonSecretsManagerCloudConfigBootstrapAutoConfigurationTests {
     @BeforeAll
     public static void initialize() {
         val environment = new MockEnvironment();
-        environment.setProperty(AmazonSecretsManagerCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "endpoint", ENDPOINT);
-        environment.setProperty(AmazonSecretsManagerCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "region", Region.US_EAST_1.id());
-        environment.setProperty(AmazonSecretsManagerCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-access-key", CREDENTIAL_ACCESS_KEY);
-        environment.setProperty(AmazonSecretsManagerCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-secret-key", CREDENTIAL_SECRET_KEY);
+        environment.setProperty(CasAmazonSecretsManagerCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "endpoint", ENDPOINT);
+        environment.setProperty(CasAmazonSecretsManagerCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "region", Region.US_EAST_1.id());
+        environment.setProperty(CasAmazonSecretsManagerCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-access-key", CREDENTIAL_ACCESS_KEY);
+        environment.setProperty(CasAmazonSecretsManagerCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-secret-key", CREDENTIAL_SECRET_KEY);
 
-        val builder = new AmazonEnvironmentAwareClientBuilder(AmazonSecretsManagerCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX, environment);
+        val builder = new AmazonEnvironmentAwareClientBuilder(CasAmazonSecretsManagerCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX, environment);
         val client = builder.build(SecretsManagerClient.builder(), SecretsManagerClient.class);
 
         try {

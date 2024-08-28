@@ -1,1 +1,1 @@
-org.springframework.cloud.bootstrap.BootstrapConfiguration=org.apereo.cas.config.GoogleCloudSecretsManagerCloudConfigBootstrapAutoConfiguration
+org.springframework.cloud.bootstrap.BootstrapConfiguration=org.apereo.cas.config.CasGoogleCloudSecretsManagerCloudConfigBootstrapAutoConfiguration

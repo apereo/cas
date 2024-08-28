@@ -1,1 +1,1 @@
-org.springframework.cloud.bootstrap.BootstrapConfiguration=org.apereo.cas.config.RestfulCloudConfigBootstrapAutoConfiguration
+org.springframework.cloud.bootstrap.BootstrapConfiguration=org.apereo.cas.config.CasRestfulCloudConfigBootstrapAutoConfiguration

@@ -48,7 +48,7 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.OpenIDConnect)
 @Configuration(value = "OidcWebflowConfiguration", proxyBeanMethods = false)
-public class OidcWebflowConfiguration {
+class OidcWebflowConfiguration {
     @ConditionalOnMissingBean(name = "oidcUnmetAuthenticationRequirementWebflowExceptionHandler")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

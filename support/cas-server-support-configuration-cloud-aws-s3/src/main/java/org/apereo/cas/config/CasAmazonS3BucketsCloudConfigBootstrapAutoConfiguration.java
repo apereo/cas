@@ -24,7 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.Properties;
 
 /**
- * This is {@link AmazonS3BucketsCloudConfigBootstrapAutoConfiguration}.
+ * This is {@link CasAmazonS3BucketsCloudConfigBootstrapAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -33,7 +33,7 @@ import java.util.Properties;
 @Getter
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "aws-s3")
 @AutoConfiguration
-public class AmazonS3BucketsCloudConfigBootstrapAutoConfiguration implements PropertySourceLocator {
+public class CasAmazonS3BucketsCloudConfigBootstrapAutoConfiguration implements PropertySourceLocator {
     /**
      * Amazon S3 CAS configuration key prefix.
      */

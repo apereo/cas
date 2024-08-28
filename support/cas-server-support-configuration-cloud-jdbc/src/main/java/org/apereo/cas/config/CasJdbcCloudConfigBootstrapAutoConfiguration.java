@@ -21,7 +21,7 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link JdbcCloudConfigBootstrapAutoConfiguration}.
+ * This is {@link CasJdbcCloudConfigBootstrapAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "jdbc")
 @AutoConfiguration
-public class JdbcCloudConfigBootstrapAutoConfiguration implements PropertySourceLocator {
+public class CasJdbcCloudConfigBootstrapAutoConfiguration implements PropertySourceLocator {
 
     private static final String CAS_CONFIGURATION_PREFIX = "cas.spring.cloud.jdbc";
 

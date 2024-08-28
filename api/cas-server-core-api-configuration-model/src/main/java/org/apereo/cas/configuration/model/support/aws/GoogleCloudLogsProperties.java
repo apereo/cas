@@ -7,6 +7,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * This is {@link GoogleCloudLogsProperties}.
@@ -40,4 +42,10 @@ public class GoogleCloudLogsProperties implements Serializable {
      */
     @RequiredProperty
     private String projectId;
+
+    /**
+     * Map of resource labels to filter log entries.
+     * Key is the resource label name, and value is the actual label itself.
+     */
+    private Map<String, String> labels = new LinkedHashMap<>();
 }
