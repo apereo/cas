@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.config.JdbcCloudConfigBootstrapAutoConfiguration;
+import org.apereo.cas.config.CasJdbcCloudConfigBootstrapAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
@@ -18,17 +18,17 @@ import java.io.Serial;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link JdbcCloudConfigBootstrapAutoConfigurationTests}.
+ * This is {@link CasJdbcCloudConfigBootstrapAutoConfigurationTests}.
  *
  * @author Misagh Moayyed
  * @since 6.0.0
  */
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @SpringBootTestAutoConfigurations
-@SpringBootTest(classes = JdbcCloudConfigBootstrapAutoConfiguration.class)
+@SpringBootTest(classes = CasJdbcCloudConfigBootstrapAutoConfiguration.class)
 @Tag("JDBC")
 @ExtendWith(CasTestExtension.class)
-class JdbcCloudConfigBootstrapAutoConfigurationTests {
+class CasJdbcCloudConfigBootstrapAutoConfigurationTests {
     private static final String STATIC_AUTHN_USERS = "casuser::WHATEVER";
 
     @Autowired

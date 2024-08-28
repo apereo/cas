@@ -32,7 +32,7 @@ import org.springframework.context.annotation.Bean;
 import java.util.Optional;
 
 /**
- * This is {@link GoogleCloudSecretsManagerCloudConfigBootstrapAutoConfiguration}.
+ * This is {@link CasGoogleCloudSecretsManagerCloudConfigBootstrapAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 7.0.0
@@ -43,7 +43,7 @@ import java.util.Optional;
 @ConditionalOnProperty(value = "spring.cloud.gcp.secretmanager.enabled", matchIfMissing = true)
 @AutoConfiguration(after = GcpSecretManagerAutoConfiguration.class)
 @EnableConfigurationProperties(GcpSecretManagerProperties.class)
-public class GoogleCloudSecretsManagerCloudConfigBootstrapAutoConfiguration {
+public class CasGoogleCloudSecretsManagerCloudConfigBootstrapAutoConfiguration {
 
     /**
      * Google cloud secrets manager property source.

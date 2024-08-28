@@ -4,7 +4,6 @@ import org.apereo.cas.aws.AmazonEnvironmentAwareClientBuilder;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -16,13 +15,12 @@ import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
 import software.amazon.awssdk.services.ssm.SsmClient;
 import software.amazon.awssdk.services.ssm.model.GetParametersByPathRequest;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
 
 /**
- * This is {@link AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfiguration}.
+ * This is {@link CasAmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 6.2.0
@@ -31,7 +29,7 @@ import java.util.Properties;
 @Getter
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "aws-ssm")
 @AutoConfiguration
-public class AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfiguration implements PropertySourceLocator {
+public class CasAmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfiguration implements PropertySourceLocator {
     /**
      * Configuration prefix for amazon secrets manager.
      */
@@ -42,33 +40,33 @@ public class AmazonSimpleSystemsManagementCloudConfigBootstrapAutoConfiguration 
         val props = new Properties();
         try {
             val builder = new AmazonEnvironmentAwareClientBuilder(CAS_CONFIGURATION_PREFIX, environment);
-            val client = builder.build(SsmClient.builder(), SsmClient.class);
+            try (val client = builder.build(SsmClient.builder(), SsmClient.class)) {
+                val profiles = new ArrayList<String>();
+                profiles.add(StringUtils.EMPTY);
+                profiles.addAll(Arrays.asList(environment.getActiveProfiles()));
 
-            val profiles = new ArrayList<String>();
-            profiles.add(StringUtils.EMPTY);
-            profiles.addAll(Arrays.asList(environment.getActiveProfiles()));
+                profiles.forEach(profile -> {
+                    var nextToken = (String) null;
+                    do {
+                        val prefix = String.format("/cas/%s", profile);
+                        val request = GetParametersByPathRequest.builder()
+                            .path(prefix)
+                            .withDecryption(Boolean.TRUE)
+                            .nextToken(nextToken)
+                            .build();
+                        val result = client.getParametersByPath(request);
+                        nextToken = result.nextToken();
+                        LOGGER.trace("Fetched [{}] parameters with next token as [{}]", result.parameters().size(), result.nextToken());
 
-            profiles.forEach(profile -> {
-                var nextToken = (String) null;
-                do {
-                    val prefix = String.format("/cas/%s", profile);
-                    val request = GetParametersByPathRequest.builder()
-                        .path(prefix)
-                        .withDecryption(Boolean.TRUE)
-                        .nextToken(nextToken)
-                        .build();
-                    val result = client.getParametersByPath(request);
-                    nextToken = result.nextToken();
-                    LOGGER.trace("Fetched [{}] parameters with next token as [{}]", result.parameters().size(), result.nextToken());
-
-                    result.parameters().forEach(p -> {
-                        var propKey = StringUtils.removeStart(p.name(), prefix);
-                        propKey = StringUtils.removeStart(propKey, "/");
-                        val key = StringUtils.removeEnd(propKey, "/");
-                        props.put(key, p.value());
-                    });
-                } while (nextToken != null);
-            });
+                        result.parameters().forEach(p -> {
+                            var propKey = StringUtils.removeStart(p.name(), prefix);
+                            propKey = StringUtils.removeStart(propKey, "/");
+                            val key = StringUtils.removeEnd(propKey, "/");
+                            props.put(key, p.value());
+                        });
+                    } while (nextToken != null);
+                });
+            }
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }

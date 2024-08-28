@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.config.GoogleCloudSecretsManagerCloudConfigBootstrapAutoConfiguration;
+import org.apereo.cas.config.CasGoogleCloudSecretsManagerCloudConfigBootstrapAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
@@ -27,7 +27,7 @@ import org.springframework.core.env.Environment;
 @SpringBootTest(classes = {
     BaseGoogleCloudSecretsManagerTests.BaseGoogleCloudSecretsManagerTestConfiguration.class,
     PropertyPlaceholderAutoConfiguration.class,
-    GoogleCloudSecretsManagerCloudConfigBootstrapAutoConfiguration.class
+    CasGoogleCloudSecretsManagerCloudConfigBootstrapAutoConfiguration.class
 }, properties = {
     "spring.cloud.gcp.secretmanager.enabled=true",
     "spring.cloud.gcp.secretmanager.project-id=project-12345"

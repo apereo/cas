@@ -34,12 +34,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 8000)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @SpringBootTestAutoConfigurations
-@SpringBootTest(classes = DynamoDbCloudConfigBootstrapAutoConfiguration.class, properties = {
-    DynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "endpoint=http://localhost:8000",
-    DynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "local-instance=true",
-    DynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "prevent-table-creation-on-startup=true",
-    DynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-access-key=test",
-    DynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-secret-key=test"
+@SpringBootTest(classes = CasDynamoDbCloudConfigBootstrapAutoConfiguration.class, properties = {
+    CasDynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "endpoint=http://localhost:8000",
+    CasDynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "local-instance=true",
+    CasDynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "prevent-table-creation-on-startup=true",
+    CasDynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-access-key=test",
+    CasDynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-secret-key=test"
 })
 class DynamoDbCloudConfigBootstrapConfigurationTests {
     private static final String STATIC_AUTHN_USERS = "casuser::WHATEVER";
@@ -50,24 +50,24 @@ class DynamoDbCloudConfigBootstrapConfigurationTests {
     @BeforeAll
     public static void initialize() throws Exception {
         val environment = new MockEnvironment();
-        environment.setProperty(DynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "endpoint", "http://localhost:8000");
-        environment.setProperty(DynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "local-instance", "true");
-        environment.setProperty(DynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "prevent-table-creation-on-startup", "true");
-        environment.setProperty(DynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-access-key", "test");
-        environment.setProperty(DynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-secret-key", "test");
+        environment.setProperty(CasDynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "endpoint", "http://localhost:8000");
+        environment.setProperty(CasDynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "local-instance", "true");
+        environment.setProperty(CasDynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "prevent-table-creation-on-startup", "true");
+        environment.setProperty(CasDynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-access-key", "test");
+        environment.setProperty(CasDynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX + '.' + "credential-secret-key", "test");
 
-        val builder = new AmazonEnvironmentAwareClientBuilder(DynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX, environment);
+        val builder = new AmazonEnvironmentAwareClientBuilder(CasDynamoDbCloudConfigBootstrapAutoConfiguration.CAS_CONFIGURATION_PREFIX, environment);
         val amazonDynamoDBClient = builder.build(DynamoDbClient.builder(), DynamoDbClient.class);
 
-        DynamoDbCloudConfigBootstrapAutoConfiguration.createSettingsTable(amazonDynamoDBClient, true);
+        CasDynamoDbCloudConfigBootstrapAutoConfiguration.createSettingsTable(amazonDynamoDBClient, true);
         val values = new HashMap<String, AttributeValue>();
-        values.put(DynamoDbCloudConfigBootstrapAutoConfiguration.ColumnNames.ID.getColumnName(),
+        values.put(CasDynamoDbCloudConfigBootstrapAutoConfiguration.ColumnNames.ID.getColumnName(),
             AttributeValue.builder().s(UUID.randomUUID().toString()).build());
-        values.put(DynamoDbCloudConfigBootstrapAutoConfiguration.ColumnNames.NAME.getColumnName(),
+        values.put(CasDynamoDbCloudConfigBootstrapAutoConfiguration.ColumnNames.NAME.getColumnName(),
             AttributeValue.builder().s("cas.authn.accept.users").build());
-        values.put(DynamoDbCloudConfigBootstrapAutoConfiguration.ColumnNames.VALUE.getColumnName(),
+        values.put(CasDynamoDbCloudConfigBootstrapAutoConfiguration.ColumnNames.VALUE.getColumnName(),
             AttributeValue.builder().s(STATIC_AUTHN_USERS).build());
-        val request = PutItemRequest.builder().tableName(DynamoDbCloudConfigBootstrapAutoConfiguration.TABLE_NAME).item(values).build();
+        val request = PutItemRequest.builder().tableName(CasDynamoDbCloudConfigBootstrapAutoConfiguration.TABLE_NAME).item(values).build();
         amazonDynamoDBClient.putItem(request);
     }
 

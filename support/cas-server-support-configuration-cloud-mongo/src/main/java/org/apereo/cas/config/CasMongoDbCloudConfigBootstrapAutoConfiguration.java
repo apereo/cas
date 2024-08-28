@@ -17,14 +17,14 @@ import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import java.util.Objects;
 
 /**
- * This is {@link MongoDbCloudConfigBootstrapAutoConfiguration}.
+ * This is {@link CasMongoDbCloudConfigBootstrapAutoConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.CasConfiguration, module = "mongo")
 @AutoConfiguration
-public class MongoDbCloudConfigBootstrapAutoConfiguration {
+public class CasMongoDbCloudConfigBootstrapAutoConfiguration {
     /**
      * MongoDb CAS configuration key URI.
      */
