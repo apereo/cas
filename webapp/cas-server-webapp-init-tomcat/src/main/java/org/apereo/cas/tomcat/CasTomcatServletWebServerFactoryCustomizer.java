@@ -324,7 +324,7 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
         public void invoke(final Request request, final Response response) throws IOException, ServletException {
             val valve = casProperties.getServer().getTomcat().getRemoteUserValve();
             val username = request.getHeader(valve.getRemoteUserHeader());
-            LOGGER.debug("Received remote user [{}] from [{}]", username, request.getRemoteAddr());
+            LOGGER.trace("Received remote user [{}] from [{}]", username, request.getRemoteAddr());
             if (StringUtils.isNotBlank(username) && RegexUtils.matchesIpAddress(valve.getAllowedIpAddressRegex(), request.getRemoteAddr())) {
                 val principal = new GenericPrincipal(username);
                 request.setUserPrincipal(principal);
