@@ -29,7 +29,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 27017)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @SpringBootTestAutoConfigurations
-@SpringBootTest(classes = CasMongoDbCloudConfigBootstrapAutoConfiguration.class, properties = "cas.spring.cloud.mongo.uri=" + CasMongoDbCloudConfigBootstrapAutoConfigurationTests.MONGODB_URI)
+@SpringBootTest(classes = CasMongoDbCloudConfigBootstrapAutoConfiguration.class,
+    properties = "cas.spring.cloud.mongo.uri=" + CasMongoDbCloudConfigBootstrapAutoConfigurationTests.MONGODB_URI)
 class CasMongoDbCloudConfigBootstrapAutoConfigurationTests {
     static final String MONGODB_URI = "mongodb://root:secret@localhost:27017/admin";
 
