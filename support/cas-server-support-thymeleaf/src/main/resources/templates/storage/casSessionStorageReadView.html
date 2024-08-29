@@ -30,17 +30,21 @@
 
         <script>new mdc.linearProgress.MDCLinearProgress(document.querySelector('.mdc-linear-progress'));</script>
         <script th:inline="javascript">
-            /*<![CDATA[*/
-
-            let sessionStorageContext = /*[[${sessionStorageContext}]]*/;
-            if (sessionStorageContext === undefined || sessionStorageContext === null || sessionStorageContext === "") {
-                sessionStorageContext = "sessionStorage";
-            }
-
-            const payload = readFromSessionStorage(sessionStorageContext);
-            document.getElementById("sessionStorage").value = payload;
-            document.getElementById("fm1").submit();
-            /*]]>*/
+            document.addEventListener('DOMContentLoaded', () => {
+                /*<![CDATA[*/
+                const browserStorage = /*[[${browserStorage}]]*/ ;
+                let payload;
+                if (browserStorage.storageType === 'SESSION') {
+                    payload = readFromSessionStorage(browserStorage);
+                } else {
+                    payload = readFromLocalStorage(browserStorage);
+                }
+                if (Object.keys(payload).length > 0) {
+                    document.getElementById("browserStorage").value = JSON.stringify(payload);
+                }
+                document.getElementById("fm1").submit();
+                /*]]>*/
+            });
         </script>
 
         <noscript>

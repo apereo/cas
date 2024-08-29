@@ -28,23 +28,24 @@
 
         <script>new mdc.linearProgress.MDCLinearProgress(document.querySelector('.mdc-linear-progress'));</script>
         <script th:inline="javascript">
-            /*<![CDATA[*/
+            document.addEventListener('DOMContentLoaded', () => {
+                /*<![CDATA[*/
 
-            let sessionStorageContext = /*[[${sessionStorageContext}]]*/;
-            if (sessionStorageContext === undefined || sessionStorageContext === null || sessionStorageContext === "") {
-                sessionStorageContext = "sessionStorage";
-            }
-
-            let payload = /*[[${sessionStorage.payload}]]*/;
-            writeToSessionStorage(payload, sessionStorageContext);
-            let url = /*[[${sessionStorage.destinationUrl}]]*/;
-
-            if (url !== undefined && url !== "" && url !== null) {
-                window.location.href = url;
-            } else {
-                document.getElementById("fm1").submit();
-            }
-            /*]]>*/
+                const browserStorage = /*[[${browserStorage}]]*/ ;
+                let payload;
+                if (browserStorage.storageType === 'SESSION') {
+                    payload = writeToSessionStorage(browserStorage);
+                } else {
+                    payload = writeToLocalStorage(browserStorage);
+                }
+                let url = browserStorage.destinationUrl;
+                if (url !== undefined && url !== "" && url !== null) {
+                    window.location.href = url;
+                } else {
+                    document.getElementById("fm1").submit();
+                }
+                /*]]>*/
+            });
         </script>
 
         <noscript>
