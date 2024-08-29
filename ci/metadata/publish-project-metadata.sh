@@ -28,50 +28,21 @@ function publishProjectModules() {
     exit 1
   fi
 
-  coords="\"collection\":\"casmodules\",\"database\":\"apereocas\",\"dataSource\":\"cascluster\"";
-  
-  echo "Clearing previous records for ${casVersion}"
-  execPostRequestWithHttpie "deleteMany" "{${coords},\"filter\":{\"version\":{\"\$eq\":\"$casVersion\"}}}"
+  versionNumbers=${casVersion%%-*}
+  versionNumbers=${versionNumbers//./}
+  echo "CAS simple version number is: $versionNumbers"
+  collectionName="casmodules$versionNumbers"
+  echo "CAS module collection is $collectionName"
 
-  echo "Clearing SNAPSHOT records for ${casVersion}"
-  execPostRequestWithHttpie "deleteMany" "{${coords},\"filter\":{\"version\":{\"\$regex\":\"-SNAPSHOT\$\"}}}"
+  coords="\"collection\":\"$collectionName\",\"database\":\"apereocas\",\"dataSource\":\"cascluster\"";
 
-  echo "Uploading module records for ${casVersion}"
+  echo "Removing previous records for ${casVersion} from ${coords}"
+  execPostRequestWithHttpie "deleteMany" "{${coords},\"filter\":{}}"
+
+  echo "Uploading module records for ${casVersion} to ${coords}"
   input=$(cat build/modules.json)
   execPostRequestWithHttpie "insertMany" "{${coords},\"documents\": ${input}}"
   
-  if [ $? -eq 1 ]; then
-    echo "Unable to upload records for CAS version ${casVersion}. Aborting..."
-    exit 1
-  fi
-}
-
-function publishProjectConfiguration() {
-  echo "Publishing CAS configuration metadata for CAS version ${casVersion}"
-  /gradlew :api:cas-server-core-api-configuration-model:generateConfigurationMetadata \
-           :api:cas-server-core-api-configuration-model:generateConfigurationMetadata \
-           --no-configuration-cache --build-cache --configure-on-demand \
-           --no-daemon --parallel -x test -x javadoc -x check
-  if [ $? -eq 1 ]; then
-    echo "Unable to successfully generate metadata for CAS configuration"
-    exit 1
-  fi
-
-  coords="\"collection\":\"casconfig\",\"database\":\"apereocas\",\"dataSource\":\"cascluster\"";
-
-#  echo "Clearing previous records for ${casVersion}"
-#  execPostRequestWithHttpie "deleteMany" "{${coords},\"filter\":{\"_id\":{\"\$ne\":null}}}"
-  
-  echo "Clearing previous records for ${casVersion}"
-  execPostRequestWithHttpie "deleteMany" "{${coords},\"filter\":{\"version\":{\"\$eq\":\"$casVersion\"}}}"
-  echo "Clearing SNAPSHOT records for ${casVersion}"
-  execPostRequestWithHttpie "deleteMany" "{${coords},\"filter\":{\"version\":{\"\$regex\":\"-SNAPSHOT\$\"}}}"
-
-
-  echo "Uploading configuration records for ${casVersion}"
-  input=$(cat api/cas-server-core-api-configuration-model/build/spring-configuration-metadata.json)
-  execPostRequestWithHttpie "insertOne" "{${coords},\"document\": {\"version\": \"$casVersion\", \"payload\": ${input} }}"
-
   if [ $? -eq 1 ]; then
     echo "Unable to upload records for CAS version ${casVersion}. Aborting..."
     exit 1
@@ -86,4 +57,3 @@ if [ $? -eq 1 ]; then
 fi
 
 publishProjectModules
-publishProjectConfiguration
