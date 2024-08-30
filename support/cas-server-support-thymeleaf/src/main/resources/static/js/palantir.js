@@ -1145,6 +1145,65 @@ async function initializeLoggingOperations() {
     
 }
 
+async function initializeAuditEventsOperations() {
+    if (actuatorEndpoints.auditlog) {
+        const auditEventsTable = $("#auditEventsTable").DataTable({
+            pageLength: 10,
+            drawCallback: settings => {
+                $("#auditEventsTable tr").addClass("mdc-data-table__row");
+                $("#auditEventsTable td").addClass("mdc-data-table__cell");
+            }
+        });
+        function fetchAuditLog() {
+            return setInterval(() => {
+                if (currentActiveTab === Tabs.LOGGING) {
+                    const interval = $("#auditEventsIntervalFilter").val();
+                    const count = $("#auditEventsCountFilter").val();
+                    console.log("Fetching audit log with interval", interval);
+                    $.ajax({
+                        url: `${actuatorEndpoints.auditlog}?interval=${interval}&count=${count}`,
+                        type: "GET",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        success: (response, textStatus, xhr) => {
+                            console.log(response);
+                            auditEventsTable.clear();
+                            for (const entry of response) {
+                                auditEventsTable.row.add({
+                                    0: `<code>${entry?.principal ?? "N/A"}</code>`,
+                                    1: `<code>${entry?.auditableResource ?? "N/A"}</code>`,
+                                    2: `<code>${entry?.actionPerformed ?? "N/A"}</code>`,
+                                    3: `<code>${entry?.whenActionWasPerformed ?? "N/A"}</code>`,
+                                    4: `<code>${entry?.clientInfo?.clientIpAddress ?? "N/A"}</code>`,
+                                    5: `<span>${entry?.clientInfo?.userAgent ?? "N/A"}</span>`,
+                                });
+                            }
+                            auditEventsTable.draw();
+                        },
+                        error: (xhr, textStatus, errorThrown) => {
+                            console.error("Error fetching data:", errorThrown);
+                        }
+                    });
+                }
+            }, $("#auditEventsRefreshFilter").val())
+        }
+        
+        let refreshInterval = undefined;
+        if (actuatorEndpoints.auditlog) {
+            refreshInterval = fetchAuditLog();
+        }
+        $("#auditEventsRefreshFilter").selectmenu({
+            change: (event, data) => {
+                if (refreshInterval) {
+                    clearInterval(refreshInterval);
+                    refreshInterval = fetchAuditLog()
+                }
+            }
+        });
+    }
+}
+
 async function initializeSystemOperations() {
     function configureAuditEventsChart() {
         if (actuatorEndpoints.auditevents) {
@@ -3130,7 +3189,10 @@ async function initializePalantir() {
                 $("#ssoSessionsTabButton").addClass("d-none");
                 $(`#attribute-tab-${Tabs.SSO_SESSIONS}`).addClass("d-none");
             }
-            if (!actuatorEndpoints.loggingconfig || !actuatorEndpoints.loggers) {
+            if (!actuatorEndpoints.auditlog) {
+                $("#auditEvents").parent().addClass("d-none");
+            }
+            if ((!actuatorEndpoints.loggingconfig || !actuatorEndpoints.loggers) && !actuatorEndpoints.auditlog) {
                 $("#loggingTabButton").addClass("d-none");
                 $(`#attribute-tab-${Tabs.LOGGING}`).addClass("d-none");
             }
@@ -3220,6 +3282,7 @@ async function initializePalantir() {
                         initializeOidcProtocolOperations(),
                         initializeThrottlesOperations(),
                         initializeMultifactorOperations(),
+                        initializeAuditEventsOperations()
                     ]);
                 });
             }

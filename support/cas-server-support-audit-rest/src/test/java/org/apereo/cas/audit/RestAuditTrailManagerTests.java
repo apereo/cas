@@ -23,7 +23,6 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
@@ -75,11 +74,11 @@ class RestAuditTrailManagerTests {
             assertTrue(webServer.isRunning());
             auditTrailManager.record(audit);
 
-            val time = LocalDate.now(ZoneOffset.UTC).minusDays(2);
-
+            val time = LocalDateTime.now(ZoneOffset.UTC).minusDays(2);
             val criteria = new HashMap<AuditTrailManager.WhereClauseFields, Object>();
             criteria.put(AuditTrailManager.WhereClauseFields.DATE, time);
             criteria.put(AuditTrailManager.WhereClauseFields.PRINCIPAL, "casuser");
+            criteria.put(AuditTrailManager.WhereClauseFields.COUNT, "10");
             val results = auditTrailManager.getAuditRecords(criteria);
             assertFalse(results.isEmpty());
         }

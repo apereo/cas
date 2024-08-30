@@ -304,7 +304,7 @@ public class GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator {
         private final String columnName;
     }
 
-    private Set<GoogleAuthenticatorToken> getRecordsByKeys(final List<DynamoDbQueryBuilder> queries) {
+    private Set<GoogleAuthenticatorToken> getRecordsByKeys(final List<? extends DynamoDbQueryBuilder> queries) {
         return DynamoDbTableUtils.getRecordsByKeys(amazonDynamoDBClient, dynamoDbProperties.getTokenTableName(),
                 queries, GoogleAuthenticatorDynamoDbTokenRepositoryFacilitator::extractAttributeValuesFrom)
             .collect(Collectors.toSet());

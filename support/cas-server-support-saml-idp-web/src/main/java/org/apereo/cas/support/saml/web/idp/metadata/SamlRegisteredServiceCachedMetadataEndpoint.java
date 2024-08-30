@@ -21,6 +21,7 @@ import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -38,6 +39,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -140,34 +142,49 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActu
         @RequestParam(required = false) final String entityId,
         @RequestParam(required = false, defaultValue = "true") final boolean force) {
 
-        return FunctionUtils.doAndHandle(() -> {
-            val registeredService = findRegisteredService(serviceId);
-            val criteriaSet = new CriteriaSet();
-            if (StringUtils.isNotBlank(entityId)) {
-                criteriaSet.add(new EntityIdCriterion(entityId));
-                criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-            } else {
-                criteriaSet.add(new EvaluableEntityRoleEntityDescriptorCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-                criteriaSet.add(new SatisfyAnyCriterion(true));
-            }
-
-            val metadataResolverResult = force
-                ? Optional.of(cachingMetadataResolver.getObject().resolve(registeredService, criteriaSet))
-                : cachingMetadataResolver.getObject().getIfPresent(registeredService, criteriaSet);
-            return metadataResolverResult.map(Unchecked.function(result -> {
-                val iteration = result.getMetadataResolver().resolve(criteriaSet).spliterator();
-                val body = StreamSupport.stream(iteration, false)
-                    .filter(TimeBoundSAMLObject::isValid)
-                    .map(entity -> {
-                        val details = CollectionUtils.wrap(
-                            "cachedInstant", result.getCachedInstant(),
-                            "metadata", SamlUtils.transformSamlObject(openSamlConfigBean.getObject(), entity).toString());
-                        return Pair.of(entity.getEntityID(), details);
-                    })
-                    .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
-                return ResponseEntity.ok(body);
-            })).orElseThrow(() -> new SamlException("Unable to locate and resolve metadata for service " + registeredService.getName()));
-        }, e -> ResponseEntity.badRequest().body(Map.of("error", e.getMessage()))).get();
+        val responseBody = new LinkedHashMap<String, Object>();
+        val stopWatch = new StopWatch();
+        stopWatch.start();
+        try {
+            return FunctionUtils.doAndHandle(() -> {
+                val registeredService = findRegisteredService(serviceId);
+                stopWatch.split();
+                responseBody.put("registeredServiceSplitTime", stopWatch.formatSplitTime());
+                
+                val criteriaSet = new CriteriaSet();
+                if (StringUtils.isNotBlank(entityId)) {
+                    criteriaSet.add(new EntityIdCriterion(entityId));
+                    criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+                } else {
+                    criteriaSet.add(new EvaluableEntityRoleEntityDescriptorCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+                    criteriaSet.add(new SatisfyAnyCriterion(true));
+                }
+                val metadataResolverResult = force
+                    ? Optional.of(cachingMetadataResolver.getObject().resolve(registeredService, criteriaSet))
+                    : cachingMetadataResolver.getObject().getIfPresent(registeredService, criteriaSet);
+                stopWatch.split();
+                responseBody.put("metadataResolverSplitTime", stopWatch.formatSplitTime());
+                
+                val resultsMap = metadataResolverResult.map(Unchecked.function(result -> {
+                    val iteration = result.getMetadataResolver().resolve(criteriaSet).spliterator();
+                    return StreamSupport.stream(iteration, false)
+                        .filter(TimeBoundSAMLObject::isValid)
+                        .map(entity -> {
+                            val details = CollectionUtils.wrap(
+                                "cachedInstant", result.getCachedInstant(),
+                                "metadata", SamlUtils.transformSamlObject(openSamlConfigBean.getObject(), entity).toString());
+                            return Pair.of(entity.getEntityID(), details);
+                        })
+                        .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+                })).orElseThrow(() -> new SamlException("Unable to locate and resolve metadata for service " + registeredService.getName()));
+                stopWatch.split();
+                responseBody.put("metadataLoadSplitTime", stopWatch.formatSplitTime());
+                responseBody.putAll(resultsMap);
+                return ResponseEntity.ok(responseBody);
+            }, e -> ResponseEntity.badRequest().body(Map.of("error", e.getMessage()))).get();
+        } finally {
+            stopWatch.stop();
+        }
     }
 
     protected SamlRegisteredService findRegisteredService(final String serviceId) throws Throwable {
