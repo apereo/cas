@@ -137,7 +137,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
     }
 
     @Test
-    void verfifyAggregatedCacheLoading() throws Exception {
+    void verifyAggregatedCacheLoading() throws Exception {
         val resolver = getResolver("PT5M");
 
         val service1 = getSamlRegisteredService(1, ".*", "classpath:aggregate-md.xml");
@@ -165,7 +165,7 @@ class SamlRegisteredServiceDefaultCachingMetadataResolverTests extends BaseSamlI
         val criteriaSet1 = getCriteriaFor("https://shib-sp-test-preprod.dartmouth.edu/shibboleth");
         val service = getSamlRegisteredService(1, ".*", "https://mdq.incommon.org/entities/{0}");
         val resolver = getResolver("PT5M");
-        assertThrowsWithRootCause(RuntimeException.class, SamlException.class, () -> resolver.resolve(service, criteriaSet1));
+        assertThrows(SamlException.class, () -> resolver.resolve(service, criteriaSet1));
     }
 
     @Test
