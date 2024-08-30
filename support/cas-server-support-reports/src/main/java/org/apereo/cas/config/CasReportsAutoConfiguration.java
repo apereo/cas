@@ -50,6 +50,7 @@ import org.apereo.cas.web.report.TicketExpirationPoliciesEndpoint;
 import org.apereo.cas.web.report.TicketRegistryEndpoint;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import lombok.val;
+import org.apereo.inspektr.common.spi.AuditActionDateProvider;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
@@ -297,10 +298,14 @@ public class CasReportsAutoConfiguration {
         @ConditionalOnAvailableEndpoint
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditLogEndpoint auditLogEndpoint(
+            @Qualifier("defaultAuditActionDateProvider")
+            final ObjectProvider<AuditActionDateProvider> defaultAuditActionDateProvider,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(AuditTrailExecutionPlan.BEAN_NAME)
             final ObjectProvider<AuditTrailExecutionPlan> auditTrailExecutionPlan,
             final CasConfigurationProperties casProperties) {
-            return new AuditLogEndpoint(auditTrailExecutionPlan, casProperties);
+            return new AuditLogEndpoint(auditTrailExecutionPlan,
+                applicationContext, defaultAuditActionDateProvider, casProperties);
         }
     }
 

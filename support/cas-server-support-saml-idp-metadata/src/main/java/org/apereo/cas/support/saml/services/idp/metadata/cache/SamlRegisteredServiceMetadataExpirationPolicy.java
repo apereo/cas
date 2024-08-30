@@ -29,10 +29,8 @@ import java.util.concurrent.TimeUnit;
 public record SamlRegisteredServiceMetadataExpirationPolicy(Duration defaultExpiration) implements Expiry<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> {
     @Override
     public long expireAfterCreate(
-        @NonNull
-        final SamlRegisteredServiceCacheKey cacheKey,
-        @NonNull
-        final CachedMetadataResolverResult cacheResult,
+        final @NonNull SamlRegisteredServiceCacheKey cacheKey,
+        final @NonNull CachedMetadataResolverResult cacheResult,
         final long currentTime) {
         val service = cacheKey.getRegisteredService();
         val duration = getCacheDurationForServiceProvider(service, cacheResult);
@@ -62,10 +60,8 @@ public record SamlRegisteredServiceMetadataExpirationPolicy(Duration defaultExpi
 
     @Override
     public long expireAfterUpdate(
-        @NonNull
-        final SamlRegisteredServiceCacheKey cacheKey,
-        @NonNull
-        final CachedMetadataResolverResult cacheResult,
+        final @NonNull SamlRegisteredServiceCacheKey cacheKey,
+        final @NonNull CachedMetadataResolverResult cacheResult,
         final long currentTime, final long currentDuration) {
         LOGGER.trace("Cache expiration duration after updates is set to [{}] nanoseconds", currentDuration);
         return currentDuration;
@@ -73,10 +69,8 @@ public record SamlRegisteredServiceMetadataExpirationPolicy(Duration defaultExpi
 
     @Override
     public long expireAfterRead(
-        @NonNull
-        final SamlRegisteredServiceCacheKey cacheKey,
-        @NonNull
-        final CachedMetadataResolverResult cacheResult,
+        final @NonNull SamlRegisteredServiceCacheKey cacheKey,
+        final @NonNull CachedMetadataResolverResult cacheResult,
         final long currentTime, final long currentDuration) {
         LOGGER.trace("Cache expiration duration after reads is set to [{}] nanoseconds", currentDuration);
         return currentDuration;

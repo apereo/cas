@@ -15,11 +15,13 @@ const YAML = require("yaml");
     await cas.gotoLogin(page);
     await cas.loginWith(page, "unknown", "Mellon");
 
-    await cas.doPost("https://localhost:8443/cas/actuator/auditLog", {}, {
-        "Content-Type": "application/json"
-    }, (res) => assert(res.data.length === 0), (error) => {
-        throw(error);
-    });
+    await cas.doGet("https://localhost:8443/cas/actuator/auditLog",
+        (res) => assert(res.data.length === 0),
+        (error) => {
+            throw (error);
+        }, {
+            "Content-Type": "application/json"
+        });
 
     const name = (Math.random() + 1).toString(36).substring(4);
     await cas.log("Updating configuration and waiting for changes to reload...");
@@ -32,11 +34,13 @@ const YAML = require("yaml");
     await cas.loginWith(page, "unknown", "Mellon");
 
     try {
-        await cas.doPost("https://localhost:8443/cas/actuator/auditLog", {}, {
-            "Content-Type": "application/json"
-        }, (res) => assert(res.data.length === 2), (error) => {
-            throw(error);
-        });
+        await cas.doGet("https://localhost:8443/cas/actuator/auditLog",
+            (res) => assert(res.data.length === 2),
+            (error) => {
+                throw (error);
+            }, {
+                "Content-Type": "application/json"
+            });
     } finally {
         await updateConfig(configFile, configFilePath, "");
     }

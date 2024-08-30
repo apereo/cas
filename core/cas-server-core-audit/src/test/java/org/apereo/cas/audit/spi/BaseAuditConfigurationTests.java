@@ -91,6 +91,7 @@ public abstract class BaseAuditConfigurationTests {
         val time = LocalDate.now(ZoneOffset.UTC).minusDays(2);
         val criteria = Map.<AuditTrailManager.WhereClauseFields, Object>of(
             AuditTrailManager.WhereClauseFields.DATE, time,
+            AuditTrailManager.WhereClauseFields.COUNT, 10,
             AuditTrailManager.WhereClauseFields.PRINCIPAL, USER);
         val results = getAuditTrailManager().getAuditRecords(criteria);
         assertFalse(results.isEmpty());

@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.apereo.inspektr.audit.AuditActionContext;
 
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link DynamoDbAuditTrailManager}.
@@ -32,7 +32,7 @@ public class DynamoDbAuditTrailManager extends AbstractAuditTrailManager {
     }
 
     @Override
-    public Set<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
+    public List<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
         return dynamoDbFacilitator.getAuditRecords(whereClause);
     }
 

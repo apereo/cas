@@ -951,6 +951,7 @@ body {
 .sidebar-navigation ul li {
     padding: 28px 0;
     cursor: pointer;
+    text-align: center;
     transition: all ease-out 120ms;
     border-radius: 10px;
 }

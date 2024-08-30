@@ -5,7 +5,6 @@ import org.apereo.cas.audit.spi.AuditActionContextJsonSerializer;
 import org.apereo.cas.configuration.model.core.audit.AuditRestProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
@@ -23,10 +22,9 @@ import org.hjson.JsonValue;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.util.HashSet;
+import java.time.temporal.TemporalAccessor;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link RestAuditTrailManager}.
@@ -74,15 +72,18 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
     }
 
     @Override
-    public Set<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
+    public List<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
         HttpResponse response = null;
         try {
-            val localDate = (LocalDate) whereClause.get(WhereClauseFields.DATE);
-            LOGGER.debug("Sending query to audit REST endpoint to fetch records from [{}]", localDate);
-            val parameters = CollectionUtils.<String, String>wrap("date", String.valueOf(localDate.toEpochDay()));
-            FunctionUtils.doIf(whereClause.containsKey(WhereClauseFields.PRINCIPAL),
-                    c -> parameters.put("principial", whereClause.get(WhereClauseFields.PRINCIPAL).toString()))
-                .accept(whereClause);
+            val date = (TemporalAccessor) whereClause.get(WhereClauseFields.DATE);
+            LOGGER.debug("Sending query to audit REST endpoint to fetch records from [{}]", date);
+            val parameters = CollectionUtils.<String, String>wrap("date", date.toString());
+            if (whereClause.containsKey(WhereClauseFields.PRINCIPAL)) {
+                parameters.put("principal", whereClause.get(WhereClauseFields.PRINCIPAL).toString());
+            }
+            if (whereClause.containsKey(WhereClauseFields.COUNT)) {
+                parameters.put("count", whereClause.get(WhereClauseFields.COUNT).toString());
+            }
             val exec = HttpExecutionRequest.builder()
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
@@ -94,7 +95,7 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
             if (response != null && response.getCode() == HttpStatus.SC_OK) {
                 try (val content = ((HttpEntityContainer) response).getEntity().getContent()) {
                     val result = IOUtils.toString(content, StandardCharsets.UTF_8);
-                    val values = new TypeReference<Set<AuditActionContext>>() {
+                    val values = new TypeReference<List<AuditActionContext>>() {
                     };
                     return MAPPER.readValue(JsonValue.readHjson(result).toString(), values);
                 }
@@ -104,7 +105,7 @@ public class RestAuditTrailManager extends AbstractAuditTrailManager {
         } finally {
             HttpUtils.close(response);
         }
-        return new HashSet<>(0);
+        return List.of();
     }
 
     @Override

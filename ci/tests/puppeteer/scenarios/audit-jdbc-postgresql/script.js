@@ -1,4 +1,3 @@
-
 const cas = require("../../cas.js");
 const assert = require("assert");
 const YAML = require("yaml");
@@ -9,7 +8,7 @@ const path = require("path");
     const configFilePath = path.join(__dirname, "config.yml");
     const file = fs.readFileSync(configFilePath, "utf8");
     const configFile = YAML.parse(file);
-    
+
     let browser = await cas.newBrowser(cas.browserOptions());
     let page = await cas.newPage(browser);
     await cas.gotoLogin(page);
@@ -20,23 +19,24 @@ const path = require("path");
     await cas.gotoLogout(page);
     await browser.close();
 
-    await cas.doPost("https://localhost:8443/cas/actuator/auditLog", {}, {
-        "Content-Type": "application/json"
-    }, (res) => {
-        cas.log(`Found ${res.data.length} audit records`);
-        assert(res.data.length >= 4);
-        assert(res.data[0].principal !== undefined);
-        assert(res.data[0].actionPerformed !== undefined);
-        assert(res.data[0].applicationCode !== undefined);
-        assert(res.data[0].auditableResource !== undefined);
-        assert(res.data[0].whenActionWasPerformed !== undefined);
-        assert(res.data[0].clientInfo.clientIpAddress !== undefined);
-        assert(res.data[0].clientInfo.serverIpAddress !== undefined);
-        assert(res.data[0].clientInfo.userAgent !== undefined);
-        assert(res.data[0].clientInfo.locale !== undefined);
-    }, (error) => {
-        throw(error);
-    });
+    await cas.doGet("https://localhost:8443/cas/actuator/auditLog",
+        (res) => {
+            cas.log(`Found ${res.data.length} audit records`);
+            assert(res.data.length >= 4);
+            assert(res.data[0].principal !== undefined);
+            assert(res.data[0].actionPerformed !== undefined);
+            assert(res.data[0].applicationCode !== undefined);
+            assert(res.data[0].auditableResource !== undefined);
+            assert(res.data[0].whenActionWasPerformed !== undefined);
+            assert(res.data[0].clientInfo.clientIpAddress !== undefined);
+            assert(res.data[0].clientInfo.serverIpAddress !== undefined);
+            assert(res.data[0].clientInfo.userAgent !== undefined);
+            assert(res.data[0].clientInfo.locale !== undefined);
+        }, (error) => {
+            throw (error);
+        }, {
+            "Content-Type": "application/json"
+        });
 
     await cas.doGet("https://localhost:8443/cas/actuator/auditevents",
         async (res) => {
@@ -46,7 +46,7 @@ const path = require("path");
             assert(res.data.events[0].timestamp !== undefined);
             assert(res.data.events[0].type !== undefined);
         }, async (err) => {
-            throw(err);
+            throw (err);
         });
 
     await cas.log("Updating configuration...");

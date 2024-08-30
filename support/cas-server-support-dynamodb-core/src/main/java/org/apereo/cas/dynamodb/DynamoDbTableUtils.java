@@ -220,12 +220,29 @@ public class DynamoDbTableUtils {
     public static ScanResponse scan(final DynamoDbClient dynamoDbClient,
                                     final String tableName,
                                     final List<? extends DynamoDbQueryBuilder> queries) {
+        return scan(dynamoDbClient, tableName, -1, queries);
+    }
+
+    /**
+     * Scan scan response.
+     *
+     * @param dynamoDbClient the dynamo db client
+     * @param tableName      the table name
+     * @param count          the count
+     * @param queries        the queries
+     * @return the scan response
+     */
+    public static ScanResponse scan(final DynamoDbClient dynamoDbClient,
+                                    final String tableName,
+                                    final long count,
+                                    final List<? extends DynamoDbQueryBuilder> queries) {
         try {
             val scanFilter = buildRequestQueryFilter(queries);
-            val scanRequest = ScanRequest.builder()
-                .tableName(tableName)
-                .scanFilter(scanFilter)
-                .build();
+            val scanRequestBuilder = ScanRequest.builder().tableName(tableName).scanFilter(scanFilter);
+            if (count > 0) {
+                scanRequestBuilder.limit((int) count);
+            }
+            val scanRequest = scanRequestBuilder.build();
             LOGGER.debug("Submitting request [{}] to get record with keys [{}]", scanRequest, queries);
             return dynamoDbClient.scan(scanRequest);
         } catch (final Exception e) {
@@ -267,7 +284,26 @@ public class DynamoDbTableUtils {
                                                  final String tableName,
                                                  final List<? extends DynamoDbQueryBuilder> queries,
                                                  final Function<Map<String, AttributeValue>, T> itemMapper) {
-        val scanResponse = scan(dynamoDbClient, tableName, queries);
+        return getRecordsByKeys(dynamoDbClient, tableName, -1, queries, itemMapper);
+    }
+
+    /**
+     * Gets records by keys.
+     *
+     * @param <T>            the type parameter
+     * @param dynamoDbClient the dynamo db client
+     * @param tableName      the table name
+     * @param count          the count
+     * @param queries        the queries
+     * @param itemMapper     the item mapper
+     * @return the records by keys
+     */
+    public static <T> Stream<T> getRecordsByKeys(final DynamoDbClient dynamoDbClient,
+                                                 final String tableName,
+                                                 final long count,
+                                                 final List<? extends DynamoDbQueryBuilder> queries,
+                                                 final Function<Map<String, AttributeValue>, T> itemMapper) {
+        val scanResponse = scan(dynamoDbClient, tableName, count, queries);
         val items = scanResponse.items();
         return items.stream().map(itemMapper);
     }

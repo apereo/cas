@@ -545,7 +545,7 @@ public class FunctionUtils {
         classified.put(Throwable.class, Boolean.TRUE);
         clazzes.forEach(clz -> classified.put(clz, Boolean.TRUE));
 
-        val retryPolicy = maximumAttempts >= 0
+        val retryPolicy = maximumAttempts > 0
             ? new SimpleRetryPolicy(maximumAttempts, classified, true)
             : new NeverRetryPolicy();
         retryTemplate.setRetryPolicy(retryPolicy);

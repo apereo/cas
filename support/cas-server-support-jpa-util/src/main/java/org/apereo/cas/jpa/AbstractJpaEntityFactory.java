@@ -15,16 +15,9 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public abstract class AbstractJpaEntityFactory<T> {
+public abstract class AbstractJpaEntityFactory<T> implements JpaEntityFactory<T> {
     private final String dialect;
-
-    /**
-     * Gets type.
-     *
-     * @return the type
-     */
-    public abstract Class<T> getType();
-
+    
     /**
      * New document.
      *
@@ -33,50 +26,4 @@ public abstract class AbstractJpaEntityFactory<T> {
     public T newInstance() {
         return FunctionUtils.doUnchecked(() -> getType().getDeclaredConstructor().newInstance());
     }
-
-    /**
-     * Is MS SQL Server ?.
-     *
-     * @return true/false
-     */
-    public boolean isMsSqlServer() {
-        return this.dialect.contains("SQLServer");
-    }
-
-    /**
-     * Is oracle ?.
-     *
-     * @return true/false
-     */
-    public boolean isOracle() {
-        return this.dialect.contains("Oracle");
-    }
-
-    /**
-     * Is my sql ?.
-     *
-     * @return true/false
-     */
-    public boolean isMySql() {
-        return this.dialect.contains("MySQL");
-    }
-
-    /**
-     * Is postgres ?.
-     *
-     * @return true/false
-     */
-    public boolean isPostgres() {
-        return this.dialect.contains("PostgreSQL");
-    }
-
-    /**
-     * Is maria db ?
-     *
-     * @return true/false
-     */
-    public boolean isMariaDb() {
-        return this.dialect.contains("MariaDB");
-    }
-
 }

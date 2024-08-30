@@ -6,6 +6,7 @@ import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,12 +27,12 @@ public class MockAuditTrailManager implements AuditTrailManager {
     }
 
     @Override
-    public Set<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
+    public List<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
         val localDate = (LocalDate) whereClause.get(WhereClauseFields.DATE);
         return auditRecords
             .stream()
             .filter(audit -> audit.getWhenActionWasPerformed().isAfter(localDate.atStartOfDay()))
-            .collect(Collectors.toSet());
+            .collect(Collectors.toList());
     }
 
     @Override

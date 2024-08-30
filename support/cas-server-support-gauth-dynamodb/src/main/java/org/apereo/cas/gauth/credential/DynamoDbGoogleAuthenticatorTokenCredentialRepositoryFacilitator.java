@@ -291,7 +291,7 @@ public class DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator {
         private final String columnName;
     }
 
-    private Collection<? extends OneTimeTokenAccount> getRecordsByKeys(final List<DynamoDbQueryBuilder> queries) {
+    private Collection<? extends OneTimeTokenAccount> getRecordsByKeys(final List<? extends DynamoDbQueryBuilder> queries) {
         return DynamoDbTableUtils.getRecordsByKeys(amazonDynamoDBClient, dynamoDbProperties.getTableName(),
                 queries, DynamoDbGoogleAuthenticatorTokenCredentialRepositoryFacilitator::extractAttributeValuesFrom)
             .collect(Collectors.toSet());

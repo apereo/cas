@@ -1,4 +1,3 @@
-
 const cas = require("../../cas.js");
 const YAML = require("yaml");
 const fs = require("fs");
@@ -18,11 +17,13 @@ async function callRegisteredServices() {
 }
 
 async function callAuditLog() {
-    await cas.doPost("https://localhost:8443/cas/actuator/auditLog", {}, {
-        "Content-Type": "application/json"
-    }, (res) => cas.log(`Found ${res.data.length} audit records`), (error) => {
-        throw(error);
-    });
+    await cas.doGet("https://localhost:8443/cas/actuator/auditLog",
+        (res) => cas.log(`Found ${res.data.length} audit records`),
+        (error) => {
+            throw (error);
+        }, {
+            "Content-Type": "application/json"
+        });
 }
 
 (async () => {
@@ -64,7 +65,7 @@ async function callAuditLog() {
 
     await cas.log("Waiting for audit log cleaner to resume...");
     await cas.sleep(5000);
-    
+
     await browser.close();
 
 })();
