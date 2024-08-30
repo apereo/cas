@@ -6,7 +6,6 @@ import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.util.concurrent.CasReentrantLock;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
@@ -42,7 +41,6 @@ import java.util.Optional;
 @Slf4j
 @Monitorable
 public class SamlRegisteredServiceDefaultCachingMetadataResolver implements SamlRegisteredServiceCachingMetadataResolver {
-    private final CasReentrantLock lock = new CasReentrantLock();
 
     private final LoadingCache<SamlRegisteredServiceCacheKey, CachedMetadataResolverResult> cache;
 
@@ -73,7 +71,7 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
 
     @Override
     public CachedMetadataResolverResult resolve(final SamlRegisteredService service, final CriteriaSet criteriaSet) {
-        return lock.tryLock(() -> {
+        try {
             val metadataLocation = SpringExpressionLanguageValueResolver.getInstance().resolve(service.getMetadataLocation());
             LOGGER.debug("Resolving metadata for [{}] at [{}]", service.getName(), metadataLocation);
             val cacheKey = new SamlRegisteredServiceCacheKey(service, criteriaSet);
@@ -97,7 +95,9 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
                 }
                 return queryResult.getResult();
             });
-        });
+        } catch (final Exception e) {
+            throw new SamlException(e.getMessage(), e);
+        }
     }
 
     @Override
