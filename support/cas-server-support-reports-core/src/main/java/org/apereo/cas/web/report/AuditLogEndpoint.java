@@ -19,8 +19,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import java.time.Clock;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +49,7 @@ public class AuditLogEndpoint extends BaseCasRestActuatorEndpoint {
 
     private List<AuditActionContext> getAuditLog(final String interval, final long count) {
         if (StringUtils.isBlank(interval)) {
-            val sinceDate = LocalDate.now(Clock.systemUTC())
+            val sinceDate = auditActionDateProvider.getObject().get()
                 .minusDays(casProperties.getAudit().getEngine().getNumberOfDaysInHistory());
             return auditTrailManager.getObject().getAuditRecords(Map.of(
                 AuditTrailManager.WhereClauseFields.DATE, sinceDate,
