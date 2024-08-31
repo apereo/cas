@@ -922,7 +922,7 @@ select.palantir {
 
 @media (min-width: 1400px) {
     .container-xxl {
-        max-width: 90%;
+        max-width: 95%;
     }
 }
 
@@ -968,14 +968,13 @@ body {
     background-color: #313443;
     padding: 8px 15px;
     border-radius: 3px;
-    margin-top: 10px;
-    left: 190px;
+    margin-top: 5px;
+    left: 170px;
     opacity: 0;
     visibility: hidden;
     font-size: 13px;
     letter-spacing: 0.5px;
     z-index: 100;
-
 }
 
 .sidebar-navigation ul li .tooltip:before {
