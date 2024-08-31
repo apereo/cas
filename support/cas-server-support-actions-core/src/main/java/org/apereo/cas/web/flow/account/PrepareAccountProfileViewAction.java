@@ -23,7 +23,7 @@ import org.jooq.lambda.Unchecked;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import java.time.Clock;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
@@ -99,7 +99,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
     }
 
     protected void buildAuditLogRecords(final RequestContext requestContext, final TicketGrantingTicket ticket) {
-        val sinceDate = LocalDate.now(Clock.systemUTC()).minusMonths(2);
+        val sinceDate = LocalDateTime.now(Clock.systemUTC()).minusMonths(2);
         val criteria = Map.<AuditTrailManager.WhereClauseFields, Object>of(
             AuditTrailManager.WhereClauseFields.DATE, sinceDate,
             AuditTrailManager.WhereClauseFields.PRINCIPAL, ticket.getAuthentication().getPrincipal().getId());

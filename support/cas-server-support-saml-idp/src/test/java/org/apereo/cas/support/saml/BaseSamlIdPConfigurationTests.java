@@ -132,7 +132,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.saml-idp.metadata.http.metadata-backup-location=file://${java.io.tmpdir}/metadata-backups",
         "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata-${#randomNumber8}"
     },
-    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureObservability
 @ExtendWith(CasTestExtension.class)

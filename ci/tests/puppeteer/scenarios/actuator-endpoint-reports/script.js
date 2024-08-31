@@ -33,7 +33,7 @@ const cas = require("../../cas.js");
         "authenticationHandlers",
         "authenticationHandlers/STATIC",
         "authenticationPolicies",
-        "auditLog/PT1H",
+        "auditLog?interval=PT1H",
         "ssoSessions",
         `sso?tgc=${tgc.value}`,
         "casModules",
