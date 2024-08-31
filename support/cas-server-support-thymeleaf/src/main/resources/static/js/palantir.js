@@ -704,9 +704,6 @@ async function initializeTicketsOperations() {
 
 
 async function initializeSsoSessionOperations() {
-    const ssoSessionsEditor = initializeAceEditor("ssoSessionsEditor");
-    ssoSessionsEditor.setReadOnly(true);
-
     const ssoSessionDetailsTable = $("#ssoSessionDetailsTable").DataTable({
         pageLength: 10,
         autoWidth: false,
@@ -770,8 +767,6 @@ async function initializeSsoSessionOperations() {
                             type: "DELETE",
                             contentType: "application/x-www-form-urlencoded",
                             success: (response, status, xhr) => {
-                                ssoSessionsEditor.setValue(JSON.stringify(response, null, 2));
-                                ssoSessionsEditor.gotoLine(1);
                                 ssoSessionsTable.clear().draw();
                             },
                             error: (xhr, status, error) => {
@@ -790,17 +785,24 @@ async function initializeSsoSessionOperations() {
             if (!form.reportValidity()) {
                 return false;
             }
-            ssoSessionsEditor.setValue("");
             const username = $("#ssoSessionUsername").val();
+            Swal.fire({
+                icon: "info",
+                title: `Fetching SSO Sessions for ${username}`,
+                text: "Please wait while single sign-on sessions are retrieved...",
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            ssoSessionsTable.clear();
+            
             $.ajax({
                 url: `${actuatorEndpoints.ssosessions}/users/${username}`,
                 type: "GET",
                 contentType: "application/x-www-form-urlencoded",
                 success: (response, status, xhr) => {
-                    $("#ssoSessionsEditorContainer").removeClass("d-none");
-                    ssoSessionsEditor.setValue(JSON.stringify(response, null, 2));
-                    ssoSessionsEditor.gotoLine(1);
-
                     for (const session of response.activeSsoSessions) {
                         const attributes = {
                             principal: session["principal_attributes"],
@@ -833,7 +835,8 @@ async function initializeSsoSessionOperations() {
                         });
                     }
                     ssoSessionsTable.draw();
-
+                    Swal.close();
+                    
                     $("button[name=viewSsoSession]").off().on("click", function () {
                         const attributes = JSON.parse($(this).children("span").first().text());
                         for (const [key, value] of Object.entries(attributes.principal)) {
@@ -874,8 +877,6 @@ async function initializeSsoSessionOperations() {
                                         type: "DELETE",
                                         contentType: "application/x-www-form-urlencoded",
                                         success: (response, status, xhr) => {
-                                            ssoSessionsEditor.setValue(JSON.stringify(response, null, 2));
-                                            ssoSessionsEditor.gotoLine(1);
                                             let nearestTr = $(this).closest("tr");
                                             ssoSessionsTable.row(nearestTr).remove().draw();
                                         },
@@ -890,6 +891,7 @@ async function initializeSsoSessionOperations() {
                 },
                 error: (xhr, status, error) => {
                     console.error("Error fetching data:", error);
+                    Swal.close();
                     displayBanner(xhr);
                 }
             });
@@ -2631,6 +2633,7 @@ async function initializeMultifactorOperations() {
                 console.error("Error fetching data:", error);
                 displayBanner(xhr);
                 $("#mfaDevicesButton").prop("disabled", true);
+                Swal.close();
             });
         }
 
