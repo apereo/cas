@@ -34,12 +34,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.test.web.servlet.MockMvc;
 
 /**
  * This is {@link AbstractCasEndpointTests}.
@@ -49,12 +51,18 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @SpringBootTest(
     classes = AbstractCasEndpointTests.SharedTestConfiguration.class,
-    properties = "management.endpoints.web.exposure.include=*")
+    properties = "management.endpoints.web.exposure.include=*",
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableScheduling
+@AutoConfigureMockMvc
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ExtendWith(CasTestExtension.class)
 public abstract class AbstractCasEndpointTests {
+    @Autowired
+    @Qualifier("mockMvc")
+    protected MockMvc mockMvc;
+    
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     protected ServicesManager servicesManager;
@@ -73,6 +81,7 @@ public abstract class AbstractCasEndpointTests {
             plan.registerAuditTrailManager(new MockAuditTrailManager());
         }
     }
+    
     @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({
         CasReportsAutoConfiguration.class,
