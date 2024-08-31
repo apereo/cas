@@ -14,6 +14,7 @@ import org.springframework.retry.RetryCallback;
 import org.springframework.retry.RetryContext;
 import org.springframework.retry.RetryListener;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.backoff.NoBackOffPolicy;
 import org.springframework.retry.policy.NeverRetryPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
@@ -538,7 +539,6 @@ public class FunctionUtils {
                                    final RetryCallback<T, Exception> callback,
                                    final int maximumAttempts) throws Exception {
         val retryTemplate = new RetryTemplate();
-        retryTemplate.setBackOffPolicy(new FixedBackOffPolicy());
 
         val classified = new HashMap<Class<? extends Throwable>, Boolean>();
         classified.put(Error.class, Boolean.TRUE);
@@ -548,6 +548,10 @@ public class FunctionUtils {
         val retryPolicy = maximumAttempts > 0
             ? new SimpleRetryPolicy(maximumAttempts, classified, true)
             : new NeverRetryPolicy();
+        retryTemplate.setBackOffPolicy(maximumAttempts > 0
+            ? new FixedBackOffPolicy()
+            : new NoBackOffPolicy());
+        
         retryTemplate.setRetryPolicy(retryPolicy);
         retryTemplate.setThrowLastExceptionOnExhausted(true);
         retryTemplate.registerListener(new RetryListener() {

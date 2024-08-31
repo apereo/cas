@@ -77,6 +77,7 @@ public class HttpUtils {
             prepareHttpRequest(request, execution);
             val client = getHttpClient(execution);
             return FunctionUtils.doAndRetry(retryContext -> {
+                LOGGER.trace("Sending HTTP request to [{}]. Attempt: [{}]", request.getUri(), retryContext.getRetryCount());
                 val res = client.execute(request);
                 if (res == null || org.springframework.http.HttpStatus.valueOf(res.getCode()).isError()) {
                     val maxAttempts = (int) retryContext.getAttribute("retry.maxAttempts");

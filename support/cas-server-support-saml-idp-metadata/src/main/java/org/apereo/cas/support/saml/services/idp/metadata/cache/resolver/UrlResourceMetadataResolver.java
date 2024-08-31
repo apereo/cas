@@ -137,7 +137,8 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
                 }
 
                 response = fetchMetadata(service, metadataLocation, criteriaSet, backupFile);
-                val status = HttpStatus.valueOf(response.getCode());
+                val status = response != null ? HttpStatus.valueOf(response.getCode()) : HttpStatus.BAD_REQUEST;
+                LOGGER.debug("Received metadata response status code [{}]", status);
                 if (shouldHttpResponseStatusBeProcessed(status)) {
                     val metadataProvider = getMetadataResolverFromResponse(response, backupFile);
                     configureAndInitializeSingleMetadataResolver(metadataProvider, service);

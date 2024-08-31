@@ -141,7 +141,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActu
         })
     public ResponseEntity<? extends Map> getCachedMetadataObject(
         @RequestParam final String serviceId,
-        @RequestParam(required = false) final boolean includeMetadata,
+        @RequestParam(required = false, defaultValue = "true") final boolean includeMetadata,
         @Nullable
         @RequestParam(required = false) final String entityId,
         @RequestParam(required = false, defaultValue = "true") final boolean force) {
@@ -169,19 +169,25 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActu
                 stopWatch.split();
                 responseBody.put("metadataResolverSplitTime", stopWatch.formatSplitTime());
 
-                val resultsMap = metadataResolverResult.map(Unchecked.function(result -> {
-                    val iteration = result.getMetadataResolver().resolve(criteriaSet).spliterator();
-                    return StreamSupport.stream(iteration, false)
-                        .filter(TimeBoundSAMLObject::isValid)
-                        .map(entity -> {
-                            val details = CollectionUtils.wrap("cachedInstant", result.getCachedInstant());
-                            if (includeMetadata) {
-                                details.put("metadata", SamlUtils.transformSamlObject(openSamlConfigBean.getObject(), entity).toString());
-                            }
-                            return Pair.of(entity.getEntityID(), details);
-                        })
-                        .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
-                })).orElseThrow(() -> new SamlException("Unable to locate and resolve metadata for service " + registeredService.getName()));
+                val resultsMap = metadataResolverResult
+                    .map(Unchecked.function(result -> {
+                        val iteration = result.getMetadataResolver().resolve(criteriaSet).spliterator();
+                        return StreamSupport.stream(iteration, false)
+                            .filter(TimeBoundSAMLObject::isValid)
+                            .map(entity -> {
+                                val details = CollectionUtils.wrap("cachedInstant", result.getCachedInstant());
+                                if (includeMetadata) {
+                                    details.put("metadata", SamlUtils.transformSamlObject(openSamlConfigBean.getObject(), entity).toString());
+                                }
+                                return Pair.of(entity.getEntityID(), details);
+                            })
+                            .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+                    }))
+                    .orElseThrow(() -> new SamlException("""
+                    Unable to locate and resolve metadata for service %s. \
+                    This can happen when the metadata entry is not found in the cache or \
+                    the SAML2 service provider is unable to produce valid metadata via %s.
+                    """.formatted(registeredService.getName(), registeredService.getMetadataLocation())));
                 stopWatch.split();
                 responseBody.put("metadataLoadSplitTime", stopWatch.formatSplitTime());
                 responseBody.putAll(resultsMap);
