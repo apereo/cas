@@ -20,7 +20,6 @@ import org.springframework.test.context.TestPropertySource;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
-import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**

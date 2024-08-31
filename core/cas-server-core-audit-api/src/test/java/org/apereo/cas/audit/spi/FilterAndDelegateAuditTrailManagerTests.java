@@ -8,7 +8,6 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import java.time.Clock;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -77,7 +76,7 @@ class FilterAndDelegateAuditTrailManagerTests {
         val mgr = new FilterAndDelegateAuditTrailManager(List.of(mock), List.of("TEST.*"), List.of());
         mgr.record(ctx);
         assertFalse(mock.getAuditRecords().isEmpty());
-        val criteria = Map.<AuditTrailManager.WhereClauseFields, Object>of(AuditTrailManager.WhereClauseFields.DATE, LocalDate.now(ZoneOffset.UTC));
+        val criteria = Map.<AuditTrailManager.WhereClauseFields, Object>of(AuditTrailManager.WhereClauseFields.DATE, LocalDateTime.now(ZoneOffset.UTC));
         assertEquals(1, mgr.getAuditRecords(criteria).size());
         assertDoesNotThrow(mgr::removeAll);
     }

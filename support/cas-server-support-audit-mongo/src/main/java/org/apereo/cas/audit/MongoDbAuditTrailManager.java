@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +44,7 @@ public class MongoDbAuditTrailManager extends AbstractAuditTrailManager {
 
     @Override
     public List<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
-        val localDate = (LocalDate) whereClause.get(WhereClauseFields.DATE);
+        val localDate = (LocalDateTime) whereClause.get(WhereClauseFields.DATE);
         val dt = DateTimeUtils.dateOf(localDate);
         LOGGER.debug("Retrieving audit records since [{}] from [{}]", dt, this.collectionName);
         val query = new Query().addCriteria(Criteria.where("whenActionWasPerformed").gte(dt));

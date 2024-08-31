@@ -233,19 +233,20 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
 
     @Override
     public List<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
-        var builder = new StringBuilder("1=1 ");
-        var args = new ArrayList<>();
+        val builder = new StringBuilder("1=1 ");
+        val args = new ArrayList<>();
         if (whereClause.containsKey(WhereClauseFields.DATE)) {
             builder.append("AND AUD_DATE>=? ");
-
-            val formatter = DateTimeFormatter.ofPattern(dateFormatterPattern, Locale.ENGLISH);
             var sinceDate = (TemporalAccessor) whereClause.get(WhereClauseFields.DATE);
-            var formattedDate = formatter.format(sinceDate);
             if (dateFormatterFunction != null) {
+                val formatter = DateTimeFormatter.ofPattern(dateFormatterPattern, Locale.ENGLISH);
                 val patternToUse = StringUtils.isNotBlank(dateFormatterPattern) ? dateFormatterPattern : "yyyy-MM-dd";
-                formattedDate = String.format(dateFormatterFunction, formattedDate, patternToUse);
+                val formattedDate = String.format(dateFormatterFunction, formatter.format(sinceDate), patternToUse);
+                LOGGER.trace("Using date formatter [{}] to format date [{}] to [{}]", dateFormatterFunction, sinceDate, formattedDate);
+                args.add(formattedDate);
+            } else {
+                args.add(sinceDate);
             }
-            args.add(formattedDate);
         }
         if (whereClause.containsKey(WhereClauseFields.PRINCIPAL)) {
             var principal = whereClause.get(WhereClauseFields.PRINCIPAL).toString();
@@ -263,12 +264,14 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
                                                                     final long count) {
         return transactionTemplate.execute((TransactionCallback<List>) transactionStatus -> {
             var sql = String.format(selectByDateSqlTemplate, tableName, where);
-            if (jpaAuditTrailEntityFactory.isOracle()) {
-                sql += " FETCH FIRST %s ROWS ONLY".formatted(count);
-            } else if (jpaAuditTrailEntityFactory.isMsSqlServer()) {
-                sql = StringUtils.replace(sql, "SELECT ", "SELECT TOP %s ".formatted(count));
-            } else {
-                sql += " LIMIT %s".formatted(count);
+            if (count > 0) {
+                if (jpaAuditTrailEntityFactory.isOracle()) {
+                    sql += " FETCH FIRST %s ROWS ONLY".formatted(count);
+                } else if (jpaAuditTrailEntityFactory.isMsSqlServer()) {
+                    sql = StringUtils.replace(sql, "SELECT ", "SELECT TOP %s ".formatted(count));
+                } else {
+                    sql += " LIMIT %s".formatted(count);
+                }
             }
             val results = new ArrayList<>();
             LOGGER.debug("Executing SQL query [{}]", sql);

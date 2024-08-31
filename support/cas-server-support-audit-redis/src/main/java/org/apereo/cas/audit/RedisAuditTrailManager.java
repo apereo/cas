@@ -7,7 +7,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +49,7 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
 
     @Override
     public List<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
-        val localDate = (LocalDate) whereClause.get(WhereClauseFields.DATE);
+        val localDate = (LocalDateTime) whereClause.get(WhereClauseFields.DATE);
         LOGGER.debug("Retrieving audit records since [{}]", localDate);
 
         val count = whereClause.containsKey(WhereClauseFields.COUNT)
@@ -64,7 +64,7 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
                 .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull)
                 .map(AuditActionContext.class::cast)
-                .filter(audit -> audit.getWhenActionWasPerformed().isAfter(localDate.atStartOfDay()))
+                .filter(audit -> audit.getWhenActionWasPerformed().isAfter(localDate))
                 .collect(Collectors.toList());
         }
     }

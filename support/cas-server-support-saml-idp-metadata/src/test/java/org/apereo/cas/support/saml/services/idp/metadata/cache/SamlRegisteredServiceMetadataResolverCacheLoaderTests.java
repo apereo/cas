@@ -21,7 +21,6 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
-import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
