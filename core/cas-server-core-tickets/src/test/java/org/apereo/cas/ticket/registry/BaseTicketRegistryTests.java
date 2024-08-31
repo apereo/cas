@@ -146,7 +146,9 @@ public abstract class BaseTicketRegistryTests {
         }
         ticketRegistry = this.getNewTicketRegistry();
         if (ticketRegistry != null) {
-            ticketRegistry.deleteAll();
+            if (!info.getTags().contains("SkipClearingTicketRegistry")) {
+                ticketRegistry.deleteAll();
+            }
             setUpEncryption();
         }
     }
