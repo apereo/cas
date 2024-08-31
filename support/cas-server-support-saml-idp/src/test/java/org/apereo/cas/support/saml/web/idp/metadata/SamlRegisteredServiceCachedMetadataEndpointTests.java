@@ -3,23 +3,21 @@ package org.apereo.cas.support.saml.web.idp.metadata;
 import org.apereo.cas.support.saml.BaseSamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlIdPTestUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
-
+import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Stream;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link SamlRegisteredServiceCachedMetadataEndpointTests}.
@@ -34,10 +32,9 @@ import static org.junit.jupiter.api.Assertions.*;
 })
 @Execution(ExecutionMode.SAME_THREAD)
 class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlIdPConfigurationTests {
-    @Autowired
-    @Qualifier("samlRegisteredServiceCachedMetadataEndpoint")
-    private SamlRegisteredServiceCachedMetadataEndpoint endpoint;
-
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .build().toObjectMapper();
+    
     private SamlRegisteredService samlRegisteredService;
 
     @BeforeEach
@@ -48,51 +45,98 @@ class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlIdPConfig
 
     @Test
     void verifyInvalidate() throws Throwable {
-        endpoint.invalidate(samlRegisteredService.getServiceId(), null);
-        endpoint.invalidate(StringUtils.EMPTY, null);
+        mockMvc.perform(delete("/actuator/samlIdPRegisteredServiceMetadataCache")
+            .queryParam("serviceId", samlRegisteredService.getServiceId())
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isNoContent());
+        
+        mockMvc.perform(delete("/actuator/samlIdPRegisteredServiceMetadataCache")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isNoContent());
     }
 
     @Test
     void verifyInvalidateByEntityId() throws Throwable {
-        endpoint.getCachedMetadataObject(samlRegisteredService.getServiceId(), samlRegisteredService.getServiceId(), true);
-        endpoint.invalidate(samlRegisteredService.getName(), samlRegisteredService.getServiceId());
-        val response = endpoint.getCachedMetadataObject(samlRegisteredService.getServiceId(), samlRegisteredService.getServiceId(), false);
-        assertNotNull(response);
-        assertFalse(response.getBody().containsKey(samlRegisteredService.getServiceId()));
+        mockMvc.perform(get("/actuator/samlIdPRegisteredServiceMetadataCache")
+                .queryParam("serviceId", samlRegisteredService.getServiceId())
+                .queryParam("entityId", samlRegisteredService.getServiceId())
+                .queryParam("force", "true")
+                .queryParam("includeMetadata", "true")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+
+        mockMvc.perform(delete("/actuator/samlIdPRegisteredServiceMetadataCache")
+            .queryParam("serviceId", samlRegisteredService.getServiceId())
+            .queryParam("entityId", samlRegisteredService.getServiceId())
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isNoContent());
+        
+        val body = MAPPER.readValue(mockMvc.perform(get("/actuator/samlIdPRegisteredServiceMetadataCache")
+            .queryParam("serviceId", samlRegisteredService.getServiceId())
+            .queryParam("entityId", samlRegisteredService.getServiceId())
+            .queryParam("force", "false")
+            .queryParam("includeMetadata", "true")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString(), Map.class);
+        assertFalse(body.containsKey(samlRegisteredService.getServiceId()));
     }
 
     @Test
     void verifyCachedMetadataObject() throws Throwable {
-        val response = endpoint.getCachedMetadataObject(samlRegisteredService.getServiceId(), StringUtils.EMPTY, true);
-        val results = response.getBody();
-        assertNotNull(results);
-        assertTrue(results.containsKey(samlRegisteredService.getServiceId()));
+        val body = MAPPER.readValue(mockMvc.perform(get("/actuator/samlIdPRegisteredServiceMetadataCache")
+            .queryParam("serviceId", samlRegisteredService.getServiceId())
+            .queryParam("force", "true")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), Map.class);
+        assertTrue(body.containsKey(samlRegisteredService.getServiceId()));
     }
 
     @Test
     void verifyCachedServiceWithoutResolution() throws Throwable {
-        val response = endpoint.getCachedMetadataObject(String.valueOf(samlRegisteredService.getName()), UUID.randomUUID().toString(), false);
-        val results = response.getBody();
-        assertNotNull(results);
-        assertFalse(results.containsKey(samlRegisteredService.getServiceId()));
+        val body = MAPPER.readValue(mockMvc.perform(get("/actuator/samlIdPRegisteredServiceMetadataCache")
+            .queryParam("serviceId", samlRegisteredService.getName())
+            .queryParam("entityId", UUID.randomUUID().toString())
+            .queryParam("force", "false")
+            .queryParam("includeMetadata", "true")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString(), Map.class);
+        assertFalse(body.containsKey(samlRegisteredService.getServiceId()));
     }
 
     @Test
     void verifyCachedService() throws Throwable {
-        Stream.of(Boolean.TRUE, Boolean.FALSE)
-            .map(force -> endpoint.getCachedMetadataObject(String.valueOf(samlRegisteredService.getId()), StringUtils.EMPTY, force))
-            .map(HttpEntity::getBody)
-            .forEach(results -> {
-                assertNotNull(results);
-                assertTrue(results.containsKey(samlRegisteredService.getServiceId()));
-            });
+        var body = MAPPER.readValue(mockMvc.perform(get("/actuator/samlIdPRegisteredServiceMetadataCache")
+            .queryParam("serviceId", String.valueOf(samlRegisteredService.getId()))
+            .queryParam("force", "true")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), Map.class);
+        assertTrue(body.containsKey(samlRegisteredService.getServiceId()));
+
+        body = MAPPER.readValue(mockMvc.perform(get("/actuator/samlIdPRegisteredServiceMetadataCache")
+            .queryParam("serviceId", String.valueOf(samlRegisteredService.getId()))
+            .queryParam("force", "false")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), Map.class);
+        assertTrue(body.containsKey(samlRegisteredService.getServiceId()));
     }
 
     @Test
     void verifyBadService() throws Throwable {
-        val response = endpoint.getCachedMetadataObject("bad-service-id", StringUtils.EMPTY, true);
-        val results = response.getBody();
-        assertNotNull(results);
-        assertTrue(results.containsKey("error"));
+        val body = MAPPER.readValue(mockMvc.perform(get("/actuator/samlIdPRegisteredServiceMetadataCache")
+            .queryParam("serviceId", UUID.randomUUID().toString())
+            .queryParam("force", "false")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest()).andReturn().getResponse().getContentAsString(), Map.class);
+        assertTrue(body.containsKey("error"));
     }
 }
