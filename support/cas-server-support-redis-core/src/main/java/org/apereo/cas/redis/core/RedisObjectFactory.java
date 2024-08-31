@@ -33,6 +33,8 @@ import org.springframework.data.redis.connection.lettuce.LettucePoolingClientCon
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.util.StringUtils;
+import javax.net.ssl.TrustManagerFactory;
+import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -270,6 +272,9 @@ public class RedisObjectFactory {
                 redis.getKeyCertificateChainFile().getCanonicalPath(), redis.getKeyFile().getCanonicalPath());
             sslOptionsBuilder.keyManager(redis.getKeyCertificateChainFile(), redis.getKeyFile(),
                 StringUtils.hasText(redis.getKeyPassword()) ? redis.getKeyPassword().toCharArray() : null);
+        }
+        if (redis.isUseSsl() && redis.getCertificateFile() != null) {
+            sslOptionsBuilder.trustManager(redis.getCertificateFile());
         }
         return clientOptionsBuilder
             .timeoutOptions(TimeoutOptions.enabled())
