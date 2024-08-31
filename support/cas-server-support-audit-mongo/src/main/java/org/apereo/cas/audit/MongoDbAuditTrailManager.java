@@ -52,7 +52,7 @@ public class MongoDbAuditTrailManager extends AbstractAuditTrailManager {
             query.addCriteria(Criteria.where("principal").is(whereClause.get(WhereClauseFields.PRINCIPAL).toString()));
         }
         if (whereClause.containsKey(WhereClauseFields.COUNT)) {
-            query.limit((int) whereClause.get(WhereClauseFields.COUNT));
+            query.limit(Long.valueOf(whereClause.get(WhereClauseFields.COUNT).toString()).intValue());
         }
         return new ArrayList<>(this.mongoTemplate.find(query, AuditActionContext.class, this.collectionName));
     }
