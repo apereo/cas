@@ -1,6 +1,7 @@
 package org.apereo.cas.web.report;
 
-import org.apereo.cas.logging.web.LoggingConfigurationEndpoint;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -11,14 +12,17 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import java.io.File;
 import java.io.FileWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link LoggingConfigurationEndpointTests}.
@@ -34,9 +38,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests {
-    @Autowired
-    @Qualifier("loggingConfigurationEndpoint")
-    private LoggingConfigurationEndpoint loggingConfigurationEndpoint;
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .build().toObjectMapper();
 
     @BeforeAll
     public static void setup() throws Exception {
@@ -50,18 +53,23 @@ class LoggingConfigurationEndpointTests extends AbstractCasEndpointTests {
     @Test
     @Order(1)
     void verifyOperation() throws Throwable {
-        assertNotNull(loggingConfigurationEndpoint);
-        val configuration = loggingConfigurationEndpoint.configuration();
-        assertNotNull(configuration);
-        assertTrue(configuration.containsKey("loggers"));
-        assertTrue(configuration.containsKey("activeLoggers"));
+        val body = MAPPER.readValue(mockMvc.perform(get("/actuator/loggingConfig")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), Map.class);
+        assertTrue(body.containsKey("loggers"));
+        assertTrue(body.containsKey("activeLoggers"));
     }
 
     @Test
     @Order(10)
     void verifyStreamOperation() throws Throwable {
         LOGGER.warn("This is a test warning");
-        val entries = loggingConfigurationEndpoint.getLogEntries(10, "warn");
+        val entries = MAPPER.readValue(mockMvc.perform(get("/actuator/loggingConfig/stream")
+                .queryParam("level", "warn")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk()).andReturn().getResponse().getContentAsString(), List.class);
         assertFalse(entries.isEmpty());
     }
 }

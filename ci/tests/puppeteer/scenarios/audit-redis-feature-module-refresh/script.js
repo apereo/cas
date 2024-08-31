@@ -22,7 +22,7 @@ const YAML = require("yaml");
             "Content-Type": "application/json"
         });
 
-    await cas.log("Updating configuration and waiting for changes to reload...");
+    await cas.log(`Updating configuration ${configFilePath} and waiting for changes to reload...`);
     await updateConfig(configFile, configFilePath, true);
     await cas.sleep(5000);
 

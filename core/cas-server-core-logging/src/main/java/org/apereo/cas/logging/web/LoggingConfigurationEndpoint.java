@@ -143,7 +143,8 @@ public class LoggingConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
             @Parameter(name = "level", in = ParameterIn.QUERY, description = "The log level to filter statements", required = false)
         })
     public List getLogEntries(@RequestParam(name = "count", required = false, defaultValue = "50") final int count,
-                              @RequestParam(name = "level", required = false) final String level) {
+                              @RequestParam(name = "level", required = false) final String level,
+                              @RequestParam(name = "name", required = false) final String name) {
         initializeIfNecessary();
         val configuration = loggerContext.getConfiguration();
         return configuration.getAppenders()
@@ -151,6 +152,7 @@ public class LoggingConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
             .stream()
             .filter(CasAppender.class::isInstance)
             .map(CasAppender.class::cast)
+            .filter(appender -> StringUtils.isBlank(name) || appender.getName().equalsIgnoreCase(name))
             .map(appender -> {
                 val currentEvents = appender.getLogEvents()
                     .stream()

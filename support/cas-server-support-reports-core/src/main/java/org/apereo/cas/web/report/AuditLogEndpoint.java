@@ -22,8 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Controller to handle the logging dashboard requests.
@@ -47,14 +46,14 @@ public class AuditLogEndpoint extends BaseCasRestActuatorEndpoint {
         this.auditTrailManager = auditTrailManager;
     }
 
-    private List<AuditActionContext> getAuditLog(final String interval, final long count) {
+    private Stream<AuditActionContext> getAuditLog(final String interval, final long count) {
         if (StringUtils.isBlank(interval)) {
             val sinceDate = auditActionDateProvider.getObject().get()
                 .minusDays(casProperties.getAudit().getEngine().getNumberOfDaysInHistory());
             return auditTrailManager.getObject().getAuditRecords(Map.of(
                 AuditTrailManager.WhereClauseFields.DATE, sinceDate,
                 AuditTrailManager.WhereClauseFields.COUNT, count
-            ));
+            )).parallelStream();
         }
         val duration = Beans.newDuration(interval);
         val startingDate = LocalDateTime.from(duration.subtractFrom(auditActionDateProvider.getObject().get()));
@@ -62,9 +61,8 @@ public class AuditLogEndpoint extends BaseCasRestActuatorEndpoint {
         val initialRecords = auditTrailManager.getObject().getAuditRecords(Map.of(AuditTrailManager.WhereClauseFields.DATE, startingDate));
         LOGGER.debug("Filtering audit records that are after [{}]", startingDate);
         return initialRecords
-            .stream()
-            .filter(rec -> rec.getWhenActionWasPerformed().isAfter(startingDate))
-            .collect(Collectors.toList());
+            .parallelStream()
+            .filter(rec -> rec.getWhenActionWasPerformed().isAfter(startingDate));
     }
 
     /**
@@ -78,8 +76,12 @@ public class AuditLogEndpoint extends BaseCasRestActuatorEndpoint {
      * @param resourceOperatedUpon the resource operated upon
      * @return the audit log
      */
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE,
-        consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+    @GetMapping(
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = {
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.APPLICATION_FORM_URLENCODED_VALUE
+        })
     @Operation(summary = "Provide a report of the audit log. Each filter other than `interval` can accept a regular expression to match against.",
         parameters = {
             @Parameter(name = "count", description = "Total number of records to fetch from audit log"),
@@ -89,20 +91,19 @@ public class AuditLogEndpoint extends BaseCasRestActuatorEndpoint {
             @Parameter(name = "principal", description = "The principal"),
             @Parameter(name = "resourceOperatedUpon", description = "The resource operated upon")
         })
-    public Set<AuditActionContext> getAuditLog(
-        @RequestParam(required = false, defaultValue = "0") final int count,
+    public List<AuditActionContext> getAuditLog(
+        @RequestParam(required = false, defaultValue = "10") final int count,
         @RequestParam(required = false) final String interval,
         @RequestParam(required = false) final String actionPerformed,
         @RequestParam(required = false) final String clientIpAddress,
         @RequestParam(required = false) final String principal,
         @RequestParam(required = false) final String resourceOperatedUpon) {
         val records = getAuditLog(interval, count)
-            .stream()
             .filter(e -> StringUtils.isBlank(actionPerformed) || RegexUtils.find(actionPerformed, e.getActionPerformed()))
             .filter(e -> StringUtils.isBlank(clientIpAddress) || RegexUtils.find(clientIpAddress, e.getClientInfo().getClientIpAddress()))
             .filter(e -> StringUtils.isBlank(principal) || RegexUtils.find(principal, e.getPrincipal()))
             .filter(e -> StringUtils.isBlank(resourceOperatedUpon) || RegexUtils.find(resourceOperatedUpon, e.getResourceOperatedUpon()))
-            .collect(Collectors.toSet());
+            .toList();
         LOGGER.debug("Found [{}] audit log records", records.size());
         return records;
     }
