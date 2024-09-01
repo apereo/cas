@@ -3,6 +3,7 @@ name: Code Analysis
 env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  GRADLE_BUILD_OPTIONS: "--no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #  GRADLE_BUILDCACHE_USER: ci
 #  GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
@@ -79,7 +80,26 @@ jobs:
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Run Analysis
         run: ./gradlew --build-cache --no-watch-fs --configure-on-demand --parallel --no-daemon ${{ matrix.category }} -x test -x javadoc -DskipNestedConfigMetadataGen=true -Dverbose=true --max-workers=8
-        
+
+##########################################################################
+  codeql-analysis:
+    runs-on: ubuntu-latest
+    needs: [ initialize ]
+    continue-on-error: false
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java
+          queries: security-and-quality,performance,deprecated,correctness
+      - name: Build
+        run: ./gradlew build ${{ env.GRADLE_BUILD_OPTIONS }}
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
 ##########################################################################
 
   validate-codebase:
