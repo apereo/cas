@@ -3,7 +3,7 @@ name: Code Analysis
 env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
-  GRADLE_BUILD_OPTIONS: "--no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache"
+  GRADLE_BUILD_OPTIONS: "--no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache -DskipAot=true"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #  GRADLE_BUILDCACHE_USER: ci
 #  GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
@@ -44,7 +44,8 @@ jobs:
     needs: [trigger-ci]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -66,9 +67,10 @@ jobs:
         category:
           - checkstyleMain
           - checkstyleTest
-    name: ${{ matrix.category }}
+    name: Code Style ${{ matrix.category }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -83,6 +85,7 @@ jobs:
 
 ##########################################################################
   codeql-analysis:
+    name: CodeQL Analysis
     runs-on: ubuntu-latest
     needs: [ initialize ]
     continue-on-error: false
@@ -91,7 +94,8 @@ jobs:
       contents: read
       security-events: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -140,7 +144,8 @@ jobs:
           - CheckNativeRuntimeHints
     name: ${{ matrix.check }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:

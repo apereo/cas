@@ -68,7 +68,8 @@ jobs:
     needs: [trigger-ci]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -89,7 +90,8 @@ jobs:
       scenarios255: ${{ steps.get-scenarios255.outputs.scenarios255 }}
       scenarios511: ${{ steps.get-scenarios511.outputs.scenarios511 }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -125,7 +127,8 @@ jobs:
     name: ${{matrix.scenario}}
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -173,7 +176,8 @@ jobs:
     name: ${{matrix.scenario}}
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
