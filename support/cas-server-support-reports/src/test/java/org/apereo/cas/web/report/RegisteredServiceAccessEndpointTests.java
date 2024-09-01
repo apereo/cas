@@ -7,12 +7,9 @@ import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import java.util.Map;
 import java.util.Set;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -40,10 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class RegisteredServiceAccessEndpointTests extends AbstractCasEndpointTests {
-    @Autowired
-    @Qualifier("mockMvc")
-    private MockMvc mockMvc;
-
     @Test
     void verifyForbiddenOperation() throws Throwable {
         mockMvc.perform(post("/actuator/serviceAccess")
