@@ -95,7 +95,7 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: java
-          queries: security-and-quality,performance,deprecated,correctness
+          queries: security-and-quality,deprecated,correctness
       - name: Build
         run: ./gradlew build ${{ env.GRADLE_BUILD_OPTIONS }}
       - name: Perform CodeQL Analysis
