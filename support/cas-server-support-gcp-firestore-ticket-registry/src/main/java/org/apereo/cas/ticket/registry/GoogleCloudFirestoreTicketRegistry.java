@@ -272,8 +272,10 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
     protected GoogleCloudFirestoreTicketDocument buildTicketAsDocument(final Ticket ticket) throws Exception {
         val encTicket = encodeTicket(ticket);
         val json = serializeTicket(encTicket);
-        LOGGER.trace("Serialized ticket into a JSON document as\n [{}]",
-            JsonValue.readJSON(json).toString(Stringify.FORMATTED));
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Serialized ticket into a JSON document as\n [{}]",
+                JsonValue.readJSON(json).toString(Stringify.FORMATTED));
+        }
         val principal = getPrincipalIdFrom(ticket);
 
         val expireAt = getExpireAt(ticket);
