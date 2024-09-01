@@ -33,8 +33,6 @@ import org.springframework.data.redis.connection.lettuce.LettucePoolingClientCon
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.util.StringUtils;
-import javax.net.ssl.TrustManagerFactory;
-import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
