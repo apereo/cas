@@ -2583,6 +2583,64 @@ async function initializeCasProtocolOperations() {
     $("button[name=casProtocolV3Button]").off().on("click", () => buildCasProtocolPayload("p3/serviceValidate", "xml"));
 }
 
+async function initializeTrustedMultifactorOperations() {
+    const mfaTrustedDevicesTable = $("#mfaTrustedDevicesTable").DataTable({
+        pageLength: 10,
+        autoWidth: true,
+        columnDefs: [
+            {visible: false, targets: 7}
+        ],
+        drawCallback: settings => {
+            $("#mfaTrustedDevicesTable tr").addClass("mdc-data-table__row");
+            $("#mfaTrustedDevicesTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    $("#mfaTrustedDevicesButton").off().on("click", () => {
+        if (actuatorEndpoints.multifactortrusteddevices) {
+            mfaTrustedDevicesTable.clear();
+            const username = $("#mfaTrustedUsername").val();
+            $("#mfaTrustedDevicesButton").prop("disabled", true);
+            Swal.fire({
+                icon: "info",
+                title: `Fetching Multifactor Trusted Devices for ${username}`,
+                text: "Please wait while registered multifactor trusted devices are retrieved...",
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            $.get(`${actuatorEndpoints.multifactortrusteddevices}/${username}`, response => {
+                console.log(response);
+                for (const device of Object.values(response)) {
+                    mfaTrustedDevicesTable.row.add({
+                        0: `<code>${device.id ?? "N/A"}</code>`,
+                        1: `<code>${device.principal ?? "N/A"}</code>`,
+                        2: `<code>${device.deviceFingerprint ?? "N/A"}</code>`,
+                        3: `<code>${device.recordDate ?? "N/A"}</code>`,
+                        4: `<code>${device.name ?? "N/A"}</code>`,
+                        5: `<code>${device.expirationDate ?? "N/A"}</code>`,
+                        6: `<code>${device.multifactorAuthenticationProvider ?? "N/A"}</code>`,
+                        7: `<code>${device.recordKey ?? "N/A"}</code>`
+                    });
+                }
+                mfaTrustedDevicesTable.draw();
+                $("#mfaTrustedDevicesButton").prop("disabled", false);
+                Swal.close();
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayBanner(xhr);
+                $("#mfaTrustedDevicesButton").prop("disabled", false);
+                Swal.close();
+            });
+        }
+    });
+
+}
+
+
 async function initializeMultifactorOperations() {
     const mfaDevicesTable = $("#mfaDevicesTable").DataTable({
         pageLength: 10,
@@ -2595,9 +2653,9 @@ async function initializeMultifactorOperations() {
             $("#mfaDevicesTable td").addClass("mdc-data-table__cell");
         }
     });
-    
+
     $("#mfaDevicesButton").off().on("click", () => {
-        function fetchMfaDevicesFromDuoSecurity() {
+        function fetchMfaDevices() {
             const username = $("#mfaUsername").val();
             $("#mfaDevicesButton").prop("disabled", true);
             Swal.fire({
@@ -2611,6 +2669,7 @@ async function initializeMultifactorOperations() {
                 }
             });
 
+            mfaDevicesTable.clear();
             $.get(`${actuatorEndpoints.mfadevices}/${username}`, response => {
                 console.log(response);
                 for (const device of Object.values(response)) {
@@ -2632,19 +2691,18 @@ async function initializeMultifactorOperations() {
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
                 displayBanner(xhr);
-                $("#mfaDevicesButton").prop("disabled", true);
+                $("#mfaDevicesButton").prop("disabled", false);
                 Swal.close();
             });
         }
 
-        mfaDevicesTable.clear();
         const fmMfaDevices = document.getElementById("fmMfaDevices");
         if (!fmMfaDevices.checkValidity()) {
             fmMfaDevices.reportValidity();
             return false;
         }
         
-        fetchMfaDevicesFromDuoSecurity();
+        fetchMfaDevices();
     });
 }
 
@@ -3241,7 +3299,11 @@ async function initializePalantir() {
 
             if (!actuatorEndpoints.mfadevices) {
                 $("#mfaTabButton").addClass("d-none");
+                $("#mfaDevicesTab").parent().addClass("d-none");
                 $(`#attribute-tab-${Tabs.MFA}`).addClass("d-none");
+            }
+            if (!actuatorEndpoints.multifactortrusteddevices) {
+                $("#trustedMfaDevicesTab").parent().addClass("d-none");
             }
             
             let visibleCount = $("nav.sidebar-navigation ul li:visible").length;
@@ -3285,6 +3347,7 @@ async function initializePalantir() {
                         initializeOidcProtocolOperations(),
                         initializeThrottlesOperations(),
                         initializeMultifactorOperations(),
+                        initializeTrustedMultifactorOperations(),
                         initializeAuditEventsOperations()
                     ]);
                 });
