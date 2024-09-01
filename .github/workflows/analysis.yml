@@ -91,6 +91,14 @@ jobs:
       contents: read
       security-events: write
     steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: ${{ env.JDK_DISTRIBUTION }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
