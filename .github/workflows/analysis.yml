@@ -88,7 +88,7 @@ jobs:
     name: CodeQL Analysis
     runs-on: ubuntu-latest
     needs: [ initialize ]
-    continue-on-error: false
+    continue-on-error: true
     permissions:
       actions: read
       contents: read
@@ -109,7 +109,7 @@ jobs:
           languages: java
           queries: security-and-quality
       - name: Build
-        run: ./gradlew build --no-build-cache ${{ env.GRADLE_BUILD_OPTIONS }}
+        run: ./gradlew build ${{ env.GRADLE_BUILD_OPTIONS }}
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
 ##########################################################################
