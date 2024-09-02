@@ -109,7 +109,7 @@ jobs:
           languages: java
           queries: security-and-quality
       - name: Build
-        run: ./gradlew build ${{ env.GRADLE_BUILD_OPTIONS }}
+        run: ./gradlew build --no-build-cache ${{ env.GRADLE_BUILD_OPTIONS }}
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
 ##########################################################################
