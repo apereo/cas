@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -99,7 +100,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     public void to(final OutputStream out, final T object) {
         FunctionUtils.doUnchecked(__ -> {
             try (val writer = new StringWriter()) {
-                getObjectMapper().writer(prettyPrinter).writeValue(writer, object);
+                objectWriterFor(object).writeValue(writer, object);
                 val hjsonString = isJsonFormat()
                     ? JsonValue.readHjson(writer.toString()).toString(getJsonFormattingOptions())
                     : writer.toString();
@@ -112,7 +113,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     public void to(final Writer out, final T object) {
         FunctionUtils.doUnchecked(__ -> {
             try (val writer = new StringWriter()) {
-                getObjectMapper().writer(prettyPrinter).writeValue(writer, object);
+                objectWriterFor(object).writeValue(writer, object);
                 if (isJsonFormat()) {
                     JsonValue.readHjson(writer.toString()).writeTo(out, getJsonFormattingOptions());
                 } else {
@@ -126,7 +127,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     public void to(final File out, final T object) {
         FunctionUtils.doUnchecked(__ -> {
             try (val writer = new StringWriter()) {
-                getObjectMapper().writer(prettyPrinter).writeValue(writer, object);
+                objectWriterFor(object).writeValue(writer, object);
 
                 if (isJsonFormat()) {
                     try (val fileWriter = Files.newBufferedWriter(out.toPath(), StandardCharsets.UTF_8)) {
@@ -151,10 +152,10 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     }
 
     @Override
-    public String fromList(final Collection<T> json) {
+    public String fromList(final Collection<T> object) {
         return FunctionUtils.doUnchecked(() -> {
             try (val writer = new StringWriter()) {
-                getObjectMapper().writer(prettyPrinter).writeValue(writer, json);
+                getObjectMapper().writerFor(object.getClass()).with(prettyPrinter).writeValue(writer, object);
                 return writer.toString();
             }
         });
@@ -211,8 +212,8 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
 
     protected T readObjectFromString(final String jsonString) {
         try {
-            LOGGER.trace("Attempting to consume [{}]", jsonString);
-            return getObjectMapper().readValue(jsonString, getTypeToSerialize());
+            LOGGER.trace("Attempting to parse [{}]", jsonString);
+            return getObjectMapper().readerFor(getTypeToSerialize()).readValue(jsonString);
         } catch (final Exception e) {
             LOGGER.error("Cannot read/parse [{}] to deserialize into type [{}]. This may be caused "
                     + "in the absence of a configuration/support module that knows how to interpret the fragment, "
@@ -228,7 +229,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         try {
             LOGGER.trace("Attempting to consume [{}]", jsonString);
             val expectedType = getObjectMapper().getTypeFactory().constructParametricType(List.class, getTypeToSerialize());
-            return getObjectMapper().readValue(jsonString, expectedType);
+            return getObjectMapper().readerFor(expectedType).readValue(jsonString);
         } catch (final Exception e) {
             LOGGER.error("Cannot read/parse [{}] to deserialize into List of type [{}]."
                     + "Internal parsing error is [{}]",
@@ -244,5 +245,9 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
 
     private Stringify getJsonFormattingOptions() {
         return prettyPrinter instanceof MinimalPrettyPrinter ? Stringify.PLAIN : Stringify.FORMATTED;
+    }
+
+    private ObjectWriter objectWriterFor(final T object) {
+        return getObjectMapper().writerFor(object.getClass()).with(prettyPrinter);
     }
 }
