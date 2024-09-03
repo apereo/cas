@@ -16,7 +16,7 @@ import org.springframework.test.context.TestPropertySource;
     "cas.authn.mfa.web-authn.jpa.password=mypass",
     "cas.authn.mfa.web-authn.jpa.driver-class=org.mariadb.jdbc.Driver",
     "cas.authn.mfa.web-authn.jpa.url=jdbc:mariadb://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
-    "cas.authn.mfa.web-authn.jpa.dialect=org.hibernate.dialect.MariaDB106Dialect"
+    "cas.authn.mfa.web-authn.jpa.dialect=org.hibernate.dialect.MariaDBDialect"
 })
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MariaDb")

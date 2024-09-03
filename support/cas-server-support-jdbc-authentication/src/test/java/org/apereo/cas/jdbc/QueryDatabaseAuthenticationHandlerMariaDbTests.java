@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
     "database.driver-class=org.mariadb.jdbc.Driver",
     "database.name=mysql",
     "database.url=jdbc:mariadb://localhost:3306/",
-    "database.dialect=org.hibernate.dialect.MariaDB106Dialect"
+    "database.dialect=org.hibernate.dialect.MariaDBDialect"
 })
 @EnabledIfListeningOnPort(port = 3306)
 @Tag("MariaDb")
