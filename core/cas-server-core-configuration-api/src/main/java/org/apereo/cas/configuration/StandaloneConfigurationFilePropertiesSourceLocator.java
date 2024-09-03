@@ -32,18 +32,18 @@ public class StandaloneConfigurationFilePropertiesSourceLocator implements CasCo
     public Optional<PropertySource<?>> locate(final Environment environment, final ResourceLoader resourceLoader) {
         val compositePropertySource = new CompositePropertySource(getClass().getSimpleName());
         val configFile = CasConfigurationPropertiesSourceLocator.getStandaloneProfileConfigurationFile(environment);
-        LOGGER.info("Loading standalone configuration properties from [{}]", configFile);
         if (configFile != null) {
+            LOGGER.info("Loading standalone configuration properties from [{}]", configFile);
             val sourceStandalone = loadSettingsFromStandaloneConfigFile(environment, configFile);
             compositePropertySource.addPropertySource(sourceStandalone);
             return Optional.of(compositePropertySource);
         }
+        LOGGER.info("No standalone configuration properties are available");
         return Optional.empty();
     }
 
     private PropertySource<Map<String, Object>> loadSettingsFromStandaloneConfigFile(
-        final Environment environment,
-        final File configFile) {
+        final Environment environment, final File configFile) {
         val configurationLoaders = CasConfigurationPropertiesSourceLocator.getConfigurationPropertiesLoaders();
         val resource = new FileSystemResource(configFile);
         val foundLoader = configurationLoaders

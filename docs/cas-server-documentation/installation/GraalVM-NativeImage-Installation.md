@@ -57,7 +57,7 @@ that run with an [embedded server container](../installation/Configuring-Servlet
 When building a CAS Graal VM native image, an embedded server container will be automatically provided.
  
 The build machine that ultimately produces the CAS Graal VM native image is preferred be running Linux 
-with at least 16GB of memory and 4 CPU cores.
+with at least 32GB of memory and 4 CPU cores.
 
 <div class="alert alert-info">:information_source: <strong>LLVM Toolchain</strong><p>
 You may run into build errors about <i>ld64 limitations</i>, particularly if you are building native images on ARM machines.
