@@ -181,6 +181,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
             context.put("status", generatedTokenResult.getStatus());
         }
         context.put(CasProtocolConstants.PARAMETER_SERVICE, tokenResult.getService().getId());
+        Optional.ofNullable(tokenRequestContext.getToken()).ifPresent(token -> context.put(OAuth20Constants.TOKEN, token.getId()));
         context.put(OAuth20Constants.CLIENT_ID, tokenRequestContext.getRegisteredService().getClientId());
         context.put(OAuth20Constants.GRANT_TYPE, tokenRequestContext.getGrantType().getType());
         context.put(OAuth20Constants.RESPONSE_TYPE, tokenRequestContext.getResponseType().getType());
