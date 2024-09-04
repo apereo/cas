@@ -182,6 +182,7 @@ class OidcCibaControllerTests extends AbstractOidcTests {
         registeredService.setBackchannelTokenDeliveryMode(OidcBackchannelTokenDeliveryModes.PUSH.getMode());
         registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.CIBA.getType()));
         registeredService.setBackchannelClientNotificationEndpoint("https://ciba.example.org");
+        registeredService.setGenerateRefreshToken(true);
         servicesManager.save(registeredService);
 
         val profile = new CommonProfile();
@@ -217,6 +218,7 @@ class OidcCibaControllerTests extends AbstractOidcTests {
             registeredService.setSupportedGrantTypes(Set.of(OAuth20GrantTypes.CIBA.getType()));
             registeredService.setBackchannelClientNotificationEndpoint("https://localhost:%s".formatted(webServer.getPort()));
             registeredService.setBackchannelUserCodeParameterSupported(true);
+            registeredService.setGenerateRefreshToken(true);
             servicesManager.save(registeredService);
             val userCode = UUID.randomUUID().toString();
             var response = mvc.perform(post("/cas/" + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL)
