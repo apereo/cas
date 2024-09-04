@@ -20,14 +20,14 @@ Palantir is the next generation of the [CAS Management](https://github.com/apere
 CAS codebase in an attempt to both streamline the development and release processes and to ensure the tool
 remains consistent and up to date. Its intention is to act as the overall admin management tool and console for the CAS server,
 and presents a user interface to allow one to add and modify application registrations, observe CAS server status, 
-state of single sign-on sessions and more.
+state of single sign-on sessions, access strategy and authorization, protocol payload simulations and a lot more.
 
 Support is enabled by adding the following module into the overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-palantir" %}
 
-<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
-This capability is a work in progress. We encourage you to start to experiment and test your CAS deployment 
+<div class="alert alert-info">:warning: <strong>Usage Warning!</strong><p>
+This capability is relatively new. We encourage you to start to experiment and test your CAS deployment 
 with this feature and contribute fixes.</p></div>
 
 Accessing the Palantir dashboard will by default require a form-based user authentication. The credentials

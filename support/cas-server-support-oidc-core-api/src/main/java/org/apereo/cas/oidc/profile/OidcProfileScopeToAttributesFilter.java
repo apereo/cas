@@ -5,7 +5,9 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
+import org.apereo.cas.oidc.claims.BaseOidcScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcRegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcScopeFreeAttributeReleasePolicy;
 import org.apereo.cas.oidc.scopes.OidcAttributeReleasePolicyFactory;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -14,10 +16,10 @@ import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttribut
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.jooq.lambda.Unchecked;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.util.Collection;
 import java.util.HashMap;
@@ -117,23 +119,41 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
             .stream()
             .distinct()
             .filter(effectiveAttributeReleasePolicies::containsKey)
-            .map(Unchecked.function(scope -> {
+            .map(scope -> {
                 val policy = effectiveAttributeReleasePolicies.get(scope);
-                val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
-                    .registeredService(registeredService)
-                    .service(service)
-                    .principal(principal)
-                    .applicationContext(applicationContext)
-                    .build();
-                val policyAttr = policy.getAttributes(releasePolicyContext);
-                LOGGER.debug("Calculated attributes [{}] via attribute release policy [{}]", policyAttr, policy.getName());
-                return policyAttr;
-            }))
+                return getAttributesFromPolicy(principal, service, registeredService, policy);
+            })
             .forEach(attributes::putAll);
+
+        effectiveAttributeReleasePolicies.values()
+            .stream()
+            .filter(OidcScopeFreeAttributeReleasePolicy.class::isInstance)
+            .forEach(policy -> {
+                val policyAttr = getAttributesFromPolicy(principal, service, registeredService, policy);
+                attributes.putAll(policyAttr);
+            });
+        LOGGER.debug("Final collection of attributes based on scopes are [{}]", attributes);
         return attributes;
     }
 
-    private Map<String, List<Object>> getAttributesAllowedForService(
+    protected Map<String, List<Object>> getAttributesFromPolicy(final Principal principal,
+                                                                final Service service,
+                                                                final OidcRegisteredService registeredService,
+                                                                final BaseOidcScopeAttributeReleasePolicy policy) {
+        return FunctionUtils.doUnchecked(() -> {
+            val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
+                .registeredService(registeredService)
+                .service(service)
+                .principal(principal)
+                .applicationContext(applicationContext)
+                .build();
+            val policyAttr = policy.getAttributes(releasePolicyContext);
+            LOGGER.debug("Calculated attributes [{}] via attribute release policy [{}]", policyAttr, policy.getName());
+            return policyAttr;
+        });
+    }
+
+    protected Map<String, List<Object>> getAttributesAllowedForService(
         final Collection<String> scopes,
         final Principal principal,
         final Service service,

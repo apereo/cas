@@ -7,6 +7,7 @@ import org.apereo.cas.support.events.AbstractCasEventRepositoryTests;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 /**
  * Test cases for {@link MongoDbCasEventRepository}.
@@ -25,10 +25,10 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  */
 @Tag("MongoDb")
 @ExtendWith(CasTestExtension.class)
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
     CasMongoDbEventsAutoConfiguration.class,
-    CasCoreWebAutoConfiguration.class,
-    RefreshAutoConfiguration.class
+    CasCoreWebAutoConfiguration.class
 },
     properties = {
         "cas.events.mongo.user-id=root",

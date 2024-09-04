@@ -1,0 +1,13 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "...",
+  "clientSecret": "...",
+  "serviceId": "^https://.*",
+  "name": "OIDC",
+  "bypassApprovalPrompt": true,
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
+  "id": 1,
+  "scopes" : [ "java.util.HashSet", [ "profile", "openid", "email", "phone" ] ],
+  "description": "OpenID Connect service definition that allows the client to use the authorization code grant flow and recognized a few standard OpenID Connect scopes."
+}

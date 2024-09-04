@@ -18,13 +18,11 @@ import org.apereo.cas.config.CasGoogleAuthenticatorRedisAutoConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -37,6 +35,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Tag("Redis")
 @ExtendWith(CasTestExtension.class)
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
     CasGoogleAuthenticatorRedisAutoConfiguration.class,
     CasCoreWebflowAutoConfiguration.class,
@@ -49,13 +48,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     CasCoreAuthenticationAutoConfiguration.class,
     CasPersonDirectoryAutoConfiguration.class,
     CasGoogleAuthenticatorAutoConfiguration.class,
-    AopAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
     CasCoreCookieAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,
     CasCoreScriptingAutoConfiguration.class,
-    RefreshAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class
 }, properties = {
     "cas.authn.mfa.gauth.redis.host=localhost",

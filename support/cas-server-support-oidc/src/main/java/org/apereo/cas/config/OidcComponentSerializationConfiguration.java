@@ -9,6 +9,7 @@ import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcEmailScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcProfileScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcScopeFreeAttributeReleasePolicy;
 import org.apereo.cas.oidc.ticket.OidcCibaRequest;
 import org.apereo.cas.oidc.ticket.OidcDefaultCibaRequest;
 import org.apereo.cas.oidc.ticket.OidcDefaultPushedAuthorizationRequest;
@@ -72,6 +73,7 @@ class OidcComponentSerializationConfiguration {
             plan.registerSerializableClass(OidcEmailScopeAttributeReleasePolicy.class);
             plan.registerSerializableClass(OidcPhoneScopeAttributeReleasePolicy.class);
             plan.registerSerializableClass(OidcAssuranceScopeAttributeReleasePolicy.class);
+            plan.registerSerializableClass(OidcScopeFreeAttributeReleasePolicy.class);
             plan.registerSerializableClass(OidcProfileScopeAttributeReleasePolicy.class);
         };
     }

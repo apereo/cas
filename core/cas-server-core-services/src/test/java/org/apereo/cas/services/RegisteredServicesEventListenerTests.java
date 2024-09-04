@@ -17,6 +17,7 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceExpiredEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesRefreshEvent;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
@@ -28,13 +29,9 @@ import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.context.annotation.Bean;
 import java.util.Set;
@@ -46,9 +43,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
     RegisteredServicesEventListenerTests.RegisteredServicesEventListenerTestConfiguration.class,
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreAuthenticationAutoConfiguration.class,
@@ -58,9 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreScriptingAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
-    CasCoreServicesAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
-    MailSenderValidatorAutoConfiguration.class
+    CasCoreServicesAutoConfiguration.class
 }, properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",

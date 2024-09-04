@@ -180,12 +180,14 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Stream<Ticket> stream() {
+    public Stream<Ticket> stream(final TicketRegistryStreamCriteria criteria) {
         return ticketCatalog
             .findAll()
             .stream()
             .map(this::getTicketCollectionInstanceByMetadata)
             .flatMap(map -> mongoTemplate.stream(new Query(), MongoDbTicketDocument.class, map))
+            .skip(criteria.getFrom())
+            .limit(criteria.getCount())
             .map(ticket -> decodeTicket(deserializeTicket(ticket.getJson(), ticket.getType())));
     }
 
@@ -331,8 +333,10 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         val json = serializeTicket(encTicket);
         FunctionUtils.throwIf(StringUtils.isBlank(json),
             () -> new IllegalArgumentException("Ticket " + ticket.getId() + " cannot be serialized to JSON"));
-        LOGGER.trace("Serialized ticket into a JSON document as\n [{}]",
-            JsonValue.readJSON(json).toString(Stringify.FORMATTED));
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Serialized ticket into a JSON document as\n [{}]",
+                JsonValue.readJSON(json).toString(Stringify.FORMATTED));
+        }
 
         val expireAt = getExpireAt(ticket);
         LOGGER.trace("Calculated expiration date for ticket ttl as [{}]", expireAt);

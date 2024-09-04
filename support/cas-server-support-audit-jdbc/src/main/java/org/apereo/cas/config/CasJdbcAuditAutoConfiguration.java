@@ -3,12 +3,14 @@ package org.apereo.cas.config;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.JdbcAuditTrailEntityFactory;
 import org.apereo.cas.audit.generic.JdbcAuditTrailEntity;
+import org.apereo.cas.audit.spi.entity.AuditTrailEntity;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.core.audit.AuditJdbcProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigurationContext;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.jpa.JpaEntityFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.spring.beans.BeanCondition;
@@ -65,6 +67,14 @@ public class CasJdbcAuditAutoConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasSupportJdbcAuditEntityConfiguration {
 
+        @Bean
+        @ConditionalOnMissingBean(name = "jpaAuditTrailEntityFactory")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public JpaEntityFactory<AuditTrailEntity> jpaAuditTrailEntityFactory(final CasConfigurationProperties casProperties) {
+            val dialect = casProperties.getAudit().getJdbc().getDialect();
+            return new JdbcAuditTrailEntityFactory(dialect);
+        }
+
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public JpaVendorAdapter inspektrAuditJpaVendorAdapter(
@@ -77,16 +87,20 @@ public class CasJdbcAuditAutoConfiguration {
         @ConditionalOnMissingBean(name = "inspektrAuditEntityManagerFactory")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public FactoryBean<EntityManagerFactory> inspektrAuditEntityManagerFactory(
-            @Qualifier("inspektrAuditJpaVendorAdapter") final JpaVendorAdapter inspektrAuditJpaVendorAdapter,
+            @Qualifier("jpaAuditTrailEntityFactory")
+            final JpaEntityFactory<AuditTrailEntity> jpaAuditTrailEntityFactory,
+            @Qualifier("inspektrAuditJpaVendorAdapter")
+            final JpaVendorAdapter inspektrAuditJpaVendorAdapter,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("inspektrAuditTrailDataSource") final DataSource inspektrAuditTrailDataSource,
+            @Qualifier("inspektrAuditTrailDataSource")
+            final DataSource inspektrAuditTrailDataSource,
             final CasConfigurationProperties casProperties,
-            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME) final JpaBeanFactory jpaBeanFactory) {
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
+            final JpaBeanFactory jpaBeanFactory) {
             return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
-                    val dialect = casProperties.getAudit().getJdbc().getDialect();
-                    val type = new JdbcAuditTrailEntityFactory(dialect).getType();
+                    val type = jpaAuditTrailEntityFactory.getType();
                     val ctx = JpaConfigurationContext
                         .builder()
                         .jpaVendorAdapter(inspektrAuditJpaVendorAdapter)
@@ -159,17 +173,21 @@ public class CasJdbcAuditAutoConfiguration {
         @DependsOn("inspektrAuditEntityManagerFactory")
         public AuditTrailManager jdbcAuditTrailManager(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("auditCleanupCriteria") final WhereClauseMatchCriteria auditCleanupCriteria,
-            @Qualifier("inspektrAuditTransactionTemplate") final TransactionOperations inspektrAuditTransactionTemplate,
-            @Qualifier("inspektrAuditTrailDataSource") final DataSource inspektrAuditTrailDataSource,
+            @Qualifier("jpaAuditTrailEntityFactory")
+            final JpaEntityFactory<AuditTrailEntity> jpaAuditTrailEntityFactory,
+            @Qualifier("auditCleanupCriteria")
+            final WhereClauseMatchCriteria auditCleanupCriteria,
+            @Qualifier("inspektrAuditTransactionTemplate")
+            final TransactionOperations inspektrAuditTransactionTemplate,
+            @Qualifier("inspektrAuditTrailDataSource")
+            final DataSource inspektrAuditTrailDataSource,
             final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(AuditTrailManager.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
                     val manager = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate,
-                        new JdbcTemplate(inspektrAuditTrailDataSource));
+                        new JdbcTemplate(inspektrAuditTrailDataSource), jpaAuditTrailEntityFactory);
                     manager.setCleanupCriteria(auditCleanupCriteria);
-
                     val jdbc = casProperties.getAudit().getJdbc();
                     manager.setAsynchronous(jdbc.isAsynchronous());
                     manager.setColumnLength(jdbc.getColumnLength());

@@ -81,6 +81,4 @@ public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebf
         LOGGER.debug("Authentication request for [{}] is below the risk threshold", authentication.getPrincipal());
         return null;
     }
-
-
 }

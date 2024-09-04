@@ -1,0 +1,19 @@
+{
+  "@class": "org.apereo.cas.services.OidcRegisteredService",
+  "clientId": "client",
+  "clientSecret": "secret",
+  "serviceId": "^https://localhost:9859/anything/sample1",
+  "name": "Sample",
+  "id": 1,
+  "scopes" : [ "java.util.HashSet", [ "email", "profile", "openid" ] ],
+  "informationUrl": "https://github.com/apereo/cas",
+  "privacyUrl": "https://github.com/apereo/cas",
+  "supportedGrantTypes": [ "java.util.HashSet", [ "authorization_code" ] ],
+  "supportedResponseTypes": [ "java.util.HashSet", [ "code" ] ],
+  "bypassApprovalPrompt": true,
+  "userProfileViewType": "FLAT",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.oidc.claims.OidcScopeFreeAttributeReleasePolicy",
+    "allowedAttributes" : [ "java.util.ArrayList", [ "surrogateUser", "surrogatePrincipal", "surrogateEnabled" ] ]
+  }
+}

@@ -13,9 +13,11 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.oidc.OidcConfigurationContext;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.OidcAttributeDefinition;
+import org.apereo.cas.oidc.claims.OidcScopeFreeAttributeReleasePolicy;
 import org.apereo.cas.services.OidcBackchannelTokenDeliveryModes;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceChainingAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredServiceOidcIdTokenExpirationPolicy;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -91,34 +93,38 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         return new OidcIdToken(finalIdToken, claims);
     }
 
+    @SuppressWarnings("LongFloatConversion")
     protected JwtClaims buildJwtClaims(final IdTokenGenerationContext context) throws Throwable {
-        LOGGER.trace("Attempting to produce claims for the id token [{}]", context.getAccessToken());
-        val authentication = context.getAccessToken().getAuthentication();
-        val activePrincipal = buildPrincipalForAttributeFilter(context.getAccessToken(), context.getRegisteredService());
+        val accessToken = context.getAccessToken();
+        
+        LOGGER.trace("Attempting to produce claims for the id token [{}]", accessToken);
+        val authentication = accessToken.getAuthentication();
+        val activePrincipal = buildPrincipalForAttributeFilter(accessToken, context.getRegisteredService());
         val principal = getConfigurationContext().getProfileScopeToAttributesFilter()
-            .filter(context.getAccessToken().getService(), activePrincipal, context.getRegisteredService(), context.getAccessToken());
+            .filter(accessToken.getService(),
+                activePrincipal, context.getRegisteredService(), accessToken);
         LOGGER.debug("Principal to use to build the ID token is [{}]", principal);
 
         val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
         val claims = new JwtClaims();
 
-        val jwtId = getJwtId(context.getAccessToken());
+        val jwtId = getJwtId(accessToken);
         LOGGER.debug("Calculated ID token jti claim to be [{}]", jwtId);
         claims.setJwtId(jwtId);
 
         claims.setClaim(OidcConstants.CLAIM_SESSION_ID, DigestUtils.sha(jwtId));
-        claims.setIssuer(getConfigurationContext().getIssuerService()
-            .determineIssuer(Optional.ofNullable((OidcRegisteredService) context.getRegisteredService())));
+        val oidcRegisteredService = (OidcRegisteredService) context.getRegisteredService();
+        claims.setIssuer(getConfigurationContext().getIssuerService().determineIssuer(Optional.of(oidcRegisteredService)));
         val audience = context.getRegisteredService().getAudience().isEmpty()
-            ? List.of(context.getAccessToken().getClientId())
+            ? List.of(accessToken.getClientId())
             : new ArrayList<>(context.getRegisteredService().getAudience());
         claims.setAudience(audience);
         LOGGER.debug("Calculated ID token aud claim to be [{}]", audience);
 
-        buildExpirationClaim(claims, (OidcRegisteredService) context.getRegisteredService());
+        buildExpirationClaim(claims, oidcRegisteredService);
 
         claims.setIssuedAtToNow();
-        claims.setNotBeforeMinutesInThePast((float) Beans.newDuration(oidc.getCore().getSkew()).toMinutes());
+        claims.setNotBeforeMinutesInThePast(Beans.newDuration(oidc.getCore().getSkew()).toMinutes());
         claims.setSubject(principal.getId());
 
         buildAuthenticationContextClassRef(claims, authentication);
@@ -132,9 +138,9 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val attributes = authentication.getAttributes();
         claims.setStringClaim(OAuth20Constants.CLIENT_ID, context.getRegisteredService().getClientId());
 
-        var authTime = context.getAccessToken().isStateless() || context.getAccessToken().getTicketGrantingTicket() == null
+        val authTime = accessToken.isStateless() || accessToken.getTicketGrantingTicket() == null
             ? authentication.getAuthenticationDate().toEpochSecond()
-            : ((AuthenticationAwareTicket) context.getAccessToken().getTicketGrantingTicket()).getAuthentication().getAuthenticationDate().toEpochSecond();
+            : ((AuthenticationAwareTicket) accessToken.getTicketGrantingTicket()).getAuthentication().getAuthenticationDate().toEpochSecond();
         claims.setClaim(OidcConstants.CLAIM_AUTH_TIME, authTime);
 
         if (attributes.containsKey(OAuth20Constants.STATE)) {
@@ -143,11 +149,11 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         if (attributes.containsKey(OAuth20Constants.NONCE)) {
             setClaim(claims, OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE).getFirst());
         }
-        generateAccessTokenHash(context.getAccessToken(), (OidcRegisteredService) context.getRegisteredService(), claims);
+        generateAccessTokenHash(accessToken, oidcRegisteredService, claims);
 
         val includeClaims = context.getResponseType() != OAuth20ResponseTypes.CODE && context.getGrantType() != OAuth20GrantTypes.AUTHORIZATION_CODE;
-        if (includeClaims || oidc.getIdToken().isIncludeIdTokenClaims()) {
-            FunctionUtils.doIf(oidc.getIdToken().isIncludeIdTokenClaims(),
+        if (includeClaims || includeClaimsInIdTokenForcefully(context)) {
+            FunctionUtils.doIf(includeClaimsInIdTokenForcefully(context),
                     __ -> LOGGER.warn("Individual claims requested by OpenID scopes are forced to be included in the ID token. "
                         + "This is a violation of the OpenID Connect specification and a workaround via dedicated CAS configuration. "
                         + "Claims should be requested from the userinfo/profile endpoints in exchange for an access token."))
@@ -165,6 +171,12 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         }
 
         return claims;
+    }
+
+    private boolean includeClaimsInIdTokenForcefully(final IdTokenGenerationContext context) {
+        val oidcService = (OidcRegisteredService) context.getRegisteredService();
+        val properties = getConfigurationContext().getCasProperties().getAuthn().getOidc();
+        return properties.getIdToken().isIncludeIdTokenClaims() || oidcService.isIncludeIdTokenClaims();
     }
 
     private void generateCibaClaims(final IdTokenGenerationContext context, final JwtClaims claims) throws Throwable {
@@ -289,7 +301,28 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val oidc = getConfigurationContext().getCasProperties().getAuthn().getOidc();
         val claims = oidc.getDiscovery().getClaims();
         LOGGER.trace("Checking if any of [{}] are specified in the list of discovery claims [{}]", ImmutableSet.of(claimName, mappedClaim), claims);
-        return claims.contains(claimName) || claims.contains(mappedClaim) || isClaimDefinitionSupportedForRelease(mappedClaim);
+        return claims.contains(claimName)
+            || claims.contains(mappedClaim)
+            || isClaimDefinitionSupportedForRelease(mappedClaim)
+            || isClaimReleasedAllowedByScopeFreePolicy(claimName, registeredService);
+    }
+
+    protected boolean isClaimReleasedAllowedByScopeFreePolicy(final String claimName, final RegisteredService registeredService) {
+        if (registeredService.getAttributeReleasePolicy() instanceof final OidcScopeFreeAttributeReleasePolicy policy) {
+            val allowedAttributes = policy.getAllowedAttributes();
+            LOGGER.trace("Checking if claim [{}] is allowed by the scope-free policy [{}]", claimName, allowedAttributes);
+            return !policy.claimsMustBeDefinedViaDiscovery() && allowedAttributes.contains(claimName);
+        }
+        if (registeredService.getAttributeReleasePolicy() instanceof final RegisteredServiceChainingAttributeReleasePolicy chain) {
+            return chain
+                .getPolicies()
+                .stream()
+                .filter(OidcScopeFreeAttributeReleasePolicy.class::isInstance)
+                .map(OidcScopeFreeAttributeReleasePolicy.class::cast)
+                .filter(policy -> !policy.claimsMustBeDefinedViaDiscovery())
+                .anyMatch(policy -> policy.getAllowedAttributes().contains(claimName));
+        }
+        return false;
     }
 
     private boolean isClaimDefinitionSupportedForRelease(final String claimName) {

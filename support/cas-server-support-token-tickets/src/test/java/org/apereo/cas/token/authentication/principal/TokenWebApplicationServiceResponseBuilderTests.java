@@ -26,6 +26,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.cipher.JwtTicketCipherExecutor;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.nimbusds.jwt.JWTParser;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -35,10 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import java.util.UUID;
@@ -50,12 +48,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
     CasRegisteredServicesTestConfiguration.class,
     CasTokenTicketsAutoConfiguration.class,
-    RefreshAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasCoreServicesAutoConfiguration.class,
     CasCoreUtilAutoConfiguration.class,

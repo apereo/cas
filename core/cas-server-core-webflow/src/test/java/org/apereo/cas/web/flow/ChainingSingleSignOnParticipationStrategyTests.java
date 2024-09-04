@@ -4,15 +4,14 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,11 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Authentication")
 @ExtendWith(CasTestExtension.class)
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasCoreWebAutoConfiguration.class
-})
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = CasCoreWebAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class ChainingSingleSignOnParticipationStrategyTests {
     @Autowired

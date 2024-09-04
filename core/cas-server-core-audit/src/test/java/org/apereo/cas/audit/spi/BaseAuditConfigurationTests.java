@@ -15,6 +15,7 @@ import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
@@ -23,10 +24,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.time.Clock;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Map;
@@ -43,9 +41,9 @@ public abstract class BaseAuditConfigurationTests {
     private static final String USER = RandomUtils.randomAlphanumeric(6);
 
     protected AuditActionContext auditActionContext;
+
+    @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreAuthenticationAutoConfiguration.class,
@@ -81,7 +79,7 @@ public abstract class BaseAuditConfigurationTests {
 
     @Test
     void verifyAuditByDate() throws Throwable {
-        val time = LocalDate.now(ZoneOffset.UTC).minusDays(2);
+        val time = LocalDateTime.now(ZoneOffset.UTC).minusDays(2);
         val criteria = Map.<AuditTrailManager.WhereClauseFields, Object>of(AuditTrailManager.WhereClauseFields.DATE, time);
         val results = getAuditTrailManager().getAuditRecords(criteria);
         assertFalse(results.isEmpty());
@@ -89,9 +87,10 @@ public abstract class BaseAuditConfigurationTests {
 
     @Test
     void verifyAuditByPrincipal() throws Throwable {
-        val time = LocalDate.now(ZoneOffset.UTC).minusDays(2);
+        val time = LocalDateTime.now(ZoneOffset.UTC).minusDays(2);
         val criteria = Map.<AuditTrailManager.WhereClauseFields, Object>of(
             AuditTrailManager.WhereClauseFields.DATE, time,
+            AuditTrailManager.WhereClauseFields.COUNT, 10L,
             AuditTrailManager.WhereClauseFields.PRINCIPAL, USER);
         val results = getAuditTrailManager().getAuditRecords(criteria);
         assertFalse(results.isEmpty());

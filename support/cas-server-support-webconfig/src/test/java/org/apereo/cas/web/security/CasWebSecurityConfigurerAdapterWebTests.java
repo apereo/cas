@@ -30,10 +30,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@SpringBootTest(classes = {
-    CasWebSecurityConfigurerAdapterWebTests.WebTestConfiguration.class,
-    BaseWebSecurityTests.SharedTestConfiguration.class
-},
+@SpringBootTest(
+    classes = {
+        CasWebSecurityConfigurerAdapterWebTests.WebTestConfiguration.class,
+        BaseWebSecurityTests.SharedTestConfiguration.class
+    },
     properties = {
         "server.port=8080",
 

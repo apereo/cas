@@ -1,5 +1,5 @@
 {
-  "dependencies": "events-memory,electrofence,geolocation",
+  "dependencies": "events-jpa,electrofence,geolocation",
   "conditions": {
     "docker": "true"
   },
@@ -15,6 +15,14 @@
     "--cas.authn.adaptive.risk.core.threshold=0.2",
     "--cas.authn.adaptive.risk.ip.enabled=true",
 
+    "--cas.jdbc.show-sql=true",
+    "--cas.events.jpa.ddl-auto=create-drop",
+    "--cas.events.jpa.user=root",
+    "--cas.events.jpa.password=password",
+    "--cas.events.jpa.driver-class=com.mysql.cj.jdbc.Driver",
+    "--cas.events.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
+    "--cas.events.jpa.dialect=org.hibernate.dialect.MySQLDialect",
+    
     "--cas.service-registry.core.init-from-json=true",
 
     "--spring.mail.host=localhost",
@@ -33,5 +41,5 @@
     "--cas.authn.adaptive.risk.response.mail.text=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/email.gtemplate"
   ],
   "jvmArgs": "-Djava.net.preferIPv4Addresses=true",
-  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+  "initScript": "${PWD}/ci/tests/mysql/run-mysql-server.sh,${PWD}/ci/tests/mail/run-mail-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

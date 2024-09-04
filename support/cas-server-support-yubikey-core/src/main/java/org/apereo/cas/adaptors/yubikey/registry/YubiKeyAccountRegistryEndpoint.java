@@ -28,8 +28,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -111,7 +111,7 @@ public class YubiKeyAccountRegistryEndpoint extends BaseCasRestActuatorEndpoint 
             Unchecked.function(entry -> {
                 val acct = (YubiKeyAccount) entry;
                 val fileName = String.format("%s-%s", acct.getUsername(), acct.getId());
-                val sourceFile = File.createTempFile(fileName, ".json");
+                val sourceFile = Files.createTempFile(fileName, ".json").toFile();
                 MAPPER.writeValue(sourceFile, acct);
                 return sourceFile;
             }), "yubikeybaccts");

@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.1.0
  */
 @Tag("Delegation")
-public class Pac4jBannerContributorTests {
+class Pac4jBannerContributorTests {
     @Test
     void verifyOperation() throws Throwable {
         val contributor = new Pac4jBannerContributor();

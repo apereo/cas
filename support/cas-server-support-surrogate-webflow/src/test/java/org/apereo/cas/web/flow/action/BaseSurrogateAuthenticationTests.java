@@ -22,13 +22,10 @@ import org.apereo.cas.config.CasSurrogateAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasSurrogateAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
@@ -39,6 +36,7 @@ import org.springframework.context.annotation.Import;
  * @since 5.3.0
  */
 public abstract class BaseSurrogateAuthenticationTests {
+    @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({
         CasSurrogateAuthenticationAutoConfiguration.class,
         CasSurrogateAuthenticationWebflowAutoConfiguration.class,
@@ -57,11 +55,7 @@ public abstract class BaseSurrogateAuthenticationTests {
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreCookieAutoConfiguration.class,
         CasCoreSamlAutoConfiguration.class,
-        CasDelegatedAuthenticationAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        MailSenderAutoConfiguration.class,
-        AopAutoConfiguration.class,
-        RefreshAutoConfiguration.class
+        CasDelegatedAuthenticationAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
     @Import({AuthenticationTestConfiguration.class, CasPersonDirectoryTestConfiguration.class})

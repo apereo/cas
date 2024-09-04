@@ -41,7 +41,8 @@ jobs:
       JDK_CURRENT: ${{ env.JDK_CURRENT }}
       JDK_LATEST: ${{ env.JDK_LATEST }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -65,7 +66,8 @@ jobs:
           - ${{ needs.initialize.outputs.JDK_CURRENT }}
           - ${{ needs.initialize.outputs.JDK_LATEST }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up JDK ${{ matrix.jdk }}
         uses: actions/setup-java@v4
         with:
@@ -90,7 +92,8 @@ jobs:
     needs: [initialize]
     continue-on-error: false
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
       - uses: graalvm/setup-graalvm@v1
         with:
           distribution: 'graalvm'

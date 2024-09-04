@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.executor;
 
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.cryptacular.bean.AEADBlockCipherBean;
 import org.cryptacular.bean.KeyStoreFactoryBean;
@@ -12,9 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
@@ -43,9 +44,10 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    ClientFlowExecutionRepositoryTests.WebflowTestConfiguration.class,
-    RefreshAutoConfiguration.class
+    AopAutoConfiguration.class,
+    ClientFlowExecutionRepositoryTests.WebflowTestConfiguration.class
 })
 @Tag("Webflow")
 @ExtendWith(CasTestExtension.class)

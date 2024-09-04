@@ -46,11 +46,11 @@ public abstract class BaseOneTimeTokenRepositoryTests {
     @Test
     void verifyTokenSave() throws Throwable {
         val otp = getRandomOtp();
-        var token = (OneTimeToken) new GoogleAuthenticatorToken(otp, userId);
-        oneTimeTokenAuthenticatorTokenRepository.store(token);
+        val token = oneTimeTokenAuthenticatorTokenRepository.store(new GoogleAuthenticatorToken(otp, userId));
+        assertNotNull(token);
         assertTrue(oneTimeTokenAuthenticatorTokenRepository.exists(userId, otp));
-        token = oneTimeTokenAuthenticatorTokenRepository.get(userId, otp);
-        assertTrue(token.getId() > 0);
+        val foundToken = oneTimeTokenAuthenticatorTokenRepository.get(userId, otp);
+        assertTrue(foundToken.getId() > 0);
         oneTimeTokenAuthenticatorTokenRepository.clean();
         googleAuthenticatorTokenRepositoryCleaner.clean();
     }
@@ -79,7 +79,7 @@ public abstract class BaseOneTimeTokenRepositoryTests {
 
         assertTrue(t1.getId() > 0);
         assertTrue(t2.getId() > 0);
-        assertNotEquals(token.getId(), token2.getId());
+        assertNotEquals(t1.getId(), t2.getId());
         assertEquals(otp1, (int) t1.getToken());
     }
 

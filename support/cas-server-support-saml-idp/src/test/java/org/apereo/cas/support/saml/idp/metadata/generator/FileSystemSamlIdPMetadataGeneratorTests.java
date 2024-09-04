@@ -23,7 +23,7 @@ class FileSystemSamlIdPMetadataGeneratorTests {
     @Nested
     @TestPropertySource(properties = {
         "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
-        "cas.authn.saml-idp.core.cache-expiration=0",
+        "cas.authn.saml-idp.metadata.core.cache-expiration=0",
         "cas.authn.saml-idp.metadata.file-system.sign-metadata=true",
         "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata456"
     })
@@ -44,7 +44,7 @@ class FileSystemSamlIdPMetadataGeneratorTests {
     @Nested
     @TestPropertySource(properties = {
         "cas.authn.saml-idp.core.entity-id=https://cas.example.org/idp",
-        "cas.authn.saml-idp.core.cache-expiration=0",
+        "cas.authn.saml-idp.metadata.core.cache-expiration=0",
         "cas.authn.saml-idp.metadata.file-system.sign-metadata=true",
         "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/idp-metadata599"
     })

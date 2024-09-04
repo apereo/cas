@@ -4,7 +4,8 @@ const fs = require("fs");
 const path = require("path");
 
 const TOTAL = 10;
-const BASE_URL = "https://localhost:8443/cas/actuator/registeredServices";
+const ACTUATOR_URL = "https://localhost:8443/cas/actuator";
+const BASE_URL = `${ACTUATOR_URL}/registeredServices`;
 
 async function fetchServices() {
     await cas.log("Fetching services from CAS");
@@ -33,13 +34,23 @@ async function importServices() {
     const template = path.join(__dirname, "registered-service.json");
     const contents = fs.readFileSync(template, "utf8");
     for (let i = 1; i <= TOTAL; i++) {
-        const serviceBody = contents.replaceAll("${id}", String(i));
+        const serviceId = String(i);
+        const serviceBody = contents.replaceAll("${id}", serviceId);
         await cas.log(`Import registered service:\n${serviceBody}`);
         await cas.doRequest(`${BASE_URL}/import`, "POST", {
             "Accept": "application/json",
             "Content-Length": serviceBody.length,
             "Content-Type": "application/json"
         }, 201, serviceBody);
+
+        await cas.doRequest(`${ACTUATOR_URL}/entityHistory/registeredServices/${serviceId}`, "GET", {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+        });
+        await cas.doRequest(`${ACTUATOR_URL}/entityHistory/registeredServices/${serviceId}/changelog`, "GET", {
+            "Accept": "text/plain",
+            "Content-Type": "application/json"
+        });
     }
 }
 
@@ -77,6 +88,7 @@ async function importServices() {
         await fetchServices();
         await verifyServices();
         await cas.logg("All CAS services are available");
+
     } catch (e) {
         failed = true;
         throw e;

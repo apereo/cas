@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.loader.GroovyConfigurationPropertiesLoader;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,12 +26,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Groovy")
 @ExtendWith(CasTestExtension.class)
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    CasCoreScriptingAutoConfiguration.class
-}, properties = "spring.profiles.active=test")
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = CasCoreScriptingAutoConfiguration.class, properties = "spring.profiles.active=test")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class GroovyConfigurationPropertiesLoaderTests {
+class GroovyConfigurationPropertiesLoaderTests {
 
     @Autowired
     private Environment environment;

@@ -1,6 +1,7 @@
 package org.apereo.cas.hz;
 
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
+import org.apereo.cas.test.CasTestExtension;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.JoinConfig;
@@ -8,6 +9,7 @@ import com.hazelcast.config.NetworkConfig;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.UUID;
 
@@ -21,6 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 6.3.0
  */
 @Tag("Hazelcast")
+@ExtendWith(CasTestExtension.class)
 class HazelcastAzureDiscoveryStrategyTests {
     @Test
     void verifyOperation() throws Throwable {

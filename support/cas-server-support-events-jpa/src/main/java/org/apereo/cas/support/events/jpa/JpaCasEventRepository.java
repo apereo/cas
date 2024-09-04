@@ -2,6 +2,7 @@ package org.apereo.cas.support.events.jpa;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.jpa.JpaBeanFactory;
+import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.CasEventRepositoryFilter;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
@@ -27,12 +28,12 @@ import java.util.stream.Stream;
  * @since 5.0.0
  */
 @EnableTransactionManagement(proxyTargetClass = false)
-@Transactional(transactionManager = "transactionManagerEvents")
+@Transactional(transactionManager = CasEventRepository.TRANSACTION_MANAGER_EVENTS)
 @ToString
 public class JpaCasEventRepository extends AbstractCasEventRepository {
 
     private static final String SELECT_QUERY = "SELECT r from JpaCasEvent r ";
-
+    
     private final PlatformTransactionManager transactionManager;
 
     private final CasConfigurationProperties casProperties;
@@ -58,7 +59,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, value = TRANSACTION_MANAGER_EVENTS)
     public Stream<? extends CasEvent> load() {
         val query = entityManager.createQuery(SELECT_QUERY.trim(), JpaCasEvent.class);
         return jpaBeanFactory
@@ -67,7 +68,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, value = TRANSACTION_MANAGER_EVENTS)
     public Stream<? extends CasEvent> load(final ZonedDateTime dateTime) {
         val sql = SELECT_QUERY.concat("where r.creationTime >= :creationTime");
         val query = entityManager.createQuery(sql, JpaCasEvent.class)
@@ -79,7 +80,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, value = TRANSACTION_MANAGER_EVENTS)
     public Stream<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal) {
         val sql = SELECT_QUERY.concat("where r.type = :type and r.principalId = :principalId");
         val query = entityManager.createQuery(sql, JpaCasEvent.class).setParameter(TYPE_PARAM, type)
@@ -90,7 +91,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, value = TRANSACTION_MANAGER_EVENTS)
     public Stream<? extends CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal, final ZonedDateTime dateTime) {
         val sql = SELECT_QUERY.concat("where r.type = :type and r.creationTime >= :creationTime and r.principalId = :principalId");
         val query = entityManager.createQuery(sql, JpaCasEvent.class).setParameter(TYPE_PARAM, type)
@@ -102,7 +103,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, value = TRANSACTION_MANAGER_EVENTS)
     public Stream<? extends CasEvent> getEventsOfType(final String type) {
         val query = entityManager.createQuery(SELECT_QUERY.concat("where r.type = :type"), JpaCasEvent.class)
             .setParameter(TYPE_PARAM, type);
@@ -112,7 +113,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, value = TRANSACTION_MANAGER_EVENTS)
     public Stream<? extends CasEvent> getEventsOfType(final String type, final ZonedDateTime dateTime) {
         val sql = SELECT_QUERY.concat("where r.type = :type and r.creationTime >= :creationTime");
         val query = entityManager.createQuery(sql, JpaCasEvent.class)
@@ -124,7 +125,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, value = TRANSACTION_MANAGER_EVENTS)
     public Stream<? extends CasEvent> getEventsForPrincipal(final String id) {
         val sql = SELECT_QUERY.concat("where r.principalId = :principalId");
         val query = entityManager.createQuery(sql, JpaCasEvent.class)
@@ -135,7 +136,7 @@ public class JpaCasEventRepository extends AbstractCasEventRepository {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, value = TRANSACTION_MANAGER_EVENTS)
     public Stream<? extends CasEvent> getEventsForPrincipal(final String id, final ZonedDateTime dateTime) {
         val sql = SELECT_QUERY.concat("where r.principalId = :principalId and r.creationTime >= :creationTime");
         var query = entityManager.createQuery(sql, JpaCasEvent.class)

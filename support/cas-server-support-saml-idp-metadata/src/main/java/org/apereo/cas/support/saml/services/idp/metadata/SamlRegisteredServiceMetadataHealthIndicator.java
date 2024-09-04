@@ -59,7 +59,7 @@ public class SamlRegisteredServiceMetadataHealthIndicator extends AbstractHealth
                     count.getAndIncrement();
                 }
             });
-        if (count.intValue() == samlServices.size()) {
+        if (!samlServices.isEmpty() && count.intValue() == samlServices.size()) {
             builder.down();
         }
     }

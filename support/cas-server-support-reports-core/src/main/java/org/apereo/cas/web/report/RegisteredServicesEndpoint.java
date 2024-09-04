@@ -40,9 +40,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -221,7 +221,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
             Unchecked.function(entry -> {
                 val service = (RegisteredService) entry;
                 val fileName = String.format("%s-%s", service.getName(), service.getId());
-                val sourceFile = File.createTempFile(fileName, ".json");
+                val sourceFile = Files.createTempFile(fileName, ".json").toFile();
                 serializer.to(sourceFile, service);
                 return sourceFile;
             }), "services");
@@ -247,7 +247,7 @@ public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
         val registeredServiceSerializer = new RegisteredServiceJsonSerializer(applicationContext);
         val registeredService = servicesManager.getObject().findServiceBy(id);
         val fileName = String.format("%s-%s", registeredService.getName(), registeredService.getId());
-        val serviceFile = File.createTempFile(fileName, ".json");
+        val serviceFile = Files.createTempFile(fileName, ".json").toFile();
         registeredServiceSerializer.to(serviceFile, registeredService);
         val headers = new HttpHeaders();
         val resource = new TemporaryFileSystemResource(serviceFile);

@@ -48,7 +48,7 @@ public class CasCoreMonitorAutoConfiguration {
     @ConditionalOnMissingBean(name = ExecutableObserver.BEAN_NAME)
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    public ExecutableObserver defaultExecutableObserver(final ObservationRegistry observationRegistry) {
+    public ExecutableObserver defaultExecutableObserver(final ObjectProvider<ObservationRegistry> observationRegistry) {
         return new DefaultExecutableObserver(observationRegistry);
     }
 

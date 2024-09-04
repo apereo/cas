@@ -27,8 +27,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -120,7 +120,7 @@ public class AttributeConsentReportEndpoint extends BaseCasRestActuatorEndpoint 
             Unchecked.function(entry -> {
                 val acct = (ConsentDecision) entry;
                 val fileName = String.format("%s-%s", acct.getPrincipal(), acct.getId());
-                val sourceFile = File.createTempFile(fileName, ".json");
+                val sourceFile = Files.createTempFile(fileName, ".json").toFile();
                 MAPPER.writeValue(sourceFile, acct);
                 return sourceFile;
             }), "attrconsent");

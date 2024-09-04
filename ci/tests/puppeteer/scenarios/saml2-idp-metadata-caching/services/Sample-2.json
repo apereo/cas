@@ -1,0 +1,12 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "unknown-sp",
+  "name" : "Sample",
+  "id" : 2,
+  "evaluationOrder" : 2,
+  "metadataExpirationDuration": "",
+  "metadataLocation" : "http://localhost:1234/unknown-sp",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  }
+}
