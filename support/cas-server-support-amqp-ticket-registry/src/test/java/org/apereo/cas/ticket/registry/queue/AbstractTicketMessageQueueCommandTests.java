@@ -15,15 +15,12 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 /**
  * This is {@link AbstractTicketMessageQueueCommandTests}.
@@ -31,8 +28,8 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    CompositeMeterRegistryAutoConfiguration.class,
     RabbitAutoConfiguration.class,
     CasAMQPTicketRegistryAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
@@ -44,9 +41,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
     CasCoreUtilAutoConfiguration.class,
     CasCoreScriptingAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
-    AopAutoConfiguration.class,
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class
 },
     properties = {

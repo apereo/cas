@@ -7,17 +7,14 @@ import org.apereo.cas.support.wsfederation.authentication.principal.WsFederation
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.beans.BeanContainer;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Import;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -82,12 +79,9 @@ public abstract class AbstractWsFederationTests extends AbstractOpenSamlTests {
         standardCred.setAttributes(attributes);
         return standardCred;
     }
-    @ImportAutoConfiguration({
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        SecurityAutoConfiguration.class,
-        AopAutoConfiguration.class,
-        CasWsFederationAuthenticationAutoConfiguration.class})
+
+    @SpringBootTestAutoConfigurations
+    @ImportAutoConfiguration(CasWsFederationAuthenticationAutoConfiguration.class)
     @SpringBootConfiguration(proxyBeanMethods = false)
     @Import(AbstractOpenSamlTests.SharedTestConfiguration.class)
     public static class SharedTestConfiguration {

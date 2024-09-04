@@ -2,7 +2,6 @@ package org.apereo.cas.aup;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
@@ -78,7 +77,7 @@ class JdbcAcceptableUsagePolicyRepositoryAdvancedTests extends BaseJdbcAcceptabl
 
     @Test
     void verifyRepositoryPolicyText() throws Throwable {
-        val service = (BaseWebBasedRegisteredService) RegisteredServiceTestUtils.getRegisteredService();
+        val service = RegisteredServiceTestUtils.getRegisteredService();
         val policy = new DefaultRegisteredServiceAcceptableUsagePolicy();
         policy.setMessageCode("aup.code");
         policy.setText("aup text here");

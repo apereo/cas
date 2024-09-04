@@ -16,6 +16,7 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -25,11 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import java.util.Optional;
@@ -82,10 +79,6 @@ class CasCoreLogoutAutoConfigurationTests {
         assertFalse(casProtocolEndpointConfigurer.getIgnoredEndpoints().isEmpty());
     }
     @ImportAutoConfiguration({
-        MailSenderAutoConfiguration.class,
-        AopAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        RefreshAutoConfiguration.class,
         CasCoreTicketsAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreUtilAutoConfiguration.class,
@@ -97,6 +90,7 @@ class CasCoreLogoutAutoConfigurationTests {
         CasCoreAuthenticationAutoConfiguration.class,
         CasCoreLogoutAutoConfiguration.class
     })
+    @SpringBootTestAutoConfigurations
     @SpringBootConfiguration(proxyBeanMethods = false)
     public static class SharedTestConfiguration {
     }

@@ -85,9 +85,7 @@ public class MongoDbServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService save(final RegisteredService svc) {
-        if (svc.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE) {
-            svc.setId(svc.hashCode());
-        }
+        svc.assignIdIfNecessary();
         invokeServiceRegistryListenerPreSave(svc);
         this.mongoTemplate.save(svc, this.collectionName);
         LOGGER.debug("Saved registered service: [{}]", svc);

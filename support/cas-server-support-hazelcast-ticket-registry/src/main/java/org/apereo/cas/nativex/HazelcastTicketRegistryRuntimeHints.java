@@ -68,6 +68,7 @@ import com.hazelcast.shaded.org.apache.calcite.schema.SchemaPlus;
 import com.hazelcast.shaded.org.apache.calcite.schema.Schemas;
 import com.hazelcast.shaded.org.apache.calcite.schema.Statistic;
 import com.hazelcast.shaded.org.apache.calcite.schema.Table;
+import com.hazelcast.spi.properties.ClusterProperty;
 import com.hazelcast.sql.SqlService;
 import com.hazelcast.sql.impl.type.converter.Converter;
 import lombok.val;
@@ -86,6 +87,7 @@ public class HazelcastTicketRegistryRuntimeHints implements CasRuntimeHintsRegis
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         registerReflectionHints(hints,
             List.of(
+                ClusterProperty.class,
                 Schemas.class,
                 SchemaPlus.class,
                 Queryable.class,

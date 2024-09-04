@@ -29,7 +29,7 @@ class CasAppenderTests {
         assertDoesNotThrow(() -> {
             new CasAppender("CasAppender2", mock(Configuration.class),
                 AppenderRef.createAppenderRef("ref", Level.INFO, appender.getFilter()),
-                appender.getFilter());
+                appender.getFilter(), 10);
             logger.info("Testing CasAppender...");
         });
     }

@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.delegation.DelegationAutoRedir
 import org.apereo.cas.support.pac4j.authentication.clients.ConfigurableDelegatedClient;
 import org.apereo.cas.support.pac4j.authentication.clients.ConfigurableDelegatedClientBuilder;
 import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -15,13 +16,7 @@ import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.config.SAML2Configuration;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcAutoConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -75,15 +70,8 @@ public abstract class BaseSaml2DelegatedAuthenticationTests {
             return saml2Config;
         }
     }
-    @ImportAutoConfiguration({
-        RefreshAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        ThymeleafAutoConfiguration.class,
-        MockMvcAutoConfiguration.class,
-        ErrorMvcAutoConfiguration.class,
-        AopAutoConfiguration.class,
-        CasDelegatedAuthenticationSaml2AutoConfiguration.class
-    })
+    @SpringBootTestAutoConfigurations
+    @ImportAutoConfiguration(CasDelegatedAuthenticationSaml2AutoConfiguration.class)
     @SpringBootConfiguration(proxyBeanMethods = false)
     @EnableWebMvc
     @Import(BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)

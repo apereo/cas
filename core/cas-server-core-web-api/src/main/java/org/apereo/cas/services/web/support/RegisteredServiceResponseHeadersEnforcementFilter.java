@@ -45,7 +45,7 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     private static String getStringProperty(final Optional<RegisteredService> result,
                                             final RegisteredServiceProperties property) {
         if (result.isPresent()) {
-            val registeredService = (RegisteredService) result.get();
+            val registeredService = result.get();
             LOGGER.trace("Resolved registered service [{}] from request to enforce response headers", registeredService);
             val properties = registeredService.getProperties();
             if (!properties.containsKey(property.getPropertyName())) {

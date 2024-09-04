@@ -80,7 +80,7 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseGoo
 
     @Override
     public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
-        return update(account);
+        return update(account.assignIdIfNecessary());
     }
 
     @Override

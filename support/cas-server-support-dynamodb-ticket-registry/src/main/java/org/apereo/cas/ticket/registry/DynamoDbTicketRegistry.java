@@ -138,8 +138,12 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public Stream<? extends Ticket> stream() {
-        return dbTableService.stream().map(this::decodeTicket);
+    public Stream<? extends Ticket> stream(final TicketRegistryStreamCriteria criteria) {
+        return dbTableService
+            .stream()
+            .skip(criteria.getFrom())
+            .limit(criteria.getCount())
+            .map(this::decodeTicket);
     }
 
     @Override

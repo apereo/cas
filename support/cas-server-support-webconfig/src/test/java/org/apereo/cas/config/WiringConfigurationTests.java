@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
 import org.junit.jupiter.api.Tag;
@@ -9,15 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -36,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
     CasWebAppAutoConfiguration.class,
     CasCoreWebflowAutoConfiguration.class,
@@ -54,15 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
     CasCoreAuditAutoConfiguration.class,
-    CasPersonDirectoryAutoConfiguration.class,
-
-    WebMvcAutoConfiguration.class,
-    AopAutoConfiguration.class,
-    MailSenderAutoConfiguration.class,
-    EndpointAutoConfiguration.class,
-    SecurityAutoConfiguration.class,
-    WebEndpointAutoConfiguration.class,
-    RefreshAutoConfiguration.class
+    CasPersonDirectoryAutoConfiguration.class
 }, properties = {
     "cas.authn.accept.users=casuser::Mellon",
     "cas.http-web-request.cors.enabled=true",

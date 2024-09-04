@@ -32,8 +32,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
@@ -160,7 +160,7 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
             Unchecked.function(entry -> {
                 val acct = (MultifactorAuthenticationTrustRecord) entry;
                 val fileName = String.format("%s-%s", acct.getPrincipal(), acct.getName());
-                val sourceFile = File.createTempFile(fileName, ".json");
+                val sourceFile = Files.createTempFile(fileName, ".json").toFile();
                 MAPPER.writeValue(sourceFile, acct);
                 return sourceFile;
             }), "mfatrusteddevices-" + username);
@@ -184,7 +184,7 @@ public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseC
             Unchecked.function(entry -> {
                 val acct = (MultifactorAuthenticationTrustRecord) entry;
                 val fileName = String.format("%s-%s", acct.getPrincipal(), acct.getName());
-                val sourceFile = File.createTempFile(fileName, ".json");
+                val sourceFile = Files.createTempFile(fileName, ".json").toFile();
                 MAPPER.writeValue(sourceFile, acct);
                 return sourceFile;
             }), "mfatrusteddevices");

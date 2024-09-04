@@ -26,11 +26,13 @@ const querystring = require("querystring");
     await jimp.read(buffer, (err, image) => {
         if (err) {
             cas.logr(err);
+            throw err;
         }
         const qrcode = new qrCode();
         qrcode.callback = (err, channelIdResult) => {
             if (err) {
                 cas.logr(err);
+                throw err;
             }
             const channelId = channelIdResult.result;
             cas.logg(`QR channel code is ${channelId}`);

@@ -14,6 +14,7 @@ import org.apereo.cas.notifications.mail.EmailMessageRequest;
 import org.apereo.cas.notifications.mail.EmailSender;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -21,9 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -35,9 +34,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasMailjetEmailSenderAutoConfiguration.class
 }, properties = {
@@ -48,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Mail")
 @ExtendWith(CasTestExtension.class)
 @Getter
-public class MailjetEmailSenderTests {
+class MailjetEmailSenderTests {
     @Autowired
     @Qualifier(EmailSender.BEAN_NAME)
     private EmailSender emailSender;

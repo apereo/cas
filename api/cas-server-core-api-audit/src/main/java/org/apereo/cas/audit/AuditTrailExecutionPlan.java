@@ -5,7 +5,6 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link AuditTrailExecutionPlan}.
@@ -46,5 +45,5 @@ public interface AuditTrailExecutionPlan {
      * @param criteria the criteria
      * @return the audit records since
      */
-    Set<AuditActionContext> getAuditRecords(Map<AuditTrailManager.WhereClauseFields, Object> criteria);
+    List<AuditActionContext> getAuditRecords(Map<AuditTrailManager.WhereClauseFields, Object> criteria);
 }

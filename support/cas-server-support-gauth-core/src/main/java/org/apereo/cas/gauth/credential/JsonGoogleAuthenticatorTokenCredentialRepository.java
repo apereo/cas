@@ -110,6 +110,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepository extends BaseGoogle
     public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
         return lock.tryLock(() -> {
             try {
+                account.assignIdIfNecessary();
                 LOGGER.debug("Storing google authenticator account for [{}]", account.getUsername());
                 val accounts = readAccountsFromJsonRepository();
                 LOGGER.debug("Found [{}] account(s) and added google authenticator account for [{}]",

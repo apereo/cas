@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.configuration.support.JpaPersistenceUnitProvider;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 
@@ -14,6 +15,7 @@ import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.support.TransactionOperations;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.Collection;
@@ -63,7 +65,8 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
             if (entityManager.contains(entity)) {
                 entityManager.remove(entity);
             } else {
-                entityManager.remove(entityManager.merge(entity));
+                val mergedEntity = entityManager.merge(entity);
+                entityManager.remove(mergedEntity);
             }
         });
         return true;
@@ -185,29 +188,28 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
     }
 
     private RegisteredService saveInternal(final RegisteredService registeredService) {
-        val isNew = registeredService.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE;
         invokeServiceRegistryListenerPreSave(registeredService);
 
         val entity = fromRegisteredService(registeredService);
-        if (isNew) {
-            entityManager.persist(entity);
-            return toRegisteredService(entity);
+        val foundEntity = entityManager.find(JpaRegisteredServiceEntity.class, entity.getId());
+        if (foundEntity == null) {
+            try {
+                entityManager.persist(entity.setId(0));
+                return toRegisteredService(entity);
+            } catch (final EntityExistsException e) {
+                LoggingUtils.error(LOGGER, e);
+            }
         }
-        val r = entityManager.merge(entity);
-        return toRegisteredService(r);
+        val storedEntity = entityManager.merge(entity);
+        return toRegisteredService(storedEntity);
     }
 
 
-    /**
-     * From registered service.
-     *
-     * @param service the service
-     * @return the jpa registered service entity
-     */
-    private JpaRegisteredServiceEntity fromRegisteredService(final RegisteredService service) {
+    protected JpaRegisteredServiceEntity fromRegisteredService(final RegisteredService service) {
         val jsonBody = serializer.toString(service);
+        val identifier = service.getId() == RegisteredServiceDefinition.INITIAL_IDENTIFIER_VALUE ? 0L : service.getId();
         return JpaRegisteredServiceEntity.builder()
-            .id(service.getId())
+            .id(identifier)
             .name(service.getName())
             .serviceId(service.getServiceId())
             .evaluationOrder(service.getEvaluationOrder())
@@ -215,7 +217,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
             .build();
     }
 
-    private RegisteredService toRegisteredService(final JpaRegisteredServiceEntity entity) {
+    protected RegisteredService toRegisteredService(final JpaRegisteredServiceEntity entity) {
         val service = serializer.from(entity.getBody());
         service.setId(entity.getId());
         LOGGER.trace("Converted JPA entity [{}] to [{}]", this, service);

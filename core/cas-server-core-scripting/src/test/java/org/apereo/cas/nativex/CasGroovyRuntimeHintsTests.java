@@ -12,7 +12,7 @@ import org.springframework.aot.hint.RuntimeHints;
  * @since 7.1.0
  */
 @Tag("Native")
-public class CasGroovyRuntimeHintsTests {
+class CasGroovyRuntimeHintsTests {
     @Test
     void verifyHints() throws Throwable {
         val hints = new RuntimeHints();

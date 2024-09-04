@@ -6,6 +6,7 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Tag;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -26,12 +26,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("Groovy")
 @ExtendWith(CasTestExtension.class)
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    CasCoreScriptingAutoConfiguration.class
-})
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = CasCoreScriptingAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class GroovyExecutableCompiledScriptFactoryTests {
+class GroovyExecutableCompiledScriptFactoryTests {
 
     @Autowired
     @Qualifier(ScriptResourceCacheManager.BEAN_NAME)

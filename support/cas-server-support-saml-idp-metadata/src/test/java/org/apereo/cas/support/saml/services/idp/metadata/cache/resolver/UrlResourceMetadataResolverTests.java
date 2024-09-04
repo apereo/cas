@@ -103,7 +103,7 @@ class UrlResourceMetadataResolverTests {
             val service = new SamlRegisteredService();
             service.setName(RandomUtils.randomAlphabetic(12));
             service.setId(RandomUtils.nextInt());
-            service.setMetadataLocation("http://localhost:%s".formatted(RandomUtils.nextInt()));
+            service.setMetadataLocation("https://this-is-unknown.com:444");
             assertTrue(resolver.resolve(service).isEmpty());
         }
     }

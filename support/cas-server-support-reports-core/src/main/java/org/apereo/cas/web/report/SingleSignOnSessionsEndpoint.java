@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistryStreamCriteria;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.cas.util.LoggingUtils;
@@ -127,8 +128,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
             @Parameter(name = "count", schema = @Schema(type = "integer"), in = ParameterIn.QUERY, description = "Total number of sessions to return")
         })
     public Map<String, Object> getSsoSessions(
-        @Valid
-        @ModelAttribute final SsoSessionsRequest ssoSessionsRequest) {
+        @ModelAttribute final @Valid SsoSessionsRequest ssoSessionsRequest) {
         val sessionsMap = new HashMap<String, Object>();
         val activeSsoSessions = getActiveSsoSessions(ssoSessionsRequest).toList();
         sessionsMap.put("activeSsoSessions", activeSsoSessions);
@@ -183,7 +183,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
         })
     @DeleteMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> destroySsoSessions(
-        @Valid final SsoSessionsRequest ssoSessionsRequest,
+        final @Valid SsoSessionsRequest ssoSessionsRequest,
         final HttpServletRequest request,
         final HttpServletResponse response) {
         if (StringUtils.isBlank(ssoSessionsRequest.getUsername()) && StringUtils.isBlank(ssoSessionsRequest.getType())) {
@@ -275,7 +275,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
 
     private Stream<Map<String, Object>> getActiveSsoSessions(final SsoSessionsRequest ssoSessionsRequest) {
         val option = Optional.ofNullable(ssoSessionsRequest.getType()).map(SsoSessionReportOptions::valueOf).orElse(SsoSessionReportOptions.ALL);
-        return getNonExpiredTicketGrantingTickets(ssoSessionsRequest.getFrom(), ssoSessionsRequest.getCount())
+        return getNonExpiredTicketGrantingTickets(ssoSessionsRequest)
             .map(TicketGrantingTicket.class::cast)
             .filter(tgt -> !(option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null))
             .filter(tgt -> StringUtils.isBlank(ssoSessionsRequest.getUsername())
@@ -337,18 +337,15 @@ public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
         return sso;
     }
 
-    private Stream<? extends Ticket> getNonExpiredTicketGrantingTickets(final long from, final long count) {
-        var ticketsStream = ticketRegistryProvider
+    private Stream<? extends Ticket> getNonExpiredTicketGrantingTickets(
+        final SsoSessionsRequest ssoSessionsRequest) {
+        return ticketRegistryProvider
             .getObject()
-            .stream()
+            .stream(TicketRegistryStreamCriteria.builder()
+                .count(ssoSessionsRequest.getCount())
+                .from(ssoSessionsRequest.getFrom())
+                .build())
             .filter(ticket -> ticket instanceof TicketGrantingTicket && !ticket.isExpired());
-        if (from > 0) {
-            ticketsStream = ticketsStream.skip(from);
-        }
-        if (count > 0) {
-            ticketsStream = ticketsStream.limit(count);
-        }
-        return ticketsStream;
     }
 
 }

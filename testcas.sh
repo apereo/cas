@@ -45,7 +45,7 @@ parallel="--parallel "
 dryRun=""
 info=""
 gradleCmd="./gradlew"
-flags="-no-daemon --configure-on-demand --build-cache -x javadoc -x check -Dverbose=true "
+flags="--no-daemon --configure-on-demand --build-cache -x javadoc -x check -Dverbose=true "
 coverageTask=""
 
 while (( "$#" )); do
@@ -60,6 +60,15 @@ while (( "$#" )); do
         ;;
     --no-parallel)
         parallel="--no-parallel "
+        shift
+        ;;
+    --pts)
+        printf "Running tests with predictive test selection mode: ${GREEN}$2${ENDCOLOR}\n"
+        flags+=" -Dpts.mode=$2 "
+        shift 2
+        ;;
+    --no-pts)
+        flags+=" -DPTS_ENABLED=false "
         shift
         ;;
     --with-coverage)
@@ -511,8 +520,8 @@ if [[ -z "$task" ]] && [[ -z "$coverageTask" ]]; then
 fi
 
 cmd="$gradleCmd ${GREEN}$task $tests${ENDCOLOR}${flags}${debug}${dryRun}${info}${parallel}${GREEN}$coverageTask${ENDCOLOR}"
-printf "${cmd}%n"
-
+printf "${cmd} %n"
+echo
 cmd="$gradleCmd $task $tests $flags ${debug} ${parallel} ${dryRun} ${info} ${coverageTask}"
 eval "$cmd"
 retVal=$?

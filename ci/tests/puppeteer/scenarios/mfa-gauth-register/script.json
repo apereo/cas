@@ -1,3 +1,11 @@
 {
-  "dependencies": "gauth"
+  "dependencies": "gauth,reports",
+  "properties": [
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.enabled-by-default=true",
+
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas"
+  ]
 }

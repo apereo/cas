@@ -6,6 +6,7 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.registry.BaseTicketRegistryTests;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import io.micrometer.observation.Observation;
 import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationTextPublisher;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
     CasCoreTicketsMonitoringConfigurationTests.CasCoreTicketsMonitoringTestConfiguration.class,
     CasCoreMonitorAutoConfiguration.class,

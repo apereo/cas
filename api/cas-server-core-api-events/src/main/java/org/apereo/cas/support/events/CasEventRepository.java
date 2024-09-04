@@ -13,6 +13,11 @@ import java.util.stream.Stream;
  */
 public interface CasEventRepository {
     /**
+     * Name of the events transaction manager.
+     */
+    String TRANSACTION_MANAGER_EVENTS = "transactionManagerEvents";
+    
+    /**
      * Bean name.
      */
     String BEAN_NAME = "casEventRepository";

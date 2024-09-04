@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.support.ThrottledSubmission;
 import org.apereo.cas.web.support.ThrottledSubmissionsStore;
 import lombok.val;
@@ -9,9 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,9 +20,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
     CasHazelcastTicketRegistryAutoConfiguration.class,
     CasCoreWebAutoConfiguration.class,
     CasCoreAutoConfiguration.class,
@@ -34,7 +32,12 @@ import static org.junit.jupiter.api.Assertions.*;
     CasCoreNotificationsAutoConfiguration.class,
     CasCoreTicketsAutoConfiguration.class,
     CasHazelcastThrottlingAutoConfiguration.class
-})
+},
+    properties = {
+        "cas.authn.throttle.hazelcast.cluster.network.port-auto-increment=false",
+        "cas.authn.throttle.hazelcast.cluster.network.port=5710",
+        "cas.authn.throttle.hazelcast.cluster.instance-name=throttlehzstore"
+    })
 @Tag("Hazelcast")
 @ExtendWith(CasTestExtension.class)
 class CasHazelcastThrottlingConfigurationTests {

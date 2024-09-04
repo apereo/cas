@@ -117,7 +117,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
             .filter(CollectionUtils.distinctByKey(service -> service.getValue().getId()))
             .toList();
         for (val entry : cachedServices) {
-            val cachedService = (RegisteredService) entry.getValue();
+            val cachedService = entry.getValue();
             LOGGER.debug("Found cached service definition [{}] in the replication cache [{}]",
                 cachedService, distributedCacheManager.getName());
 

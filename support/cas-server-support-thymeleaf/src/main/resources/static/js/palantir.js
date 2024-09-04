@@ -16,7 +16,8 @@ const Tabs = {
     AUTHENTICATION: 9,
     CONSENT: 10,
     PROTOCOLS: 11,
-    THROTTLES: 12
+    THROTTLES: 12,
+    MFA: 13
 };
 
 /**
@@ -31,6 +32,10 @@ let httpRequestResponsesChart = null;
 let httpRequestsByUrlChart = null;
 let auditEventsChart = null;
 let threadDumpChart = null;
+
+let currentActiveTab = Tabs.APPLICATIONS;
+
+const CAS_FEATURES = [];
 
 function fetchServices(callback) {
     if (actuatorEndpoints.registeredservices) {
@@ -85,17 +90,31 @@ function fetchServices(callback) {
                         class="mdc-button mdc-button--raised btn btn-link min-width-32x">
                     <i class="mdi mdi-content-copy min-width-32x" aria-hidden="true"></i>
                 </button>
-            `;
+                `;
+                if (actuatorEndpoints.entityhistory) {
+                    serviceButtons += `
+                    <button type="button" name="viewEntityHistory" href="#" serviceId='${service.id}'
+                            class="mdc-button mdc-button--raised btn btn-link min-width-32x">
+                        <i class="mdi mdi-history min-width-32x" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" name="viewEntityChangelog" href="#" serviceId='${service.id}'
+                            class="mdc-button mdc-button--raised btn btn-link min-width-32x">
+                        <i class="mdi mdi-delta min-width-32x" aria-hidden="true"></i>
+                    </button>
+                    `;
+                }
+
                 applicationsTable.row.add({
                     0: `<i serviceId='${service.id}' title='${serviceClass}' class='mdi ${icon}'></i>`,
                     1: `${serviceDetails}`,
                     2: `${serviceIdDetails}`,
                     3: `<span serviceId='${service.id}' class="text-wrap">${service.description ?? ""}</span>`,
-                    4: `<span serviceId='${service.id}'>${serviceButtons.trim()}</span>`
+                    4: `<span serviceId='${service.id}'>${serviceButtons.trim()}</span>`,
+                    5: `${service.id}`
                 });
             }
-            applicationsTable.draw();
 
+            applicationsTable.search("").draw();
             servicesChart.data.datasets[0].data = serviceCountByType;
             servicesChart.update();
 
@@ -106,13 +125,33 @@ function fetchServices(callback) {
             initializeServiceButtons();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
 }
 
-function initializeFooterButtons() {
+function selectSidebarMenuTab(tab) {
+    const applicationMenuItem = $(`nav.sidebar-navigation ul li[data-tab-index=${tab}]`);
+    selectSidebarMenuButton(applicationMenuItem);
+}
 
+function navigateToApplication(serviceIdToFind) {
+    let applicationsTable = $("#applicationsTable").DataTable();
+    applicationsTable.search(String(serviceIdToFind));
+    const foundRows = applicationsTable.rows({search: "applied"}).count();
+    if (foundRows > 0) {
+        const matchingRows = applicationsTable.rows({search: "applied"});
+        matchingRows.nodes().to$().addClass("selected");
+        applicationsTable.draw();
+        activateDashboardTab(Tabs.APPLICATIONS);
+        selectSidebarMenuTab(Tabs.APPLICATIONS);
+    } else {
+        displayBanner(`Could not find a registered service with id ${serviceIdToFind}`);
+        applicationsTable.search("").draw();
+    }
+}
+
+function initializeFooterButtons() {
     $("button[name=newService]").off().on("click", () => {
         if (actuatorEndpoints.registeredservices) {
             const editServiceDialogElement = document.getElementById("editServiceDialog");
@@ -130,15 +169,15 @@ function initializeFooterButtons() {
         if (actuatorEndpoints.registeredservices) {
             $("#serviceFileInput").click();
             $("#serviceFileInput").change(event =>
-                swal({
+                Swal.fire({
                     title: "Are you sure you want to import this entry?",
                     text: "Once imported, the entry should take immediate effect.",
                     icon: "warning",
-                    buttons: true,
-                    dangerMode: true
+                    showConfirmButton: true,
+                    showDenyButton: true
                 })
-                    .then((willImport) => {
-                        if (willImport) {
+                    .then((result) => {
+                        if (result.isConfirmed) {
                             const file = event.target.files[0];
                             const reader = new FileReader();
                             reader.readAsText(file);
@@ -157,7 +196,7 @@ function initializeFooterButtons() {
                                     },
                                     error: (xhr, status, error) => {
                                         console.error("File upload failed:", error);
-                                        displayErrorInBanner(xhr);
+                                        displayBanner(xhr);
                                     }
                                 });
                             };
@@ -211,12 +250,30 @@ function initializeFooterButtons() {
  * Initialization Functions
  */
 async function initializeAccessStrategyOperations() {
+
+    if (!CAS_FEATURES.includes("SAMLIdentityProvider")) {
+        $("#accessEntityIdLabel").addClass("d-none");
+    }
+    if (!CAS_FEATURES.includes("OpenIDConnect") && !CAS_FEATURES.includes("OAuth")) {
+        $("#accessClientIdLabel").addClass("d-none");
+    }
+
     const accessStrategyEditor = initializeAceEditor("accessStrategyEditor");
     accessStrategyEditor.setReadOnly(true);
 
+    const accessStrategyAttributesTable = $("#accessStrategyAttributesTable").DataTable({
+        pageLength: 10,
+        drawCallback: settings => {
+            $("#accessStrategyAttributesTable tr").addClass("mdc-data-table__row");
+            $("#accessStrategyAttributesTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
     $("button[name=accessStrategyButton]").off().on("click", () => {
         if (actuatorEndpoints.serviceaccess) {
-            $("#serviceAccessResultDiv").hide();
+            hideBanner();
+            accessStrategyAttributesTable.clear();
+
             const form = document.getElementById("fmAccessStrategy");
             if (!form.reportValidity()) {
                 return false;
@@ -236,54 +293,65 @@ async function initializeAccessStrategyOperations() {
                 data: $.param(renamedData),
                 success: (response, status, xhr) => {
                     $("#accessStrategyEditorContainer").removeClass("d-none");
-                    $("#serviceAccessResultDiv")
-                        .show()
-                        .addClass("banner-success")
-                        .removeClass("banner-danger");
-                    $("#serviceAccessResultDiv #serviceAccessResult").text(`Status ${xhr.status}: Service is authorized.`);
-                    accessStrategyEditor.setValue(JSON.stringify(response, null, 2));
+                    $("#accessStrategyAttributesContainer").removeClass("d-none");
+
+                    accessStrategyEditor.setValue(JSON.stringify(response.registeredService, null, 2));
                     accessStrategyEditor.gotoLine(1);
+
+                    for (const [key, value] of Object.entries(response.authentication.principal.attributes)) {
+                        accessStrategyAttributesTable.row.add({
+                            0: `<code>${key}</code>`,
+                            1: `<code>${value}</code>`
+                        });
+                    }
+                    accessStrategyAttributesTable.draw();
+                    updateNavigationSidebar();
+                    $("#authorizedServiceNavigation").off().on("click", () => {
+                        navigateToApplication(response.registeredService.id);
+                    });
                 },
                 error: (xhr, status, error) => {
-                    $("#serviceAccessResultDiv")
-                        .show()
-                        .removeClass("banner-success")
-                        .addClass("banner-danger");
                     $("#accessStrategyEditorContainer").addClass("d-none");
-                    $("#serviceAccessResultDiv #serviceAccessResult").text(`Status ${xhr.status}: Service is unauthorized.`);
+                    $("#accessStrategyAttributesContainer").addClass("d-none");
+                    displayBanner(`Status ${xhr.status}: Service is unauthorized.`);
                 }
             });
         }
     });
 }
 
-function hideErrorInBanner() {
+function hideBanner() {
     const snackbar = new mdc.snackbar.MDCSnackbar(document.getElementById("errorBanner"));
     snackbar.close();
 }
 
-function displayErrorInBanner(error) {
+function displayBanner(error) {
     let message = "";
-    switch (error.status) {
-    case 401:
-        message = "You are not authorized to access this resource. Are you sure you are authenticated?";
-        break;
-    case 403:
-        message = "You are forbidden from accessing this resource. Are you sure you have the necessary permissions and the entry is correctly regstered with CAS?";
-        break;
-    case 400:
-    case 500:
-        message = "Unable to process or accept the request. Check CAS server logs for details.";
-        break;
-    case 0:
-        message = "Unable to contact the CAS server. Are you sure the server is reachable?";
-        break;
-    default:
-        message = `HTTP error: ${error.status}. `;
-        break;
+    if (error.hasOwnProperty("status")) {
+        switch (error.status) {
+        case 401:
+            message = "You are not authorized to access this resource. Are you sure you are authenticated?";
+            break;
+        case 403:
+            message = "You are forbidden from accessing this resource. Are you sure you have the necessary permissions and the entry is correctly regstered with CAS?";
+            break;
+        case 400:
+        case 500:
+            message = "Unable to process or accept the request. Check CAS server logs for details.";
+            break;
+        case 0:
+            message = "Unable to contact the CAS server. Are you sure the server is reachable?";
+            break;
+        default:
+            message = `HTTP error: ${error.status}. `;
+            break;
+        }
     }
     if (error.hasOwnProperty("path")) {
         message += `Unable to make an API call to ${error.path}. Is the endpoint enabled and available?`;
+    }
+    if (typeof error === "string") {
+        message = error;
     }
     const snackbar = new mdc.snackbar.MDCSnackbar(document.getElementById("errorBanner"));
     snackbar.labelText = message;
@@ -295,13 +363,13 @@ function initializeJvmMetrics() {
         return new Promise((resolve, reject) =>
             $.get(`${actuatorEndpoints.metrics}/${metricName}`, response => resolve(response.measurements[0].value)).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
                 reject(error);
             })
         );
     }
 
-    async function fetchJvmMetrics() {
+    async function fetchJvmThreadsMetrics() {
         const promises = [
             "jvm.threads.daemon",
             "jvm.threads.live",
@@ -329,14 +397,14 @@ function initializeJvmMetrics() {
                 resolve(threadData);
             }).fail((xhr, status, error) => {
                 console.error("Error thread dump:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
                 reject(error);
             }));
 
     }
 
     if (actuatorEndpoints.metrics) {
-        fetchJvmMetrics()
+        fetchJvmThreadsMetrics()
             .then(payload => {
                 jvmThreadsChart.data.datasets[0].data = payload;
                 jvmThreadsChart.update();
@@ -368,7 +436,7 @@ async function initializeScheduledTasksOperations() {
             {width: "30%", targets: 2},
             {width: "10%", targets: 3},
             {width: "10%", targets: 4},
-            {width: "10%", targets: 5},
+            {width: "10%", targets: 5}
         ],
         drawCallback: settings => {
             $("#threadDumpTable tr").addClass("mdc-data-table__row");
@@ -431,13 +499,17 @@ async function initializeScheduledTasksOperations() {
             scheduledtasks.draw();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
 
     if (actuatorEndpoints.metrics) {
         initializeJvmMetrics();
-        setInterval(() => initializeJvmMetrics(), DEFAULT_INTERVAL);
+        setInterval(() => {
+            if (currentActiveTab === Tabs.TASKS) {
+                initializeJvmMetrics();
+            }
+        }, DEFAULT_INTERVAL);
     }
 
     function fetchThreadDump() {
@@ -451,20 +523,24 @@ async function initializeScheduledTasksOperations() {
                     2: `<code>${thread.threadState}</code>`,
                     3: `<code>${thread.priority}</code>`,
                     4: `<code>${thread.daemon}</code>`,
-                    5: `<code>${thread.suspended}</code>`,
+                    5: `<code>${thread.suspended}</code>`
                 });
             }
             threadDumpTable.draw();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
 
 
     if (actuatorEndpoints.threaddump) {
         fetchThreadDump();
-        setInterval(() => fetchThreadDump(), DEFAULT_INTERVAL);
+        setInterval(() => {
+            if (currentActiveTab === Tabs.TASKS) {
+                fetchThreadDump();
+            }
+        }, DEFAULT_INTERVAL);
     }
 }
 
@@ -491,14 +567,14 @@ async function initializeTicketsOperations() {
                     })
                     .fail((xhr, status, error) => {
                         console.error("Error fetching data:", error);
-                        displayErrorInBanner(xhr);
+                        displayBanner(xhr);
                     });
             }
         }
     });
 
     $("button#cleanTicketsButton").off().on("click", () => {
-        hideErrorInBanner();
+        hideBanner();
         if (actuatorEndpoints.ticketregistry) {
             $.ajax({
                 url: `${actuatorEndpoints.ticketregistry}/clean`,
@@ -509,7 +585,7 @@ async function initializeTicketsOperations() {
                 },
                 error: (xhr, status, error) => {
                     console.log(`Error: ${status} / ${error} / ${xhr.responseText}`);
-                    displayErrorInBanner(xhr);
+                    displayBanner(xhr);
                 }
             });
         }
@@ -570,7 +646,7 @@ async function initializeTicketsOperations() {
             ticketDefinitions.selectedIndex = 0;
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
 
@@ -621,16 +697,13 @@ async function initializeTicketsOperations() {
             ticketExpirationPoliciesTable.draw();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
 }
 
 
 async function initializeSsoSessionOperations() {
-    const ssoSessionsEditor = initializeAceEditor("ssoSessionsEditor");
-    ssoSessionsEditor.setReadOnly(true);
-
     const ssoSessionDetailsTable = $("#ssoSessionDetailsTable").DataTable({
         pageLength: 10,
         autoWidth: false,
@@ -677,15 +750,16 @@ async function initializeSsoSessionOperations() {
                 return false;
             }
 
-            swal({
+            Swal.fire({
                 title: "Are you sure you want to delete all sessions for the user?",
                 text: "Once deleted, you may not be able to recover this entry.",
                 icon: "warning",
-                buttons: true,
-                dangerMode: true
+                showConfirmButton: true,
+                showDenyButton: true
+                
             })
-                .then((willDelete) => {
-                    if (willDelete) {
+                .then((result) => {
+                    if (result.isConfirmed) {
                         const username = $("#ssoSessionUsername").val();
 
                         $.ajax({
@@ -693,13 +767,11 @@ async function initializeSsoSessionOperations() {
                             type: "DELETE",
                             contentType: "application/x-www-form-urlencoded",
                             success: (response, status, xhr) => {
-                                ssoSessionsEditor.setValue(JSON.stringify(response, null, 2));
-                                ssoSessionsEditor.gotoLine(1);
                                 ssoSessionsTable.clear().draw();
                             },
                             error: (xhr, status, error) => {
                                 console.error("Error fetching data:", error);
-                                displayErrorInBanner(xhr);
+                                displayBanner(xhr);
                             }
                         });
                     }
@@ -713,17 +785,24 @@ async function initializeSsoSessionOperations() {
             if (!form.reportValidity()) {
                 return false;
             }
-            ssoSessionsEditor.setValue("");
             const username = $("#ssoSessionUsername").val();
+            Swal.fire({
+                icon: "info",
+                title: `Fetching SSO Sessions for ${username}`,
+                text: "Please wait while single sign-on sessions are retrieved...",
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            ssoSessionsTable.clear();
+            
             $.ajax({
                 url: `${actuatorEndpoints.ssosessions}/users/${username}`,
                 type: "GET",
                 contentType: "application/x-www-form-urlencoded",
                 success: (response, status, xhr) => {
-                    $("#ssoSessionsEditorContainer").removeClass("d-none");
-                    ssoSessionsEditor.setValue(JSON.stringify(response, null, 2));
-                    ssoSessionsEditor.gotoLine(1);
-
                     for (const session of response.activeSsoSessions) {
                         const attributes = {
                             principal: session["principal_attributes"],
@@ -756,7 +835,8 @@ async function initializeSsoSessionOperations() {
                         });
                     }
                     ssoSessionsTable.draw();
-
+                    Swal.close();
+                    
                     $("button[name=viewSsoSession]").off().on("click", function () {
                         const attributes = JSON.parse($(this).children("span").first().text());
                         for (const [key, value] of Object.entries(attributes.principal)) {
@@ -783,28 +863,26 @@ async function initializeSsoSessionOperations() {
                         const ticket = $(this).data("ticketgrantingticket");
                         console.log("Removing ticket-granting ticket:", ticket);
 
-                        swal({
+                        Swal.fire({
                             title: "Are you sure you want to delete this session?",
                             text: "Once deleted, you may not be able to recover this entry.",
                             icon: "warning",
-                            buttons: true,
-                            dangerMode: true
+                            showConfirmButton: true,
+                            showDenyButton: true
                         })
-                            .then((willDelete) => {
-                                if (willDelete) {
+                            .then((result) => {
+                                if (result.isConfirmed) {
                                     $.ajax({
                                         url: `${actuatorEndpoints.ssosessions}/${ticket}`,
                                         type: "DELETE",
                                         contentType: "application/x-www-form-urlencoded",
                                         success: (response, status, xhr) => {
-                                            ssoSessionsEditor.setValue(JSON.stringify(response, null, 2));
-                                            ssoSessionsEditor.gotoLine(1);
                                             let nearestTr = $(this).closest("tr");
                                             ssoSessionsTable.row(nearestTr).remove().draw();
                                         },
                                         error: (xhr, status, error) => {
                                             console.error("Error fetching data:", error);
-                                            displayErrorInBanner(xhr);
+                                            displayBanner(xhr);
                                         }
                                     });
                                 }
@@ -813,7 +891,8 @@ async function initializeSsoSessionOperations() {
                 },
                 error: (xhr, status, error) => {
                     console.error("Error fetching data:", error);
-                    displayErrorInBanner(xhr);
+                    Swal.close();
+                    displayBanner(xhr);
                 }
             });
         }
@@ -866,11 +945,38 @@ async function initializeLoggingOperations() {
         return background;
     }
 
+    function handleLoggerLevelSelectionChange() {
+        $("select[name=loggerLevelSelect]").off().on("change", function () {
+            if (actuatorEndpoints.loggers) {
+                const logger = $(this).data("logger");
+                const level = $(this).val();
+                console.log("Logger:", logger, "Level:", level);
+                const loggerData = {
+                    "configuredLevel": level
+                };
+                $.ajax({
+                    url: `${actuatorEndpoints.loggers}/${logger}`,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(loggerData),
+                    success: response => {
+                        console.log("Update successful:", response);
+                        $(this).css("background-color", determineLoggerColor(level));
+                    },
+                    error: (xhr, status, error) => {
+                        console.error("Failed", error);
+                        displayBanner(xhr);
+                    }
+                });
+            }
+        });
+    }
+    
     function fetchLoggerData(callback) {
-        if (actuatorEndpoints.loggingConfig) {
-            $.get(actuatorEndpoints.loggingConfig, response => callback(response)).fail((xhr, status, error) => {
+        if (actuatorEndpoints.loggingconfig) {
+            $.get(actuatorEndpoints.loggingconfig, response => callback(response)).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
             });
         }
     }
@@ -895,34 +1001,7 @@ async function initializeLoggingOperations() {
                     1: `${loggerLevel.trim()}`
                 });
             }
-
-            function handleLoggerLevelSelectionChange() {
-                $("select[name=loggerLevelSelect]").off().on("change", function () {
-                    if (actuatorEndpoints.loggers) {
-                        const logger = $(this).data("logger");
-                        const level = $(this).val();
-                        console.log("Logger:", logger, "Level:", level);
-                        const loggerData = {
-                            "configuredLevel": level
-                        };
-                        $.ajax({
-                            url: `${actuatorEndpoints.loggers}/${logger}`,
-                            type: "POST",
-                            contentType: "application/json",
-                            data: JSON.stringify(loggerData),
-                            success: response => {
-                                console.log("Update successful:", response);
-                                $(this).css("background-color", determineLoggerColor(level));
-                            },
-                            error: (xhr, status, error) => {
-                                console.error("Failed", error);
-                                displayErrorInBanner(xhr);
-                            }
-                        });
-                    }
-                });
-            }
-
+            
             console.log(response);
 
             loggersTable.clear();
@@ -932,18 +1011,24 @@ async function initializeLoggingOperations() {
             loggersTable.draw();
 
             $("#newLoggerButton").off().on("click", () =>
-                swal({
-                    content: "input",
-                    buttons: true,
+                Swal.fire({
+                    input: "text",
+                    inputAttributes: {
+                        autocapitalize: "off"
+                    },
+                    showConfirmButton: true,
+                    showDenyButton: true,
                     icon: "success",
                     title: "What's the name of the new logger?",
                     text: "The new logger will only be effective at runtime and will not be persisted."
                 })
-                    .then((value) => {
-                        addLoggerToTable({name: value, level: "WARN"});
-                        loggersTable.draw();
-                        handleLoggerLevelSelectionChange();
-                        loggersTable.search(value).draw();
+                    .then((result) => {
+                        if (result.isConfirmed) {
+                            addLoggerToTable({name: result.value, level: "INFO"});
+                            loggersTable.draw();
+                            handleLoggerLevelSelectionChange();
+                            loggersTable.search(result.value).draw();
+                        }
                     }));
             handleLoggerLevelSelectionChange();
         });
@@ -956,6 +1041,169 @@ async function initializeLoggingOperations() {
             updateLoggersTable();
         }
     });
+
+    if (currentActiveTab === Tabs.LOGGING) {
+        updateLoggersTable();
+    }
+
+    const logEndpoints = [actuatorEndpoints.cloudwatchlogs, actuatorEndpoints.gcplogs, actuatorEndpoints.loggingconfig, actuatorEndpoints.logfile];
+    const hasLogEndpoint = logEndpoints.some(element => element !== undefined);
+
+    if (hasLogEndpoint) {
+        const scrollSwitch = new mdc.switchControl.MDCSwitch(document.getElementById("scrollLogsButton"));
+        scrollSwitch.selected = true;
+
+        if (actuatorEndpoints.logfile) {
+            $("#logFileStream").parent().addClass("w-50");
+            $("#logDataStream").parent().addClass("w-50");
+        } else {
+            $("#logFileStream").parent().addClass("d-none");
+            $("#logDataStream").parent().addClass("w-100");
+        }
+
+        async function fetchLogsFrom(endpoint) {
+            if (endpoint) {
+                const logDataStream = $("#logDataStream");
+                const level = $("#logLevelFilter").val();
+                const count = $("#logCountFilter").val();
+                console.log("Fetching log data", endpoint, level);
+                $.ajax({
+                    url: `${endpoint}/stream?level=${level}&count=${count}`,
+                    type: "GET",
+                    dataType: "json",
+                    success: logEvents => {
+                        logDataStream.empty();
+                        logEvents.forEach(log => {
+                            let className = `log-${log.level.toLowerCase()}`;
+                            const logEntry = `<div>${new Date(log.timestamp).toLocaleString()} - <span class='${className}'>[${log.level}]</span> - ${log.message}</div>`;
+                            logDataStream.append($(logEntry));
+                        });
+                        if (scrollSwitch.selected) {
+                            logDataStream.scrollTop(logDataStream.prop("scrollHeight"));
+                        }
+                    },
+                    error: (xhr, status, error) => {
+                        console.error("Streaming logs failed:", error);
+                    }
+                });
+            }
+        }
+
+        function startStreamingLogFile() {
+            return setInterval(() => {
+                if (currentActiveTab === Tabs.LOGGING) {
+                    const logFileStream = $("#logFileStream");
+                    console.log("Fetching log data from", actuatorEndpoints.logfile);
+                    $.ajax({
+                        url: actuatorEndpoints.logfile,
+                        type: "GET",
+                        success: response => {
+                            logFileStream.empty();
+                            logFileStream.text(response);
+                            if (scrollSwitch.selected) {
+                                logFileStream.scrollTop(logFileStream.prop("scrollHeight"));
+                            }
+                        },
+                        error: (xhr, status, error) => {
+                            console.error("Streaming logs failed:", error);
+                        }
+                    });
+                }
+            }, $("#logRefreshFilter").val())
+        }
+
+        function startStreamingLogData() {
+            return setInterval(() => {
+                if (currentActiveTab === Tabs.LOGGING) {
+                    fetchLogsFrom(actuatorEndpoints.cloudwatchlogs);
+                    fetchLogsFrom(actuatorEndpoints.gcplogs);
+                    fetchLogsFrom(actuatorEndpoints.loggingconfig);
+                }
+            }, $("#logRefreshFilter").val())
+        }
+
+        let refreshStreamInterval = startStreamingLogData();
+
+        let refreshLogFileInterval = undefined;
+        if (actuatorEndpoints.logfile) {
+            refreshLogFileInterval = startStreamingLogFile();
+        }
+
+        $("#logRefreshFilter").selectmenu({
+            change: (event, data) => {
+                clearInterval(refreshStreamInterval);
+                refreshStreamInterval = startStreamingLogData();
+                
+                if (refreshLogFileInterval) {
+                    clearInterval(refreshLogFileInterval);
+                    refreshLogFileInterval = startStreamingLogFile()
+                }
+            }
+        });
+        
+    } else {
+        $("#loggingDataStreamOps").parent().addClass("d-none");
+    }
+    
+}
+
+async function initializeAuditEventsOperations() {
+    if (actuatorEndpoints.auditlog) {
+        const auditEventsTable = $("#auditEventsTable").DataTable({
+            pageLength: 10,
+            drawCallback: settings => {
+                $("#auditEventsTable tr").addClass("mdc-data-table__row");
+                $("#auditEventsTable td").addClass("mdc-data-table__cell");
+            }
+        });
+        function fetchAuditLog() {
+            return setInterval(() => {
+                if (currentActiveTab === Tabs.LOGGING) {
+                    const interval = $("#auditEventsIntervalFilter").val();
+                    const count = $("#auditEventsCountFilter").val();
+                    console.log("Fetching audit log with interval", interval);
+                    $.ajax({
+                        url: `${actuatorEndpoints.auditlog}?interval=${interval}&count=${count}`,
+                        type: "GET",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        success: (response, textStatus, xhr) => {
+                            console.log(response);
+                            auditEventsTable.clear();
+                            for (const entry of response) {
+                                auditEventsTable.row.add({
+                                    0: `<code>${entry?.principal ?? "N/A"}</code>`,
+                                    1: `<code>${entry?.auditableResource ?? "N/A"}</code>`,
+                                    2: `<code>${entry?.actionPerformed ?? "N/A"}</code>`,
+                                    3: `<code>${entry?.whenActionWasPerformed ?? "N/A"}</code>`,
+                                    4: `<code>${entry?.clientInfo?.clientIpAddress ?? "N/A"}</code>`,
+                                    5: `<span>${entry?.clientInfo?.userAgent ?? "N/A"}</span>`,
+                                });
+                            }
+                            auditEventsTable.draw();
+                        },
+                        error: (xhr, textStatus, errorThrown) => {
+                            console.error("Error fetching data:", errorThrown);
+                        }
+                    });
+                }
+            }, $("#auditEventsRefreshFilter").val())
+        }
+        
+        let refreshInterval = undefined;
+        if (actuatorEndpoints.auditlog) {
+            refreshInterval = fetchAuditLog();
+        }
+        $("#auditEventsRefreshFilter").selectmenu({
+            change: (event, data) => {
+                if (refreshInterval) {
+                    clearInterval(refreshInterval);
+                    refreshInterval = fetchAuditLog()
+                }
+            }
+        });
+    }
 }
 
 async function initializeSystemOperations() {
@@ -1066,7 +1314,7 @@ async function initializeSystemOperations() {
                 httpRequestsByUrlChart.update();
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
             });
 
             $("#downloadHeapDumpButton").off().on("click", () => {
@@ -1120,7 +1368,7 @@ async function initializeSystemOperations() {
                 systemHealthChart.update();
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
             });
         }
     }
@@ -1128,6 +1376,7 @@ async function initializeSystemOperations() {
     function configureStatistics() {
         if (actuatorEndpoints.statistics) {
             $.get(actuatorEndpoints.statistics, response => {
+                console.log("Updating statistics");
                 const expired = response.expiredTickets;
                 const valid = response.validTickets;
                 statisticsChart.data.datasets[0].data = [valid, expired];
@@ -1140,13 +1389,14 @@ async function initializeSystemOperations() {
         if (actuatorEndpoints.info) {
             $.get(actuatorEndpoints.info, response => callback(response)).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
             });
         }
     }
 
     function configureSystemData() {
         fetchSystemData(response => {
+            console.log("Updating JVM memory");
             const maximum = convertMemoryToGB(response.systemInfo["JVM Maximum Memory"]);
             const free = convertMemoryToGB(response.systemInfo["JVM Free Memory"]);
             const total = convertMemoryToGB(response.systemInfo["JVM Total Memory"]);
@@ -1165,7 +1415,7 @@ async function initializeSystemOperations() {
                 $("#httpRequestsMaxTime").text(`${maxTime}s`);
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
             });
             $.get(`${actuatorEndpoints.metrics}/http.server.requests.active`, response => {
                 let active = response.measurements[0].value;
@@ -1174,7 +1424,7 @@ async function initializeSystemOperations() {
                 $("#httpRequestsDuration").text(`${duration}s`);
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
             });
         }
         configureHttpRequestResponses().then(configureAuditEventsChart());
@@ -1207,51 +1457,124 @@ async function initializeSystemOperations() {
         }
     });
 
-    setInterval(() => {
-        configureSystemData();
-        configureHealthChart();
-        configureStatistics();
-    }, DEFAULT_INTERVAL);
 
-    if (actuatorEndpoints.casFeatures) {
-        $.get(actuatorEndpoints.casFeatures, response => {
-            console.log(response);
-            $("#casFeaturesChipset").empty();
-            for (const element of response) {
-                let feature = `
-                            <div class="mdc-chip" role="row">
-                                <div class="mdc-chip__ripple"></div>
-                                <span role="gridcell">
-                                  <span class="mdc-chip__text">${element.trim().replace("CasFeatureModule.", "")}</span>
-                                </span>
-                            </div>
-                        `.trim();
-                $("#casFeaturesChipset").append($(feature));
-            }
-        });
-    }
+    setInterval(() => {
+        if (currentActiveTab === Tabs.SYSTEM) {
+            configureSystemData();
+            configureHealthChart();
+            configureStatistics();
+        }
+    }, DEFAULT_INTERVAL);
 
     configureSystemData();
     configureStatistics();
     configureHealthChart();
+
+}
+
+async function initializeCasFeatures() {
+    return new Promise((resolve, reject) => {
+        if (actuatorEndpoints.casFeatures) {
+            $.get(actuatorEndpoints.casFeatures, response => {
+                console.log(response);
+                $("#casFeaturesChipset").empty();
+                for (const element of response) {
+                    const featureName = element.trim().replace("CasFeatureModule.", "");
+                    CAS_FEATURES.push(featureName);
+
+                    let feature = `
+                            <div class="mdc-chip" role="row">
+                                <div class="mdc-chip__ripple"></div>
+                                <span role="gridcell">
+                                  <span class="mdc-chip__text">${featureName}</span>
+                                </span>
+                            </div>
+                        `.trim();
+                    $("#casFeaturesChipset").append($(feature));
+                }
+                resolve();
+            });
+        }
+    });
+
 }
 
 function initializeServiceButtons() {
     const editor = initializeAceEditor("serviceEditor");
     let editServiceDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("editServiceDialog"));
 
+    if (actuatorEndpoints.registeredservices) {
+        const entityHistoryTable = $("#entityHistoryTable").DataTable();
+        $("button[name=viewEntityHistory]").off().on("click", function () {
+            let serviceId = $(this).parent().attr("serviceId");
+            $.get(`${actuatorEndpoints.entityhistory}/registeredServices/${serviceId}`, response => {
+                entityHistoryTable.clear();
+
+                const editor = initializeAceEditor("entityHistoryEditor", "json");
+                editor.setValue("");
+                editor.setReadOnly(true);
+
+                for (const item of response) {
+                    entityHistoryTable.row.add({
+                        0: `<code>${item.id}</code>`,
+                        1: `<code>${item.date}</code>`,
+                        2: `${JSON.stringify(item.entity, null, 4)}`
+                    });
+                }
+
+                entityHistoryTable.draw();
+                entityHistoryTable.on("click", "tbody tr", function () {
+                    let data = entityHistoryTable.row(this).data();
+                    editor.setValue(data[2]);
+                    editor.gotoLine(1);
+                    editor.setReadOnly(true);
+                });
+
+                if (response.length > 0) {
+                    const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("viewEntityHistoryDialog"));
+                    dialog["open"]();
+                } else {
+                    Swal.fire("No History!", "There are no changes recorded for this application definition.", "info");
+                }
+
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayBanner(xhr);
+            });
+
+        });
+
+    }
+
+    $("button[name=viewEntityChangelog]").off().on("click", function () {
+        let serviceId = $(this).parent().attr("serviceId");
+
+        $.get(`${actuatorEndpoints.entityhistory}/registeredServices/${serviceId}/changelog`, response => {
+            const editor = initializeAceEditor("entityChangelogEditor", "text");
+            editor.setValue(response);
+            editor.setReadOnly(true);
+            editor.gotoLine(1);
+            const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("viewEntityChangelogDialog"));
+            dialog["open"]();
+        }).fail((xhr, status, error) => {
+            console.error("Error fetching data:", error);
+            displayBanner(xhr);
+        });
+    });
+
+
     $("button[name=deleteService]").off().on("click", function () {
         let serviceId = $(this).parent().attr("serviceId");
         if (actuatorEndpoints.registeredservices) {
-            swal({
+            Swal.fire({
                 title: "Are you sure you want to delete this entry?",
                 text: "Once deleted, you may not be able to recover this entry.",
                 icon: "warning",
-                buttons: true,
-                dangerMode: true
+                showConfirmButton: true,
+                showDenyButton: true
             })
-                .then((willDelete) => {
-                    if (willDelete) {
+                .then((result) => {
+                    if (result.isConfirmed) {
                         $.ajax({
                             url: `${actuatorEndpoints.registeredservices}/${serviceId}`,
                             type: "DELETE",
@@ -1264,7 +1587,7 @@ function initializeServiceButtons() {
                             },
                             error: (xhr, status, error) => {
                                 console.error("Error deleting resource:", error);
-                                displayErrorInBanner(xhr);
+                                displayBanner(xhr);
                             }
                         });
                     }
@@ -1284,27 +1607,26 @@ function initializeServiceButtons() {
                 editServiceDialog["open"]();
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
             });
         }
     });
 
     $("button[name=saveService]").off().on("click", () => {
         if (actuatorEndpoints.registeredservices) {
-            swal({
-                title: "Are you sure you want to update this entry?",
+            const editServiceDialogElement = document.getElementById("editServiceDialog");
+            const isNewService = $(editServiceDialogElement).attr("newService") === "true";
+
+            Swal.fire({
+                title: `Are you sure you want to ${isNewService ? "create" : "update"} this entry?`,
                 text: "Once updated, you may not be able to revert this entry.",
                 icon: "warning",
-                buttons: true,
-                dangerMode: true
+                showConfirmButton: true,
+                showDenyButton: true
             })
-                .then((willUpdate) => {
-                    if (willUpdate) {
+                .then((result) => {
+                    if (result.isConfirmed) {
                         const value = editor.getValue();
-
-                        const editServiceDialogElement = document.getElementById("editServiceDialog");
-                        const isNewService = $(editServiceDialogElement).attr("newService") === "true";
-
                         $.ajax({
                             url: `${actuatorEndpoints.registeredservices}`,
                             type: isNewService ? "POST" : "PUT",
@@ -1320,11 +1642,12 @@ function initializeServiceButtons() {
                                     $(`#applicationsTable tr td span[serviceId=${newServiceId}]`).each(function () {
                                         $(this).closest("tr").addClass("selected");
                                     });
+                                    updateNavigationSidebar();
                                 });
                             },
                             error: (xhr, status, error) => {
                                 console.error("Update failed:", error);
-                                displayErrorInBanner(xhr);
+                                displayBanner(xhr);
                             }
                         });
                     }
@@ -1356,7 +1679,7 @@ function initializeServiceButtons() {
                 editServiceDialog["open"]();
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
             });
         }
     });
@@ -1367,22 +1690,72 @@ async function initializeServicesOperations() {
         pageLength: 25,
         autoWidth: false,
         columnDefs: [
-            {width: "3%", targets: 0},
-            {width: "12%", targets: 1},
+            {width: "5%", targets: 0},
+            {width: "10%", targets: 1},
             {width: "17%", targets: 2},
-            {width: "59%", targets: 3},
-            {width: "9%", targets: 4}
+            {width: "56%", targets: 3},
+            {width: "12%", targets: 4},
+            {visible: false, targets: 5}
         ],
         drawCallback: settings => {
             $("#applicationsTable tr").addClass("mdc-data-table__row");
             $("#applicationsTable td").addClass("mdc-data-table__cell");
         }
     });
-
     applicationsTable.on("click", "tbody tr", e => e.currentTarget.classList.remove("selected"));
+
+    $("#entityHistoryTable").DataTable({
+        pageLength: 10,
+        autoWidth: false,
+        columnDefs: [
+            {width: "5%", targets: 0},
+            {width: "25%", targets: 1},
+            {visible: false, targets: 2}
+        ],
+        drawCallback: settings => {
+            $("#entityHistoryTable tr").addClass("mdc-data-table__row");
+            $("#entityHistoryTable td").addClass("mdc-data-table__cell");
+        }
+    });
 
     fetchServices();
     initializeFooterButtons();
+
+    let serviceDefinitionsEntries = "";
+    for (let type in serviceDefinitions) {
+        serviceDefinitionsEntries += `<h3>${type}</h3>`;
+        const entries = serviceDefinitions[type];
+        serviceDefinitionsEntries += "<div>";
+        for (const entry of entries) {
+            const definition = JSON.parse(entry);
+            serviceDefinitionsEntries += `<a class="mr-4" name="serviceDefinitionEntry" title="${definition.description}" data-type="${type}" data-id="${definition.id}" href="#">${definition.name}-${definition.id}</a>`;
+        }
+        serviceDefinitionsEntries += "</div>";
+    }
+    $("#serviceTemplatesContainer")
+        .html(serviceDefinitionsEntries)
+        .accordion({
+            collapsible: true,
+            heightStyle: "content"
+        })
+        .tooltip();
+
+    $("a[name=serviceDefinitionEntry]").off().on("click", function () {
+        let type = $(this).data("type");
+        let id = $(this).data("id");
+        console.log("Selected service definition:", type, id);
+        const entries = serviceDefinitions[type];
+        for (const entry of entries) {
+            const definition = JSON.parse(entry);
+            if (definition.id === id) {
+                const serviceEditor = initializeAceEditor("serviceEditor", "json");
+                serviceEditor.setReadOnly(false);
+                serviceEditor.setValue(JSON.stringify(definition, null, 2));
+                serviceEditor.gotoLine(1);
+            }
+        }
+    });
+
 }
 
 async function initializeAllCharts() {
@@ -1507,7 +1880,7 @@ async function initializeAllCharts() {
             plugins: {
                 title: {
                     display: true,
-                    text: 'Audit Events'
+                    text: "Audit Events"
                 }
             }
         }
@@ -1534,7 +1907,7 @@ async function initializeAllCharts() {
             plugins: {
                 title: {
                     display: true,
-                    text: 'HTTP Request/Responses (Date)'
+                    text: "HTTP Requests/Responses (Date)"
                 }
             }
         }
@@ -1561,7 +1934,7 @@ async function initializeAllCharts() {
             plugins: {
                 title: {
                     display: true,
-                    text: 'HTTP Request/Responses (URL)'
+                    text: "HTTP Requests/Responses (URL)"
                 }
             }
         }
@@ -1641,15 +2014,15 @@ async function initializePersonDirectoryOperations() {
                 return false;
             }
             const username = $("#personUsername").val();
-            swal({
+            Swal.fire({
                 title: `Are you sure you want to delete the cache for ${username}?`,
                 text: `Once the cached entry is removed, attribute repositories would be forced to fetch attributes for ${username} again`,
                 icon: "warning",
-                buttons: true,
-                dangerMode: true
+                showConfirmButton: true,
+                showDenyButton: true
             })
-                .then((willClear) => {
-                    if (willClear) {
+                .then((result) => {
+                    if (result.isConfirmed) {
                         personDirectoryTable.clear();
                         $.ajax({
                             url: `${actuatorEndpoints.persondirectory}/cache/${username}`,
@@ -1660,7 +2033,7 @@ async function initializePersonDirectoryOperations() {
                             },
                             error: (xhr, status, error) => {
                                 console.error("Error fetching data:", error);
-                                displayErrorInBanner(xhr);
+                                displayBanner(xhr);
                             }
                         });
                     }
@@ -1694,7 +2067,7 @@ async function initializePersonDirectoryOperations() {
                 },
                 error: (xhr, status, error) => {
                     console.error("Error fetching data:", error);
-                    displayErrorInBanner(xhr);
+                    displayBanner(xhr);
                 }
             });
         }
@@ -1747,7 +2120,7 @@ async function initializeAuthenticationOperations() {
             authenticationHandlersTable.draw();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
 
@@ -1777,7 +2150,7 @@ async function initializeAuthenticationOperations() {
             authenticationPoliciesTable.draw();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
 
@@ -1817,7 +2190,7 @@ async function initializeAuthenticationOperations() {
                         </span>
                             `;
                         }
-                        
+
                         $(rows).eq(i).before(
                             `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
                                 <td colspan="3">${group} ${samlButtons.trim()} </td>
@@ -1832,7 +2205,7 @@ async function initializeAuthenticationOperations() {
     if (actuatorEndpoints.delegatedClients) {
         const saml2Editor = initializeAceEditor("delegatedClientsSaml2Editor", "xml");
         saml2Editor.setReadOnly(true);
-        
+
         $.get(actuatorEndpoints.delegatedClients, response => {
             function showSamlMetadata(payload) {
                 saml2Editor.setValue(new XMLSerializer().serializeToString(payload));
@@ -1900,7 +2273,7 @@ async function initializeConsentOperations() {
                 $("#consentAttributesTable td").addClass("mdc-data-table__cell");
             }
         });
-        
+
         const consentTable = $("#consentTable").DataTable({
             pageLength: 10,
             autoWidth: false,
@@ -1912,7 +2285,7 @@ async function initializeConsentOperations() {
                 {width: "15%", targets: 4},
                 {width: "8%", targets: 5},
                 {width: "8%", targets: 6},
-                {width: "12%", targets: 7},
+                {width: "12%", targets: 7}
             ],
             drawCallback: settings => {
                 $("#consentTable tr").addClass("mdc-data-table__row");
@@ -1945,7 +2318,7 @@ async function initializeConsentOperations() {
                     4: `<code>${source.decision.createdDate}</code>`,
                     5: `<code>${source.decision.options}</code>`,
                     6: `<code>${source.decision.reminder} ${source.decision.reminderTimeUnit}</code>`,
-                    7: `${consentButtons}`,
+                    7: `${consentButtons}`
                 });
             }
             consentTable.draw();
@@ -1967,15 +2340,15 @@ async function initializeConsentOperations() {
             $("button[name=deleteConsent]").off().on("click", function () {
                 const id = $(this).attr("consentId");
                 const principal = $(this).attr("principal");
-                swal({
+                Swal.fire({
                     title: `Are you sure you want to delete this entry for ${principal}?`,
                     text: "Once deleted, you may not be able to recover this entry.",
                     icon: "warning",
-                    buttons: true,
-                    dangerMode: true
+                    showConfirmButton: true,
+                    showDenyButton: true
                 })
-                    .then((willDelete) => {
-                        if (willDelete) {
+                    .then((result) => {
+                        if (result.isConfirmed) {
                             $.ajax({
                                 url: `${actuatorEndpoints.attributeconsent}/${principal}/${id}`,
                                 type: "DELETE",
@@ -1986,18 +2359,17 @@ async function initializeConsentOperations() {
                                 },
                                 error: (xhr, status, error) => {
                                     console.error("Error fetching data:", error);
-                                    displayErrorInBanner(xhr);
+                                    displayBanner(xhr);
                                 }
                             });
                         }
                     });
             });
-            
+
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
-
 
 
         $("button[name=exportAllConsent]").off().on("click", () => {
@@ -2050,9 +2422,9 @@ async function initializeConfigurationOperations() {
     });
 
     function encryptOrDecryptConfig(op) {
-        hideErrorInBanner();
+        hideBanner();
         $("#configEncryptionResult").addClass("d-none");
-        
+
         const form = document.getElementById("fmConfigEncryption");
         if (!form.reportValidity()) {
             return false;
@@ -2068,7 +2440,7 @@ async function initializeConfigurationOperations() {
                 hljs.highlightAll();
                 $("#configEncryptionResult").removeClass("d-none");
             }).fail((xhr, status, error) => {
-                displayErrorInBanner(xhr);
+                displayBanner(xhr);
                 $("#configEncryptionResult").addClass("d-none");
             });
         }
@@ -2107,7 +2479,7 @@ async function initializeConfigurationOperations() {
 
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
 
@@ -2172,16 +2544,16 @@ async function initializeConfigurationOperations() {
             configPropsTable.draw();
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
-    
+
     $("#encryptConfigButton").off().on("click", () => encryptOrDecryptConfig("encrypt"));
     $("#decryptConfigButton").off().on("click", () => encryptOrDecryptConfig("decrypt"));
 }
 
 async function initializeCasProtocolOperations() {
-    function buildCasProtocolPayload(endpoint,format) {
+    function buildCasProtocolPayload(endpoint, format) {
         const form = document.getElementById("fmCasProtocol");
         if (!form.reportValidity()) {
             return false;
@@ -2201,7 +2573,7 @@ async function initializeCasProtocolOperations() {
             editor.gotoLine(1);
             $("#casProtocolEditorContainer").removeClass("d-none");
         }).fail((xhr, status, error) => {
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
             $("#casProtocolEditorContainer").addClass("d-none");
         });
     }
@@ -2209,6 +2581,129 @@ async function initializeCasProtocolOperations() {
     $("button[name=casProtocolV1Button]").off().on("click", () => buildCasProtocolPayload("validate", "text"));
     $("button[name=casProtocolV2Button]").off().on("click", () => buildCasProtocolPayload("serviceValidate", "xml"));
     $("button[name=casProtocolV3Button]").off().on("click", () => buildCasProtocolPayload("p3/serviceValidate", "xml"));
+}
+
+async function initializeTrustedMultifactorOperations() {
+    const mfaTrustedDevicesTable = $("#mfaTrustedDevicesTable").DataTable({
+        pageLength: 10,
+        autoWidth: true,
+        columnDefs: [
+            {visible: false, targets: 7}
+        ],
+        drawCallback: settings => {
+            $("#mfaTrustedDevicesTable tr").addClass("mdc-data-table__row");
+            $("#mfaTrustedDevicesTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    $("#mfaTrustedDevicesButton").off().on("click", () => {
+        if (actuatorEndpoints.multifactortrusteddevices) {
+            mfaTrustedDevicesTable.clear();
+            const username = $("#mfaTrustedUsername").val();
+            $("#mfaTrustedDevicesButton").prop("disabled", true);
+            Swal.fire({
+                icon: "info",
+                title: `Fetching Multifactor Trusted Devices for ${username}`,
+                text: "Please wait while registered multifactor trusted devices are retrieved...",
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            $.get(`${actuatorEndpoints.multifactortrusteddevices}/${username}`, response => {
+                console.log(response);
+                for (const device of Object.values(response)) {
+                    mfaTrustedDevicesTable.row.add({
+                        0: `<code>${device.id ?? "N/A"}</code>`,
+                        1: `<code>${device.principal ?? "N/A"}</code>`,
+                        2: `<code>${device.deviceFingerprint ?? "N/A"}</code>`,
+                        3: `<code>${device.recordDate ?? "N/A"}</code>`,
+                        4: `<code>${device.name ?? "N/A"}</code>`,
+                        5: `<code>${device.expirationDate ?? "N/A"}</code>`,
+                        6: `<code>${device.multifactorAuthenticationProvider ?? "N/A"}</code>`,
+                        7: `<code>${device.recordKey ?? "N/A"}</code>`
+                    });
+                }
+                mfaTrustedDevicesTable.draw();
+                $("#mfaTrustedDevicesButton").prop("disabled", false);
+                Swal.close();
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayBanner(xhr);
+                $("#mfaTrustedDevicesButton").prop("disabled", false);
+                Swal.close();
+            });
+        }
+    });
+
+}
+
+
+async function initializeMultifactorOperations() {
+    const mfaDevicesTable = $("#mfaDevicesTable").DataTable({
+        pageLength: 10,
+        autoWidth: true,
+        columnDefs: [
+            {visible: false, targets: 8}
+        ],
+        drawCallback: settings => {
+            $("#mfaDevicesTable tr").addClass("mdc-data-table__row");
+            $("#mfaDevicesTable td").addClass("mdc-data-table__cell");
+        }
+    });
+
+    $("#mfaDevicesButton").off().on("click", () => {
+        function fetchMfaDevices() {
+            const username = $("#mfaUsername").val();
+            $("#mfaDevicesButton").prop("disabled", true);
+            Swal.fire({
+                icon: "info",
+                title: `Fetching Devices for ${username}`,
+                text: "Please wait while registered multifactor devices are retrieved...",
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            mfaDevicesTable.clear();
+            $.get(`${actuatorEndpoints.mfadevices}/${username}`, response => {
+                console.log(response);
+                for (const device of Object.values(response)) {
+                    mfaDevicesTable.row.add({
+                        0: `<code>${device.name ?? "N/A"}</code>`,
+                        1: `<code>${device.type ?? "N/A"}</code>`,
+                        2: `<code>${device.id ?? "N/A"}</code>`,
+                        3: `<code>${device.number ?? "N/A"}</code>`,
+                        4: `<code>${device.model ?? "N/A"}</code>`,
+                        5: `<code>${device.lastUsedDateTime ?? "N/A"}</code>`,
+                        6: `<code>${device.expirationDateTime ?? "N/A"}</code>`,
+                        7: `<code>${device.source ?? "N/A"}</code>`,
+                        8: `<span>${device.payload}</span>`,
+                    });
+                }
+                mfaDevicesTable.draw();
+                $("#mfaDevicesButton").prop("disabled", false);
+                Swal.close();
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayBanner(xhr);
+                $("#mfaDevicesButton").prop("disabled", false);
+                Swal.close();
+            });
+        }
+
+        const fmMfaDevices = document.getElementById("fmMfaDevices");
+        if (!fmMfaDevices.checkValidity()) {
+            fmMfaDevices.reportValidity();
+            return false;
+        }
+        
+        fetchMfaDevices();
+    });
 }
 
 async function initializeThrottlesOperations() {
@@ -2221,7 +2716,7 @@ async function initializeThrottlesOperations() {
             {width: "15%", targets: 3},
             {width: "10%", targets: 4},
             {width: "20%", targets: 5},
-            {width: "10%", targets: 6},
+            {width: "10%", targets: 6}
         ],
         drawCallback: settings => {
             $("#throttlesTable tr").addClass("mdc-data-table__row");
@@ -2241,7 +2736,7 @@ async function initializeThrottlesOperations() {
                         <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
                     </button>
                 `;
-                
+
                 throttlesTable.row.add({
                     0: `<code>${record.key}</code>`,
                     1: `<code>${record.id}</code>`,
@@ -2249,22 +2744,22 @@ async function initializeThrottlesOperations() {
                     3: `<code>${record.username}</code>`,
                     4: `<code>${record.clientIpAddress}</code>`,
                     5: `<code>${record.expiration}</code>`,
-                    6: `${buttons}`,
+                    6: `${buttons}`
                 });
             }
             throttlesTable.draw();
-            
+
             $("button[name=removeThrottledAttempt]").off().on("click", function () {
                 const key = $(this).data("key");
-                swal({
+                Swal.fire({
                     title: "Are you sure you want to delete this entry?",
                     text: "Once deleted, you may not be able to recover this entry.",
                     icon: "warning",
-                    buttons: true,
-                    dangerMode: true
+                    showConfirmButton: true,
+                    showDenyButton: true
                 })
-                    .then((willDelete) => {
-                        if (willDelete) {
+                    .then((result) => {
+                        if (result.isConfirmed) {
                             $.ajax({
                                 url: `${actuatorEndpoints.throttles}/${key}`,
                                 type: "DELETE",
@@ -2275,7 +2770,7 @@ async function initializeThrottlesOperations() {
                                 },
                                 error: (xhr, status, error) => {
                                     console.error("Error fetching data:", error);
-                                    displayErrorInBanner(xhr);
+                                    displayBanner(xhr);
                                 }
                             });
                         }
@@ -2283,26 +2778,26 @@ async function initializeThrottlesOperations() {
             });
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
         });
     }
-    
+
     if (actuatorEndpoints.throttles) {
         fetchThrottledAttempts();
 
         $("button[name=releaseThrottlesButton]").off().on("click", () => {
-            swal({
+            Swal.fire({
                 title: "Are you sure you want to release throttled entries?",
                 text: "Released entries, when eligible, will be removed from the authentication throttling store.",
                 icon: "warning",
-                buttons: true,
-                dangerMode: true
+                showConfirmButton: true,
+                showDenyButton: true
             })
-                .then((willDelete) => {
-                    if (willDelete) {
+                .then((result) => {
+                    if (result.isConfirmed) {
                         $.ajax({
                             url: `${actuatorEndpoints.throttles}`,
-                            type: 'DELETE',
+                            type: "DELETE",
                             data: {
                                 clear: false
                             },
@@ -2310,7 +2805,7 @@ async function initializeThrottlesOperations() {
                                 fetchThrottledAttempts();
                             },
                             error: (jqXHR, textStatus, errorThrown) => {
-                                displayErrorInBanner(jqXHR);
+                                displayBanner(jqXHR);
                             }
                         });
                     }
@@ -2318,18 +2813,18 @@ async function initializeThrottlesOperations() {
         });
 
         $("button[name=clearThrottlesButton]").off().on("click", () => {
-            swal({
+            Swal.fire({
                 title: "Are you sure you want to clear throttled entries?",
                 text: "All entries will be removed from the authentication throttling store.",
                 icon: "warning",
-                buttons: true,
-                dangerMode: true
+                showConfirmButton: true,
+                showDenyButton: true
             })
-                .then((willDelete) => {
-                    if (willDelete) {
+                .then((result) => {
+                    if (result.isConfirmed) {
                         $.ajax({
                             url: `${actuatorEndpoints.throttles}`,
-                            type: 'DELETE',
+                            type: "DELETE",
                             data: {
                                 clear: true
                             },
@@ -2337,7 +2832,7 @@ async function initializeThrottlesOperations() {
                                 fetchThrottledAttempts();
                             },
                             error: (jqXHR, textStatus, errorThrown) => {
-                                displayErrorInBanner(jqXHR);
+                                displayBanner(jqXHR);
                             }
                         });
                     }
@@ -2346,162 +2841,381 @@ async function initializeThrottlesOperations() {
     }
 }
 
-async function initializeSAML2ProtocolOperations() {
-    $("button[name=saml2ProtocolPostButton]").off().on("click", () => {
-        const form = document.getElementById("fmSaml2Protocol");
+async function initializeSAML1ProtocolOperations() {
+    $("button[name=saml1ProtocolButton]").off().on("click", () => {
+        const form = document.getElementById("fmSaml1Protocol");
         if (!form.reportValidity()) {
             return false;
         }
-        const username = $("#saml2ProtocolUsername").val();
-        const password = $("#saml2ProtocolPassword").val();
-        const entityId = $("#saml2ProtocolEntityId").val();
+        const username = $("#saml1ProtocolUsername").val();
+        const password = $("#saml1ProtocolPassword").val();
+        const service = $("#saml1ProtocolService").val();
 
-        $.post(`${actuatorEndpoints.samlpostprofileresponse}`, {
+        $.post(`${actuatorEndpoints.samlvalidate}`, {
             username: username,
             password: password,
-            entityId: entityId
+            service: service
         }, data => {
-            const editor = initializeAceEditor("saml2ProtocolEditor", "xml");
+            $("#saml1ProtocolEditorContainer").removeClass("d-none");
+            const editor = initializeAceEditor("saml1ProtocolEditor", "xml");
             editor.setReadOnly(true);
-            editor.setValue(new XMLSerializer().serializeToString(data));
+            editor.setValue(data.assertion);
             editor.gotoLine(1);
-            $("#saml2ProtocolEditorContainer").removeClass("d-none");
-            $("#saml2ProtocolLogoutEditor").addClass("d-none");
+
+            const serviceEditor = initializeAceEditor("saml1ProtocolServiceEditor", "json");
+            serviceEditor.setReadOnly(true);
+            serviceEditor.setValue(JSON.stringify(data.registeredService, null, 2));
+            serviceEditor.gotoLine(1);
         }).fail((xhr, status, error) => {
-            displayErrorInBanner(xhr);
+            displayBanner(xhr);
             $("#saml2ProtocolEditorContainer").addClass("d-none");
         });
     });
 
+}
 
-    $("button[name=saml2ProtocolLogoutButton]").off().on("click", () => {
-        const entityId = document.getElementById("saml2ProtocolEntityId");
-        if (!entityId.checkValidity()) {
-            entityId.reportValidity();
-            return false;
-        }
-        $.ajax({
-            url: `${actuatorEndpoints.samlpostprofileresponse}/logout/post`,
-            type: 'POST',
-            data: {
-                entityId: $("#saml2ProtocolEntityId").val()
-            },
-            success: (response, textStatus, jqXHR) => {
-                const saml2ProtocolEditor = initializeAceEditor("saml2ProtocolEditor", "html");
-                saml2ProtocolEditor.setReadOnly(true);
-                saml2ProtocolEditor.setValue(response);
-                saml2ProtocolEditor.gotoLine(1);
-
-                const logoutRequest = atob(jqXHR.getResponseHeader("LogoutRequest"));
-                const saml2ProtocolLogoutEditor = initializeAceEditor("saml2ProtocolLogoutEditor", "xml");
-                saml2ProtocolLogoutEditor.setReadOnly(true);
-                saml2ProtocolLogoutEditor.setValue(logoutRequest);
-                saml2ProtocolLogoutEditor.gotoLine(1);
-                
-                $("#saml2ProtocolEditorContainer").removeClass("d-none");
-                $("#saml2ProtocolLogoutEditor").removeClass("d-none");
-            },
-            error: (jqXHR, textStatus, errorThrown) => {
-                displayErrorInBanner(xhr);
-                $("#saml2ProtocolEditorContainer").addClass("d-none");
-                $("#saml2ProtocolLogoutEditor").addClass("d-none");
-            }
-        });
+function showSaml2IdPMetadata() {
+    $.get(`${casServerPrefix}/idp/metadata`, response => {
+        let oidcOpConfigurationDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("saml2MetadataDialog"));
+        const editor = initializeAceEditor("saml2MetadataDialogEditor", "xml");
+        editor.setValue(new XMLSerializer().serializeToString(response));
+        editor.gotoLine(1);
+        editor.setReadOnly(true);
+        oidcOpConfigurationDialog["open"]();
+    }).fail((xhr, status, error) => {
+        console.error("Error fetching data:", error);
+        displayBanner(xhr);
     });
+}
 
+function showOidcJwks() {
+    $.get(`${casServerPrefix}/oidc/jwks`, response => {
+        let oidcOpConfigurationDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("oidcOpConfigurationDialog"));
+        const editor = initializeAceEditor("oidcOpConfigurationDialogEditor", "json");
+        editor.setValue(JSON.stringify(response, null, 2));
+        editor.gotoLine(1);
+        editor.setReadOnly(true);
+        oidcOpConfigurationDialog["open"]();
+    }).fail((xhr, status, error) => {
+        console.error("Error fetching data:", error);
+        displayBanner(xhr);
+    });
+}
 
-    $("button[name=saml2MetadataCacheInvalidateButton]").off().on("click", () => {
-        hideErrorInBanner();
-        $("#saml2MetadataCacheEditorContainer").addClass("d-none");
-        
-        swal({
-            title: "Are you sure you want to invalidate the cache entry?",
-            text: "Once deleted, the change will take effect immediately.",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true
-        })
-            .then((willDelete) => {
-                if (willDelete) {
-                    $.ajax({
-                        url: `${actuatorEndpoints.samlidpregisteredservicemetadatacache}`,
-                        type: 'DELETE',
-                        data: {
-                            entityId: $("#saml2MetadataCacheEntityId").val(),
-                            serviceId: $("#saml2MetadataCacheService").val()
-                        },
-                        success: (response, textStatus, jqXHR) => {
-                            swal({
-                                title: "Cached metadata record(s) removed.",
-                                text: "Cached metadata entry has been removed successfully.",
-                                buttons: false,
+async function initializeOidcProtocolOperations() {
+    if (CAS_FEATURES.includes("OpenIDConnect")) {
+        $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, response => {
+            hljs.highlightAll();
+            $("#oidcIssuer").text(response.issuer);
+        });
+
+        $("button[name=oidcOpConfigurationButton]").off().on("click", () => {
+            hideBanner();
+            $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, response => {
+                let oidcOpConfigurationDialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("oidcOpConfigurationDialog"));
+                const editor = initializeAceEditor("oidcOpConfigurationDialogEditor", "json");
+                editor.setValue(JSON.stringify(response, null, 2));
+                editor.gotoLine(1);
+                editor.setReadOnly(true);
+                oidcOpConfigurationDialog["open"]();
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayBanner(xhr);
+            });
+        });
+
+        $("button[name=oidcKeyRotationButton]").off().on("click", () => {
+            hideBanner();
+            Swal.fire({
+                title: "Are you sure you want to rotate keys?",
+                text: "Once rotated, the change will take effect immediately.",
+                icon: "warning",
+                showConfirmButton: true,
+                showDenyButton: true
+            })
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        $("#oidcKeyRotationButton").prop("disabled", true);
+                        $.get(`${actuatorEndpoints.oidcjwks}/rotate`, response => {
+                            Swal.fire({
+                                title: "Done!",
+                                text: "Keys in the OpenID Connect keystore are successfully rotated.",
                                 icon: "success",
                                 timer: 1000
                             });
-                        },
-                        error: (jqXHR, textStatus, errorThrown) => {
-                            displayErrorInBanner(jqXHR);
-                        }
-                    });
+                            $("#oidcKeyRotationButton").prop("disabled", false);
+                        }).fail((xhr, status, error) => {
+                            console.error("Error fetching data:", error);
+                            displayBanner(xhr);
+                            $("#oidcKeyRotationButton").prop("disabled", false);
+                        });
+                    }
+                });
+        });
+
+        $("button[name=oidcKeyRevocationButton]").off().on("click", () => {
+            hideBanner();
+            Swal.fire({
+                title: "Are you sure you want to revoke keys?",
+                text: "Once revoked, the change will take effect immediately.",
+                icon: "warning",
+                showConfirmButton: true,
+                showDenyButton: true
+            })
+                .then((willDo) => {
+                    if (willDo) {
+                        $("#oidcKeyRevocationButton").prop("disabled", true);
+                        $.get(`${actuatorEndpoints.oidcjwks}/revoke`, response => {
+                            Swal.fire({
+                                title: "Done!",
+                                text: "Keys in the OpenID Connect keystore are successfully revoked.",
+                                showConfirmButton: false,
+                                icon: "success",
+                                timer: 1000
+                            });
+                            $("#oidcKeyRevocationButton").prop("disabled", false);
+                        }).fail((xhr, status, error) => {
+                            console.error("Error fetching data:", error);
+                            displayBanner(xhr);
+                            $("#oidcKeyRevocationButton").prop("disabled", false);
+                        });
+                    }
+                });
+        });
+
+        $("button[name=oidcProtocolButton]").off().on("click", () => {
+            hideBanner();
+            const oidcForm = document.getElementById("fmOidcProtocol");
+            if (!oidcForm.checkValidity()) {
+                oidcForm.reportValidity();
+                return false;
+            }
+
+            function decodeJWT(token) {
+                const parts = token.split(".");
+                if (parts.length === 3) {
+                    const header = JSON.parse(atob(parts[0]));
+                    const payload = JSON.parse(atob(parts[1]));
+                    const signature = parts[2];
+                    return {
+                        header: header,
+                        payload: payload,
+                        signature: signature
+                    };
+                }
+                return {};
+            }
+
+            $.get(`${casServerPrefix}/oidc/.well-known/openid-configuration`, oidcConfiguration => {
+
+                const clientId = $("#oidcProtocolClientId").val();
+                const clientSecret = $("#oidcProtocolClientSecret").val();
+                const scopes = encodeURIComponent($("#oidcProtocolScopes").val());
+
+                $.ajax({
+                    url: `${oidcConfiguration.token_endpoint}?grant_type=client_credentials&scope=${scopes}`,
+                    type: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Basic ${btoa(`${clientId}:${clientSecret}`)}`
+                    },
+                    success: (response, textStatus, xhr) => {
+                        console.log(response);
+                        const oidcProtocolEditorTokens = initializeAceEditor("oidcProtocolEditorTokens", "json");
+                        oidcProtocolEditorTokens.setReadOnly(true);
+                        oidcProtocolEditorTokens.setValue(JSON.stringify(response, null, 2));
+                        oidcProtocolEditorTokens.gotoLine(1);
+
+                        const oidcProtocolEditorIdTokenClaims = initializeAceEditor("oidcProtocolEditorIdTokenClaims", "json");
+                        oidcProtocolEditorIdTokenClaims.setReadOnly(true);
+                        const idToken = response.id_token;
+                        const decodedIdToken = decodeJWT(idToken);
+                        oidcProtocolEditorIdTokenClaims.setValue(JSON.stringify(decodedIdToken.payload, null, 2));
+                        oidcProtocolEditorIdTokenClaims.gotoLine(1);
+
+
+                        const oidcProtocolEditorProfile = initializeAceEditor("oidcProtocolEditorProfile", "json");
+                        oidcProtocolEditorProfile.setReadOnly(true);
+                        const accessToken = response.access_token;
+
+                        $.post(`${oidcConfiguration.userinfo_endpoint}`, {
+                            access_token: accessToken
+                        }, data => {
+                            oidcProtocolEditorProfile.setValue(JSON.stringify(data, null, 2));
+                            oidcProtocolEditorProfile.gotoLine(1);
+                        }).fail((xhr, status, error) => {
+                            console.error("Error fetching data:", error);
+                            displayBanner(xhr);
+                        });
+                        $("#oidcProtocolEditorContainer").removeClass("d-none");
+                    },
+                    error: (xhr, textStatus, errorThrown) => {
+                        $("#oidcProtocolEditorContainer").addClass("d-none");
+                        console.error("Error fetching data:", errorThrown);
+                        displayBanner(xhr);
+                    }
+                });
+
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayBanner(xhr);
+                $("#oidcProtocolEditorContainer").addClass("d-none");
+            });
+
+
+        });
+    }
+}
+
+async function initializeSAML2ProtocolOperations() {
+    if (CAS_FEATURES.includes("SAMLIdentityProvider")) {
+        if (actuatorEndpoints.info) {
+            $.get(actuatorEndpoints.info, response => {
+                hljs.highlightAll();
+                $("#saml2EntityId").text(response.saml2.entityId);
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayBanner(xhr);
+            });
+        }
+
+        $("button[name=saml2ProtocolPostButton]").off().on("click", () => {
+            const form = document.getElementById("fmSaml2Protocol");
+            if (!form.reportValidity()) {
+                return false;
+            }
+            const username = $("#saml2ProtocolUsername").val();
+            const password = $("#saml2ProtocolPassword").val();
+            const entityId = $("#saml2ProtocolEntityId").val();
+
+            $.post(`${actuatorEndpoints.samlpostprofileresponse}`, {
+                username: username,
+                password: password,
+                entityId: entityId
+            }, data => {
+                const editor = initializeAceEditor("saml2ProtocolEditor", "xml");
+                editor.setReadOnly(true);
+                editor.setValue(new XMLSerializer().serializeToString(data));
+                editor.gotoLine(1);
+                $("#saml2ProtocolEditorContainer").removeClass("d-none");
+                $("#saml2ProtocolLogoutEditor").addClass("d-none");
+            }).fail((xhr, status, error) => {
+                displayBanner(xhr);
+                $("#saml2ProtocolEditorContainer").addClass("d-none");
+            });
+        });
+
+        $("button[name=saml2ProtocolLogoutButton]").off().on("click", () => {
+            const entityId = document.getElementById("saml2ProtocolEntityId");
+            if (!entityId.checkValidity()) {
+                entityId.reportValidity();
+                return false;
+            }
+            $.ajax({
+                url: `${actuatorEndpoints.samlpostprofileresponse}/logout/post`,
+                type: "POST",
+                data: {
+                    entityId: $("#saml2ProtocolEntityId").val()
+                },
+                success: (response, textStatus, jqXHR) => {
+                    const saml2ProtocolEditor = initializeAceEditor("saml2ProtocolEditor", "html");
+                    saml2ProtocolEditor.setReadOnly(true);
+                    saml2ProtocolEditor.setValue(response);
+                    saml2ProtocolEditor.gotoLine(1);
+
+                    const logoutRequest = atob(jqXHR.getResponseHeader("LogoutRequest"));
+                    const saml2ProtocolLogoutEditor = initializeAceEditor("saml2ProtocolLogoutEditor", "xml");
+                    saml2ProtocolLogoutEditor.setReadOnly(true);
+                    saml2ProtocolLogoutEditor.setValue(logoutRequest);
+                    saml2ProtocolLogoutEditor.gotoLine(1);
+
+                    $("#saml2ProtocolEditorContainer").removeClass("d-none");
+                    $("#saml2ProtocolLogoutEditor").removeClass("d-none");
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    displayBanner(xhr);
+                    $("#saml2ProtocolEditorContainer").addClass("d-none");
+                    $("#saml2ProtocolLogoutEditor").addClass("d-none");
                 }
             });
-    });
-
-    $("button[name=saml2MetadataCacheFetchButton]").off().on("click", function() {
-        hideErrorInBanner();
-
-        $(this).prop("disabled", true);
-        $.ajax({
-            url: `${actuatorEndpoints.samlidpregisteredservicemetadatacache}`,
-            type: 'GET',
-            data: {
-                entityId: $("#saml2MetadataCacheEntityId").val(),
-                serviceId: $("#saml2MetadataCacheService").val()
-            },
-            success: (response, textStatus, jqXHR) => {
-                console.log(response);
-                
-                const editor = initializeAceEditor("saml2MetadataCacheEditor", "xml");
-                editor.setReadOnly(true);
-                for (const [entityId, entry] of Object.entries(response)) {
-                    editor.setValue(entry.metadata);
-                    $("#saml2MetadataCacheDetails").html(`<i class="mdc-tab__icon mdi mdi-clock" aria-hidden="true"></i> Cache Instant: <code>${entry.cachedInstant}</code>`);
-                }
-                editor.gotoLine(1);
-                $("#saml2MetadataCacheEditorContainer").removeClass("d-none");
-                $("#saml2MetadataCacheDetails").removeClass("d-none");
-                $(this).prop("disabled", false)
-            },
-            error: (jqXHR, textStatus, errorThrown) => {
-                displayErrorInBanner(jqXHR);
-                $("#saml2MetadataCacheEditorContainer").addClass("d-none");
-                $("#saml2MetadataCacheDetails").addClass("d-none");
-                $(this).prop("disabled", false)
-            }
         });
-        
-    });
+
+        $("button[name=saml2MetadataCacheInvalidateButton]").off().on("click", () => {
+            hideBanner();
+            $("#saml2MetadataCacheEditorContainer").addClass("d-none");
+
+            Swal.fire({
+                title: "Are you sure you want to invalidate the cache entry?",
+                text: "Once deleted, the change will take effect immediately.",
+                icon: "warning",
+                showConfirmButton: true,
+                showDenyButton: true
+            })
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: `${actuatorEndpoints.samlidpregisteredservicemetadatacache}`,
+                            type: "DELETE",
+                            data: {
+                                entityId: $("#saml2MetadataCacheEntityId").val(),
+                                serviceId: $("#saml2MetadataCacheService").val()
+                            },
+                            success: (response, textStatus, jqXHR) => {
+                                Swal.fire({
+                                    title: "Cached metadata record(s) removed.",
+                                    text: "Cached metadata entry has been removed successfully.",
+                                    showConfirmButton: false,
+                                    icon: "success",
+                                    timer: 1000
+                                });
+                            },
+                            error: (jqXHR, textStatus, errorThrown) => {
+                                displayBanner(jqXHR);
+                            }
+                        });
+                    }
+                });
+        });
+
+        $("button[name=saml2MetadataCacheFetchButton]").off().on("click", function () {
+            hideBanner();
+
+            $(this).prop("disabled", true);
+            $.ajax({
+                url: `${actuatorEndpoints.samlidpregisteredservicemetadatacache}`,
+                type: "GET",
+                data: {
+                    entityId: $("#saml2MetadataCacheEntityId").val(),
+                    serviceId: $("#saml2MetadataCacheService").val()
+                },
+                success: (response, textStatus, jqXHR) => {
+                    console.log(response);
+
+                    const editor = initializeAceEditor("saml2MetadataCacheEditor", "xml");
+                    editor.setReadOnly(true);
+                    for (const [entityId, entry] of Object.entries(response)) {
+                        editor.setValue(entry.metadata);
+                        $("#saml2MetadataCacheDetails").html(`<i class="mdc-tab__icon mdi mdi-clock" aria-hidden="true"></i> Cache Instant: <code>${entry.cachedInstant}</code>`);
+                    }
+                    editor.gotoLine(1);
+                    $("#saml2MetadataCacheEditorContainer").removeClass("d-none");
+                    $("#saml2MetadataCacheDetails").removeClass("d-none");
+                    $(this).prop("disabled", false);
+                },
+                error: (jqXHR, textStatus, errorThrown) => {
+                    displayBanner(jqXHR);
+                    $("#saml2MetadataCacheEditorContainer").addClass("d-none");
+                    $("#saml2MetadataCacheDetails").addClass("d-none");
+                    $(this).prop("disabled", false);
+                }
+            });
+
+        });
+    }
 }
 
 async function initializePalantir() {
     try {
-        await Promise.all([
-            initializeAllCharts(),
-            initializeScheduledTasksOperations(),
-            initializeServicesOperations(),
-            initializeAccessStrategyOperations(),
-            initializeTicketsOperations(),
-            initializeSystemOperations(),
-            initializeLoggingOperations(),
-            initializeSsoSessionOperations(),
-            initializeConfigurationOperations(),
-            initializePersonDirectoryOperations(),
-            initializeAuthenticationOperations(),
-            initializeConsentOperations(),
-            initializeCasProtocolOperations(),
-            initializeSAML2ProtocolOperations(),
-            initializeThrottlesOperations()
-        ]);
         setTimeout(() => {
             if (!actuatorEndpoints.registeredservices) {
                 $("#applicationsTabButton").addClass("d-none");
@@ -2536,7 +3250,10 @@ async function initializePalantir() {
                 $("#ssoSessionsTabButton").addClass("d-none");
                 $(`#attribute-tab-${Tabs.SSO_SESSIONS}`).addClass("d-none");
             }
-            if (!actuatorEndpoints.loggingConfig || !actuatorEndpoints.loggers) {
+            if (!actuatorEndpoints.auditlog) {
+                $("#auditEvents").parent().addClass("d-none");
+            }
+            if ((!actuatorEndpoints.loggingconfig || !actuatorEndpoints.loggers) && !actuatorEndpoints.auditlog) {
                 $("#loggingTabButton").addClass("d-none");
                 $(`#attribute-tab-${Tabs.LOGGING}`).addClass("d-none");
             }
@@ -2549,17 +3266,28 @@ async function initializePalantir() {
                 $(`#attribute-tab-${Tabs.CONSENT}`).addClass("d-none");
             }
             if (!actuatorEndpoints.casvalidate) {
+                $("#casprotocol").parent().remove();
                 $("#casProtocolContainer").addClass("d-none");
             }
             if (!actuatorEndpoints.samlpostprofileresponse) {
+                $("#saml2protocol").parent().remove();
                 $("#saml2ProtocolContainer").addClass("d-none");
+            }
+            if (!actuatorEndpoints.samlvalidate) {
+                $("#saml1ProtocolContainer").addClass("d-none");
+                $("#saml1protocol").parent().remove();
             }
             if (!actuatorEndpoints.casconfig) {
                 $("#config-encryption-tab").addClass("d-none");
-                $("#casConfigSecurity").addClass("d-none");
+                $("#casConfigSecurity").parent().remove();
             }
-            
-            if (!actuatorEndpoints.casvalidate && !actuatorEndpoints.samlpostprofileresponse) {
+            if (!actuatorEndpoints.oidcjwks) {
+                $("#oidcprotocol").parent().remove();
+                $("#oidcProtocolContainer").addClass("d-none");
+            }
+
+            if (!actuatorEndpoints.samlvalidate && !actuatorEndpoints.casvalidate
+                && !actuatorEndpoints.samlpostprofileresponse && !actuatorEndpoints.oidcjwks) {
                 $("#protocolsTabButton").addClass("d-none");
                 $(`#attribute-tab-${Tabs.PROTOCOLS}`).addClass("d-none");
             }
@@ -2569,16 +3297,25 @@ async function initializePalantir() {
                 $(`#attribute-tab-${Tabs.THROTTLES}`).addClass("d-none");
             }
 
+            if (!actuatorEndpoints.mfadevices) {
+                $("#mfaTabButton").addClass("d-none");
+                $("#mfaDevicesTab").parent().addClass("d-none");
+                $(`#attribute-tab-${Tabs.MFA}`).addClass("d-none");
+            }
+            if (!actuatorEndpoints.multifactortrusteddevices) {
+                $("#trustedMfaDevicesTab").parent().addClass("d-none");
+            }
+            
             let visibleCount = $("nav.sidebar-navigation ul li:visible").length;
             console.log("Number of visible list items:", visibleCount);
 
             if (visibleCount === 0) {
                 $("#dashboard").hide();
-                swal({
+                Swal.fire({
                     title: "Palantir is unavailable!",
                     text: `Palantir requires a number of actuator endpoints to be enabled and exposed, and your CAS deployment fails to do so.`,
                     icon: "warning",
-                    buttons: false
+                    showConfirmButton: false
                 });
             } else {
 
@@ -2590,6 +3327,30 @@ async function initializePalantir() {
                 console.log("Activating Tab", selectedTab);
                 $(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).click();
                 activateDashboardTab(selectedTab);
+                initializeCasFeatures().then(() => {
+                    Promise.all([
+                        initializeAllCharts(),
+                        initializeScheduledTasksOperations(),
+                        initializeServicesOperations(),
+                        initializeAccessStrategyOperations(),
+                        initializeTicketsOperations(),
+                        initializeSystemOperations(),
+                        initializeLoggingOperations(),
+                        initializeSsoSessionOperations(),
+                        initializeConfigurationOperations(),
+                        initializePersonDirectoryOperations(),
+                        initializeAuthenticationOperations(),
+                        initializeConsentOperations(),
+                        initializeCasProtocolOperations(),
+                        initializeSAML2ProtocolOperations(),
+                        initializeSAML1ProtocolOperations(),
+                        initializeOidcProtocolOperations(),
+                        initializeThrottlesOperations(),
+                        initializeMultifactorOperations(),
+                        initializeTrustedMultifactorOperations(),
+                        initializeAuditEventsOperations()
+                    ]);
+                });
             }
         }, 2);
         $("#dashboard").removeClass("d-none");
@@ -2602,39 +3363,49 @@ function activateDashboardTab(idx) {
     try {
         let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
         tabs.activateTab(Number(idx));
+        console.log("Activated tab", idx);
+        currentActiveTab = Number(idx);
         updateNavigationSidebar();
     } catch (e) {
         console.error("An error occurred while activating tab:", e);
     }
 }
 
+function selectSidebarMenuButton(selectedItem) {
+    $("nav.sidebar-navigation ul li").removeClass("active");
+    $(selectedItem).addClass("active");
+    const index = $(selectedItem).data("tab-index");
+    console.log("Tracking tab", index);
+    window.localStorage.setItem("PalantirSelectedTab", index);
+    return index;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     $(".jqueryui-tabs").tabs();
+    $(".jqueryui-menu").menu();
+    $(".jqueryui-selectmenu").selectmenu();
 
     $("nav.sidebar-navigation ul li").off().on("click", function () {
-        hideErrorInBanner();
-        $("li").removeClass("active");
-        $(this).addClass("active");
-        const index = $(this).data("tab-index");
-        console.log("Tracking tab", index);
-        window.localStorage.setItem("PalantirSelectedTab", index);
+        hideBanner();
+        const index = selectSidebarMenuButton(this);
         activateDashboardTab(index);
     });
-    swal({
+    Swal.fire({
         icon: "info",
         title: "Initializing Palantir",
-        text: "Please wait while Palantir is being initialized...",
+        text: "Please wait while Palantir is initializing...",
         allowOutsideClick: false,
-        buttons: false
+        showConfirmButton: false
     });
+
     initializePalantir().then(r => {
         console.log("Palantir ready!");
-        swal({
+        Swal.fire({
             title: "Palantir is ready!",
-            text: "Palantir has been successfully initialized and is ready for use.",
-            buttons: false,
+            text: "Palantir is successfully initialized and is ready for use.",
+            showConfirmButton: false,
             icon: "success",
-            timer: 1000
+            timer: 800
         });
     });
 });

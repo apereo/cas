@@ -165,10 +165,13 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     }
 
     @Override
-    public Stream<? extends Ticket> stream() {
-        return ticketCatalog.findAll()
+    public Stream<? extends Ticket> stream(final TicketRegistryStreamCriteria criteria) {
+        return ticketCatalog
+            .findAll()
             .stream()
             .flatMap(this::streamCassandraTicketBy)
+            .skip(criteria.getFrom())
+            .limit(criteria.getCount())
             .map(holder -> {
                 val result = deserializeTicket(holder.getData(), holder.getType());
                 return decodeTicket(result);
@@ -292,7 +295,7 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
             .entrySet()
             .stream()
             .map(entry -> {
-                val entryValues = (List) entry.getValue();
+                val entryValues = entry.getValue();
                 val valueList = entryValues.stream().map(Object::toString).collect(Collectors.joining(","));
                 return Pair.of(entry.getKey(), valueList);
             })

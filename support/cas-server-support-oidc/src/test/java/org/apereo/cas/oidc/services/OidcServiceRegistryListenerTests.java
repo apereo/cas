@@ -4,6 +4,7 @@ import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.claims.OidcCustomScopeAttributeReleasePolicy;
 import org.apereo.cas.oidc.claims.OidcPhoneScopeAttributeReleasePolicy;
+import org.apereo.cas.oidc.claims.OidcScopeFreeAttributeReleasePolicy;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.RegisteredServiceChainingAttributeReleasePolicy;
@@ -148,6 +149,23 @@ class OidcServiceRegistryListenerTests extends AbstractOidcTests {
         val policy = service.getAttributeReleasePolicy();
         assertFalse(policy instanceof RegisteredServiceChainingAttributeReleasePolicy);
         assertInstanceOf(ReturnAllowedAttributeReleasePolicy.class, policy);
+    }
+
+    @Test
+    void verifyScopeWithPolicyAsChainWithScopeFreePolicy() throws Throwable {
+        var service = getOidcRegisteredService();
+        val chainingPolicy = new ChainingAttributeReleasePolicy();
+        chainingPolicy.addPolicies(new OidcScopeFreeAttributeReleasePolicy(List.of("system_id")));
+        chainingPolicy.addPolicies(new OidcScopeFreeAttributeReleasePolicy(List.of("food_pref")));
+        service.setAttributeReleasePolicy(chainingPolicy);
+        val scopes = service.getScopes();
+        scopes.add(OidcConstants.StandardScopes.PHONE.getScope());
+        scopes.add(OidcConstants.StandardScopes.PROFILE.getScope());
+        service = (OidcRegisteredService) oidcServiceRegistryListener.postLoad(service);
+        val policy = service.getAttributeReleasePolicy();
+        assertInstanceOf(RegisteredServiceChainingAttributeReleasePolicy.class, policy);
+        val chain = (RegisteredServiceChainingAttributeReleasePolicy) policy;
+        assertEquals(5, chain.size());
     }
 
 }

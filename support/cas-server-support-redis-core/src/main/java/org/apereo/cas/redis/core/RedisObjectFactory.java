@@ -271,6 +271,9 @@ public class RedisObjectFactory {
             sslOptionsBuilder.keyManager(redis.getKeyCertificateChainFile(), redis.getKeyFile(),
                 StringUtils.hasText(redis.getKeyPassword()) ? redis.getKeyPassword().toCharArray() : null);
         }
+        if (redis.isUseSsl() && redis.getCertificateFile() != null) {
+            sslOptionsBuilder.trustManager(redis.getCertificateFile());
+        }
         return clientOptionsBuilder
             .timeoutOptions(TimeoutOptions.enabled())
             .sslOptions(sslOptionsBuilder.build())

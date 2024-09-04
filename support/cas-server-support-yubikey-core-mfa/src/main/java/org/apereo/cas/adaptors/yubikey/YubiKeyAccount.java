@@ -62,7 +62,7 @@ public class YubiKeyAccount implements Serializable, Cloneable {
     @JsonProperty
     @Transient
     @Builder.Default
-    private long id = System.currentTimeMillis();
+    private long id = -1;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "YubiKeyRegisteredDevice")
