@@ -5,7 +5,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.ticket.DefaultSecurityTokenTicket;
 import org.apereo.cas.ticket.SecurityTokenTicket;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
-import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+import org.apereo.cas.util.serialization.AbstractJacksonBackedNonHjsonStringSerializer;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
@@ -46,7 +46,7 @@ class CasWsSecurityTokenTicketComponentSerializationConfiguration {
         return plan -> plan.registerSerializableClass(DefaultSecurityTokenTicket.class);
     }
 
-    private static final class SecurityTokenTicketStringSerializer extends AbstractJacksonBackedStringSerializer<DefaultSecurityTokenTicket> {
+    private static final class SecurityTokenTicketStringSerializer extends AbstractJacksonBackedNonHjsonStringSerializer<DefaultSecurityTokenTicket> {
         @Serial
         private static final long serialVersionUID = -3198623586274810263L;
 

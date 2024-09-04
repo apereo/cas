@@ -59,14 +59,14 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
 
     @Override
     public T from(final String json) {
-        val jsonString = isJsonFormat() ? JsonValue.readHjson(json).toString() : json;
+        val jsonString = parseFromHjson() ? JsonValue.readHjson(json).toString() : json;
         return readObjectFromString(jsonString);
     }
 
     @Override
     public T from(final Reader json) {
         return FunctionUtils.doAndHandle(() -> {
-            val data = isJsonFormat()
+            val data = parseFromHjson()
                 ? JsonValue.readHjson(json).toString()
                 : String.join("\n", IOUtils.readLines(json));
             return readObjectFromString(data);
@@ -84,7 +84,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     @Override
     public T from(final File json) {
         return FunctionUtils.doAndHandle(() -> {
-            val data = isJsonFormat()
+            val data = parseFromHjson()
                 ? JsonValue.readHjson(FileUtils.readFileToString(json, StandardCharsets.UTF_8)).toString()
                 : FileUtils.readFileToString(json, StandardCharsets.UTF_8);
             return readObjectFromString(data);
@@ -101,7 +101,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         FunctionUtils.doUnchecked(__ -> {
             try (val writer = new StringWriter()) {
                 objectWriterFor(object).writeValue(writer, object);
-                val hjsonString = isJsonFormat()
+                val hjsonString = parseFromHjson()
                     ? JsonValue.readHjson(writer.toString()).toString(getJsonFormattingOptions())
                     : writer.toString();
                 IOUtils.write(hjsonString, out, StandardCharsets.UTF_8);
@@ -114,7 +114,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         FunctionUtils.doUnchecked(__ -> {
             try (val writer = new StringWriter()) {
                 objectWriterFor(object).writeValue(writer, object);
-                if (isJsonFormat()) {
+                if (parseFromHjson()) {
                     JsonValue.readHjson(writer.toString()).writeTo(out, getJsonFormattingOptions());
                 } else {
                     IOUtils.write(writer.toString(), out);
@@ -129,7 +129,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
             try (val writer = new StringWriter()) {
                 objectWriterFor(object).writeValue(writer, object);
 
-                if (isJsonFormat()) {
+                if (parseFromHjson()) {
                     try (val fileWriter = Files.newBufferedWriter(out.toPath(), StandardCharsets.UTF_8)) {
                         JsonValue.readHjson(writer.toString()).writeTo(fileWriter, getJsonFormattingOptions());
                         fileWriter.flush();
@@ -163,7 +163,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
 
     @Override
     public List<T> fromList(final String json) {
-        val jsonString = isJsonFormat() ? JsonValue.readHjson(json).toString() : json;
+        val jsonString = parseFromHjson() ? JsonValue.readHjson(json).toString() : json;
         return readObjectsFromString(jsonString);
     }
 
@@ -194,7 +194,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     }
 
     protected String readJsonFrom(final InputStream json) throws IOException {
-        return isJsonFormat()
+        return parseFromHjson()
             ? JsonValue.readHjson(IOUtils.toString(json, StandardCharsets.UTF_8)).toString()
             : String.join("\n", IOUtils.readLines(json, StandardCharsets.UTF_8));
     }
@@ -239,8 +239,16 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         return null;
     }
 
-    private boolean isJsonFormat() {
-        return !(getObjectMapper().getFactory() instanceof YAMLFactory);
+    private boolean parseFromHjson() {
+        return !isYaml() && mayBeHjson();
+    }
+
+    private boolean isYaml() {
+        return YAMLFactory.FORMAT_NAME_YAML.equals(getObjectMapper().getFactory().getFormatName());
+    }
+
+    protected boolean mayBeHjson() {
+        return true;
     }
 
     private Stringify getJsonFormattingOptions() {

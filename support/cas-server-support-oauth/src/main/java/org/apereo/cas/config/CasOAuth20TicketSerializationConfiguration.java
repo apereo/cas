@@ -13,7 +13,7 @@ import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
 import org.apereo.cas.ticket.refreshtoken.OAuth20DefaultRefreshToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
-import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+import org.apereo.cas.util.serialization.AbstractJacksonBackedNonHjsonStringSerializer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -60,7 +60,7 @@ class CasOAuth20TicketSerializationConfiguration {
         };
     }
 
-    private static final class OAuthCodeTicketStringSerializer extends AbstractJacksonBackedStringSerializer<OAuth20DefaultCode> {
+    private static final class OAuthCodeTicketStringSerializer extends AbstractJacksonBackedNonHjsonStringSerializer<OAuth20DefaultCode> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
@@ -74,7 +74,7 @@ class CasOAuth20TicketSerializationConfiguration {
         }
     }
 
-    private static final class AccessTokenTicketStringSerializer extends AbstractJacksonBackedStringSerializer<OAuth20DefaultAccessToken> {
+    private static final class AccessTokenTicketStringSerializer extends AbstractJacksonBackedNonHjsonStringSerializer<OAuth20DefaultAccessToken> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
@@ -88,7 +88,7 @@ class CasOAuth20TicketSerializationConfiguration {
         }
     }
 
-    private static final class RefreshTokenTicketStringSerializer extends AbstractJacksonBackedStringSerializer<OAuth20DefaultRefreshToken> {
+    private static final class RefreshTokenTicketStringSerializer extends AbstractJacksonBackedNonHjsonStringSerializer<OAuth20DefaultRefreshToken> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
@@ -102,7 +102,7 @@ class CasOAuth20TicketSerializationConfiguration {
         }
     }
 
-    private static final class DeviceTokenTicketStringSerializer extends AbstractJacksonBackedStringSerializer<OAuth20DefaultDeviceToken> {
+    private static final class DeviceTokenTicketStringSerializer extends AbstractJacksonBackedNonHjsonStringSerializer<OAuth20DefaultDeviceToken> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
@@ -117,7 +117,7 @@ class CasOAuth20TicketSerializationConfiguration {
         }
     }
 
-    private static final class DeviceUserCodeTicketStringSerializer extends AbstractJacksonBackedStringSerializer<OAuth20DefaultDeviceUserCode> {
+    private static final class DeviceUserCodeTicketStringSerializer extends AbstractJacksonBackedNonHjsonStringSerializer<OAuth20DefaultDeviceUserCode> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 

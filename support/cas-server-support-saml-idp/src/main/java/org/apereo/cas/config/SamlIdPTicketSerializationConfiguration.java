@@ -7,7 +7,7 @@ import org.apereo.cas.ticket.artifact.SamlArtifactTicketImpl;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketImpl;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
-import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+import org.apereo.cas.util.serialization.AbstractJacksonBackedNonHjsonStringSerializer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -46,7 +46,7 @@ class SamlIdPTicketSerializationConfiguration {
         };
     }
 
-    private static final class SamlArtifactTicketStringSerializer extends AbstractJacksonBackedStringSerializer<SamlArtifactTicketImpl> {
+    private static final class SamlArtifactTicketStringSerializer extends AbstractJacksonBackedNonHjsonStringSerializer<SamlArtifactTicketImpl> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
@@ -60,7 +60,7 @@ class SamlIdPTicketSerializationConfiguration {
         }
     }
 
-    private static final class SamlAttributeQueryTicketStringSerializer extends AbstractJacksonBackedStringSerializer<SamlAttributeQueryTicketImpl> {
+    private static final class SamlAttributeQueryTicketStringSerializer extends AbstractJacksonBackedNonHjsonStringSerializer<SamlAttributeQueryTicketImpl> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
