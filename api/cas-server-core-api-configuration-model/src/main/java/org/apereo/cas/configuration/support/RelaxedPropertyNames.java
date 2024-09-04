@@ -249,12 +249,12 @@ public class RelaxedPropertyNames implements Iterable<String> {
                 return value;
             }
             var builder = new StringBuilder();
-            for (final var field : Splitter.on(SEPARATED_TO_CAMEL_CASE_PATTERN).split(value)) {
+            for (val field : Splitter.on(SEPARATED_TO_CAMEL_CASE_PATTERN).split(value)) {
                 var fieldCased = caseInsensitive ? field.toLowerCase(Locale.ENGLISH) : field;
                 builder.append(builder.isEmpty() ? field : StringUtils.capitalize(fieldCased));
             }
             var lastChar = value.charAt(value.length() - 1);
-            for (final var suffix : SUFFIXES) {
+            for (val suffix : SUFFIXES) {
                 if (lastChar == suffix) {
                     builder.append(suffix);
                     break;

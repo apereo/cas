@@ -11,6 +11,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.CachedMetadataRes
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.http.HttpRequestUtils;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -20,10 +21,10 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -41,9 +42,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(CasTestExtension.class)
 class SamlRegisteredServiceAttributeReleasePolicyTests {
     @Nested
+    @SpringBootTestAutoConfigurations
     @SpringBootTest(classes = {
-        DefaultTests.SamlTestConfiguration.class,
-        RefreshAutoConfiguration.class
+        AopAutoConfiguration.class,
+        DefaultTests.SamlTestConfiguration.class
     })
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     class DefaultTests {
@@ -146,9 +148,10 @@ class SamlRegisteredServiceAttributeReleasePolicyTests {
     }
 
     @Nested
+    @SpringBootTestAutoConfigurations
     @SpringBootTest(classes = {
-        NoServiceProvider.SamlTestConfiguration.class,
-        RefreshAutoConfiguration.class
+        AopAutoConfiguration.class,
+        NoServiceProvider.SamlTestConfiguration.class
     })
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     public class NoServiceProvider {

@@ -2,9 +2,7 @@ package org.apereo.cas.services.support;
 
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.util.RegexUtils;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
@@ -14,13 +12,11 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.io.Serial;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -41,10 +37,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
 
     @Serial
     private static final long serialVersionUID = 403015306984610128L;
-
-    @JsonIgnore
-    private Pattern compiledPattern;
-
+    
     private String pattern;
 
     private int order;
@@ -56,7 +49,6 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      */
     @JsonCreator
     public RegisteredServiceRegexAttributeFilter(@JsonProperty("pattern") final String regex) {
-        this.compiledPattern = RegexUtils.createPattern(regex);
         this.pattern = regex;
     }
 
@@ -124,7 +116,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
     private boolean patternMatchesAttributeValue(final Object value) {
         val matcher = value.toString();
         LOGGER.trace("Compiling a pattern matcher for [{}]", matcher);
-        return this.compiledPattern.matcher(matcher).matches();
+        return RegexUtils.createPattern(this.pattern).matcher(matcher).matches();
     }
 
     /**
@@ -135,7 +127,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      */
     private void logReleasedAttributeEntry(final String attributeName, final Object attributeValue) {
         LOGGER.debug("The attribute value [{}] for attribute name [{}] matches the pattern [{}]. Releasing attribute...",
-            attributeValue, attributeName, this.compiledPattern.pattern());
+            attributeValue, attributeName, this.pattern);
     }
 
 }

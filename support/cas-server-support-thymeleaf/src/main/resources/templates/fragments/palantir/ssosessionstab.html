@@ -8,6 +8,9 @@
 <body>
 <span th:fragment="main">
     <div class="attribute-tab w-100 d-none" id="attribute-tab-6">
+        <h3>Single Sign-on Sessions</h3>
+        <p>You can query the ticket registry to find the active single sign-on sessions for a given CAS principal.</p>
+        
         <form id="fmSsoSessions" class="d-block" onsubmit="return false;">
             <section class="cas-field form-group my-3 mdc-input-group d-flex">
                 <div class="mdc-input-group-field mdc-input-group-field-append w-100">
@@ -29,7 +32,7 @@
             <div class="d-flex">
                 <button type="button" name="ssoSessionButton" id="ssoSessionButton"
                         class="mdc-button mdc-button--raised">
-                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all" aria-hidden="true"></i>Verify</span>
+                    <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-magnify" aria-hidden="true"></i>Search</span>
                 </button>
                 <button type="button" name="removeSsoSessionButton" id="removeSsoSessionButton"
                         class="mdc-button mdc-button--raised">
@@ -56,10 +59,6 @@
          </table>
         <hr>
         
-        <section class="my-3 d-flex h-350px d-none" id="ssoSessionsEditorContainer">
-              <pre class="ace-editor ace-relative w-100 h-100" id="ssoSessionsEditor"></pre>
-        </section>
-
         <div class="mdc-dialog modal" id="ssoSession-dialog" role="alertdialog"
              aria-modal="true" aria-labelledby="ssoSession-dialog-title" aria-describedby="ssoSession-dialog-content">
             <div class="mdc-dialog__container w-75 modal-dialog">

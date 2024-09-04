@@ -20,8 +20,9 @@ public interface OneTimeTokenRepository<T extends OneTimeToken> {
      * Store token/code in the repository, marking it as invalid to be reused again.
      *
      * @param token the token
+     * @return the t
      */
-    void store(T token);
+    T store(T token);
 
     /**
      * Determine if the otp for user exists in repository.

@@ -84,7 +84,7 @@ public abstract class BaseWebAuthnCredentialRepositoryTests {
         assertFalse(webAuthnCredentialRepository.getUsernameForUserHandle(ba).isEmpty());
         assertFalse(webAuthnCredentialRepository.lookup(ba, ba).isEmpty());
         assertFalse(webAuthnCredentialRepository.lookupAll(ba).isEmpty());
-        assertTrue(webAuthnCredentialRepository.stream().count() > 0);
+        assertTrue(webAuthnCredentialRepository.stream().findAny().isPresent());
 
         val credential = RegisteredCredential.builder()
             .credentialId(ba)

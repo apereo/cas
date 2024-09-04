@@ -18,9 +18,9 @@ class OneTimeTokenTests {
 
     @Test
     void verifyComparisonWorks() throws Throwable {
-        val otp1 = new OneTimeToken(123456, "casuser");
+        val otp1 = new OneTimeToken(123456, "casuser").assignIdIfNecessary();
         Thread.sleep(1);
-        val otp2 = new OneTimeToken(123456, "casuser");
+        val otp2 = new OneTimeToken(123456, "casuser").assignIdIfNecessary();
         assertEquals(-1, otp1.compareTo(otp2));
         assertNotEquals(0, otp1.getId());
     }

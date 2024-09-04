@@ -104,11 +104,6 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     }
 
     @Override
-    public RegisteredService save(final RegisteredService registeredService) {
-        return save(registeredService, true);
-    }
-
-    @Override
     public RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
         return lock.tryLock(() -> {
             val clientInfo = ClientInfoHolder.getClientInfo();

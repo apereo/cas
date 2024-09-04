@@ -7,11 +7,11 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.audit.AuditActionContext;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,14 +32,11 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
 
     private final CasRedisTemplate redisTemplate;
 
-    private final long scanCount;
 
     public RedisAuditTrailManager(final CasRedisTemplate redisTemplate,
-                                  final boolean asynchronous,
-                                  final long scanCount) {
+                                  final boolean asynchronous) {
         super(asynchronous);
         this.redisTemplate = Objects.requireNonNull(redisTemplate);
-        this.scanCount = scanCount;
     }
 
     private static String getPatternAuditRedisKey(final String time, final String principal) {
@@ -51,25 +48,30 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
     }
 
     @Override
-    public Set<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
-        val localDate = (LocalDate) whereClause.get(WhereClauseFields.DATE);
+    public List<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> whereClause) {
+        val localDate = (LocalDateTime) whereClause.get(WhereClauseFields.DATE);
         LOGGER.debug("Retrieving audit records since [{}]", localDate);
 
+        val count = whereClause.containsKey(WhereClauseFields.COUNT)
+            ? (long) whereClause.get(WhereClauseFields.COUNT)
+            : DEFAULT_MAX_AUDIT_RECORDS_TO_FETCH;
+        
         try (val keys = whereClause.containsKey(WhereClauseFields.PRINCIPAL)
-            ? getAuditRedisKeys(whereClause.get(WhereClauseFields.PRINCIPAL).toString())
-            : getAuditRedisKeys()) {
+            ? getAuditRedisKeys(whereClause.get(WhereClauseFields.PRINCIPAL).toString(), count)
+            : getAuditRedisKeys(count)) {
             return keys
+                .limit(count)
                 .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull)
                 .map(AuditActionContext.class::cast)
-                .filter(audit -> audit.getWhenActionWasPerformed().isAfter(localDate.atStartOfDay()))
-                .collect(Collectors.toSet());
+                .filter(audit -> audit.getWhenActionWasPerformed().isAfter(localDate))
+                .collect(Collectors.toList());
         }
     }
 
     @Override
     public void removeAll() {
-        try (val keys = getAuditRedisKeys()) {
+        try (val keys = getAuditRedisKeys(-1)) {
             keys.forEach(redisTemplate::delete);
         }
     }
@@ -80,11 +82,11 @@ public class RedisAuditTrailManager extends AbstractAuditTrailManager {
         this.redisTemplate.boundValueOps(redisKey).set(audit);
     }
 
-    private Stream<String> getAuditRedisKeys() {
-        return redisTemplate.scan(getPatternAuditRedisKey(), this.scanCount);
+    private Stream<String> getAuditRedisKeys(final long count) {
+        return redisTemplate.scan(getPatternAuditRedisKey(), count);
     }
 
-    private Stream<String> getAuditRedisKeys(final String principal) {
-        return redisTemplate.scan(getPatternAuditRedisKey("*", principal), this.scanCount);
+    private Stream<String> getAuditRedisKeys(final String principal, final long count) {
+        return redisTemplate.scan(getPatternAuditRedisKey("*", principal), count);
     }
 }

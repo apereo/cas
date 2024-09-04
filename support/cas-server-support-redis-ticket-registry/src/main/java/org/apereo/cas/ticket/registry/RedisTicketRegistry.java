@@ -203,10 +203,11 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
     }
 
     @Override
-    public Stream<? extends Ticket> stream() {
+    public Stream<? extends Ticket> stream(final TicketRegistryStreamCriteria criteria) {
         val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(Ticket.class.getName()).orElseThrow();
         return fetchKeysForTickets()
-            .parallel()
+            .skip(criteria.getFrom())
+            .limit(criteria.getCount())
             .map(redisKey -> {
                 val adapter = buildRedisKeyValueAdapter(redisKey);
                 val document = adapter.get(redisKey, redisKey, RedisTicketDocument.class);

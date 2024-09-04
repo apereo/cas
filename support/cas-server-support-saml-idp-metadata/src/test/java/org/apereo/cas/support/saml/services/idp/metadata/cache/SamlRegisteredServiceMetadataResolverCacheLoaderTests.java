@@ -21,7 +21,6 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
-import static org.apereo.cas.util.junit.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -92,7 +91,7 @@ class SamlRegisteredServiceMetadataResolverCacheLoaderTests extends BaseSamlIdPS
         service.setServiceId("https://example.org/saml");
         service.setMetadataLocation("${#systemProperties['EMPTY_SP_REF']}");
         val key = new SamlRegisteredServiceCacheKey(service, new CriteriaSet());
-        assertThrowsWithRootCause(RuntimeException.class, SamlException.class, () -> loader.load(key));
+        assertThrows(SamlException.class, () -> loader.load(key));
     }
 
     private SamlRegisteredServiceMetadataResolverCacheLoader buildCacheLoader() throws Throwable {

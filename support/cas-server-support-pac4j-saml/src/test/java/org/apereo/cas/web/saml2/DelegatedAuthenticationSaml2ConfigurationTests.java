@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastPropert
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviderFactory;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.instance.impl.HazelcastInstanceFactory;
 import lombok.val;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,8 +29,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.5.0
  */
 @Tag("CasConfiguration")
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
     DelegatedAuthenticationSaml2ConfigurationTests.SAMLTestConfiguration.class,
     BaseSaml2DelegatedAuthenticationTests.SharedTestConfiguration.class
 })

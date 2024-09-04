@@ -3,13 +3,12 @@ package org.apereo.cas.shell.commands;
 import org.apereo.cas.config.CasCommandLineShellAutoConfiguration;
 import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.shell.Input;
 import org.springframework.shell.InputProvider;
@@ -34,9 +33,8 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
     ExitCodeAutoConfiguration.class,
     ParameterResolverAutoConfiguration.class,
     ThemingAutoConfiguration.class,

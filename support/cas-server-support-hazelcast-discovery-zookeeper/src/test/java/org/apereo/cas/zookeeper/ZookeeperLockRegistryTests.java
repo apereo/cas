@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.lock.LockRepository;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.Tag;
@@ -12,10 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,11 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("ZooKeeper")
 @ExtendWith(CasTestExtension.class)
 @EnabledIfListeningOnPort(port = 2181)
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    WebMvcAutoConfiguration.class,
-    CasHazelcastZooKeeperAutoConfiguration.class
-}, properties = {
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = CasHazelcastZooKeeperAutoConfiguration.class, properties = {
     "cas.ticket.registry.hazelcast.cluster.discovery.zookeeper.url=localhost:2181",
     "cas.ticket.registry.core.enable-locking=true"
 })

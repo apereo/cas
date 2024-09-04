@@ -8,8 +8,10 @@ import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.google.common.collect.ArrayListMultimap;
 import lombok.val;
+import org.assertj.core.util.CanIgnoreReturnValue;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.io.Serial;
 import java.util.Arrays;
@@ -34,10 +35,8 @@ import static org.mockito.Mockito.*;
  */
 @Tag("RegisteredService")
 @ExtendWith(CasTestExtension.class)
-@SpringBootTest(classes = {
-    RefreshAutoConfiguration.class,
-    CasCoreWebAutoConfiguration.class
-})
+@SpringBootTestAutoConfigurations
+@SpringBootTest(classes = CasCoreWebAutoConfiguration.class)
 @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
 class RegisteredServiceTests {
     private static final long ID = 1000;
@@ -70,8 +69,10 @@ class RegisteredServiceTests {
         private static final long serialVersionUID = 1L;
 
         @Override
-        public void setServiceId(final String id) {
+        @CanIgnoreReturnValue
+        public BaseRegisteredService setServiceId(final String id) {
             serviceId = id;
+            return this;
         }
 
         @Override

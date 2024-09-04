@@ -23,6 +23,7 @@ const docker = new Docker({socketPath: "/var/run/docker.sock"});
 const archiver = require("archiver");
 const unzipper = require("unzipper");
 const puppeteer = require("puppeteer");
+const speakeasy = require("speakeasy");
 
 const LOGGER = pino({
     level: "debug",
@@ -989,6 +990,27 @@ exports.loginDuoSecurityBypassCode = async (page, username = "casuser", currentC
         }
     }
 };
+
+exports.parseOtpAuthenticationUrl = async (url) => {
+    const parsedUrl = new URL(url);
+    const label = parsedUrl.pathname.substring(1);
+    const [issuerLabel, userLabel] = label.split(":");
+    const params = new URLSearchParams(parsedUrl.search);
+    const secret = params.get("secret");
+    const issuer = params.get("issuer");
+    return {
+        user: userLabel,
+        secret: secret,
+        issuer: issuer || issuerLabel
+    };
+};
+
+exports.generateOtp = async (otpConfig) =>
+    speakeasy.totp({
+        secret: otpConfig.secret,
+        encoding: "base32",
+        step: 30
+    });
 
 exports.dockerContainer = async (name) => {
     const containers = await docker.container.list();

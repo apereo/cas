@@ -79,7 +79,8 @@ jobs:
     outputs:
       categories: ${{ steps.get-categories.outputs.categories }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -104,7 +105,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     name: ${{ matrix.category }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -115,11 +117,6 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
         shell: bash
-      - name: Configure Environment
-        if: github.event_name == 'schedule'
-        run: |
-          echo "Running on schedule with PTS disabled..."
-          echo "PTS_ENABLED=false" >> $GITHUB_ENV
       - name: Run Tests
         uses: nick-fields/retry@v3
         with:
@@ -129,7 +126,13 @@ jobs:
           timeout_minutes: ${{ env.RETRY_MINUTES }}
           shell: bash
           command: |
-            ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED
+            if [[ "{{ github.event_name }}" == "push" ]] || [[ "{{ github.event_name }}" == "schedule" ]]; then
+              ptsMode="REMAINING_TESTS";
+            else
+              ptsMode="RELEVANT_TESTS";
+            fi
+            echo "Running tests with PTS mode: $ptsMode"
+            ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED --pts $ptsMode
             [[ $? -eq 0 ]] && ./testcas.sh --no-watch --with-coverage
       - name: Check Coverage Report
         run: |

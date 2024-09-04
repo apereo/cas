@@ -122,7 +122,7 @@ public class LdapGoogleAuthenticatorTokenCredentialRepository
 
     @Override
     public OneTimeTokenAccount save(final OneTimeTokenAccount account) {
-        return update(account);
+        return update(account.assignIdIfNecessary());
     }
 
     @Override

@@ -26,19 +26,15 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderAutoConfiguration;
-import org.springframework.boot.autoconfigure.mail.MailSenderValidatorAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.webflow.execution.Action;
@@ -49,7 +45,8 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@SpringBootTest(classes = BasePasswordManagementActionTests.SharedTestConfiguration.class,
+@SpringBootTest(
+    classes = BasePasswordManagementActionTests.SharedTestConfiguration.class,
     properties = {
         "spring.mail.host=localhost",
         "spring.mail.port=25000",
@@ -112,12 +109,9 @@ public abstract class BasePasswordManagementActionTests {
 
     @Autowired
     protected ConfigurableApplicationContext applicationContext;
+
+    @SpringBootTestAutoConfigurations
     @ImportAutoConfiguration({
-        AopAutoConfiguration.class,
-        WebMvcAutoConfiguration.class,
-        MailSenderAutoConfiguration.class,
-        MailSenderValidatorAutoConfiguration.class,
-        RefreshAutoConfiguration.class,
         CasPasswordManagementAutoConfiguration.class,
         CasPasswordManagementWebflowAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,

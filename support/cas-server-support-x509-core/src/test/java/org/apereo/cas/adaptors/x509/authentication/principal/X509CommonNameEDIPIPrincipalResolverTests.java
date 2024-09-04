@@ -12,6 +12,7 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalAttribute
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +41,7 @@ import static org.junit.jupiter.params.provider.Arguments.*;
  * @since 5.3.0
  */
 @Tag("X509")
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @ExtendWith(CasTestExtension.class)
 class X509CommonNameEDIPIPrincipalResolverTests {

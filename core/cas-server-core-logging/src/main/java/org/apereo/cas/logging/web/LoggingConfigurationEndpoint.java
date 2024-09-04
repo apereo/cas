@@ -1,12 +1,14 @@
 package org.apereo.cas.logging.web;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.logging.CasAppender;
+import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import org.apereo.cas.web.BaseCasActuatorEndpoint;
+import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -14,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.appender.FileAppender;
 import org.apache.logging.log4j.core.appender.MemoryMappedFileAppender;
@@ -28,14 +29,15 @@ import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
-import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
-import org.springframework.boot.actuate.endpoint.annotation.Selector;
-import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
-import org.springframework.core.env.Environment;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -49,7 +51,7 @@ import java.util.Set;
 @Slf4j
 @Endpoint(id = "loggingConfig", enableByDefault = false)
 @Getter
-public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint {
+public class LoggingConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
 
     private static final String LOGGER_NAME_ROOT = "root";
 
@@ -57,20 +59,13 @@ public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint {
 
     private static final String FILE_PATTERN_PARAM = "filePattern";
 
-    private final Environment environment;
-
-    private final ResourceLoader resourceLoader;
-
     private LoggerContext loggerContext;
 
     private Resource logConfigurationFile;
 
     public LoggingConfigurationEndpoint(final CasConfigurationProperties casProperties,
-                                        final ResourceLoader resourceLoader,
-                                        final Environment environment) {
-        super(casProperties);
-        this.environment = environment;
-        this.resourceLoader = resourceLoader;
+                                        final ConfigurableApplicationContext applicationContext) {
+        super(casProperties, applicationContext);
     }
 
     /**
@@ -78,11 +73,11 @@ public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint {
      *
      * @return the map
      */
-    @ReadOperation
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get logging configuration report")
     public Map<String, Object> configuration() {
         initializeIfNecessary();
-        
+
         val configuredLoggers = new HashSet<>();
         getLoggerConfigurations().forEach(config -> {
             val loggerMap = new HashMap<String, Object>();
@@ -135,73 +130,73 @@ public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint {
     }
 
     /**
-     * Looks up the logger in the logger factory,
-     * and attempts to find the real logger instance
-     * based on the underlying logging framework
-     * and retrieve the logger object. Then, updates the level.
-     * This functionality at this point is heavily dependant
-     * on the log4j API.
+     * Gets log entries.
      *
-     * @param loggerName  the logger name
-     * @param loggerLevel the logger level
-     * @param additive    the additive nature of the logger
+     * @param count the count
+     * @param level the level
+     * @return the log entries
      */
-    @WriteOperation
-    @Operation(summary = "Update logger level for a logger name", parameters = {
-        @Parameter(name = "loggerName", required = true, description = "The logger name"),
-        @Parameter(name = "loggerLevel", required = true, description = "The logger level"),
-        @Parameter(name = "additive", schema = @Schema(type = "boolean"), description = "Whether logger is additive")
-    })
-    public void updateLoggerLevel(@Selector final String loggerName,
-                                  final String loggerLevel,
-                                  final boolean additive) {
+    @GetMapping(path = "/stream", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Fetch the last X number of log entries from all CAS appenders configured to capture logs",
+        parameters = {
+            @Parameter(name = "count", in = ParameterIn.QUERY, description = "The number of log entries to fetch", required = false),
+            @Parameter(name = "level", in = ParameterIn.QUERY, description = "The log level to filter statements", required = false)
+        })
+    public List getLogEntries(@RequestParam(name = "count", required = false, defaultValue = "50") final int count,
+                              @RequestParam(name = "level", required = false) final String level,
+                              @RequestParam(name = "name", required = false) final String name) {
         initializeIfNecessary();
-
-        val loggerConfigs = getLoggerConfigurations();
-        loggerConfigs.stream()
-            .filter(cfg -> cfg.getName().equals(loggerName))
-            .forEachOrdered(cfg -> {
-                cfg.setLevel(Level.getLevel(loggerLevel));
-                cfg.setAdditive(additive);
-            });
-        this.loggerContext.updateLoggers();
+        val configuration = loggerContext.getConfiguration();
+        return configuration.getAppenders()
+            .values()
+            .stream()
+            .filter(CasAppender.class::isInstance)
+            .map(CasAppender.class::cast)
+            .filter(appender -> StringUtils.isBlank(name) || appender.getName().equalsIgnoreCase(name))
+            .map(appender -> {
+                val currentEvents = appender.getLogEvents()
+                    .stream()
+                    .filter(logEvent -> StringUtils.isBlank(level) || logEvent.getLevel().name().equalsIgnoreCase(level))
+                    .map(logEvent -> {
+                        val timestamp = DateTimeUtils.zonedDateTimeOf(logEvent.getInstant().getEpochMillisecond());
+                        return new LogEvent(logEvent.getMessage().getFormattedMessage(), timestamp, logEvent.getLevel().name());
+                    })
+                    .toList();
+                val start = Math.max(0, currentEvents.size() - count);
+                return currentEvents.subList(start, currentEvents.size());
+            })
+            .filter(events -> !events.isEmpty())
+            .flatMap(List::stream)
+            .toList();
     }
-
+    
     private Map<String, Logger> getActiveLoggersInFactory() {
         val factory = (Log4jLoggerFactory) getCasLoggerFactoryInstance();
         if (factory != null) {
             return factory.getLoggersInContext(this.loggerContext);
         }
-        return new HashMap<>(0);
+        return new HashMap<>();
     }
 
-    /**
-     * Gets logger configurations.
-     *
-     * @return the logger configurations
-     */
     private Set<LoggerConfig> getLoggerConfigurations() {
         val configuration = this.loggerContext.getConfiguration();
         return new HashSet<>(configuration.getLoggers().values());
     }
 
-
     private static ILoggerFactory getCasLoggerFactoryInstance() {
         return LoggerFactory.getILoggerFactory();
     }
 
-    private static Optional<Pair<Resource, LoggerContext>> buildLoggerContext(final Environment environment,
-                                                                              final ResourceLoader resourceLoader) {
-        val logFile = environment.getProperty("logging.config", "classpath:/log4j2.xml");
+    private Optional<Pair<Resource, LoggerContext>> buildLoggerContext() {
+        val logFile = applicationContext.getEnvironment().getProperty("logging.config", "classpath:/log4j2.xml");
         LOGGER.info("Located logging configuration reference in the environment as [{}]", logFile);
-
-        if (ResourceUtils.doesResourceExist(logFile, resourceLoader)) {
-            val logConfigurationFile = resourceLoader.getResource(logFile);
-            LOGGER.trace("Loaded logging configuration resource [{}]. Initializing logger context...", logConfigurationFile);
-            val loggerContext = FunctionUtils.doUnchecked(() -> Configurator.initialize("CAS", null, logConfigurationFile.getURI()));
+        if (ResourceUtils.doesResourceExist(logFile, applicationContext)) {
+            val configFile = applicationContext.getResource(logFile);
+            LOGGER.trace("Loaded logging configuration resource [{}]. Initializing logger context...", configFile);
+            val context = FunctionUtils.doUnchecked(() -> Configurator.initialize("CAS", null, configFile.getURI()));
             LOGGER.trace("Installing log configuration listener to detect changes and update");
-            loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
-            return Optional.of(Pair.of(logConfigurationFile, loggerContext));
+            context.getConfiguration().addListener(reconfigurable -> context.updateLoggers(reconfigurable.reconfigure()));
+            return Optional.of(Pair.of(configFile, context));
         }
         LOGGER.warn("Logging configuration cannot be found in the environment settings");
         return Optional.empty();
@@ -214,11 +209,14 @@ public class LoggingConfigurationEndpoint extends BaseCasActuatorEndpoint {
      */
     private void initializeIfNecessary() {
         if (loggerContext == null) {
-            val pair = buildLoggerContext(environment, resourceLoader);
+            val pair = buildLoggerContext();
             pair.ifPresent(it -> {
                 this.logConfigurationFile = it.getKey();
                 this.loggerContext = it.getValue();
             });
         }
+    }
+
+    public record LogEvent(String message, ZonedDateTime timestamp, String level) {
     }
 }

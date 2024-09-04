@@ -16,11 +16,13 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -38,6 +40,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -61,11 +64,12 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActu
 
     private final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean;
 
-    public SamlRegisteredServiceCachedMetadataEndpoint(final CasConfigurationProperties casProperties,
-                                                       final ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> cachingMetadataResolver,
-                                                       final ObjectProvider<ServicesManager> servicesManager,
-                                                       final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
-                                                       final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean) {
+    public SamlRegisteredServiceCachedMetadataEndpoint(
+        final CasConfigurationProperties casProperties,
+        final ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> cachingMetadataResolver,
+        final ObjectProvider<ServicesManager> servicesManager,
+        final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer,
+        final ObjectProvider<OpenSamlConfigBean> openSamlConfigBean) {
         super(casProperties, openSamlConfigBean.getObject().getApplicationContext());
         this.cachingMetadataResolver = cachingMetadataResolver;
         this.servicesManager = servicesManager;
@@ -131,43 +135,67 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActu
     @Operation(summary = "Get SAML2 cached metadata for a SAML2 registered service. The service id could be the registered service numeric identifier, its name or actual service id. "
         + "In case the service definition points to an aggregate, you may also specify an entity id to locate the service provider within that aggregate",
         parameters = {
-            @Parameter(name = "serviceId", required = true, description = "The service id"),
-            @Parameter(name = "entityId", description = "The entity id")
+            @Parameter(in = ParameterIn.QUERY, name = "serviceId", required = true, description = "The service id"),
+            @Parameter(in = ParameterIn.QUERY, name = "entityId", description = "The entity id"),
+            @Parameter(in = ParameterIn.QUERY, name = "includeMetadata", description = "Whether to include the XML metadata in the response")
         })
     public ResponseEntity<? extends Map> getCachedMetadataObject(
         @RequestParam final String serviceId,
+        @RequestParam(required = false, defaultValue = "true") final boolean includeMetadata,
         @Nullable
         @RequestParam(required = false) final String entityId,
         @RequestParam(required = false, defaultValue = "true") final boolean force) {
 
-        return FunctionUtils.doAndHandle(() -> {
-            val registeredService = findRegisteredService(serviceId);
-            val criteriaSet = new CriteriaSet();
-            if (StringUtils.isNotBlank(entityId)) {
-                criteriaSet.add(new EntityIdCriterion(entityId));
-                criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-            } else {
-                criteriaSet.add(new EvaluableEntityRoleEntityDescriptorCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
-                criteriaSet.add(new SatisfyAnyCriterion(true));
-            }
+        val responseBody = new LinkedHashMap<String, Object>();
+        val stopWatch = new StopWatch();
+        stopWatch.start();
+        try {
+            return FunctionUtils.doAndHandle(() -> {
+                val registeredService = findRegisteredService(serviceId);
+                stopWatch.split();
+                responseBody.put("registeredServiceSplitTime", stopWatch.formatSplitTime());
 
-            val metadataResolverResult = force
-                ? Optional.of(cachingMetadataResolver.getObject().resolve(registeredService, criteriaSet))
-                : cachingMetadataResolver.getObject().getIfPresent(registeredService, criteriaSet);
-            return metadataResolverResult.map(Unchecked.function(result -> {
-                val iteration = result.getMetadataResolver().resolve(criteriaSet).spliterator();
-                val body = StreamSupport.stream(iteration, false)
-                    .filter(TimeBoundSAMLObject::isValid)
-                    .map(entity -> {
-                        val details = CollectionUtils.wrap(
-                            "cachedInstant", result.getCachedInstant(),
-                            "metadata", SamlUtils.transformSamlObject(openSamlConfigBean.getObject(), entity).toString());
-                        return Pair.of(entity.getEntityID(), details);
-                    })
-                    .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
-                return ResponseEntity.ok(body);
-            })).orElseThrow(() -> new SamlException("Unable to locate and resolve metadata for service " + registeredService.getName()));
-        }, e -> ResponseEntity.badRequest().body(Map.of("error", e.getMessage()))).get();
+                val criteriaSet = new CriteriaSet();
+                if (StringUtils.isNotBlank(entityId)) {
+                    criteriaSet.add(new EntityIdCriterion(entityId));
+                    criteriaSet.add(new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+                } else {
+                    criteriaSet.add(new EvaluableEntityRoleEntityDescriptorCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME));
+                    criteriaSet.add(new SatisfyAnyCriterion(true));
+                }
+                val metadataResolverResult = force
+                    ? Optional.of(cachingMetadataResolver.getObject().resolve(registeredService, criteriaSet))
+                    : cachingMetadataResolver.getObject().getIfPresent(registeredService, criteriaSet);
+                stopWatch.split();
+                responseBody.put("metadataResolverSplitTime", stopWatch.formatSplitTime());
+
+                val resultsMap = metadataResolverResult
+                    .map(Unchecked.function(result -> {
+                        val iteration = result.getMetadataResolver().resolve(criteriaSet).spliterator();
+                        return StreamSupport.stream(iteration, false)
+                            .filter(TimeBoundSAMLObject::isValid)
+                            .map(entity -> {
+                                val details = CollectionUtils.wrap("cachedInstant", result.getCachedInstant());
+                                if (includeMetadata) {
+                                    details.put("metadata", SamlUtils.transformSamlObject(openSamlConfigBean.getObject(), entity).toString());
+                                }
+                                return Pair.of(entity.getEntityID(), details);
+                            })
+                            .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+                    }))
+                    .orElseThrow(() -> new SamlException("""
+                    Unable to locate and resolve metadata for service %s. \
+                    This can happen when the metadata entry is not found in the cache or \
+                    the SAML2 service provider is unable to produce valid metadata via %s.
+                    """.formatted(registeredService.getName(), registeredService.getMetadataLocation())));
+                stopWatch.split();
+                responseBody.put("metadataLoadSplitTime", stopWatch.formatSplitTime());
+                responseBody.putAll(resultsMap);
+                return ResponseEntity.ok(responseBody);
+            }, e -> ResponseEntity.badRequest().body(Map.of("error", e.getMessage()))).get();
+        } finally {
+            stopWatch.stop();
+        }
     }
 
     protected SamlRegisteredService findRegisteredService(final String serviceId) throws Throwable {
@@ -187,7 +215,7 @@ public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActu
         val ctx = AuditableContext.builder()
             .registeredService(registeredService)
             .build();
-        val result = this.registeredServiceAccessStrategyEnforcer.getObject().execute(ctx);
+        val result = registeredServiceAccessStrategyEnforcer.getObject().execute(ctx);
         result.throwExceptionIfNeeded();
         LOGGER.debug("Located registered service definition [{}]", registeredService);
         return registeredService;

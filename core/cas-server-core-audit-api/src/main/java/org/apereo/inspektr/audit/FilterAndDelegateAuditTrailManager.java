@@ -9,7 +9,6 @@ import org.springframework.context.ApplicationEventPublisherAware;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -78,12 +77,12 @@ public class FilterAndDelegateAuditTrailManager implements AuditTrailManager, Ap
     }
 
     @Override
-    public Set<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> params) {
+    public List<? extends AuditActionContext> getAuditRecords(final Map<WhereClauseFields, Object> params) {
         return auditTrailManagers
             .stream()
             .map(mgr -> mgr.getAuditRecords(params))
-            .flatMap(Set::stream)
-            .collect(Collectors.toSet());
+            .flatMap(List::stream)
+            .collect(Collectors.toList());
     }
 
     @Override

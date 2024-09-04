@@ -15,4 +15,5 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.Metrics)
 @Configuration(value = "CasMetricsRepositoryConfiguration", proxyBeanMethods = false)
-public class CasMetricsRepositoryConfiguration {}
+class CasMetricsRepositoryConfiguration {
+}

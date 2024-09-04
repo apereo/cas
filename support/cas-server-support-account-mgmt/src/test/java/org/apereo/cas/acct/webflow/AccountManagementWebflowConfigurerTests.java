@@ -2,6 +2,7 @@ package org.apereo.cas.acct.webflow;
 
 import org.apereo.cas.acct.AccountRegistrationUtils;
 import org.apereo.cas.config.CasAccountManagementWebflowAutoConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.BaseWebflowConfigurerTests;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -22,7 +23,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@ImportAutoConfiguration(CasAccountManagementWebflowAutoConfiguration.class)
+@ImportAutoConfiguration({
+    CasThymeleafAutoConfiguration.class,
+    CasAccountManagementWebflowAutoConfiguration.class
+})
 @Tag("WebflowConfig")
 class AccountManagementWebflowConfigurerTests extends BaseWebflowConfigurerTests {
     @Test

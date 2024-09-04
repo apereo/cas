@@ -48,7 +48,7 @@ public class CasSupportRedisAuditAutoConfiguration {
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
                 val redis = casProperties.getAudit().getRedis();
-                return new RedisAuditTrailManager(auditRedisTemplate, redis.isAsynchronous(), redis.getScanCount());
+                return new RedisAuditTrailManager(auditRedisTemplate, redis.isAsynchronous());
             })
             .otherwiseProxy()
             .get();

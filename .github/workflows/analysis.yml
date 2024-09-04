@@ -3,6 +3,7 @@ name: Code Analysis
 env:
   JAVA_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
   GRADLE_OPTS: "-Xms512m -Xmx6048m -Xss128m -XX:ReservedCodeCacheSize=512m -server"
+  GRADLE_BUILD_OPTIONS: "--no-daemon -x check -x test -x javadoc --configure-on-demand --max-workers=8 --no-configuration-cache -DskipAot=true"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #  GRADLE_BUILDCACHE_USER: ci
 #  GRADLE_BUILDCACHE_PSW: ${{ secrets.GRADLE_BUILDCACHE_PSW }}
@@ -43,7 +44,8 @@ jobs:
     needs: [trigger-ci]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -65,9 +67,10 @@ jobs:
         category:
           - checkstyleMain
           - checkstyleTest
-    name: ${{ matrix.category }}
+    name: Code Style ${{ matrix.category }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -79,7 +82,39 @@ jobs:
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Run Analysis
         run: ./gradlew --build-cache --no-watch-fs --configure-on-demand --parallel --no-daemon ${{ matrix.category }} -x test -x javadoc -DskipNestedConfigMetadataGen=true -Dverbose=true --max-workers=8
-        
+
+##########################################################################
+  codeql-analysis:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    needs: [ initialize ]
+    continue-on-error: true
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JDK_CURRENT }}
+          distribution: ${{ env.JDK_DISTRIBUTION }}
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          develocity-access-key: ${{ env.DEVELOCITY_ACCESS_KEY }}
+          develocity-token-expiry: 4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java
+          queries: security-and-quality
+      - name: Build
+        run: ./gradlew build ${{ env.GRADLE_BUILD_OPTIONS }}
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
 ##########################################################################
 
   validate-codebase:
@@ -112,7 +147,8 @@ jobs:
           - CheckNativeRuntimeHints
     name: ${{ matrix.check }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:

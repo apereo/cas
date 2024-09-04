@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration;
 
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @since 6.0
  */
+@SpringBootTestAutoConfigurations
 @SpringBootTest(classes = AopAutoConfiguration.class)
 @Tag("CasConfiguration")
 @ExtendWith(CasTestExtension.class)

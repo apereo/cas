@@ -11,7 +11,6 @@ import org.apereo.cas.interrupt.InterruptInquiryExecutionPlanConfigurer;
 import org.apereo.cas.interrupt.InterruptResponse;
 import org.apereo.cas.interrupt.InterruptTrackingEngine;
 import org.apereo.cas.interrupt.webflow.InterruptUtils;
-import org.apereo.cas.services.BaseWebBasedRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -71,7 +70,7 @@ class InquireInterruptActionTests {
             val context = MockRequestContext.create(applicationContext);
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
 
-            val registeredService = (BaseWebBasedRegisteredService) RegisteredServiceTestUtils.getRegisteredService();
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService();
             val webflowInterruptPolicy = new DefaultRegisteredServiceWebflowInterruptPolicy()
                 .setAttributeName("mem...of").setAttributeValue("^st[a-z]ff$");
             registeredService.setWebflowInterruptPolicy(webflowInterruptPolicy);
@@ -90,7 +89,7 @@ class InquireInterruptActionTests {
             val context = MockRequestContext.create(applicationContext);
 
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
-            val registeredService = (BaseWebBasedRegisteredService) RegisteredServiceTestUtils.getRegisteredService();
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService();
             registeredService.setWebflowInterruptPolicy(new DefaultRegisteredServiceWebflowInterruptPolicy().setForceExecution(TriStateBoolean.TRUE));
             WebUtils.putRegisteredService(context, registeredService);
 
@@ -114,7 +113,7 @@ class InquireInterruptActionTests {
             val context = MockRequestContext.create(applicationContext);
             val authentication = CoreAuthenticationTestUtils.getAuthentication();
             WebUtils.putAuthentication(authentication, context);
-            val registeredService = (BaseWebBasedRegisteredService) RegisteredServiceTestUtils.getRegisteredService();
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService();
             WebUtils.putRegisteredService(context, registeredService);
             WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
             WebUtils.putCredential(context, CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
@@ -139,7 +138,7 @@ class InquireInterruptActionTests {
             val context = MockRequestContext.create(applicationContext);
 
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("interrupted"), context);
-            val registeredService = (BaseWebBasedRegisteredService) RegisteredServiceTestUtils.getRegisteredService();
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService();
             registeredService.setWebflowInterruptPolicy(new DefaultRegisteredServiceWebflowInterruptPolicy().setGroovyScript(groovyScript));
             WebUtils.putRegisteredService(context, registeredService);
             WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
@@ -153,7 +152,7 @@ class InquireInterruptActionTests {
         void verifyInterruptForExternalGroovyScript() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
             WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication("interrupted"), context);
-            val registeredService = (BaseWebBasedRegisteredService) RegisteredServiceTestUtils.getRegisteredService();
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService();
             registeredService.setWebflowInterruptPolicy(new DefaultRegisteredServiceWebflowInterruptPolicy()
                 .setGroovyScript("classpath:/InterruptGroovyTrigger.groovy"));
             WebUtils.putRegisteredService(context, registeredService);

@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
@@ -17,7 +18,6 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import javax.net.ssl.HttpsURLConnection;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -33,7 +33,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
 class DefaultCasSSLContextTests {
 
-    @ImportAutoConfiguration({RefreshAutoConfiguration.class, CasCoreWebAutoConfiguration.class})
+    @SpringBootTestAutoConfigurations
+    @ImportAutoConfiguration(CasCoreWebAutoConfiguration.class)
     @SpringBootConfiguration(proxyBeanMethods = false)
     @EnableConfigurationProperties({CasConfigurationProperties.class, WebProperties.class})
     public static class SharedTestConfiguration {

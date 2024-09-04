@@ -37,7 +37,7 @@ public class MultifactorAuthenticationContingencyPlan extends BaseAuthentication
                                                                     final HttpServletRequest request) {
         var id = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getMfaProvider();
         if (StringUtils.isBlank(id)) {
-
+            LOGGER.debug("No explicit multifactor authentication provider is defined to handle risk-based authentication.");
             val providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
             if (providerMap.isEmpty()) {
                 LOGGER.warn("No multifactor authentication providers are available in the application context. Authentication is blocked");
@@ -52,11 +52,12 @@ public class MultifactorAuthenticationContingencyPlan extends BaseAuthentication
             }
         }
 
+        LOGGER.debug("Attempting to handle risk-based authentication via multifactor authentication provider [{}]", id);
         val attributeName = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getRiskyAuthenticationAttribute();
         val newAuthn = DefaultAuthenticationBuilder.newInstance(authentication)
             .addAttribute(attributeName, Boolean.TRUE)
             .build();
-        LOGGER.debug("Updated authentication to remember risk-based authn via [{}]", attributeName);
+        LOGGER.debug("Updated authentication to remember risk-based authentication via [{}]", attributeName);
         authentication.updateAttributes(newAuthn);
         return new AuthenticationRiskContingencyResponse(new Event(this, id));
     }

@@ -87,7 +87,7 @@ class CasPersonDirectoryLdapConfiguration {
                                 LOGGER.debug("Configured result attribute mapping for [{}] to be [{}]", ldap.getLdapUrl(), ldap.getAttributes());
                                 val resultingAttributes = CollectionUtils.fromCommaDelimitedValues(ldap.getAttributes());
                                 dao.setResultAttributeMapping(resultingAttributes);
-                                val attributes = (String[]) ldap.getAttributes().keySet().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
+                                val attributes = ldap.getAttributes().keySet().toArray(ArrayUtils.EMPTY_STRING_ARRAY);
                                 constraints.setReturningAttributes(attributes);
                             } else {
                                 LOGGER.debug("Retrieving all attributes as no explicit attribute mappings are defined for [{}]", ldap.getLdapUrl());
