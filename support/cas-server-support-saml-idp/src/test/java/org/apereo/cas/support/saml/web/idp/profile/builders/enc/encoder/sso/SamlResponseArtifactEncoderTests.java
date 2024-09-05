@@ -26,7 +26,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.3.0
  */
 @Tag("SAML2")
-@TestPropertySource(properties = "cas.tgc.crypto.enabled=false")
+@TestPropertySource(properties = {
+    "cas.authn.saml-idp.metadata.file-system.location=${#systemProperties['java.io.tmpdir']}/saml22182",
+    "cas.tgc.crypto.enabled=false"
+})
 class SamlResponseArtifactEncoderTests extends BaseSamlIdPConfigurationTests {
     @Test
     void verifyOperation() throws Throwable {

@@ -58,7 +58,8 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
 
     @Override
     protected String writeMetadata(final String metadata, final Optional<SamlRegisteredService> registeredService) throws Throwable {
-        val metadataFile = getConfigurationContext().getSamlIdPMetadataLocator().resolveMetadata(registeredService).getFile();
+        val metadataResource = getConfigurationContext().getSamlIdPMetadataLocator().resolveMetadata(registeredService);
+        val metadataFile = metadataResource.getFile();
         LOGGER.info("Writing SAML2 metadata to [{}]", metadataFile);
 
         val mdProps = getConfigurationContext().getCasProperties().getAuthn().getSamlIdp().getMetadata();
