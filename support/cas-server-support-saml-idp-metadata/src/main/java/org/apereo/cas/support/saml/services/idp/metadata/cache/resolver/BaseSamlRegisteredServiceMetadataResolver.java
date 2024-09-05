@@ -204,10 +204,16 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
         buildSignatureValidationFilterIfNeeded(service, metadataFilterList);
         buildEntityRoleFilterIfNeeded(service, metadataFilterList);
         buildPredicateFilterIfNeeded(service, metadataFilterList);
+        addMetadataFiltersFromApplicationContext(metadataFilterList);
 
         if (!metadataFilterList.isEmpty()) {
             addMetadataFiltersToMetadataResolver(metadataProvider, metadataFilterList);
         }
+    }
+
+    protected void addMetadataFiltersFromApplicationContext(final List<MetadataFilter> metadataFilterList) {
+        val filtersFromContext = configBean.getApplicationContext().getBeansOfType(MetadataFilter.class).values();
+        metadataFilterList.addAll(filtersFromContext);
     }
 
     protected void addMetadataFiltersToMetadataResolver(final AbstractMetadataResolver metadataProvider,
