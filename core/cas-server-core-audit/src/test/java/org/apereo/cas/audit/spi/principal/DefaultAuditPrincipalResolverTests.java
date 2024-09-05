@@ -101,11 +101,19 @@ class DefaultAuditPrincipalResolverTests {
         val assertion = mock(Assertion.class);
         when(assertion.getPrimaryAuthentication()).thenReturn(authentication);
 
+        val auditableEntity = new AuditableEntity() {
+            @Override
+            public String getAuditablePrincipal() {
+                return UUID.randomUUID().toString();
+            }
+        };
+
         return Stream.of(
             arguments(ticketGrantingTicket),
             arguments(auditableContext),
             arguments(ticketGrantingTicket),
-            arguments(assertion)
+            arguments(assertion),
+            arguments(auditableEntity)
         );
     }
 

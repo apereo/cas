@@ -77,6 +77,7 @@ public class DefaultAuditPrincipalResolver implements PrincipalResolver {
                 case final AuthenticationAwareTicket ticket -> getPrincipalFromTicket(auditTarget, returnValue, exception, ticket);
                 case final AuditableContext auditableContext -> getPrincipalFromAuditContext(auditTarget, returnValue, exception, auditableContext);
                 case final Assertion assertion -> getPrincipalFromAssertion(auditTarget, returnValue, exception, assertion);
+                case final AuditableEntity auditableEntity -> getPrincipalFromAuditableEntity(auditTarget, returnValue, exception, auditableEntity);
                 default -> UNKNOWN_USER;
             };
         }
