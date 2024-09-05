@@ -2606,6 +2606,14 @@ ext.libraries = [
                     exclude(group: "org.ow2.asm", module: "asm")
                     exclude(group: "org.apache.tomcat.embed", module: "tomcat-embed-el")
                 },
+                dependencies.create("org.eclipse.jetty.http2:jetty-http2-server:$jettyVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                },
+                dependencies.create("org.eclipse.jetty:jetty-alpn-java-server:$jettyVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jcl-over-slf4j")
+                },
                 dependencies.create("jakarta.annotation:jakarta.annotation-api:$jakartaAnnotationApiVersion")
         ],
         springbootundertow         : [
