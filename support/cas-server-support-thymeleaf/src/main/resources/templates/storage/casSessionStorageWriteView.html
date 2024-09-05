@@ -30,15 +30,15 @@
         <script th:inline="javascript">
             document.addEventListener('DOMContentLoaded', () => {
                 /*<![CDATA[*/
-
-                const browserStorage = /*[[${browserStorage}]]*/ ;
-                let payload;
-                if (browserStorage.storageType === 'SESSION') {
-                    payload = writeToSessionStorage(browserStorage);
-                } else {
-                    payload = writeToLocalStorage(browserStorage);
+                let sessionStorageContext = /*[[${sessionStorageContext}]]*/;
+                if (sessionStorageContext === undefined || sessionStorageContext === null || sessionStorageContext === "") {
+                    sessionStorageContext = "sessionStorage";
                 }
-                let url = browserStorage.destinationUrl;
+
+                let payload = /*[[${sessionStorage.payload}]]*/;
+                writeToSessionStorage(payload, sessionStorageContext);
+                let url = /*[[${sessionStorage.destinationUrl}]]*/;
+
                 if (url !== undefined && url !== "" && url !== null) {
                     window.location.href = url;
                 } else {

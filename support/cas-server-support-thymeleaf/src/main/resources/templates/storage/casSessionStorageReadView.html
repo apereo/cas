@@ -32,16 +32,13 @@
         <script th:inline="javascript">
             document.addEventListener('DOMContentLoaded', () => {
                 /*<![CDATA[*/
-                const browserStorage = /*[[${browserStorage}]]*/ ;
-                let payload;
-                if (browserStorage.storageType === 'SESSION') {
-                    payload = readFromSessionStorage(browserStorage);
-                } else {
-                    payload = readFromLocalStorage(browserStorage);
+                let sessionStorageContext = /*[[${sessionStorageContext}]]*/;
+                if (sessionStorageContext === undefined || sessionStorageContext === null || sessionStorageContext === "") {
+                    sessionStorageContext = "sessionStorage";
                 }
-                if (Object.keys(payload).length > 0) {
-                    document.getElementById("browserStorage").value = JSON.stringify(payload);
-                }
+
+                const payload = readFromSessionStorage(sessionStorageContext);
+                document.getElementById("sessionStorage").value = payload;
                 document.getElementById("fm1").submit();
                 /*]]>*/
             });
