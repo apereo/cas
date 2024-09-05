@@ -10,7 +10,9 @@
 
     "--cas.authn.throttle.bucket4j.bandwidth[0].capacity=1",
     "--cas.authn.throttle.bucket4j.bandwidth[0].duration=PT5S",
-    "--cas.authn.throttle.bucket4j.blocking=true"
+    "--cas.authn.throttle.bucket4j.blocking=true",
+
+    "--server.http2.enabled=false"
   ]
 }
 
