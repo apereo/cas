@@ -3,18 +3,12 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.config.CasCoreSamlAutoConfiguration;
 import org.apereo.cas.config.CasSamlIdPAutoConfiguration;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.idp.metadata.locator.FileSystemSamlIdPMetadataLocator;
-import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
-import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.test.CasTestExtension;
-import org.apereo.cas.util.crypto.CipherExecutor;
-import com.github.benmanes.caffeine.cache.Cache;
 import lombok.val;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -24,11 +18,6 @@ import org.pac4j.core.context.session.SessionStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.core.io.FileSystemResource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.UUID;
@@ -40,7 +29,6 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Import(BaseSamlIdPWebflowTests.SamlIdPMetadataTestConfiguration.class)
 @ImportAutoConfiguration({
     CasCoreSamlAutoConfiguration.class,
     CasSamlIdPAutoConfiguration.class
@@ -81,22 +69,6 @@ public abstract class BaseSamlIdPWebflowTests extends BaseWebflowConfigurerTests
         when(issuer.getValue()).thenReturn(service);
         when(authnRequest.getIssuer()).thenReturn(issuer);
         return authnRequest;
-    }
-
-    @TestConfiguration(value = "SamlIdPMetadataTestConfiguration", proxyBeanMethods = false)
-    static class SamlIdPMetadataTestConfiguration {
-        @Autowired
-        @Qualifier("samlIdPMetadataCache")
-        private Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache;
-
-        @Bean
-        public SamlIdPMetadataLocator samlIdPMetadataLocator(
-            final ConfigurableApplicationContext applicationContext) throws Exception {
-            return new FileSystemSamlIdPMetadataLocator(
-                CipherExecutor.noOpOfStringToString(),
-                new FileSystemResource(FileUtils.getTempDirectory()),
-                samlIdPMetadataCache, applicationContext);
-        }
     }
 }
 
