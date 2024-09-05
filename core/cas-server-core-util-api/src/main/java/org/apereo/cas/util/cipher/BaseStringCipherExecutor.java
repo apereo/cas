@@ -16,6 +16,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.jose4j.json.JsonUtil;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.jwk.PublicJsonWebKey;
@@ -23,6 +24,7 @@ import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.LinkedHashMap;
+import java.util.concurrent.Executors;
 
 /**
  * The {@link BaseStringCipherExecutor} is the default
@@ -131,16 +133,24 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
     protected void initialize() {
         if (!initialized) {
-            if (this.encryptionEnabled) {
-                configureEncryptionParameters(secretKeyEncryption, contentEncryptionAlgorithmIdentifier);
-            } else {
-                LOGGER.debug("Encryption is not enabled for [{}]. The cipher [{}] will only attempt to produce signed objects",
-                    getName(), getClass().getSimpleName());
-            }
-            if (this.signingEnabled) {
-                configureSigningParameters(secretKeySigning);
-            } else {
-                LOGGER.info("Signing is not enabled for [{}]. The cipher [{}] will attempt to produce plain objects", getName(), getClass().getSimpleName());
+            try (val executor = Executors.newVirtualThreadPerTaskExecutor()) {
+                val signingCertTask = Unchecked.runnable(() -> {
+                    if (this.signingEnabled) {
+                        configureSigningParameters(secretKeySigning);
+                    } else {
+                        LOGGER.info("Signing is not enabled for [{}]. The cipher [{}] will attempt to produce plain objects", getName(), getClass().getSimpleName());
+                    }
+                });
+                val encryptionCertTask = Unchecked.runnable(() -> {
+                    if (this.encryptionEnabled) {
+                        configureEncryptionParameters(secretKeyEncryption, contentEncryptionAlgorithmIdentifier);
+                    } else {
+                        LOGGER.debug("Encryption is not enabled for [{}]. The cipher [{}] will only attempt to produce signed objects",
+                            getName(), getClass().getSimpleName());
+                    }
+                });
+                executor.execute(signingCertTask);
+                executor.execute(encryptionCertTask);
             }
             this.initialized = true;
         }
