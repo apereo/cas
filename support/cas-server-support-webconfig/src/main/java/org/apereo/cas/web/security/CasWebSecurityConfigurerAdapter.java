@@ -19,6 +19,7 @@ import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointPr
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
@@ -32,7 +33,10 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.util.ResourceUtils;
 import jakarta.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,6 +76,8 @@ public class CasWebSecurityConfigurerAdapter {
     private final List<CasWebSecurityConfigurer> webSecurityConfigurers;
 
     private final SecurityContextRepository securityContextRepository;
+
+    private final WebProperties webProperties;
 
     private static List<String> prepareProtocolEndpoint(final String endpoint) {
         val baseEndpoint = StringUtils.prependIfMissing(endpoint, "/");
@@ -158,6 +164,7 @@ public class CasWebSecurityConfigurerAdapter {
         patterns.add("/css/**");
         patterns.add("/images/**");
         patterns.add("/static/**");
+        patterns.add("/public/**");
         patterns.add("/error");
         patterns.add("/favicon.ico");
         patterns.add(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN);
@@ -192,6 +199,17 @@ public class CasWebSecurityConfigurerAdapter {
             customizer.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll();
             customizer.requestMatchers(new AntPathRequestMatcher("/resources/**")).permitAll();
             customizer.requestMatchers(new AntPathRequestMatcher("/static/**")).permitAll();
+            customizer.requestMatchers(new AntPathRequestMatcher("/public/**")).permitAll();
+            Arrays.stream(webProperties.getResources().getStaticLocations())
+                .forEach(location -> {
+                    if (location.startsWith(ResourceUtils.FILE_URL_PREFIX)) {
+                        val file = new File(StringUtils.remove(location, ResourceUtils.FILE_URL_PREFIX));
+                        if (file.exists() && file.isDirectory()) {
+                            val directories = Arrays.stream(file.listFiles(File::isDirectory)).toList();
+                            directories.forEach(directory -> customizer.requestMatchers(new AntPathRequestMatcher('/' + directory.getName() + "/**")).permitAll());
+                        }
+                    }
+                });
         });
     }
 

@@ -2,6 +2,9 @@ package org.apereo.cas.web.security;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
+import lombok.val;
+import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -19,6 +22,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.WebApplicationContext;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -40,6 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
         "spring.security.user.name=casuser",
         "spring.security.user.password=Mellon",
+        "spring.web.resources.static-locations=file:/tmp",
 
         "management.endpoints.enabled-by-default=true",
         "management.endpoints.web.exposure.include=*",
@@ -54,7 +61,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "cas.monitor.endpoints.endpoint.health.required-ip-addresses[1]=10.0.0.0/24",
         "cas.monitor.endpoints.endpoint.health.required-ip-addresses[2]=172.16.0.0/16",
         "cas.monitor.endpoints.endpoint.health.required-ip-addresses[3]=200\\\\.0\\\\.0\\\\....",
-
         "cas.monitor.endpoints.form-login-enabled=true"
     }, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -65,6 +71,13 @@ class CasWebSecurityConfigurerAdapterWebTests {
     private WebApplicationContext webApplicationContext;
 
     private MockMvc mvc;
+
+    @BeforeAll
+    public static void beforeAll() throws Exception {
+        val parent = new File("/tmp/cas-static-content");
+        assertTrue(parent.mkdir());
+        FileUtils.writeStringToFile(new File(parent, "data.txt"), "Hello, World!", StandardCharsets.UTF_8);
+    }
 
     @BeforeEach
     public void setup() {
@@ -111,6 +124,11 @@ class CasWebSecurityConfigurerAdapterWebTests {
 
         mvc.perform(get("/cas/actuator/health")).andExpect(status().isUnauthorized());
         mvc.perform(get("/cas/custom")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void verifyStaticResources() throws Throwable {
+        mvc.perform(get("/cas/hello/data.txt")).andExpect(status().isOk());
     }
 
     @TestConfiguration(value = "WebTestConfiguration", proxyBeanMethods = false)

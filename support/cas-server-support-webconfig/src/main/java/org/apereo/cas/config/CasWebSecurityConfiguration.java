@@ -22,6 +22,7 @@ import org.springframework.boot.actuate.endpoint.web.PathMappedEndpoints;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -153,9 +154,11 @@ class CasWebSecurityConfiguration {
             final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
             final List<CasWebSecurityConfigurer> configurersList,
             final WebEndpointProperties webEndpointProperties,
-            final CasConfigurationProperties casProperties) {
+            final CasConfigurationProperties casProperties,
+            final WebProperties webProperties) {
             val adapter = new CasWebSecurityConfigurerAdapter(casProperties,
-                webEndpointProperties, pathMappedEndpoints, configurersList, securityContextRepository);
+                webEndpointProperties, pathMappedEndpoints, configurersList,
+                securityContextRepository, webProperties);
             return adapter::configureWebSecurity;
         }
 
@@ -169,9 +172,11 @@ class CasWebSecurityConfiguration {
             final List<CasWebSecurityConfigurer> configurersList,
             final WebEndpointProperties webEndpointProperties,
             final SecurityProperties securityProperties,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties,
+            final WebProperties webProperties) throws Exception {
             val adapter = new CasWebSecurityConfigurerAdapter(casProperties,
-                webEndpointProperties, pathMappedEndpoints, configurersList, securityContextRepository);
+                webEndpointProperties, pathMappedEndpoints, configurersList,
+                securityContextRepository, webProperties);
             return adapter.configureHttpSecurity(http).build();
         }
     }
