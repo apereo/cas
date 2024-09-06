@@ -344,20 +344,12 @@ if [[ ${buildDocs} == "true" ]]; then
   echo -n "Starting at " && date
   jekyll --version
 
-  if [[ "${CI}" == "true" ]]; then
-    while sleep 30; do echo -e "\n=====[ Build is still running: $(date +'%Y-%m-%d %H:%M:%S') ]====="; done &
-    sleeppid=$!
-  fi
-
   if [[ ${serve} == "true" ]]; then
     bundle exec jekyll serve --profile --incremental --trace
   else
     bundle exec jekyll build --profile --incremental --trace
   fi
   retVal=$?
-  if [[ "${CI}" == "true" ]]; then
-    kill -9 sleeppid
-  fi
 
   echo -n "Ended at " && date
   if [[ ${retVal} -eq 1 ]]; then

@@ -4,7 +4,7 @@ title: CAS - Release Notes
 category: Planning
 ---
 
-# 7.1.0-RC6 Release Notes
+# 7.2.0-RC6 Release Notes
 
 We strongly recommend that you take advantage of the release candidates as they come out. Waiting for a `GA` release is only going to set
 you up for unpleasant surprises. A `GA` is [a tag and nothing more](https://apereo.github.io/2017/03/08/the-myth-of-ga-rel/). Note
@@ -41,64 +41,5 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release.
 
-### CAS Delegated Authentication
-
-All functionality and components that allow CAS to route authentication requests to external CAS identity providers are now consolidated under a single module.
-This is done to simplify the setup in a more modular way and reduce the number of libraries and dependencies that would be pulled into the build.
-
-Please make sure you review the [CAS delegated authentication](../integration/Delegate-Authentication-CAS.html) page and include the correct module in your build.
-
-<div class="alert alert-warning">:warning: <strong>Usage Warning!</strong><p>
-This is potentially a breaking change. Make sure to review your build's dependencies and adjust modules to restore functionality.
-</p></div>
-
-### Graal VM Native Images
-
-A CAS server installation and deployment process can be tuned to build and run
-as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html).
-The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) have selectively switched
-to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
- 
-### Palantir Admin Console
-
-Small efforts are underway to improve the [Palantir Admin Console](../installation/Admin-Dashboard.html) as a viable alternative to the CAS Management tool.
-The console is now able to display and manage registered services and show basic information about system status, health, etc. We'll continue to refine
-the console and add more features in the coming releases.
-
-<a href="https://github.com/user-attachments/assets/304fc177-7327-460c-b6dc-ae339f1aa76b" data-lightbox="image-0" data-title="Palantir Admin Console">
-    <img width="60%" src="https://github.com/user-attachments/assets/304fc177-7327-460c-b6dc-ae339f1aa76b" title="Palantir Admin Console" />
-</a>
-
-### Testing Strategy
-
-The collection of end-to-end [browser tests based via Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `486` distinct scenarios. The overall
-test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
-are now configured to run with parallelism enabled.
-
-## Other Stuff
-
-- Many small improvements and bug fixes in CAS documentation to remove typos and correct references.
-- When attempting to resolve SAML2 metadata, particularly via URLs, the number of retry attempts is now configurable.
-- Small improvements to [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) to prevent memory leaks and crashes.
-
 ## Library Upgrades
 
-- Spring
-- Spring Cloud
-- Spring Boot
-- Spring Data
-- Apache Tomcat
-- Spring Retry
-- Amazon SDK
-- Pac4j
-- LettuceMod
-- Hazelcast
-- Kafka
-- EclipseLink
-- Netty
-- Lettuce
-- LettuceMod
-- Google Cloud Monitor
-- OpenSAML
-- Jetty
