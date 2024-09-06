@@ -83,7 +83,7 @@ public class DeviceFingerprintProperties implements Serializable {
         /**
          * The default max age for the cookie component.
          */
-        private static final int DEFAULT_MAX_AGE_DAYS = 30;
+        private static final Duration DEFAULT_MAX_AGE_DAYS = Duration.ofDays(30);
 
         /**
          * Is this component enabled or not.
@@ -103,7 +103,7 @@ public class DeviceFingerprintProperties implements Serializable {
 
         public Cookie() {
             setName("MFATRUSTED");
-            setMaxAge((int) Duration.ofDays(DEFAULT_MAX_AGE_DAYS).getSeconds());
+            setMaxAge(DEFAULT_MAX_AGE_DAYS.toString());
 
             crypto.getEncryption().setKeySize(EncryptionJwtCryptoProperties.DEFAULT_STRINGABLE_ENCRYPTION_KEY_SIZE);
             crypto.getSigning().setKeySize(SigningJwtCryptoProperties.DEFAULT_STRINGABLE_SIGNING_KEY_SIZE);

@@ -14,6 +14,7 @@ import org.apereo.cas.web.support.gen.CookieRetrievingCookieGenerator;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -109,18 +110,31 @@ public class CookieUtils {
      * @return the cookie generation context
      */
     public static CookieGenerationContext buildCookieGenerationContext(final TicketGrantingCookieProperties cookie) {
-        val rememberMeMaxAge = (int) Beans.newDuration(cookie.getRememberMeMaxAge()).getSeconds();
+        val rememberMeMaxAge = getCookieMaxAge(cookie.getRememberMeMaxAge());
         val builder = buildCookieGenerationContextBuilder(cookie);
         return builder.rememberMeMaxAge(rememberMeMaxAge).build();
     }
 
+    /**
+     * Gets cookie max age.
+     *
+     * @param maxAge the max age
+     * @return the cookie max age
+     */
+    public static int getCookieMaxAge(final String maxAge) {
+        if (NumberUtils.isCreatable(maxAge)) {
+            return Integer.parseInt(maxAge);
+        }
+        return (int) Beans.newDuration(maxAge).getSeconds();
+    }
+    
     private static CookieGenerationContext.CookieGenerationContextBuilder buildCookieGenerationContextBuilder(
         final CookieProperties cookie) {
         
         return CookieGenerationContext.builder()
             .name(cookie.getName())
             .path(cookie.getPath())
-            .maxAge(cookie.getMaxAge())
+            .maxAge(getCookieMaxAge(cookie.getMaxAge()))
             .secure(cookie.isSecure())
             .domain(cookie.getDomain())
             .sameSitePolicy(cookie.getSameSitePolicy())

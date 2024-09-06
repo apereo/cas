@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import jakarta.servlet.http.Cookie;
+import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -29,10 +30,8 @@ import static org.mockito.Mockito.*;
 @Tag("Cookie")
 class DefaultCasCookieValueManagerTests {
     private static final String CLIENT_IP = "127.0.0.1";
-
     private static final String USER_AGENT = "Test-Client/1.0.0";
-
-    private static final String VALUE = "cookieValue";
+    private static final String VALUE = UUID.randomUUID().toString();
 
     private CookieValueManager cookieValueManager;
 

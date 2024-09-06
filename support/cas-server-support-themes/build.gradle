@@ -1,10 +1,19 @@
 description = "Apereo CAS Web Application Themes Support"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            title: "Themes",
+            category: "User Interface"
+    ]
+}
+
 dependencies {
     runtimeOnly libraries.webjars
     runtimeOnly libraries.webjarsbootstrap
 
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-notifications")
@@ -14,6 +23,7 @@ dependencies {
     testImplementation project(":support:cas-server-support-person-directory")
 
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-cookie-api")
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-util")
