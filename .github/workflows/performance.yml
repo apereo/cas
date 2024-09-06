@@ -17,8 +17,10 @@ env:
 ##########################################################################
 
 on:
-  schedule:
-    - cron: "0 22 * * *"
+  workflow_dispatch:
+  push:
+   branches-ignore:
+     - '**'
 
 concurrency:
   group: "workflow = ${{ github.workflow }}, ref = ${{ github.event.ref }}, pr = ${{ github.event.pull_request.id }}"
