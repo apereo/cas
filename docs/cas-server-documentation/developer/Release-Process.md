@@ -80,16 +80,40 @@ releases, when new branches are created.</p></div>
  
 Change GitHub Actions workflows to trigger and *only* build the newly-created release branch:
 
-* Modify the `analysis.yml` workflow to run on the newly-created branch.
-* Modify the `validation.yml` workflow to run on the newly-created branch.
-* Modify the `publish.yml` workflow to run on the newly-created branch.
-* Modify the `publish-docs.yml` to point to the newly-created branch.
-* Modify the `functional-tests.yml` to point to the newly-created branch.
-* Modify the `native-tests.yml` to point to the newly-created branch.
-* Disable the following workflows: `build.yml`, `dependencies.yml`, `native-tests`, `tests`. These can be disabled in the YAML configuration via:
+* `analysis.yml`
+* `validation.yml`
+* `publish.yml`
+* `publish-docs.yml`
+* `functional-tests.yml`
+* `tests.yml`
+      
+```yaml
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - $NEW_BRANCH
+      - '!**.**.**'
+      - '!heroku-*'
+  pull_request:
+    types: [ labeled ]
+    branches: [ $NEW_BRANCH, pr-* ]
+```
+
+<div class="alert alert-warning">:information_source: <strong>Remember</strong><p>Make sure nothing else in these workflows
+points to the <code>master</code> branch</p>.</div>
+
+Then disable the following workflows:
+
+- `build.yml`
+- `dependencies.yml`
+- `native-tests.yml`
+
+These can be disabled in the YAML configuration via:
 
 ```yaml
 on:
+  workflow_dispatch:  
   push:
     branches-ignore:
       - '**'
@@ -103,7 +127,7 @@ Do not forget to commit all changes and push changes upstream, creating a new re
 - Build and release the project using the following command:
 
 ```bash
-./release.sh
+./ci/release.sh
 ```
 
 The script will prompt for the appropriate Sonatype username and password (or user token). You can also run the script in non-interactive
@@ -121,7 +145,7 @@ if credentials are lost accidentally or otherwise.
 
 ## Finalizing the Release
 
-- Create a tag for the released version, commit the change and push the tag to the upstream repository. (i.e. `v5.0.0-RC1`).
+- The script will automatically create a tag for the released version, commit the change and push the tag to the upstream repository. (i.e. `v5.0.0-RC1`).
 
 You should also switch back to the main development branch (i.e. `master`) and follow these steps:
 
@@ -145,12 +169,12 @@ based on the newly-released version.
 <div class="alert alert-warning">:warning: <strong>Remember</strong><p>You should do this only for major or minor releases, when new branches are created.</p></div>
 
 - Configure docs to point `current` to the latest available version [here](https://github.com/apereo/cas/blob/gh-pages/current/index.html).
-- Modify the `cas-server-documentation/_config.yml` file to exclude relevant branches and directories from the build. 
-- Configure docs to include the new release in the list of [available versions](https://github.com/apereo/cas/blob/gh-pages/_layouts/default.html).
+- Modify [the configuration file](https://github.com/apereo/cas/blob/master/docs/cas-server-documentation/_config.yml) to exclude relevant branches and directories from the build. 
+- Configure docs to include the new release in the list of [available versions](https://github.com/apereo/cas/blob/master/docs/cas-server-documentation/_layouts/default.html).
 - Update the project's [`README.md` page](https://github.com/apereo/cas/blob/master/README.md) to list the new version, if necessary.
 - Update [the build process](Build-Process.html) to include any needed information on how to build the new release.
+- Update [Algolia](https://crawler.algolia.com/) for the new documentation version to index the new space for search requests.
 - Update the release notes overview and remove all previous entries.
-- Send a pull request to [Algolia](https://crawler.algolia.com/) for the new documentation version to index the new space for search requests.
 
 ## Update Maintenance Policy
 
