@@ -54,6 +54,15 @@
                     <div class="cf-turnstile" th:attr="data-sitekey=${recaptchaSiteKey}"></div>
                 </section>
             </span>
+
+            <span th:if="${recaptchaSiteKey != null AND #strings.equalsIgnoreCase(recaptchaVersion, 'FRIENDLY_CAPTCHA')}" th:remove="tag">
+                <script src="https://cdn.jsdelivr.net/npm/friendly-challenge@0.9.16/widget.min.js" async defer></script>
+
+                <section id="friendlyCaptchaSection" class="form-group">
+                    <div class="frc-captcha" th:attr="data-sitekey=${recaptchaSiteKey}"></div>
+                </section>
+            </span>
+
         </div>
     </main>
 </body>

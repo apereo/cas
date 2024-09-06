@@ -6,7 +6,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.http.HttpExecutionRequest;
 import org.apereo.cas.util.http.HttpUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,10 +29,10 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 @Slf4j
 public abstract class BaseCaptchaValidator implements CaptchaValidator {
-    private static final ObjectReader READER = new ObjectMapper().findAndRegisterModules().reader();
+    protected static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     @Getter
-    private final GoogleRecaptchaProperties recaptchaProperties;
+    protected final GoogleRecaptchaProperties recaptchaProperties;
 
     @Override
     public boolean validate(final String recaptchaResponse, final String userAgent) {
@@ -78,7 +77,7 @@ public abstract class BaseCaptchaValidator implements CaptchaValidator {
                 throw new IllegalArgumentException("Unable to parse empty entity response from " + recaptchaProperties.getVerifyUrl());
             }
             LOGGER.debug("Recaptcha verification response received: [{}]", result);
-            val node = READER.readTree(result);
+            val node = MAPPER.reader().readTree(result);
             if (node.has("score") && node.get("score").doubleValue() <= recaptchaProperties.getScore()) {
                 LOGGER.warn("Recaptcha score received is less than the threshold score defined for CAS");
                 return false;

@@ -1,0 +1,12 @@
+{
+  "dependencies": "captcha",
+
+  "properties": [
+    "--cas.google-recaptcha.enabled=true",
+    "--cas.google-recaptcha.verify-url=https://api.friendlycaptcha.com/api/v1/siteverify",
+    "--cas.google-recaptcha.site-key=FCMHM02BOGDH75US",
+    "--cas.google-recaptcha.secret=A1JI2I4DL12I0FVJLQIKVL7BJ95UAO7TTJ7UMHL0DUFJAAG8RLQ4QFN0NK",
+    "--cas.google-recaptcha.version=FRIENDLY_CAPTCHA",
+    "--cas.http-web-request.header.content-security-policy="
+  ]
+}

@@ -22,6 +22,7 @@ public interface CaptchaValidator {
             case GOOGLE_RECAPTCHA_V3 -> new GoogleCaptchaV3Validator(googleRecaptcha);
             case HCAPTCHA -> new HCaptchaValidator(googleRecaptcha);
             case TURNSTILE -> new TurnstileCaptchaValidator(googleRecaptcha);
+            case FRIENDLY_CAPTCHA -> new FriendlyCaptchaValidator(googleRecaptcha);
         };
     }
 
