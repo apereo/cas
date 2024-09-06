@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.web.support.CookieUtils;
 
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -79,7 +80,7 @@ class CasWebAppConfiguration {
         resolver.setCookieHttpOnly(localeCookie.isHttpOnly());
         resolver.setCookieSecure(localeCookie.isSecure());
         resolver.setCookieName(StringUtils.defaultIfBlank(localeCookie.getName(), CookieLocaleResolver.DEFAULT_COOKIE_NAME));
-        resolver.setCookieMaxAge(localeCookie.getMaxAge());
+        resolver.setCookieMaxAge(CookieUtils.getCookieMaxAge(localeCookie.getMaxAge()));
         resolver.setLanguageTagCompliant(true);
         resolver.setRejectInvalidCookies(true);
         return resolver;

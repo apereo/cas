@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.cookie;
 
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.configuration.support.DurationCapable;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import lombok.Getter;
@@ -77,7 +78,8 @@ public class CookieProperties implements CasFeatureModule, Serializable {
      * A negative value means that the cookie is not stored persistently and will be deleted when the Web browser exits.
      * A zero value causes the cookie to be deleted.
      */
-    private int maxAge = -1;
+    @DurationCapable
+    private String maxAge = "-1";
 
     /**
      * If a cookie is only intended to be accessed in a first party context, the

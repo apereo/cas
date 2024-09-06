@@ -914,7 +914,7 @@ class CasOAuth20Configuration {
             val csrfMatcher = new CsrfTokenGeneratorMatcher(new DefaultCsrfTokenGenerator());
             val oauth = casProperties.getAuthn().getOauth();
             val csrfCookie = oauth.getCsrfCookie();
-            val maxAge = csrfCookie.getMaxAge();
+            val maxAge = CookieUtils.getCookieMaxAge(csrfCookie.getMaxAge());
             if (maxAge >= 0) {
                 csrfMatcher.setMaxAge(maxAge);
             }
