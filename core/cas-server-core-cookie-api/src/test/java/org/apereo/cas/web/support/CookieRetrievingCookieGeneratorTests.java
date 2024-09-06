@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.cookie.CookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.PinnableCookieProperties;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -18,6 +19,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,7 @@ import static org.mockito.Mockito.*;
 @Tag("Cookie")
 @SpringBootTest(classes = RefreshAutoConfiguration.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@ExtendWith(CasTestExtension.class)
 class CookieRetrievingCookieGeneratorTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
