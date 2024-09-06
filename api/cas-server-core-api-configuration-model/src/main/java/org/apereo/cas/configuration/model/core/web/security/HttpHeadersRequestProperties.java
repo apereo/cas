@@ -86,6 +86,8 @@ public class HttpHeadersRequestProperties implements Serializable {
      * resources are allowed to load via a HTTP Header.
      * Header value is made up of one or more directives.
      * Multiple directives are separated with a semicolon.
+     * &#64;nonce&#64; is a specific value which is replaced by a generated random value
+     * saved as the request attribute 'contentSecurityPolicyGeneratedNonce'.
      */
     @ExpressionLanguageCapable
     private String contentSecurityPolicy = "script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none'; worker-src 'self' blob: 'unsafe-inline';";
