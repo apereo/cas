@@ -206,7 +206,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
             .skip(criteria.getFrom())
             .limit(criteria.getCount())
             .map(redisKey -> {
-                val compositeKey = RedisKeyGenerator.parseKey(redisKey);
+                val compositeKey = RedisKeyGenerator.parse(redisKey);
                 val redisKeyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(compositeKey.getPrefix()).orElseThrow();
                 val keyspace = redisKeyGenerator.getKeyspace();
                 val entryId = redisKeyGenerator.rawKey(redisKey);
