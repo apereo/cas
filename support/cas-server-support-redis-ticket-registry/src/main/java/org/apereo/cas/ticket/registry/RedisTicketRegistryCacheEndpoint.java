@@ -2,13 +2,11 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import com.github.benmanes.caffeine.cache.Cache;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -28,7 +26,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class RedisTicketRegistryCacheEndpoint extends BaseCasRestActuatorEndpoint {
 
     private final ObjectProvider<TicketRegistry> ticketRegistry;
-
     private final ObjectProvider<Cache<String, Ticket>> ticketCache;
 
     public RedisTicketRegistryCacheEndpoint(final CasConfigurationProperties casProperties,
@@ -48,20 +45,14 @@ public class RedisTicketRegistryCacheEndpoint extends BaseCasRestActuatorEndpoin
      */
     @DeleteMapping(value = "{ticketId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Invalidate and remove the provided ticket from the Redis first-level in-memory CAS cache. "
-                         + "The ticket entity is not removed from the Redis instance itself. Invalidating the ticket entity "
-                         + "will force CAS to re-fetch the ticket from Redis and ignore/discard its own cached copy, if any.",
+        + "The ticket entity is not removed from the Redis instance itself. Invalidating the ticket entity "
+        + "will force CAS to re-fetch the ticket from Redis and ignore/discard its own cached copy, if any.",
         parameters = @Parameter(name = "ticketId", required = true, description = "The ticket id to invalidate"))
-    public ResponseEntity invalidateTicket(
-        @PathVariable
-        final String ticketId) {
-        val prefix = StringUtils.substring(ticketId, 0, ticketId.indexOf(UniqueTicketIdGenerator.SEPARATOR));
-        val redisTicketsKey = RedisCompositeKey.forTickets()
-            .withTicketId(prefix, ticketRegistry.getObject().digestIdentifier(ticketId));
-        val ticketInCache = ticketCache.getObject().getIfPresent(redisTicketsKey.getQuery());
-        ticketCache.getObject().invalidate(redisTicketsKey.getQuery());
-        return ticketInCache != null
-            ? ResponseEntity.ok(ticketInCache)
-            : ResponseEntity.notFound().build();
+    public ResponseEntity invalidateTicket(@PathVariable final String ticketId) {
+        val id = ticketRegistry.getObject().digestIdentifier(ticketId);
+        val ticketInCache = ticketCache.getObject().getIfPresent(id);
+        ticketCache.getObject().invalidate(id);
+        return buildResponse(ticketInCache);
     }
 
     /**
@@ -73,13 +64,13 @@ public class RedisTicketRegistryCacheEndpoint extends BaseCasRestActuatorEndpoin
     @GetMapping(value = "{ticketId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Fetch the ticket entity from the Redis first-level in-memory CAS cache.",
         parameters = @Parameter(name = "ticketId", required = true, description = "The ticket id to fetch"))
-    public ResponseEntity fetchTicket(
-        @PathVariable
-        final String ticketId) {
-        val prefix = StringUtils.substring(ticketId, 0, ticketId.indexOf(UniqueTicketIdGenerator.SEPARATOR));
-        val redisTicketsKey = RedisCompositeKey.forTickets()
-            .withTicketId(prefix, ticketRegistry.getObject().digestIdentifier(ticketId));
-        val ticketInCache = ticketCache.getObject().getIfPresent(redisTicketsKey.getQuery());
+    public ResponseEntity fetchTicket(@PathVariable final String ticketId) {
+        val id = ticketRegistry.getObject().digestIdentifier(ticketId);
+        val ticketInCache = ticketCache.getObject().getIfPresent(id);
+        return buildResponse(ticketInCache);
+    }
+
+    protected ResponseEntity buildResponse(final Ticket ticketInCache) {
         return ticketInCache != null
             ? ResponseEntity.ok(ticketInCache)
             : ResponseEntity.notFound().build();

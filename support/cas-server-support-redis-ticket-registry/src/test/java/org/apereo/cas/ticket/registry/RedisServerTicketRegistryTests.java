@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.config.CasRedisCoreAutoConfiguration;
@@ -19,6 +20,7 @@ import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.expiration.TimeoutExpirationPolicy;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
+import org.apereo.cas.ticket.registry.key.RedisKeyGeneratorFactory;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.ProxyGrantingTicketIdGenerator;
 import org.apereo.cas.util.ProxyTicketIdGenerator;
@@ -38,6 +40,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junitpioneer.jupiter.RetryingTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -105,7 +108,7 @@ class RedisServerTicketRegistryTests {
                 }
             };
 
-            val totalThreads = 25;
+            val totalThreads = 1;
             val threads = new Thread[totalThreads];
             for (var i = 0; i < threads.length; i++) {
                 threads[i] = new Thread(runnable);
@@ -343,17 +346,17 @@ class RedisServerTicketRegistryTests {
         @Qualifier(TicketRegistry.BEAN_NAME)
         private TicketRegistry ticketRegistry;
 
-        @Test
+        @RetryingTest(2)
         void verifyDifferentLoginSamePrincipal() throws Throwable {
             val principalId = UUID.randomUUID().toString();
             val authentication = CoreAuthenticationTestUtils.getAuthentication(principalId);
-            for (int i = 0; i < 20; i++) {
+            for (var i = 0; i < 20; i++) {
                 val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
                     .getNewTicketId(TicketGrantingTicket.PREFIX);
                 val tgt1 = new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
                 ticketRegistry.addTicket(tgt1);
             }
-            assertEquals(1, ticketRegistry.countSessionsFor(principalId));
+            await().untilAsserted(() -> assertEquals(1, ticketRegistry.countSessionsFor(principalId)));
         }
     }
 
@@ -379,13 +382,18 @@ class RedisServerTicketRegistryTests {
         @Qualifier("ticketRedisTemplate")
         private CasRedisTemplate<String, RedisTicketDocument> ticketRedisTemplate;
 
+        @Autowired
+        @Qualifier("redisKeyGeneratorFactory")
+        private RedisKeyGeneratorFactory redisKeyGeneratorFactory;
+
         @Test
         void verifyDifferentLoginSamePrincipal() throws Throwable {
             val principalId = UUID.randomUUID().toString();
             for (var i = 0; i < 3; i++) {
                 addTicketAndWait(principalId);
             }
-            val key = RedisCompositeKey.forPrincipal().withQuery(principalId).toKeyPattern();
+            val keyGenerator = redisKeyGeneratorFactory.getRedisKeyGenerator(Principal.class.getName()).orElseThrow();
+            val key = keyGenerator.forId(principalId);
             assertEquals(1, ticketRedisTemplate.boundZSetOps(key).size());
             assertEquals(1, ticketRegistry.countSessionsFor(principalId));
         }

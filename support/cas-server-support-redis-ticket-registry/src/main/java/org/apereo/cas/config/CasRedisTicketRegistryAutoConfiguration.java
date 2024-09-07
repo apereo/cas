@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.authentication.CasSSLContext;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
@@ -10,14 +11,13 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.CachedTicketExpirationPolicy;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistry;
-import org.apereo.cas.ticket.registry.RedisCompositeKey;
 import org.apereo.cas.ticket.registry.RedisTicketDocument;
 import org.apereo.cas.ticket.registry.RedisTicketRegistry;
 import org.apereo.cas.ticket.registry.RedisTicketRegistryCacheEndpoint;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.registry.key.PrincipalRedisKeyGenerator;
+import org.apereo.cas.ticket.registry.key.DefaultRedisKeyGenerator;
+import org.apereo.cas.ticket.registry.key.RedisKeyGenerator;
 import org.apereo.cas.ticket.registry.key.RedisKeyGeneratorFactory;
-import org.apereo.cas.ticket.registry.key.TicketRedisKeyGenerator;
 import org.apereo.cas.ticket.registry.pub.DefaultRedisTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.registry.pub.RedisTicketRegistryMessagePublisher;
 import org.apereo.cas.ticket.registry.sub.DefaultRedisTicketRegistryMessageListener;
@@ -32,6 +32,7 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.redis.lettucemod.api.sync.RedisModulesCommands;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
@@ -48,6 +49,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisKeyValueAdapter;
+import org.springframework.data.redis.core.convert.KeyspaceConfiguration;
+import org.springframework.data.redis.core.mapping.RedisMappingContext;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.Topic;
@@ -66,6 +70,7 @@ import java.util.Optional;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "redis")
 @AutoConfiguration
+@Slf4j
 public class CasRedisTicketRegistryAutoConfiguration {
 
     private static final BeanCondition CONDITION = BeanCondition.on("cas.ticket.registry.redis.enabled").isTrue().evenIfMissing();
@@ -93,13 +98,14 @@ public class CasRedisTicketRegistryAutoConfiguration {
             final ObjectProvider<TicketRegistry> ticketRegistry,
             @Qualifier("redisTicketRegistryCache")
             final ObjectProvider<Cache<String, Ticket>> redisTicketRegistryCache) {
-            return new RedisTicketRegistryCacheEndpoint(casProperties, applicationContext, ticketRegistry, redisTicketRegistryCache);
+            return new RedisTicketRegistryCacheEndpoint(casProperties, applicationContext,
+                ticketRegistry, redisTicketRegistryCache);
         }
 
         @Bean
         @ConditionalOnMissingBean(name = "redisTicketRegistryMessageTopic")
         public Topic redisTicketRegistryMessageTopic() {
-            return new ChannelTopic(RedisCompositeKey.REDIS_TICKET_REGISTRY_MESSAGE_TOPIC);
+            return new ChannelTopic(RedisKeyGenerator.REDIS_TICKET_REGISTRY_MESSAGE_TOPIC);
         }
 
         @Bean
@@ -133,12 +139,15 @@ public class CasRedisTicketRegistryAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
         public MessageListener redisTicketRegistryMessageListener(
+            @Qualifier("redisKeyGeneratorFactory")
+            final RedisKeyGeneratorFactory redisKeyGeneratorFactory,
             @Qualifier("redisTicketRegistryMessageIdentifier")
             final PublisherIdentifier redisTicketRegistryMessageIdentifier,
             @Qualifier("redisTicketRegistryCache")
             final Cache<String, Ticket> redisTicketRegistryCache) {
             val adapter = new MessageListenerAdapter(
-                new DefaultRedisTicketRegistryMessageListener(redisTicketRegistryMessageIdentifier, redisTicketRegistryCache));
+                new DefaultRedisTicketRegistryMessageListener(redisTicketRegistryMessageIdentifier,
+                    redisKeyGeneratorFactory, redisTicketRegistryCache));
             adapter.setSerializer(new JdkSerializationRedisSerializer());
             return adapter;
         }
@@ -154,11 +163,11 @@ public class CasRedisTicketRegistryAutoConfiguration {
             return new DefaultRedisTicketRegistryMessagePublisher(ticketRedisTemplate, redisTicketRegistryMessageIdentifier);
         }
     }
-    
+
     @Configuration(value = "RedisTicketRegistryCoreConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class RedisTicketRegistryCoreConfiguration {
-        
+
         @ConditionalOnMissingBean(name = "redisTicketConnectionFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -205,7 +214,6 @@ public class CasRedisTicketRegistryAutoConfiguration {
                 .get();
         }
 
-
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public RedisTicketRegistry.CasRedisTemplates casRedisTemplates(
@@ -219,9 +227,13 @@ public class CasRedisTicketRegistryAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "redisKeyGeneratorFactory")
-        public RedisKeyGeneratorFactory redisKeyGeneratorFactory() {
+        public RedisKeyGeneratorFactory redisKeyGeneratorFactory(
+            @Qualifier(TicketCatalog.BEAN_NAME)
+            final TicketCatalog ticketCatalog) {
             val factory = new RedisKeyGeneratorFactory();
-            factory.registerRedisKeyGenerators(new TicketRedisKeyGenerator(), new PrincipalRedisKeyGenerator());
+            ticketCatalog.findAll().forEach(ticketDefinition ->
+                factory.registerRedisKeyGenerator(DefaultRedisKeyGenerator.forTicket(ticketCatalog, ticketDefinition)));
+            factory.registerRedisKeyGenerator(DefaultRedisKeyGenerator.forPrincipal(ticketCatalog, Principal.class.getName()));
             return factory;
         }
 
@@ -252,9 +264,18 @@ public class CasRedisTicketRegistryAutoConfiguration {
                     val searchCommands = redis.isEnableRedisSearch()
                         ? RedisObjectFactory.newRedisModulesCommands(redis, casSslContext)
                         : Optional.<RedisModulesCommands>empty();
+
+                    val redisMappingContext = new RedisMappingContext();
+                    val keySpaceConfig = redisMappingContext.getMappingConfiguration().getKeyspaceConfiguration();
+                    for (val redisKeyGenerator : redisKeyGeneratorFactory.getRedisKeyGenerators()) {
+                        val keyspaceSettings = new KeyspaceConfiguration.KeyspaceSettings(RedisTicketDocument.class, redisKeyGenerator.getNamespace());
+                        LOGGER.debug("Adding keyspace [{}]", redisKeyGenerator.getNamespace());
+                        keySpaceConfig.addKeyspaceSettings(keyspaceSettings);
+                    }
+                    val adapter = new RedisKeyValueAdapter(casRedisTemplates.getTicketsRedisTemplate(), redisMappingContext);
                     return new RedisTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
                         casRedisTemplates, redisTicketRegistryCache, redisTicketRegistryMessagePublisher,
-                        searchCommands, redisKeyGeneratorFactory, casProperties);
+                        searchCommands, redisKeyGeneratorFactory, adapter, casProperties);
                 }))
                 .otherwise(() -> new DefaultTicketRegistry(ticketSerializationManager, ticketCatalog))
                 .get();

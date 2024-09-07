@@ -484,7 +484,6 @@ public abstract class BaseTicketRegistryTests {
         val ticketRegistryTickets = ticketRegistry.getTickets();
         assertEquals(tickets.size(), ticketRegistryTickets.size(), "The size of the registry is not the same as the collection.");
 
-
         tickets.stream().filter(ticket -> !ticketRegistryTickets.contains(ticket))
             .forEach(ticket -> {
                 throw new AssertionError("Ticket " + ticket + " was not found in retrieval of collection of all tickets.");

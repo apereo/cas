@@ -2,10 +2,9 @@ package org.apereo.cas.ticket.registry.pub;
 
 import org.apereo.cas.redis.core.CasRedisTemplate;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.registry.RedisCompositeKey;
 import org.apereo.cas.ticket.registry.RedisTicketDocument;
+import org.apereo.cas.ticket.registry.key.RedisKeyGenerator;
 import org.apereo.cas.util.PublisherIdentifier;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -55,7 +54,7 @@ public class DefaultRedisTicketRegistryMessagePublisher implements RedisTicketRe
 
     private void sendPayload(final RedisMessagePayload payload) {
         LOGGER.trace("Publishing Redis event payload [{}] from [{}]", payload, publisherIdentifier);
-        redisTemplate.convertAndSend(RedisCompositeKey.REDIS_TICKET_REGISTRY_MESSAGE_TOPIC, payload);
+        redisTemplate.convertAndSend(RedisKeyGenerator.REDIS_TICKET_REGISTRY_MESSAGE_TOPIC, payload);
     }
     
     private RedisMessagePayload getRedisMessagePayload(final RedisMessagePayload.RedisMessageTypes type) {
