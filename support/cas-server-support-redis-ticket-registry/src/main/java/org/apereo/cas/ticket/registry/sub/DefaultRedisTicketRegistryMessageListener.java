@@ -29,11 +29,11 @@ public class DefaultRedisTicketRegistryMessageListener implements RedisTicketReg
             switch (command.getMessageType()) {
                 case ADD, UPDATE -> {
                     val result = getMessageResult(command);
-                    ticketCache.put(result.redisKey(), result.ticket());
+                    ticketCache.put(result.ticket().getId(), result.ticket());
                 }
                 case DELETE -> {
                     val result = getMessageResult(command);
-                    ticketCache.invalidate(result.redisKey());
+                    ticketCache.invalidate(result.ticket().getId());
                 }
                 case DELETE_ALL -> ticketCache.invalidateAll();
             }
