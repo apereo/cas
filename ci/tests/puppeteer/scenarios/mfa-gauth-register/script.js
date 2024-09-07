@@ -55,7 +55,12 @@ const jimp = require("jimp");
             await cas.click(page, "#registerButton");
             await cas.sleep(2000);
 
-            const otp2 = await cas.generateOtp(otpConfig);
+            let otp2 = await cas.generateOtp(otpConfig);
+            while (otp2 === otp1) {
+                await cas.logb(`Generated OTP matches the previous value: ${otp2}. Trying again...`);
+                await cas.sleep(3000);
+                otp2 = await cas.generateOtp(otpConfig);
+            }
             await cas.logg(`Generated authentication OTP: ${otp2}`);
             await cas.type(page, "#token", otp2);
             await cas.sleep(2000);
