@@ -2,7 +2,6 @@ package org.apereo.cas.nativex;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.ticket.registry.CachedTicketExpirationPolicy;
-import org.apereo.cas.ticket.registry.RedisCompositeKey;
 import org.apereo.cas.ticket.registry.RedisTicketDocument;
 import org.apereo.cas.ticket.registry.pub.RedisMessagePayload;
 import org.apereo.cas.ticket.registry.sub.RedisTicketRegistryMessageListener;
@@ -30,7 +29,6 @@ public class RedisTicketRegistryRuntimeHints implements CasRuntimeHintsRegistrar
                 RedisMessagePayload.class,
                 RedisMessagePayload.RedisMessagePayloadBuilder.class,
                 CachedTicketExpirationPolicy.class,
-                RedisCompositeKey.class,
                 RedisTicketDocument.class,
                 RedisTicketDocument.RedisTicketDocumentBuilder.class
             )

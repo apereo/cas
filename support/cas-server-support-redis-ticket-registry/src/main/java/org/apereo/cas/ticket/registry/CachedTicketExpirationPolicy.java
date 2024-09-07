@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.registry.key.RedisKeyGenerator;
 
 import com.github.benmanes.caffeine.cache.Expiry;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,7 @@ public class CachedTicketExpirationPolicy implements Expiry<String, Ticket> {
             LOGGER.trace("Ticket [{}] has expired and shall be evicted from the cache", ticket.getId());
             return 0;
         }
-        return Duration.ofSeconds(RedisCompositeKey.getTimeout(ticket)).toNanos();
+        return Duration.ofSeconds(RedisKeyGenerator.getTicketExpirationInSeconds(ticket)).toNanos();
     }
 
     @Override
