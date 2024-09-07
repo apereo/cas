@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
 
 /**
  * This is {@link RedisKeyGenerator}.
@@ -15,6 +16,15 @@ import org.apache.commons.lang3.StringUtils;
  * @since 7.0.0
  */
 public interface RedisKeyGenerator {
+    /**
+     * The namespace for all CAS tickets.
+     */
+    String REDIS_NAMESPACE_TICKETS = "CAS_TICKET";
+    /**
+     * The namespace for all CAS principals.
+     */
+    String REDIS_NAMESPACE_PRINCIPALS = "CAS_PRINCIPAL";
+
     /**
      * Redis message topic key used to sync memory cache across nodes.
      */
@@ -97,24 +107,27 @@ public interface RedisKeyGenerator {
     /**
      * Parse key into redis composite key.
      *
-     * @param redisKeyPattern the redis key pattern
+     * @param key the redis key pattern
      * @return the redis composite key
      */
-    static RedisCompositeKey parseKey(final String redisKeyPattern) {
-        var patternBits = Splitter.on(':').splitToList(redisKeyPattern);
-        if (patternBits.size() == 1) {
-            return RedisCompositeKey.builder()
-                .namespace(patternBits.getFirst()).build();
-        }
+    static RedisCompositeKey parse(final String key) {
+        val patternBits = Splitter.on(':').splitToList(key);
         if (patternBits.size() == 2) {
-            return RedisCompositeKey.builder().namespace(patternBits.getFirst())
-                .prefix(patternBits.getLast()).build();
+            Assert.isTrue(patternBits.getFirst().equals(REDIS_NAMESPACE_PRINCIPALS), "Unknown principal key pattern %s".formatted(key));
+            return RedisCompositeKey.builder()
+                .namespace(patternBits.getFirst())
+                .id(patternBits.getLast())
+                .build();
         }
         if (patternBits.size() == 3) {
-            return RedisCompositeKey.builder().namespace(patternBits.getFirst())
-                .prefix(patternBits.get(1)).id(patternBits.getLast()).build();
+            Assert.isTrue(patternBits.getFirst().equals(REDIS_NAMESPACE_TICKETS), "Unknown ticket key pattern %s".formatted(key));
+            return RedisCompositeKey.builder()
+                .namespace(patternBits.getFirst())
+                .prefix(patternBits.get(1))
+                .id(patternBits.getLast())
+                .build();
         }
-        throw new IllegalArgumentException("Unable to parse pattern for key " + redisKeyPattern);
+        throw new IllegalArgumentException("Unable to parse pattern " + key);
     }
 
     @SuperBuilder

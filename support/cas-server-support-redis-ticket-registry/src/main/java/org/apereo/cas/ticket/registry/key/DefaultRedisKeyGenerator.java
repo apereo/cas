@@ -57,7 +57,7 @@ public class DefaultRedisKeyGenerator implements RedisKeyGenerator {
 
     @Override
     public boolean isTicketKeyGenerator() {
-        return "CAS_TICKET".equalsIgnoreCase(this.namespace);
+        return REDIS_NAMESPACE_TICKETS.equalsIgnoreCase(this.namespace);
     }
 
     /**
@@ -68,7 +68,7 @@ public class DefaultRedisKeyGenerator implements RedisKeyGenerator {
      * @return the redis key generator
      */
     public static RedisKeyGenerator forTicket(final TicketCatalog ticketCatalog, final TicketDefinition ticketDefinition) {
-        return new DefaultRedisKeyGenerator(ticketCatalog, "CAS_TICKET", ticketDefinition.getPrefix());
+        return new DefaultRedisKeyGenerator(ticketCatalog, REDIS_NAMESPACE_TICKETS, ticketDefinition.getPrefix());
     }
 
     /**
@@ -79,6 +79,6 @@ public class DefaultRedisKeyGenerator implements RedisKeyGenerator {
      * @return the redis key generator
      */
     public static RedisKeyGenerator forPrincipal(final TicketCatalog ticketCatalog, final String type) {
-        return new DefaultRedisKeyGenerator(ticketCatalog, "CAS_PRINCIPAL", type);
+        return new DefaultRedisKeyGenerator(ticketCatalog, REDIS_NAMESPACE_PRINCIPALS, type);
     }
 }
