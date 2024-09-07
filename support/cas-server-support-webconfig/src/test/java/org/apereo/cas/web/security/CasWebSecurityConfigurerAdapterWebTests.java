@@ -75,7 +75,7 @@ class CasWebSecurityConfigurerAdapterWebTests {
     @BeforeAll
     public static void beforeAll() throws Exception {
         val parent = new File("/tmp/cas-static-content");
-        assertTrue(parent.mkdir());
+        assertTrue(parent.mkdirs());
         FileUtils.writeStringToFile(new File(parent, "data.txt"), "Hello, World!", StandardCharsets.UTF_8);
     }
 
