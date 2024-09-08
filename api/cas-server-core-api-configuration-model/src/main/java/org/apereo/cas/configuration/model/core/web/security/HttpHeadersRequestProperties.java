@@ -90,7 +90,8 @@ public class HttpHeadersRequestProperties implements Serializable {
      * saved as the request attribute 'contentSecurityPolicyGeneratedNonce'.
      */
     @ExpressionLanguageCapable
-    private String contentSecurityPolicy = "script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none'; worker-src 'self' blob: 'unsafe-inline';";
+    private String contentSecurityPolicy = "script-src 'self' 'unsafe-inline' 'unsafe-eval' "
+        + "https://www.googletagmanager.com https://www.google.com; object-src 'none'; worker-src 'self' blob: 'unsafe-inline';";
 
     /**
      * Files with these extensions are considered static, so they will be cached by browsers. The value is part of a RegEx.

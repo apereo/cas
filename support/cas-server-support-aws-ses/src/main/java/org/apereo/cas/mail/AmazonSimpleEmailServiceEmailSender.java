@@ -7,7 +7,7 @@ import org.apereo.cas.notifications.mail.EmailSender;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
-import org.springframework.context.HierarchicalMessageSource;
+import org.springframework.context.MessageSource;
 import software.amazon.awssdk.services.ses.SesClient;
 import software.amazon.awssdk.services.ses.model.Body;
 import software.amazon.awssdk.services.ses.model.Content;
@@ -25,7 +25,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AmazonSimpleEmailServiceEmailSender implements EmailSender {
     private final SesClient sesClient;
-    private final HierarchicalMessageSource messageSource;
+    private final MessageSource messageSource;
     private final CasConfigurationProperties casProperties;
 
     @Override

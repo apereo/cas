@@ -42,6 +42,9 @@ configurations.configureEach {
                 if (requested.group == "com.h2database") {
                     details.useVersion("${h2Version}")
                 }
+                if (requested.group == "com.google.code.gson") {
+                    details.useVersion("${gsonVersion}")
+                }
                 if (requested.name == "hibernate-validator") {
                     details.useVersion("${hibernateValidatorVersion}")
                 }

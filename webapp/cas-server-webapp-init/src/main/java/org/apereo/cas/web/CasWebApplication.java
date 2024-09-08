@@ -29,12 +29,13 @@ import java.util.List;
  * @since 5.0.0
  */
 @EnableDiscoveryClient
-@SpringBootApplication(proxyBeanMethods = false, exclude = {
-    DataSourceAutoConfiguration.class,
-    HibernateJpaAutoConfiguration.class,
-    MongoAutoConfiguration.class,
-    MongoDataAutoConfiguration.class
-})
+@SpringBootApplication(proxyBeanMethods = false,
+    exclude = {
+        DataSourceAutoConfiguration.class,
+        HibernateJpaAutoConfiguration.class,
+        MongoAutoConfiguration.class,
+        MongoDataAutoConfiguration.class
+    })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = false)
 @EnableTransactionManagement(proxyTargetClass = false)

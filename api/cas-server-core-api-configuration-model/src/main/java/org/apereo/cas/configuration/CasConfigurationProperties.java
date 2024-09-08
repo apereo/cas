@@ -55,7 +55,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.validation.annotation.Validated;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -68,12 +67,11 @@ import java.time.Instant;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConfigurationProperties("cas")
+@ConfigurationProperties(prefix = "cas")
 @Getter
 @Setter
 @Accessors(chain = true)
 @RequiresModule(name = "cas-server-core-api", automated = true)
-@Validated
 public class CasConfigurationProperties implements Serializable {
     /**
      * Prefix used for all CAS-specific settings.
