@@ -7,11 +7,10 @@ import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -39,20 +38,33 @@ import java.util.List;
  */
 @Slf4j
 @Getter
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
-public abstract class AbstractJacksonBackedStringSerializer<T> implements StringSerializer<T> {
+public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
     protected static final PrettyPrinter MINIMAL_PRETTY_PRINTER = new MinimalPrettyPrinter();
 
     @Serial
     private static final long serialVersionUID = -8415599777321259365L;
 
-    private final PrettyPrinter prettyPrinter;
     private final ConfigurableApplicationContext applicationContext;
+    private final Class<T> typeToSerialize;
+    private final ObjectReader typeReader;
+    private final ObjectWriter typeWriter;
 
     private ObjectMapper objectMapper;
 
-    protected AbstractJacksonBackedStringSerializer(final ConfigurableApplicationContext applicationContext) {
-        this(new DefaultPrettyPrinter(), applicationContext);
+    protected BaseJacksonSerializer(final PrettyPrinter prettyPrinter,
+                                    final ConfigurableApplicationContext applicationContext,
+                                    final Class<T> typeToSerialize) {
+        this.applicationContext = applicationContext;
+        this.typeToSerialize = typeToSerialize;
+
+        this.typeReader = getObjectMapper().readerFor(typeToSerialize);
+        this.typeWriter = getObjectMapper().writerFor(typeToSerialize).with(prettyPrinter);
+    }
+
+    protected BaseJacksonSerializer(
+        final ConfigurableApplicationContext applicationContext,
+        final Class typeToSerialize) {
+        this(new DefaultPrettyPrinter(), applicationContext, typeToSerialize);
     }
 
     @Override
@@ -96,17 +108,17 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
 
     @Override
     public void to(final OutputStream out, final T object) {
-        FunctionUtils.doUnchecked(__ -> objectWriterFor(object).writeValue(out, object));
+        FunctionUtils.doUnchecked(__ -> typeWriter.writeValue(out, object));
     }
 
     @Override
     public void to(final Writer writer, final T object) {
-        FunctionUtils.doUnchecked(__ -> objectWriterFor(object).writeValue(writer, object));
+        FunctionUtils.doUnchecked(__ -> typeWriter.writeValue(writer, object));
     }
 
     @Override
     public void to(final File out, final T object) {
-        FunctionUtils.doUnchecked(__ -> objectWriterFor(object).writeValue(out, object));
+        FunctionUtils.doUnchecked(__ -> typeWriter.writeValue(out, object));
     }
 
     @Override
@@ -123,7 +135,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     public String fromList(final Collection<T> object) {
         return FunctionUtils.doUnchecked(() -> {
             try (val writer = new StringWriter()) {
-                objectWriterFor(object.getClass()).writeValue(writer, object);
+                typeWriter.writeValue(writer, object);
                 return writer.toString();
             }
         });
@@ -146,7 +158,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     protected boolean isLenient() {
         return false;
     }
-    
+
     /**
      * Gets object mapper and builds on if uninitialized.
      *
@@ -165,14 +177,15 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         return objectMapper;
     }
 
+    protected void configureObjectMapper(final ObjectMapper objectMapper) {
+    }
+
     protected String readJsonFrom(final InputStream json) throws IOException {
         return isJsonFormat() && isLenient()
             ? readHumanJson(IOUtils.toString(json, StandardCharsets.UTF_8))
             : String.join("\n", IOUtils.readLines(json, StandardCharsets.UTF_8));
     }
-
-    protected void configureObjectMapper(final ObjectMapper mapper) {
-    }
+    
 
     protected boolean isDefaultTypingEnabled() {
         return true;
@@ -185,7 +198,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     protected T readObjectFromString(final String jsonString) {
         try {
             LOGGER.trace("Attempting to parse [{}]", jsonString);
-            return getObjectMapper().readerFor(getTypeToSerialize()).readValue(jsonString);
+            return typeReader.readValue(jsonString);
         } catch (final Exception e) {
             LOGGER.error("Cannot read/parse [{}] to deserialize into type [{}]. This may be caused "
                     + "in the absence of a configuration/support module that knows how to interpret the fragment, "
@@ -213,14 +226,6 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
 
     private boolean isJsonFormat() {
         return !(getObjectMapper().getFactory() instanceof YAMLFactory);
-    }
-
-    private ObjectWriter objectWriterFor(final T object) {
-        return objectWriterFor(object.getClass());
-    }
-
-    private ObjectWriter objectWriterFor(final Class object) {
-        return getObjectMapper().writerFor(object).with(prettyPrinter);
     }
 
     private static String readHumanJson(final String json) {

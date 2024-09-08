@@ -9,7 +9,7 @@ import org.apereo.cas.ticket.TransientSessionTicketImpl;
 import org.apereo.cas.ticket.expiration.NeverExpiresExpirationPolicy;
 import org.apereo.cas.ticket.serialization.serializers.TicketGrantingTicketStringSerializer;
 import org.apereo.cas.ticket.serialization.serializers.TransientSessionTicketStringSerializer;
-import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+import org.apereo.cas.util.serialization.BaseJacksonSerializer;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
 import com.nimbusds.oauth2.sdk.Scope;
@@ -48,8 +48,8 @@ class DelegatedClientSerializationTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
-    private AbstractJacksonBackedStringSerializer tstSerializer;
-    private AbstractJacksonBackedStringSerializer tgtSerializer;
+    private BaseJacksonSerializer tstSerializer;
+    private BaseJacksonSerializer tgtSerializer;
 
 
     @BeforeEach

@@ -27,7 +27,6 @@ import com.redis.lettucemod.search.CreateOptions;
 import com.redis.lettucemod.search.Document;
 import com.redis.lettucemod.search.Field;
 import com.redis.lettucemod.search.SearchResults;
-import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -69,13 +68,13 @@ import java.util.stream.StreamSupport;
  */
 @Slf4j
 @Monitorable
+@Getter
 public class RedisTicketRegistry extends AbstractTicketRegistry implements Cleanable {
 
     private static final String SEARCH_INDEX_NAME = RedisTicketDocument.class.getSimpleName() + "Index";
 
     private final CasRedisTemplates casRedisTemplates;
 
-    @Getter(AccessLevel.PACKAGE)
     private final ObjectProvider<Cache<String, Ticket>> ticketCache;
 
     private final ObjectProvider<RedisTicketRegistryMessagePublisher> messagePublisher;
@@ -461,7 +460,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                 .map(this::decodeTicket)
                 .filter(predicate)
                 .findFirst()
-                .orElse(null));
+                .orElseGet(() -> handleMissingTicket(rawTicketId, redisKeyPattern)));
+        
         if (ticket != null && predicate.test(ticket) && !ticket.isExpired()) {
             ticketCache.ifAvailable(cache -> cache.put(rawTicketId, ticket));
             return ticket;
@@ -471,6 +471,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         return null;
     }
 
+    protected Ticket handleMissingTicket(final String rawTicketId, final String redisKey) {
+        return null;
+    }
 
     private void addOrUpdateTicket(final Ticket ticket) {
         val digestedId = digestIdentifier(ticket.getId());

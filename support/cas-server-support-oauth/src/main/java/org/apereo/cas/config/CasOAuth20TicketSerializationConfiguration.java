@@ -13,7 +13,7 @@ import org.apereo.cas.ticket.device.OAuth20DeviceUserCode;
 import org.apereo.cas.ticket.refreshtoken.OAuth20DefaultRefreshToken;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
-import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+import org.apereo.cas.util.serialization.BaseJacksonSerializer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -60,74 +60,48 @@ class CasOAuth20TicketSerializationConfiguration {
         };
     }
 
-    private static final class OAuthCodeTicketStringSerializer extends AbstractJacksonBackedStringSerializer<OAuth20DefaultCode> {
+    private static final class OAuthCodeTicketStringSerializer extends BaseJacksonSerializer<OAuth20DefaultCode> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
         OAuthCodeTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
-            super(MINIMAL_PRETTY_PRINTER, applicationContext);
-        }
-        
-        @Override
-        public Class<OAuth20DefaultCode> getTypeToSerialize() {
-            return OAuth20DefaultCode.class;
+            super(MINIMAL_PRETTY_PRINTER, applicationContext, OAuth20DefaultCode.class);
         }
     }
 
-    private static final class AccessTokenTicketStringSerializer extends AbstractJacksonBackedStringSerializer<OAuth20DefaultAccessToken> {
+    private static final class AccessTokenTicketStringSerializer extends BaseJacksonSerializer<OAuth20DefaultAccessToken> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
         AccessTokenTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
-            super(MINIMAL_PRETTY_PRINTER, applicationContext);
-        }
-
-        @Override
-        public Class<OAuth20DefaultAccessToken> getTypeToSerialize() {
-            return OAuth20DefaultAccessToken.class;
+            super(MINIMAL_PRETTY_PRINTER, applicationContext, OAuth20DefaultAccessToken.class);
         }
     }
 
-    private static final class RefreshTokenTicketStringSerializer extends AbstractJacksonBackedStringSerializer<OAuth20DefaultRefreshToken> {
+    private static final class RefreshTokenTicketStringSerializer extends BaseJacksonSerializer<OAuth20DefaultRefreshToken> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
         RefreshTokenTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
-            super(MINIMAL_PRETTY_PRINTER, applicationContext);
-        }
-
-        @Override
-        public Class<OAuth20DefaultRefreshToken> getTypeToSerialize() {
-            return OAuth20DefaultRefreshToken.class;
+            super(MINIMAL_PRETTY_PRINTER, applicationContext, OAuth20DefaultRefreshToken.class);
         }
     }
 
-    private static final class DeviceTokenTicketStringSerializer extends AbstractJacksonBackedStringSerializer<OAuth20DefaultDeviceToken> {
+    private static final class DeviceTokenTicketStringSerializer extends BaseJacksonSerializer<OAuth20DefaultDeviceToken> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
         DeviceTokenTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
-            super(MINIMAL_PRETTY_PRINTER, applicationContext);
-        }
-
-
-        @Override
-        public Class<OAuth20DefaultDeviceToken> getTypeToSerialize() {
-            return OAuth20DefaultDeviceToken.class;
+            super(MINIMAL_PRETTY_PRINTER, applicationContext, OAuth20DefaultDeviceToken.class);
         }
     }
 
-    private static final class DeviceUserCodeTicketStringSerializer extends AbstractJacksonBackedStringSerializer<OAuth20DefaultDeviceUserCode> {
+    private static final class DeviceUserCodeTicketStringSerializer extends BaseJacksonSerializer<OAuth20DefaultDeviceUserCode> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
         DeviceUserCodeTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
-            super(MINIMAL_PRETTY_PRINTER, applicationContext);
-        }
-
-        @Override
-        public Class<OAuth20DefaultDeviceUserCode> getTypeToSerialize() {
-            return OAuth20DefaultDeviceUserCode.class;
+            super(MINIMAL_PRETTY_PRINTER, applicationContext, OAuth20DefaultDeviceUserCode.class);
         }
     }
 }

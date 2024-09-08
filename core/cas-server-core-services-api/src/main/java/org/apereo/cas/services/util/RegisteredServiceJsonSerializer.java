@@ -1,7 +1,7 @@
 package org.apereo.cas.services.util;
 
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+import org.apereo.cas.util.serialization.BaseJacksonSerializer;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import lombok.val;
@@ -19,18 +19,18 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
-public class RegisteredServiceJsonSerializer extends AbstractJacksonBackedStringSerializer<RegisteredService> {
+public class RegisteredServiceJsonSerializer extends BaseJacksonSerializer<RegisteredService> {
 
     @Serial
     private static final long serialVersionUID = 7645698151115635245L;
 
     public RegisteredServiceJsonSerializer(final ConfigurableApplicationContext applicationContext) {
-        super(applicationContext);
+        super(applicationContext, RegisteredService.class);
     }
 
     public RegisteredServiceJsonSerializer(final PrettyPrinter prettyPrinter,
                                            final ConfigurableApplicationContext applicationContext) {
-        super(prettyPrinter, applicationContext);
+        super(prettyPrinter, applicationContext, RegisteredService.class);
     }
 
     @Override
@@ -47,12 +47,7 @@ public class RegisteredServiceJsonSerializer extends AbstractJacksonBackedString
     public boolean supports(final String content) {
         return content.contains(JsonTypeInfo.Id.CLASS.getDefaultPropertyName());
     }
-
-    @Override
-    public Class<RegisteredService> getTypeToSerialize() {
-        return RegisteredService.class;
-    }
-
+    
     @Override
     public List<MediaType> getContentTypes() {
         return List.of(MediaType.APPLICATION_JSON);

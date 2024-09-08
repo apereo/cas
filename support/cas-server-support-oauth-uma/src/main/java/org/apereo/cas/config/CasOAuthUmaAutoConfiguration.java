@@ -54,7 +54,7 @@ import org.apereo.cas.uma.web.controllers.rpt.UmaRequestingPartyTokenJwksEndpoin
 import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+import org.apereo.cas.util.serialization.BaseJacksonSerializer;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.RefreshableHandlerInterceptor;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -359,17 +359,12 @@ public class CasOAuthUmaAutoConfiguration {
             };
         }
 
-        private static final class UmaPermissionTicketStringSerializer extends AbstractJacksonBackedStringSerializer<DefaultUmaPermissionTicket> {
+        private static final class UmaPermissionTicketStringSerializer extends BaseJacksonSerializer<DefaultUmaPermissionTicket> {
             @Serial
             private static final long serialVersionUID = -2198623586274810263L;
 
             UmaPermissionTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
-                super(MINIMAL_PRETTY_PRINTER, applicationContext);
-            }
-
-            @Override
-            public Class<DefaultUmaPermissionTicket> getTypeToSerialize() {
-                return DefaultUmaPermissionTicket.class;
+                super(MINIMAL_PRETTY_PRINTER, applicationContext, DefaultUmaPermissionTicket.class);
             }
         }
         

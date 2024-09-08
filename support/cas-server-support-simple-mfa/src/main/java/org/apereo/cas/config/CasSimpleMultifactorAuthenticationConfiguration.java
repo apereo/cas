@@ -21,7 +21,7 @@ import org.apereo.cas.ticket.ExpirationPolicyBuilder;
 import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
-import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+import org.apereo.cas.util.serialization.BaseJacksonSerializer;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -190,17 +190,12 @@ class CasSimpleMultifactorAuthenticationConfiguration {
         }
 
         private static final class CasSimpleMultifactorAuthenticationTicketStringSerializer
-            extends AbstractJacksonBackedStringSerializer<CasSimpleMultifactorAuthenticationTicketImpl> {
+            extends BaseJacksonSerializer<CasSimpleMultifactorAuthenticationTicketImpl> {
             @Serial
             private static final long serialVersionUID = -2198623586274810263L;
 
             CasSimpleMultifactorAuthenticationTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
-                super(MINIMAL_PRETTY_PRINTER, applicationContext);
-            }
-
-            @Override
-            public Class<CasSimpleMultifactorAuthenticationTicketImpl> getTypeToSerialize() {
-                return CasSimpleMultifactorAuthenticationTicketImpl.class;
+                super(MINIMAL_PRETTY_PRINTER, applicationContext, CasSimpleMultifactorAuthenticationTicketImpl.class);
             }
         }
     }
