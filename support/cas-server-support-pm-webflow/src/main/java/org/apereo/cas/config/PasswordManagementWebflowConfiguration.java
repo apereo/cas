@@ -48,6 +48,7 @@ import org.apereo.cas.web.DefaultCaptchaActivationStrategy;
 import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.InitializeCaptchaAction;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -119,8 +120,9 @@ class PasswordManagementWebflowConfiguration {
         @ConditionalOnMissingBean(name = "passwordResetHandlerAdapter")
         public HandlerAdapter passwordResetHandlerAdapter(
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowExecutionPlan.BEAN_NAME) final CasWebflowExecutionPlan webflowExecutionPlan,
             @Qualifier("loginFlowExecutor") final FlowExecutor loginFlowExecutor) {
-            val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_PASSWORD_RESET);
+            val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_PASSWORD_RESET, webflowExecutionPlan);
             handler.setFlowExecutor(loginFlowExecutor);
             return handler;
         }

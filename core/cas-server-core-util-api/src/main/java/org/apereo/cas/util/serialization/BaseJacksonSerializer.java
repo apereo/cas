@@ -45,6 +45,7 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
     private static final long serialVersionUID = -8415599777321259365L;
 
     private final ConfigurableApplicationContext applicationContext;
+    private final PrettyPrinter prettyPrinter;
     private final Class<T> typeToSerialize;
     private final ObjectReader typeReader;
     private final ObjectWriter typeWriter;
@@ -56,6 +57,7 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
                                     final Class<T> typeToSerialize) {
         this.applicationContext = applicationContext;
         this.typeToSerialize = typeToSerialize;
+        this.prettyPrinter = prettyPrinter;
 
         this.typeReader = getObjectMapper().readerFor(typeToSerialize);
         this.typeWriter = getObjectMapper().writerFor(typeToSerialize).with(prettyPrinter);
@@ -135,7 +137,7 @@ public abstract class BaseJacksonSerializer<T> implements StringSerializer<T> {
     public String fromList(final Collection<T> object) {
         return FunctionUtils.doUnchecked(() -> {
             try (val writer = new StringWriter()) {
-                typeWriter.writeValue(writer, object);
+                getObjectMapper().writerFor(object.getClass()).with(prettyPrinter).writeValue(writer, object);
                 return writer.toString();
             }
         });

@@ -46,6 +46,7 @@ import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
 import org.apereo.cas.web.flow.CasFlowHandlerMapping;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
 import org.apereo.cas.web.flow.DefaultDelegatedClientAuthenticationWebflowManager;
@@ -710,8 +711,9 @@ class DelegatedAuthenticationWebflowConfiguration {
         public HandlerAdapter delegatedClientRedirectWebflowHandlerAdapter(
             @Qualifier("delegatedClientWebflowUrlHandler") final FlowUrlHandler delegatedClientWebflowUrlHandler,
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowExecutionPlan.BEAN_NAME) final CasWebflowExecutionPlan webflowExecutionPlan,
             @Qualifier("delegatedClientRedirectFlowExecutor") final FlowExecutor delegatedClientRedirectFlowExecutor) {
-            val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_DELEGATION_REDIRECT);
+            val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_DELEGATION_REDIRECT, webflowExecutionPlan);
             handler.setFlowExecutor(delegatedClientRedirectFlowExecutor);
             handler.setFlowUrlHandler(delegatedClientWebflowUrlHandler);
             return handler;
