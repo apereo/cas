@@ -153,6 +153,7 @@ or override log42.component.properties to turn off async
         <Logger name="org.springframework.amqp" level="error" />
         <Logger name="org.springframework.integration" level="warn"/>
         <Logger name="org.springframework.messaging" level="warn"/>
+        <Logger name="org.springframework.beans" level="warn"/>
         <Logger name="org.springframework.web" level="${sys:spring.web.log.level}"/>
         <Logger name="org.springframework.scheduling" level="warn"/>
         <Logger name="org.springframework.context.annotation" level="off"/>

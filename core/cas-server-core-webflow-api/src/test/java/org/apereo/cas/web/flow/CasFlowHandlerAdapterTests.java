@@ -27,7 +27,7 @@ class CasFlowHandlerAdapterTests {
         val plan = mock(CasWebflowExecutionPlan.class);
         when(plan.isInitialized()).thenReturn(false);
         ApplicationContextProvider.registerBeanIntoApplicationContext(applicationContext, plan, CasWebflowExecutionPlan.BEAN_NAME);
-        val adapter = new CasFlowHandlerAdapter("login");
+        val adapter = new CasFlowHandlerAdapter("login", plan);
         adapter.setApplicationContext(applicationContext);
         val request = new MockHttpServletRequest();
         request.setMethod(HttpMethod.GET.name());

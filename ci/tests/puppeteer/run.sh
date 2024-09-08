@@ -321,11 +321,12 @@ if [[ "${CI}" == "true" ]]; then
   DAEMON="--no-daemon"
 
   printgreen "Creating configuration directories.."
-  mkdir -p /etc/cas/config
-  mkdir -p /etc/cas/static
-  mkdir -p /etc/cas/saml
-  mkdir -p /etc/cas/services
-  mkdir -p /etc/cas/oidc
+  sudo mkdir -p /etc/cas/config
+  sudo mkdir -p /etc/cas/static
+  sudo mkdir -p /etc/cas/saml
+  sudo mkdir -p /etc/cas/services
+  sudo mkdir -p /etc/cas/oidc
+  sudo chmod -R 777 /etc/cas
   ls -al /etc/cas
 fi
 

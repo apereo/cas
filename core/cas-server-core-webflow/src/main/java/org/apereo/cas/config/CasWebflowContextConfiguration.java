@@ -106,9 +106,10 @@ class CasWebflowContextConfiguration {
         @Bean
         public HandlerAdapter logoutHandlerAdapter(
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowExecutionPlan.BEAN_NAME) final CasWebflowExecutionPlan webflowExecutionPlan,
             @Qualifier("logoutFlowUrlHandler") final FlowUrlHandler logoutFlowUrlHandler,
             @Qualifier("logoutFlowExecutor") final FlowExecutor logoutFlowExecutor) {
-            val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_LOGOUT);
+            val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_LOGOUT, webflowExecutionPlan);
             handler.setFlowExecutor(logoutFlowExecutor);
             handler.setFlowUrlHandler(logoutFlowUrlHandler);
             return handler;
@@ -130,9 +131,10 @@ class CasWebflowContextConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerAdapter loginHandlerAdapter(
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(CasWebflowExecutionPlan.BEAN_NAME) final CasWebflowExecutionPlan webflowExecutionPlan,
             @Qualifier("loginFlowExecutor") final FlowExecutor loginFlowExecutor,
             @Qualifier("loginFlowUrlHandler") final FlowUrlHandler loginFlowUrlHandler) {
-            val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_LOGIN);
+            val handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_LOGIN, webflowExecutionPlan);
             handler.setFlowExecutor(loginFlowExecutor);
             handler.setFlowUrlHandler(loginFlowUrlHandler);
             return handler;
