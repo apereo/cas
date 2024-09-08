@@ -94,9 +94,9 @@ public class CoreAuthenticationTestUtils {
 
     public static WebApplicationService getWebApplicationService(final String id) {
         val svc = mock(WebApplicationService.class);
-        when(svc.getId()).thenReturn(id);
-        when(svc.getOriginalUrl()).thenReturn(id);
-        when(svc.getSource()).thenReturn(CasProtocolConstants.PARAMETER_SERVICE);
+        lenient().when(svc.getId()).thenReturn(id);
+        lenient().when(svc.getOriginalUrl()).thenReturn(id);
+        lenient().when(svc.getSource()).thenReturn(CasProtocolConstants.PARAMETER_SERVICE);
         return svc;
     }
 
@@ -177,20 +177,20 @@ public class CoreAuthenticationTestUtils {
 
     public static CasModelRegisteredService getRegisteredService(final String name, final String url) {
         val service = mock(CasModelRegisteredService.class);
-        when(service.getFriendlyName()).thenCallRealMethod();
-        when(service.getServiceId()).thenReturn(url);
-        when(service.getName()).thenReturn(name);
-        when(service.getId()).thenReturn(Long.MAX_VALUE);
-        when(service.getDescription()).thenReturn("service description");
+        lenient().when(service.getFriendlyName()).thenCallRealMethod();
+        lenient().when(service.getServiceId()).thenReturn(url);
+        lenient().when(service.getName()).thenReturn(name);
+        lenient().when(service.getId()).thenReturn(Long.MAX_VALUE);
+        lenient().when(service.getDescription()).thenReturn("service description");
 
         val access = mock(RegisteredServiceAccessStrategy.class);
-        when(access.isServiceAccessAllowed(any(), any())).thenReturn(true);
-        when(access.isServiceAccessAllowedForSso(any())).thenReturn(true);
-        when(service.getAccessStrategy()).thenReturn(access);
+        lenient().when(access.isServiceAccessAllowed(any(), any())).thenReturn(true);
+        lenient().when(access.isServiceAccessAllowedForSso(any())).thenReturn(true);
+        lenient().when(service.getAccessStrategy()).thenReturn(access);
 
         val authnPolicy = mock(RegisteredServiceAuthenticationPolicy.class);
-        when(authnPolicy.getRequiredAuthenticationHandlers()).thenReturn(Set.of());
-        when(service.getAuthenticationPolicy()).thenReturn(authnPolicy);
+        lenient().when(authnPolicy.getRequiredAuthenticationHandlers()).thenReturn(Set.of());
+        lenient().when(service.getAuthenticationPolicy()).thenReturn(authnPolicy);
         return service;
     }
 
@@ -261,7 +261,7 @@ public class CoreAuthenticationTestUtils {
 
     public static AuthenticationSystemSupport getAuthenticationSystemSupport() {
         val authSupport = mock(AuthenticationSystemSupport.class);
-        when(authSupport.getPrincipalElectionStrategy()).thenReturn(new DefaultPrincipalElectionStrategy());
+        lenient().when(authSupport.getPrincipalElectionStrategy()).thenReturn(new DefaultPrincipalElectionStrategy());
         return authSupport;
     }
 

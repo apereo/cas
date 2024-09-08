@@ -86,7 +86,7 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
             .scratchCodes(acct.getScratchCodes())
             .name(casuser)
             .build();
-        var stored = repo.save(toSave);
+        val stored = repo.save(toSave);
         assertNotNull(repo.get(stored.getId()));
         assertNotNull(repo.get(toSave.getUsername(), stored.getId()));
         assertEquals(1, repo.count());
@@ -181,8 +181,8 @@ public abstract class BaseOneTimeTokenCredentialRepositoryTests {
     @Test
     void verifyGetWithDecodedSecret() throws Throwable {
         val casuser = getUsernameUnderTest();
-        when(cipherExecutor.encode(PLAIN_SECRET)).thenReturn("abc321");
-        when(cipherExecutor.decode("abc321")).thenReturn(PLAIN_SECRET);
+        lenient().when(cipherExecutor.encode(PLAIN_SECRET)).thenReturn("abc321");
+        lenient().when(cipherExecutor.decode("abc321")).thenReturn(PLAIN_SECRET);
         val repo = getRegistry("verifyGetWithDecodedSecret");
         var acct = getAccount("verifyGetWithDecodedSecret", casuser);
         acct.setSecretKey(PLAIN_SECRET);
