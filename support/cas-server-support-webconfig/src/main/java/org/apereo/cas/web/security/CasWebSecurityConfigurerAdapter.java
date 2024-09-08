@@ -206,6 +206,7 @@ public class CasWebSecurityConfigurerAdapter {
                         val file = new File(StringUtils.remove(location, ResourceUtils.FILE_URL_PREFIX));
                         if (file.exists() && file.isDirectory()) {
                             val directories = Arrays.stream(file.listFiles(File::isDirectory)).toList();
+                            LOGGER.info("Directories to authorize for static public resources are [{}]", directories);
                             directories.forEach(directory -> customizer.requestMatchers(new AntPathRequestMatcher('/' + directory.getName() + "/**")).permitAll());
                         }
                     }

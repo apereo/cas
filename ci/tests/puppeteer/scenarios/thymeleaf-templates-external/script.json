@@ -3,7 +3,7 @@
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--spring.web.resources.static-locations=file:/tmp/cas/static,classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/",
+    "--spring.web.resources.static-locations=file:/etc/cas/static,classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/",
     "--cas.view.template-prefixes=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/templates"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"

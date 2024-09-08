@@ -2,6 +2,7 @@ package org.apereo.cas.web.security;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -46,7 +47,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
         "spring.security.user.name=casuser",
         "spring.security.user.password=Mellon",
-        "spring.web.resources.static-locations=file:/tmp",
+        "spring.web.resources.static-locations=file:${java.io.tmpdir}/static",
 
         "management.endpoints.enabled-by-default=true",
         "management.endpoints.web.exposure.include=*",
@@ -66,6 +67,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("WebApp")
 @ExtendWith(CasTestExtension.class)
+@Slf4j
 class CasWebSecurityConfigurerAdapterWebTests {
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -74,9 +76,17 @@ class CasWebSecurityConfigurerAdapterWebTests {
 
     @BeforeAll
     public static void beforeAll() throws Exception {
-        val parent = new File("/tmp/cas-static-content");
-        assertTrue(parent.mkdirs());
-        FileUtils.writeStringToFile(new File(parent, "data.txt"), "Hello, World!", StandardCharsets.UTF_8);
+        val parent = new File(System.getProperty("java.io.tmpdir"), "static");
+        if (!parent.exists()) {
+            assertTrue(parent.mkdirs());
+        }
+        val root = new File(parent, "hello");
+        if (!root.exists()) {
+            assertTrue(root.mkdirs());
+        }
+        val data = new File(root, "data.txt");
+        FileUtils.writeStringToFile(data, "Hello, World!", StandardCharsets.UTF_8);
+        LOGGER.info("Writing static data file to [{}]", data);
     }
 
     @BeforeEach

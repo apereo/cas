@@ -7,6 +7,7 @@
     </Appenders>
     <Loggers>
         <Logger name="org.apereo" level="error"  />
+        <Logger name="org.apereo.cas.web.security" level="info"  />
         <Logger name="org.ldaptive" level="warn" />
         <Logger name="org.springframework.test.web" level="warn" />
         <Logger name="org.springframework.web" level="warn" />

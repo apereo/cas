@@ -319,6 +319,14 @@ if [[ "${CI}" == "true" ]]; then
   DEBUG=""
   printgreen "Gradle daemon is turned off while running CI"
   DAEMON="--no-daemon"
+
+  printgreen "Creating configuration directories.."
+  mkdir -p /etc/cas/config
+  mkdir -p /etc/cas/static
+  mkdir -p /etc/cas/saml
+  mkdir -p /etc/cas/services
+  mkdir -p /etc/cas/oidc
+  ls -al /etc/cas
 fi
 
 if [[ "${RERUN}" == "true" ]]; then
