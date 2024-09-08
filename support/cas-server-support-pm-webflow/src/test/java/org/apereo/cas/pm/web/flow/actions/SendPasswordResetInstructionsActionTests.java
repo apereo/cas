@@ -23,7 +23,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -47,7 +46,6 @@ class SendPasswordResetInstructionsActionTests {
     @TestConfiguration(value = "PasswordManagementTestConfiguration", proxyBeanMethods = false)
     static class PasswordManagementTestConfiguration {
         @Bean
-        @Autowired
         public PasswordManagementService passwordChangeService() throws Throwable {
             val service = mock(PasswordManagementService.class);
             when(service.createToken(any())).thenReturn(null);

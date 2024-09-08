@@ -24,8 +24,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -64,12 +62,11 @@ class SurrogatePrincipalResolverTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
-    @Mock
     private AttributeDefinitionStore attributeDefinitionStore;
     
     @BeforeEach
     public void before() throws Exception {
-        MockitoAnnotations.openMocks(this).close();
+        this.attributeDefinitionStore = mock(AttributeDefinitionStore.class);
     }
 
     @Test
@@ -94,9 +91,9 @@ class SurrogatePrincipalResolverTests {
         val resolver = new SurrogatePrincipalResolver(context);
         resolver.setSurrogatePrincipalBuilder(surrogatePrincipalBuilder);
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        val p = resolver.resolve(credential);
-        assertNotNull(p);
-        assertEquals(p.getId(), credential.getId());
+        val principal = resolver.resolve(credential);
+        assertNotNull(principal);
+        assertEquals(principal.getId(), credential.getId());
     }
 
     @Test
@@ -109,10 +106,10 @@ class SurrogatePrincipalResolverTests {
         val surrogateTrait = new SurrogateCredentialTrait("surrogate");
         credential.getCredentialMetadata().addTrait(surrogateTrait);
         credential.setUsername("test");
-        val p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal("test")),
+        val principal = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal("test")),
             Optional.of(mock(AuthenticationHandler.class)), Optional.of(CoreAuthenticationTestUtils.getService()));
-        assertInstanceOf(SurrogatePrincipal.class, p);
-        assertEquals(p.getId(), surrogateTrait.getSurrogateUsername());
+        assertInstanceOf(SurrogatePrincipal.class, principal);
+        assertEquals(principal.getId(), surrogateTrait.getSurrogateUsername());
     }
 
     @Test
@@ -122,9 +119,9 @@ class SurrogatePrincipalResolverTests {
         val resolver = new SurrogatePrincipalResolver(context);
         resolver.setSurrogatePrincipalBuilder(surrogatePrincipalBuilder);
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        val p = resolver.resolve(credential);
-        assertNotNull(p);
-        assertEquals("TEST", p.getId());
+        val principal = resolver.resolve(credential);
+        assertNotNull(principal);
+        assertEquals("TEST", principal.getId());
     }
 
     @Test
@@ -150,11 +147,11 @@ class SurrogatePrincipalResolverTests {
         val credential = new UsernamePasswordCredential();
         credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("surrogate"));
         credential.setUsername("username");
-        val p = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal("casuser")),
+        val principal = resolver.resolve(credential, Optional.of(CoreAuthenticationTestUtils.getPrincipal("casuser")),
             Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
             Optional.of(CoreAuthenticationTestUtils.getService()));
-        assertNotNull(p);
-        assertEquals("surrogate", p.getId());
+        assertNotNull(principal);
+        assertEquals("surrogate", principal.getId());
     }
 
     @Test

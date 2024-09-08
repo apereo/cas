@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -69,7 +68,6 @@ class PersonDirectoryPrincipalResolverTests {
     @Autowired
     private ConfigurableApplicationContext applicationContext;
 
-    @Mock
     private ServicesManager servicesManager;
 
     @Mock
@@ -80,7 +78,7 @@ class PersonDirectoryPrincipalResolverTests {
 
     @BeforeEach
     public void before() throws Exception {
-        MockitoAnnotations.openMocks(this).close();
+        servicesManager = mock(ServicesManager.class);
     }
 
     private PrincipalResolutionContext.PrincipalResolutionContextBuilder<?, ?> getPrincipalResolutionContextBuilder(final StubPersonAttributeDao attributeRepository) {
@@ -466,9 +464,8 @@ class PersonDirectoryPrincipalResolverTests {
 
                 val service = CoreAuthenticationTestUtils.getService(UUID.randomUUID().toString());
                 val registeredService = CoreAuthenticationTestUtils.getRegisteredService(service.getId());
-                when(registeredService.getAttributeReleasePolicy()).thenReturn(attributePolicy);
-
-                when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
+                lenient().when(registeredService.getAttributeReleasePolicy()).thenReturn(attributePolicy);
+                lenient().when(servicesManager.findServiceBy(any(Service.class))).thenReturn(registeredService);
 
                 val resolved = resolver.resolve(credential, Optional.of(principal),
                     Optional.of(new SimpleTestUsernamePasswordAuthenticationHandler()),
@@ -535,4 +532,5 @@ class PersonDirectoryPrincipalResolverTests {
             mock(AttributeRepositoryResolver.class),
             properties);
     }
+
 }
