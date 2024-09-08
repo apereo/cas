@@ -15,7 +15,7 @@ import com.sendgrid.helpers.mail.objects.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.HierarchicalMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -32,7 +32,7 @@ import java.util.List;
 public class SendGridEmailSender implements EmailSender {
     private final SendGridAPI sendGridAPI;
 
-    private final HierarchicalMessageSource messageSource;
+    private final MessageSource messageSource;
 
     @Override
     public EmailCommunicationResult send(final EmailMessageRequest emailRequest) {

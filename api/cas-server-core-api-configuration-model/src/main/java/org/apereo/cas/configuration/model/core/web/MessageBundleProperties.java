@@ -23,7 +23,6 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Accessors(chain = true)
-
 public class MessageBundleProperties implements Serializable {
 
     /**

@@ -5,7 +5,7 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.context.HierarchicalMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
@@ -19,7 +19,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 public class DefaultEmailSender implements EmailSender {
     private final JavaMailSender mailSender;
 
-    private final HierarchicalMessageSource messageSource;
+    private final MessageSource messageSource;
 
     @Override
     public boolean canSend() {

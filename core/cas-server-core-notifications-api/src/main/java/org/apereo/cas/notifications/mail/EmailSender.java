@@ -5,7 +5,7 @@ import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.text.StringSubstitutor;
-import org.springframework.context.HierarchicalMessageSource;
+import org.springframework.context.MessageSource;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -49,7 +49,7 @@ public interface EmailSender {
      * @return the string
      */
     default String determineEmailSubject(final EmailMessageRequest emailRequest,
-                                         final HierarchicalMessageSource messageSource) {
+                                         final MessageSource messageSource) {
         val substitutor = new StringSubstitutor(emailRequest.getContext(), "${", "}");
         var subject = substitutor.replace(emailRequest.getEmailProperties().getSubject());
 

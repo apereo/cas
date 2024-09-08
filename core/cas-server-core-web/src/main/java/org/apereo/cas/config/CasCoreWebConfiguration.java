@@ -45,7 +45,7 @@ import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolve
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.HierarchicalMessageSource;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -95,6 +95,7 @@ class CasCoreWebConfiguration {
          */
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "casCommonMessages")
         public PropertiesFactoryBean casCommonMessages(final CasConfigurationProperties casProperties) {
             val properties = new PropertiesFactoryBean();
             val resourceLoader = new DefaultResourceLoader();
@@ -113,7 +114,8 @@ class CasCoreWebConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        public HierarchicalMessageSource messageSource(
+        @ConditionalOnMissingBean(name = "casMessageSource")
+        public MessageSource messageSource(
             final CasConfigurationProperties casProperties,
             @Qualifier("casCommonMessages") final Properties casCommonMessages) {
             val bean = new CasReloadableMessageBundle();

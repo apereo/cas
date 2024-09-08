@@ -17,7 +17,7 @@ import com.mailjet.client.transactional.response.SentMessageStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.springframework.context.HierarchicalMessageSource;
+import org.springframework.context.MessageSource;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -32,11 +32,11 @@ import java.util.stream.Collectors;
 public class MailjetEmailSender implements EmailSender {
 
     private final MailjetClient mailjetClient;
-    private final HierarchicalMessageSource messageSource;
+    private final MessageSource messageSource;
     private final CasConfigurationProperties casProperties;
 
     @Override
-    public EmailCommunicationResult send(final EmailMessageRequest emailRequest) throws Exception {
+    public EmailCommunicationResult send(final EmailMessageRequest emailRequest) {
         val emailProperties = emailRequest.getEmailProperties();
         val messageBuilder = TransactionalEmail
             .builder()
