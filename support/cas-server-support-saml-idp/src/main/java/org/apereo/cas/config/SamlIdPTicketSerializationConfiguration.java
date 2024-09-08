@@ -7,7 +7,7 @@ import org.apereo.cas.ticket.artifact.SamlArtifactTicketImpl;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicket;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketImpl;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
-import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+import org.apereo.cas.util.serialization.BaseJacksonSerializer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -46,31 +46,21 @@ class SamlIdPTicketSerializationConfiguration {
         };
     }
 
-    private static final class SamlArtifactTicketStringSerializer extends AbstractJacksonBackedStringSerializer<SamlArtifactTicketImpl> {
+    private static final class SamlArtifactTicketStringSerializer extends BaseJacksonSerializer<SamlArtifactTicketImpl> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
         SamlArtifactTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
-            super(MINIMAL_PRETTY_PRINTER, applicationContext);
-        }
-
-        @Override
-        public Class<SamlArtifactTicketImpl> getTypeToSerialize() {
-            return SamlArtifactTicketImpl.class;
+            super(MINIMAL_PRETTY_PRINTER, applicationContext, SamlArtifactTicketImpl.class);
         }
     }
 
-    private static final class SamlAttributeQueryTicketStringSerializer extends AbstractJacksonBackedStringSerializer<SamlAttributeQueryTicketImpl> {
+    private static final class SamlAttributeQueryTicketStringSerializer extends BaseJacksonSerializer<SamlAttributeQueryTicketImpl> {
         @Serial
         private static final long serialVersionUID = -2198623586274810263L;
 
         SamlAttributeQueryTicketStringSerializer(final ConfigurableApplicationContext applicationContext) {
-            super(MINIMAL_PRETTY_PRINTER, applicationContext);
-        }
-
-        @Override
-        public Class<SamlAttributeQueryTicketImpl> getTypeToSerialize() {
-            return SamlAttributeQueryTicketImpl.class;
+            super(MINIMAL_PRETTY_PRINTER, applicationContext, SamlAttributeQueryTicketImpl.class);
         }
     }
 }

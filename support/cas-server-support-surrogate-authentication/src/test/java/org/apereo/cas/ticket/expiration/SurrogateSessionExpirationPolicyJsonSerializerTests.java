@@ -3,7 +3,7 @@ package org.apereo.cas.ticket.expiration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.ExpirationPolicy;
-import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+import org.apereo.cas.util.serialization.BaseJacksonSerializer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -41,17 +41,12 @@ class SurrogateSessionExpirationPolicyJsonSerializerTests {
         assertEquals(policy, newPolicy);
     }
 
-    private static final class SurrogateSessionExpirationPolicyJsonSerializer extends AbstractJacksonBackedStringSerializer<ExpirationPolicy> {
+    private static final class SurrogateSessionExpirationPolicyJsonSerializer extends BaseJacksonSerializer<ExpirationPolicy> {
         @Serial
         private static final long serialVersionUID = -7883370764375218898L;
 
         SurrogateSessionExpirationPolicyJsonSerializer(final ConfigurableApplicationContext applicationContext) {
-            super(MINIMAL_PRETTY_PRINTER, applicationContext);
-        }
-
-        @Override
-        public Class<ExpirationPolicy> getTypeToSerialize() {
-            return ExpirationPolicy.class;
+            super(MINIMAL_PRETTY_PRINTER, applicationContext, ExpirationPolicy.class);
         }
     }
 

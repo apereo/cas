@@ -17,7 +17,7 @@ import org.apereo.cas.oidc.ticket.OidcPushedAuthorizationRequest;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.services.PairwiseOidcRegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
-import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+import org.apereo.cas.util.serialization.BaseJacksonSerializer;
 import org.apereo.cas.util.serialization.ComponentSerializationPlanConfigurer;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 
@@ -79,32 +79,22 @@ class OidcComponentSerializationConfiguration {
     }
 
     private static final class OidcPushedAuthorizationRequestSerializer extends
-        AbstractJacksonBackedStringSerializer<OidcDefaultPushedAuthorizationRequest> {
+        BaseJacksonSerializer<OidcDefaultPushedAuthorizationRequest> {
         @Serial
         private static final long serialVersionUID = -6298623586274810263L;
 
         OidcPushedAuthorizationRequestSerializer(final ConfigurableApplicationContext applicationContext) {
-            super(MINIMAL_PRETTY_PRINTER, applicationContext);
-        }
-
-        @Override
-        public Class<OidcDefaultPushedAuthorizationRequest> getTypeToSerialize() {
-            return OidcDefaultPushedAuthorizationRequest.class;
+            super(MINIMAL_PRETTY_PRINTER, applicationContext, OidcDefaultPushedAuthorizationRequest.class);
         }
     }
 
     private static final class OidcCibaRequestSerializer extends
-        AbstractJacksonBackedStringSerializer<OidcDefaultCibaRequest> {
+        BaseJacksonSerializer<OidcDefaultCibaRequest> {
         @Serial
         private static final long serialVersionUID = -1298623586274810263L;
 
         OidcCibaRequestSerializer(final ConfigurableApplicationContext applicationContext) {
-            super(MINIMAL_PRETTY_PRINTER, applicationContext);
-        }
-
-        @Override
-        public Class<OidcDefaultCibaRequest> getTypeToSerialize() {
-            return OidcDefaultCibaRequest.class;
+            super(MINIMAL_PRETTY_PRINTER, applicationContext, OidcDefaultCibaRequest.class);
         }
     }
 }

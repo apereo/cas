@@ -3,7 +3,7 @@ package org.apereo.cas.pac4j.serialization;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
+import org.apereo.cas.util.serialization.BaseJacksonSerializer;
 import com.nimbusds.oauth2.sdk.Scope;
 import com.nimbusds.oauth2.sdk.pkce.CodeVerifier;
 import com.nimbusds.oauth2.sdk.token.AccessTokenType;
@@ -38,14 +38,9 @@ class NimbusOAuthJacksonModuleTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val serializer = new AbstractJacksonBackedStringSerializer(applicationContext) {
+        val serializer = new BaseJacksonSerializer(applicationContext, Object.class) {
             @Serial
             private static final long serialVersionUID = 1083978605633757365L;
-
-            @Override
-            public Class getTypeToSerialize() {
-                return Object.class;
-            }
         };
 
         val mapper = serializer.getObjectMapper();
@@ -57,7 +52,7 @@ class NimbusOAuthJacksonModuleTests {
         runTest(serializer, Scope.class, new Scope("profile"));
     }
 
-    private static void runTest(final AbstractJacksonBackedStringSerializer serializer, final Class clazz, final Object object) throws Exception {
+    private static void runTest(final BaseJacksonSerializer serializer, final Class clazz, final Object object) throws Exception {
         val mapper = serializer.getObjectMapper();
         val content = mapper.writeValueAsString(object);
         assertNotNull(mapper.readValue(content, clazz));
