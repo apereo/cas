@@ -5,8 +5,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.http.HttpClient;
-
 import com.duosecurity.Client;
+import com.duosecurity.exception.DuoException;
 import com.duosecurity.model.AccessDevice;
 import com.duosecurity.model.Application;
 import com.duosecurity.model.AuthContext;
@@ -19,12 +19,13 @@ import com.duosecurity.model.User;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -38,36 +39,52 @@ import static org.mockito.Mockito.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class UniversalPromptDuoSecurityAuthenticationServiceTests {
 
-    @Test
-    void verifyPingFails() throws Throwable {
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void verifyPing(final boolean pass) throws Throwable {
         val duoClient = mock(Client.class);
-        when(duoClient.healthCheck()).thenThrow(new RuntimeException());
-
+        if (pass) {
+            when(duoClient.healthCheck()).thenReturn(new HealthCheckResponse());
+        } else {
+            when(duoClient.healthCheck()).thenThrow(new RuntimeException());
+        }
         val duoProperties = new DuoSecurityMultifactorAuthenticationProperties();
         val service = new UniversalPromptDuoSecurityAuthenticationService(duoProperties, mock(HttpClient.class), duoClient,
             List.of(MultifactorAuthenticationPrincipalResolver.identical()), Caffeine.newBuilder().build());
         assertTrue(service.getDuoClient().isPresent());
-        assertFalse(service.ping());
+        assertEquals(pass, service.ping());
     }
 
-    @Test
-    void verifyPing() throws Throwable {
-        val duoClient = mock(Client.class);
-        when(duoClient.healthCheck()).thenReturn(new HealthCheckResponse());
-        val duoProperties = new DuoSecurityMultifactorAuthenticationProperties();
-        val service = new UniversalPromptDuoSecurityAuthenticationService(duoProperties, mock(HttpClient.class), duoClient,
-            List.of(MultifactorAuthenticationPrincipalResolver.identical()), Caffeine.newBuilder().build());
-        assertTrue(service.getDuoClient().isPresent());
-        assertTrue(service.ping());
-    }
-
-    @Test
-    void verifyAuth() throws Throwable {
+    @ParameterizedTest
+    @ValueSource(strings = "email")
+    @NullAndEmptySource
+    void verifyAuth(final String principalAttribute) throws Throwable {
         val state = UUID.randomUUID().toString();
+        val principal = RegisteredServiceTestUtils.getPrincipal("casuser",
+            Map.of("email", List.of("cas@example.org")));
         val credential = new DuoSecurityUniversalPromptCredential(state,
-            RegisteredServiceTestUtils.getAuthentication("casuser"));
+            RegisteredServiceTestUtils.getAuthentication(principal));
+        val token = buildDuoAuthenticationToken();
+        val duoProperties = new DuoSecurityMultifactorAuthenticationProperties()
+            .setPrincipalAttribute(principalAttribute);
+        val service = buildAuthenticationService(token, duoProperties);
+        val result = service.authenticate(credential);
+        assertNotNull(result);
+        assertTrue(result.isSuccess());
+        assertEquals("CAS", result.getUsername());
+        assertNotNull(result.getAttributes());
+    }
 
+    private static UniversalPromptDuoSecurityAuthenticationService buildAuthenticationService(
+        final Token token, final DuoSecurityMultifactorAuthenticationProperties duoProperties) throws DuoException {
         val duoClient = mock(Client.class);
+        when(duoClient.exchangeAuthorizationCodeFor2FAResult(anyString(), anyString())).thenReturn(token);
+        return new UniversalPromptDuoSecurityAuthenticationService(duoProperties,
+            mock(HttpClient.class), duoClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()),
+            Caffeine.newBuilder().build());
+    }
+
+    private static Token buildDuoAuthenticationToken() {
         val token = new Token();
         token.setAud("aud");
         token.setIat(123456.00D);
@@ -88,18 +105,7 @@ class UniversalPromptDuoSecurityAuthenticationServiceTests {
         authContext.setApplication(new Application());
         token.setAuth_context(authContext);
         token.setAuth_result(new AuthResult());
-
-        when(duoClient.exchangeAuthorizationCodeFor2FAResult(anyString(), anyString())).thenReturn(token);
-
-        val duoProperties = new DuoSecurityMultifactorAuthenticationProperties();
-        val service = new UniversalPromptDuoSecurityAuthenticationService(duoProperties,
-            mock(HttpClient.class), duoClient, List.of(MultifactorAuthenticationPrincipalResolver.identical()),
-            Caffeine.newBuilder().build());
-        val result = service.authenticate(credential);
-        assertNotNull(result);
-        assertTrue(result.isSuccess());
-        assertEquals("CAS", result.getUsername());
-        assertNotNull(result.getAttributes());
+        return token;
     }
 
 }

@@ -39,6 +39,8 @@ dependencies {
     compileOnly project(":support:cas-server-support-surrogate-api")
     compileOnly project(":support:cas-server-support-passwordless-api")
 
+    testImplementation libraries.nimbus
+    
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-trusted-mfa")
     testImplementation project(":support:cas-server-support-themes")

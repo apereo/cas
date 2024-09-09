@@ -65,6 +65,11 @@ The collection of end-to-end [browser tests based on Puppeteer](../../developer/
 and scenarios. At the moment, total number of jobs stands at approximately `487` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
+  
+### Redis Ticket Registry
+
+The performance of the [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) is improved to remove unnecessary 
+classloading, locks and JSON serialization overhead.
 
 ## Other Stuff
    
@@ -72,6 +77,8 @@ are now configured to run with parallelism enabled.
 - Support for [reCAPTCHA](../integration/Configuring-Google-reCAPTCHA.html) is now extended to support [Friendly CAPTCHA](https://friendlycaptcha.com/). 
 - Content security policy header configuration can now support a dynamic nonce, which is a random value different for every HTTP request.
 - Static resources can now be externalized by default via the following additional directories: `file:/etc/cas/static` and `file:/etc/cas/public`.
+- The `maxAge` cookie setting can now be configured as a duration.
+
 
 ## Library Upgrades
 
@@ -80,6 +87,7 @@ are now configured to run with parallelism enabled.
 - Spring Session
 - Spring Integration
 - Spring Kafka
+- Spring Cloud
 - Spring AMQP
 - Spring Security
 - Micrometer

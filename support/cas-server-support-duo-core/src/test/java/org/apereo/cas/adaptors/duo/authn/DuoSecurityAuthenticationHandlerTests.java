@@ -53,15 +53,7 @@ class DuoSecurityAuthenticationHandlerTests {
         when(duoService.authenticate(any(Credential.class))).thenThrow(new RuntimeException("Unable to authenticate"));
         assertThrows(FailedLoginException.class, () -> handler.authenticate(credential, mock(Service.class)));
     }
-
-    private static DuoSecurityAuthenticationHandler getAuthenticationHandler(
-        final DuoSecurityMultifactorAuthenticationProvider provider) {
-        return new DuoSecurityAuthenticationHandler(null,
-            mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(),
-            new DirectObjectProvider<>(provider), 0, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
-    }
-
-
+    
     @Test
     void verifyDuoSecurityUniversalPromptCredential() throws Throwable {
         val authentication = CoreAuthenticationTestUtils.getAuthentication();
@@ -129,4 +121,12 @@ class DuoSecurityAuthenticationHandlerTests {
         val credential = new DuoSecurityDirectCredential(CoreAuthenticationTestUtils.getAuthentication().getPrincipal(), DuoSecurityMultifactorAuthenticationProperties.DEFAULT_IDENTIFIER);
         assertThrows(FailedLoginException.class, () -> handler.authenticate(credential, mock(Service.class)));
     }
+
+    private static DuoSecurityAuthenticationHandler getAuthenticationHandler(
+        final DuoSecurityMultifactorAuthenticationProvider provider) {
+        return new DuoSecurityAuthenticationHandler(null,
+            mock(ServicesManager.class), PrincipalFactoryUtils.newPrincipalFactory(),
+            new DirectObjectProvider<>(provider), 0, List.of(MultifactorAuthenticationPrincipalResolver.identical()));
+    }
+
 }

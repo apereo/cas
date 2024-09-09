@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.io.Serial;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -60,8 +61,7 @@ public class SimplePrincipal implements Principal {
     protected SimplePrincipal(@JsonProperty("id") final @NonNull String id,
                               @JsonProperty("attributes") final Map<String, List<Object>> attributes) {
         this.id = id;
-        this.attributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-        this.attributes.putAll(attributes);
+        this.attributes = new HashMap<>(attributes);
     }
 
     @Override
