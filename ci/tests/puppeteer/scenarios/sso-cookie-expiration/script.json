@@ -4,8 +4,7 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.service-registry.core.init-from-json=true",
-
     "--cas.tgc.crypto.enabled=false",
-    "--cas.tgc.max-age=PT8D"
+    "--cas.tgc.max-age=PT4H"
   ]
 }

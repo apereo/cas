@@ -38,10 +38,8 @@ const cas = require("../../cas.js");
     await cas.logPage(page);
     const content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
-    assert(payload.form.access_token !== undefined);
-    assert(payload.form.id_token === undefined);
-    assert(payload.form.token_type !== undefined);
-    assert(payload.form.expires_in !== undefined);
+    assert(payload.form.code !== undefined);
+    assert(payload.form.nonce !== undefined);
     await cas.screenshot(page);
     await cas.doGet("http://localhost:9666/scim/v2/Users?attributes=userName",
         (res) => {
