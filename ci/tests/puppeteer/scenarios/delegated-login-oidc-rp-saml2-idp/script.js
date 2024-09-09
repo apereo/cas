@@ -46,11 +46,8 @@ const path = require("path");
     await cas.logPage(page);
     const content = await cas.textContent(page, "body");
     const payload = JSON.parse(content);
-    assert(payload.form.access_token !== undefined);
-    assert(payload.form.id_token === undefined);
-    assert(payload.form.token_type !== undefined);
-    assert(payload.form.expires_in !== undefined);
-
+    assert(payload.form.code !== undefined);
+    assert(payload.form.nonce !== undefined);
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();
