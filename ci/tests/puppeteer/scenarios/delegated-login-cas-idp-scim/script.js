@@ -8,7 +8,7 @@ const cas = require("../../cas.js");
     
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
         "client_id=client&" +
-        "redirect_uri=https%3A%2F%2Foidcdebugger.com%2Fdebug&" +
+        "redirect_uri=https://localhost:9859/post&" +
         "scope=openid%20email%20profile%20address%20phone&" +
         "response_type=code&" +
         "response_mode=form_post&" +
@@ -35,12 +35,14 @@ const cas = require("../../cas.js");
     await cas.click(page, "#allow");
     await cas.waitForNavigation(page);
     await cas.sleep(2000);
-    await cas.assertTextContent(page, "h1.green-text", "Success!");
-
     await cas.logPage(page);
+    const content = await cas.textContent(page, "body");
+    const payload = JSON.parse(content);
+    assert(payload.form.access_token !== undefined);
+    assert(payload.form.id_token === undefined);
+    assert(payload.form.token_type !== undefined);
+    assert(payload.form.expires_in !== undefined);
     await cas.screenshot(page);
-    assert(await page.url().startsWith("https://oidcdebugger.com/debug"));
-
     await cas.doGet("http://localhost:9666/scim/v2/Users?attributes=userName",
         (res) => {
             assert(res.status === 200);

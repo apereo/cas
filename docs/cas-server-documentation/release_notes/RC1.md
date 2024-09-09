@@ -46,6 +46,12 @@ The following items are new improvements and enhancements presented in this rele
 The migration of the entire codebase to Spring Boot `3.4` is ongoing, and at the moment is waiting for the wider ecosystem 
 of supporting frameworks and libraries to catch up to changes. We anticipate the work to finalize in the next few 
 release candidates and certainly prior to the final release.
+   
+The following integrations and extensions remain dysfunctional for now until the underlying library adds
+support for the new version of Spring Boot:
+
+1. [Swagger](../integration/Swagger-Integration.html)
+2. [Spring Boot Admin](../monitoring/Configuring-SpringBootAdmin.html)
 
 ### OpenRewrite Recipes
 

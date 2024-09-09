@@ -106,7 +106,7 @@ class OAuth20TokenAuthorizationResponseBuilderTests extends AbstractOAuth20Tests
         val redirectUrl = ((AbstractUrlBasedView) modelAndView.getView()).getUrl();
         val params = splitQuery(redirectUrl.substring(redirectUrl.indexOf('#') + 1));
 
-        verifyParam(params, OAuth20Constants.STATE, URLEncoder.encode(STATE, StandardCharsets.UTF_8));
-        verifyParam(params, OAuth20Constants.NONCE, URLEncoder.encode(NONCE, StandardCharsets.UTF_8));
+        verifyParam(params, OAuth20Constants.STATE, STATE);
+        verifyParam(params, OAuth20Constants.NONCE, NONCE);
     }
 }
