@@ -127,7 +127,7 @@ class CasWebSecurityConfiguration {
                 .build();
             bean.setFilter(new ClientInfoThreadLocalFilter(options));
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
-            bean.setNameX("CAS Client Info Logging Filter");
+            bean.setName("CAS Client Info Logging Filter");
             bean.setAsyncSupported(true);
             bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
             return bean;
