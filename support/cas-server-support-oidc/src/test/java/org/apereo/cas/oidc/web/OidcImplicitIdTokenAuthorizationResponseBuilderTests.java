@@ -7,23 +7,26 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseModeTypes;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.web.response.OAuth20AuthorizationRequest;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestContext;
-
 import lombok.val;
 import org.apache.hc.core5.net.URIBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
-
+import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -43,8 +46,9 @@ class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends AbstractOidcT
         assertTrue(oidcImplicitIdTokenCallbackUrlBuilder.supports(authzRequest));
     }
 
-    @Test
-    void verifyBuild() throws Throwable {
+    @ParameterizedTest
+    @MethodSource("getResponseModes")
+    void verifyBuild(final OAuth20ResponseModeTypes responseMode) throws Throwable {
         val attributes = new HashMap<String, List<Object>>();
         attributes.put(OAuth20Constants.STATE, Collections.singletonList("state"));
         attributes.put(OAuth20Constants.NONCE, Collections.singletonList("nonce"));
@@ -67,6 +71,7 @@ class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends AbstractOidcT
             .responseType(OAuth20ResponseTypes.ID_TOKEN)
             .ticketGrantingTicket(new MockTicketGrantingTicket("casuser"))
             .token(code)
+            .responseMode(responseMode)
             .userProfile(profile)
             .redirectUri("https://oauth.example.org")
             .scopes(code.getScopes())
@@ -75,15 +80,36 @@ class OidcImplicitIdTokenAuthorizationResponseBuilderTests extends AbstractOidcT
         servicesManager.save(registeredService);
         val modelAndView = oidcImplicitIdTokenCallbackUrlBuilder.build(tokenRequestContext);
         assertNotNull(modelAndView);
-        val redirectUrl = ((AbstractUrlBasedView) modelAndView.getView()).getUrl();
-        assertNotNull(redirectUrl);
-        val urlBuilder = new URIBuilder(redirectUrl);
-        assertTrue(urlBuilder.getQueryParams().isEmpty());
+        if (responseMode == null || responseMode == OAuth20ResponseModeTypes.FRAGMENT) {
+            val redirectUrl = ((AbstractUrlBasedView) modelAndView.getView()).getUrl();
+            assertNotNull(redirectUrl);
+            val urlBuilder = new URIBuilder(redirectUrl);
+            assertTrue(urlBuilder.getQueryParams().isEmpty());
+            val fragment = urlBuilder.getFragment();
+            assertTrue(fragment.contains(OidcConstants.ID_TOKEN + '='));
+            assertTrue(fragment.contains(OAuth20Constants.STATE + '='));
+            assertTrue(fragment.contains(OAuth20Constants.NONCE + '='));
+            assertFalse(fragment.contains(OAuth20Constants.ACCESS_TOKEN + '='));
+        }
+        if (responseMode == OAuth20ResponseModeTypes.FORM_POST) {
+            val redirectUrl = modelAndView.getModelMap().get("originalUrl").toString();
+            val parameters = (Map) modelAndView.getModelMap().get("parameters");
+            assertNotNull(redirectUrl);
+            val urlBuilder = new URIBuilder(redirectUrl);
+            assertNull(urlBuilder.getFragment());
+            assertTrue(urlBuilder.getQueryParams().isEmpty());
+            assertTrue(parameters.containsKey(OidcConstants.ID_TOKEN));
+            assertTrue(parameters.containsKey(OAuth20Constants.STATE));
+            assertTrue(parameters.containsKey(OAuth20Constants.NONCE));
+            assertFalse(parameters.containsKey(OAuth20Constants.ACCESS_TOKEN));
+        }
+    }
 
-        val fragment = urlBuilder.getFragment();
-        assertTrue(fragment.contains(OidcConstants.ID_TOKEN + '='));
-        assertTrue(fragment.contains(OAuth20Constants.STATE + '='));
-        assertTrue(fragment.contains(OAuth20Constants.NONCE + '='));
-        assertFalse(fragment.contains(OAuth20Constants.ACCESS_TOKEN + '='));
+    private static Stream<Arguments> getResponseModes() {
+        return Stream.of(
+            Arguments.of(OAuth20ResponseModeTypes.FRAGMENT),
+            Arguments.of((Object) null),
+            Arguments.of(OAuth20ResponseModeTypes.FORM_POST)
+        );
     }
 }
