@@ -62,7 +62,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `487` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `488` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
   
@@ -78,7 +78,8 @@ classloading, locks and JSON serialization overhead.
 - Content security policy header configuration can now support a dynamic nonce, which is a random value different for every HTTP request.
 - Static resources can now be externalized by default via the following additional directories: `file:/etc/cas/static` and `file:/etc/cas/public`.
 - The `maxAge` cookie setting can now be configured as a duration.
-
+- An optional principal attribute can now be configured to be used as the username sent to [Duo Security](../mfa/DuoSecurity-Authentication.html).
+- Response mode handling of OpenID Connect `token` or `id_token` response types is adjusted to build the redirect URL and parameters/fragments correctly.  
 
 ## Library Upgrades
 
@@ -94,4 +95,5 @@ classloading, locks and JSON serialization overhead.
 - Apache Log4j
 - Logback
 - Amazon SDK
+- Gradle
 
