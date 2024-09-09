@@ -53,7 +53,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         val duoProvider = MultifactorAuthenticationUtils.getMultifactorAuthenticationProviderById(duoSecurityIdentifier, applicationContext)
             .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
             .orElseThrow(() -> new IllegalArgumentException("Unable to locate multifactor authentication provider by id " + duoSecurityIdentifier));
-        
+
         val client = duoProvider.getDuoAuthenticationService()
             .getDuoClient()
             .map(Client.class::cast)
@@ -87,9 +87,7 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
         Optional.ofNullable(WebUtils.getRegisteredService(requestContext))
             .ifPresent(registeredService -> properties.put(RegisteredService.class.getSimpleName(), registeredService));
 
-        val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
-        val authUrl = client.createAuthUrl(principal.getId(), state);
-
+        val authUrl = createAuthUrl(duoProvider, authentication, client, requestContext, state);
         requestContext.getFlowScope().put("duoUniversalPromptLoginUrl", authUrl);
 
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
@@ -106,5 +104,18 @@ public class DuoSecurityUniversalPromptPrepareLoginAction extends AbstractMultif
 
         LOGGER.debug("Redirecting to Duo Security url at [{}]", authUrl);
         return success(sessionStorage);
+    }
+
+    protected String createAuthUrl(final DuoSecurityMultifactorAuthenticationProvider provider,
+                                   final Authentication authentication, final Client client,
+                                   final RequestContext requestContext, final String state) throws Exception {
+        val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
+        LOGGER.debug("Principal resolved for Duo Security as [{}]", principal);
+        var principalId = principal.getId();
+        val principalAttribute = provider.getDuoAuthenticationService().getProperties().getPrincipalAttribute();
+        if (principal.getAttributes().containsKey(principalAttribute)) {
+            principalId = principal.getAttributes().get(principalAttribute).getFirst().toString();
+        }
+        return client.createAuthUrl(principalId, state);
     }
 }

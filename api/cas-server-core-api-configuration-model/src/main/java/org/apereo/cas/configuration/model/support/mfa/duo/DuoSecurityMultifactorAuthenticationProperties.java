@@ -115,6 +115,14 @@ public class DuoSecurityMultifactorAuthenticationProperties extends BaseMultifac
      * from Duo Security and collected as CAS attributes.
      */
     private boolean collectDuoAttributes = true;
+
+    /**
+     * The principal attribute that would be used to resolve
+     * the username sent to Duo Security, and one that would
+     * also be used to verify the Duo Security response and exchange.
+     * If undefined or not found, the default principal id would be used.
+     */
+    private String principalAttribute;
     
     public DuoSecurityMultifactorAuthenticationProperties() {
         setId(DEFAULT_IDENTIFIER);
