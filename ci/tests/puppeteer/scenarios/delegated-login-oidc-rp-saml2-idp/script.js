@@ -12,7 +12,7 @@ const path = require("path");
 
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
         "client_id=client&" +
-        "redirect_uri=https%3A%2F%2Foidcdebugger.com%2Fdebug&" +
+        "redirect_uri=https://localhost:9859/post&" +
         "scope=openid%20email%20profile%20address%20phone&" +
         "response_type=code&" +
         "response_mode=form_post&" +
@@ -43,10 +43,14 @@ const path = require("path");
 
     await cas.click(page, "#allow");
     await cas.sleep(3000);
-    await cas.assertTextContent(page, "h1.green-text", "Success!");
-
     await cas.logPage(page);
-    assert(await page.url().startsWith("https://oidcdebugger.com/debug"));
+    const content = await cas.textContent(page, "body");
+    const payload = JSON.parse(content);
+    assert(payload.form.access_token !== undefined);
+    assert(payload.form.id_token === undefined);
+    assert(payload.form.token_type !== undefined);
+    assert(payload.form.expires_in !== undefined);
+
     await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
     await browser.close();
 })();

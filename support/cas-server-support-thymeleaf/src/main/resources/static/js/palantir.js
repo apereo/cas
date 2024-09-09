@@ -2615,6 +2615,13 @@ async function initializeTrustedMultifactorOperations() {
             $.get(`${actuatorEndpoints.multifactortrusteddevices}/${username}`, response => {
                 console.log(response);
                 for (const device of Object.values(response)) {
+                    let buttons = `
+                     <button type="button" name="removeMfaTrustedDevice" href="#" 
+                            data-key='${device.recordKey}'
+                            class="mdc-button mdc-button--raised min-width-32x">
+                        <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
+                    </button>
+                `;
                     mfaTrustedDevicesTable.row.add({
                         0: `<code>${device.id ?? "N/A"}</code>`,
                         1: `<code>${device.principal ?? "N/A"}</code>`,
@@ -2623,12 +2630,42 @@ async function initializeTrustedMultifactorOperations() {
                         4: `<code>${device.name ?? "N/A"}</code>`,
                         5: `<code>${device.expirationDate ?? "N/A"}</code>`,
                         6: `<code>${device.multifactorAuthenticationProvider ?? "N/A"}</code>`,
-                        7: `<code>${device.recordKey ?? "N/A"}</code>`
+                        7: `<code>${device.recordKey ?? "N/A"}</code>`,
+                        8: `${buttons}`,
                     });
                 }
                 mfaTrustedDevicesTable.draw();
                 $("#mfaTrustedDevicesButton").prop("disabled", false);
                 Swal.close();
+
+                $("button[name=removeMfaTrustedDevice]").off().on("click", function () {
+                    const key = $(this).data("key");
+                    Swal.fire({
+                        title: "Are you sure you want to delete this entry?",
+                        text: "Once deleted, you may not be able to recover this entry.",
+                        icon: "warning",
+                        showConfirmButton: true,
+                        showDenyButton: true
+                    })
+                        .then((result) => {
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    url: `${actuatorEndpoints.multifactortrusteddevices}/${key}`,
+                                    type: "DELETE",
+                                    contentType: "application/x-www-form-urlencoded",
+                                    success: (response, status, xhr) => {
+                                        let nearestTr = $(this).closest("tr");
+                                        mfaTrustedDevicesTable.row(nearestTr).remove().draw();
+                                    },
+                                    error: (xhr, status, error) => {
+                                        console.error("Error fetching data:", error);
+                                        displayBanner(xhr);
+                                    }
+                                });
+                            }
+                        });
+                });
+
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
                 displayBanner(xhr);

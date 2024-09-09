@@ -38,5 +38,4 @@ public class OneTimeTokenCredentialDeviceManager implements MultifactorAuthentic
             .payload(acct.toJson())
             .build();
     }
-
 }
