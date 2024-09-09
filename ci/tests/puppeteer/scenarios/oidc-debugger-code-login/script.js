@@ -1,5 +1,6 @@
 
 const cas = require("../../cas.js");
+const assert = require("assert");
 
 (async () => {
     await cas.refreshContext();
@@ -8,7 +9,7 @@ const cas = require("../../cas.js");
     const page = await cas.newPage(browser);
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?" +
         "client_id=client&" +
-        "redirect_uri=https%3A%2F%2Foidcdebugger.com%2Fdebug&" +
+        "redirect_uri=https://localhost:9859/post&" +
         "scope=openid%20email%20profile%20address%20phone&" +
         "response_type=code&" +
         "response_mode=form_post&" +
@@ -21,7 +22,12 @@ const cas = require("../../cas.js");
     await cas.click(page, "#allow");
     await cas.waitForNavigation(page);
     await cas.sleep(1000);
-    await cas.assertTextContent(page, "h1.green-text", "Success!");
+
+    const content = await cas.textContent(page, "body");
+    const payload = JSON.parse(content);
+    await cas.log(payload);
+    assert(payload.form.code !== undefined);
+    assert(payload.form.nonce !== undefined);
 
     await browser.close();
 })();

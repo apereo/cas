@@ -34,7 +34,7 @@ public class OAuth20ResponseModeFormPostBuilder implements OAuth20ResponseModeBu
         model.put("parameters", parameters);
         val mv = new ModelAndView(CasWebflowConstants.VIEW_ID_POST_RESPONSE, model);
         mv.setStatus(HttpStatusCode.valueOf(HttpStatus.OK.value()));
-        LOGGER.debug("Redirecting to [{}] with model [{}]", mv.getViewName(), mv.getModel());
+        LOGGER.debug("POSTing to [{}] with model [{}]", mv.getViewName(), mv.getModel());
         return mv;
     }
 
