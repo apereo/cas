@@ -52,7 +52,7 @@ echo -e "**********************************************************"
 gradleBuild="$gradleBuild clean :webapp:cas-server-webapp-${webAppServerType}:build -x check -x test -x javadoc --no-configuration-cache -DskipNestedConfigMetadataGen=true -DcasModules=${casModules} "
 tasks="$gradle $gradleBuildOptions $gradleBuild"
 printgreen "$tasks"
-echo -e "***************************************************************************************"
+echo -e "\n***************************************************************************************\n"
 eval "$tasks"
 retVal=$?
 
@@ -75,7 +75,7 @@ if [ $retVal == 0 ]; then
   [ -f "${keystore}" ] && rm "${keystore}"
   keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
     -keystore "${keystore}" -dname "${dname}" -ext SAN="${subjectAltName}"
-  printgreen "Launching CAS web application ${webAppServerType} server with properties [${casProperties}]"
+  printgreen "Launching CAS web application ${webAppServerType} server with properties [${casProperties}] \n"
   casOutput="/tmp/cas.log"
 
   "${PWD}"/ci/tests/httpbin/run-httpbin-server.sh
@@ -97,6 +97,7 @@ if [ $retVal == 0 ]; then
       --logging.level.org.apereo.cas=info ${casProperties} &
   pid=$!
   printgreen "Launched CAS with pid ${pid} with modules ${casModules}. Waiting for CAS server to come online..."
+  sleep 15
   until curl -k -L --output /dev/null --silent --fail https://localhost:8443/cas/login; do
     echo -n '.'
     sleep 2
@@ -136,7 +137,7 @@ if [ $retVal == 0 ]; then
   clear
   echo -e "***************************************************************************************"
   printgreen "Running JMeter tests via ${jmeterScript}..."
-  export HEAP="-Xms1g -Xmx4g -XX:MaxMetaspaceSize=512m"
+  export HEAP="-Xms1g -Xmx6g -XX:MaxMetaspaceSize=512m"
   /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter -l /tmp/jmeter-results.xml -n -t "${jmeterScript}" >results.log
   echo -n "JMeter results are written to " && ls /tmp/jmeter-results.xml
   echo -e "***************************************************************************************"
