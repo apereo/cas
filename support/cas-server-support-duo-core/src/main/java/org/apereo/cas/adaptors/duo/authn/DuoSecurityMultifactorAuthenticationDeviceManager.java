@@ -42,6 +42,17 @@ public class DuoSecurityMultifactorAuthenticationDeviceManager implements Multif
             .collect(Collectors.toList());
     }
 
+    @Override
+    public void removeRegisteredDevice(final Principal principal, final String deviceId) {
+        Stream.of(duoSecurityMultifactorAuthenticationProvider)
+            .filter(Objects::nonNull)
+            .filter(BeanSupplier::isNotProxy)
+            .map(provider -> provider.getDuoAuthenticationService().getAdminApiService())
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .forEach(Unchecked.consumer(service -> service.deleteDuoSecurityUserAccount(principal.getId(), deviceId)));
+    }
+
     protected List<MultifactorAuthenticationRegisteredDevice> mapDuoSecurityDevice(final DuoSecurityUserAccount acct) {
         return acct
             .getDevices()

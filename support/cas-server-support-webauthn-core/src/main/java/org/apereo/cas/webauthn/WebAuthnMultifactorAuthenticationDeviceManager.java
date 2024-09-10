@@ -4,10 +4,12 @@ import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManag
 import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.function.FunctionUtils;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.yubico.core.RegistrationStorage;
 import com.yubico.data.CredentialRegistration;
 import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.webauthn.attestation.Attestation;
+import com.yubico.webauthn.data.ByteArray;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 public class WebAuthnMultifactorAuthenticationDeviceManager implements MultifactorAuthenticationDeviceManager {
+    private static final ObjectWriter OBJECT_WRITER = JacksonCodecs.json().writerWithDefaultPrettyPrinter();
     private final RegistrationStorage webAuthnCredentialRepository;
 
     @Override
@@ -33,20 +36,30 @@ public class WebAuthnMultifactorAuthenticationDeviceManager implements Multifact
             .stream()
             .filter(Objects::nonNull)
             .map(this::mapWebAuthnAccount)
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 
-    protected MultifactorAuthenticationRegisteredDevice mapWebAuthnAccount(
-        final CredentialRegistration acct) {
-        val vendor = Optional.ofNullable(acct.getAttestationMetadata()).orElseGet(Attestation::empty).getVendorProperties().orElseGet(Map::of);
-        val device = Optional.ofNullable(acct.getAttestationMetadata()).orElseGet(Attestation::empty).getDeviceProperties().orElseGet(Map::of);
-        return FunctionUtils.doUnchecked(() -> MultifactorAuthenticationRegisteredDevice.builder()
+    @Override
+    public void removeRegisteredDevice(final Principal principal, final String deviceId) {
+        FunctionUtils.doAndHandle(__ -> {
+            val credentialId = ByteArray.fromBase64Url(deviceId);
+            webAuthnCredentialRepository.removeRegistrationByUsernameAndCredentialId(principal.getId(), credentialId);
+        });
+    }
+
+    protected MultifactorAuthenticationRegisteredDevice mapWebAuthnAccount(final CredentialRegistration acct) {
+        val attestation = Optional.ofNullable(acct.getAttestationMetadata()).orElseGet(Attestation::empty);
+        val vendor = attestation.getVendorProperties().orElseGet(Map::of);
+        val device = attestation.getDeviceProperties().orElseGet(Map::of);
+        return FunctionUtils.doUnchecked(() -> MultifactorAuthenticationRegisteredDevice
+            .builder()
             .id(acct.getCredential().getCredentialId().getBase64Url())
             .name(acct.getCredentialNickname())
             .type(vendor.get("name"))
             .model(device.get("displayName"))
             .lastUsedDateTime(acct.getRegistrationTime().toString())
-            .payload(JacksonCodecs.json().writerWithDefaultPrettyPrinter().writeValueAsString(acct))
+            .payload(OBJECT_WRITER.writeValueAsString(acct))
             .source("Web Authn")
             .build());
     }

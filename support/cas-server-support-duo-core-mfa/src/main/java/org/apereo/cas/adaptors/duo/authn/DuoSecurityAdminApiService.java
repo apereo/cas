@@ -60,4 +60,13 @@ public interface DuoSecurityAdminApiService {
      * @throws Exception the exception
      */
     Optional<DuoSecurityUserAccount> modifyDuoSecurityUserAccount(DuoSecurityUserAccount newAccount) throws Exception;
+
+    /**
+     * Delete duo security user account.
+     *
+     * @param userIdentifier the user identifier
+     * @param deviceId       the device id
+     * @throws Exception the exception
+     */
+    void deleteDuoSecurityUserAccount(String userIdentifier, String deviceId) throws Exception;
 }

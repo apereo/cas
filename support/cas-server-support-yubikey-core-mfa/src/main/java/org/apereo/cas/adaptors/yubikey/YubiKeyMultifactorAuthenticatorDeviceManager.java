@@ -28,6 +28,11 @@ public class YubiKeyMultifactorAuthenticatorDeviceManager implements Multifactor
             .collect(Collectors.toList());
     }
 
+    @Override
+    public void removeRegisteredDevice(final Principal principal, final String deviceId) {
+        yubiKeyAccountRegistry.delete(principal.getId(), Long.parseLong(deviceId));
+    }
+
     protected List<MultifactorAuthenticationRegisteredDevice> mapAccount(final YubiKeyAccount acct) {
         return acct
             .getDevices()

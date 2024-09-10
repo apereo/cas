@@ -48,6 +48,8 @@ public interface RegistrationStorage extends CredentialRepository {
 
     boolean removeRegistrationByUsername(String username, CredentialRegistration credentialRegistration);
 
+    boolean removeRegistrationByUsernameAndCredentialId(String username, ByteArray credentialRegistration);
+
     boolean removeAllRegistrations(String username);
 
     void updateSignatureCount(AssertionResult result);
