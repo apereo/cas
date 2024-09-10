@@ -83,7 +83,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: [initialize]
     continue-on-error: false
-    if: ${{ env.CAS_MODULE_METADATA_MONGODB_URL != null }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -97,8 +96,10 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Install MongoDB tools
+        if: ${{ env.CAS_MODULE_METADATA_MONGODB_URL != null }}
         run: |
           sudo apt-get update
           sudo apt-get install -y mongodb-mongosh mongodb-database-tools
       - name: Publish Modules Metadata
+        if: ${{ env.CAS_MODULE_METADATA_MONGODB_URL != null }}
         run: ./ci/metadata/publish-project-metadata.sh
