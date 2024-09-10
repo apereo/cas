@@ -30,6 +30,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.Ordered;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.filter.CorsFilter;
@@ -59,6 +60,7 @@ public class CasFiltersConfiguration {
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
             bean.setName("characterEncodingFilter");
             bean.setAsyncSupported(true);
+            bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
             return bean;
         }
     }
