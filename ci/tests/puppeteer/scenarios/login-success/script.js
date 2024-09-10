@@ -39,5 +39,11 @@ const assert = require("assert");
     await cas.gotoLogin(page, "https://anything-matches-here");
     await cas.assertVisibility(page, "#wildcardService");
 
+    await cas.gotoLogin(page);
+    await cas.loginWith(page, "fancyuser", "jleleu€");
+    await cas.sleep(1000);
+    await cas.assertCookie(page);
+    await cas.gotoLogout(page);
+    await cas.sleep(1000);
     await browser.close();
 })();
