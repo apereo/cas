@@ -1,21 +1,13 @@
-// stylelint-disable declaration-no-important
-
-//
-// Right side table of contents
-//
-
 .docs-toc {
-  @supports (position: sticky) {
     position: sticky;
     top: 4rem;
     height: calc(100vh - 4rem);
     overflow-y: auto;
-  }
-  order: 2;
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
-  font-size: 1rem;
-  text-align: left;
+    order: 2;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    font-size: 1rem;
+    text-align: left;
 }
 
 .section-nav {
@@ -52,16 +44,13 @@
 
 .docs-sidebar {
   order: 0;
-  // background-color: #f5f2f9;
   border-bottom: 1px solid rgba(0, 0, 0, .1);
 
   @include media-breakpoint-up(md) {
-    @supports (position: sticky) {
-      position: sticky;
-      top: 4rem;
-      z-index: 1000;
-      height: calc(100vh - 4rem);
-    }
+    position: sticky;
+    top: 4rem;
+    z-index: 1000;
+    height: calc(100vh - 4rem);
     border-right: 1px solid rgba(0, 0, 0, .1);
   }
 
@@ -77,10 +66,8 @@
   margin-left: -15px;
 
   @include media-breakpoint-up(md) {
-    @supports (position: sticky) {
-      max-height: calc(100vh - 9rem);
-      overflow-y: auto;
-    }
+    max-height: calc(100vh - 9rem);
+    overflow-y: auto;
   }
 
   // Override collapse behaviors
