@@ -120,4 +120,4 @@ jobs:
           echo "Uploading module records for ${casVersion} to $collectionName"
           mongoimport --uri "$CAS_MODULE_METADATA_MONGODB_URL" \
               --collection "$collectionName" --file build/modules.json \
-              --type json --jsonArray --drop
+              --type json --jsonArray --drop 2>/dev/null
