@@ -102,6 +102,22 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y mongodb-mongosh mongodb-database-tools
           mongosh --version
+      - name: Build Modules Metadata
+        run: |
+          ./gradlew generateProjectModulesMetadata --no-configuration-cache \
+              --build-cache --configure-on-demand --no-daemon \
+              --parallel -x test -x javadoc -x check
       - name: Publish Modules Metadata
         if: ${{ env.CAS_MODULE_METADATA_MONGODB_URL != null }}
-        run: ./ci/metadata/publish-project-metadata.sh
+        run: |
+          casVersion=$(cat gradle.properties | grep version | awk -F"=" '{printf $2}')
+          echo "Checking CAS version ${casVersion}..."
+          versionNumbers=${casVersion%%-*}
+          versionNumbers=${versionNumbers//./}
+          echo "CAS simple version number is: $versionNumbers"
+          collectionName="casmodules$versionNumbers"
+          echo "CAS module collection is $collectionName"
+          echo "Uploading module records for ${casVersion} to $collectionName"
+          mongoimport --uri "$CAS_MODULE_METADATA_MONGODB_URL" \
+              --collection "$collectionName" --file build/modules.json \
+              --type json --jsonArray --drop
