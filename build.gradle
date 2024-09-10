@@ -559,7 +559,7 @@ tasks.register('verifyRequiredJavaVersion') {
     }
 }
 
-tasks.register('publishProjectModules') {
+tasks.register('generateProjectModulesMetadata') {
     def outputFile = new File(project.layout.buildDirectory.getAsFile().get(), "modules.json")
     def results = []
     subprojects.each {
