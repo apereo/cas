@@ -1,7 +1,5 @@
 #!/bin/bash
 
-
-
 function publishProjectModules() {
   echo "Creating CAS module metadata for CAS version ${casVersion}"
   ./gradlew --no-configuration-cache --build-cache --configure-on-demand \
@@ -17,13 +15,10 @@ function publishProjectModules() {
   collectionName="casmodules$versionNumbers"
   echo "CAS module collection is $collectionName"
   
-  echo "Removing previous records for ${casVersion}"
-  mongosh "${CAS_MODULE_METADATA_MONGDODB_URL}" --eval "db.$collectionName.deleteMany({})"
-  
   echo "Uploading module records for ${casVersion} to $collectionName"
   mongoimport --uri "$CAS_MODULE_METADATA_MONGODB_URL" \
-    --collection "$collectionName" --file build/modules.json --type json
-  
+    --collection "$collectionName" --file build/modules.json \
+    --type json --jsonArray --drop
   if [ $? -eq 1 ]; then
     echo "Unable to upload module metadata for CAS version ${casVersion}. Aborting..."
     exit 1
