@@ -87,10 +87,10 @@ class CasEmbeddedContainerTomcatFiltersConfiguration {
         };
         bean.setFilter(filter);
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
-        bean.setName("tomcatRemoteAddressFilter");
+        bean.setName("tomcatAsyncRequestsFilter");
         bean.setEnabled(true);
         bean.setAsyncSupported(true);
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
         return bean;
     }
 
