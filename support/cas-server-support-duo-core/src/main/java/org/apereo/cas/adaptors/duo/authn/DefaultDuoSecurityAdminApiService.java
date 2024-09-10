@@ -55,7 +55,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
 
     @Override
     public Optional<DuoSecurityUserAccount> getDuoSecurityUserAccount(final String username, final boolean fetchBypassCodes) throws Exception {
-        val userResponse = (JSONArray) getEndpointResultFor(CollectionUtils.wrap("uri", "users", "username", username));
+        val userResponse = (JSONArray) executeAdminEndpoint(CollectionUtils.wrap("uri", "users", "username", username));
         if (userResponse != null && userResponse.length() == 1) {
             val userJson = userResponse.getJSONObject(0);
             val user = mapDuoSecurityUserAccount(userJson);
@@ -69,7 +69,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
 
     @Override
     public Optional<DuoSecurityUserAccount> modifyDuoSecurityUserAccount(final DuoSecurityUserAccount newAccount) throws Exception {
-        val userResponse = (JSONArray) getEndpointResultFor(CollectionUtils.wrap("uri", "users", "username", newAccount.getUsername()));
+        val userResponse = (JSONArray) executeAdminEndpoint(CollectionUtils.wrap("uri", "users", "username", newAccount.getUsername()));
         if (userResponse != null && userResponse.length() == 1) {
             val user = mapDuoSecurityUserAccount(userResponse.getJSONObject(0));
             val parameters = CollectionUtils.<String, String>wrap(
@@ -79,7 +79,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
             FunctionUtils.doIfNotNull(newAccount.getFirstName(), __ -> parameters.put("firstname", newAccount.getFirstName()));
             FunctionUtils.doIfNotNull(newAccount.getLastName(), __ -> parameters.put("lastname", newAccount.getLastName()));
             FunctionUtils.doIfNotNull(newAccount.getStatus(), __ -> parameters.put("status", newAccount.getStatus().toValue()));
-            val updateResponse = getEndpointResultFor(parameters);
+            val updateResponse = executeAdminEndpoint(parameters);
             val userAccount = (JSONObject) (updateResponse instanceof final JSONArray array ? array.get(0) : updateResponse);
             return Optional.of(mapDuoSecurityUserAccount(userAccount));
         }
@@ -87,10 +87,17 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
     }
 
     @Override
+    public void deleteDuoSecurityUserAccount(final String userIdentifier, final String deviceId) throws Exception {
+        val params = CollectionUtils.<String, String>wrap("uri", String.format("phones/%s", deviceId));
+        params.put("method", HttpMethod.DELETE.name());
+        executeAdminEndpoint(params);
+    }
+
+    @Override
     public List<Long> createDuoSecurityBypassCodesFor(final String userIdentifier) throws Exception {
         val params = CollectionUtils.<String, String>wrap("uri", String.format("users/%s/bypass_codes", userIdentifier));
         params.put("method", HttpMethod.POST.name());
-        val bypassResponse = (JSONArray) getEndpointResultFor(params);
+        val bypassResponse = (JSONArray) executeAdminEndpoint(params);
         if (bypassResponse != null) {
             return Arrays.stream(bypassResponse.join(",")
                     .replace("\"", StringUtils.EMPTY).split(","))
@@ -104,7 +111,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
     public List<DuoSecurityBypassCode> getDuoSecurityBypassCodesFor(final String userIdentifier) throws Exception {
         val codes = new ArrayList<DuoSecurityBypassCode>();
 
-        val bypassResponse = (JSONArray) getEndpointResultFor(CollectionUtils.wrap("uri", String.format("users/%s/bypass_codes", userIdentifier)));
+        val bypassResponse = (JSONArray) executeAdminEndpoint(CollectionUtils.wrap("uri", String.format("users/%s/bypass_codes", userIdentifier)));
         for (var i = 0; bypassResponse != null && i < bypassResponse.length(); i++) {
             val bypassJson = bypassResponse.getJSONObject(i);
             if (bypassJson.has("bypass_code_id")) {
@@ -122,7 +129,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
     protected void prepareHttpRequest(final Http request) {
     }
 
-    private Object getEndpointResultFor(final Map<String, String> params) throws Exception {
+    private Object executeAdminEndpoint(final Map<String, String> params) throws Exception {
         val resolver = SpringExpressionLanguageValueResolver.getInstance();
         val uri = getAdminEndpointUri(params.getOrDefault("uri", StringUtils.EMPTY));
         val method = params.getOrDefault("method", HttpMethod.GET.name());

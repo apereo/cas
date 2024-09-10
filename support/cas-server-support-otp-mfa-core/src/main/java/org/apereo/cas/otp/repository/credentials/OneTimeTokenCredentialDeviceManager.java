@@ -28,6 +28,11 @@ public class OneTimeTokenCredentialDeviceManager implements MultifactorAuthentic
             .collect(Collectors.toList());
     }
 
+    @Override
+    public void removeRegisteredDevice(final Principal principal, final String deviceId) {
+        repository.delete(Long.parseLong(deviceId));
+    }
+
     protected MultifactorAuthenticationRegisteredDevice mapAccount(final OneTimeTokenAccount acct) {
         return MultifactorAuthenticationRegisteredDevice
             .builder()
