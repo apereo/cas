@@ -28,9 +28,9 @@ dependencies {
     implementation project(":webapp:cas-server-webapp-resources")
 
     def casModules = providers.systemProperty("casModules").getOrNull()
-    if (casModules != null) {
+    if (casModules != null && casModules.trim().length() > 0) {
         def dependencies = casModules.split(",")
-        dependencies.each {
+        dependencies.findAll {it.length() > 0 }.each {
             def projectsToAdd = rootProject.subprojects.findAll {project ->
                 def pattern = /cas-server-${it}|cas-server-core-${it}|cas-server-support-${it}/
                 logger.debug("Matching ${pattern} against CAS module ${project.name}")
