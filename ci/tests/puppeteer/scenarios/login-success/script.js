@@ -68,5 +68,11 @@ const fs = require("fs");
     await cas.gotoLogout(page);
     await cas.sleep(1000);
 
+    await cas.gotoLogin(page);
+    await cas.loginWith(page, "fancyuser", "jleleuâ¬");
+    await cas.sleep(1000);
+    await cas.assertCookie(page);
+    await cas.gotoLogout(page);
+    await cas.sleep(1000);
     await browser.close();
 })();

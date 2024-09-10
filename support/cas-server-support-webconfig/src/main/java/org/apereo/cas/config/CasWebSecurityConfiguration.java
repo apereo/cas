@@ -129,7 +129,7 @@ class CasWebSecurityConfiguration {
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
             bean.setName("CAS Client Info Logging Filter");
             bean.setAsyncSupported(true);
-            bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+            bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
             return bean;
         }
 
@@ -142,7 +142,7 @@ class CasWebSecurityConfiguration {
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
             bean.setName("Spring Security Context Holder Filter");
             bean.setAsyncSupported(true);
-            bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+            bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
             return bean;
         }
 
