@@ -23,7 +23,6 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.core.Ordered;
 import org.springframework.http.HttpStatus;
 
 import jakarta.servlet.FilterChain;
@@ -73,7 +72,6 @@ public class CasEmbeddedContainerTomcatFiltersConfiguration {
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setName("tomcatRemoteAddressFilter");
         bean.setEnabled(addr.isEnabled());
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
         return bean;
     }
 
