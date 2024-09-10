@@ -11,7 +11,9 @@
     "--cas.server.prefix=http://localhost:8080/cas",
 
     "--cas.google-analytics.google-analytics-tracking-id=G-XF7F4RCQ0J",
-    
+
+    "--cas.authn.accept.users=casuser::Mellon,fancyuser::jleleu€",
+
     "--cas.service-registry.core.init-from-json=true",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",

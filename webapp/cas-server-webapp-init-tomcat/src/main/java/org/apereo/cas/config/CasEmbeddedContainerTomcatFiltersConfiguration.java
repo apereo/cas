@@ -90,7 +90,7 @@ class CasEmbeddedContainerTomcatFiltersConfiguration {
         bean.setName("tomcatRemoteAddressFilter");
         bean.setEnabled(true);
         bean.setAsyncSupported(true);
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
         return bean;
     }
 
