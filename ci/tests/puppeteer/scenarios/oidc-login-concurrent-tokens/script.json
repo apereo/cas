@@ -16,7 +16,7 @@
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--cas.ticket.st.time-to-kill-in-seconds=30",
-
+    "--cas.authn.oauth.access-token.max-time-to-live-in-seconds=0",
     "--cas.authn.oidc.core.issuer=${cas.server.name}/cas/oidc",
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
 

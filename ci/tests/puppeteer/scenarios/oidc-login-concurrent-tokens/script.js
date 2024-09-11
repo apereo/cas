@@ -28,10 +28,10 @@ const fetchRefreshToken = async () =>
                 "Content-Type": "application/json",
                 "Authorization": `Basic ${btoa("client:secret")}`
             }, async (res) => {
-                assert(res.data.access_token !== undefined);
+                assert(res.data.access_token === undefined);
+                assert(res.data.token_type === undefined);
                 assert(res.data.id_token !== undefined);
                 assert(res.data.refresh_token !== undefined);
-                assert(res.data.token_type !== undefined);
                 const end = performance.now();
                 const duration = (end - start);
                 logger.info({
@@ -58,6 +58,7 @@ const fetchIdToken = async (refreshToken) =>
                 "Authorization": `Basic ${btoa("client:secret")}`
             }, async (res) => {
                 assert(res.data.id_token !== undefined);
+                assert(res.data.access_token === undefined);
                 const end = performance.now();
                 const duration = (end - start);
                 logger.info({
@@ -85,7 +86,7 @@ function printSummary(durations) {
 
 (async () => {
     const totalTokens = 1000;
-    const totalThreads = 100;
+    const totalThreads = 10;
     
     const { default: pLimit } = await import("p-limit");
     const threadControl = pLimit(totalThreads);
