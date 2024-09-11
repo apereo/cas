@@ -31,7 +31,9 @@ public abstract class BaseIdTokenGeneratorService<T extends OAuth20Configuration
         val idTokenResult = getConfigurationContext().getIdTokenSigningAndEncryptionService().encode(context.getRegisteredService(), claims);
         context.getAccessToken().setIdToken(idTokenResult);
         LOGGER.debug("Updating access token [{}] in ticket registry with ID token [{}]", context.getAccessToken().getId(), idTokenResult);
-        getConfigurationContext().getTicketRegistry().updateTicket(context.getAccessToken());
+        if (context.getAccessToken().getExpiresIn() > 0) {
+            getConfigurationContext().getTicketRegistry().updateTicket(context.getAccessToken());
+        }
         return idTokenResult;
     }
 }
