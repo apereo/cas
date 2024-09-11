@@ -1,5 +1,6 @@
 package org.apereo.cas.webauthn;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
 import org.apereo.cas.authentication.principal.Principal;
@@ -12,6 +13,7 @@ import com.yubico.webauthn.attestation.Attestation;
 import com.yubico.webauthn.data.ByteArray;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -27,8 +29,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class WebAuthnMultifactorAuthenticationDeviceManager implements MultifactorAuthenticationDeviceManager {
     private static final ObjectWriter OBJECT_WRITER = JacksonCodecs.json().writerWithDefaultPrettyPrinter();
-    private final RegistrationStorage webAuthnCredentialRepository;
 
+    private final RegistrationStorage webAuthnCredentialRepository;
+    private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
+    
     @Override
     public List<MultifactorAuthenticationRegisteredDevice> findRegisteredDevices(final Principal principal) {
         val registrations = webAuthnCredentialRepository.getRegistrationsByUsername(principal.getId());
@@ -61,6 +65,7 @@ public class WebAuthnMultifactorAuthenticationDeviceManager implements Multifact
             .lastUsedDateTime(acct.getRegistrationTime().toString())
             .payload(OBJECT_WRITER.writeValueAsString(acct))
             .source("Web Authn")
+            .details(Map.of("providerId", multifactorAuthenticationProvider.getObject().getId()))
             .build());
     }
 }

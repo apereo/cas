@@ -288,9 +288,12 @@ class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationDeviceManager googleAuthenticatorDeviceManager(
+            @Qualifier("googleAuthenticatorMultifactorAuthenticationProvider")
+            final ObjectProvider<MultifactorAuthenticationProvider> googleAuthenticatorMultifactorAuthenticationProvider,
             @Qualifier("googleAuthenticatorAccountRegistry")
             final OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry) {
-            return new OneTimeTokenCredentialDeviceManager(googleAuthenticatorAccountRegistry);
+            return new OneTimeTokenCredentialDeviceManager(googleAuthenticatorAccountRegistry,
+                googleAuthenticatorMultifactorAuthenticationProvider);
         }
         
         @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")

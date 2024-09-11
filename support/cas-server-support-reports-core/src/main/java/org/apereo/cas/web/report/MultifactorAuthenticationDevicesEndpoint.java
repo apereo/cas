@@ -12,6 +12,7 @@ import lombok.val;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
@@ -51,5 +52,32 @@ public class MultifactorAuthenticationDevicesEndpoint extends BaseCasRestActuato
             .flatMap(List::stream)
             .toList();
 
+    }
+
+    /**
+     * Remove mfa device for user.
+     *
+     * @param username   the username
+     * @param key        the key
+     * @param providerId the provider id
+     * @throws Throwable the throwable
+     */
+    @DeleteMapping(value = "/{username}/{providerId}/{key}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Delete registered MFA device for a given user",
+        parameters = {
+            @Parameter(name = "username", description = "The user that owns registered multifactor devices", in = ParameterIn.PATH),
+            @Parameter(name = "providerId", description = "The multifactor provider ID that owns the device", in = ParameterIn.PATH),
+            @Parameter(name = "key", description = "The device id or key that belongs to the user and needs to be removed", in = ParameterIn.PATH)
+        })
+    public void removeMfaDeviceForUser(@PathVariable final String username,
+                                       @PathVariable final String key,
+                                       @PathVariable final String providerId) throws Throwable {
+        val principal = PrincipalFactoryUtils.newPrincipalFactory().createPrincipal(username);
+        val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext).values();
+        providers
+            .stream()
+            .filter(provider -> provider.matches(providerId))
+            .filter(provider -> Objects.nonNull(provider.getDeviceManager()))
+            .forEach(provider -> provider.getDeviceManager().removeRegisteredDevice(principal, key));
     }
 }

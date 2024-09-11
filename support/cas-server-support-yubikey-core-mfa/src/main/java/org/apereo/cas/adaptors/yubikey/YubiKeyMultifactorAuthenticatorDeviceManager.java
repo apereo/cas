@@ -1,11 +1,14 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
 import org.apereo.cas.authentication.principal.Principal;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -17,7 +20,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class YubiKeyMultifactorAuthenticatorDeviceManager implements MultifactorAuthenticationDeviceManager {
     private final YubiKeyAccountRegistry yubiKeyAccountRegistry;
-
+    private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
+    
     @Override
     public List<MultifactorAuthenticationRegisteredDevice> findRegisteredDevices(final Principal principal) {
         val registrations = yubiKeyAccountRegistry.getAccount(principal.getId());
@@ -44,6 +48,7 @@ public class YubiKeyMultifactorAuthenticatorDeviceManager implements Multifactor
                 .lastUsedDateTime(device.getRegistrationDate().toString())
                 .model(device.getPublicId())
                 .source("YubiKey")
+                .details(Map.of("providerId", multifactorAuthenticationProvider.getObject().getId()))
                 .build())
             .collect(Collectors.toList());
     }

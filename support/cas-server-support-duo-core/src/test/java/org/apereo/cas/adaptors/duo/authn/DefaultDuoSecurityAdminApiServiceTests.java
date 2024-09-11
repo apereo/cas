@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ClassPathResource;
 import java.util.List;
@@ -54,6 +55,9 @@ class DefaultDuoSecurityAdminApiServiceTests {
     @Qualifier("duoSecurityAdminApiService")
     private DuoSecurityAdminApiService duoSecurityAdminApiService;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyCodesAndAccount() throws Throwable {
         val duoProps = casProperties.getAuthn().getMfa().getDuo().getFirst();
@@ -70,14 +74,13 @@ class DefaultDuoSecurityAdminApiServiceTests {
             assertNotNull(userAccount.get().getPhone());
         }
     }
-
+    
 
     @TestConfiguration(value = "DuoSecurityAdminTestConfiguration", proxyBeanMethods = false)
     static class DuoSecurityAdminTestConfiguration {
         @Bean
         public DuoSecurityAdminApiService duoSecurityAdminApiService(
-            @Qualifier("noRedirectHttpClient")
-            final HttpClient httpClient,
+            @Qualifier("noRedirectHttpClient") final HttpClient httpClient,
             final CasConfigurationProperties casProperties) {
 
             val duoProps = casProperties.getAuthn().getMfa().getDuo().getFirst();

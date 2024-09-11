@@ -50,7 +50,7 @@ public class DuoSecurityMultifactorAuthenticationDeviceManager implements Multif
             .map(provider -> provider.getDuoAuthenticationService().getAdminApiService())
             .filter(Optional::isPresent)
             .map(Optional::get)
-            .forEach(Unchecked.consumer(service -> service.deleteDuoSecurityUserAccount(principal.getId(), deviceId)));
+            .forEach(Unchecked.consumer(service -> service.deleteDuoSecurityUserDevice(principal.getId(), deviceId)));
     }
 
     protected List<MultifactorAuthenticationRegisteredDevice> mapDuoSecurityDevice(final DuoSecurityUserAccount acct) {

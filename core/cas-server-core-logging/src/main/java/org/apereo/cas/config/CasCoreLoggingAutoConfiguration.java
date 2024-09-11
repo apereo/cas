@@ -54,7 +54,7 @@ public class CasCoreLoggingAutoConfiguration {
             bean.setAsyncSupported(true);
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
             bean.setName("threadContextMDCServletFilter");
-            bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
+            bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 2);
             bean.setEnabled(casProperties.getLogging().getMdc().isEnabled());
             return bean;
         }

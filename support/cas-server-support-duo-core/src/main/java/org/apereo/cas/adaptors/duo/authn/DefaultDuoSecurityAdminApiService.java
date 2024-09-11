@@ -87,8 +87,9 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
     }
 
     @Override
-    public void deleteDuoSecurityUserAccount(final String userIdentifier, final String deviceId) throws Exception {
-        val params = CollectionUtils.<String, String>wrap("uri", String.format("phones/%s", deviceId));
+    public void deleteDuoSecurityUserDevice(final String username, final String deviceId) throws Exception {
+        val userIdentifier = getDuoSecurityUserAccount(username, false).map(DuoSecurityUserAccount::getUserId).orElseThrow();
+        val params = CollectionUtils.<String, String>wrap("uri", String.format("users/%s/phones/%s", userIdentifier, deviceId));
         params.put("method", HttpMethod.DELETE.name());
         executeAdminEndpoint(params);
     }
@@ -171,7 +172,7 @@ public class DefaultDuoSecurityAdminApiService implements DuoSecurityAdminApiSer
             && result.has(DuoSecurityAuthenticationService.RESULT_KEY_STAT)) {
             val response = result.optJSONArray(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE);
             if (response == null) {
-                return result.getJSONObject(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE);
+                return result.optJSONObject(DuoSecurityAuthenticationService.RESULT_KEY_RESPONSE, result);
             }
             return response;
         }
