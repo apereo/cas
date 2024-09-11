@@ -57,7 +57,7 @@ public class CasLoggingConfiguration {
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
             bean.setInitParameters(initParams);
             bean.setName("threadContextMDCServletFilter");
-            bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
+            bean.setOrder(Ordered.HIGHEST_PRECEDENCE + 2);
             bean.setEnabled(casProperties.getLogging().isMdcEnabled());
             return bean;
         }
