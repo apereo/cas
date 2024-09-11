@@ -24,6 +24,7 @@ import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.ChainingRegisteredServiceAccessStrategyActivationCriteria;
 import org.apereo.cas.services.ChainingRegisteredServiceAttributeReleaseActivationCriteria;
 import org.apereo.cas.services.ChainingRegisteredServiceDelegatedAuthenticationPolicy;
+import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.DefaultRegisteredServiceAcceptableUsagePolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceAuthenticationPolicy;
@@ -35,6 +36,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.DefaultRegisteredServiceProxyGrantingTicketExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceServiceTicketExpirationPolicy;
+import org.apereo.cas.services.DefaultRegisteredServiceSurrogatePolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.DefaultRegisteredServiceWebflowInterruptPolicy;
@@ -100,6 +102,7 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             ServiceRegistry.class,
             ServiceRegistryExecutionPlanConfigurer.class));
 
+        registerSpringProxy(hints, ChainingServiceRegistry.class, ServiceRegistry.class);
         registerSerializableSpringProxy(hints, ServiceRegistryInitializerEventListener.class);
 
         registerSerializationHints(hints,
@@ -152,6 +155,7 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             AttributeBasedRegisteredServiceAccessStrategyActivationCriteria.class,
             AttributeBasedRegisteredServiceAttributeReleaseActivationCriteria.class,
             AttributeBasedRegisteredServiceSingleSignOnParticipationPolicy.class,
+            DefaultRegisteredServiceSurrogatePolicy.class,
 
             ChainingAttributeReleasePolicy.class,
             DenyAllAttributeReleasePolicy.class,
