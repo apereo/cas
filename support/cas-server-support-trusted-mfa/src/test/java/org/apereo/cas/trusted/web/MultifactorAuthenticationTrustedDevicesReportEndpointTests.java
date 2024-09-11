@@ -3,7 +3,6 @@ package org.apereo.cas.trusted.web;
 import org.apereo.cas.config.CasMultifactorAuthnTrustAutoConfiguration;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
-import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.web.report.AbstractCasEndpointTests;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,13 +50,18 @@ class MultifactorAuthenticationTrustedDevicesReportEndpointTests extends Abstrac
         var record = MultifactorAuthenticationTrustRecord.newInstance(UUID.randomUUID().toString(), "geography", "fingerprint");
         mfaTrustEngine.save(record);
 
-        mockMvc.perform(delete("/actuator/multifactorTrustedDevices")
+        mockMvc.perform(delete("/actuator/multifactorTrustedDevices/clean")
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
 
-        endpoint.clean();
-        endpoint.removeSince(DateTimeUtils.dateOf(LocalDateTime.now(Clock.systemUTC()).plusDays(1)));
+        val date = LocalDateTime.now(Clock.systemUTC()).plusDays(1);
+        mockMvc.perform(delete("/actuator/multifactorTrustedDevices/expire")
+                .queryParam("expiration", date.toString())
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+
         assertFalse(endpoint.devices().isEmpty());
     }
 
