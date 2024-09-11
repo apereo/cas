@@ -15,6 +15,7 @@ import org.apereo.cas.util.thread.Cleanable;
 import lombok.val;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.integration.support.locks.LockRegistry;
 
 /**
  * This is {@link CasCoreTicketsRuntimeHints}.
@@ -40,6 +41,7 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
         val ticketCompactors = findSubclassesInPackage(TicketCompactor.class, CentralAuthenticationService.NAMESPACE);
         registerReflectionHints(hints, ticketCompactors);
         registerProxyHints(hints, TicketCompactor.class);
+        registerProxyHints(hints, LockRegistry.class);
 
         registerReflectionHints(hints, findSubclassesInPackage(CipherExecutor.class, CentralAuthenticationService.NAMESPACE));
     }

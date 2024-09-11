@@ -86,6 +86,8 @@ classloading, locks and JSON serialization overhead.
 - The `maxAge` cookie setting can now be configured as a duration.
 - An optional principal attribute can now be configured to be used as the username sent to [Duo Security](../mfa/DuoSecurity-Authentication.html).
 - Response mode handling of OpenID Connect `token` or `id_token` response types is adjusted to build the redirect URL and parameters/fragments correctly.  
+- [Palantir Admin Console](../installation/Admin-Dashboard.html) now offers the ability to remove (trusted) registered multifactor authentication devices.
+- OAuth access tokens with an expiration policy value of zero now prevent CAS from issuing access tokens altogether. 
 
 ## Library Upgrades
 
@@ -98,6 +100,7 @@ classloading, locks and JSON serialization overhead.
 - Spring AMQP
 - Spring Security
 - Micrometer
+- ErrorProne
 - Apache Log4j
 - Logback
 - Amazon SDK
