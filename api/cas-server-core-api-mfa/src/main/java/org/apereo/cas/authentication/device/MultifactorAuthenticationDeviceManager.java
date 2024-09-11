@@ -10,6 +10,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
+@FunctionalInterface
 public interface MultifactorAuthenticationDeviceManager {
 
     /**
@@ -36,5 +37,6 @@ public interface MultifactorAuthenticationDeviceManager {
      * @param principal the principal
      * @param deviceId  the device id
      */
-    void removeRegisteredDevice(Principal principal, String deviceId);
+    default void removeRegisteredDevice(final Principal principal, final String deviceId) {
+    }
 }

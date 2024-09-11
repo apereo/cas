@@ -68,5 +68,5 @@ public interface DuoSecurityAdminApiService {
      * @param deviceId       the device id
      * @throws Exception the exception
      */
-    void deleteDuoSecurityUserAccount(String userIdentifier, String deviceId) throws Exception;
+    void deleteDuoSecurityUserDevice(String userIdentifier, String deviceId) throws Exception;
 }

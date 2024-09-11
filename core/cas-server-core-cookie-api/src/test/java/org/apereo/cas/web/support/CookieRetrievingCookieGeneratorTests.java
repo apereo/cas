@@ -157,7 +157,8 @@ class CookieRetrievingCookieGeneratorTests {
         val ctx = getCookieGenerationContext();
         ctx.setSameSitePolicy("lax");
 
-        val gen = CookieUtils.buildCookieRetrievingGenerator(new DefaultCasCookieValueManager(CipherExecutor.noOp(),
+        val gen = CookieUtils.buildCookieRetrievingGenerator(new DefaultCasCookieValueManager(
+            CipherExecutor.noOp(),
             new DirectObjectProvider<>(mock(GeoLocationService.class)),
             DefaultCookieSameSitePolicy.INSTANCE, new PinnableCookieProperties().setPinToSession(false)), ctx);
         val context = MockRequestContext.create();

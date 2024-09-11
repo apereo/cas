@@ -72,13 +72,8 @@ public abstract class BaseWebAuthnCredentialRepository implements WebAuthnCreden
 
     @Override
     public boolean removeRegistrationByUsernameAndCredentialId(final String username, final ByteArray credentialId) {
-        var removed = false;
         val registrations = new HashSet<>(getRegistrationsByUsername(username));
-        for (val registration : registrations) {
-            if (registration.getCredential().getCredentialId().equals(credentialId)) {
-                removed = registrations.remove(registration);
-            }
-        }
+        val removed = registrations.removeIf(registration -> registration.getCredential().getCredentialId().equals(credentialId));
         update(username, registrations);
         return removed;
     }

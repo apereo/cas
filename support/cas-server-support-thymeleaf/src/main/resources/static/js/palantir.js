@@ -2710,6 +2710,16 @@ async function initializeMultifactorOperations() {
             $.get(`${actuatorEndpoints.mfadevices}/${username}`, response => {
                 console.log(response);
                 for (const device of Object.values(response)) {
+                    let buttons = `
+                     <button type="button" name="removeMfaDevice" href="#" 
+                            data-provider='${device?.details?.providerId ?? "Unknown"}'
+                            data-key='${device.id}'
+                            data-username='${username}'
+                            class="mdc-button mdc-button--raised min-width-32x">
+                        <i class="mdi mdi-delete min-width-32x" aria-hidden="true"></i>
+                    </button>
+                `;
+
                     mfaDevicesTable.row.add({
                         0: `<code>${device.name ?? "N/A"}</code>`,
                         1: `<code>${device.type ?? "N/A"}</code>`,
@@ -2720,11 +2730,42 @@ async function initializeMultifactorOperations() {
                         6: `<code>${device.expirationDateTime ?? "N/A"}</code>`,
                         7: `<code>${device.source ?? "N/A"}</code>`,
                         8: `<span>${device.payload}</span>`,
+                        9: `${buttons}`,
                     });
                 }
                 mfaDevicesTable.draw();
                 $("#mfaDevicesButton").prop("disabled", false);
                 Swal.close();
+
+                $("button[name=removeMfaDevice]").off().on("click", function () {
+                    const key = $(this).data("key");
+                    const providerId = $(this).data("provider");
+                    Swal.fire({
+                        title: "Are you sure you want to delete this entry?",
+                        text: "Once deleted, you may not be able to recover this entry.",
+                        icon: "warning",
+                        showConfirmButton: true,
+                        showDenyButton: true
+                    })
+                        .then((result) => {
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    url: `${actuatorEndpoints.mfadevices}/${username}/${providerId}/${key}`,
+                                    type: "DELETE",
+                                    contentType: "application/x-www-form-urlencoded",
+                                    success: (response, status, xhr) => {
+                                        let nearestTr = $(this).closest("tr");
+                                        mfaDevicesTable.row(nearestTr).remove().draw();
+                                    },
+                                    error: (xhr, status, error) => {
+                                        console.error("Error fetching data:", error);
+                                        displayBanner(xhr);
+                                    }
+                                });
+                            }
+                        });
+                });
+
             }).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
                 displayBanner(xhr);

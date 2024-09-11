@@ -1,6 +1,7 @@
 package org.apereo.cas.webauthn.web;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.EncodingUtils;
@@ -42,12 +43,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(CasTestExtension.class)
 class WebAuthnRegisteredDevicesEndpointTests {
     @Autowired
+    @Qualifier("webAuthnMultifactorAuthenticationProvider")
+    private MultifactorAuthenticationProvider webAuthnMultifactorAuthenticationProvider;
+
+    @Autowired
     @Qualifier("webAuthnRegisteredDevicesEndpoint")
     private WebAuthnRegisteredDevicesEndpoint webAuthnRegisteredDevicesEndpoint;
 
     @Autowired
     @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
     private WebAuthnCredentialRepository webAuthnCredentialRepository;
+    
     private static CredentialRegistration getCredentialRegistration(final Authentication authn) throws Exception {
         return CredentialRegistration.builder()
             .userIdentity(UserIdentity.builder()
@@ -74,7 +80,11 @@ class WebAuthnRegisteredDevicesEndpointTests {
 
         assertFalse(webAuthnRegisteredDevicesEndpoint.fetch(id1).isEmpty());
         assertFalse(webAuthnRegisteredDevicesEndpoint.fetch(id2).isEmpty());
-
+        
+        var principal = RegisteredServiceTestUtils.getPrincipal(id1);
+        val devices = webAuthnMultifactorAuthenticationProvider.getDeviceManager().findRegisteredDevices(principal);
+        assertEquals(1, devices.size());
+        
         webAuthnRegisteredDevicesEndpoint.delete(id1, id1);
         assertTrue(webAuthnRegisteredDevicesEndpoint.fetch(id1).isEmpty());
 
@@ -86,6 +96,13 @@ class WebAuthnRegisteredDevicesEndpointTests {
         val record = getCredentialRegistration(RegisteredServiceTestUtils.getAuthentication(id3));
         assertTrue(webAuthnRegisteredDevicesEndpoint.write(id3,
             EncodingUtils.encodeBase64(WebAuthnUtils.getObjectMapper().writeValueAsString(record))));
+
+        val id4 = UUID.randomUUID().toString();
+        principal = RegisteredServiceTestUtils.getPrincipal(id4);
+        val registration = register(RegisteredServiceTestUtils.getAuthentication(id4));
+        webAuthnMultifactorAuthenticationProvider.getDeviceManager().removeRegisteredDevice(principal,
+            registration.getCredential().getCredentialId().getBase64Url());
+        assertFalse(webAuthnMultifactorAuthenticationProvider.getDeviceManager().hasRegisteredDevices(principal));
     }
 
     @Test

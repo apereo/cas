@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 import java.nio.charset.StandardCharsets;
@@ -21,6 +22,8 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link MultifactorAuthenticationTrustedDevicesReportEndpointTests}.
@@ -45,9 +48,14 @@ class MultifactorAuthenticationTrustedDevicesReportEndpointTests extends Abstrac
 
     @Test
     void verifyRemovals() throws Throwable {
-        assertNotNull(endpoint);
         var record = MultifactorAuthenticationTrustRecord.newInstance(UUID.randomUUID().toString(), "geography", "fingerprint");
         mfaTrustEngine.save(record);
+
+        mockMvc.perform(delete("/actuator/multifactorTrustedDevices")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+
         endpoint.clean();
         endpoint.removeSince(DateTimeUtils.dateOf(LocalDateTime.now(Clock.systemUTC()).plusDays(1)));
         assertFalse(endpoint.devices().isEmpty());

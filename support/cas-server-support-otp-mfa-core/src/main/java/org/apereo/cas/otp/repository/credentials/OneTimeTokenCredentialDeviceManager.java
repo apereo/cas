@@ -1,11 +1,14 @@
 package org.apereo.cas.otp.repository.credentials;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.OneTimeTokenAccount;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
 import org.apereo.cas.authentication.device.MultifactorAuthenticationRegisteredDevice;
 import org.apereo.cas.authentication.principal.Principal;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectProvider;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -18,7 +21,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OneTimeTokenCredentialDeviceManager implements MultifactorAuthenticationDeviceManager {
     private final OneTimeTokenCredentialRepository repository;
-
+    private final ObjectProvider<MultifactorAuthenticationProvider> multifactorAuthenticationProvider;
+    
     @Override
     public List<MultifactorAuthenticationRegisteredDevice> findRegisteredDevices(final Principal principal) {
         return repository.get(principal.getId())
@@ -41,6 +45,7 @@ public class OneTimeTokenCredentialDeviceManager implements MultifactorAuthentic
             .lastUsedDateTime(acct.getLastUsedDateTime())
             .source(acct.getSource())
             .payload(acct.toJson())
+            .details(Map.of("providerId", multifactorAuthenticationProvider.getObject().getId()))
             .build();
     }
 }

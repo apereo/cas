@@ -4,11 +4,15 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.io.FileWatcherService;
+import org.apereo.cas.util.io.WatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,16 +25,29 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
-public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry {
+public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry implements DisposableBean {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(true).build().toObjectMapper();
 
     private final Resource jsonResource;
-
-    public JsonYubiKeyAccountRegistry(final Resource jsonResource, final YubiKeyAccountValidator validator) {
+    
+    private WatcherService watcherService;
+    
+    public JsonYubiKeyAccountRegistry(final Resource jsonResource,
+                                      final YubiKeyAccountValidator validator) throws Exception {
         super(getDevicesFromJsonResource(jsonResource), validator);
         this.jsonResource = jsonResource;
+        if (ResourceUtils.isFile(this.jsonResource)) {
+            this.watcherService = new FileWatcherService(jsonResource.getFile(),
+                Unchecked.consumer(__ -> setDevices(getDevicesFromJsonResource(jsonResource))));
+            this.watcherService.start(getClass().getSimpleName());
+        }
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        FunctionUtils.doIfNotNull(watcherService, WatcherService::close);
     }
 
     private static Map<String, YubiKeyAccount> getDevicesFromJsonResource(final Resource jsonResource) {

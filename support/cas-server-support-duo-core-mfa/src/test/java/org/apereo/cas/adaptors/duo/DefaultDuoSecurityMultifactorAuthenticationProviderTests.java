@@ -21,7 +21,8 @@ class DefaultDuoSecurityMultifactorAuthenticationProviderTests extends BaseAbstr
     @Override
     public AbstractMultifactorAuthenticationProvider getMultifactorAuthenticationProvider() {
         return new DefaultDuoSecurityMultifactorAuthenticationProvider(
-            new DuoSecurityMultifactorAuthenticationRegistrationProperties().setRegistrationUrl("https://www.example.org"),
+            new DuoSecurityMultifactorAuthenticationRegistrationProperties()
+                .setRegistrationUrl("https://www.example.org"),
             mock(DuoSecurityAuthenticationService.class));
     }
 }

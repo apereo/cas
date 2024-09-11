@@ -392,9 +392,11 @@ class WebAuthnConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public MultifactorAuthenticationDeviceManager webAuthnMultifactorAuthenticationDeviceManager(
+            @Qualifier("webAuthnMultifactorAuthenticationProvider")
+            final ObjectProvider<MultifactorAuthenticationProvider> webAuthnMultifactorAuthenticationProvider,
             @Qualifier("webAuthnCredentialRepository")
             final WebAuthnCredentialRepository webAuthnCredentialRepository) {
-            return new WebAuthnMultifactorAuthenticationDeviceManager(webAuthnCredentialRepository);
+            return new WebAuthnMultifactorAuthenticationDeviceManager(webAuthnCredentialRepository, webAuthnMultifactorAuthenticationProvider);
         }
         
         @Configuration(value = "WebAuthnMultifactorProviderConfiguration", proxyBeanMethods = false)
