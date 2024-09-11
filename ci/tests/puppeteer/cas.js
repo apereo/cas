@@ -559,7 +559,8 @@ exports.doDelete = async (url, statusCode = 0, successHandler = undefined, failu
         .catch((error) => failureHandler === undefined ? undefined : failureHandler(error));
 };
 
-exports.doPost = async (url, params = "", headers = {}, successHandler, failureHandler) => {
+exports.doPost = async (url, params = "", headers = {},
+    successHandler, failureHandler, verbose=true) => {
     const instance = axios.create({
         timeout: 12000,
         httpsAgent: new https.Agent({
@@ -567,15 +568,19 @@ exports.doPost = async (url, params = "", headers = {}, successHandler, failureH
         })
     });
     const urlParams = params instanceof URLSearchParams ? params : new URLSearchParams(params);
-    await this.logg(`Posting to URL ${url}`);
+    if (verbose){
+        await this.logg(`Posting to URL ${url}`);
+    }
     return instance
         .post(url, urlParams, {headers: headers})
         .then((res) => {
-            this.log(res.data);
+            if (verbose) {
+                this.log(res.data);
+            }
             return successHandler(res);
         })
         .catch((error) => {
-            if (error.response !== undefined) {
+            if (error.response !== undefined && verbose) {
                 this.logr(error.response.data);
             }
             return failureHandler(error);
