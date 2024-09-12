@@ -105,4 +105,6 @@ classloading, locks and JSON serialization overhead.
 - Logback
 - Amazon SDK
 - Gradle
+- JGit
+- Apache Tomcat
 
