@@ -4,7 +4,6 @@
     "docker": "true"
   },
   "properties": [
-    "--server.http2.enabled=false",
     "--logging.level.PROTOCOL_MESSAGE=off",
     "--logging.level.org.apereo.cas=error",
 

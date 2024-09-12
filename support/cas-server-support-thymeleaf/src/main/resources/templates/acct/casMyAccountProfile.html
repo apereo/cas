@@ -8,6 +8,9 @@
     <link href="../../static/css/cas.css" rel="stylesheet" th:remove="tag"/>
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.highlight.css}}" />
     <script type="text/javascript" th:src="@{#{webjars.highlight.js}}"></script>
+    <script type="text/javascript" th:src="@{#{webjars.sweet-alert.js}}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{#{webjars.sweet-alert.css}}" />
+    <link rel="stylesheet" type="text/css" th:href="@{#{webjars.animate.css}}" />
 </head>
 
 <body id="cas">
@@ -30,56 +33,21 @@
         </script>
 
 
-        <div id="casAccountProfile" class="mdc-card card w-lg-100 p-4" style="min-height: 400px">
-            <div class="row">
-                <div class="col col-lg-2">
-                    <div th:replace="~{fragments/accountprofilenavigation :: navigation}">
-                        <a href="fragments/accountprofilenavigation.html">Fragment goes here</a>
-                    </div>
-                </div>
-                <div class="col col-lg-10">
-                    <div th:replace="~{fragments/accountprofileoverview :: overview}">
-                        <a href="fragments/accountprofileoverview.html">Fragment goes here</a>
-                    </div>
-
-                    <div th:replace="~{fragments/accountprofilemfadevices :: mfadevices}">
-                        <a href="fragments/accountprofilemfadevices.html">Fragment goes here</a>
-                    </div>
-
-                    <div th:replace="~{fragments/accountprofileauditlog :: auditlog}">
-                        <a href="fragments/accountprofileauditlog.html">Fragment goes here</a>
-                    </div>
-
-                    <div th:replace="~{fragments/accountprofilesecurityquestions :: securityquestions}">
-                        <a href="fragments/accountprofilesecurityquestions.html">Fragment goes here</a>
-                    </div>
-
-                    <div th:replace="~{fragments/accountprofileapplications :: applications}">
-                        <a href="fragments/accountprofileapplications.html">Fragment goes here</a>
-                    </div>
-                    <div th:replace="~{fragments/accountprofilesessions :: sessions}">
-                        <a href="fragments/accountprofilesessions.html">Fragment goes here</a>
-                    </div>
-
-                    <div th:replace="~{fragments/accountprofileconsent :: consent}">
-                        <a href="fragments/accountprofileconsent.html">Fragment goes here</a>
-                    </div>
-
-                    <div th:replace="~{fragments/accountprofileattributes :: attributes}">
-                        <a href="fragments/accountprofileattributes.html">Fragment goes here</a>
-                    </div>
-
-                    <div th:replace="~{fragments/accountprofiletrusteddevices :: trusteddevices}">
-                        <a href="fragments/accountprofiletrusteddevices.html">Fragment goes here</a>
-                    </div>
-                    <div th:replace="~{fragments/accountprofileaccesstokens :: accesstokens}">
-                        <a href="fragments/accountprofileaccesstokens.html">Fragment goes here</a>
-                    </div>
-                </div>
+        <div id="casAccountProfile">
+            <div th:replace="~{fragments/accountprofile/accountprofilenavigation :: navigation}" />
+            <div class="mdc-card p-2 m-1" style="min-height: 100vh;">
+                <div th:replace="~{fragments/accountprofile/accountprofileoverview :: overview}" />
+                <div th:replace="~{fragments/accountprofile/accountprofilemfadevices :: mfadevices}"/>
+                <div th:replace="~{fragments/accountprofile/accountprofileauditlog :: auditlog}"/>
+                <div th:replace="~{fragments/accountprofile/accountprofilesecurityquestions :: securityquestions}" />
+                <div th:replace="~{fragments/accountprofile/accountprofileapplications :: applications}"/>
+                <div th:replace="~{fragments/accountprofile/accountprofilesessions :: sessions}"/>
+                <div th:replace="~{fragments/accountprofile/accountprofileconsent :: consent}"/>
+                <div th:replace="~{fragments/accountprofile/accountprofileattributes :: attributes}"/>
+                <div th:replace="~{fragments/accountprofile/accountprofiletrusteddevices :: trusteddevices}"/>
+                <div th:replace="~{fragments/accountprofile/accountprofileaccesstokens :: accesstokens}"/>
             </div>
         </div>
-
-
     </div>
 </main>
 </body>

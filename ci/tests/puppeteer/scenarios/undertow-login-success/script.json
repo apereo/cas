@@ -3,7 +3,6 @@
   "server": "undertow",
   "properties": [
     "--cas.server.name=https://localhost:8443",
-    "--cas.server.prefix=${cas.server.name}/cas",
-    "--server.http2.enabled=false"
+    "--cas.server.prefix=${cas.server.name}/cas"
   ]
 }
