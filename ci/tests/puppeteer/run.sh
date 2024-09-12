@@ -183,6 +183,13 @@ while (( "$#" )); do
     DEBUG="true"
     shift 1;
     ;;
+  --hboy)
+    export HEADLESS="true"
+    REBUILD="true"
+    BUILDFLAGS="${BUILDFLAGS} --offline"
+    DRYRUN="true"
+    shift 1;
+    ;;
   --hbo|-hbo)
     export HEADLESS="true"
     REBUILD="true"

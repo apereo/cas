@@ -15,7 +15,12 @@
         <div id="divOverview" class="profile-content p-1" style="display: none;">
             <h2>
                 <i class="mdi mdi-human-greeting-variant fas fa-door-open" aria-hidden="true"></i>
-                <span>Hello, <span th:text="${authentication.principal.id}"></span>!</span>
+                <span>Hello,
+                    <span th:if="${authentication.principal.attributes['displayName'] != null}"
+                          th:text="${authentication.principal.attributes['displayName'][0]}" />
+                    <span th:if="${authentication.principal.attributes['displayName'] == null}"
+                          th:text="${authentication.principal.id}"></span>!
+                </span>
             </h2>
             <p th:utext="#{screen.account.success(${authentication.principal.id})}">You,
                 <strong>username</strong>, have successfully logged into the Central Authentication Service.</p>

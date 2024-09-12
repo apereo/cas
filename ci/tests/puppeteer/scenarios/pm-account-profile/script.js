@@ -76,7 +76,7 @@ async function verifyAccountManagementFlow(browser) {
     await cas.click(page, "#linkAttributes");
     await cas.sleep(1000);
 
-    await cas.click(page, "#linkServices");
+    await cas.click(page, "#linkApplications");
     await cas.sleep(1000);
 
     await cas.click(page, "#linkMfaRegisteredAccounts");
