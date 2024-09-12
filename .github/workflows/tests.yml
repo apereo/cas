@@ -142,7 +142,7 @@ jobs:
               [[ $? -eq 0 ]] && ./testcas.sh --no-watch --with-coverage
             fi
       - name: Check Coverage Report
-        if: {{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') }}
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
         run: |
           xml_files=$(find build/reports -type f -name "*.xml")
           if [ -z "$xml_files" ]; then
@@ -151,7 +151,7 @@ jobs:
             echo ${xml_files}
           fi
       - name: Upload to SonarCloud
-        if: ${{ env.SONARCLOUD_TOKEN != null && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') }}
+        if: env.SONARCLOUD_TOKEN != null && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
         run: |
           ./gradlew sonar --build-cache --configure-on-demand --no-daemon -DskipAot=true --parallel \
             -x javadoc -DskipNestedConfigMetadataGen=true -Dverbose=true \
@@ -159,7 +159,7 @@ jobs:
       - name: "Upload to Codecov"
         uses: "codecov/codecov-action@v4"
         continue-on-error: true
-        if: ${{ env.CODECOV_TOKEN != null && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') }}
+        if: env.CODECOV_TOKEN != null && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
         with:
           token: ${{ env.CODECOV_TOKEN }}
           files: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
@@ -169,7 +169,7 @@ jobs:
           fail_ci_if_error: false
       - name: Upload Coverage Report
         uses: "actions/upload-artifact@v4"
-        if: {{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') }}
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
         with:
           name: "cas-tests-${{ matrix.category }}.coverage"
           path: "./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
@@ -178,7 +178,7 @@ jobs:
   coverage:
     runs-on: ubuntu-latest
     needs: [ tests ]
-    if: {{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') }}
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
