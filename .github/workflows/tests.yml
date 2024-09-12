@@ -32,6 +32,7 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 20 * * *'
+    - cron: '0 10 * * *'  # This needs to match the condition below that disables PTS mode.
   push:
     branches:
       - master
@@ -126,15 +127,22 @@ jobs:
           timeout_minutes: ${{ env.RETRY_MINUTES }}
           shell: bash
           command: |
-            if [[ "{{ github.event_name }}" == "push" ]] || [[ "{{ github.event_name }}" == "schedule" ]]; then
-              ptsMode="REMAINING_TESTS";
-            else
-              ptsMode="RELEVANT_TESTS";
+            if [[ "{{ github.event.schedule == '0 10 * * *'}}" ]]; then
+              echo "Running tests without PTS mode"
+              ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED --no-pts
+              [[ $? -eq 0 ]] && ./testcas.sh --no-watch --with-coverage
+            else 
+              if [[ "{{ github.event_name }}" == "push" ]] || [[ "{{ github.event_name }}" == "schedule" ]]; then
+                ptsMode="REMAINING_TESTS";
+              else
+                ptsMode="RELEVANT_TESTS";
+              fi
+              echo "Running tests with PTS mode: $ptsMode"
+              ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED --pts $ptsMode
+              [[ $? -eq 0 ]] && ./testcas.sh --no-watch --with-coverage
             fi
-            echo "Running tests with PTS mode: $ptsMode"
-            ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED --pts $ptsMode
-            [[ $? -eq 0 ]] && ./testcas.sh --no-watch --with-coverage
       - name: Check Coverage Report
+        if: {{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') }}
         run: |
           xml_files=$(find build/reports -type f -name "*.xml")
           if [ -z "$xml_files" ]; then
@@ -143,7 +151,7 @@ jobs:
             echo ${xml_files}
           fi
       - name: Upload to SonarCloud
-        if: ${{ env.SONARCLOUD_TOKEN != null }}
+        if: ${{ env.SONARCLOUD_TOKEN != null && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') }}
         run: |
           ./gradlew sonar --build-cache --configure-on-demand --no-daemon -DskipAot=true --parallel \
             -x javadoc -DskipNestedConfigMetadataGen=true -Dverbose=true \
@@ -151,7 +159,7 @@ jobs:
       - name: "Upload to Codecov"
         uses: "codecov/codecov-action@v4"
         continue-on-error: true
-        if: ${{ env.CODECOV_TOKEN != null }}
+        if: ${{ env.CODECOV_TOKEN != null && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') }}
         with:
           token: ${{ env.CODECOV_TOKEN }}
           files: ./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
@@ -161,6 +169,7 @@ jobs:
           fail_ci_if_error: false
       - name: Upload Coverage Report
         uses: "actions/upload-artifact@v4"
+        if: {{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') }}
         with:
           name: "cas-tests-${{ matrix.category }}.coverage"
           path: "./build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
@@ -169,6 +178,7 @@ jobs:
   coverage:
     runs-on: ubuntu-latest
     needs: [ tests ]
+    if: {{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4

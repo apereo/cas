@@ -89,7 +89,7 @@ public class OAuth20DefaultAccessTokenResponseGenerator<T extends OAuth20Configu
         generatedToken.getAccessToken()
             .ifPresent(token -> {
                 val accessToken = resolveToken(token, OAuth20AccessToken.class);
-                if (accessToken.getExpiresIn() > 0) {
+                if (result.getResponseType() != OAuth20ResponseTypes.ID_TOKEN && accessToken.getExpiresIn() > 0) {
                     val encodedAccessTokenId = encodeAccessToken(accessToken, result);
                     if (StringUtils.equals(encodedAccessTokenId, accessToken.getId()) && token.isStateless()) {
                         model.put(OAuth20Constants.ACCESS_TOKEN, token.getId());
