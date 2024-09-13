@@ -729,6 +729,9 @@ layout: null
         *   [Redis](/cas/{{ version }}/monitoring/Configuring-Monitoring-Redis.html)
   *   [Tracing](#tracingoverview)
       *   [Overview](/cas/{{ version }}/monitoring/Configuring-Tracing.html)
+      *   [Jaeger](/cas/{{ version }}/monitoring/Configuring-Tracing-Jaeger.html)
+      *   [OpenTelemetry](/cas/{{ version }}/monitoring/Configuring-Tracing-OpenTelemetry.html)
+      *   [Zipkin](/cas/{{ version }}/monitoring/Configuring-Tracing-Zipkin.html)
       
 * [User Interface](#user_interface)
     *   [Overview](/cas/{{ version }}/ux/User-Interface-Customization.html)

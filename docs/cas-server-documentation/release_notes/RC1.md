@@ -72,6 +72,11 @@ and scenarios. At the moment, total number of jobs stands at approximately `488`
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
   
+### Jaeger Distributed Tracing
+
+Jaeger is an open-source distributed tracing platform, that is now 
+[supported by CAS](../monitoring/Configuring-Tracing-Jaeger.html) for metrics and monitoring.
+
 ### Redis Ticket Registry
 
 The performance of the [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) is improved to remove unnecessary 
