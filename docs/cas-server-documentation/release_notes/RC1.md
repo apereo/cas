@@ -102,6 +102,7 @@ classloading, locks and JSON serialization overhead.
 - Spring Integration
 - Spring Kafka
 - Spring Cloud
+- Spring Data
 - Spring AMQP
 - Spring Security
 - Micrometer

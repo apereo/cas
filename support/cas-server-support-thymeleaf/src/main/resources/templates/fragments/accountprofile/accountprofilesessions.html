@@ -61,7 +61,12 @@
              id="divSessions">
             <h2>
                 <i class="mdi mdi-human-greeting-variant fas fa-door-open" aria-hidden="true"></i>
-                <span>Hello, <span th:utext="${authentication.principal.id}"></span>!</span>
+                <span>Hello,
+                    <span th:if="${authentication.principal.attributes['displayName'] != null}"
+                          th:text="${authentication.principal.attributes['displayName'][0]}" />
+                    <span th:if="${authentication.principal.attributes['displayName'] == null}"
+                          th:text="${authentication.principal.id}"/>
+                </span>
             </h2>
             <div class="text-justify">
                 <p th:utext="#{screen.account.sessions}">Sessions</p>
