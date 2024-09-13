@@ -64,7 +64,7 @@ public class YubiKeyMultifactorAuthenticationProperties extends BaseMultifactorA
      * Keep device registration records inside a static JSON resource.
      */
     @ExpressionLanguageCapable
-    private String jsonFile;
+    private YubiKeyJsonMultifactorProperties json = new YubiKeyJsonMultifactorProperties();
 
     /**
      * Collection of allowed devices allowed per user.
