@@ -32,10 +32,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import com.yubico.client.v2.YubicoClient;
 import lombok.extern.slf4j.Slf4j;
@@ -113,10 +111,10 @@ class YubiKeyAuthenticationEventExecutionPlanConfiguration {
             @Qualifier("yubikeyAccountCipherExecutor")
             final CipherExecutor yubikeyAccountCipherExecutor) throws Exception {
             val yubi = casProperties.getAuthn().getMfa().getYubikey();
-            if (StringUtils.isNotBlank(yubi.getJsonFile())) {
-                val jsonResource = ResourceUtils.getRawResourceFrom(SpringExpressionLanguageValueResolver.getInstance().resolve(yubi.getJsonFile()));
-                LOGGER.debug("Using JSON resource [{}] as the YubiKey account registry", jsonResource);
-                val registry = new JsonYubiKeyAccountRegistry(jsonResource, yubiKeyAccountValidator);
+            if (yubi.getJson().getLocation() != null) {
+                LOGGER.debug("Using JSON resource [{}] as the YubiKey account registry", yubi.getJson().getLocation());
+                val registry = new JsonYubiKeyAccountRegistry(yubi.getJson().getLocation(),
+                    yubi.getJson().isWatchResource(), yubiKeyAccountValidator);
                 registry.setCipherExecutor(yubikeyAccountCipherExecutor);
                 return registry;
             }

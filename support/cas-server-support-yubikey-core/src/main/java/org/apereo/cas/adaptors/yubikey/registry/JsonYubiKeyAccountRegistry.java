@@ -35,10 +35,12 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
     private WatcherService watcherService;
     
     public JsonYubiKeyAccountRegistry(final Resource jsonResource,
+                                      final boolean watchResource,
                                       final YubiKeyAccountValidator validator) throws Exception {
         super(getDevicesFromJsonResource(jsonResource), validator);
         this.jsonResource = jsonResource;
-        if (ResourceUtils.isFile(this.jsonResource)) {
+        
+        if (ResourceUtils.isFile(this.jsonResource) && watchResource) {
             this.watcherService = new FileWatcherService(jsonResource.getFile(),
                 Unchecked.consumer(__ -> setDevices(getDevicesFromJsonResource(jsonResource))));
             this.watcherService.start(getClass().getSimpleName());

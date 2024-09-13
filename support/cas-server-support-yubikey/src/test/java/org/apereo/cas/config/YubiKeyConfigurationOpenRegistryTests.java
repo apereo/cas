@@ -22,8 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseYubiKeyTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.mfa.yubikey.client-id=18423",
-        "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As=",
-        "cas.authn.mfa.yubikey.json-file="
+        "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As="
     })
 @Tag("MFAProvider")
 @ExtendWith(CasTestExtension.class)
