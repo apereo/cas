@@ -1637,6 +1637,15 @@ ext.libraries = [
                     exclude(group: "commons-lang", module: "commons-lang")
                 }
         ],
+        opentelemetry : [
+                dependencies.create("io.opentelemetry:opentelemetry-exporter-otlp:$otelVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "ch.qos.logback", module: "logback-core")
+                    exclude(group: "ch.qos.logback", module: "logback-classic")
+                }
+        ],
         tracingotel : [
                 dependencies.create("io.micrometer:micrometer-tracing-bridge-otel:$micrometerOtelVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")

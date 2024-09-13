@@ -79,6 +79,12 @@ public class MonitorProperties implements Serializable {
     private MemcachedMonitorProperties memcached = new MemcachedMonitorProperties();
 
     /**
+     * Configuration properties for monitoring Jaeger tracing.
+     */
+    @NestedConfigurationProperty
+    private JaegerMonitorProperties jaeger = new JaegerMonitorProperties();
+
+    /**
      * Options for monitoring MongoDb resources.
      */
     private List<MongoDbMonitorProperties> mongo = new ArrayList<>();

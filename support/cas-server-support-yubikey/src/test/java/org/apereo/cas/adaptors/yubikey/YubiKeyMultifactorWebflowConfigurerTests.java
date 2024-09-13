@@ -21,7 +21,7 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
     properties = {
         "cas.authn.mfa.yubikey.client-id=18423",
         "cas.authn.mfa.yubikey.secret-key=zAIqhjui12mK8x82oe9qzBEb0As=",
-        "cas.authn.mfa.yubikey.json.resource=file:${java.io.tmpdir}/yubikey.json",
+        "cas.authn.mfa.yubikey.json.location=file:${java.io.tmpdir}/yubikey.json",
         "cas.authn.mfa.yubikey.trusted-device-enabled=true",
         "cas.authn.mfa.yubikey.multiple-device-registration-enabled=true",
         "cas.authn.mfa.trusted.core.device-registration-enabled=true"
