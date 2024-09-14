@@ -449,6 +449,7 @@ layout: null
         *   [Default](/cas/{{ version }}/ticketing/Default-Ticket-Registry.html)
         *   [Stateless](/cas/{{ version }}/ticketing/Stateless-Ticket-Registry.html)
         *   [AMQP](/cas/{{ version }}/ticketing/Messaging-AMQP-Ticket-Registry.html)
+        *   [Apache Kafka](/cas/{{ version }}/ticketing/Kafka-Ticket-Registry.html)
         *   [Google Cloud PubSub](/cas/{{ version }}/ticketing/GCP-PubSub-Ticket-Registry.html)
         *   [Google Cloud Firestore](/cas/{{ version }}/ticketing/GCP-Firestore-Ticket-Registry.html)
         *   [Hazelcast](#hazelcastticketregistry)

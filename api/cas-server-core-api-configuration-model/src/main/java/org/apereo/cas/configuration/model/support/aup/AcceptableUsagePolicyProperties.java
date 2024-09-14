@@ -65,7 +65,7 @@ public class AcceptableUsagePolicyProperties implements CasFeatureModule, Serial
     private RedisAcceptableUsagePolicyProperties redis = new RedisAcceptableUsagePolicyProperties();
 
     /**
-     * Control AUP backed by runtime's memory.
+     * Control AUP backed by runtime memory.
      */
     @NestedConfigurationProperty
     private InMemoryAcceptableUsagePolicyProperties inMemory = new InMemoryAcceptableUsagePolicyProperties();

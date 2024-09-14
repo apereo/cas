@@ -29,7 +29,7 @@ class AMQPTicketRegistryQueueReceiverTests extends AbstractTicketMessageQueueCom
     @Test
     void verifyOperation() throws Throwable {
         val receiver = new DefaultQueueableTicketRegistryMessageReceiver(ticketRegistry,
-            new PublisherIdentifier(UUID.randomUUID().toString()));
+            new PublisherIdentifier(UUID.randomUUID().toString()), applicationContext);
         var ticket = new TicketGrantingTicketImpl("TGT-334455", CoreAuthenticationTestUtils.getAuthentication(),
             NeverExpiresExpirationPolicy.INSTANCE);
         val cmd = new AddTicketMessageQueueCommand(new PublisherIdentifier(), ticket);

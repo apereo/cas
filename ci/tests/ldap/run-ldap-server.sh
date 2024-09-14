@@ -4,7 +4,7 @@
 
 export DOCKER_IMAGE="osixia/openldap:latest"
 
-echo "Running LDAP docker image"
+echo "Running LDAP docker container"
 docker stop ldap-server || true && docker rm ldap-server || true
 docker run --rm  -d -p 10389:389 -p 1389:389 --name="ldap-server" mmoayyed/ldap
 
@@ -17,7 +17,7 @@ else
     exit $retVal
 fi
 
-echo "Running OpenLDAP docker image"
+echo "Running OpenLDAP docker container"
 # Create an empty OpenLdap server for the company Example Inc. and the domain example.org.
 docker stop openldap-server || true && docker rm openldap-server || true
 docker run --rm -d -p 11389:389 -p 11636:636 --name="openldap-server" \

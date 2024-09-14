@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Running Syncope Docker image..."
+echo "Running Syncope docker container..."
 COMPOSE_FILE=./ci/tests/syncope/docker-compose.yml
 test -f $COMPOSE_FILE || COMPOSE_FILE=docker-compose.yml
 docker compose -f $COMPOSE_FILE down >/dev/null 2>/dev/null || true

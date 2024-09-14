@@ -1,7 +1,7 @@
 #!/bin/bash
 
 export DOCKER_IMAGE="rabbitmq:3-management"
-echo "Running RabbitMQ docker image..."
+echo "Running RabbitMQ docker container..."
 docker stop rabbitmq-server || true && docker rm rabbitmq-server || true
 docker run -d -p 5672:5672 -p 15672:15672 --hostname rabbitmq \
   --name rabbitmq-server -e RABBITMQ_DEFAULT_USER=rabbituser \

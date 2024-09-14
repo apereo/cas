@@ -30,7 +30,7 @@ public abstract class BaseMessageQueueCommand implements Serializable {
     @Serial
     private static final long serialVersionUID = 7050449807845156228L;
 
-    private final PublisherIdentifier id;
+    private final PublisherIdentifier publisherIdentifier;
 
     /**
      * Execute.

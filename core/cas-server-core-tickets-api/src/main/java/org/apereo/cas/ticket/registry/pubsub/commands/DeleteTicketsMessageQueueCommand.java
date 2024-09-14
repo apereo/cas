@@ -36,12 +36,12 @@ public class DeleteTicketsMessageQueueCommand extends BaseMessageQueueCommand {
 
     @Override
     public void execute(final QueueableTicketRegistry registry) {
-        LOGGER.debug("Executing queue command on ticket registry id [{}] to delete tickets", getId().getId());
+        LOGGER.debug("Executing queue command on ticket registry id [{}] to delete tickets", getPublisherIdentifier().getId());
         registry.deleteAllFromQueue();
     }
 
     @Override
-    public BaseMessageQueueCommand withId(final PublisherIdentifier id) {
+    public BaseMessageQueueCommand withPublisherIdentifier(final PublisherIdentifier id) {
         return new DeleteTicketsMessageQueueCommand(id);
     }
 }

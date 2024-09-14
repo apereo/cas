@@ -81,6 +81,10 @@ Jaeger is an open-source distributed tracing platform, that is now
 
 The performance of the [Redis Ticket Registry](../ticketing/Redis-Ticket-Registry.html) is improved to remove unnecessary 
 classloading, locks and JSON serialization overhead.
+         
+### Kafka Ticket Registry
+
+Apache Kafka can now be used as a [ticket registry](../ticketing/Kafka-Ticket-Registry.html) to broadcast ticket operations across the cluster.
 
 ## Other Stuff
    

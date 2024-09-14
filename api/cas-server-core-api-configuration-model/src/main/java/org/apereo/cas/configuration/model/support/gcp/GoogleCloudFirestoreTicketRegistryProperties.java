@@ -30,9 +30,7 @@ public class GoogleCloudFirestoreTicketRegistryProperties implements Serializabl
      * Crypto settings for the registry.
      */
     @NestedConfigurationProperty
-    private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
+    private EncryptionRandomizedSigningJwtCryptographyProperties crypto =
+        new EncryptionRandomizedSigningJwtCryptographyProperties().setEnabled(false);
 
-    public GoogleCloudFirestoreTicketRegistryProperties() {
-        this.crypto.setEnabled(false);
-    }
 }

@@ -4,7 +4,7 @@ export DOCKER_IMAGE="mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:late
 
 docker stop cosmosdb || true && docker rm cosmosdb || true
 dockerPlatform=$(docker version --format '{{json .Server.Os}}')
-echo "Trying to determine Docker image for platform $dockerPlatform"
+echo "Trying to determine docker container for platform $dockerPlatform"
 
 if [[ $dockerPlatform =~ "windows" ]]; then
 #  docker run --name cosmosdb --memory 2GB \

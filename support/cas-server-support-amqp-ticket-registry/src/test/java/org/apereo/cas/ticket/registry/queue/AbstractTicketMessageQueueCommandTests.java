@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * This is {@link AbstractTicketMessageQueueCommandTests}.
@@ -60,4 +61,7 @@ public abstract class AbstractTicketMessageQueueCommandTests {
     @Autowired
     @Qualifier(TicketSerializationManager.BEAN_NAME)
     protected TicketSerializationManager ticketSerializationManager;
+
+    @Autowired
+    protected ConfigurableApplicationContext applicationContext;
 }

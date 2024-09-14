@@ -9,7 +9,6 @@ import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -25,13 +24,12 @@ import org.springframework.test.context.TestPropertySource;
  */
 @Import(AMQPDefaultTicketRegistryTests.AMQPTicketRegistryTestConfiguration.class)
 @ImportAutoConfiguration({
-    CompositeMeterRegistryAutoConfiguration.class,
     RabbitAutoConfiguration.class,
     CasAMQPTicketRegistryAutoConfiguration.class
 })
 @TestPropertySource(properties = {
-    "cas.ticket.registry.amqp.in-memory.signing.key=HbuPoSycjr0Pyv2u8WSwKcM6Ow0lviUdT7b9VzwxkcANqbDyKOb6KHPus_fCDCXElPhzXpeP-T0bryadZNiwOQ",
-    "cas.ticket.registry.amqp.in-memory.encryption.key=BXRiSBWJcRksTizjdaCoLw",
+    "cas.ticket.registry.in-memory.crypto.signing.key=HbuPoSycjr0Pyv2u8WSwKcM6Ow0lviUdT7b9VzwxkcANqbDyKOb6KHPus_fCDCXElPhzXpeP-T0bryadZNiwOQ",
+    "cas.ticket.registry.in-memory.crypto.encryption.key=BXRiSBWJcRksTizjdaCoLw",
 
     "spring.rabbitmq.host=localhost",
     "spring.rabbitmq.port=5672",

@@ -2,7 +2,7 @@
 
 docker stop strapi-server || true && docker rm strapi-server || true
 
-echo "Building Strapi docker image"
+echo "Building Strapi docker container"
 docker build ci/tests/puppeteer/scenarios/oidc-login-strapi/strapi -t cas/strapi:latest
 
 docker run -d -p 1337:1337 \

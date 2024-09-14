@@ -1,5 +1,3 @@
-version: "3"
-
 services:
   redis-master:
     image: redis/redis-stack:7.4.0-rc2

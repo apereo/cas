@@ -25,7 +25,7 @@ import java.io.Serial;
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class AddTicketMessageQueueCommand extends BaseMessageQueueCommand {
+public class AddTicketMessageQueueCommand extends BaseMessageQueueCommand implements TicketAwareQueueCommand {
     @Serial
     private static final long serialVersionUID = -7698722632898271240L;
 
@@ -41,13 +41,18 @@ public class AddTicketMessageQueueCommand extends BaseMessageQueueCommand {
     }
 
     @Override
+    public String getTicketId() {
+        return this.ticket.getId();
+    }
+
+    @Override
     public void execute(final QueueableTicketRegistry registry) throws Exception {
-        LOGGER.debug("Executing queue command on ticket registry id [{}] to add ticket [{}]", getId().getId(), ticket);
+        LOGGER.debug("Executing queue command on ticket registry id [{}] to add ticket [{}]", getPublisherIdentifier().getId(), ticket);
         registry.addTicketToQueue(this.ticket);
     }
 
     @Override
-    public BaseMessageQueueCommand withId(final PublisherIdentifier id) {
+    public BaseMessageQueueCommand withPublisherIdentifier(final PublisherIdentifier id) {
         return new AddTicketMessageQueueCommand(id, this.ticket);
     }
 }

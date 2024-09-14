@@ -10,8 +10,8 @@ sleep 10
 docker ps
 COUNT_KAFKA=$(docker ps --format "{{.ID}}: {{.Names}}" | grep -c "kafka")
 if [[ ${COUNT_KAFKA} -eq 2 ]]; then
-    echo "Kafka docker images are running."
+    echo "Kafka docker containers are running."
 else
-    echo "Kafka docker images failed to start."
+    echo "Kafka docker containers failed to start."
     exit 1
 fi
