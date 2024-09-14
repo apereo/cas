@@ -7,7 +7,7 @@
 
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 export DOCKER_IMAGE="quay.io/keycloak/keycloak:latest"
-echo "Running Keycloak docker image..."
+echo "Running Keycloak docker container..."
 docker stop keycloak || true && docker rm keycloak || true
 
 openssl req -newkey rsa:2048 -nodes \

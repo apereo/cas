@@ -1,6 +1,6 @@
 #!/bin/bash
 export DOCKER_IMAGE="jaegertracing/all-in-one:1.60"
-echo "Running Jaeger docker image..."
+echo "Running Jaeger docker container..."
 docker stop jaeger-server || true && docker rm jaeger-server || true
 
 docker run --rm --name="jaeger-server" \
@@ -10,7 +10,7 @@ docker run --rm --name="jaeger-server" \
   -p 16686:16686 \
   -p 14268:14268 \
   -d ${DOCKER_IMAGE}
-echo "Waiting for Jaeger image to prepare..."
+echo "Waiting for Jaeger container to prepare..."
 sleep 5
 docker ps | grep "jaeger-server"
 echo "Jaeger docker container is running."

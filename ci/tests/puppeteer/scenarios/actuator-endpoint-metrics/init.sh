@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Running Prometheus docker image..."
+echo "Running Prometheus docker container..."
 docker stop prom-server || true && docker rm prom-server || true
 docker run --rm -d -p 9090:9090 --name "prom-server" \
   -v "${SCENARIO_FOLDER}/prometheus.yml":/etc/prometheus/prometheus.yml \
@@ -17,7 +17,7 @@ else
     exit $retVal
 fi
 
-echo "Running Grafana docker image..."
+echo "Running Grafana docker container..."
 docker stop grafana-server || true && docker rm grafana-server || true
 docker run --rm -d -p 3000:3000 --name "grafana-server" \
   -e GF_SECURITY_ADMIN_PASSWORD=admin \

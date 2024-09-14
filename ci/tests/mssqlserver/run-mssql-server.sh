@@ -7,7 +7,7 @@ export DOCKER_IMAGE="mcr.microsoft.com/azure-sql-edge:latest"
 export MSYS2_ARG_CONV_EXCL="*"
 export MSYS_NO_PATHCONV=1
 
-echo "Running SQL Server docker image..."
+echo "Running SQL Server docker container..."
 docker stop mssql-server || true
 # docker run --rm -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=p@ssw0rd' \
 #   --name "mssql-server" --rm -d \

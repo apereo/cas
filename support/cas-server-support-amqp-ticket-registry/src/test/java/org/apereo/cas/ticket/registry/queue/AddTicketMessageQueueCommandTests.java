@@ -30,7 +30,7 @@ class AddTicketMessageQueueCommandTests extends AbstractTicketMessageQueueComman
         var ticket = new TicketGrantingTicketImpl("TGT", CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.addTicket(ticket);
         val cmd = new AddTicketMessageQueueCommand(new PublisherIdentifier(UUID.randomUUID().toString()), ticket)
-            .withId(new PublisherIdentifier());
+            .withPublisherIdentifier(new PublisherIdentifier());
         cmd.execute(ticketRegistry);
         ticket = ticketRegistry.getTicket(ticket.getId(), ticket.getClass());
         assertNotNull(ticket);

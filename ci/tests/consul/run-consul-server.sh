@@ -2,7 +2,7 @@
 
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 export DOCKER_IMAGE="consul:1.15.4"
-echo "Running Consul docker image"
+echo "Running Consul docker container"
 set -e
 echo Starting Consul
 docker stop consul || true && docker rm consul || true

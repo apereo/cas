@@ -27,7 +27,8 @@ class UpdateTicketMessageQueueCommandTests extends AbstractTicketMessageQueueCom
     void verifyUpdateTicket() throws Throwable {
         var ticket = new TicketGrantingTicketImpl("TGT",
             CoreAuthenticationTestUtils.getAuthentication(), NeverExpiresExpirationPolicy.INSTANCE);
-        val cmd = new UpdateTicketMessageQueueCommand(new PublisherIdentifier(), ticket).withId(new PublisherIdentifier());
+        val cmd = new UpdateTicketMessageQueueCommand(new PublisherIdentifier(), ticket)
+            .withPublisherIdentifier(new PublisherIdentifier());
         cmd.execute(ticketRegistry);
         ticket = ticketRegistry.getTicket(ticket.getId(), ticket.getClass());
         assertNotNull(ticket);

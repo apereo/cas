@@ -26,10 +26,10 @@ public class AMQPTicketRegistryQueuePublisher implements QueueableTicketRegistry
 
     @Override
     public void publishMessageToQueue(final BaseMessageQueueCommand cmd) {
-        LOGGER.debug("[{}] is publishing message [{}]", cmd.getId().getId(), cmd);
+        LOGGER.debug("[{}] is publishing message [{}]", cmd.getPublisherIdentifier().getId(), cmd);
         rabbitTemplate.convertAndSend(QUEUE_DESTINATION, StringUtils.EMPTY, cmd,
             message -> {
-                LOGGER.trace("Sent message [{}] from ticket registry id [{}]", message, cmd.getId());
+                LOGGER.trace("Sent message [{}] from ticket registry id [{}]", message, cmd.getPublisherIdentifier());
                 return message;
             });
     }

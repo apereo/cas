@@ -702,7 +702,7 @@ if [[ "${RERUN}" != "true" && ("${NATIVE_BUILD}" == "false" || "${NATIVE_RUN}" =
           --spring.profiles.active=none  \
           --server.ssl.key-store="$keystore" ${properties} &
       elif [[ "${buildDockerImage}" == "true" ]]; then
-        printcyan "Launching Docker image cas-${scenarioName}:latest"
+        printcyan "Launching docker container cas-${scenarioName}:latest"
         docker run -d --rm \
             --name="cas-${scenarioName}" \
             -e SPRING_APPLICATION_JSON=${springAppJson} \

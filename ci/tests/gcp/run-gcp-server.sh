@@ -13,7 +13,7 @@ function runContainer() {
      exit $retVal
  fi
 
- echo "Running GCP $1 docker image..."
+ echo "Running GCP $1 docker container..."
  docker stop gcp-$1-server || true
 
  ports=""

@@ -5,7 +5,7 @@
 echo "Building Postgres image..."
 docker build ci/tests/postgres/ -t cas/postgres:latest
 
-echo "Running Postgres docker image..."
+echo "Running Postgres docker container..."
 docker stop postgres-server || true
 docker run --rm --name postgres-server --rm -e POSTGRES_PASSWORD=password -d -p 5432:5432 cas/postgres
 

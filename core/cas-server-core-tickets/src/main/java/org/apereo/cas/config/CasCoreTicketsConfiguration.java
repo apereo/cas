@@ -218,12 +218,13 @@ class CasCoreTicketsConfiguration {
         @ConditionalOnMissingBean(name = "messageQueueTicketRegistryReceiver")
         @Lazy(false)
         public QueueableTicketRegistryMessageReceiver messageQueueTicketRegistryReceiver(
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier("messageQueueTicketRegistryIdentifier")
             final PublisherIdentifier messageQueueTicketRegistryIdentifier) {
             return ticketRegistry instanceof final QueueableTicketRegistry queueableTicketRegistry
-                ? new DefaultQueueableTicketRegistryMessageReceiver(queueableTicketRegistry, messageQueueTicketRegistryIdentifier)
+                ? new DefaultQueueableTicketRegistryMessageReceiver(queueableTicketRegistry, messageQueueTicketRegistryIdentifier, applicationContext)
                 : QueueableTicketRegistryMessageReceiver.noOp();
         }
 
@@ -232,8 +233,8 @@ class CasCoreTicketsConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public PublisherIdentifier messageQueueTicketRegistryIdentifier(final CasConfigurationProperties casProperties) {
             val bean = new PublisherIdentifier();
-            val amqp = casProperties.getTicket().getRegistry().getCore();
-            FunctionUtils.doIfNotBlank(amqp.getQueueIdentifier(), __ -> bean.setId(amqp.getQueueIdentifier()));
+            val core = casProperties.getTicket().getRegistry().getCore();
+            FunctionUtils.doIfNotBlank(core.getQueueIdentifier(), __ -> bean.setId(core.getQueueIdentifier()));
             return bean;
         }
 

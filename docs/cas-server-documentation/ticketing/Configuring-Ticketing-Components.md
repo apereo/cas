@@ -58,6 +58,7 @@ Components for the following caching technologies are provided:
 
 * [AMQP](Messaging-AMQP-Ticket-Registry.html)
 * [Google Cloud PubSub](GCP-PubSub-Ticket-Registry.html)
+* [Apache Kafka](Kafka-Ticket-Registry.html)
 
 ### RDBMS Ticket Registries
 

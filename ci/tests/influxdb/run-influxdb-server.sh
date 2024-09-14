@@ -2,7 +2,7 @@
 
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 export DOCKER_IMAGE="influxdb:2.7.6-alpine"
-echo "Running InfluxDb docker image..."
+echo "Running InfluxDb docker container..."
 docker stop influxdb-server || true && docker rm influxdb-server || true
 docker run --rm -d -p 8083:8083 -p 8086:8086 \
   --name="influxdb-server" ${DOCKER_IMAGE}

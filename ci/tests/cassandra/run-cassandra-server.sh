@@ -6,7 +6,7 @@ export DOCKER_IMAGE="cassandra:5.0"
 echo "Generating security keys and certificates..."
 "$PWD"/ci/tests/cassandra/generate-keys.sh
 
-echo "Running Cassandra docker image..."
+echo "Running Cassandra docker container..."
 docker stop cassandra || true && docker rm cassandra || true
 #docker run --rm --name cassandra -d -p 9042:9042 cassandra:4.0.6
 docker run --rm --name cassandra -d -p 7199:7199 -p 7000:7000 -p 7001:7001 -p 9042:9042 \

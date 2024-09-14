@@ -3,7 +3,7 @@
 # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
 export DOCKER_IMAGE="gvenzl/oracle-free:23"
-echo "Running Oracle docker image..."
+echo "Running Oracle docker container..."
 docker stop oracle-db || true
 #docker run --rm -d -p 1521:1521 --name oracle-db --rm store/oracle/database-enterprise:12.2.0.1-slim
 docker run --rm -d -p 1521:1521 --name oracle-db --rm ${DOCKER_IMAGE}
