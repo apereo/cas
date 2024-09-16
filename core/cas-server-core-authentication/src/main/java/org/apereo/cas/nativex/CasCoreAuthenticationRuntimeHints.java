@@ -21,6 +21,7 @@ import org.apereo.cas.authentication.PrincipalElectionStrategyConflictResolver;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.intel.IPAddressIntelligenceResponse;
+import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.metadata.CacheCredentialsCipherExecutor;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
@@ -28,6 +29,7 @@ import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.validation.ValidationResponseType;
 import lombok.val;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.beans.factory.DisposableBean;
 import java.util.List;
 
 /**
@@ -77,5 +79,7 @@ public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistr
                 CacheCredentialsCipherExecutor.class,
                 SimplePrincipal.class,
                 DefaultAuthentication.class));
+
+        registerSpringProxy(hints, AttributeDefinitionStore.class, DisposableBean.class, AutoCloseable.class);
     }
 }

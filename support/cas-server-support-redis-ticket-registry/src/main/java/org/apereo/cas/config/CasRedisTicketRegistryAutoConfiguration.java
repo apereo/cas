@@ -56,7 +56,7 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.Topic;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
-import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.integration.redis.util.RedisLockRegistry;
 import org.springframework.integration.support.locks.LockRegistry;
 import java.util.Optional;
@@ -139,6 +139,8 @@ public class CasRedisTicketRegistryAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
         public MessageListener redisTicketRegistryMessageListener(
+            @Qualifier("ticketRedisTemplate")
+            final CasRedisTemplate<String, RedisTicketDocument> ticketRedisTemplate,
             @Qualifier("redisKeyGeneratorFactory")
             final RedisKeyGeneratorFactory redisKeyGeneratorFactory,
             @Qualifier("redisTicketRegistryMessageIdentifier")
@@ -148,7 +150,8 @@ public class CasRedisTicketRegistryAutoConfiguration {
             val adapter = new MessageListenerAdapter(
                 new DefaultRedisTicketRegistryMessageListener(redisTicketRegistryMessageIdentifier,
                     redisKeyGeneratorFactory, redisTicketRegistryCache));
-            adapter.setSerializer(new JdkSerializationRedisSerializer());
+            adapter.setSerializer(ticketRedisTemplate.getValueSerializer());
+            adapter.setStringSerializer((RedisSerializer<String>) ticketRedisTemplate.getKeySerializer());
             return adapter;
         }
 

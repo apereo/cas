@@ -160,7 +160,7 @@ public abstract class BaseTicketRegistryTests {
         val authn = CoreAuthenticationTestUtils.getAuthentication(
             Map.of("cn", List.of("cn1", "cn2"), "givenName", List.of("g1", "g2"),
                 "authn-context", List.of("mfa-example")));
-        val tgt1 = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(), 
+        val tgt1 = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
             authn, NeverExpiresExpirationPolicy.INSTANCE);
         ticketRegistry.addTicket(tgt1);
 
@@ -346,7 +346,8 @@ public abstract class BaseTicketRegistryTests {
 
     @RepeatedTest(2)
     void verifyAddAndUpdateTicket() throws Throwable {
-        val ticketGrantingTicketId = TestTicketIdentifiers.generate().ticketGrantingTicketId();
+        val generatedTickets = TestTicketIdentifiers.generate();
+        val ticketGrantingTicketId = generatedTickets.ticketGrantingTicketId();
         val tgt = new TicketGrantingTicketImpl(
             ticketGrantingTicketId,
             CoreAuthenticationTestUtils.getAuthentication(),
@@ -363,7 +364,9 @@ public abstract class BaseTicketRegistryTests {
         assertTrue(services.isEmpty(), () -> "Ticket services should be empty. useEncryption[" + useEncryption + ']');
 
         val service = RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST");
-        val serviceTicket = tgt.grantServiceTicket("ST-1", service, NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+        val serviceTicketId = generatedTickets.serviceTicketId();
+        val serviceTicket = tgt.grantServiceTicket(serviceTicketId, service,
+            NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
         assertNotNull(serviceTicket);
 
         val updatedTgt = ticketRegistry.updateTicket(tgt);
@@ -372,7 +375,7 @@ public abstract class BaseTicketRegistryTests {
             : ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
         assertInstanceOf(TicketGrantingTicket.class, tgtResult);
         services = tgtResult.getServices();
-        assertEquals(Collections.singleton("ST-1"), services.keySet());
+        assertEquals(Collections.singleton(serviceTicketId), services.keySet());
     }
 
     @RepeatedTest(2)
