@@ -24,14 +24,14 @@ env:
   JDK_CURRENT: 21
   JDK_DISTRIBUTION: "corretto"
   RETRY_ATTEMPTS: 2
-  RETRY_MINUTES: 30
+  RETRY_MINUTES: 40
   CATEGORY_REGEX: ".*"
 ##########################################################################
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 20 * * *'
+    - cron: '0 15 * * *'
     - cron: '0 10 * * *'  # This needs to match the condition below that disables PTS mode.
   push:
     branches:
@@ -127,7 +127,7 @@ jobs:
           timeout_minutes: ${{ env.RETRY_MINUTES }}
           shell: bash
           command: |
-            if [[ "{{ github.event.schedule == '0 10 * * *'}}" ]]; then
+            if [[ "{{ github.event_name }}" == "schedule" ]] && [[ "{{ github.event.schedule == '0 10 * * *'}}" ]]; then
               echo "Running tests without PTS mode"
               ./testcas.sh --no-watch --category ${{ matrix.category }} --events FAILED --no-pts
               [[ $? -eq 0 ]] && ./testcas.sh --no-watch --with-coverage
