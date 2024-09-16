@@ -386,7 +386,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         }
     }
 
-    private static long getTicketAgeSeconds(@NonNull final Ticket ticket) {
+    private static long getTicketAgeSeconds(final @NonNull Ticket ticket) {
         return ZonedDateTime.now(ticket.getExpirationPolicy().getClock()).toEpochSecond() - ticket.getCreationTime().toEpochSecond();
     }
 

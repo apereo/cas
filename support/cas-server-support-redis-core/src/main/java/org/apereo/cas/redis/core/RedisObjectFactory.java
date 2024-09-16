@@ -31,6 +31,7 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.util.StringUtils;
 import java.time.Duration;
@@ -51,6 +52,30 @@ import java.util.stream.Collectors;
 @Slf4j
 @UtilityClass
 public class RedisObjectFactory {
+    /**
+     * New redis template.
+     *
+     * @param <K>               the type parameter
+     * @param <V>               the type parameter
+     * @param connectionFactory the connection factory
+     * @param valueSerializer   the value serializer
+     * @return the cas redis template
+     */
+    public static <K, V> CasRedisTemplate<K, V> newRedisTemplate(
+        final RedisConnectionFactory connectionFactory,
+        final RedisSerializer<?> valueSerializer) {
+        val template = new DefaultCasRedisTemplate<K, V>();
+
+        val stringRedisSerializer = new StringRedisSerializer();
+
+        template.setKeySerializer(stringRedisSerializer);
+        template.setHashKeySerializer(stringRedisSerializer);
+
+        template.setValueSerializer(valueSerializer);
+        template.setHashValueSerializer(valueSerializer);
+        template.setConnectionFactory(connectionFactory);
+        return template;
+    }
 
     /**
      * New redis template.
@@ -61,17 +86,8 @@ public class RedisObjectFactory {
      * @return the redis template
      */
     public static <K, V> CasRedisTemplate<K, V> newRedisTemplate(final RedisConnectionFactory connectionFactory) {
-        val template = new DefaultCasRedisTemplate<K, V>();
-
-        val stringRedisSerializer = new StringRedisSerializer();
-        val jsonSerializer = new JdkSerializationRedisSerializer();
-
-        template.setKeySerializer(stringRedisSerializer);
-        template.setValueSerializer(jsonSerializer);
-        template.setHashValueSerializer(jsonSerializer);
-        template.setHashKeySerializer(stringRedisSerializer);
-        template.setConnectionFactory(connectionFactory);
-        return template;
+        val valueSerializer = new JdkSerializationRedisSerializer();
+        return newRedisTemplate(connectionFactory, valueSerializer);
     }
 
     /**
