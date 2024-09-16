@@ -158,6 +158,7 @@ jobs:
             ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
           name: screenshots-${{matrix.scenario}}
           path: ./ci/tests/puppeteer/screenshots/*.png
@@ -209,6 +210,7 @@ jobs:
             ./ci/tests/puppeteer/run.sh --scenario $PWD/ci/tests/puppeteer/scenarios/${{matrix.scenario}}
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
           name: screenshots-${{matrix.scenario}}
           path: ./ci/tests/puppeteer/screenshots/*.png
