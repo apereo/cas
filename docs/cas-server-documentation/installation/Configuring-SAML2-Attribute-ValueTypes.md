@@ -91,7 +91,7 @@ The construction of NameID here is identical to the Subject's `NameID` element a
 ### Inline NameID - Detached
 
 The following *partial* configuration will encode the attribute value separate and detached 
-from the the NameID produced for the `Subject`'s:
+from the NameID produced for the `Subject`'s:
 
 ```json
 ...
