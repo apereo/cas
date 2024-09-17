@@ -74,8 +74,8 @@ public class CasAMQPTicketRegistryAutoConfiguration {
     public Declarables messageQueueTopicBindings(
         @Qualifier("messageQueueTicketRegistryIdentifier")
         final PublisherIdentifier messageQueueTicketRegistryIdentifier) {
-        val queue = new Queue(messageQueueTicketRegistryIdentifier.getId(), false, false, true);
-        val topicExchange = new TopicExchange(AMQPTicketRegistryQueuePublisher.QUEUE_DESTINATION, false, true);
+        val queue = new Queue(messageQueueTicketRegistryIdentifier.getId(), true, false, true);
+        val topicExchange = new TopicExchange(AMQPTicketRegistryQueuePublisher.QUEUE_DESTINATION, true, true);
         return new Declarables(queue, topicExchange, BindingBuilder.bind(queue).to(topicExchange).with("#"));
     }
 

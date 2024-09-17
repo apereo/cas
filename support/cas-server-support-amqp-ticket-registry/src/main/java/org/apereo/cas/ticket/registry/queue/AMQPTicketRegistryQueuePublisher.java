@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessag
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.rabbit.core.RabbitOperations;
 
 /**
@@ -29,6 +30,7 @@ public class AMQPTicketRegistryQueuePublisher implements QueueableTicketRegistry
         LOGGER.debug("[{}] is publishing message [{}]", cmd.getPublisherIdentifier().getId(), cmd);
         rabbitTemplate.convertAndSend(QUEUE_DESTINATION, StringUtils.EMPTY, cmd,
             message -> {
+                message.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
                 LOGGER.trace("Sent message [{}] from ticket registry id [{}]", message, cmd.getPublisherIdentifier());
                 return message;
             });
