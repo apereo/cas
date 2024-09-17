@@ -9,7 +9,7 @@ category: Notifications
 # Sending Email - Mailjet
    
 You may instruct CAS to use [Mailjet](https://www.mailjet.com/) for sending emails.
-Support is enabled by including the the following module:
+Support is enabled by including the following module:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-mailjet" %}
 

@@ -65,7 +65,7 @@ Maps to the `Required` [authentication policy](../authentication/Configuring-Aut
 }
 ```
       
-The `tryAll` flag will ensure that the the total number of collected credentials in the current authentication transaction
+The `tryAll` flag will ensure that the total number of collected credentials in the current authentication transaction
 matches the sum of all authentication successes and failures.
 
 ### Excluded

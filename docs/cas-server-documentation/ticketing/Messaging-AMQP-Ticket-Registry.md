@@ -18,7 +18,7 @@ instructs others to keep their copy accurate by broadcasting messages and data a
 Each message and ticket registry instance running inside a CAS node in the cluster is tagged with a unique 
 identifier in order to avoid endless looping behavior and recursive needless inbound operations.
     
-The broadcast and the message queue is backed by the the Advanced Message Queuing Protocol (AMQP) protocol. This is a platform-neutral, 
+The broadcast and the message queue is backed by the Advanced Message Queuing Protocol (AMQP) protocol. This is a platform-neutral, 
 wire-level protocol for message-oriented middleware. The implementation of this protocol is backed by [RabbitMQ](https://www.rabbitmq.com/). 
 This is a lightweight, reliable, scalable, and portable message broker based on the AMQP protocol. CAS uses RabbitMQ to communicate through the AMQP protocol.
 
