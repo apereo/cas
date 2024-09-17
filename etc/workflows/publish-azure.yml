@@ -49,7 +49,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: "zulu"
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Checkout
@@ -75,7 +75,7 @@ jobs:
           java-version: ${{ env.JDK_CURRENT }}
           distribution: "zulu"
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Output Config
