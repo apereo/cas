@@ -81,8 +81,9 @@ public class DefaultSurrogateAuthenticationPrincipalBuilder implements Surrogate
             }
             
             val surrogatePrincipal = buildSurrogatePrincipal(surrogateUsername, principal, registeredService);
-            val auth = DefaultAuthenticationBuilder.newInstance(authentication).setPrincipal(surrogatePrincipal).build();
-            return Optional.of(authenticationResultBuilder.collect(auth));
+            val authenticationBuilder = DefaultAuthenticationBuilder.newInstance(authentication).setPrincipal(surrogatePrincipal);
+            surrogateAuthenticationService.collectSurrogateAttributes(authenticationBuilder, surrogateUsername, principal.getId());
+            return Optional.of(authenticationResultBuilder.collect(authenticationBuilder.build()));
         }
         return Optional.empty();
     }

@@ -115,10 +115,15 @@ public class DefaultAuthentication implements Authentication {
     }
 
     @Override
-    public Object getSingleValuedAttribute(final String name) {
+    public <T> T getSingleValuedAttribute(final String name, final Class<T> expectedType) {
         if (containsAttribute(name)) {
             val values = getAttributes().get(name);
-            return values.stream().filter(Objects::nonNull).findFirst().orElse(null);
+            return values
+                .stream()
+                .filter(Objects::nonNull)
+                .findFirst()
+                .map(expectedType::cast)
+                .orElse(null);
         }
         return null;
     }

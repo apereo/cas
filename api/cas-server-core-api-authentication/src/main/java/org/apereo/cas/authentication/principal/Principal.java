@@ -1,11 +1,13 @@
 package org.apereo.cas.authentication.principal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
+import lombok.val;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Generic concept of an authenticated thing. Examples include a person or a
@@ -38,5 +40,48 @@ public interface Principal extends Serializable {
      */
     default Map<String, List<Object>> getAttributes() {
         return new LinkedHashMap<>(0);
+    }
+
+    /**
+     * Gets attribute.
+     *
+     * @param <T>          the type parameter
+     * @param name         the name
+     * @param expectedType the expected type
+     * @return the attribute
+     */
+    @JsonIgnore
+    default <T> T getSingleValuedAttribute(String name, Class<T> expectedType) {
+        if (containsAttribute(name)) {
+            val values = getAttributes().get(name);
+            return values
+                .stream()
+                .filter(Objects::nonNull)
+                .findFirst()
+                .map(expectedType::cast)
+                .orElse(null);
+        }
+        return null;
+    }
+
+    /**
+     * Gets single valued attribute.
+     *
+     * @param name the name
+     * @return the single valued attribute
+     */
+    @JsonIgnore
+    default Object getSingleValuedAttribute(final String name) {
+        return getSingleValuedAttribute(name, Object.class);
+    }
+    
+    /**
+     * Contains attribute by name.
+     *
+     * @param name the name
+     * @return the boolean
+     */
+    default boolean containsAttribute(final String name) {
+        return getAttributes().containsKey(name);
     }
 }

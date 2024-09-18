@@ -33,6 +33,7 @@ public class DefaultSurrogateCredentialParser implements SurrogateCredentialPars
                     .surrogateUsername(surrogateUsername)
                     .username(primaryUserName)
                     .credential(credential)
+                    .selectable(credential.getId().startsWith(separator))
                     .build());
             }
         }

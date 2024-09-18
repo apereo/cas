@@ -69,7 +69,7 @@ public class CibaPushTokenDeliveryHandler implements CibaTokenDeliveryHandler {
             () -> {
                 HttpResponse response = null;
                 try {
-                    val clientNotificationValue = (String) cibaRequest.getAuthentication().getSingleValuedAttribute(OidcConstants.CLIENT_NOTIFICATION_TOKEN);
+                    val clientNotificationValue = cibaRequest.getAuthentication().getSingleValuedAttribute(OidcConstants.CLIENT_NOTIFICATION_TOKEN, String.class);
                     val exec = HttpExecutionRequest.builder()
                         .bearerToken(clientNotificationValue)
                         .method(HttpMethod.POST)

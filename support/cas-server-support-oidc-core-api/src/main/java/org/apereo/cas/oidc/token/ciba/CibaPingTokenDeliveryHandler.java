@@ -43,7 +43,7 @@ public class CibaPingTokenDeliveryHandler implements CibaTokenDeliveryHandler {
     public Map<String, ?> deliver(final OidcRegisteredService registeredService, final OidcCibaRequest cibaRequest) throws Throwable {
         HttpResponse response = null;
         try {
-            val clientNotificationValue = (String) cibaRequest.getAuthentication().getSingleValuedAttribute(OidcConstants.CLIENT_NOTIFICATION_TOKEN);
+            val clientNotificationValue = cibaRequest.getAuthentication().getSingleValuedAttribute(OidcConstants.CLIENT_NOTIFICATION_TOKEN, String.class);
             val payload = Map.of(OidcConstants.AUTH_REQ_ID, cibaRequest.getEncodedId());
             val exec = HttpExecutionRequest.builder()
                 .bearerToken(clientNotificationValue)

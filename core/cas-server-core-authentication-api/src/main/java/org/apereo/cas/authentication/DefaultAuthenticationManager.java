@@ -195,7 +195,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
     protected Collection<AuthenticationMetaDataPopulator> getAuthenticationMetadataPopulatorsForTransaction(
         final AuthenticationTransaction transaction) {
-        return this.authenticationEventExecutionPlan.getAuthenticationMetadataPopulators(transaction);
+        return authenticationEventExecutionPlan.getAuthenticationMetadataPopulators(transaction);
     }
 
     protected void publishEvent(final ApplicationEvent event) {
