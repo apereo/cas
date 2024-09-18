@@ -136,8 +136,20 @@ public interface Authentication extends Serializable {
     /**
      * Gets attribute.
      *
-     * @param name the name
+     * @param <T>          the type parameter
+     * @param name         the name
+     * @param expectedType the expected type
      * @return the attribute
      */
-    Object getSingleValuedAttribute(String name);
+    <T> T getSingleValuedAttribute(String name, Class<T> expectedType);
+
+    /**
+     * Gets single valued attribute.
+     *
+     * @param name the name
+     * @return the single valued attribute
+     */
+    default Object getSingleValuedAttribute(final String name) {
+        return getSingleValuedAttribute(name, Object.class);
+    }
 }

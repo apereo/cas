@@ -1,9 +1,12 @@
 package org.apereo.cas.authentication.surrogate;
 
+import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 
 import lombok.val;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -19,6 +22,11 @@ import java.util.Optional;
 @FunctionalInterface
 public interface SurrogateAuthenticationService {
     /**
+     * Logger instance.
+     */
+    Logger LOGGER = LoggerFactory.getLogger(SurrogateAuthenticationService.class);
+    
+    /**
      * An authorized account may be tagged as a wildcard, meaning
      * that the account has special permissions to impersonate anyone.
      */
@@ -33,6 +41,7 @@ public interface SurrogateAuthenticationService {
      * Surrogate username attribute in the authentication payload.
      */
     String AUTHENTICATION_ATTR_SURROGATE_USER = "surrogateUser";
+    
     /**
      * Original credential attribute in the authentication payload.
      */
@@ -89,4 +98,21 @@ public interface SurrogateAuthenticationService {
     default boolean isWildcardedAccount(final Collection<String> accounts, final Optional<? extends Service> service) {
         return accounts.size() == 1 && accounts.contains(SurrogateAuthenticationService.WILDCARD_ACCOUNT);
     }
+
+    /**
+     * Collect surrogate attributes.
+     *
+     * @param builder       the builder
+     * @param surrogateUser the surrogate user
+     * @param principal     the principal
+     */
+    default void collectSurrogateAttributes(final AuthenticationBuilder builder,
+                                            final String surrogateUser,
+                                            final String principal) {
+        LOGGER.debug("Recording surrogate username [{}] as an authentication attribute", surrogateUser);
+        builder.addAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER, surrogateUser);
+        builder.addAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL, principal);
+        builder.addAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, Boolean.TRUE);
+    }
+
 }

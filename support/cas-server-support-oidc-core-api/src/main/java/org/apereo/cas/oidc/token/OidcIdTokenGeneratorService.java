@@ -183,7 +183,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val deliveryMode = OidcBackchannelTokenDeliveryModes.valueOf(
             ((OidcRegisteredService) context.getRegisteredService()).getBackchannelTokenDeliveryMode().toUpperCase(Locale.ENGLISH));
         if (deliveryMode == OidcBackchannelTokenDeliveryModes.PUSH) {
-            val requestId = (String) context.getAccessToken().getAuthentication().getSingleValuedAttribute(OidcConstants.AUTH_REQ_ID);
+            val requestId = context.getAccessToken().getAuthentication().getSingleValuedAttribute(OidcConstants.AUTH_REQ_ID, String.class);
             claims.setStringClaim(OidcConstants.CLAIM_AUTH_REQ_ID, requestId);
 
             if (context.getRefreshToken() != null) {

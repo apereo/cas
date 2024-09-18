@@ -41,12 +41,12 @@ public class SurrogateInitialAuthenticationAction extends BaseCasWebflowAction {
         credential.setId(surrogateRequest.getUsername());
 
         if (surrogateRequest.hasSurrogateUsername()) {
-            WebUtils.putSurrogateAuthenticationRequest(context, Boolean.TRUE);
-            LOGGER.debug("No surrogate username is defined; Signal webflow to request for surrogate credentials");
-        } else {
             credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait(surrogateRequest.getSurrogateUsername()));
             WebUtils.putSurrogateAuthenticationRequest(context, Boolean.FALSE);
             LOGGER.debug("Converted credential to surrogate for username [{}] and assigned it to webflow", surrogateRequest.getUsername());
+        } else {
+            WebUtils.putSurrogateAuthenticationRequest(context, Boolean.TRUE);
+            LOGGER.debug("No surrogate username is defined; Signal webflow to request for surrogate credentials");
         }
         WebUtils.putCredential(context, credential);
     }

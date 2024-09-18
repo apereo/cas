@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.SurrogateAuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -33,8 +34,10 @@ class SurrogateAuthenticationMetadataConfiguration {
         @ConditionalOnMissingBean(name = "surrogateAuthenticationMetadataPopulator")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuthenticationMetaDataPopulator surrogateAuthenticationMetadataPopulator() {
-            return new SurrogateAuthenticationMetaDataPopulator();
+        public AuthenticationMetaDataPopulator surrogateAuthenticationMetadataPopulator(
+            @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
+            final SurrogateAuthenticationService surrogateAuthenticationService) {
+            return new SurrogateAuthenticationMetaDataPopulator(surrogateAuthenticationService);
         }
 
     }

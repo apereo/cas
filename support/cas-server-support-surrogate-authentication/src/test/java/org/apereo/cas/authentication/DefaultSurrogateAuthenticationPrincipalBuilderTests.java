@@ -1,9 +1,8 @@
 package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
-import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.authentication.surrogate.BaseSurrogateAuthenticationServiceTests;
-import org.apereo.cas.authentication.surrogate.SimpleSurrogateAuthenticationService;
+import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
@@ -17,8 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -31,7 +28,8 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Impersonation")
 @ExtendWith(CasTestExtension.class)
-@SpringBootTest(classes = BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class,
+    properties = "cas.authn.surrogate.simple.surrogates.test=surrogate")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class DefaultSurrogateAuthenticationPrincipalBuilderTests {
     @Autowired
@@ -45,25 +43,31 @@ class DefaultSurrogateAuthenticationPrincipalBuilderTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier(SurrogateAuthenticationPrincipalBuilder.BEAN_NAME)
+    private SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder;
+
+    @Autowired
+    @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
+    private PrincipalElectionStrategy principalElectionStrategy;
+    
     @Test
     void verifyOperationWithNoService() throws Throwable {
-        val surrogatePrincipalBuilder = getBuilder();
-        val p = surrogatePrincipalBuilder.buildSurrogatePrincipal("surrogate", CoreAuthenticationTestUtils.getPrincipal());
-        assertNotNull(p);
+        val principal = surrogatePrincipalBuilder.buildSurrogatePrincipal("surrogate", CoreAuthenticationTestUtils.getPrincipal());
+        assertNotNull(principal);
     }
 
     @Test
     void verifyOperationWithService() throws Throwable {
-        val surrogatePrincipalBuilder = getBuilder();
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(new DenyAllAttributeReleasePolicy());
-        val p = surrogatePrincipalBuilder.buildSurrogatePrincipal("surrogate", CoreAuthenticationTestUtils.getPrincipal(), registeredService);
-        assertNotNull(p);
+        val principal = surrogatePrincipalBuilder.buildSurrogatePrincipal("surrogate",
+            CoreAuthenticationTestUtils.getPrincipal(), registeredService);
+        assertNotNull(principal);
     }
 
     @Test
     void verifyOperationWithoutAuthn() throws Throwable {
-        val surrogatePrincipalBuilder = getBuilder();
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         val resultBuilder = new DefaultAuthenticationResultBuilder();
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
@@ -73,7 +77,6 @@ class DefaultSurrogateAuthenticationPrincipalBuilderTests {
 
     @Test
     void verifyOperationWithSurrogate() throws Throwable {
-        val surrogatePrincipalBuilder = getBuilder();
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(new DenyAllAttributeReleasePolicy());
 
@@ -94,7 +97,6 @@ class DefaultSurrogateAuthenticationPrincipalBuilderTests {
 
     @Test
     void verifyOperationWithSurrogateSuccess() throws Throwable {
-        val surrogatePrincipalBuilder = getBuilder();
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
         when(registeredService.getAttributeReleasePolicy()).thenReturn(new DenyAllAttributeReleasePolicy());
 
@@ -109,17 +111,11 @@ class DefaultSurrogateAuthenticationPrincipalBuilderTests {
             () -> surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(resultBuilder, credential, registeredService));
 
         credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("surrogate"));
-        assertTrue(surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(resultBuilder, credential, registeredService).isPresent());
-    }
-
-    private SurrogateAuthenticationPrincipalBuilder getBuilder() {
-        val surrogateAuthenticationService = new SimpleSurrogateAuthenticationService(
-            Map.of("test", List.of("surrogate")), servicesManager, casProperties);
-        return new DefaultSurrogateAuthenticationPrincipalBuilder(
-            PrincipalFactoryUtils.newPrincipalFactory(),
-            CoreAuthenticationTestUtils.getAttributeRepository(),
-            surrogateAuthenticationService,
-            attributeRepositoryResolver,
-            casProperties);
+        val builder = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(
+            resultBuilder, credential, registeredService).orElseThrow();
+        val authentication = builder.build(principalElectionStrategy).getAuthentication();
+        assertTrue(authentication.getSingleValuedAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, Boolean.class));
+        assertEquals("test", authentication.getSingleValuedAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL, String.class));
+        assertEquals("surrogate", authentication.getSingleValuedAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER, String.class));
     }
 }
