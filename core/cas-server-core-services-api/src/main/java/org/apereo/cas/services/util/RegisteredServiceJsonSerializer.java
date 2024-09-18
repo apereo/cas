@@ -57,4 +57,9 @@ public class RegisteredServiceJsonSerializer extends AbstractJacksonBackedString
     public List<MediaType> getContentTypes() {
         return List.of(MediaType.APPLICATION_JSON);
     }
+
+    @Override
+    protected boolean isLenient() {
+        return true;
+    }
 }
