@@ -52,4 +52,9 @@ public class RegisteredServiceJsonSerializer extends BaseRegisteredServiceSerial
     public List<MediaType> getContentTypes() {
         return List.of(MediaType.APPLICATION_JSON);
     }
+
+    @Override
+    protected boolean isLenient() {
+        return true;
+    }
 }
