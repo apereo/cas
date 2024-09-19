@@ -126,6 +126,7 @@ import java.time.Clock;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -551,7 +552,8 @@ public abstract class AbstractOAuth20Tests {
                                                   final boolean refreshToken,
                                                   final String scopes) throws Throwable {
         val principal = createPrincipal();
-        val code = addCode(principal, service);
+        val code = addCode(principal, service,
+            org.springframework.util.StringUtils.commaDelimitedListToSet(scopes));
         LOGGER.debug("Added code [{}] for principal [{}]", code, principal);
 
         val mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
@@ -604,8 +606,19 @@ public abstract class AbstractOAuth20Tests {
         return addCodeWithChallenge(principal, registeredService, null, null);
     }
 
+    protected OAuth20Code addCode(final Principal principal, final OAuthRegisteredService registeredService,
+                                  final Collection<String> scopes) throws Throwable {
+        return addCodeWithChallenge(principal, registeredService, null, null, scopes);
+    }
+
     protected OAuth20Code addCodeWithChallenge(final Principal principal, final OAuthRegisteredService registeredService,
                                                final String codeChallenge, final String codeChallengeMethod) throws Throwable {
+        return addCodeWithChallenge(principal, registeredService, codeChallenge, codeChallengeMethod, new ArrayList<>());
+    }
+
+    protected OAuth20Code addCodeWithChallenge(final Principal principal, final OAuthRegisteredService registeredService,
+                                               final String codeChallenge, final String codeChallengeMethod,
+                                               final Collection<String> scopes) throws Throwable {
         val authentication = getAuthentication(principal);
         val factory = new WebApplicationServiceFactory();
         val service = factory.createService(registeredService.getClientId());
@@ -614,8 +627,7 @@ public abstract class AbstractOAuth20Tests {
         ticketRegistry.addTicket(tgt);
 
         val code = oAuthCodeFactory.create(service, authentication,
-            tgt, new ArrayList<>(),
-            codeChallenge, codeChallengeMethod, registeredService.getClientId(), new HashMap<>(),
+            tgt, scopes, codeChallenge, codeChallengeMethod, registeredService.getClientId(), new HashMap<>(),
             OAuth20ResponseTypes.CODE, OAuth20GrantTypes.AUTHORIZATION_CODE);
         ticketRegistry.addTicket(code);
         return code;
