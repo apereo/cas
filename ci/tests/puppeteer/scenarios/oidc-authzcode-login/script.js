@@ -1,4 +1,3 @@
-
 const cas = require("../../cas.js");
 const assert = require("assert");
 
@@ -147,6 +146,40 @@ async function verifyAccessTokenAndProfile(context) {
     return {redirectUri, url, code, accessTokenUrl, payload};
 }
 
+async function verifyAuhotizedScopes(context) {
+    const page = await cas.newPage(context);
+    const redirectUri = "http://localhost:9889/anything/app1";
+    const url = "https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code"
+        + `&client_id=client&scope=${encodeURIComponent("MyCustomScope")}`
+        + `&redirect_uri=${redirectUri}`;
+    await cas.goto(page, url);
+    await cas.sleep(1000);
+    await cas.loginWith(page);
+    await cas.sleep(2000);
+
+    if (await cas.isVisible(page, "#allow")) {
+        await cas.click(page, "#allow");
+        await cas.waitForNavigation(page);
+    }
+    await cas.sleep(2000);
+    await cas.screenshot(page);
+    await cas.logPage(page);
+    const code = await cas.assertParameter(page, "code");
+    await cas.log(`Current code is ${code}`);
+    const accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
+        + `&scope=${encodeURIComponent("openid profile MyCustomScope")}`
+        + `&client_id=client&client_secret=secret&redirect_uri=${redirectUri}&code=${code}`;
+    await cas.doPost(accessTokenUrl, "", {
+        "Content-Type": "application/json"
+    }, () => {
+        throw "Operation should have failed to obtain access token";
+    },
+    (err) => {
+        assert(err.response.data.error === "invalid_scope");
+        assert(err.response.data.error_description === "Invalid or unauthorized scope");
+    });
+}
+
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
 
@@ -160,6 +193,10 @@ async function verifyAccessTokenAndProfile(context) {
 
     context = await browser.createBrowserContext();
     await verifyAccessTokenIsLimited(context);
+    await context.close();
+    
+    context = await browser.createBrowserContext();
+    await verifyAuhotizedScopes(context);
     await context.close();
 
     await browser.close();
