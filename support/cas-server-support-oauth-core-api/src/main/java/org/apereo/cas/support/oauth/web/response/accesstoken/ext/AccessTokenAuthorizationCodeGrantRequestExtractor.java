@@ -9,6 +9,7 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuth20Token;
+import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.LoggingUtils;
@@ -95,12 +96,29 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         return validStatefulTicket || (token.isStateless() && token.getAuthentication() != null && !token.isExpired());
     }
 
+    /**
+     * The requested scope MUST NOT include any scope
+     * not originally granted by the resource owner, and if omitted is
+     * treated as equal to the scope originally granted by the
+     * resource owner.
+     *
+     * @param requestedScopes the requested scopes
+     * @param token           the token
+     * @param context         the context
+     * @return scopes
+     */
     protected Set<String> extractRequestedScopesByToken(final Set<String> requestedScopes,
                                                         final OAuth20Token token,
                                                         final WebContext context) {
-        val scopes = new TreeSet<>(requestedScopes);
-        scopes.addAll(token.getScopes());
-        return scopes;
+        if (requestedScopes.isEmpty()) {
+            return new TreeSet<>(token.getScopes());
+        }
+        if (!token.getScopes().containsAll(requestedScopes)) {
+            LOGGER.error("Requested scopes [{}] exceed the granted scopes [{}] for token [{}]",
+                requestedScopes, token.getScopes(), token.getId());
+            throw new OAuth20UnauthorizedScopeRequestException(token.getId());
+        }
+        return new TreeSet<>(requestedScopes);
     }
 
     protected AccessTokenRequestContext extractInternal(
