@@ -1,12 +1,10 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.attribute.AttributeRepositoryResolver;
 import org.apereo.cas.authentication.surrogate.BaseSurrogateAuthenticationServiceTests;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -32,17 +30,6 @@ import static org.mockito.Mockito.*;
     properties = "cas.authn.surrogate.simple.surrogates.test=surrogate")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class DefaultSurrogateAuthenticationPrincipalBuilderTests {
-    @Autowired
-    private CasConfigurationProperties casProperties;
-    
-    @Autowired
-    @Qualifier(AttributeRepositoryResolver.BEAN_NAME)
-    private AttributeRepositoryResolver attributeRepositoryResolver;
-    
-    @Autowired
-    @Qualifier(ServicesManager.BEAN_NAME)
-    private ServicesManager servicesManager;
-
     @Autowired
     @Qualifier(SurrogateAuthenticationPrincipalBuilder.BEAN_NAME)
     private SurrogateAuthenticationPrincipalBuilder surrogatePrincipalBuilder;

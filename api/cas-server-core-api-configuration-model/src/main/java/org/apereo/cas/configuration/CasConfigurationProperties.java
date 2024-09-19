@@ -38,6 +38,7 @@ import org.apereo.cas.configuration.model.support.custom.CasCustomProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProvidersProperties;
 import org.apereo.cas.configuration.model.support.firebase.GoogleFirebaseCloudMessagingProperties;
 import org.apereo.cas.configuration.model.support.geo.GeoLocationProperties;
+import org.apereo.cas.configuration.model.support.heimdall.HeimdallAuthorizationProperties;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
 import org.apereo.cas.configuration.model.support.javers.JaversProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
@@ -49,13 +50,11 @@ import org.apereo.cas.configuration.model.support.slack.SlackMessagingProperties
 import org.apereo.cas.configuration.model.support.sms.SmsProvidersProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Clock;
@@ -105,11 +104,17 @@ public class CasConfigurationProperties implements Serializable {
     private ConsentProperties consent = new ConsentProperties();
 
     /**
-     * Access Strategy and authorization-related functionality.
+     * Service access Strategy and authorization-related functionality.
      */
     @NestedConfigurationProperty
     private AccessStrategyProperties accessStrategy = new AccessStrategyProperties();
 
+    /**
+     * Heimdall authorization-related functionality.
+     */
+    @NestedConfigurationProperty
+    private HeimdallAuthorizationProperties heimdall = new HeimdallAuthorizationProperties();
+   
     /**
      * ACME functionality.
      */

@@ -3,7 +3,7 @@ ext {
     publishMetadata = true
     projectMetadata = [
             title: "Permit.io",
-            category: "Permit.io Integration",
+            category: "Authorization",
             aliases: ["permitio"]
     ]
 }
