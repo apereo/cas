@@ -12,7 +12,7 @@ import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
 public class DefaultResourceAuthorizer implements ResourceAuthorizer {
     @Override
     public AuthorizationResult evaluate(final AuthorizationRequest request, final AuthorizableResource resource) {
-        if (resource.getPolicies().stream()
+        if (resource.getPolicies().parallelStream()
             .map(policy -> policy.evaluate(resource, request))
             .anyMatch(AuthorizationResult::authorized)) {
             return AuthorizationResult.granted("OK");
