@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -16,7 +17,6 @@ import lombok.val;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.hjson.JsonValue;
-import org.hjson.Stringify;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +26,6 @@ import java.io.Serial;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.Collection;
 import java.util.List;
 
@@ -59,15 +58,15 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
 
     @Override
     public T from(final String json) {
-        val jsonString = isJsonFormat() ? JsonValue.readHjson(json).toString() : json;
+        val jsonString = isJsonFormat() && isLenient() ? readHumanJson(json) : json;
         return readObjectFromString(jsonString);
     }
 
     @Override
     public T from(final Reader json) {
         return FunctionUtils.doAndHandle(() -> {
-            val data = isJsonFormat()
-                ? JsonValue.readHjson(json).toString()
+            val data = isJsonFormat() && isLenient()
+                ? readHumanJson(json)
                 : String.join("\n", IOUtils.readLines(json));
             return readObjectFromString(data);
         }, throwable -> null).get();
@@ -84,8 +83,8 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     @Override
     public T from(final File json) {
         return FunctionUtils.doAndHandle(() -> {
-            val data = isJsonFormat()
-                ? JsonValue.readHjson(FileUtils.readFileToString(json, StandardCharsets.UTF_8)).toString()
+            val data = isJsonFormat() && isLenient()
+                ? readHumanJson(FileUtils.readFileToString(json, StandardCharsets.UTF_8))
                 : FileUtils.readFileToString(json, StandardCharsets.UTF_8);
             return readObjectFromString(data);
         }, throwable -> null).get();
@@ -98,47 +97,17 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
 
     @Override
     public void to(final OutputStream out, final T object) {
-        FunctionUtils.doUnchecked(__ -> {
-            try (val writer = new StringWriter()) {
-                getObjectMapper().writer(prettyPrinter).writeValue(writer, object);
-                val hjsonString = isJsonFormat()
-                    ? JsonValue.readHjson(writer.toString()).toString(getJsonFormattingOptions())
-                    : writer.toString();
-                IOUtils.write(hjsonString, out, StandardCharsets.UTF_8);
-            }
-        });
+        FunctionUtils.doUnchecked(__ -> objectWriterFor(object).writeValue(out, object));
     }
 
     @Override
-    public void to(final Writer out, final T object) {
-        FunctionUtils.doUnchecked(__ -> {
-            try (val writer = new StringWriter()) {
-                getObjectMapper().writer(prettyPrinter).writeValue(writer, object);
-                if (isJsonFormat()) {
-                    JsonValue.readHjson(writer.toString()).writeTo(out, getJsonFormattingOptions());
-                } else {
-                    IOUtils.write(writer.toString(), out);
-                }
-            }
-        });
+    public void to(final Writer writer, final T object) {
+        FunctionUtils.doUnchecked(__ -> objectWriterFor(object).writeValue(writer, object));
     }
 
     @Override
     public void to(final File out, final T object) {
-        FunctionUtils.doUnchecked(__ -> {
-            try (val writer = new StringWriter()) {
-                getObjectMapper().writer(prettyPrinter).writeValue(writer, object);
-
-                if (isJsonFormat()) {
-                    try (val fileWriter = Files.newBufferedWriter(out.toPath(), StandardCharsets.UTF_8)) {
-                        JsonValue.readHjson(writer.toString()).writeTo(fileWriter, getJsonFormattingOptions());
-                        fileWriter.flush();
-                    }
-                } else {
-                    FileUtils.write(out, writer.toString(), StandardCharsets.UTF_8);
-                }
-            }
-        });
+        FunctionUtils.doUnchecked(__ -> objectWriterFor(object).writeValue(out, object));
     }
 
     @Override
@@ -152,10 +121,10 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     }
 
     @Override
-    public String fromList(final Collection<T> json) {
+    public String fromList(final Collection<T> object) {
         return FunctionUtils.doUnchecked(() -> {
             try (val writer = new StringWriter()) {
-                getObjectMapper().writer(prettyPrinter).writeValue(writer, json);
+                objectWriterFor(object.getClass()).writeValue(writer, object);
                 return writer.toString();
             }
         });
@@ -163,7 +132,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
 
     @Override
     public List<T> fromList(final String json) {
-        val jsonString = isJsonFormat() ? JsonValue.readHjson(json).toString() : json;
+        val jsonString = isJsonFormat() && isLenient() ? readHumanJson(json) : json;
         return readObjectsFromString(jsonString);
     }
 
@@ -175,6 +144,10 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         });
     }
 
+    protected boolean isLenient() {
+        return false;
+    }
+    
     /**
      * Gets object mapper and builds on if uninitialized.
      *
@@ -201,8 +174,8 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
      * @throws IOException the io exception
      */
     protected String readJsonFrom(final InputStream json) throws IOException {
-        return isJsonFormat()
-            ? JsonValue.readHjson(IOUtils.toString(json, StandardCharsets.UTF_8)).toString()
+        return isJsonFormat() && isLenient()
+            ? readHumanJson(IOUtils.toString(json, StandardCharsets.UTF_8))
             : String.join("\n", IOUtils.readLines(json, StandardCharsets.UTF_8));
     }
 
@@ -235,8 +208,8 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
      */
     protected T readObjectFromString(final String jsonString) {
         try {
-            LOGGER.trace("Attempting to consume [{}]", jsonString);
-            return getObjectMapper().readValue(jsonString, getTypeToSerialize());
+            LOGGER.trace("Attempting to parse [{}]", jsonString);
+            return getObjectMapper().readerFor(getTypeToSerialize()).readValue(jsonString);
         } catch (final Exception e) {
             LOGGER.error("Cannot read/parse [{}] to deserialize into type [{}]. This may be caused "
                     + "in the absence of a configuration/support module that knows how to interpret the fragment, "
@@ -252,7 +225,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         try {
             LOGGER.trace("Attempting to consume [{}]", jsonString);
             val expectedType = getObjectMapper().getTypeFactory().constructParametricType(List.class, getTypeToSerialize());
-            return getObjectMapper().readValue(jsonString, expectedType);
+            return getObjectMapper().readerFor(expectedType).readValue(jsonString);
         } catch (final Exception e) {
             LOGGER.error("Cannot read/parse [{}] to deserialize into List of type [{}]."
                     + "Internal parsing error is [{}]",
@@ -266,7 +239,20 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         return !(getObjectMapper().getFactory() instanceof YAMLFactory);
     }
 
-    private Stringify getJsonFormattingOptions() {
-        return prettyPrinter instanceof MinimalPrettyPrinter ? Stringify.PLAIN : Stringify.FORMATTED;
+    private ObjectWriter objectWriterFor(final T object) {
+        return objectWriterFor(object.getClass());
     }
+
+    private ObjectWriter objectWriterFor(final Class object) {
+        return getObjectMapper().writerFor(object).with(prettyPrinter);
+    }
+
+    private static String readHumanJson(final String json) {
+        return JsonValue.readHjson(json).toString();
+    }
+
+    private static String readHumanJson(final Reader json) throws Exception {
+        return JsonValue.readHjson(json).toString();
+    }
+
 }
