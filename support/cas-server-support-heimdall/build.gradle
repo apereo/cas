@@ -1,0 +1,69 @@
+description = "Apereo CAS Heimdall Authorization Engine"
+ext {
+    publishMetadata = true
+    projectMetadata = [
+            title: "Heimdall",
+            category: "Authorization",
+            aliases: ["heimdall", "authz", "pdp", "pep"]
+    ]
+}
+
+dependencies {
+    api project(":api:cas-server-core-api")
+    api project(":api:cas-server-core-api-util")
+    api project(":api:cas-server-core-api-ticket")
+
+    implementation libraries.jose4j
+    implementation libraries.nimbus
+    implementation libraries.springsecurityweb
+    implementation libraries.springsecurityconfig
+
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-validation-api")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-cookie-api")
+    implementation project(":core:cas-server-core-tickets-api")
+    implementation project(":core:cas-server-core-audit-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-rest-api")
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-authentication-mfa-api")
+    implementation project(":core:cas-server-core-services-authentication")
+    implementation project(":core:cas-server-core-logout-api")
+    implementation project(":core:cas-server-core-scripting")
+
+    implementation project(":support:cas-server-support-token-core-api")
+    implementation project(":support:cas-server-support-oauth-api")
+    implementation project(":support:cas-server-support-oauth-core-api")
+    implementation project(":support:cas-server-support-oidc-core-api")
+
+    testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":support:cas-server-support-webconfig")
+
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-authentication-attributes")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-audit")
+    testImplementation project(":core:cas-server-core-cookie")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-notifications")
+    testImplementation project(":core:cas-server-core-authentication-mfa")
+    testImplementation project(":core:cas-server-core-webflow-mfa")
+    testImplementation project(":core:cas-server-core-webflow")
+
+    testImplementation libraries.springboottomcat
+    
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
+}

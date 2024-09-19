@@ -1,0 +1,44 @@
+package org.apereo.cas.heimdall;
+
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasHeimdallAutoConfiguration;
+import org.apereo.cas.config.CasWebAppAutoConfiguration;
+import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+
+/**
+ * This is {@link BaseHeimdallTests}.
+ *
+ * @author Misagh Moayyed
+ * @since 7.2.0
+ */
+abstract class BaseHeimdallTests {
+    @SpringBootTestAutoConfigurations
+    @ImportAutoConfiguration({
+        CasWebAppAutoConfiguration.class,
+        CasCoreAutoConfiguration.class,
+        CasCoreTicketsAutoConfiguration.class,
+        CasCoreLogoutAutoConfiguration.class,
+        CasCoreCookieAutoConfiguration.class,
+        CasCoreNotificationsAutoConfiguration.class,
+        CasCoreAuthenticationAutoConfiguration.class,
+        CasCoreMultifactorAuthenticationAutoConfiguration.class,
+        CasCoreMultifactorAuthenticationWebflowAutoConfiguration.class,
+        CasCoreWebflowAutoConfiguration.class,
+        CasCoreWebAutoConfiguration.class,
+        CasCoreServicesAutoConfiguration.class,
+        CasHeimdallAutoConfiguration.class
+    })
+    public static class SharedTestConfiguration {
+    }
+}

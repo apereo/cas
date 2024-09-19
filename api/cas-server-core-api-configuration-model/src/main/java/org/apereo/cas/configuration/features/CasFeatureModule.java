@@ -71,6 +71,10 @@ public interface CasFeatureModule {
 
     enum FeatureCatalog {
         /**
+         * Authorization services and API access management.
+         */
+        Authorization,
+        /**
          * Dashboard and administrative console
          * to manage CAS services, configuration, etc.
          */
