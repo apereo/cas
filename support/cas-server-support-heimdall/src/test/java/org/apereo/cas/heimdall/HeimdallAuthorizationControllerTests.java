@@ -77,6 +77,25 @@ class HeimdallAuthorizationControllerTests {
     }
 
     @Test
+    void verifyScopesOperation() throws Throwable {
+        val accessToken = buildAccessToken();
+        ticketRegistry.addTicket(accessToken);
+
+        mockMvc.perform(post("/heimdall/authorize")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(AuthorizationRequest.builder()
+                .uri("/api/scopes")
+                .method("POST")
+                .namespace("API_SCOPES")
+                .build()
+                .toJson()
+            )
+            .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+    }
+
+    @Test
     void verifyUnauthorizedOperation() throws Throwable {
         val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(),
             Map.of("color", List.of("red", "green"), "memberOf", List.of("nothing")));
