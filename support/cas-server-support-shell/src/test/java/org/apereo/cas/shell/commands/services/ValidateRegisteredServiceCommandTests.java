@@ -37,7 +37,6 @@ class ValidateRegisteredServiceCommandTests extends BaseCasShellCommandTests {
         val svc = RegisteredServiceTestUtils.getRegisteredService("example");
         try (val writer = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
             new RegisteredServiceJsonSerializer(appCtx).to(writer, svc);
-            writer.flush();
         }
         assertTrue(file.exists() && file.length() > 0);
         assertDoesNotThrow(() -> runShellCommand(() -> () -> "generate-yaml --file " + file.getPath() + " --destination " + yaml.getPath()));
