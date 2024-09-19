@@ -14,7 +14,9 @@ import lombok.experimental.Accessors;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -41,4 +43,6 @@ public class AuthorizableResource implements Serializable {
     private String method;
 
     private List<ResourceAuthorizationPolicy> policies = new ArrayList<>();
+
+    private Map<String, Object> properties = new HashMap<>();
 }
