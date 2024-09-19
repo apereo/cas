@@ -8,7 +8,9 @@ import org.apereo.cas.heimdall.authorizer.ResourceAuthorizer;
 import org.apereo.cas.heimdall.authorizer.repository.AuthorizableResourceRepository;
 import org.apereo.cas.heimdall.authorizer.repository.JsonAuthorizableResourceRepository;
 import org.apereo.cas.heimdall.engine.AuthorizationEngine;
+import org.apereo.cas.heimdall.engine.AuthorizationPrincipalParser;
 import org.apereo.cas.heimdall.engine.DefaultAuthorizationEngine;
+import org.apereo.cas.heimdall.engine.DefaultAuthorizationPrincipalParser;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
@@ -34,13 +36,22 @@ import java.util.List;
 public class CasHeimdallAutoConfiguration {
 
     @Bean
+    @ConditionalOnMissingBean(name = "authorizationPrincipalParser")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public AuthorizationPrincipalParser authorizationPrincipalParser(
+        @Qualifier(TicketRegistry.BEAN_NAME)
+        final TicketRegistry ticketRegistry) {
+        return new DefaultAuthorizationPrincipalParser(ticketRegistry);
+    }
+
+    @Bean
     @ConditionalOnMissingBean(name = "heimdallAuthorizationController")
     public HeimdallAuthorizationController heimdallAuthorizationController(
-        @Qualifier(TicketRegistry.BEAN_NAME)
-        final TicketRegistry ticketRegistry,
+        @Qualifier("authorizationPrincipalParser")
+        final AuthorizationPrincipalParser authorizationPrincipalParser,
         @Qualifier("heimdallAuthorizationEngine")
         final AuthorizationEngine heimdallAuthorizationEngine) {
-        return new HeimdallAuthorizationController(heimdallAuthorizationEngine, ticketRegistry);
+        return new HeimdallAuthorizationController(heimdallAuthorizationEngine, authorizationPrincipalParser);
     }
 
     @Bean
