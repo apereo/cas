@@ -1,20 +1,12 @@
 package org.apereo.cas.heimdall;
 
-import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.heimdall.engine.AuthorizationEngine;
-import org.apereo.cas.support.oauth.OAuth20Constants;
-import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
-import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.heimdall.engine.AuthorizationPrincipalParser;
 import org.apereo.cas.util.LoggingUtils;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
-import com.nimbusds.jwt.JWTClaimsSet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -48,7 +39,7 @@ public class HeimdallAuthorizationController {
     public static final String BASE_URL = "/heimdall";
 
     private final AuthorizationEngine authorizationEngine;
-    private final TicketRegistry ticketRegistry;
+    private final AuthorizationPrincipalParser principalParser;
 
     /**
      * Authorize response entity.
@@ -79,10 +70,8 @@ public class HeimdallAuthorizationController {
     private AuthorizationRequest prepareAuthorizationRequest(final AuthorizationRequest authorizationRequest,
                                                              final String authorizationHeader,
                                                              final HttpServletRequest request) throws Throwable {
-        val claims = parseAuthorizationHeader(authorizationHeader);
+        val principal = principalParser.parse(authorizationHeader);
         val headers = HttpRequestUtils.getRequestHeaders(request);
-        val principal = PrincipalFactoryUtils.newPrincipalFactory()
-            .createPrincipal(claims.getSubject(), (Map) claims.getClaims());
         val requestToAuthorize = authorizationRequest.withPrincipal(principal);
         requestToAuthorize.getContext().putAll((Map) headers);
         return requestToAuthorize;
@@ -95,23 +84,6 @@ public class HeimdallAuthorizationController {
             .body(authorizationResponse);
     }
 
-    private JWTClaimsSet parseAuthorizationHeader(final String authorizationHeader) throws Throwable {
-        val token = StringUtils.removeStart(authorizationHeader, "Bearer ");
-        try {
-            return JwtBuilder.parse(token);
-        } catch (final Exception e) {
-            val ticket = ticketRegistry.getTicket(token, OAuth20AccessToken.class);
-            FunctionUtils.throwIf(ticket == null || ticket.isExpired(), AuthenticationException::new);
-            val claimsMap = new HashMap<String, Object>(ticket.getClaims());
-            val authentication = ticket.getAuthentication();
-            claimsMap.putAll(authentication.getAttributes());
-            claimsMap.putAll(authentication.getPrincipal().getAttributes());
-            claimsMap.put(OAuth20Constants.SCOPE, ticket.getScopes());
-            claimsMap.put(OAuth20Constants.TOKEN, token);
-            claimsMap.put(OAuth20Constants.CLAIM_SUB, authentication.getPrincipal().getId());
-            return JWTClaimsSet.parse(claimsMap);
-        }
-    }
 
     private static void logRequest(final BaseHeimdallRequest heimdallRequest) {
         if (LOGGER.isDebugEnabled()) {
