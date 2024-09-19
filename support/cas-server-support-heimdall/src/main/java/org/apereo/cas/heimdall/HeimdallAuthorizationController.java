@@ -10,14 +10,15 @@ import lombok.val;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This is {@link HeimdallAuthorizationController}.
@@ -45,21 +46,18 @@ public class HeimdallAuthorizationController {
      * Authorize response entity.
      *
      * @param authorizationRequest the authorization request
-     * @param authorizationHeader  the authorization header
      * @param request              the request
      * @return the response entity
      */
     @PostMapping("/authorize")
     public ResponseEntity authorize(
         @RequestBody final @Valid AuthorizationRequest authorizationRequest,
-        @RequestHeader(HttpHeaders.AUTHORIZATION) final String authorizationHeader,
         final HttpServletRequest request) {
 
         try {
-            val requestToAuthorize = prepareAuthorizationRequest(authorizationRequest, authorizationHeader, request);
+            val requestToAuthorize = prepareAuthorizationRequest(authorizationRequest, request);
             logRequest(requestToAuthorize);
             val authorizationResponse = authorizationEngine.authorize(requestToAuthorize);
-            logRequest(authorizationResponse);
             return buildResponse(authorizationResponse);
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
@@ -68,8 +66,9 @@ public class HeimdallAuthorizationController {
     }
 
     private AuthorizationRequest prepareAuthorizationRequest(final AuthorizationRequest authorizationRequest,
-                                                             final String authorizationHeader,
                                                              final HttpServletRequest request) throws Throwable {
+        val authorizationHeader = Objects.requireNonNull(request.getHeader(HttpHeaders.AUTHORIZATION));
+        Assert.hasText(authorizationHeader, "Authorization header cannot be blank");
         val principal = principalParser.parse(authorizationHeader);
         val headers = HttpRequestUtils.getRequestHeaders(request);
         val requestToAuthorize = authorizationRequest.withPrincipal(principal);
@@ -79,6 +78,7 @@ public class HeimdallAuthorizationController {
 
     protected ResponseEntity<AuthorizationResponse> buildResponse(
         final AuthorizationResponse authorizationResponse) {
+        logRequest(authorizationResponse);
         return ResponseEntity
             .status(authorizationResponse.getStatus())
             .body(authorizationResponse);
