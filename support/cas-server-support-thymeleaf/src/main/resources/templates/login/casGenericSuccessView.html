@@ -28,11 +28,11 @@
                 However, you are seeing this page because CAS does not know about your target destination and how
                 to get you there. Examine the authentication request again and make sure a target service/application that is authorized and registered with CAS is specified.</p>
 
-            <p th:utext="#{screen.success.security}">
+            <p id="view-genericsuccess-security" th:utext="#{screen.success.security}">
                 When you are finished, for security reasons, please <a href="logout">log out</a> and exit your web browser.
             </p>
 
-            <div th:remove="tag"
+            <div id="view-genericsuccess-authn-data"
                  th:if="${'true' == #strings.defaultString(#themes.code('cas.successful-login.display-attributes'), 'true')}">
                 <p th:unless="${#maps.isEmpty(authentication.principal.attributes)}">
                     The following attributes and services are resolved and available for <strong th:utext="${authentication.principal.id}"/>:
