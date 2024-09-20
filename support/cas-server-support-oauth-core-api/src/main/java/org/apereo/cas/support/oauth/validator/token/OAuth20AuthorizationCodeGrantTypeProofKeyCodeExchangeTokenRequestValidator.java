@@ -10,7 +10,8 @@ import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
  */
 public class OAuth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator
     extends OAuth20AuthorizationCodeGrantTypeTokenRequestValidator {
-    public OAuth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator(final OAuth20ConfigurationContext configurationContext) {
+    public OAuth20AuthorizationCodeGrantTypeProofKeyCodeExchangeTokenRequestValidator(
+        final OAuth20ConfigurationContext configurationContext) {
         super(configurationContext);
     }
 }

@@ -6,17 +6,11 @@ import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20ConfigurationContext;
-import org.apereo.cas.ticket.OAuth20Token;
-import org.apereo.cas.ticket.OAuth20UnauthorizedScopeRequestException;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.context.WebContext;
-
-import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * This is {@link AccessTokenRefreshTokenGrantRequestExtractor}.
@@ -73,29 +67,5 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
         val callContext = new CallContext(context, getConfigurationContext().getSessionStore());
         return getConfigurationContext().getRequestParameterResolver()
             .resolveClientIdAndClientSecret(callContext).getLeft();
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p>The requested scope MUST NOT include any scope
-     * not originally granted by the resource owner, and if omitted is
-     * treated as equal to the scope originally granted by the
-     * resource owner. </p>
-     *
-     * @param requestedScopes the requested scopes
-     * @param token           the token
-     * @param context         the context
-     * @return scopes
-     */
-    @Override
-    protected Set<String> extractRequestedScopesByToken(final Set<String> requestedScopes,
-                                                        final OAuth20Token token,
-                                                        final WebContext context) {
-        if (!requestedScopes.isEmpty() && !requestedScopes.equals(token.getScopes())) {
-            LOGGER.error("Requested scopes [{}] exceed the granted scopes [{}] for token [{}]",
-                requestedScopes, token.getScopes(), token.getId());
-            throw new OAuth20UnauthorizedScopeRequestException(token.getId());
-        }
-        return new TreeSet<>(token.getScopes());
     }
 }
