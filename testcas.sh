@@ -160,6 +160,9 @@ while (( "$#" )); do
             authnpolicy|authpolicy|authenticationpolicy)
                 task+="testAuthenticationPolicy "
                 ;;
+            authz|heimdall|authorization)
+                task+="testAuthorization "
+                ;;
             auth|authn|authentication)
                 task+="testAuthentication "
                 ;;
