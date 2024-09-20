@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
 import java.util.Set;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,8 +28,6 @@ import static org.mockito.Mockito.*;
  */
 @Tag("OAuth")
 class AccessTokenRefreshTokenGrantRequestExtractorTests extends AbstractOAuth20Tests {
-    private static final String CLIENT_ID = "client_id";
-
     @Autowired
     @Qualifier("accessTokenRefreshTokenGrantRequestExtractor")
     private AccessTokenGrantRequestExtractor extractor;
@@ -53,7 +50,7 @@ class AccessTokenRefreshTokenGrantRequestExtractorTests extends AbstractOAuth20T
 
     @Test
     void verifyScopeExtraction() throws Throwable {
-        val service = getRegisteredService(UUID.randomUUID().toString(), CLIENT_ID, CLIENT_SECRET);
+        val service = getRegisteredService(UUID.randomUUID().toString(), UUID.randomUUID().toString(), CLIENT_SECRET);
         service.setScopes(Set.of("openid", "email", "profile"));
         servicesManager.save(service);
 
@@ -81,6 +78,7 @@ class AccessTokenRefreshTokenGrantRequestExtractorTests extends AbstractOAuth20T
         assertEquals(Set.of("openid", "email"), result.getScopes());
 
         request.setParameter(OAuth20Constants.SCOPE, "email profile");
-        assertThrows(OAuth20UnauthorizedScopeRequestException.class, () -> extractor.extract(new JEEContext(request, new MockHttpServletResponse())));
+        assertThrows(OAuth20UnauthorizedScopeRequestException.class,
+            () -> extractor.extract(new JEEContext(request, new MockHttpServletResponse())));
     }
 }
