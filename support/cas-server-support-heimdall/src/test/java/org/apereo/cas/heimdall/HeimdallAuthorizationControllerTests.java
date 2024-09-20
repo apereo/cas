@@ -77,6 +77,28 @@ class HeimdallAuthorizationControllerTests {
     }
 
     @Test
+    void verifyAllPoliciesForcedOperation() throws Throwable {
+        val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(),
+            Map.of("color", List.of("red", "green"), "memberOf", List.of("admin")));
+        val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
+        val accessToken = buildAccessToken(authentication);
+        ticketRegistry.addTicket(accessToken);
+
+        mockMvc.perform(post("/heimdall/authorize")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(AuthorizationRequest.builder()
+                .uri("/api/all")
+                .method("POST")
+                .namespace("API_ALL")
+                .build()
+                .toJson()
+            )
+            .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isForbidden());
+    }
+    
+    @Test
     void verifyScopesOperation() throws Throwable {
         val accessToken = buildAccessToken();
         ticketRegistry.addTicket(accessToken);
