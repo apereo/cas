@@ -36,7 +36,7 @@ async function verifyImpersonationByPrincipalAttributes(browser) {
     const authenticationSuccess = json.serviceResponse.authenticationSuccess;
     assert(authenticationSuccess.user === "impersonated");
     assert(authenticationSuccess.attributes.surrogateUser[0] === "impersonated");
-    assert(authenticationSuccess.attributes.surrogateEnabled[0] === "true");
+    assert(authenticationSuccess.attributes.surrogateEnabled[0] === true);
     assert(authenticationSuccess.attributes.surrogatePrincipal[0] === "casuser");
     await cas.gotoLogin(page);
     await cas.assertCookie(page);
