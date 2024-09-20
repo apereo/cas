@@ -13,6 +13,7 @@ ext {
 dependencies {
     compileOnly libraries.graalvmsdk
     implementation libraries.graalvmpolyglot
+    implementation libraries.bouncycastle
     
     testImplementation libraries.graalvmsdk
     
