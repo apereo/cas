@@ -25,7 +25,7 @@ class ProxyAuthenticationHandlerTests {
 
     @BeforeEach
     public void initialize() {
-        authenticationHandler = new ProxyAuthenticationHandler(StringUtils.EMPTY, null, null, null, new SimpleHttpClientFactoryBean().getObject());
+        authenticationHandler = new ProxyAuthenticationHandler(StringUtils.EMPTY, null, null, 0, new SimpleHttpClientFactoryBean().getObject());
     }
 
     @Test
@@ -58,7 +58,7 @@ class ProxyAuthenticationHandlerTests {
     @Test
     void verifyAcceptsNonHttpsCredentials() throws Throwable {
         assertNotNull(authenticationHandler.authenticate(
-            RegisteredServiceTestUtils.getHttpBasedServiceCredentials("http://www.google.com"), RegisteredServiceTestUtils.getService()));
+            RegisteredServiceTestUtils.getHttpBasedServiceCredentials("http://http.badssl.com/"), RegisteredServiceTestUtils.getService()));
     }
 
     @Test
