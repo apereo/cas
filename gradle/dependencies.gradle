@@ -555,6 +555,7 @@ ext.libraries = [
         cqengine                   : [
                 dependencies.create("com.googlecode.cqengine:cqengine:$cqEngineVersion") {
                     exclude(group: 'org.xerial', module: "sqlite-jdbc")
+                    exclude(group: "org.javassist", module: "javassist")
                 }
         ],
         maxmind                    : [
@@ -1879,6 +1880,7 @@ ext.libraries = [
                 },
                 dependencies.create("org.opensaml:opensaml-security-api:$opensamlVersion") {
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.bouncycastle", module: "bcpkix-jdk18on")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "commons-lang", module: "commons-lang")
@@ -3388,6 +3390,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-tx")
                     exclude(group: "org.bouncycastle", module: "bcpkix-jdk15on")
                     exclude(group: "org.bouncycastle", module: "bcprov-jdk15on")
+                    exclude(group: "org.bouncycastle", module: "bcprov-jdk18on")
                     exclude(group: "org.springframework.security", module: "spring-security-crypto")
                 },
                 dependencies.create("org.springframework.security:spring-security-crypto:$springSecurityVersion") {
