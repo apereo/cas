@@ -244,4 +244,11 @@ public interface TicketRegistry {
     default long countTickets() {
         return stream().count();
     }
+
+    /**
+     * Define if the cleaner is enabled.
+     *
+     * @param cleanerEnabled whether the cleaner is enabled
+     */
+    void setCleanerEnabled(boolean cleanerEnabled);
 }

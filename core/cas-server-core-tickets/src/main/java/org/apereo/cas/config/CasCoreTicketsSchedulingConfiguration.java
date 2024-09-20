@@ -49,7 +49,6 @@ class CasCoreTicketsSchedulingConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Lazy(false)
     public TicketRegistryCleaner ticketRegistryCleaner(
-        final CasConfigurationProperties casProperties,
         @Qualifier(LockRepository.BEAN_NAME) final LockRepository lockRepository,
         @Qualifier(LogoutManager.DEFAULT_BEAN_NAME) final LogoutManager logoutManager,
         @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
@@ -63,12 +62,14 @@ class CasCoreTicketsSchedulingConfiguration {
     @Lazy(false)
     public Runnable ticketRegistryCleanerScheduler(
         final ConfigurableApplicationContext applicationContext,
-        @Qualifier(TicketRegistryCleaner.BEAN_NAME) final TicketRegistryCleaner ticketRegistryCleaner) {
+        @Qualifier(TicketRegistryCleaner.BEAN_NAME) final TicketRegistryCleaner ticketRegistryCleaner,
+        @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
         return BeanSupplier.of(Runnable.class)
             .when(BeanCondition.on("cas.ticket.registry.cleaner.schedule.enabled").isTrue()
                 .evenIfMissing().given(applicationContext.getEnvironment()))
             .supply(() -> {
                 LOGGER.debug("Ticket registry cleaner is enabled to run on schedule.");
+                ticketRegistry.setCleanerEnabled(true);
                 return new TicketRegistryCleanerScheduler(ticketRegistryCleaner);
             })
             .otherwiseProxy(__ -> LOGGER.info("Ticket registry cleaner is not enabled to run on schedule. "

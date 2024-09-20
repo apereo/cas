@@ -18,7 +18,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
 import com.google.common.io.ByteSource;
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -46,10 +45,12 @@ import java.util.stream.Stream;
  * @since 3.0.0
  */
 @Slf4j
-@AllArgsConstructor
 public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     private static final String TICKET_ENCRYPTION_LOG_MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
+
+    @Setter
+    protected boolean cleanerEnabled;
 
     @Setter
     protected CipherExecutor cipherExecutor;
@@ -57,6 +58,15 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     protected final TicketSerializationManager ticketSerializationManager;
 
     protected final TicketCatalog ticketCatalog;
+
+    protected AbstractTicketRegistry(
+            final CipherExecutor cipherExecutor,
+            final TicketSerializationManager ticketSerializationManager,
+            final TicketCatalog ticketCatalog) {
+        this.cipherExecutor = cipherExecutor;
+        this.ticketSerializationManager = ticketSerializationManager;
+        this.ticketCatalog = ticketCatalog;
+    }
 
     protected static String getPrincipalIdFrom(final Ticket ticket) {
         return ticket instanceof AuthenticationAwareTicket
@@ -99,7 +109,10 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
                 val ticketAgeSeconds = getTicketAgeSeconds(ticket);
                 LOGGER.debug("Ticket [{}] has expired according to policy [{}] after [{}] seconds and [{}] uses and will be removed from the ticket registry",
                     ticketId, ticket.getExpirationPolicy().getName(), ticketAgeSeconds, ticket.getCountOfUses());
-                deleteSingleTicket(ticket);
+                val isTgt = ticket instanceof TicketGrantingTicket;
+                if (!isTgt || !cleanerEnabled) {
+                    deleteSingleTicket(ticket);
+                }
                 return false;
             }
             return true;
