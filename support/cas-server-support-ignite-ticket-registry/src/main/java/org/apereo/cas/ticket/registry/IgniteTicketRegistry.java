@@ -23,6 +23,8 @@ import org.apache.ignite.cache.query.SqlFieldsQuery;
 import org.apache.ignite.configuration.CacheConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.context.ConfigurableApplicationContext;
+
 import javax.cache.Cache;
 import javax.cache.expiry.Duration;
 import javax.cache.expiry.ExpiryPolicy;
@@ -61,9 +63,9 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry implements Disp
     private Ignite ignite;
 
     public IgniteTicketRegistry(final CipherExecutor cipherExecutor, final TicketSerializationManager ticketSerializationManager,
-                                final TicketCatalog ticketCatalog, final IgniteConfiguration igniteConfiguration,
-                                final IgniteProperties properties) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+                                final TicketCatalog ticketCatalog, final ConfigurableApplicationContext applicationContext,
+                                final IgniteConfiguration igniteConfiguration, final IgniteProperties properties) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.igniteConfiguration = igniteConfiguration;
         this.properties = properties;
     }

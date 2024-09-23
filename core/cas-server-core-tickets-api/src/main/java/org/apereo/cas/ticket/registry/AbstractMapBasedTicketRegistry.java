@@ -15,6 +15,8 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ApplicationContext;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -38,9 +40,10 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     public AbstractMapBasedTicketRegistry(final CipherExecutor cipherExecutor,
                                           final TicketSerializationManager ticketSerializationManager,
                                           final TicketCatalog ticketCatalog,
+                                          final ApplicationContext applicationContext,
                                           final QueueableTicketRegistryMessagePublisher ticketPublisher,
                                           final PublisherIdentifier publisherIdentifier) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.ticketPublisher = ticketPublisher;
         this.publisherIdentifier = publisherIdentifier;
     }

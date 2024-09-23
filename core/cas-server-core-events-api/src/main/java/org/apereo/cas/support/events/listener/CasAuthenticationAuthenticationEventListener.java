@@ -2,12 +2,15 @@ package org.apereo.cas.support.events.listener;
 
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
+import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationDetectedEvent;
 import org.apereo.cas.support.events.dao.CasEvent;
+import org.apereo.cas.support.events.logout.CasRequestSingleLogoutEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.util.DateTimeUtils;
@@ -19,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
+
 import java.time.Instant;
 
 /**
@@ -39,6 +43,8 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
     private final MessageSanitizer messageSanitizer;
 
     private final GeoLocationService geoLocationService;
+
+    private final LogoutManager logoutManager;
 
     private CasEvent prepareCasEvent(final AbstractCasEvent event) {
         val dto = new CasEvent();
@@ -109,5 +115,15 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
         dto.putEventId(event.getService().getName());
         dto.setPrincipalId(event.getAuthentication().getPrincipal().getId());
         this.casEventRepository.save(dto);
+    }
+
+    @Override
+    public void handleCasRequestSingleLogoutEvent(final CasRequestSingleLogoutEvent event) throws Throwable {
+        val ticket = event.getTicketGrantingTicket();
+        LOGGER.debug("Performing single logout for expired ticket-granting ticket [{}]", ticket.getId());
+        val request = SingleLogoutExecutionRequest.builder()
+            .ticketGrantingTicket(ticket)
+            .build();
+        logoutManager.performLogout(request);
     }
 }

@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.NoOpCasEventRepository;
 import org.apereo.cas.support.events.listener.CasAuthenticationAuthenticationEventListener;
@@ -50,11 +51,12 @@ public class CasCoreEventsAutoConfiguration {
             @Qualifier(GeoLocationService.BEAN_NAME) final ObjectProvider<GeoLocationService> geoLocationService,
             @Qualifier(MessageSanitizer.BEAN_NAME) final MessageSanitizer messageSanitizer,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(CasEventRepository.BEAN_NAME) final CasEventRepository casEventRepository) {
+            @Qualifier(CasEventRepository.BEAN_NAME) final CasEventRepository casEventRepository,
+            @Qualifier(LogoutManager.DEFAULT_BEAN_NAME) final LogoutManager logoutManager) {
             return BeanSupplier.of(CasAuthenticationEventListener.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new CasAuthenticationAuthenticationEventListener(casEventRepository,
-                    messageSanitizer, geoLocationService.getIfAvailable()))
+                    messageSanitizer, geoLocationService.getIfAvailable(), logoutManager))
                 .otherwiseProxy()
                 .get();
         }

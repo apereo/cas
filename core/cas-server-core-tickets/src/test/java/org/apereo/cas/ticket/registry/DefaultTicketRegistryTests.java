@@ -1,17 +1,24 @@
 package org.apereo.cas.ticket.registry;
 
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.support.events.logout.CasRequestSingleLogoutEvent;
+import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import lombok.val;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
+import org.springframework.context.ConfigurableApplicationContext;
+
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -28,7 +35,8 @@ class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
 
     @Override
     public TicketRegistry getNewTicketRegistry() {
-        return new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog());
+        return new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog(),
+                mock(ConfigurableApplicationContext.class));
     }
 
     @RepeatedTest(1)
@@ -77,8 +85,28 @@ class DefaultTicketRegistryTests extends BaseTicketRegistryTests {
     void verifyEncodeFails() throws Throwable {
         val cipher = new DefaultTicketCipherExecutor(null, null,
             "AES", 512, 16, "webflow");
-        val reg = new DefaultTicketRegistry(cipher, mock(TicketSerializationManager.class), new DefaultTicketCatalog());
+        val reg = new DefaultTicketRegistry(cipher, mock(TicketSerializationManager.class), new DefaultTicketCatalog(),
+                mock(ConfigurableApplicationContext.class));
         assertNull(reg.encodeTicket(null));
         assertNotNull(reg.decodeTicket(mock(Ticket.class)));
+    }
+
+    @RepeatedTest(1)
+    void verifyGetExpiredTicket() throws Throwable {
+        val applicationContext = mock(ConfigurableApplicationContext.class);
+        val registry = new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog(),
+                applicationContext);
+        val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
+        val ticketGrantingTicket = new TicketGrantingTicketImpl(TestTicketIdentifiers.generate().ticketGrantingTicketId(),
+                originalAuthn, new HardTimeoutExpirationPolicy(1));
+        registry.addTicket(ticketGrantingTicket);
+        Thread.sleep(1500);
+        val tgtId = ticketGrantingTicket.getId();
+        val tgt = registry.getTicket(tgtId);
+        assertNull(tgt);
+        val internalTgt = registry.getMapInstance().get(tgtId);
+        assertNull(internalTgt);
+        verify(applicationContext).publishEvent(any(CasRequestSingleLogoutEvent.class));
+        verify(applicationContext).publishEvent(any(CasTicketGrantingTicketDestroyedEvent.class));
     }
 }

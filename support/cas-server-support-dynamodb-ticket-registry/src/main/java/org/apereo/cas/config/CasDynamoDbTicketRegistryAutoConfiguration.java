@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -76,13 +77,15 @@ public class CasDynamoDbTicketRegistryAutoConfiguration {
             final TicketCatalog ticketCatalog,
             @Qualifier(TicketSerializationManager.BEAN_NAME)
             final TicketSerializationManager ticketSerializationManager,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier("dynamoDbTicketRegistryFacilitator")
             final DynamoDbTicketRegistryFacilitator dynamoDbTicketRegistryFacilitator,
             final CasConfigurationProperties casProperties) {
             val db = casProperties.getTicket().getRegistry().getDynamoDb();
             val crypto = db.getCrypto();
             val cipherExecutor = CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "dynamo-db");
-            return new DynamoDbTicketRegistry(cipherExecutor, ticketSerializationManager, ticketCatalog, dynamoDbTicketRegistryFacilitator);
+            return new DynamoDbTicketRegistry(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext,
+                dynamoDbTicketRegistryFacilitator);
         }
     }
 
