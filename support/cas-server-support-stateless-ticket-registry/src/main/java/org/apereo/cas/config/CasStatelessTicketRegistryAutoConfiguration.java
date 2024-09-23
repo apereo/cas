@@ -57,8 +57,10 @@ public class CasStatelessTicketRegistryAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Lazy(false)
-    public TicketRegistryCleaner ticketRegistryCleaner() {
-        return NoOpTicketRegistryCleaner.getInstance();
+    public TicketRegistryCleaner ticketRegistryCleaner(
+        @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry
+    ) {
+        return NoOpTicketRegistryCleaner.getInstance(ticketRegistry);
     }
     
     @Bean

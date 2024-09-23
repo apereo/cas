@@ -16,9 +16,11 @@ public class NoOpTicketRegistryCleaner implements TicketRegistryCleaner {
     /**
      * Gets instance.
      *
+     * @param ticketRegistry the ticket registry
      * @return the instance
      */
-    public static TicketRegistryCleaner getInstance() {
+    public static TicketRegistryCleaner getInstance(final TicketRegistry ticketRegistry) {
+        ticketRegistry.setCleanerEnabled(false);
         if (INSTANCE == null) {
             INSTANCE = new NoOpTicketRegistryCleaner();
         }
