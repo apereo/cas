@@ -114,7 +114,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
                 try {
                     deleteTicket(ticket);
                 } catch (final Exception e) {
-                    LOGGER.warn("Deletion failed for ticket [{}]", ticket.getId());
+                    LOGGER.warn("Deletion failed for expired ticket [{}]", ticket.getId());
                 }
                 return false;
             }
