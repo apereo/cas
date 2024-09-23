@@ -180,6 +180,57 @@ async function verifyAuhotizedScopes(context) {
     });
 }
 
+async function verifyMissingOpenIdScope(context) {
+    const page = await cas.newPage(context);
+    const redirectUri = "http://localhost:9889/anything/app1";
+    const url = "https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code"
+        + `&client_id=client&scope=${encodeURIComponent("MyCustomScope")}`
+        + `&redirect_uri=${redirectUri}`;
+    await cas.goto(page, url);
+    await cas.sleep(1000);
+    await cas.loginWith(page);
+    await cas.sleep(2000);
+
+    if (await cas.isVisible(page, "#allow")) {
+        await cas.click(page, "#allow");
+        await cas.waitForNavigation(page);
+    }
+    await cas.sleep(2000);
+    await cas.screenshot(page);
+    await cas.logPage(page);
+    const code = await cas.assertParameter(page, "code");
+    await cas.log(`Current code is ${code}`);
+    const accessTokenUrl = "https://localhost:8443/cas/oidc/token?grant_type=authorization_code"
+        + `&scope=${encodeURIComponent("MyCustomScope")}`
+        + `&client_id=client&client_secret=secret&redirect_uri=${redirectUri}&code=${code}`;
+    const payload = await cas.doPost(accessTokenUrl, "", {
+        "Content-Type": "application/json"
+    }, (res) => res.data,
+    (err) => {
+        throw `Operation failed: ${err}`;
+    });
+    assert(payload.access_token !== undefined);
+    assert(payload.token_type !== undefined);
+    assert(payload.expires_in !== undefined);
+    assert(payload.scope !== undefined);
+    assert(payload.id_token === undefined);
+
+    const profileUrl = `https://localhost:8443/cas/oidc/profile?access_token=${payload.access_token}`;
+    await cas.log(`Calling user profile ${profileUrl}`);
+
+    await cas.doPost(profileUrl, "", {
+        "Content-Type": "application/json"
+    }, (res) => {
+        assert(res.data["auth_time"] !== undefined);
+        assert(res.data["id"] === "casuser");
+        assert(res.data["client_id"] === "client");
+        assert(res.data["service"] !== undefined);
+        assert(res.data.sub === "casuser");
+    }, (error) => {
+        throw `Operation failed: ${error}`;
+    });
+}
+
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
 
@@ -194,9 +245,13 @@ async function verifyAuhotizedScopes(context) {
     context = await browser.createBrowserContext();
     await verifyAccessTokenIsLimited(context);
     await context.close();
-    
+
     context = await browser.createBrowserContext();
     await verifyAuhotizedScopes(context);
+    await context.close();
+
+    context = await browser.createBrowserContext();
+    await verifyMissingOpenIdScope(context);
     await context.close();
 
     await browser.close();
