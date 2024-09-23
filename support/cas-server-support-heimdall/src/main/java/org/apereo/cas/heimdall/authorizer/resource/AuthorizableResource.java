@@ -45,4 +45,6 @@ public class AuthorizableResource implements Serializable {
     private List<ResourceAuthorizationPolicy> policies = new ArrayList<>();
 
     private Map<String, Object> properties = new HashMap<>();
+
+    private boolean enforceAllPolicies;
 }
