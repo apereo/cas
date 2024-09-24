@@ -497,37 +497,32 @@ public abstract class BaseTicketRegistryTests {
     @Tag("DisableTicketRegistryTestWithEncryption")
     void verifyTicketCountsEqualToTicketsAdded() throws Throwable {
         assumeTrue(canTicketRegistryIterate());
-        val tgts = new ArrayList<Ticket>();
-        val sts = new ArrayList<Ticket>();
+        val ticketGrantingTickets = new ArrayList<Ticket>();
+        val serviceTickets = new ArrayList<Ticket>();
+        for (var i = 0; i < TICKETS_IN_REGISTRY; i++) {
+            val auth = CoreAuthenticationTestUtils.getAuthentication();
+            val service = RegisteredServiceTestUtils.getService();
+            val ticketGrantingTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + '-' + i,
+                auth, NeverExpiresExpirationPolicy.INSTANCE);
+            val st = ticketGrantingTicket.grantServiceTicket("ST-" + i,
+                service, NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
+            ticketGrantingTickets.add(ticketGrantingTicket);
+            serviceTickets.add(st);
+            val addedTicket = ticketRegistry.addTicket(ticketGrantingTicket);
+            await().untilAsserted(() -> assertNotNull(ticketRegistry.getTicket(addedTicket.getId())));
+            val addedServiceTicket = ticketRegistry.addTicket(st);
+            await().untilAsserted(() -> assertNotNull(ticketRegistry.getTicket(addedServiceTicket.getId())));
+        }
+        await().untilAsserted(() -> {
+            val sessionCount = ticketRegistry.sessionCount();
+            assertEquals(ticketGrantingTickets.size(), sessionCount,
+                () -> "The sessionCount " + sessionCount + " is not the same as the collection " + ticketGrantingTickets.size());
+        });
 
-        FunctionUtils.doAndRetry(callback -> {
-            for (var i = 0; i < TICKETS_IN_REGISTRY; i++) {
-                val auth = CoreAuthenticationTestUtils.getAuthentication();
-                val service = RegisteredServiceTestUtils.getService();
-                val ticketGrantingTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + '-' + i,
-                    auth, NeverExpiresExpirationPolicy.INSTANCE);
-                val st = ticketGrantingTicket.grantServiceTicket("ST-" + i,
-                    service, NeverExpiresExpirationPolicy.INSTANCE, false, serviceTicketSessionTrackingPolicy);
-                tgts.add(ticketGrantingTicket);
-                sts.add(st);
-                val addedTicket = ticketRegistry.addTicket(ticketGrantingTicket);
-                await().untilAsserted(() -> assertNotNull(ticketRegistry.getTicket(addedTicket.getId())));
-                val addedServiceTicket = ticketRegistry.addTicket(st);
-                await().untilAsserted(() -> assertNotNull(ticketRegistry.getTicket(addedServiceTicket.getId())));
-            }
-            await().untilAsserted(() -> {
-                val sessionCount = ticketRegistry.sessionCount();
-                assertEquals(tgts.size(), sessionCount,
-                    () -> "The sessionCount " + sessionCount + " is not the same as the collection " + tgts.size());
-            });
-
-            await().untilAsserted(() -> {
-                val ticketCount = this.ticketRegistry.serviceTicketCount();
-                assertEquals(sts.size(), ticketCount,
-                    () -> "The serviceTicketCount " + ticketCount + " is not the same as the collection " + sts.size());
-            });
-
-            return null;
+        await().untilAsserted(() -> {
+            val ticketCount = this.ticketRegistry.serviceTicketCount();
+            assertEquals(serviceTickets.size(), ticketCount,
+                () -> "The serviceTicketCount " + ticketCount + " is not the same as the collection " + serviceTickets.size());
         });
     }
 
