@@ -51,8 +51,8 @@ IssueInstant="2021-06-19T17:03:44.022Z">
         });
     const body = await post(options);
     await cas.log(body);
-    assert("body.contains(\"<saml1:NameIdentifier>casuser</saml1:NameIdentifier>\")");
-    assert("body.contains(\"<saml1:AttributeValue>Static Credentials</saml1:AttributeValue>\")");
-    assert("body.contains(\"<saml1:AttributeValue>urn:oasis:names:tc:SAML:1.0:am:password</saml1:AttributeValue>\")");
+    assert(body.includes("<saml1:NameIdentifier>casuser</saml1:NameIdentifier>"));
+    assert(body.includes("<saml1:AttributeValue>Static Credentials</saml1:AttributeValue>"));
+    assert(body.includes("<saml1:AttributeValue>urn:oasis:names:tc:SAML:1.0:am:password</saml1:AttributeValue>"));
     await browser.close();
 })();
