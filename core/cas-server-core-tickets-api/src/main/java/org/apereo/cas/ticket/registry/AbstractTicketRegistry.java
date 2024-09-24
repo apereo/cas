@@ -16,6 +16,7 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
@@ -114,7 +115,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
                 try {
                     deleteTicket(ticket);
                 } catch (final Exception e) {
-                    LOGGER.warn("Deletion failed for expired ticket [{}]", ticket.getId());
+                    LoggingUtils.warn(LOGGER, e);
                 }
                 return false;
             }

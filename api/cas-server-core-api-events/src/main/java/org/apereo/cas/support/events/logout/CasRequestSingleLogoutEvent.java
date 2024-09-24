@@ -8,7 +8,7 @@ import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
 
 /**
- * Concrete subclass of {@code AbstractCasEvent} representing a request for SLO.
+ * Concrete subclass of {@link AbstractCasEvent} representing a request for SLO.
  *
  * @author Jerome LELEU
  * @since 7.2

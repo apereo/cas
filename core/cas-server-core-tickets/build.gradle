@@ -13,6 +13,8 @@ dependencies {
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-events-api")
+    implementation project(":core:cas-server-core-events")
 
     compileOnly project(":core:cas-server-core-services")
 

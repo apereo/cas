@@ -14,11 +14,14 @@ import org.apereo.cas.support.events.logout.CasRequestSingleLogoutEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.text.MessageSanitizer;
+
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -33,7 +36,7 @@ import java.time.Instant;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Getter
 @Slf4j
 public class CasAuthenticationAuthenticationEventListener implements CasAuthenticationEventListener {
@@ -44,7 +47,8 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
 
     private final GeoLocationService geoLocationService;
 
-    private final LogoutManager logoutManager;
+    @Setter
+    private LogoutManager logoutManager;
 
     private CasEvent prepareCasEvent(final AbstractCasEvent event) {
         val dto = new CasEvent();
@@ -119,11 +123,15 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
 
     @Override
     public void handleCasRequestSingleLogoutEvent(final CasRequestSingleLogoutEvent event) throws Throwable {
-        val ticket = event.getTicketGrantingTicket();
-        LOGGER.debug("Performing single logout for expired ticket-granting ticket [{}]", ticket.getId());
-        val request = SingleLogoutExecutionRequest.builder()
-            .ticketGrantingTicket(ticket)
-            .build();
-        logoutManager.performLogout(request);
+        try {
+            val ticket = event.getTicketGrantingTicket();
+            LOGGER.debug("Performing single logout for expired ticket-granting ticket [{}]", ticket.getId());
+            val request = SingleLogoutExecutionRequest.builder()
+                .ticketGrantingTicket(ticket)
+                .build();
+            logoutManager.performLogout(request);
+        } catch (final Throwable e) {
+            LoggingUtils.error(LOGGER, e);
+        }
     }
 }
