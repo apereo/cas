@@ -1,5 +1,5 @@
 {
-  "dependencies": "pac4j-webflow,reports,pac4j-saml,scripting",
+  "dependencies": "pac4j-webflow,reports,pac4j-saml,scripting,saml",
   "conditions": {
     "docker": "true"
   },

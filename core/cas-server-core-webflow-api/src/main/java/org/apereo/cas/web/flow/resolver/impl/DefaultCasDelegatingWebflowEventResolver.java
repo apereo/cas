@@ -19,7 +19,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.apache.commons.lang3.ObjectUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -201,9 +200,12 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
     }
 
     protected Service locateServiceForRequest(final RequestContext context) throws Throwable {
-        val serviceFromRequest = WebUtils.getService(getConfigurationContext().getArgumentExtractors(), context);
         val serviceFromFlow = WebUtils.getService(context);
-        val finalService = ObjectUtils.defaultIfNull(serviceFromRequest, serviceFromFlow);
-        return getConfigurationContext().getAuthenticationRequestServiceSelectionStrategies().resolveService(finalService);
+        val strategies = getConfigurationContext().getAuthenticationRequestServiceSelectionStrategies();
+        if (serviceFromFlow == null) {
+            val serviceFromRequest = WebUtils.getService(getConfigurationContext().getArgumentExtractors(), context);
+            return strategies.resolveService(serviceFromRequest);
+        }
+        return strategies.resolveService(serviceFromFlow);
     }
 }

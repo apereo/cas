@@ -60,8 +60,8 @@ IssueInstant="2023-03-19T17:03:44.022Z">
     console.log(body);
 
     if (userid === "casuser") {
-        assert("body.contains(\"<saml1:AttributeValue>USER-ACCOUNT</saml1:AttributeValue>\")");
+        assert(body.includes("<saml1:AttributeValue>USER-ACCOUNT</saml1:AttributeValue>"));
     } else {
-        assert("body.contains(\"<saml1:AttributeValue>ADMINISTRATOR</saml1:AttributeValue>\")");
+        assert(body.includes("<saml1:AttributeValue>ADMINISTRATOR</saml1:AttributeValue>"));
     }
 })();
