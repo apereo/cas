@@ -200,12 +200,13 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
     }
 
     protected Service locateServiceForRequest(final RequestContext context) throws Throwable {
-        val serviceFromFlow = WebUtils.getService(context);
         val strategies = getConfigurationContext().getAuthenticationRequestServiceSelectionStrategies();
+        val serviceFromFlow = WebUtils.getService(context);
+        val serviceFromRequest = WebUtils.getService(getConfigurationContext().getArgumentExtractors(), context);
         if (serviceFromFlow == null) {
-            val serviceFromRequest = WebUtils.getService(getConfigurationContext().getArgumentExtractors(), context);
             return strategies.resolveService(serviceFromRequest);
         }
+        serviceFromFlow.setFragment(serviceFromRequest.getFragment());
         return strategies.resolveService(serviceFromFlow);
     }
 }

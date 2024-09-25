@@ -1,14 +1,19 @@
 package org.apereo.cas.authentication.principal;
 
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.jpa.MultivaluedMapToJsonAttributeConverter;
 import org.apereo.cas.validation.ValidationResponseType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.core5.net.URIBuilder;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.DiscriminatorColumn;
@@ -75,5 +80,30 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
         this.id = id;
         this.originalUrl = originalUrl;
         this.artifactId = artifactId;
+    }
+
+    @Override
+    @CanIgnoreReturnValue
+    @JsonIgnore
+    public WebApplicationService setFragment(final String fragment) {
+        if (StringUtils.isNotBlank(fragment)) {
+            this.id = collectFragmentFor(this.id, fragment);
+            this.originalUrl = collectFragmentFor(this.originalUrl, fragment);
+        }
+        return this;
+    }
+
+    @Override
+    @JsonIgnore
+    public String getFragment() {
+        return FunctionUtils.doUnchecked(() -> new URIBuilder(this.id).getFragment());
+    }
+
+    private static String collectFragmentFor(final String id, final String fragment) {
+        return FunctionUtils.doUnchecked(() -> new URIBuilder(id)
+            .setFragment(fragment)
+            .build()
+            .toURL()
+            .toExternalForm());
     }
 }

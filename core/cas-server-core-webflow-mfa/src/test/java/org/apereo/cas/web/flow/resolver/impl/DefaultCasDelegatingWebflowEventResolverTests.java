@@ -54,7 +54,7 @@ class DefaultCasDelegatingWebflowEventResolverTests {
         void verifyAuthFails() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
 
-            val id = UUID.randomUUID().toString();
+            val id = "https://app.%s.org#helloworld".formatted(UUID.randomUUID().toString());
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService(id));
             context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, id);
             val registeredService = RegisteredServiceTestUtils.getRegisteredService(id);
@@ -64,6 +64,10 @@ class DefaultCasDelegatingWebflowEventResolverTests {
             assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, event.getId());
             assertTrue(event.getAttributes().contains(Credential.class.getName()));
             assertTrue(event.getAttributes().contains(WebApplicationService.class.getName()));
+            val service = (WebApplicationService) event.getAttributes().get(WebApplicationService.class.getName());
+            assertNotNull(service);
+            assertEquals(service.getId(), id);
+            assertEquals(service.getOriginalUrl(), id);
         }
 
         @Test

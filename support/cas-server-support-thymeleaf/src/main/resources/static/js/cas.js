@@ -165,6 +165,7 @@ function preserveAnchorTagOnForm() {
         } else {
             action += location.search + encodeURIComponent(location.hash);
         }
+        console.log(`Preserving URL fragment in form action: ${action}`);
         $("#fm1").attr("action", action);
 
     });
