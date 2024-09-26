@@ -55,6 +55,7 @@ public class LdaptivePersonAttributeDao extends AbstractQueryPersonAttributeDao<
     @Override
     protected List<PersonAttributes> getPeopleForQuery(final FilterTemplate filter, final String userName) {
         try {
+            Objects.requireNonNull(this.searchFilter, "Search filter cannot be null");
             val search = new SearchOperation(this.connectionFactory);
             search.setEntryHandlers(entryHandlers);
             search.setSearchResultHandlers(searchResultHandlers);
@@ -75,7 +76,6 @@ public class LdaptivePersonAttributeDao extends AbstractQueryPersonAttributeDao<
                 }
 
                 val userNameAttribute = this.getConfiguredUserNameAttribute();
-
                 val person = attributes.containsKey(userNameAttribute)
                     ? SimplePersonAttributes.fromAttribute(userNameAttribute, attributes)
                     : new SimplePersonAttributes(userName, attributes);
@@ -89,7 +89,10 @@ public class LdaptivePersonAttributeDao extends AbstractQueryPersonAttributeDao<
 
     @Override
     protected FilterTemplate appendAttributeToQuery(final FilterTemplate filter, final String attribute, final List<Object> values) {
-        val query = Objects.requireNonNullElseGet(filter, () -> new FilterTemplate(this.searchFilter));
+        val query = Objects.requireNonNullElseGet(filter, () -> {
+            Objects.requireNonNull(this.searchFilter, "Search filter cannot be null");
+            return new FilterTemplate(this.searchFilter);
+        });
         if (this.isUseAllQueryAttributes() && values.size() > 1 && (this.searchFilter.contains("{0}") || this.searchFilter.contains("{user}"))) {
             LOGGER.warn("Query value will be indeterminate due to multiple attributes and no username indicator. Use attribute [{}] in query instead", attribute);
         }

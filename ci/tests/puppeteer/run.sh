@@ -148,6 +148,12 @@ while (( "$#" )); do
     DISABLE_LINTER="true"
     shift 1;
     ;;
+  --hoy)
+    export HEADLESS="true"
+    BUILDFLAGS="${BUILDFLAGS} --offline"
+    DRYRUN="true"
+    shift 1;
+    ;;
   --ho|-ho)
     export HEADLESS="true"
     BUILDFLAGS="${BUILDFLAGS} --offline"
