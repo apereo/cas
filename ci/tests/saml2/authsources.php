@@ -24,6 +24,23 @@ $config = [
         'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'
       ]
  ],
+ 'post-sp' => [
+        'saml:SP',
+        'privatekey' => 'saml.pem',
+        'certificate' => 'saml.crt',
+        'idp' => getenv('IDP_ENTITYID'),
+        'sign.authnrequest' => false,
+        'IsPassive' => (getenv('SP_PASSIVE_AUTHN') === 'true'),
+        'discoURL' => null,
+        'acs.Bindings' => [
+          'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'
+        ],
+        'AuthnRequestBinding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+        'SingleLogoutServiceBinding' => [
+          'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+          'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST'
+        ]
+   ],
   'signed-sp' => [
        'saml:SP',
        'privatekey' => 'saml.pem',
