@@ -43,7 +43,7 @@ class DelegatedClientIdentityProviderConfigurationGroovyPostProcessorTests {
     @Test
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        val client = identityProviders.findClient("CasClient").get();
+        val client = identityProviders.findClient("CasClient").orElseThrow();
         val provider = DelegatedClientIdentityProviderConfiguration.builder().name(client.getName()).build();
         val clientConfig = Set.of(provider);
         delegatedClientIdentityProviderConfigurationPostProcessor.process(context, clientConfig);
