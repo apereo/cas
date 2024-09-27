@@ -76,7 +76,7 @@ public class DefaultDelegatedClientAuthenticationWebflowStateContributor impleme
             .or(() -> Optional.of(Boolean.toString(RegisteredServiceProperty.RegisteredServiceProperties.DELEGATED_AUTHN_PASSIVE_AUTHN.isAssignedTo(registeredService))))
             .filter(value -> StringUtils.equalsIgnoreCase(value, "true"))
             .ifPresent(attr -> properties.put(RedirectionActionBuilder.ATTRIBUTE_PASSIVE, true));
-        if (!registeredService.getAccessStrategy().isServiceAccessAllowedForSso(registeredService)) {
+        if (registeredService != null && !registeredService.getAccessStrategy().isServiceAccessAllowedForSso(registeredService)) {
             properties.put(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, true);
         }
         return properties;
