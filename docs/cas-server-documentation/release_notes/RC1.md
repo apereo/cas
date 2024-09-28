@@ -116,6 +116,8 @@ Apache Kafka can now be used as a [ticket registry](../ticketing/Kafka-Ticket-Re
 - ErrorProne
 - Apache Log4j
 - Logback
+- Jackson
+- Mockito
 - JUnit
 - Amazon SDK
 - Gradle
