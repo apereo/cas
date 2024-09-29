@@ -39,6 +39,8 @@ import jakarta.validation.MessageInterpolator;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -59,6 +61,21 @@ class CasCoreUtilConfiguration {
     @Lazy(false)
     public ApplicationContextProvider casApplicationContextProvider() {
         return new ApplicationContextProvider();
+    }
+
+    /**
+     * Bean bootstrap executor.
+     * Enables bean background initialization option: {@code @Bean(bootstrap=BACKGROUND)}
+     * for singling out specific beans for background initialization, covering the entire bean
+     * creation step for each such bean on context startup.
+     * A {@code bootstrapExecutor} bean of type {@link Executor} must be declared for background bootstrapping to
+     * be actually active. Otherwise, the background markers will be ignored at runtime.
+     * @return the executor
+     */
+    @Bean
+    @Lazy(false)
+    public Executor bootstrapExecutor() {
+        return Executors.newVirtualThreadPerTaskExecutor();
     }
 
     @Configuration(value = "CasCoreUtilContextConfiguration", proxyBeanMethods = false)

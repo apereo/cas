@@ -126,9 +126,7 @@ public class CasValidationAutoConfiguration {
                 .build();
         }
     }
-
-
-
+    
     @Configuration(value = "CasValidationViewRegistrationConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasValidationViewRegistrationConfiguration {

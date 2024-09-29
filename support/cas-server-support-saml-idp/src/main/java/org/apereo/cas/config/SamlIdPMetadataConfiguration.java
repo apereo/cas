@@ -11,8 +11,6 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.idp.DefaultSamlIdPCasEventListener;
-import org.apereo.cas.support.saml.idp.SamlIdPCasEventListener;
 import org.apereo.cas.support.saml.idp.metadata.SamlIdPMetadataResolver;
 import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
@@ -45,9 +43,12 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.support.saml.web.idp.profile.sso.SSOSamlIdPPostProfileHandlerEndpoint;
 import org.apereo.cas.support.saml.web.idp.web.SamlIdPErrorController;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.util.spring.CasApplicationReadyListener;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
@@ -447,10 +448,19 @@ class SamlIdPMetadataConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
         @ConditionalOnMissingBean(name = "samlIdPCasEventListener")
-        public SamlIdPCasEventListener samlIdPCasEventListener(
+        public CasApplicationReadyListener samlIdPCasEventListener(
             @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
             final SamlIdPMetadataGenerator samlIdPMetadataGenerator) {
-            return new DefaultSamlIdPCasEventListener(samlIdPMetadataGenerator);
+            return event -> {
+                val document = FunctionUtils.doAndHandle(() -> {
+                    LOGGER.debug("Attempting to generate/fetch SAML IdP metadata...");
+                    return samlIdPMetadataGenerator.generate(Optional.empty());
+                }, e -> {
+                    LoggingUtils.error(LOGGER, e);
+                    return null;
+                }).get();
+                LOGGER.trace("Generated SAML IdP metadata document is [{}]", document);
+            };
         }
     }
 }

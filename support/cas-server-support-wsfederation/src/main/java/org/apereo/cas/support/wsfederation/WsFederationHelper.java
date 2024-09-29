@@ -319,7 +319,7 @@ public class WsFederationHelper {
         val providers = WsFederationCertificateProvider.getProvider(wsFederationConfiguration, openSamlConfigBean);
         val signingWallet = providers.getSigningCredentials();
         LOGGER.debug("Building signature trust engine based on the following signing certificates:");
-        signingWallet.forEach(c -> LOGGER.debug("Credential entity id [{}] with public key [{}]", c.getEntityId(), c.getPublicKey()));
+        signingWallet.forEach(credential -> LOGGER.debug("Credential entity id [{}] with public key [{}]", credential.getEntityId(), credential.getPublicKey()));
 
         val resolver = new StaticCredentialResolver(signingWallet);
         val keyResolver = new StaticKeyInfoCredentialResolver(signingWallet);
@@ -337,8 +337,8 @@ public class WsFederationHelper {
                 val it = config.iterator();
                 while (it.hasNext()) {
                     try {
-                        val c = it.next();
-                        val decrypter = buildAssertionDecrypter(c);
+                        val data = it.next();
+                        val decrypter = buildAssertionDecrypter(data);
                         LOGGER.trace("Built an instance of [{}]", decrypter.getClass().getName());
                         return decrypter.decryptData(encryptedData);
                     } catch (final Exception e) {

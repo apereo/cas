@@ -52,9 +52,9 @@ public class TextMagicSmsSender implements SmsSender {
             client.setApiKeyPrefix(properties.getApiKeyPrefix());
         }
 
-        httpClient.ifPresent(c -> {
+        httpClient.ifPresent(givenClient -> {
             val okHttpClient = new OkHttpClient();
-            val httpClientFactory = c.httpClientFactory();
+            val httpClientFactory = givenClient.httpClientFactory();
             okHttpClient.setSslSocketFactory(httpClientFactory.getSslContext().getSocketFactory());
             okHttpClient.setHostnameVerifier(httpClientFactory.getHostnameVerifier());
             okHttpClient.setConnectTimeout(httpClientFactory.getConnectionTimeout(), TimeUnit.SECONDS);

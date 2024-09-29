@@ -142,7 +142,7 @@ public class DefaultChainingServicesManager implements ChainingServicesManager {
     @Override
     public RegisteredService findServiceByName(final String name) {
         return serviceManagers.stream()
-            .map(s -> s.findServiceByName(name))
+            .map(manager -> manager.findServiceByName(name))
             .filter(Objects::nonNull)
             .findFirst()
             .orElse(null);

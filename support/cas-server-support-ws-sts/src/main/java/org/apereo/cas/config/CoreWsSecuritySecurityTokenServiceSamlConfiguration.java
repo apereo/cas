@@ -37,7 +37,7 @@ class CoreWsSecuritySecurityTokenServiceSamlConfiguration {
         }
         ReflectionUtils.makeAccessible(field);
         LOGGER.trace("Setting field name [{}]", fieldName);
-        Unchecked.consumer(f -> field.set(null, value)).accept(field);
+        Unchecked.consumer(__ -> field.set(null, value)).accept(field);
     }
 
     @Bean

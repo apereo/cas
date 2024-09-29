@@ -8,6 +8,8 @@ import org.apereo.cas.acme.DefaultAcmeCertificateManager;
 import org.apereo.cas.acme.DefaultAcmeChallengeRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.CasApplicationReadyListener;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -17,13 +19,12 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.context.event.EventListener;
 import java.security.Security;
 
 /**
@@ -45,8 +46,7 @@ public class CasAcmeAutoConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AcmeWellKnownChallengeController acmeWellKnownChallengeController(
-        @Qualifier("acmeChallengeRepository")
-        final AcmeChallengeRepository acmeChallengeRepository) {
+        @Qualifier("acmeChallengeRepository") final AcmeChallengeRepository acmeChallengeRepository) {
         return new AcmeWellKnownChallengeController(acmeChallengeRepository);
     }
 
@@ -70,10 +70,8 @@ public class CasAcmeAutoConfiguration {
     public AcmeCertificateManager acmeCertificateManager(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
-        @Qualifier("acmeChallengeRepository")
-        final AcmeChallengeRepository acmeChallengeRepository,
-        @Qualifier("acmeAuthorizationExecutor")
-        final AcmeAuthorizationExecutor acmeAuthorizationExecutor) throws Exception {
+        @Qualifier("acmeChallengeRepository") final AcmeChallengeRepository acmeChallengeRepository,
+        @Qualifier("acmeAuthorizationExecutor") final AcmeAuthorizationExecutor acmeAuthorizationExecutor) {
         return BeanSupplier.of(AcmeCertificateManager.class)
             .when(BeanCondition.on("cas.acme.terms-of-use-accepted").isTrue().given(applicationContext.getEnvironment()))
             .supply(() -> new DefaultAcmeCertificateManager(acmeChallengeRepository, casProperties, acmeAuthorizationExecutor))
@@ -81,14 +79,16 @@ public class CasAcmeAutoConfiguration {
             .get();
     }
 
-    @EventListener
-    public void handleApplicationReadyEvent(final ApplicationReadyEvent event) throws Exception {
-        val casProperties = event.getApplicationContext().getBean(CasConfigurationProperties.class);
-        val domains = casProperties.getAcme().getDomains();
-        LOGGER.info("Fetching certificates for domains [{}]", domains);
-        if (event.getApplicationContext().containsBean(AcmeCertificateManager.BEAN_NAME)) {
-            val acmeCertificateManager = event.getApplicationContext().getBean(AcmeCertificateManager.BEAN_NAME, AcmeCertificateManager.class);
+
+    @Bean
+    @Lazy(false)
+    public CasApplicationReadyListener acmeApplicationReady(
+        @Qualifier(AcmeCertificateManager.BEAN_NAME) final AcmeCertificateManager acmeCertificateManager,
+        final CasConfigurationProperties casProperties) {
+        return event -> FunctionUtils.doUnchecked(__ -> {
+            val domains = casProperties.getAcme().getDomains();
+            LOGGER.info("Fetching certificates for domains [{}]", domains);
             acmeCertificateManager.fetchCertificate(domains);
-        }
+        });
     }
 }

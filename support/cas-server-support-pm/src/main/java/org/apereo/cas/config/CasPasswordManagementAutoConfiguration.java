@@ -26,6 +26,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.util.spring.CasApplicationReadyListener;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -35,7 +36,7 @@ import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.apereo.inspektr.audit.spi.support.FirstParameterAuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.ShortenedReturnValueAsStringAuditResourceResolver;
 import org.apereo.inspektr.audit.spi.support.SpringWebflowActionExecutionAuditablePrincipalResolver;
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -65,8 +66,7 @@ public class CasPasswordManagementAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         public PasswordValidationService passwordValidationService(final CasConfigurationProperties casProperties,
-                                                                   @Qualifier(PasswordHistoryService.BEAN_NAME)
-                                                                   final PasswordHistoryService passwordHistoryService) {
+                                                                   @Qualifier(PasswordHistoryService.BEAN_NAME) final PasswordHistoryService passwordHistoryService) {
             return new DefaultPasswordValidationService(casProperties, passwordHistoryService);
         }
     }
@@ -104,8 +104,7 @@ public class CasPasswordManagementAutoConfiguration {
         @ConditionalOnMissingBean(name = "passwordManagementAuditTrailRecordResolutionPlanConfigurer")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailRecordResolutionPlanConfigurer passwordManagementAuditTrailRecordResolutionPlanConfigurer(
-            @Qualifier("returnValueResourceResolver")
-            final AuditResourceResolver returnValueResourceResolver) {
+            @Qualifier("returnValueResourceResolver") final AuditResourceResolver returnValueResourceResolver) {
             return plan -> {
                 plan.registerAuditActionResolver(AuditActionResolvers.CHANGE_PASSWORD_ACTION_RESOLVER,
                     new BooleanAuditActionResolver(AuditTrailConstants.AUDIT_ACTION_POSTFIX_SUCCESS, AuditTrailConstants.AUDIT_ACTION_POSTFIX_FAILED));
@@ -143,12 +142,9 @@ public class CasPasswordManagementAutoConfiguration {
         @Bean
         public PasswordResetUrlBuilder passwordResetUrlBuilder(
             final CasConfigurationProperties casProperties,
-            @Qualifier("passwordChangeService")
-            final PasswordManagementService passwordChangeService,
-            @Qualifier(TicketRegistry.BEAN_NAME)
-            final TicketRegistry ticketRegistry,
-            @Qualifier(TicketFactory.BEAN_NAME)
-            final TicketFactory ticketFactory) {
+            @Qualifier("passwordChangeService") final PasswordManagementService passwordChangeService,
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
+            @Qualifier(TicketFactory.BEAN_NAME) final TicketFactory ticketFactory) {
             return new DefaultPasswordResetUrlBuilder(passwordChangeService,
                 ticketRegistry, ticketFactory, casProperties);
         }
@@ -158,10 +154,8 @@ public class CasPasswordManagementAutoConfiguration {
         @Bean
         public PasswordManagementService passwordChangeService(
             final CasConfigurationProperties casProperties,
-            @Qualifier("passwordManagementCipherExecutor")
-            final CipherExecutor passwordManagementCipherExecutor,
-            @Qualifier(PasswordHistoryService.BEAN_NAME)
-            final PasswordHistoryService passwordHistoryService) {
+            @Qualifier("passwordManagementCipherExecutor") final CipherExecutor passwordManagementCipherExecutor,
+            @Qualifier(PasswordHistoryService.BEAN_NAME) final PasswordHistoryService passwordHistoryService) {
             val pm = casProperties.getAuthn().getPm();
             if (pm.getCore().isEnabled()) {
                 val location = pm.getJson().getLocation();
@@ -180,11 +174,11 @@ public class CasPasswordManagementAutoConfiguration {
                         passwordHistoryService);
                 }
                 LOGGER.warn("No storage service is configured to handle the account update and password service operations. "
-                            + "Password management functionality will have no effect and will be disabled until a storage service is configured. "
-                            + "To explicitly disable the password management, add 'cas.authn.pm.core.enabled=false' to the CAS configuration");
+                    + "Password management functionality will have no effect and will be disabled until a storage service is configured. "
+                    + "To explicitly disable the password management, add 'cas.authn.pm.core.enabled=false' to the CAS configuration");
             } else {
                 LOGGER.debug("Password management is disabled. To enable the password management functionality, "
-                             + "add 'cas.authn.pm.core.enabled=true' to the CAS configuration and then configure storage options for account updates");
+                    + "add 'cas.authn.pm.core.enabled=true' to the CAS configuration and then configure storage options for account updates");
             }
             return new NoOpPasswordManagementService(passwordManagementCipherExecutor,
                 casProperties.getServer().getPrefix(), casProperties.getAuthn().getPm());
@@ -192,13 +186,14 @@ public class CasPasswordManagementAutoConfiguration {
 
         @Bean
         @Lazy(false)
-        public InitializingBean passwordManagementInitialization(final CasConfigurationProperties casProperties,
-                                                                 @Qualifier(CommunicationsManager.BEAN_NAME)
-                                                                 final CommunicationsManager communicationsManager) {
-            return () -> {
+        public CasApplicationReadyListener passwordManagementApplicationReady(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(CommunicationsManager.BEAN_NAME)
+            final ObjectProvider<CommunicationsManager> communicationsManager) {
+            return event -> {
                 val pm = casProperties.getAuthn().getPm();
                 if (pm.getCore().isEnabled()) {
-                    communicationsManager.validate();
+                    communicationsManager.getObject().validate();
                 }
             };
         }

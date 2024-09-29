@@ -1,9 +1,10 @@
 package org.apereo.cas.web;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasConfigurationPropertiesValidator;
 import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.spring.CasApplicationReadyListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -19,17 +20,17 @@ import java.time.Instant;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CasWebApplicationReady implements CasWebApplicationReadyListener {
+public class CasWebApplicationReady implements CasApplicationReadyListener {
     /**
      * System property to indicate whether configuration status has passed validation.
      */
     public static final String SYSTEM_PROPERTY_CONFIG_VALIDATION_STATUS = "CONFIG_VALIDATION_STATUS";
 
     private final ConfigurableApplicationContext applicationContext;
+    private final CasConfigurationProperties properties;
 
     @Override
     public void handleApplicationReadyEvent(final ApplicationReadyEvent event) {
-        val properties = ApplicationContextProvider.getCasConfigurationProperties().orElseThrow();
         AsciiArtUtils.printAsciiArtReady(LOGGER, "CAS is now running at " + properties.getServer().getPrefix());
         
         LOGGER.info("Ready to process requests @ [{}]", DateTimeUtils.zonedDateTimeOf(Instant.ofEpochMilli(event.getTimestamp())));

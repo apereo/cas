@@ -46,6 +46,7 @@ import org.apereo.cas.services.resource.DefaultRegisteredServiceResourceNamingSt
 import org.apereo.cas.services.resource.RegisteredServiceResourceNamingStrategy;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
+import org.apereo.cas.util.spring.CasApplicationReadyListener;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -62,7 +63,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
@@ -71,7 +71,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.context.event.EventListener;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.env.Environment;
@@ -360,10 +359,12 @@ class CasCoreServicesConfiguration {
             return Beans.newCacheBuilder(casProperties.getServiceRegistry().getCache()).build();
         }
 
-        @EventListener
-        public void refreshServicesManagerWhenReady(final ApplicationReadyEvent event) {
-            val servicesManager = event.getApplicationContext().getBean(ServicesManager.BEAN_NAME, ChainingServicesManager.class);
-            servicesManager.load();
+        @Bean
+        @Lazy(false)
+        public CasApplicationReadyListener servicesManagerApplicationReady(
+            @Qualifier(ServicesManager.BEAN_NAME) final ChainingServicesManager servicesManager,
+            final CasConfigurationProperties casProperties) {
+            return event -> servicesManager.load();
         }
     }
 
