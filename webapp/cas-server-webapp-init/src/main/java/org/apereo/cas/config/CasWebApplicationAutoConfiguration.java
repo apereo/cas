@@ -2,10 +2,9 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.util.spring.CasApplicationReadyListener;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebApplicationReady;
-import org.apereo.cas.web.CasWebApplicationReadyListener;
-
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,7 +31,9 @@ public class CasWebApplicationAutoConfiguration {
     @ConditionalOnMissingBean(name = "casWebApplicationReadyListener")
     @Bean
     @Lazy(false)
-    public CasWebApplicationReadyListener casWebApplicationReadyListener(final ConfigurableApplicationContext applicationContext) {
-        return new CasWebApplicationReady(applicationContext);
+    public CasApplicationReadyListener casWebApplicationReadyListener(
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext) {
+        return new CasWebApplicationReady(applicationContext, casProperties);
     }
 }

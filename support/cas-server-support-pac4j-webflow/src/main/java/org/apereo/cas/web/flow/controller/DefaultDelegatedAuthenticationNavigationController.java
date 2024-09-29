@@ -84,9 +84,9 @@ public class DefaultDelegatedAuthenticationNavigationController {
      */
     protected View buildRedirectViewBackToFlow(final String clientName, final HttpServletRequest request) throws Exception {
         val urlBuilder = new URIBuilder(configurationContext.getCasProperties().getServer().getLoginUrl());
-        request.getParameterMap().forEach((k, v) -> {
-            val value = request.getParameter(k);
-            urlBuilder.addParameter(k, value);
+        request.getParameterMap().forEach((name, v) -> {
+            val value = request.getParameter(name);
+            urlBuilder.addParameter(name, value);
         });
         urlBuilder.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, clientName);
         val url = urlBuilder.toString();

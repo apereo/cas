@@ -774,7 +774,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public void cloneActionState(final ActionState source, final ActionState target) {
         source.getActionList().forEach(a -> target.getActionList().add(a));
         source.getExitActionList().forEach(a -> target.getExitActionList().add(a));
-        source.getAttributes().asMap().forEach((k, v) -> target.getAttributes().put(k, v));
+        source.getAttributes().asMap().forEach((key, v) -> target.getAttributes().put(key, v));
         source.getTransitionSet().forEach(t -> target.getTransitionSet().addAll(t));
         val field = ReflectionUtils.findField(target.getExceptionHandlerSet().getClass(), "exceptionHandlers");
         Assert.notNull(field, "exceptionHandlers cannot be null");
@@ -863,7 +863,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     public void createTransitionsForState(final Flow flow, final String stateId, final Map<String, String> criteriaAndTargets) {
         if (containsFlowState(flow, stateId)) {
             val state = getState(flow, stateId);
-            criteriaAndTargets.forEach((k, v) -> createTransitionForState(state, k, v));
+            criteriaAndTargets.forEach((key, v) -> createTransitionForState(state, key, v));
         }
     }
 
