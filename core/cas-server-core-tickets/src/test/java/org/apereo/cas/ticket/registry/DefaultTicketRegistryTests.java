@@ -1,7 +1,21 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.*;
+import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreAutoConfiguration;
+import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
+import org.apereo.cas.config.CasCoreEventsAutoConfiguration;
+import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
+import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
+import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
+import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
+import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
+import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebAutoConfiguration;
+import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
@@ -17,12 +31,13 @@ import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.ticket.tracking.TicketTrackingPolicy;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
-import lombok.val;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
+import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,7 +45,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -46,7 +61,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Tag("Tickets")
-class DefaultTicketRegistryTests  {
+class DefaultTicketRegistryTests {
 
     @Nested
     class DefaultTests extends BaseTicketRegistryTests {
@@ -87,7 +102,7 @@ class DefaultTicketRegistryTests  {
             val registry = getNewTicketRegistry();
             val user = UUID.randomUUID().toString();
 
-            for (int i = 0; i < 5; i++) {
+            for (var i = 0; i < 5; i++) {
                 val tgt = new MockTicketGrantingTicket(user);
                 val st = tgt.grantServiceTicket(service, TicketTrackingPolicy.noOp());
                 registry.addTicket(st);
@@ -137,8 +152,11 @@ class DefaultTicketRegistryTests  {
     @Nested
     class LogoutTests {
 
+        @Autowired
+        private ConfigurableApplicationContext applicationContext;
+
         @RepeatedTest(1)
-        void verifyGetExpiredTicketLogoutPerformed(final ConfigurableApplicationContext applicationContext) throws Throwable {
+        void verifyGetExpiredTicketLogoutPerformed() throws Throwable {
             val registry = new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog(),
                     applicationContext);
             val originalAuthn = CoreAuthenticationTestUtils.getAuthentication();
@@ -151,7 +169,7 @@ class DefaultTicketRegistryTests  {
             assertNull(tgt);
             val internalTgt = registry.getMapInstance().get(tgtId);
             assertNull(internalTgt);
-            await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(LogoutTestConfiguration.LogoutManagerTestConfiguration.nbCalls > 0));
+            await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(LogoutTestConfiguration.LogoutManagerTestConfiguration.getNbCalls() > 0));
         }
     }
 
@@ -179,13 +197,17 @@ class DefaultTicketRegistryTests  {
         @TestConfiguration(value = "LogoutManagerTestConfiguration", proxyBeanMethods = false)
         public static class LogoutManagerTestConfiguration {
 
-            public static int nbCalls = 0;
+            private static int NB_CALLS;
+
+            public static int getNbCalls() {
+                return NB_CALLS;
+            }
 
             @Bean
             public LogoutManager logoutManager() {
-                return (context) -> {
-                    nbCalls++;
-                    return Collections.emptyList();
+                return context -> {
+                    NB_CALLS++;
+                    return List.of();
                 };
             }
         }

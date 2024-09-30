@@ -9,6 +9,7 @@ import org.apereo.cas.util.lock.LockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Objects;
@@ -47,8 +48,9 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     public int cleanTicket(final Ticket ticket) {
         return lockRepository.execute(ticket.getId(), () -> {
             if (ticket instanceof final TicketGrantingTicket tgt) {
-                applicationContext.publishEvent(new CasRequestSingleLogoutEvent(this, tgt, null));
-                applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, tgt, null));
+                val clientInfo = ClientInfoHolder.getClientInfo();
+                applicationContext.publishEvent(new CasRequestSingleLogoutEvent(this, tgt, clientInfo));
+                applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, tgt, clientInfo));
             }
 
             try {

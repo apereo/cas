@@ -19,9 +19,8 @@ import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.text.MessageSanitizer;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -36,7 +35,7 @@ import java.time.Instant;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Getter
 @Slf4j
 public class CasAuthenticationAuthenticationEventListener implements CasAuthenticationEventListener {
@@ -47,8 +46,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
 
     private final GeoLocationService geoLocationService;
 
-    @Setter
-    private LogoutManager logoutManager;
+    private final LogoutManager logoutManager;
 
     private CasEvent prepareCasEvent(final AbstractCasEvent event) {
         val dto = new CasEvent();
