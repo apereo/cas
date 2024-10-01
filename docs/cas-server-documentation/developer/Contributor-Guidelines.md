@@ -331,8 +331,8 @@ Before you do anything else, make sure you have a [functional build](Build-Proce
 To successfully finish this exercise you need:
 
 1. [Git](https://git-scm.com/downloads)
-2. [IntelliJ IDEA](https://www.jetbrains.com/idea/download/), Eclipse or NetBeans (Depending on the change, `vim` may be perfectly fine too)
-3. [Java (JDK)](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+2. [IntelliJ IDEA](https://www.jetbrains.com/idea/download/)
+3. [Java (JDK)](https://openjdk.org/)
 
 ### Fork the repository
 
