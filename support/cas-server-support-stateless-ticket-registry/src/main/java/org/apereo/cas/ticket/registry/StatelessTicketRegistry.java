@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import java.time.Clock;
 import java.time.Instant;
@@ -38,8 +39,9 @@ public class StatelessTicketRegistry extends AbstractTicketRegistry {
     public StatelessTicketRegistry(final CipherExecutor<byte[], byte[]> cipherExecutor,
                                    final TicketSerializationManager ticketSerializationManager,
                                    final TicketCatalog ticketCatalog,
+                                   final ConfigurableApplicationContext applicationContext,
                                    final List<TicketCompactor<? extends Ticket>> compactors) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.ticketCompactors = List.copyOf(compactors);
     }
 

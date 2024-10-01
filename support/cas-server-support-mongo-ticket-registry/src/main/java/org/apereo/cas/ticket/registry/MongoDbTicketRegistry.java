@@ -19,6 +19,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.domain.Limit;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -53,8 +54,9 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     private final MongoOperations mongoTemplate;
 
     public MongoDbTicketRegistry(final CipherExecutor cipherExecutor, final TicketSerializationManager ticketSerializationManager,
-                                 final TicketCatalog ticketCatalog, final MongoOperations mongoTemplate) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+                                 final TicketCatalog ticketCatalog, final ConfigurableApplicationContext applicationContext,
+                                 final MongoOperations mongoTemplate) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.mongoTemplate = mongoTemplate;
     }
 

@@ -20,6 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.context.ConfigurableApplicationContext;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -52,9 +54,10 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements A
     public HazelcastTicketRegistry(final CipherExecutor cipherExecutor,
                                    final TicketSerializationManager ticketSerializationManager,
                                    final TicketCatalog ticketCatalog,
+                                   final ConfigurableApplicationContext applicationContext,
                                    final HazelcastInstance hazelcastInstance,
                                    final HazelcastTicketRegistryProperties properties) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.hazelcastInstance = hazelcastInstance;
         this.properties = properties;
     }

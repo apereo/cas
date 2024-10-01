@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import java.util.UUID;
@@ -80,6 +81,9 @@ class HazelcastTicketRegistryTests {
         @Autowired
         private CasConfigurationProperties casProperties;
 
+        @Autowired
+        private ConfigurableApplicationContext applicationContext;
+
         @RepeatedTest(1)
         void verifyBadExpPolicyValue() throws Throwable {
             val ticket = new MockTicketGrantingTicket("casuser");
@@ -88,7 +92,7 @@ class HazelcastTicketRegistryTests {
             val myMap = mock(IMap.class);
             when(instance.getMap(anyString())).thenReturn(myMap);
             try (val registry = new HazelcastTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, ticketCatalog,
-                instance, casProperties.getTicket().getRegistry().getHazelcast())) {
+                    applicationContext, instance, casProperties.getTicket().getRegistry().getHazelcast())) {
                 ticket.setExpirationPolicy(new HardTimeoutExpirationPolicy(-1));
                 assertDoesNotThrow(() -> registry.addTicket(ticket));
                 assertDoesNotThrow(registry::shutdown);
@@ -107,7 +111,7 @@ class HazelcastTicketRegistryTests {
             defn.getProperties().setStorageName("Tickets");
             when(catalog.find(any(Ticket.class))).thenReturn(defn);
             try (val registry = new HazelcastTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, catalog,
-                instance, casProperties.getTicket().getRegistry().getHazelcast())) {
+                    applicationContext, instance, casProperties.getTicket().getRegistry().getHazelcast())) {
                 assertDoesNotThrow(() -> registry.addTicket(ticket));
                 assertNull(registry.getTicket(ticket.getId()));
             }

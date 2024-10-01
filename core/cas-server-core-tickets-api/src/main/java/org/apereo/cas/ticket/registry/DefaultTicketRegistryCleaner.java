@@ -1,7 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
+import org.apereo.cas.support.events.logout.CasRequestSingleLogoutEvent;
+import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.LoggingUtils;
@@ -9,6 +9,8 @@ import org.apereo.cas.util.lock.LockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Objects;
 
@@ -24,7 +26,7 @@ import java.util.Objects;
 public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     private final LockRepository lockRepository;
 
-    private final LogoutManager logoutManager;
+    private final ConfigurableApplicationContext applicationContext;
 
     private final TicketRegistry ticketRegistry;
 
@@ -45,16 +47,10 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     @Override
     public int cleanTicket(final Ticket ticket) {
         return lockRepository.execute(ticket.getId(), () -> {
-            try {
-                if (ticket instanceof final TicketGrantingTicket tgt) {
-                    LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
-                    val request = SingleLogoutExecutionRequest.builder()
-                        .ticketGrantingTicket(tgt)
-                        .build();
-                    logoutManager.performLogout(request);
-                }
-            } catch (final Throwable e) {
-                LoggingUtils.error(LOGGER, e);
+            if (ticket instanceof final TicketGrantingTicket tgt) {
+                val clientInfo = ClientInfoHolder.getClientInfo();
+                applicationContext.publishEvent(new CasRequestSingleLogoutEvent(this, tgt, clientInfo));
+                applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, tgt, clientInfo));
             }
 
             try {

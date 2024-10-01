@@ -9,7 +9,7 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import java.io.Serial;
 
 /**
- * Concrete subclass of {@code AbstractCasEvent} representing single sign on session
+ * Concrete subclass of {@link org.apereo.cas.support.events.AbstractCasEvent} representing single sign on session
  * destruction event e.g. user logged out
  * and <i>TicketGrantingTicket</i> has been destroyed by a CAS server.
  *
