@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.transaction.support.TransactionOperations;
 
 import jakarta.persistence.EntityManager;
@@ -60,10 +61,12 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     public JpaTicketRegistry(final CipherExecutor cipherExecutor,
                              final TicketSerializationManager ticketSerializationManager,
-                             final TicketCatalog ticketCatalog, final JpaBeanFactory jpaBeanFactory,
+                             final TicketCatalog ticketCatalog,
+                             final ConfigurableApplicationContext applicationContext,
+                             final JpaBeanFactory jpaBeanFactory,
                              final TransactionOperations transactionTemplate,
                              final CasConfigurationProperties casProperties) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.jpaBeanFactory = jpaBeanFactory;
         this.transactionTemplate = transactionTemplate;
         this.casProperties = casProperties;

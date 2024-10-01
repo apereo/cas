@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.TestPropertySource;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -61,6 +62,9 @@ class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     @Qualifier("igniteConfiguration")
     private IgniteConfiguration igniteConfiguration;
 
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
+
     @BeforeAll
     public static void beforeAll() throws Exception {
         val ks = KeyStore.getInstance("pkcs12");
@@ -74,8 +78,8 @@ class IgniteTicketRegistryTests extends BaseTicketRegistryTests {
     @RepeatedTest(1)
     void verifyDeleteUnknown() throws Throwable {
         val catalog = mock(TicketCatalog.class);
-        val registry = new IgniteTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, catalog, igniteConfiguration,
-            casProperties.getTicket().getRegistry().getIgnite());
+        val registry = new IgniteTicketRegistry(CipherExecutor.noOp(), ticketSerializationManager, catalog, applicationContext,
+            igniteConfiguration, casProperties.getTicket().getRegistry().getIgnite());
         registry.initialize();
         assertTrue(registry.deleteSingleTicket(new MockTicketGrantingTicket(RegisteredServiceTestUtils.getAuthentication())) > 0);
         registry.destroy();

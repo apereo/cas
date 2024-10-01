@@ -11,7 +11,7 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import java.io.Serial;
 
 /**
- * Concrete subclass of {@code AbstractCasEvent} representing validation of a
+ * Concrete subclass of {@link AbstractCasEvent} representing validation of a
  * service ticket by a CAS server.
  *
  * @author Dmitriy Kopylenko

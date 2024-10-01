@@ -69,10 +69,11 @@ public class CasHazelcastTicketRegistryAutoConfiguration {
         @Qualifier(TicketSerializationManager.BEAN_NAME) final TicketSerializationManager ticketSerializationManager,
         @Qualifier("casTicketRegistryHazelcastInstance") final HazelcastInstance casTicketRegistryHazelcastInstance,
         @Qualifier(TicketCatalog.BEAN_NAME) final TicketCatalog ticketCatalog,
-        final CasConfigurationProperties casProperties) {
+        final CasConfigurationProperties casProperties,
+        final ConfigurableApplicationContext applicationContext) {
         val hz = casProperties.getTicket().getRegistry().getHazelcast();
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast");
-        return new HazelcastTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
+        return new HazelcastTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, applicationContext,
             casTicketRegistryHazelcastInstance, hz);
     }
 

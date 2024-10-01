@@ -18,6 +18,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 import java.util.function.Function;
@@ -71,6 +72,7 @@ public class CassandraTicketRegistryAutoConfiguration {
     public TicketRegistry ticketRegistry(
         @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog,
+        final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier("cassandraTicketRegistrySessionFactory")
         final CassandraSessionFactory cassandraTicketRegistrySessionFactory,
@@ -78,7 +80,7 @@ public class CassandraTicketRegistryAutoConfiguration {
         final TicketSerializationManager ticketSerializationManager) {
         val cassandra = casProperties.getTicket().getRegistry().getCassandra();
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(cassandra.getCrypto(), "cassandra");
-        return new CassandraTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
+        return new CassandraTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, applicationContext,
             cassandraTicketRegistrySessionFactory, cassandra);
     }
 

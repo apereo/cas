@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 import org.jooq.lambda.Unchecked;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -46,8 +47,9 @@ public class GoogleCloudFirestoreTicketRegistry extends AbstractTicketRegistry {
     private final Firestore firestore;
 
     public GoogleCloudFirestoreTicketRegistry(final CipherExecutor cipherExecutor, final TicketSerializationManager ticketSerializationManager,
-                                              final TicketCatalog ticketCatalog, final Firestore firestore) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+                                              final TicketCatalog ticketCatalog, final ConfigurableApplicationContext applicationContext,
+                                              final Firestore firestore) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.firestore = firestore;
     }
 

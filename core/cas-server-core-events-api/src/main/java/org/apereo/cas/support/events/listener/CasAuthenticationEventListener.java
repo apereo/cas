@@ -3,6 +3,7 @@ package org.apereo.cas.support.events.listener;
 import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
 import org.apereo.cas.support.events.authentication.adaptive.CasRiskyAuthenticationDetectedEvent;
+import org.apereo.cas.support.events.logout.CasRequestSingleLogoutEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.util.spring.CasEventListener;
@@ -67,4 +68,14 @@ public interface CasAuthenticationEventListener extends CasEventListener {
     @EventListener
     @Async
     void handleCasRiskyAuthenticationDetectedEvent(CasRiskyAuthenticationDetectedEvent event) throws Throwable;
+
+    /**
+     * Handle CAS request SLO event.
+     *
+     * @param event the event
+     * @throws Throwable the throwable
+     */
+    @EventListener
+    @Async
+    void handleCasRequestSingleLogoutEvent(CasRequestSingleLogoutEvent event) throws Throwable;
 }

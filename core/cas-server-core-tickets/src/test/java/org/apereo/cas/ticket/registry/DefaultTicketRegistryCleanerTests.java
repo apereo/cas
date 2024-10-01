@@ -1,7 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
-import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
+import org.apereo.cas.support.events.logout.CasRequestSingleLogoutEvent;
+import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
@@ -12,6 +13,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -28,44 +31,34 @@ class DefaultTicketRegistryCleanerTests {
 
     @Test
     void verifyAction() throws Throwable {
-        val logoutManager = mock(LogoutManager.class);
+        val applicationContext = mock(ConfigurableApplicationContext.class);
         val ticketRegistry = newTicketRegistry();
         val tgt = new MockTicketGrantingTicket("casuser");
         tgt.setExpirationPolicy(new HardTimeoutExpirationPolicy(1));
         ticketRegistry.addTicket(tgt);
         assertEquals(1, ticketRegistry.getTickets().size());
-        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), logoutManager, ticketRegistry);
+        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, ticketRegistry);
         tgt.markTicketExpired();
         cleaner.clean();
         assertEquals(0, ticketRegistry.sessionCount());
-    }
-
-    @Test
-    void verifyLogoutFail() throws Throwable {
-        val logoutManager = mock(LogoutManager.class);
-        val ticketRegistry = newTicketRegistry();
-        val tgt = new MockTicketGrantingTicket("casuser");
-        tgt.setExpirationPolicy(new HardTimeoutExpirationPolicy(1));
-        ticketRegistry.addTicket(tgt);
-        when(logoutManager.performLogout(any())).thenThrow(IllegalArgumentException.class);
-        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), logoutManager, ticketRegistry);
-        assertEquals(1, cleaner.cleanTicket(tgt));
+        verify(applicationContext).publishEvent(any(CasRequestSingleLogoutEvent.class));
+        verify(applicationContext).publishEvent(any(CasTicketGrantingTicketDestroyedEvent.class));
     }
 
     @Test
     void verifyCleanFail() throws Throwable {
-        val logoutManager = mock(LogoutManager.class);
+        val applicationContext = mock(ConfigurableApplicationContext.class);
         val ticketRegistry = mock(TicketRegistry.class);
         when(ticketRegistry.stream()).thenThrow(IllegalArgumentException.class);
-        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), logoutManager, ticketRegistry);
+        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, ticketRegistry);
         assertEquals(0, cleaner.clean());
     }
 
     @Test
     void verifyNoCleaner() throws Throwable {
-        val logoutManager = mock(LogoutManager.class);
+        val applicationContext = mock(ConfigurableApplicationContext.class);
         val ticketRegistry = newTicketRegistry();
-        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), logoutManager, ticketRegistry) {
+        val cleaner = new DefaultTicketRegistryCleaner(LockRepository.noOp(), applicationContext, ticketRegistry) {
             @Override
             protected boolean isCleanerSupported() {
                 return false;
@@ -75,7 +68,8 @@ class DefaultTicketRegistryCleanerTests {
     }
 
     private static TicketRegistry newTicketRegistry() {
-        return new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog());
+        return new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog(),
+                mock(ConfigurableApplicationContext.class));
     }
 
 }

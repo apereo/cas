@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
+
 import java.util.List;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,7 +31,8 @@ class DefaultTicketRegistrySupportTests {
 
     @Test
     void verifyOperation() throws Throwable {
-        val registry = new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog());
+        val registry = new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog(),
+                mock(ConfigurableApplicationContext.class));
         val tgt = new MockTicketGrantingTicket("casuser", Map.of("name", List.of("CAS")));
         registry.addTicket(tgt);
         val support = new DefaultTicketRegistrySupport(registry);

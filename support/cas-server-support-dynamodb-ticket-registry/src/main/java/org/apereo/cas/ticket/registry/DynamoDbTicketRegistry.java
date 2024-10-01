@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.context.ConfigurableApplicationContext;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -42,8 +43,9 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     public DynamoDbTicketRegistry(final CipherExecutor cipherExecutor,
                                   final TicketSerializationManager ticketSerializationManager,
                                   final TicketCatalog ticketCatalog,
+                                  final ConfigurableApplicationContext applicationContext,
                                   final DynamoDbTicketRegistryFacilitator dbTableService) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.dbTableService = dbTableService;
     }
 

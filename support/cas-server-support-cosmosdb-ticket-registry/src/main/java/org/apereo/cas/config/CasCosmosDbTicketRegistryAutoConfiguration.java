@@ -18,6 +18,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
 
@@ -61,6 +62,7 @@ public class CasCosmosDbTicketRegistryAutoConfiguration {
         final TicketSerializationManager ticketSerializationManager,
         @Qualifier(TicketCatalog.BEAN_NAME)
         final TicketCatalog ticketCatalog,
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier("cosmosDbTicketRegistryObjectFactory")
         final CosmosDbObjectFactory cosmosDbTicketRegistryObjectFactory) {
 
@@ -78,6 +80,6 @@ public class CasCosmosDbTicketRegistryAutoConfiguration {
 
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(
             casProperties.getTicket().getRegistry().getCosmosDb().getCrypto(), "cosmos-db");
-        return new CosmosDbTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, containers);
+        return new CosmosDbTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, applicationContext, containers);
     }
 }

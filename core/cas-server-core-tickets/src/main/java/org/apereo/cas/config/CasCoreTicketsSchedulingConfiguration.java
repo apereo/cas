@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
@@ -51,9 +50,9 @@ class CasCoreTicketsSchedulingConfiguration {
     public TicketRegistryCleaner ticketRegistryCleaner(
         final CasConfigurationProperties casProperties,
         @Qualifier(LockRepository.BEAN_NAME) final LockRepository lockRepository,
-        @Qualifier(LogoutManager.DEFAULT_BEAN_NAME) final LogoutManager logoutManager,
+        final ConfigurableApplicationContext applicationContext,
         @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
-        return new DefaultTicketRegistryCleaner(lockRepository, logoutManager, ticketRegistry);
+        return new DefaultTicketRegistryCleaner(lockRepository, applicationContext, ticketRegistry);
     }
 
     @ConditionalOnMissingBean(name = "ticketRegistryCleanerScheduler")
