@@ -1,6 +1,7 @@
 package org.apereo.cas.logout.slo;
 
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -41,12 +42,15 @@ public class DefaultSingleLogoutRequestExecutor implements SingleLogoutRequestEx
             val clientInfo = ClientInfoHolder.getClientInfo();
             val logoutRequests = new ArrayList<SingleLogoutRequestContext>();
             if (ticket instanceof final TicketGrantingTicket tgt) {
-                logoutRequests.addAll(logoutManager.performLogout(
+                val results = logoutManager.performLogout(
                     SingleLogoutExecutionRequest.builder()
                         .ticketGrantingTicket(tgt)
                         .httpServletRequest(Optional.of(request))
                         .httpServletResponse(Optional.of(response))
-                        .build()));
+                        .build());
+                results.stream().filter(r -> r.getStatus() == LogoutRequestStatus.FAILURE)
+                    .forEach(r -> LOGGER.warn("Logout request for [{}] and [{}] has failed", r.getTicketId(), r.getLogoutUrl()));
+                logoutRequests.addAll(results);
                 applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, tgt, clientInfo));
             }
             LOGGER.trace("Removing ticket [{}] from registry...", ticketId);

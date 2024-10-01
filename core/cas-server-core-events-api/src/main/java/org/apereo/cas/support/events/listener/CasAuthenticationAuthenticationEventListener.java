@@ -3,6 +3,7 @@ package org.apereo.cas.support.events.listener;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.logout.LogoutManager;
+import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.logout.slo.SingleLogoutExecutionRequest;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.CasEventRepository;
@@ -127,7 +128,9 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
             val request = SingleLogoutExecutionRequest.builder()
                 .ticketGrantingTicket(ticket)
                 .build();
-            logoutManager.performLogout(request);
+            val results = logoutManager.performLogout(request);
+            results.stream().filter(r -> r.getStatus() == LogoutRequestStatus.FAILURE)
+                .forEach(r -> LOGGER.warn("Logout request for [{}] and [{}] has failed", r.getTicketId(), r.getLogoutUrl()));
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
         }
