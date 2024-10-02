@@ -202,7 +202,7 @@ public class CasJpaTicketRegistryAutoConfiguration {
                 .supply(() -> {
                     val jpa = casProperties.getTicket().getRegistry().getJpa();
                     val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(jpa.getCrypto(), "jpa");
-                    return new JpaTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
+                    return new JpaTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, applicationContext,
                         jpaBeanFactory, jpaTicketRegistryTransactionTemplate, casProperties);
                 })
                 .otherwiseProxy()

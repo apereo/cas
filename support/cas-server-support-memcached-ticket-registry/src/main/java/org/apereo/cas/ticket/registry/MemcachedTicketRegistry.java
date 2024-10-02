@@ -12,6 +12,7 @@ import lombok.val;
 import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,8 +41,9 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry implements D
     private final ObjectPool<MemcachedClientIF> connectionPool;
 
     public MemcachedTicketRegistry(final CipherExecutor cipherExecutor, final TicketSerializationManager ticketSerializationManager,
-                                   final TicketCatalog ticketCatalog, final ObjectPool<MemcachedClientIF> connectionPool) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+                                   final TicketCatalog ticketCatalog, final ConfigurableApplicationContext applicationContext,
+                                   final ObjectPool<MemcachedClientIF> connectionPool) {
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.connectionPool = connectionPool;
     }
 

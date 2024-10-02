@@ -16,6 +16,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -44,10 +45,11 @@ public class CasGoogleCloudFirestoreTicketRegistryAutoConfiguration {
         @Qualifier("firestore")
         final Firestore firestore,
         @Qualifier(TicketSerializationManager.BEAN_NAME)
-        final TicketSerializationManager ticketSerializationManager) {
+        final TicketSerializationManager ticketSerializationManager,
+        final ConfigurableApplicationContext applicationContext) {
         val firestoreProps = casProperties.getTicket().getRegistry().getGoogleCloudFirestore();
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(firestoreProps.getCrypto(), "firestore");
-        return new GoogleCloudFirestoreTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, firestore);
+        return new GoogleCloudFirestoreTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, applicationContext, firestore);
     }
 
 

@@ -276,11 +276,11 @@ public class CasRedisTicketRegistryAutoConfiguration {
                         keySpaceConfig.addKeyspaceSettings(keyspaceSettings);
                     }
                     val adapter = new RedisKeyValueAdapter(casRedisTemplates.getTicketsRedisTemplate(), redisMappingContext);
-                    return new RedisTicketRegistry(cipher, ticketSerializationManager, ticketCatalog,
+                    return new RedisTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, applicationContext,
                         casRedisTemplates, redisTicketRegistryCache, redisTicketRegistryMessagePublisher,
                         searchCommands, redisKeyGeneratorFactory, adapter, casProperties);
                 }))
-                .otherwise(() -> new DefaultTicketRegistry(ticketSerializationManager, ticketCatalog))
+                .otherwise(() -> new DefaultTicketRegistry(ticketSerializationManager, ticketCatalog, applicationContext))
                 .get();
         }
     }

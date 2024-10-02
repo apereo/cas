@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -41,13 +42,14 @@ class MongoDbTicketRegistryConfiguration {
         @Qualifier("mongoDbTicketRegistryTemplate")
         final MongoOperations mongoDbTicketRegistryTemplate,
         @Qualifier(TicketSerializationManager.BEAN_NAME)
-        final TicketSerializationManager ticketSerializationManager) {
+        final TicketSerializationManager ticketSerializationManager,
+        final ConfigurableApplicationContext applicationContext) {
 
         val mongo = casProperties.getTicket().getRegistry().getMongo();
         new MongoDbTicketRegistryFacilitator(ticketCatalog, mongoDbTicketRegistryTemplate, mongo).createTicketCollections();
 
         val cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mongo.getCrypto(), "mongo");
-        return new MongoDbTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, mongoDbTicketRegistryTemplate);
+        return new MongoDbTicketRegistry(cipher, ticketSerializationManager, ticketCatalog, applicationContext, mongoDbTicketRegistryTemplate);
     }
 
     @ConditionalOnMissingBean(name = "mongoDbTicketRegistryTemplate")

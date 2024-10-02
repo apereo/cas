@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
@@ -185,17 +184,16 @@ class CasCoreTicketsConfiguration {
             final PublisherIdentifier messageQueueTicketRegistryIdentifier,
             @Qualifier(TicketCatalog.BEAN_NAME)
             final TicketCatalog ticketCatalog,
+            final ConfigurableApplicationContext applicationContext,
             @Qualifier(TicketSerializationManager.BEAN_NAME)
             final TicketSerializationManager ticketSerializationManager,
-            @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
-            final ObjectProvider<LogoutManager> logoutManager,
             final CasConfigurationProperties casProperties) {
             LOGGER.info("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
                         + "Tickets that are issued during runtime will be LOST when the web server is restarted. This MAY impact SSO functionality.");
             val mem = casProperties.getTicket().getRegistry().getInMemory();
             val storageMap = new ConcurrentHashMap<String, Ticket>(mem.getInitialCapacity(), mem.getLoadFactor(), mem.getConcurrency());
             return new DefaultTicketRegistry(defaultTicketRegistryCipherExecutor, ticketSerializationManager, ticketCatalog,
-                storageMap, messageQueueTicketRegistryPublisher, messageQueueTicketRegistryIdentifier);
+                    applicationContext, storageMap, messageQueueTicketRegistryPublisher, messageQueueTicketRegistryIdentifier);
         }
 
         @Bean
