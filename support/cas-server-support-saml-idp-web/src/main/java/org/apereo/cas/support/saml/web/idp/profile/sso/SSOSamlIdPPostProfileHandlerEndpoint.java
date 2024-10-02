@@ -39,7 +39,6 @@ import lombok.With;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jooq.lambda.Unchecked;
@@ -235,7 +234,8 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEnd
             val registeredService = servicesManager.findServiceBy(selectedService, SamlRegisteredService.class);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
 
-            val loadedService = (SamlRegisteredService) BeanUtils.cloneBean(registeredService);
+            val loadedService = new SamlRegisteredService();
+            BeanUtils.copyProperties(registeredService, loadedService);
             loadedService.setEncryptAssertions(samlRequest.isEncrypt());
             loadedService.setEncryptAttributes(samlRequest.isEncrypt());
 
