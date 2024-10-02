@@ -1,9 +1,6 @@
 package org.apereo.cas.support.events;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.config.CasCoreEventsAutoConfiguration;
-import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionSuccessfulEvent;
@@ -19,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.val;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -56,9 +54,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
     CasEventsReportEndpointTests.CasEventsReportEndpointTestConfiguration.class,
-    CasCoreEventsAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class,
-    CasCoreScriptingAutoConfiguration.class
+    AbstractCasEventRepositoryTests.SharedTestConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("ActuatorEndpoint")
@@ -89,7 +85,7 @@ class CasEventsReportEndpointTests {
     @Test
     void verifyOperation() throws Throwable {
         publishEvent();
-        assertFalse(casEventRepository.load().findAny().isEmpty());
+        Awaitility.await().untilAsserted(() -> assertFalse(casEventRepository.load().findAny().isEmpty()));
         val endpoint = new CasEventsReportEndpoint(casProperties, applicationContext);
         val result = endpoint.events(100);
         assertNotNull(result);
