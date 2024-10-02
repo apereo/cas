@@ -9,7 +9,7 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import java.io.Serial;
 
 /**
- * Concrete subclass of {@code AbstractCasEvent} representing granting of a
+ * Concrete subclass of {@link AbstractCasEvent} representing granting of a
  * proxy ticket by a CAS server.
  *
  * @author Misagh Moayyed

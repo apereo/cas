@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import java.util.stream.IntStream;
 import static org.junit.jupiter.api.Assertions.*;
@@ -77,7 +78,8 @@ class SessionHealthIndicatorTests {
 
     @BeforeEach
     public void initialize() {
-        this.defaultRegistry = new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog());
+        this.defaultRegistry = new DefaultTicketRegistry(mock(TicketSerializationManager.class), new DefaultTicketCatalog(),
+                mock(ConfigurableApplicationContext.class));
     }
 
     @Test

@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
@@ -47,8 +48,9 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
     public CosmosDbTicketRegistry(final CipherExecutor cipherExecutor,
                                   final TicketSerializationManager ticketSerializationManager,
                                   final TicketCatalog ticketCatalog,
+                                  final ConfigurableApplicationContext applicationContext,
                                   final List<CosmosContainer> cosmosContainers) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.cosmosContainers = cosmosContainers;
     }
 

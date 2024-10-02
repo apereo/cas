@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
@@ -61,6 +62,9 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
     @Autowired
     @Qualifier("mongoDbTicketRegistryTemplate")
     private MongoOperations mongoDbTicketRegistryTemplate;
+
+    @Autowired
+    private ConfigurableApplicationContext applicationContext;
 
     @BeforeEach
     public void before() {
@@ -124,7 +128,7 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
         when(catalog.find(any(Ticket.class))).thenReturn(null);
         val mgr = mock(TicketSerializationManager.class);
         when(mgr.serializeTicket(any())).thenReturn("{}");
-        val registry = new MongoDbTicketRegistry(CipherExecutor.noOp(), mgr, catalog, mongoDbTicketRegistryTemplate);
+        val registry = new MongoDbTicketRegistry(CipherExecutor.noOp(), mgr, catalog, applicationContext, mongoDbTicketRegistryTemplate);
         registry.addTicket(ticket);
         assertNull(registry.updateTicket(ticket));
 

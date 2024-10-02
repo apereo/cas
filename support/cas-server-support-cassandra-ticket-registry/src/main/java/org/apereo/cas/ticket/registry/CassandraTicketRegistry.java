@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.cassandra.core.cql.BeanPropertyRowMapper;
 
 import java.util.ArrayList;
@@ -53,9 +54,10 @@ public class CassandraTicketRegistry extends AbstractTicketRegistry implements D
     public CassandraTicketRegistry(final CipherExecutor cipherExecutor,
                                    final TicketSerializationManager ticketSerializationManager,
                                    final TicketCatalog ticketCatalog,
+                                   final ConfigurableApplicationContext applicationContext,
                                    final CassandraSessionFactory cassandraSessionFactory,
                                    final CassandraTicketRegistryProperties properties) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.cassandraSessionFactory = cassandraSessionFactory;
         this.properties = properties;
     }

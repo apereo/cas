@@ -36,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisKeyValueAdapter;
 import org.springframework.data.redis.core.ScanOptions;
@@ -90,6 +91,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
     public RedisTicketRegistry(final CipherExecutor cipherExecutor,
                                final TicketSerializationManager ticketSerializationManager,
                                final TicketCatalog ticketCatalog,
+                               final ConfigurableApplicationContext applicationContext,
                                final CasRedisTemplates casRedisTemplates,
                                final ObjectProvider<Cache<String, Ticket>> ticketCache,
                                final ObjectProvider<RedisTicketRegistryMessagePublisher> messagePublisher,
@@ -97,7 +99,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                                final RedisKeyGeneratorFactory redisKeyGeneratorFactory,
                                final RedisKeyValueAdapter redisKeyValueAdapter,
                                final CasConfigurationProperties casProperties) {
-        super(cipherExecutor, ticketSerializationManager, ticketCatalog);
+        super(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext);
         this.casRedisTemplates = casRedisTemplates;
         this.ticketCache = ticketCache;
         this.messagePublisher = messagePublisher;

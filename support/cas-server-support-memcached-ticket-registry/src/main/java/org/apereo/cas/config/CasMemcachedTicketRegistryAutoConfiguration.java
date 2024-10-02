@@ -20,6 +20,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -70,6 +71,7 @@ public class CasMemcachedTicketRegistryAutoConfiguration {
                                          final TicketCatalog ticketCatalog,
                                          @Qualifier(TicketSerializationManager.BEAN_NAME)
                                          final TicketSerializationManager ticketSerializationManager,
+                                         final ConfigurableApplicationContext applicationContext,
                                          @Qualifier("memcachedTicketRegistryTranscoder")
                                          final Transcoder memcachedTicketRegistryTranscoder) {
         val memcached = casProperties.getTicket()
@@ -77,7 +79,7 @@ public class CasMemcachedTicketRegistryAutoConfiguration {
             .getMemcached();
         val factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedTicketRegistryTranscoder);
         val cipherExecutor = CoreTicketUtils.newTicketRegistryCipherExecutor(memcached.getCrypto(), "memcached");
-        return new MemcachedTicketRegistry(cipherExecutor, ticketSerializationManager, ticketCatalog, factory.getObjectPool());
+        return new MemcachedTicketRegistry(cipherExecutor, ticketSerializationManager, ticketCatalog, applicationContext, factory.getObjectPool());
     }
 
     @Bean

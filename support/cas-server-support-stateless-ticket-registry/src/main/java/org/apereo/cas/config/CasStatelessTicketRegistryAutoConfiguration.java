@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.principal.ServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -80,10 +79,9 @@ public class CasStatelessTicketRegistryAutoConfiguration {
         final TicketCatalog ticketCatalog,
         @Qualifier(TicketSerializationManager.BEAN_NAME)
         final TicketSerializationManager ticketSerializationManager,
-        @Qualifier(LogoutManager.DEFAULT_BEAN_NAME)
-        final ObjectProvider<LogoutManager> logoutManager,
-        final CasConfigurationProperties casProperties) {
-        return new StatelessTicketRegistry(statelessTicketRegistryCipherExecutor, ticketSerializationManager, ticketCatalog, ticketCompactors);
+        final ConfigurableApplicationContext applicationContext) {
+        return new StatelessTicketRegistry(statelessTicketRegistryCipherExecutor, ticketSerializationManager, ticketCatalog,
+            applicationContext, ticketCompactors);
     }
 
     @Bean

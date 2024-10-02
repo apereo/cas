@@ -2,6 +2,8 @@ package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.support.events.logout.CasRequestSingleLogoutEvent;
+import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.EncodedTicket;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -14,6 +16,7 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.serialization.TicketSerializationManager;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
@@ -24,7 +27,10 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jooq.lambda.Unchecked;
+import org.springframework.context.ApplicationContext;
+
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.HashMap;
@@ -57,6 +63,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     protected final TicketSerializationManager ticketSerializationManager;
 
     protected final TicketCatalog ticketCatalog;
+
+    protected final ApplicationContext applicationContext;
 
     protected static String getPrincipalIdFrom(final Ticket ticket) {
         return ticket instanceof AuthenticationAwareTicket
@@ -99,7 +107,16 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
                 val ticketAgeSeconds = getTicketAgeSeconds(ticket);
                 LOGGER.debug("Ticket [{}] has expired according to policy [{}] after [{}] seconds and [{}] uses and will be removed from the ticket registry",
                     ticketId, ticket.getExpirationPolicy().getName(), ticketAgeSeconds, ticket.getCountOfUses());
-                deleteSingleTicket(ticket);
+                if (ticket instanceof final TicketGrantingTicket tgt) {
+                    val clientInfo = ClientInfoHolder.getClientInfo();
+                    applicationContext.publishEvent(new CasRequestSingleLogoutEvent(this, tgt, clientInfo));
+                    applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, tgt, clientInfo));
+                }
+                try {
+                    deleteTicket(ticket);
+                } catch (final Exception e) {
+                    LoggingUtils.warn(LOGGER, e);
+                }
                 return false;
             }
             return true;
