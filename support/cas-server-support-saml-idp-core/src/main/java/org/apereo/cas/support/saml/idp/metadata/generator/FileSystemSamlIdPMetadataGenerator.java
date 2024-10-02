@@ -38,7 +38,7 @@ public class FileSystemSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGener
 
     @Override
     public Pair<String, String> buildSelfSignedEncryptionCert(final Optional<SamlRegisteredService> registeredService) throws Throwable {
-        val encCert = getConfigurationContext().getSamlIdPMetadataLocator().getEncryptionCertificate(registeredService);
+        val encCert = getConfigurationContext().getSamlIdPMetadataLocator().resolveEncryptionCertificate(registeredService);
         val encKey = getConfigurationContext().getSamlIdPMetadataLocator().resolveEncryptionKey(registeredService);
         if (encCert.isFile() && encKey.isFile()) {
             writeCertificateAndKey(encCert.getFile(), encKey.getFile(), registeredService);
