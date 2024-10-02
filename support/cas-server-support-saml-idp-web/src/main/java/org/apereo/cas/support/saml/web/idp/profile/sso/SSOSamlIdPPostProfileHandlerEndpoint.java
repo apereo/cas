@@ -37,7 +37,6 @@ import lombok.With;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import net.shibboleth.shared.resolver.CriteriaSet;
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jooq.lambda.Unchecked;
@@ -60,6 +59,7 @@ import org.opensaml.saml.saml2.core.impl.AuthnRequestBuilder;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.opensaml.saml.saml2.metadata.SingleSignOnService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.boot.actuate.endpoint.web.annotation.RestControllerEndpoint;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -249,7 +249,8 @@ public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasActuatorEndpoin
             val registeredService = servicesManager.findServiceBy(selectedService, SamlRegisteredService.class);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
 
-            val loadedService = (SamlRegisteredService) BeanUtils.cloneBean(registeredService);
+            val loadedService = new SamlRegisteredService();
+            BeanUtils.copyProperties(registeredService, loadedService);
             loadedService.setEncryptAssertions(samlRequest.isEncrypt());
             loadedService.setEncryptAttributes(samlRequest.isEncrypt());
 
