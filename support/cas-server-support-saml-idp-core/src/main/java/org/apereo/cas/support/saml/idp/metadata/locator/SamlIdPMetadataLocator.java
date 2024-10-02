@@ -45,7 +45,7 @@ public interface SamlIdPMetadataLocator {
      * @param registeredService the registered service
      * @return the encryption cert file
      */
-    Resource getEncryptionCertificate(Optional<SamlRegisteredService> registeredService) throws Throwable;
+    Resource resolveEncryptionCertificate(Optional<SamlRegisteredService> registeredService) throws Throwable;
 
     /**
      * Gets encryption key file.

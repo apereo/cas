@@ -11,12 +11,15 @@ import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListBucketsRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import java.nio.charset.StandardCharsets;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -67,12 +70,18 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
 
         metadataDocument.setMetadata(FunctionUtils.doUnchecked(() -> IOUtils.toString(object, StandardCharsets.UTF_8)));
         val objectMetadata = object.response().metadata();
-        metadataDocument.setEncryptionCertificate(objectMetadata.get("encryptionCertificate"));
-        metadataDocument.setSigningCertificate(objectMetadata.get("signingCertificate"));
-        metadataDocument.setEncryptionKey(objectMetadata.get("encryptionKey"));
-        metadataDocument.setSigningKey(objectMetadata.get("signingKey"));
+        LOGGER.debug("Located S3 object metadata [{}] from bucket [{}]", objectMetadata, bucketToUse);
+        metadataDocument.setEncryptionCertificate(getObjectMetadataEntry(objectMetadata, "encryptionCertificate"));
+        metadataDocument.setSigningCertificate(getObjectMetadataEntry(objectMetadata, "signingCertificate"));
+        metadataDocument.setEncryptionKey(getObjectMetadataEntry(objectMetadata, "encryptionKey"));
+        metadataDocument.setSigningKey(getObjectMetadataEntry(objectMetadata, "signingKey"));
         metadataDocument.setAppliesTo(bucketToUse);
         return metadataDocument;
+    }
+
+    private static String getObjectMetadataEntry(final Map<String, String> objectMetadata,
+                                                 final String key) {
+        return StringUtils.defaultIfBlank(objectMetadata.get(key), objectMetadata.get(key.toLowerCase(Locale.ENGLISH)));
     }
 }
 

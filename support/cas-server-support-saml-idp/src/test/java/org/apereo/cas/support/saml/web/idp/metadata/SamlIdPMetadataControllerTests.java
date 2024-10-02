@@ -30,6 +30,8 @@ class SamlIdPMetadataControllerTests extends BaseSamlIdPConfigurationTests {
         val response = new MockHttpServletResponse();
         val service = RegisteredServiceTestUtils.getService().getId();
         assertDoesNotThrow(() -> samlIdPMetadataController.generateMetadataForIdp(service, response));
+        assertDoesNotThrow(() -> samlIdPMetadataController.idpSigningCertificate(service));
+        assertDoesNotThrow(() -> samlIdPMetadataController.idpEncryptionCertificate(service));
     }
 
     @Test
