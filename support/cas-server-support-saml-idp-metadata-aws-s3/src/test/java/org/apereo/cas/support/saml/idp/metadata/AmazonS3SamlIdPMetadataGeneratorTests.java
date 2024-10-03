@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.saml-idp.metadata.amazon-s3.region=us-east-1",
     "cas.authn.saml-idp.metadata.amazon-s3.credential-access-key=test",
     "cas.authn.saml-idp.metadata.amazon-s3.credential-secret-key=test",
+    "cas.authn.saml-idp.metadata.amazon-s3.crypto.alg=A128CBC-HS256",
     "cas.authn.saml-idp.metadata.amazon-s3.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
     "cas.authn.saml-idp.metadata.amazon-s3.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ"
 })
