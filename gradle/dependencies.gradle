@@ -759,6 +759,9 @@ ext.libraries = [
                 },
                 dependencies.create("org.apache.httpcomponents.core5:httpcore5:$httpCoreVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                },
+                dependencies.create("org.apache.httpcomponents.core5:httpcore5-h2:$httpCoreVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
         httpclient4                : [
