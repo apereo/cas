@@ -37,8 +37,8 @@ public class DefaultSingleSignOnBuildingStrategy implements SingleSignOnBuilding
                                             final String ticketGrantingTicket) {
         try {
             return shouldIssueTicketGrantingTicket(authentication, ticketGrantingTicket)
-                    ? createTicketGrantingTicket(authenticationResult, ticketGrantingTicket)
-                    : updateTicketGrantingTicket(authentication, ticketGrantingTicket);
+                ? createTicketGrantingTicket(authenticationResult, ticketGrantingTicket)
+                : updateTicketGrantingTicket(authentication, ticketGrantingTicket);
         } catch (final Throwable e) {
             LoggingUtils.error(LOGGER, e);
             if (e instanceof final PrincipalException pe) {
