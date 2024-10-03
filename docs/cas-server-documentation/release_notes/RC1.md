@@ -72,6 +72,13 @@ and scenarios. At the moment, total number of jobs stands at approximately `490`
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
   
+### Java 23
+
+As described, the JDK baseline requirement for this CAS release is and **MUST** be JDK `21`. We are still waiting for the
+wider ecosystem of supporting frameworks and libraries to catch up to Java `23`. We anticipate the work to finalize in the next few
+release candidates and certainly prior to the final release. Remember that the baseline requirement will remain unchanged
+and this is just a preparatory step to ensure CAS is ready for the next version of Java.
+
 ### Jaeger Distributed Tracing
 
 Jaeger is an open-source distributed tracing platform, that is now 
@@ -99,6 +106,8 @@ Apache Kafka can now be used as a [ticket registry](../ticketing/Kafka-Ticket-Re
 - OAuth access tokens with an expiration policy value of zero now prevent CAS from issuing access tokens altogether. 
 - [SAML2 responses](../authentication/Configuring-SAML2-Authentication.html) may now include an additional attribute that carries the satisfied authentication context in addition to the `AuthnContext` element.
 - In [delegated authentication](../integration/Delegate-Authentication.html), disabling SSO for a registered service definition will allow CAS to instruct the external identity provider to ask for user credentials.
+- Removing a number of duplicate dependencies in the final CAS web application artifact.
+- A series of small bug fixes related to the management of SAML2 identity provider metadata via Amazon S3 buckets.
 
 ## Library Upgrades
 

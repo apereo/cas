@@ -1,5 +1,3 @@
-
-const path = require("path");
 const cas = require("../../cas.js");
 
 async function getActuatorEndpoint(entityId, password = "Mellon") {
