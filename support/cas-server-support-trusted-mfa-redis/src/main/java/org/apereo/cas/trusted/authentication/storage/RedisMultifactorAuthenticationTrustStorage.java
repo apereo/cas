@@ -6,18 +6,22 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.val;
 import org.apache.commons.lang3.ObjectUtils;
-
+import org.springframework.data.redis.core.RedisCallback;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * This is {@link RedisMultifactorAuthenticationTrustStorage}.
@@ -33,17 +37,13 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
 
     private final CasRedisTemplate<String, List<MultifactorAuthenticationTrustRecord>> redisTemplate;
 
-    private final long scanCount;
-
     public RedisMultifactorAuthenticationTrustStorage(
         final TrustedDevicesMultifactorProperties properties,
         final CipherExecutor<Serializable, String> cipherExecutor,
         final CasRedisTemplate<String, List<MultifactorAuthenticationTrustRecord>> redisTemplate,
-        final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy,
-        final long scanCount) {
+        final MultifactorAuthenticationTrustRecordKeyGenerator keyGenerationStrategy) {
         super(properties, cipherExecutor, keyGenerationStrategy);
         this.redisTemplate = redisTemplate;
-        this.scanCount = scanCount;
     }
 
     private static String getPatternRedisKey() {
@@ -51,7 +51,7 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
     }
 
     private static String buildRedisKeyForRecord(final String username) {
-        return CAS_PREFIX + username + ":*";
+        return CAS_PREFIX + username.toLowerCase(Locale.ENGLISH) + ":*";
     }
 
     private static String buildRedisKeyForRecord(final long id) {
@@ -59,27 +59,31 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
     }
 
     private static String buildRedisKeyForRecord(final MultifactorAuthenticationTrustRecord record) {
-        return CAS_PREFIX + record.getPrincipal() + ':' + record.getId();
+        return CAS_PREFIX + record.getPrincipal().toLowerCase(Locale.ENGLISH) + ':' + record.getId();
     }
 
     @Override
     public void remove(final String key) {
         val principal = getKeyGenerationStrategy().getPrincipalFromRecordKey(getCipherExecutor().decode(key));
-        try (val results = redisTemplate.scan(buildRedisKeyForRecord(principal), this.scanCount)) {
-            results.findFirst().ifPresent(redisTemplate::delete);
+        try (val results = redisTemplate.scan(buildRedisKeyForRecord(principal))) {
+            redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
+                StreamSupport.stream(results.spliterator(), false).forEach(id ->
+                    connection.keyCommands().del(id.getBytes(StandardCharsets.UTF_8)));
+                return null;
+            });
         }
     }
 
     @Override
     public void remove(final ZonedDateTime expirationDate) {
-        try (val results = redisTemplate.scan(getPatternRedisKey(), this.scanCount)) {
+        try (val results = redisTemplate.scan(getPatternRedisKey())) {
             results
                 .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull)
                 .flatMap(List::stream)
                 .filter(record -> DateTimeUtils.zonedDateTimeOf(record.getExpirationDate()).isBefore(expirationDate))
                 .forEach(record -> {
-                    try (val recordKeys = redisTemplate.scan(buildRedisKeyForRecord(record), this.scanCount)) {
+                    try (val recordKeys = redisTemplate.scan(buildRedisKeyForRecord(record))) {
                         redisTemplate.delete(Objects.requireNonNull(recordKeys.collect(Collectors.toSet())));
                     }
                 });
@@ -88,15 +92,13 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
 
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> getAll() {
-        remove();
-        try (val keys = redisTemplate.scan(getPatternRedisKey(), this.scanCount)) {
+        try (val keys = redisTemplate.scan(getPatternRedisKey())) {
             return getFromRedisKeys(keys);
         }
     }
 
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> get(final ZonedDateTime onOrAfterDate) {
-        remove();
         return getAll()
             .stream()
             .filter(record -> record.getRecordDate().isAfter(onOrAfterDate))
@@ -105,16 +107,14 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
 
     @Override
     public Set<? extends MultifactorAuthenticationTrustRecord> get(final String principal) {
-        remove();
-        try (val keys = redisTemplate.scan(buildRedisKeyForRecord(principal), this.scanCount)) {
+        try (val keys = redisTemplate.scan(buildRedisKeyForRecord(principal))) {
             return getFromRedisKeys(keys);
         }
     }
 
     @Override
     public MultifactorAuthenticationTrustRecord get(final long id) {
-        remove();
-        try (val keys = redisTemplate.scan(buildRedisKeyForRecord(id), this.scanCount)) {
+        try (val keys = redisTemplate.scan(buildRedisKeyForRecord(id))) {
             return keys
                 .findFirst()
                 .map(redisKey -> {
@@ -131,18 +131,21 @@ public class RedisMultifactorAuthenticationTrustStorage extends BaseMultifactorA
     @Override
     protected MultifactorAuthenticationTrustRecord saveInternal(final MultifactorAuthenticationTrustRecord record) {
         val redisKey = buildRedisKeyForRecord(record);
-        val results = (List<MultifactorAuthenticationTrustRecord>)
-            ObjectUtils.defaultIfNull(redisTemplate.boundValueOps(redisKey).get(), new ArrayList<>());
+        val valueOps = redisTemplate.boundValueOps(redisKey);
+        val results = ObjectUtils.defaultIfNull(valueOps.get(), new ArrayList<MultifactorAuthenticationTrustRecord>());
         results.add(record);
-        redisTemplate.boundValueOps(redisKey).set(results);
+        valueOps.set(results);
+        valueOps.expireAt(record.getExpirationDate().toInstant());
         return record;
     }
 
     private Set<? extends MultifactorAuthenticationTrustRecord> getFromRedisKeys(final Stream<String> keys) {
+        val expirationDate = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
         return keys
             .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
             .filter(Objects::nonNull)
             .flatMap(List::stream)
+            .filter(record -> DateTimeUtils.zonedDateTimeOf(record.getExpirationDate()).isAfter(expirationDate))
             .collect(Collectors.toSet());
     }
 }

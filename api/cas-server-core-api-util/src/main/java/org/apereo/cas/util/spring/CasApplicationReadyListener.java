@@ -1,23 +1,21 @@
-package org.apereo.cas.support.saml.idp;
-
-import org.apereo.cas.util.spring.CasEventListener;
+package org.apereo.cas.util.spring;
 
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 
 /**
- * This is {@link SamlIdPCasEventListener}.
+ * Interface for {@code CasWebApplication} to allow spring {@code @Async} support to use JDK proxy.
  *
- * @author Misagh Moayyed
+ * @author Hal Deadman
  * @since 6.5.0
  */
 @FunctionalInterface
-public interface SamlIdPCasEventListener extends CasEventListener {
+public interface CasApplicationReadyListener extends CasEventListener {
     /**
-     * Handle application ready event.
+     * Handle Application Ready Event.
      *
-     * @param event the event
+     * @param event ApplicationReadyEvent fired when application is ready
      */
     @EventListener
     @Async

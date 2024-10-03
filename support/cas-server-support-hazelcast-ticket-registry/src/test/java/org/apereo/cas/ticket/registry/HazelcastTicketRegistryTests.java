@@ -24,6 +24,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -45,6 +47,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("Hazelcast")
 @ExtendWith(CasTestExtension.class)
+@Execution(ExecutionMode.SAME_THREAD)
 class HazelcastTicketRegistryTests {
     @Nested
     @Getter

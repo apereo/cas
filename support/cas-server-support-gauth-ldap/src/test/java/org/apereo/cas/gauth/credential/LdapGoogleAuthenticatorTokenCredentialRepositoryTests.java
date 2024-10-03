@@ -40,14 +40,11 @@ class LdapGoogleAuthenticatorTokenCredentialRepositoryTests extends BaseLdapGoog
     @Override
     protected String getUsernameUnderTest() throws Exception {
         val uid = super.getUsernameUnderTest();
-
         @Cleanup
-        val c = new LDAPConnection("localhost", 10389, "cn=Directory Manager", "password");
-
+        val connection = new LDAPConnection("localhost", 10389, "cn=Directory Manager", "password");
         val bindInit = new BindConnectionInitializer("cn=Directory Manager", new Credential("password"));
-
         val rs = new ByteArrayInputStream(getLdif(uid).getBytes(StandardCharsets.UTF_8));
-        LdapIntegrationTestsOperations.populateEntries(c, rs, "ou=people,dc=example,dc=org", bindInit);
+        LdapIntegrationTestsOperations.populateEntries(connection, rs, "ou=people,dc=example,dc=org", bindInit);
 
         return uid;
     }

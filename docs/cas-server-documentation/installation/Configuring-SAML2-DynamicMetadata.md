@@ -11,6 +11,8 @@ category: Protocols
 The following CAS endpoints handle the generation of SAML2 metadata:
 
 - `/idp/metadata`
+- `/idp/metadata/signingCertificate`
+- `/idp/metadata/encryptionCertificate`
 
 This endpoint will display the CAS IdP SAML2 metadata upon receiving a GET request. If metadata is already available and generated,
 it will be displayed. If metadata is absent, one will be generated automatically.

@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.AuthenticationPolicyExecutionResult;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfigurer;
-import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.DefaultServiceMatchingStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -26,7 +26,6 @@ import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -34,10 +33,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
-import org.springframework.core.Ordered;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import java.util.List;
 
 /**
  * This is {@link CasCoreAutoConfiguration}.
@@ -55,6 +51,14 @@ class CasCoreConfiguration {
     @Configuration(value = "CasCorePolicyConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasCorePolicyConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(name = "casCoreAuthenticationServiceSelectionStrategyConfigurer")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public AuthenticationServiceSelectionStrategyConfigurer casCoreAuthenticationServiceSelectionStrategyConfigurer() {
+            return plan -> plan.registerStrategy(new DefaultAuthenticationServiceSelectionStrategy());
+        }
+        
         @Bean
         @ConditionalOnMissingBean(name = "serviceMatchingStrategy")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -137,23 +141,6 @@ class CasCoreConfiguration {
                 .authenticationPolicy(authenticationPolicy)
                 .principalResolver(principalResolver)
                 .build();
-        }
-    }
-
-    @Configuration(value = "CasCoreAuthenticationServiceSelectionConfiguration", proxyBeanMethods = false)
-    @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
-    static class CasCoreAuthenticationServiceSelectionConfiguration {
-        @ConditionalOnMissingBean(name = AuthenticationServiceSelectionPlan.BEAN_NAME)
-        @Bean
-        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuthenticationServiceSelectionPlan authenticationServiceSelectionPlan(
-            final List<AuthenticationServiceSelectionStrategyConfigurer> configurers) {
-            val plan = new DefaultAuthenticationServiceSelectionPlan();
-            configurers.forEach(c -> {
-                LOGGER.trace("Configuring authentication request service selection strategy plan [{}]", c.getName());
-                c.configureAuthenticationServiceSelectionStrategy(plan);
-            });
-            return plan;
         }
     }
 }

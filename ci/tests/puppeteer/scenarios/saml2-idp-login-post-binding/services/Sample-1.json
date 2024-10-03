@@ -1,0 +1,24 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "http://localhost:9443/simplesaml.+",
+  "name" : "Sample",
+  "id" : 1,
+  "evaluationOrder" : 1,
+  "metadataLocation" : "http://localhost:9443/simplesaml/module.php/saml/sp/metadata.php/post-sp",
+  "attributeReleasePolicy": {
+    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
+    "mergingPolicy": "ADD",
+    "policies": [ "java.util.ArrayList",
+      [
+        {
+          "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+        },
+        {
+          "@class": "org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy",
+          "useUniformResourceName": false
+        }
+      ]
+    ]
+  }
+}
+

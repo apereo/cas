@@ -33,7 +33,7 @@ class FileSystemSamlIdPMetadataGeneratorTests {
             assertNotNull(samlIdPMetadataGenerator.generate(Optional.empty()));
             val metadata = samlIdPMetadataLocator.resolveMetadata(Optional.empty());
             assertNotNull(metadata);
-            assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(Optional.empty()));
+            assertNotNull(samlIdPMetadataLocator.resolveEncryptionCertificate(Optional.empty()));
             assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(Optional.empty()));
             assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(Optional.empty()));
             assertNotNull(samlIdPMetadataLocator.resolveSigningKey(Optional.empty()));
@@ -60,7 +60,7 @@ class FileSystemSamlIdPMetadataGeneratorTests {
 
             samlIdPMetadataGenerator.generate(registeredService);
             assertNotNull(samlIdPMetadataLocator.resolveMetadata(registeredService));
-            assertNotNull(samlIdPMetadataLocator.getEncryptionCertificate(registeredService));
+            assertNotNull(samlIdPMetadataLocator.resolveEncryptionCertificate(registeredService));
             assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(registeredService));
             assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(registeredService));
             assertNotNull(samlIdPMetadataLocator.resolveSigningKey(registeredService));

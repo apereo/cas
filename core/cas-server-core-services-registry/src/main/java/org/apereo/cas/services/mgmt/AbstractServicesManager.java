@@ -140,7 +140,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     @Override
     public void deleteAll() {
         lock.tryLock(__ -> {
-            configurationContext.getServicesCache().asMap().forEach((k, v) -> delete(v));
+            configurationContext.getServicesCache().asMap().forEach((key, v) -> delete(v));
             configurationContext.getServicesCache().invalidateAll();
             val clientInfo = ClientInfoHolder.getClientInfo();
             publishEvent(new CasRegisteredServicesDeletedEvent(this, clientInfo));

@@ -130,7 +130,7 @@ public class DefaultAmazonCloudDirectoryRepository implements AmazonCloudDirecto
                 return Pair.of(a.key().name(), value);
             })
             .filter(p -> p.getValue() != null)
-            .collect(Collectors.toMap(Pair::getKey, s -> CollectionUtils.toCollection(s.getValue(), ArrayList.class)));
+            .collect(Collectors.toMap(Pair::getKey, pair -> CollectionUtils.toCollection(pair.getValue(), ArrayList.class)));
     }
 
     /**

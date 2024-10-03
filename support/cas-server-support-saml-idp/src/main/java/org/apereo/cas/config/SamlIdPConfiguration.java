@@ -332,7 +332,7 @@ class SamlIdPConfiguration {
             @Qualifier("casSamlIdPMetadataResolver")
             final MetadataResolver casSamlIdPMetadataResolver) {
             return new SamlProfileSamlAttributeStatementBuilder(openSamlConfigBean,
-                casProperties.getAuthn().getSamlIdp(), samlObjectEncrypter,
+                casProperties, samlObjectEncrypter,
                 attributeDefinitionStore, samlIdPServiceFactory,
                 samlProfileSamlNameIdBuilder, casSamlIdPMetadataResolver);
         }

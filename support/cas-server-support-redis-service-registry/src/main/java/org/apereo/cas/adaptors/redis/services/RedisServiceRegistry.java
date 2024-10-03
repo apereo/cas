@@ -34,15 +34,11 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
 
     private final CasRedisTemplate<String, RegisteredService> template;
 
-    private final long scanCount;
-
     public RedisServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                 final CasRedisTemplate<String, RegisteredService> template,
-                                final Collection<ServiceRegistryListener> serviceRegistryListeners,
-                                final long scanCount) {
+                                final Collection<ServiceRegistryListener> serviceRegistryListeners) {
         super(applicationContext, serviceRegistryListeners);
         this.template = template;
-        this.scanCount = scanCount;
     }
 
     private static String getRegisteredServiceRedisKey(final RegisteredService registeredService) {
@@ -128,6 +124,6 @@ public class RedisServiceRegistry extends AbstractServiceRegistry {
     }
 
     private Stream<String> getRegisteredServiceKeys() {
-        return template.scan(getPatternRegisteredServiceRedisKey(), this.scanCount);
+        return template.scan(getPatternRegisteredServiceRedisKey());
     }
 }

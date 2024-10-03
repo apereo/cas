@@ -68,7 +68,7 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     public void delete(final String username, final long deviceId) {
         try {
             val account = fetchSingleYubiKeyAccount(username);
-            if (account != null && account.getDevices().removeIf(d -> deviceId == d.getId())) {
+            if (account != null && account.getDevices().removeIf(device -> deviceId == device.getId())) {
                 entityManager.merge(account);
             }
         } catch (final NoResultException e) {

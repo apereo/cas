@@ -1,10 +1,10 @@
 package org.apereo.cas.configuration.model.support.javers;
 
-import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -25,10 +25,7 @@ public class JaversProperties implements Serializable {
     /**
      * Family of sub-properties pertaining to MongoDb settings.
      */
-    private JaversMongoProperties mongo = new JaversMongoProperties();
+    @NestedConfigurationProperty
+    private JaversMongoDbProperties mongo = new JaversMongoDbProperties();
 
-    public static class JaversMongoProperties extends BaseMongoDbProperties {
-        @Serial
-        private static final long serialVersionUID = -2471243083598934186L;
-    }
 }

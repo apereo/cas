@@ -36,6 +36,7 @@ class DelegatedClientAuthenticationStoreWebflowStateActionTests {
 
     @Autowired
     private ConfigurableApplicationContext applicationContext;
+
     @Test
     void verifyMissingClient() throws Throwable {
         val context = MockRequestContext.create(applicationContext);

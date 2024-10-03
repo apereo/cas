@@ -3,9 +3,6 @@ package org.apereo.cas.support.events;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
-import org.apereo.cas.config.CasCoreEventsAutoConfiguration;
-import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
-import org.apereo.cas.config.CasCoreUtilAutoConfiguration;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
@@ -60,9 +57,7 @@ import static org.mockito.Mockito.*;
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
     CasAuthenticationEventListenerTests.EventTestConfiguration.class,
-    CasCoreEventsAutoConfiguration.class,
-    CasCoreUtilAutoConfiguration.class,
-    CasCoreScriptingAutoConfiguration.class
+    AbstractCasEventRepositoryTests.SharedTestConfiguration.class
 })
 @Tag("Events")
 @ExtendWith(CasTestExtension.class)
@@ -203,34 +198,36 @@ class CasAuthenticationEventListenerTests {
     void verifyCasTicketGrantingTicketDestroyedHasClientInfoWithMultipleThreads() throws Throwable {
         assertRepositoryIsEmpty();
         var currentCount = casEventRepository.load().count();
-        val threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
-        val futureList = new ArrayList<Future<Integer>>();
-        var expectedNumOfIp1 = 0;
-        for (var x = 0; x < NUM_OF_REQUESTS; x++) {
-            if (shouldUseIp1(x)) {
-                expectedNumOfIp1++;
-            }
-            futureList.add(threadPool.submit(new HttpServletRequestSimulation(x, shouldUseIp1(x), applicationContext)));
-        }
-        var maxThread = -1;
-        for (val future : futureList) {
-            var currentThread = future.get();
-            if (currentThread > maxThread) {
-                maxThread = currentThread;
-            }
-        }
+        try (val threadPool = Executors.newFixedThreadPool(THREAD_POOL_SIZE)) {
 
-        waitForSpringEventToProcess(currentCount + maxThread + 1);
-        assertNotNull(casEventRepository.load());
-        val list = casEventRepository.load().toList();
-        assertFalse(list.isEmpty());
-        val eventSize = list.size();
-        val numOfIp1s = (int) list.stream().filter(e -> HttpServletRequestSimulation.IP1.equals(e.getClientIpAddress())).count();
-        assertEquals(maxThread + 1, eventSize);
-        assertEquals(expectedNumOfIp1, numOfIp1s);
+            val futureList = new ArrayList<Future<Integer>>();
+            var expectedNumOfIp1 = 0;
+            for (var x = 0; x < NUM_OF_REQUESTS; x++) {
+                if (shouldUseIp1(x)) {
+                    expectedNumOfIp1++;
+                }
+                futureList.add(threadPool.submit(new HttpServletRequestSimulation(x, shouldUseIp1(x), applicationContext)));
+            }
+            var maxThread = -1;
+            for (val future : futureList) {
+                var currentThread = future.get();
+                if (currentThread > maxThread) {
+                    maxThread = currentThread;
+                }
+            }
+
+            waitForSpringEventToProcess(currentCount + maxThread + 1);
+            assertNotNull(casEventRepository.load());
+            val list = casEventRepository.load().toList();
+            assertFalse(list.isEmpty());
+            val eventSize = list.size();
+            val numOfIp1s = (int) list.stream().filter(e -> HttpServletRequestSimulation.IP1.equals(e.getClientIpAddress())).count();
+            assertEquals(maxThread + 1, eventSize);
+            assertEquals(expectedNumOfIp1, numOfIp1s);
+        }
     }
 
-    private boolean shouldUseIp1(final int x) {
+    private static boolean shouldUseIp1(final int x) {
         return x % NUM_TO_USE_IP1 == 0;
     }
 

@@ -195,9 +195,9 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
         val fileName = getRegisteredServiceFileName(service);
         try (val out = Files.newOutputStream(fileName.toPath())) {
             invokeServiceRegistryListenerPreSave(service);
-            val result = registeredServiceSerializers.stream().anyMatch(s -> {
+            val result = registeredServiceSerializers.stream().anyMatch(serializer -> {
                 try {
-                    s.to(out, service);
+                    serializer.to(out, service);
                     return true;
                 } catch (final Exception e) {
                     LOGGER.debug(e.getMessage(), e);

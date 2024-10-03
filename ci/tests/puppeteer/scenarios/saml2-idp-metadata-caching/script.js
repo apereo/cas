@@ -41,7 +41,7 @@ const assert = require("assert");
         for (let i = 1; i <= 150; i++) {
             const randomIndex = Math.floor(Math.random() * SERVICES.length);
             const serviceId = SERVICES[randomIndex];
-            await cas.logb("Sending metadata request for service id", serviceId);
+            await cas.logb(`Sending metadata request for service id ${serviceId}`);
             promises.push(sendMetadataRequest(serviceId));
         }
         await Promise.all(promises);
