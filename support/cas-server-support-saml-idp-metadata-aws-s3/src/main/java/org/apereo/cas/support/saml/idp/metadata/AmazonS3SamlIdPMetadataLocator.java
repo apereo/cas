@@ -14,6 +14,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.ListBucketsRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
@@ -61,8 +62,18 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
         LOGGER.debug("Located [{}] S3 object(s) from bucket [{}]", objects.size(), bucketToUse);
 
         if (objects.isEmpty()) {
-            throw new IllegalArgumentException("No objects found in bucket " + bucketToUse);
+            return null;
         }
+        if (objects.size() > 1) {
+            LOGGER.warn("Located [{}] S3 object(s) from bucket [{}]", objects.size(), bucketToUse);
+            objects.forEach(obj -> {
+                LOGGER.debug("Deleting object [{}] from bucket [{}]", obj.key(), bucketToUse);
+                val deleteRequest = DeleteObjectRequest.builder().bucket(bucketToUse).key(obj.key()).build();
+                s3Client.deleteObject(deleteRequest);
+            });
+            throw new IllegalArgumentException("Multiple S3 objects where found in bucket " + bucketToUse);
+        }
+
         val obj = objects.getFirst();
         val objectKey = obj.key();
         LOGGER.debug("Fetching object [{}] from bucket [{}]", objectKey, bucketToUse);
