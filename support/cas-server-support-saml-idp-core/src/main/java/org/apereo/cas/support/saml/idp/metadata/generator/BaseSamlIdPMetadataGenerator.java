@@ -40,8 +40,7 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
     public SamlIdPMetadataDocument generate(final Optional<SamlRegisteredService> registeredService) throws Throwable {
         val idp = configurationContext.getCasProperties().getAuthn().getSamlIdp();
         LOGGER.debug("Preparing to generate metadata for entity id [{}]", idp.getCore().getEntityId());
-        val samlIdPMetadataLocator = configurationContext.getSamlIdPMetadataLocator();
-        if (!samlIdPMetadataLocator.exists(registeredService)) {
+        if (!doesMetadataExistFor(registeredService)) {
             val owner = getAppliesToFor(registeredService);
             LOGGER.trace("Metadata does not exist for [{}]", owner);
             if (shouldGenerateMetadata(registeredService)) {
@@ -76,7 +75,13 @@ public abstract class BaseSamlIdPMetadataGenerator implements SamlIdPMetadataGen
             LOGGER.debug("Skipping metadata generation process for [{}]", owner);
         }
 
+        val samlIdPMetadataLocator = configurationContext.getSamlIdPMetadataLocator();
         return samlIdPMetadataLocator.fetch(registeredService);
+    }
+
+    protected boolean doesMetadataExistFor(final Optional<SamlRegisteredService> registeredService) throws Throwable {
+        val samlIdPMetadataLocator = configurationContext.getSamlIdPMetadataLocator();
+        return samlIdPMetadataLocator.exists(registeredService);
     }
 
     protected boolean shouldGenerateMetadata(final Optional<SamlRegisteredService> registeredService) {

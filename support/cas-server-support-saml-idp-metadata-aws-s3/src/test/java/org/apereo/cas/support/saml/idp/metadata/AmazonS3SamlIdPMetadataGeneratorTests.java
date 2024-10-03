@@ -1,12 +1,17 @@
 package org.apereo.cas.support.saml.idp.metadata;
 
 import org.apereo.cas.config.CasAmazonS3SamlMetadataAutoConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.BaseSamlIdPMetadataTests;
 import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.util.RandomUtils;
+import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -14,6 +19,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import software.amazon.awssdk.services.s3.S3Client;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,14 +54,41 @@ class AmazonS3SamlIdPMetadataGeneratorTests {
     @Qualifier(SamlIdPMetadataGenerator.BEAN_NAME)
     private SamlIdPMetadataGenerator samlIdPMetadataGenerator;
 
+    @Autowired
+    @Qualifier("amazonS3Client")
+    private S3Client amazonS3Client;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("samlIdPMetadataCache")
+    private Cache<String, SamlIdPMetadataDocument> samlIdPMetadataCache;
+
     @Test
     void verifyOperation() throws Throwable {
-        samlIdPMetadataGenerator.generate(Optional.empty());
-        assertNotNull(samlIdPMetadataLocator.resolveMetadata(Optional.empty()));
-        assertNotNull(samlIdPMetadataLocator.resolveEncryptionCertificate(Optional.empty()));
-        assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(Optional.empty()));
-        assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(Optional.empty()));
-        assertNotNull(samlIdPMetadataLocator.resolveSigningKey(Optional.empty()));
+        val registeredService = Optional.<SamlRegisteredService>empty();
+        samlIdPMetadataGenerator.generate(registeredService);
+        samlIdPMetadataCache.invalidateAll();
+
+        /*
+         * Tamper with metadata manually.
+         */
+        val bucketNameToUse = AmazonS3SamlIdPMetadataUtils.determineBucketNameFor(registeredService,
+            casProperties.getAuthn().getSamlIdp().getMetadata().getAmazonS3().getIdpMetadataBucketName(), amazonS3Client);
+        val document = new SamlIdPMetadataDocument();
+        document.setId(RandomUtils.nextLong());
+        AmazonS3SamlIdPMetadataUtils.putSamlIdPMetadataIntoBucket(amazonS3Client, document, bucketNameToUse);
+        assertThrows(IllegalArgumentException.class, () -> samlIdPMetadataGenerator.generate(registeredService));
+        samlIdPMetadataCache.invalidateAll();
+        assertEquals(ResourceUtils.EMPTY_RESOURCE, samlIdPMetadataLocator.resolveMetadata(registeredService));
+
+        samlIdPMetadataGenerator.generate(registeredService);
+        assertNotNull(samlIdPMetadataLocator.resolveMetadata(registeredService));
+        assertNotNull(samlIdPMetadataLocator.resolveEncryptionCertificate(registeredService));
+        assertNotNull(samlIdPMetadataLocator.resolveEncryptionKey(registeredService));
+        assertNotNull(samlIdPMetadataLocator.resolveSigningCertificate(registeredService));
+        assertNotNull(samlIdPMetadataLocator.resolveSigningKey(registeredService));
     }
 
     @Test
