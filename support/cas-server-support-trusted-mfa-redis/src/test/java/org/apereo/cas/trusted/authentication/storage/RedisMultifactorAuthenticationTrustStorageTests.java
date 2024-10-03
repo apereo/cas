@@ -79,10 +79,10 @@ class RedisMultifactorAuthenticationTrustStorageTests extends AbstractMultifacto
     @Test
     void verifyExpireByDate() throws Throwable {
         val user = UUID.randomUUID().toString();
-        val r = MultifactorAuthenticationTrustRecord.newInstance(user, "geography", "fingerprint");
+        val record = MultifactorAuthenticationTrustRecord.newInstance(user, "geography", "fingerprint");
         val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
-        r.setRecordDate(now.minusDays(2));
-        getMfaTrustEngine().save(r);
+        record.setRecordDate(now.minusDays(2));
+        getMfaTrustEngine().save(record);
         assertEquals(1, getMfaTrustEngine().get(now.minusDays(30)).size());
         assertEquals(0, getMfaTrustEngine().get(now.minusDays(1)).size());
     }
