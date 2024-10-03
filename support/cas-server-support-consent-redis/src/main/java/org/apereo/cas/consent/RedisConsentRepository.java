@@ -32,9 +32,7 @@ public class RedisConsentRepository implements ConsentRepository {
     @Serial
     private static final long serialVersionUID = 1234168609139907616L;
 
-    private final transient CasRedisTemplate<String, ConsentDecision> redisTemplate;
-
-    private final long scanCount;
+    private final CasRedisTemplate<String, ConsentDecision> redisTemplate;
 
     @Override
     public ConsentDecision findConsentDecision(final Service service,
@@ -51,7 +49,7 @@ public class RedisConsentRepository implements ConsentRepository {
 
     @Override
     public Collection<? extends ConsentDecision> findConsentDecisions(final String principal) {
-        try (val redisKeys = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + principal + ":*", this.scanCount)) {
+        try (val redisKeys = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + principal + ":*")) {
             return redisKeys
                 .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull)
@@ -62,7 +60,7 @@ public class RedisConsentRepository implements ConsentRepository {
 
     @Override
     public Collection<? extends ConsentDecision> findConsentDecisions() {
-        try (val redisKeys = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + '*', scanCount)) {
+        try (val redisKeys = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + '*')) {
             return redisKeys
                 .map(redisKey -> redisTemplate.boundValueOps(redisKey).get())
                 .filter(Objects::nonNull)
@@ -85,7 +83,7 @@ public class RedisConsentRepository implements ConsentRepository {
 
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
-        try (val redisKey = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + principal + ':' + decisionId, scanCount)) {
+        try (val redisKey = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + principal + ':' + decisionId)) {
             val count = redisTemplate.delete(redisKey.collect(Collectors.toSet()));
             return count != null && count.intValue() > 0;
         }
@@ -93,14 +91,14 @@ public class RedisConsentRepository implements ConsentRepository {
 
     @Override
     public void deleteAll() {
-        try (val redisKey = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + '*', scanCount)) {
+        try (val redisKey = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + '*')) {
             redisTemplate.delete(redisKey.collect(Collectors.toSet()));
         }
     }
 
     @Override
     public boolean deleteConsentDecisions(final String principal) {
-        try (val redisKey = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + principal + ":*", scanCount)) {
+        try (val redisKey = redisTemplate.scan(CAS_CONSENT_DECISION_PREFIX + principal + ":*")) {
             val count = redisTemplate.delete(redisKey.collect(Collectors.toSet()));
             return count != null && count.intValue() > 0;
         }

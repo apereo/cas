@@ -22,6 +22,16 @@ public interface CasRedisTemplate<K, V> extends RedisOperations<K, V> {
     Stream<String> scan(String pattern, Long count);
 
     /**
+     * Scan stream.
+     *
+     * @param pattern the pattern
+     * @return the stream
+     */
+    default Stream<String> scan(String pattern) {
+        return scan(pattern, -1L);
+    }
+
+    /**
      * Count entries.
      *
      * @param pattern the pattern

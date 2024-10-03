@@ -85,8 +85,7 @@ public class CasRedisServiceRegistryAutoConfiguration {
         return BeanSupplier.of(ServiceRegistry.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> new RedisServiceRegistry(applicationContext, registeredServiceRedisTemplate,
-                Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new),
-                casProperties.getServiceRegistry().getRedis().getScanCount()))
+                Optional.ofNullable(serviceRegistryListeners.getIfAvailable()).orElseGet(ArrayList::new)))
             .otherwiseProxy()
             .get();
 
