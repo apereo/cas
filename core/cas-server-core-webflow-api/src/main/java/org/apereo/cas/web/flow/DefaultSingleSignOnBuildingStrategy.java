@@ -63,9 +63,9 @@ public class DefaultSingleSignOnBuildingStrategy implements SingleSignOnBuilding
         val ticket = (TicketGrantingTicket) ticketRegistrySupport.getTicket(ticketGrantingTicketId);
         val clientInfo = ClientInfoHolder.getClientInfo();
         applicationContext.publishEvent(new CasRequestSingleLogoutEvent(this, ticket, clientInfo));
-        applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, ticket, clientInfo));
 
         ticketRegistrySupport.getTicketRegistry().deleteTicket(ticketGrantingTicketId);
+        applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, ticket, clientInfo));
     }
 
     protected Ticket updateTicketGrantingTicket(final Authentication authentication, final String ticketGrantingTicketId) throws Exception {

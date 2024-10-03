@@ -51,10 +51,12 @@ public class DefaultSingleLogoutRequestExecutor implements SingleLogoutRequestEx
                 results.stream().filter(r -> r.getStatus() == LogoutRequestStatus.FAILURE)
                     .forEach(r -> LOGGER.warn("Logout request for [{}] and [{}] has failed", r.getTicketId(), r.getLogoutUrl()));
                 logoutRequests.addAll(results);
-                applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, tgt, clientInfo));
             }
             LOGGER.trace("Removing ticket [{}] from registry...", ticketId);
             ticketRegistry.deleteTicket(ticketId);
+            if (ticket instanceof final TicketGrantingTicket tgt) {
+                applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, tgt, clientInfo));
+            }
             return logoutRequests;
         } catch (final Exception e) {
             val msg = String.format("Ticket-granting ticket [%s] cannot be found in the ticket registry.", ticketId);
