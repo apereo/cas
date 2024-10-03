@@ -43,7 +43,7 @@ public class CasConsentRedisAutoConfiguration {
         final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(ConsentRepository.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
-            .supply(() -> new RedisConsentRepository(consentRedisTemplate, casProperties.getConsent().getRedis().getScanCount()))
+            .supply(() -> new RedisConsentRepository(consentRedisTemplate))
             .otherwiseProxy()
             .get();
     }
