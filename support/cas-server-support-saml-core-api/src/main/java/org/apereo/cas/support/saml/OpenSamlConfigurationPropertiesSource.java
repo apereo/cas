@@ -26,8 +26,14 @@ public class OpenSamlConfigurationPropertiesSource implements ConfigurationPrope
     /**
      * Configuration property that controls whether line breaks particularly in certificates should be ignored.
      */
-    public static final String CONFIG_APACHE_XML_IGNORE_LINEBREAKS = "org.apache.xml.security.ignoreLineBreaks";
+    public static final String  CONFIG_APACHE_XML_IGNORE_LINEBREAKS = "org.apache.xml.security.ignoreLineBreaks";
 
+    static {
+        System.setProperty(CONFIG_STRICT_MODE, "true");
+        System.setProperty(CONFIG_SUN_XML_IGNORE_LINEBREAKS, "true");
+        System.setProperty(CONFIG_APACHE_XML_IGNORE_LINEBREAKS, "true");
+    }
+    
     @Override
     public ConfigurationProperties getProperties() {
         val properties = new Properties();
