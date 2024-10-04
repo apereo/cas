@@ -7,6 +7,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.idp.MissingSamlAuthnRequestException;
 import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -105,11 +106,14 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
         val request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
         val response = HttpRequestUtils.getHttpServletResponseFromRequestAttributes();
         val webContext = new JEEContext(request, response);
-
         val result = SamlIdPSessionManager.of(openSamlConfigBean, sessionStore)
             .fetch(webContext, AuthnRequest.class);
         val authnRequest = (AuthnRequest) result
-            .orElseThrow(() -> new IllegalArgumentException("SAML request could not be determined from session store"))
+            .orElseThrow(() -> {
+                val samlAuthnRequestId = webContext.getRequestParameter(SamlIdPConstants.AUTHN_REQUEST_ID).orElse("N/A");
+                return new MissingSamlAuthnRequestException("SAML2 request could not be determined from session store %s for SAML2 request id %s"
+                    .formatted(sessionStore.getClass().getName(), samlAuthnRequestId));
+            })
             .getLeft();
         return Optional.of(authnRequest);
     }

@@ -35,6 +35,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.hc.core5.http.NameValuePair;
 import org.apache.hc.core5.net.WWWFormCodec;
 import org.springframework.binding.message.MessageBuilder;
@@ -1041,7 +1042,10 @@ public class WebUtils {
      * @return the model and view
      */
     public static ModelAndView produceErrorView(final String view, final Throwable e) {
-        val mv = new ModelAndView(view, CollectionUtils.wrap(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, e));
+        val rootCause = (e instanceof final RuntimeException er && er.getCause() != null)
+            ? ExceptionUtils.getRootCause(e)
+            : e;
+        val mv = new ModelAndView(view, CollectionUtils.wrap(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION, rootCause));
         mv.setStatus(HttpStatus.BAD_REQUEST);
         LoggingUtils.error(LOGGER, e);
         return mv;
