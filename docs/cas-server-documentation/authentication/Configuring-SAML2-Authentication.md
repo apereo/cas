@@ -92,14 +92,7 @@ about how to configure SAML2 security configuration.
   
 ## Unsolicited SSO
 
-SAML2 IdP `Unsolicited/SSO` profile supports the following parameters:
-
-| Parameter    | Description                                                    |
-|--------------|----------------------------------------------------------------|
-| `providerId` | Required. Entity ID of the service provider.                   |
-| `shire`      | Optional. Response location (ACS URL) of the service provider. |
-| `target`     | Optional. Relay state.                                         |
-| `time`       | Optional. Skew the authentication request.                     |
+Please see [this guide](../installation/Configuring-SAML2-Authentication-Unsolicited.html) for more details.
 
 ## Attribute Queries
 
