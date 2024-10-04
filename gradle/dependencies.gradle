@@ -1606,15 +1606,6 @@ ext.libraries = [
                 dependencies.create("org.apache.logging.log4j:log4j-layout-template-json:$log4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 },
-                dependencies.create("org.apache.logging.log4j:log4j-spring-boot:$log4jVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "org.apache.logging.log4j", module: "log4j-core")
-                    exclude(group: "org.apache.logging.log4j", module: "log4j-api")
-                    exclude(group: "commons-logging", module: "commons-logging")
-                    exclude(group: "org.springframework.boot", module: "spring-boot")
-                    exclude(group: "org.springframework", module: "spring-context-support")
-                    exclude(group: "org.springframework", module: "spring-context")
-                },
                 dependencies.create("com.lmax:disruptor:$disruptorVersion"),
                 dependencies.create("org.apache.logging.log4j:log4j-spring-cloud-config-client:$log4jVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
