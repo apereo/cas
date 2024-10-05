@@ -627,7 +627,7 @@ layout: null
             *   [NameID Selection](/cas/{{ version }}/installation/Configuring-SAML2-NameID.html)
             *   [Authentication Context](/cas/{{ version }}/installation/Configuring-SAML2-AuthnContextClass.html)
             *   [Attribute Query](/cas/{{ version }}/installation/Configuring-SAML2-AttributeQuery.html)
-            *   [Unsolicited](/cas/{{ version }}/installation/Configuring-SAML2-Authentication-Unsolicited.html)
+            *   [Unsolicited](/cas/{{ version }}/authentication/Configuring-SAML2-Authentication-Unsolicited.html)
             *   [Security Configuration](/cas/{{ version }}/installation/Configuring-SAML2-Security.html)
             *   [Logout & SLO](/cas/{{ version }}/installation/Configuring-SAML2-Logout.html)
     *   [REST](#casrestprotocol)

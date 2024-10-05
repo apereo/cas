@@ -89,3 +89,6 @@ and this is just a preparatory step to ensure CAS is ready for the next version 
           
 - Twilio
 - Google Cloud Logging
+- Google Cloud SDK
+- Spring Boot Admin
+- 

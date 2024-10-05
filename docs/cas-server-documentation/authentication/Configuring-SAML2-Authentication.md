@@ -92,7 +92,7 @@ about how to configure SAML2 security configuration.
   
 ## Unsolicited SSO
 
-Please see [this guide](../installation/Configuring-SAML2-Authentication-Unsolicited.html) for more details.
+Please see [this guide](../authentication/Configuring-SAML2-Authentication-Unsolicited.html) for more details.
 
 ## Attribute Queries
 
