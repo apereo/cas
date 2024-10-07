@@ -44,7 +44,8 @@ dependencies {
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-webconfig")
-
+    
+    testImplementation project(":core:cas-server-core-scripting")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-authentication")
