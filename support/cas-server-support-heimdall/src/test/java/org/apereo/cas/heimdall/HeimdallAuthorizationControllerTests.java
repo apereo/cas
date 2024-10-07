@@ -53,6 +53,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest(classes = BaseHeimdallTests.SharedTestConfiguration.class,
     properties = {
+        "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/heimdalloidc.jwks",
         "cas.authn.oidc.core.authentication-context-reference-mappings=something->mfa-something",
         "cas.heimdall.json.location=classpath:/policies",
         "server.port=8585"
@@ -65,7 +66,7 @@ class HeimdallAuthorizationControllerTests {
     @Autowired
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
-    
+
     @Autowired
     @Qualifier("mockMvc")
     private MockMvc mockMvc;
@@ -81,7 +82,7 @@ class HeimdallAuthorizationControllerTests {
     @Autowired
     @Qualifier("oidcIdTokenGenerator")
     private IdTokenGeneratorService oidcIdTokenGenerator;
-    
+
     @Test
     void verifyIdToken() throws Throwable {
         val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(),
@@ -98,7 +99,7 @@ class HeimdallAuthorizationControllerTests {
 
         val registeredService = newOidcRegisteredService(accessToken.getClientId());
         servicesManager.save(registeredService);
-        
+
         val idTokenContext = IdTokenGenerationContext.builder()
             .accessToken(accessToken)
             .responseType(OAuth20ResponseTypes.CODE)
@@ -107,7 +108,7 @@ class HeimdallAuthorizationControllerTests {
             .build();
         val idToken = oidcIdTokenGenerator.generate(idTokenContext);
         assertNotNull(idToken);
-        
+
         mockMvc.perform(post("/heimdall/authorize")
             .contentType(MediaType.APPLICATION_JSON)
             .content(AuthorizationRequest.builder()
@@ -122,7 +123,7 @@ class HeimdallAuthorizationControllerTests {
         ).andExpect(status().isOk());
 
     }
-    
+
     @Test
     void verifyAccessTokenAsJwt() throws Throwable {
         val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(),
@@ -133,7 +134,7 @@ class HeimdallAuthorizationControllerTests {
 
         val registeredService = newOidcRegisteredService(accessToken.getClientId());
         servicesManager.save(registeredService);
-        
+
         val payload = JwtBuilder.JwtRequest.builder()
             .subject("casuser")
             .jwtId(accessToken.getId())
@@ -142,7 +143,7 @@ class HeimdallAuthorizationControllerTests {
             .validUntilDate(DateTimeUtils.dateOf(LocalDate.now(Clock.systemUTC()).plusDays(1)))
             .build();
         val jwt = accessTokenJwtBuilder.build(payload);
-        
+
         mockMvc.perform(post("/heimdall/authorize")
             .contentType(MediaType.APPLICATION_JSON)
             .content(AuthorizationRequest.builder()
@@ -156,7 +157,7 @@ class HeimdallAuthorizationControllerTests {
             .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
     }
-    
+
     @Test
     void verifyOkayOperation() throws Throwable {
         val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(),
@@ -200,7 +201,7 @@ class HeimdallAuthorizationControllerTests {
             .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isOk());
     }
-    
+
     @Test
     void verifyAllPoliciesForcedOperation() throws Throwable {
         val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(),
@@ -222,7 +223,7 @@ class HeimdallAuthorizationControllerTests {
             .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isForbidden());
     }
-    
+
     @Test
     void verifyScopesOperation() throws Throwable {
         val accessToken = buildAccessToken();
@@ -268,7 +269,7 @@ class HeimdallAuthorizationControllerTests {
     void verifyUnknownOperation() throws Throwable {
         val accessToken = buildAccessToken();
         ticketRegistry.addTicket(accessToken);
-        
+
         mockMvc.perform(post("/heimdall/authorize")
             .contentType(MediaType.APPLICATION_JSON)
             .content(AuthorizationRequest.builder()
@@ -304,7 +305,7 @@ class HeimdallAuthorizationControllerTests {
         val accessToken = buildAccessToken();
         when(accessToken.isExpired()).thenReturn(true);
         ticketRegistry.addTicket(accessToken);
-        
+
         mockMvc.perform(post("/heimdall/authorize")
             .contentType(MediaType.APPLICATION_JSON)
             .content(AuthorizationRequest.builder()
