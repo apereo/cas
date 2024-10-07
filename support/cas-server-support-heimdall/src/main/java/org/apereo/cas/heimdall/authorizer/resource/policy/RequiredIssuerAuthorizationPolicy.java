@@ -1,6 +1,6 @@
 package org.apereo.cas.heimdall.authorizer.resource.policy;
 
-import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.oidc.OidcConstants;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This is {@link RequiredScopesAuthorizationPolicy}.
+ * This is {@link RequiredIssuerAuthorizationPolicy}.
  *
  * @author Misagh Moayyed
  * @since 7.2.0
@@ -25,12 +25,12 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString
 @Accessors(chain = true)
-public class RequiredScopesAuthorizationPolicy extends RequiredAttributesAuthorizationPolicy {
+public class RequiredIssuerAuthorizationPolicy extends RequiredAttributesAuthorizationPolicy {
     @Serial
-    private static final long serialVersionUID = -2444481042826672523L;
+    private static final long serialVersionUID = -2433481042826672523L;
 
     @JsonCreator
-    public RequiredScopesAuthorizationPolicy(@JsonProperty("scopes") final Set<String> scopes) {
-        setAttributes(Map.of(OAuth20Constants.SCOPE, scopes));
+    public RequiredIssuerAuthorizationPolicy(@JsonProperty("issuer") final String issuer) {
+        setAttributes(Map.of(OidcConstants.ISS, Set.of(issuer)));
     }
 }

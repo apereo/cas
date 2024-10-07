@@ -96,7 +96,7 @@ public abstract class BaseOAuth20AuthenticatorTests {
     protected ServiceFactory<WebApplicationService> serviceFactory;
 
     @Autowired
-    @Qualifier("accessTokenJwtBuilder")
+    @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
     protected JwtBuilder accessTokenJwtBuilder;
 
     @Autowired

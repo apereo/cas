@@ -570,7 +570,7 @@ class OidcConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20AuthenticationClientProvider oidcClientConfigurationAuthenticationClientProvider(
-            @Qualifier("accessTokenJwtBuilder")
+            @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
             final JwtBuilder accessTokenJwtBuilder,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry) {
@@ -659,7 +659,7 @@ class OidcConfiguration {
         public Authenticator oauthAccessTokenAuthenticator(
             @Qualifier("oidcTokenSigningAndEncryptionService")
             final OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService,
-            @Qualifier("accessTokenJwtBuilder")
+            @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
             final JwtBuilder accessTokenJwtBuilder,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
@@ -675,7 +675,7 @@ class OidcConfiguration {
         public Authenticator oidcDynamicRegistrationAuthenticator(
             @Qualifier("oidcTokenSigningAndEncryptionService")
             final OAuth20TokenSigningAndEncryptionService oidcTokenSigningAndEncryptionService,
-            @Qualifier("accessTokenJwtBuilder")
+            @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
             final JwtBuilder accessTokenJwtBuilder,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
@@ -763,7 +763,7 @@ class OidcConfiguration {
             final ConsentApprovalViewResolver consentApprovalViewResolver,
             @Qualifier("oidcAttributeToScopeClaimMapper")
             final OidcAttributeToScopeClaimMapper oidcAttributeToScopeClaimMapper,
-            @Qualifier("accessTokenJwtBuilder")
+            @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
             final JwtBuilder accessTokenJwtBuilder,
             @Qualifier("deviceTokenExpirationPolicy")
             final ExpirationPolicyBuilder deviceTokenExpirationPolicy,

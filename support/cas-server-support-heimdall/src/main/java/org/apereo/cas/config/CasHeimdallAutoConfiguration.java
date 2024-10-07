@@ -11,10 +11,13 @@ import org.apereo.cas.heimdall.engine.AuthorizationEngine;
 import org.apereo.cas.heimdall.engine.AuthorizationPrincipalParser;
 import org.apereo.cas.heimdall.engine.DefaultAuthorizationEngine;
 import org.apereo.cas.heimdall.engine.DefaultAuthorizationPrincipalParser;
+import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -39,9 +42,14 @@ public class CasHeimdallAutoConfiguration {
     @ConditionalOnMissingBean(name = "authorizationPrincipalParser")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthorizationPrincipalParser authorizationPrincipalParser(
+        @Qualifier("oidcTokenSigningAndEncryptionService")
+        final ObjectProvider<OAuth20TokenSigningAndEncryptionService> oidcTokenSigningAndEncryptionService,
+        @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
+        final ObjectProvider<JwtBuilder> accessTokenJwtBuilder,
         @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry) {
-        return new DefaultAuthorizationPrincipalParser(ticketRegistry);
+        return new DefaultAuthorizationPrincipalParser(ticketRegistry,
+            accessTokenJwtBuilder, oidcTokenSigningAndEncryptionService);
     }
 
     @Bean
