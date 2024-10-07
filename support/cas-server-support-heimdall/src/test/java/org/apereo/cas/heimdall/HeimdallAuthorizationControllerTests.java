@@ -53,6 +53,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest(classes = BaseHeimdallTests.SharedTestConfiguration.class,
     properties = {
+        "cas.authn.oidc.core.authentication-context-reference-mappings=something->mfa-something",
         "cas.heimdall.json.location=classpath:/policies",
         "server.port=8585"
     }, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -90,7 +91,8 @@ class HeimdallAuthorizationControllerTests {
                 AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, List.of("mfa-something")
             )
         );
-        val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
+        val authentication = RegisteredServiceTestUtils.getAuthentication(principal,
+            Map.of(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(), List.of("something")));
         val accessToken = buildAccessToken(authentication);
         ticketRegistry.addTicket(accessToken);
 
@@ -177,6 +179,28 @@ class HeimdallAuthorizationControllerTests {
         ).andExpect(status().isOk());
     }
 
+    @Test
+    void verifyGroovyOperation() throws Throwable {
+        val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(),
+            Map.of("color", List.of("red", "green"), "memberOf", List.of("admin")));
+        val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
+        val accessToken = buildAccessToken(authentication);
+        ticketRegistry.addTicket(accessToken);
+
+        mockMvc.perform(post("/heimdall/authorize")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(AuthorizationRequest.builder()
+                .uri("/api/groovy")
+                .method("POST")
+                .namespace("API_GROOVY")
+                .build()
+                .toJson()
+            )
+            .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+    }
+    
     @Test
     void verifyAllPoliciesForcedOperation() throws Throwable {
         val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(),
