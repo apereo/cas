@@ -42,13 +42,14 @@ public class CasHeimdallAutoConfiguration {
     @ConditionalOnMissingBean(name = "authorizationPrincipalParser")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthorizationPrincipalParser authorizationPrincipalParser(
+        final CasConfigurationProperties casProperties,
         @Qualifier("oidcTokenSigningAndEncryptionService")
         final ObjectProvider<OAuth20TokenSigningAndEncryptionService> oidcTokenSigningAndEncryptionService,
         @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
         final ObjectProvider<JwtBuilder> accessTokenJwtBuilder,
         @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry) {
-        return new DefaultAuthorizationPrincipalParser(ticketRegistry,
+        return new DefaultAuthorizationPrincipalParser(ticketRegistry, casProperties,
             accessTokenJwtBuilder, oidcTokenSigningAndEncryptionService);
     }
 
