@@ -7,7 +7,7 @@ greenlet==3.1.1
 Jinja2==3.1.4
 itsdangerous==2.2.0
 locust==2.31.8
-MarkupSafe==2.1.5
+MarkupSafe==3.0.0
 msgpack-python==0.5.6
 pyzmq==26.2.0
 pip==24.2
