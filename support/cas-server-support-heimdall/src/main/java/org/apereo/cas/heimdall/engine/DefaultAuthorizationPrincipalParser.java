@@ -3,6 +3,8 @@ package org.apereo.cas.heimdall.engine;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
@@ -11,6 +13,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.util.DateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpHeaders;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
 
@@ -31,6 +35,7 @@ import java.util.Optional;
 @Slf4j
 public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincipalParser {
     protected final TicketRegistry ticketRegistry;
+    protected final CasConfigurationProperties casProperties;
     protected final ObjectProvider<JwtBuilder> accessTokenJwtBuilder;
     protected final ObjectProvider<OAuth20TokenSigningAndEncryptionService> oidcTokenSigningAndEncryptionService;
 
@@ -45,10 +50,25 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
 
     protected JWTClaimsSet parseAuthorizationHeader(final String authorizationHeader) throws Throwable {
         val token = StringUtils.removeStart(authorizationHeader, "Bearer ");
-        return parseOidcIdToken(token)
+        val claims = parseOidcIdToken(token)
             .or(() -> parseJwtAccessToken(token))
             .or(() -> getJwtClaimsSetFromAccessToken(token))
             .orElseThrow(() -> new AuthenticationException("Unable to parse token"));
+        return validateClaims(claims);
+    }
+
+    protected JWTClaimsSet validateClaims(final JWTClaimsSet claimsSet) {
+        val maxClockSkew = Beans.newDuration(casProperties.getAuthn().getOidc().getCore().getSkew()).toSeconds();
+        val now = new Date();
+        val exp = claimsSet.getExpirationTime();
+        if (exp != null && !DateUtils.isAfter(exp, now, maxClockSkew)) {
+            throw new AuthenticationException("Token has expired: %s and is after %s".formatted(exp, now));
+        }
+        val nbf = claimsSet.getNotBeforeTime();
+        if (nbf != null && !DateUtils.isBefore(nbf, now, maxClockSkew)) {
+            throw new AuthenticationException("Token cannot be used before %s and now is %s".formatted(nbf, now));
+        }
+        return claimsSet;
     }
 
     private Optional<JWTClaimsSet> getJwtClaimsSetFromAccessToken(final String token) {
