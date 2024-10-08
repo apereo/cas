@@ -30,6 +30,7 @@ import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientsEndpo
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientsEndpointContributor;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
@@ -488,14 +489,17 @@ class DelegatedAuthenticationWebflowConfiguration {
             @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
             final DelegatedIdentityProviders identityProviders,
             @Qualifier("delegatedClientDistributedSessionStore")
-            final SessionStore delegatedClientDistributedSessionStore) {
+            final SessionStore delegatedClientDistributedSessionStore,
+            @Qualifier(TicketRegistrySupport.BEAN_NAME)
+            final TicketRegistrySupport ticketRegistrySupport) {
             return BeanSupplier.of(Action.class)
                 .when(BeanCondition.on("cas.slo.disabled").isFalse().evenIfMissing()
                     .given(applicationContext.getEnvironment()))
                 .supply(() -> WebflowActionBeanSupplier.builder()
                     .withApplicationContext(applicationContext)
                     .withProperties(casProperties)
-                    .withAction(() -> new DelegatedAuthenticationClientLogoutAction(identityProviders, delegatedClientDistributedSessionStore, casProperties.getLogout().isConfirmLogout()))
+                    .withAction(() -> new DelegatedAuthenticationClientLogoutAction(identityProviders,
+                            delegatedClientDistributedSessionStore, ticketRegistrySupport, casProperties.getLogout().isConfirmLogout()))
                     .withId(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT)
                     .build()
                     .get())

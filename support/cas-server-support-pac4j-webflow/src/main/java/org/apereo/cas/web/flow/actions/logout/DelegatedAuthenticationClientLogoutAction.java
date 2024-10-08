@@ -1,8 +1,10 @@
 package org.apereo.cas.web.flow.actions.logout;
 
+import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClientLogoutRequest;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.flow.logout.TerminateSessionAction;
@@ -42,15 +44,13 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
 
     protected final SessionStore sessionStore;
 
+    protected final TicketRegistrySupport ticketRegistrySupport;
+
     protected final boolean confirmLogout;
 
     @Override
     protected Event doPreExecute(final RequestContext requestContext) {
-        val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
-        val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-        val context = new JEEContext(request, response);
-
-        val currentProfile = findCurrentProfile(context);
+        val currentProfile = findCurrentProfile(requestContext);
         val clientResult = findCurrentClient(currentProfile);
         if (clientResult.isPresent()) {
             val client = clientResult.get();
@@ -77,7 +77,7 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val context = new JEEContext(request, response);
 
-        val currentProfile = findCurrentProfile(context);
+        val currentProfile = findCurrentProfile(requestContext);
         val clientResult = findCurrentClient(currentProfile);
         if (clientResult.isPresent()) {
             val client = clientResult.get();
@@ -104,10 +104,16 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
         return null;
     }
 
-    protected UserProfile findCurrentProfile(final JEEContext webContext) {
-        val pm = new ProfileManager(webContext, this.sessionStore);
-        val profile = pm.getProfile();
-        return profile.orElse(null);
+    protected UserProfile findCurrentProfile(final RequestContext requestContext) {
+        val tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
+        val authentication = ticketRegistrySupport.getAuthenticationFrom(tgtId);
+        return Optional.ofNullable(authentication).stream()
+            .flatMap(auth -> auth.getCredentials().stream())
+            .filter(ClientCredential.class::isInstance)
+            .map(ClientCredential.class::cast)
+            .map(ClientCredential::getUserProfile)
+            .findFirst()
+            .orElse(null);
     }
 
     protected Optional<Client> findCurrentClient(final UserProfile currentProfile) {
