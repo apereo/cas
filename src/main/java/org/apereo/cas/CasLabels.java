@@ -25,7 +25,7 @@ public enum CasLabels {
     LABEL_ATTRIBUTE_CONSENT("Attribute Consent", "consent"),
     LABEL_ATTRIBUTE_RELEASE("Attribute Release", "attribute"),
     LABEL_ATTRIBUTE_RESOLUTION("Attribute Resolution", "attribute"),
-    LABEL_AUDITS_LOGGING("Audits & Logging", "stack trace|logging|logger|logs|log4j|audit|inspektr|logback|\\blog\\b|stacktrace"),
+    LABEL_AUDITS_LOGGING("Audits & Logging", "stack trace|logging|logger|logs|log4j|audit|inspektr|logback|\\blog\\b|stacktrace|MDC"),
     LABEL_AUTHENTICATION("Authentication", "authn|authentication"),
     LABEL_AUTHENTICATION_EVENTS("Authentication Events", "events|eventing"),
     LABEL_AUTHENTICATION_POLICIES("Authentication Policies"),
