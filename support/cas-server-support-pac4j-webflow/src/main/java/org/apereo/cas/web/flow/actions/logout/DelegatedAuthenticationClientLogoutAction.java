@@ -5,6 +5,7 @@ import org.apereo.cas.pac4j.client.DelegatedIdentityProviders;
 import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
+import org.apereo.cas.web.flow.logout.TerminateSessionAction;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,8 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
 
     protected final SessionStore sessionStore;
 
+    protected final boolean confirmLogout;
+
     @Override
     protected Event doPreExecute(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
@@ -59,6 +62,17 @@ public class DelegatedAuthenticationClientLogoutAction extends BaseCasWebflowAct
 
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
+        val terminate = confirmLogout
+            ? WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext)
+                .getParameterMap().containsKey(TerminateSessionAction.REQUEST_PARAM_LOGOUT_REQUEST_CONFIRMED)
+            : true;
+        if (terminate) {
+            return terminateSessions(requestContext);
+        }
+        return null;
+    }
+
+    protected Event terminateSessions(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val context = new JEEContext(request, response);

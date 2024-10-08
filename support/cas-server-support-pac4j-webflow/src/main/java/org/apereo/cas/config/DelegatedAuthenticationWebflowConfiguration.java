@@ -495,7 +495,7 @@ class DelegatedAuthenticationWebflowConfiguration {
                 .supply(() -> WebflowActionBeanSupplier.builder()
                     .withApplicationContext(applicationContext)
                     .withProperties(casProperties)
-                    .withAction(() -> new DelegatedAuthenticationClientLogoutAction(identityProviders, delegatedClientDistributedSessionStore))
+                    .withAction(() -> new DelegatedAuthenticationClientLogoutAction(identityProviders, delegatedClientDistributedSessionStore, casProperties.getLogout().isConfirmLogout()))
                     .withId(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT)
                     .build()
                     .get())

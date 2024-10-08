@@ -35,6 +35,7 @@ dependencies {
     compileOnly project(":support:cas-server-support-discovery-profile-core")
     compileOnly project(":support:cas-server-support-scim-core")
     compileOnly project(":support:cas-server-support-ldap-core")
+	compileOnly project(":support:cas-server-support-actions-core")
 
     testImplementation libraries.pac4jcas
     testImplementation libraries.springboottomcat
