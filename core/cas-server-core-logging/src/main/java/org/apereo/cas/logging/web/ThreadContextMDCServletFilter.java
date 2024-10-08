@@ -77,6 +77,12 @@ public class ThreadContextMDCServletFilter implements Filter {
             request.setAttribute("requestId", requestId);
             response.setHeader("requestId", requestId);
 
+            val sessionId = request.getSession().getId();
+            addContextAttribute("sessionId", sessionId);
+            request.setAttribute("sessionId", sessionId);
+            response.setHeader("sessionId", sessionId);
+
+
             val params = request.getParameterMap();
             val mdc = casProperties.getLogging().getMdc();
             params.keySet()

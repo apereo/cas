@@ -86,5 +86,7 @@ class ThreadContextMDCServletFilterTests {
         assertFalse(mdcElements.containsKey("password"));
         assertFalse(mdcElements.containsKey("confirmedPassword"));
         assertFalse(mdcElements.containsKey("cookie"));
+
+        assertNotNull(request.getAttribute("sessionId"));
     }
 }
