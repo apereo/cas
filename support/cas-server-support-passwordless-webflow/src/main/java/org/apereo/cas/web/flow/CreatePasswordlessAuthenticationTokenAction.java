@@ -71,7 +71,7 @@ public class CreatePasswordlessAuthenticationTokenAction extends BasePasswordles
             FunctionUtils.doUnchecked(u -> {
                 val smsProperties = passwordlessProperties.getTokens().getSms();
                 val text = SmsBodyBuilder.builder().properties(smsProperties)
-                    .parameters(Map.of("token", token)).build().get();
+                    .parameters(Map.of("token", token.getToken())).build().get();
                 val smsRequest = SmsRequest
                     .builder()
                     .from(smsProperties.getFrom())
