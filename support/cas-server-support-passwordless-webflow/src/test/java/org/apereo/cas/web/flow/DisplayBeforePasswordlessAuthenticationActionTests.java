@@ -32,6 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestPropertySource(properties = {
     "spring.mail.host=localhost",
     "spring.mail.port=25000",
+    "cas.authn.passwordless.tokens.sms.text=Your token is ${token}",
+    "cas.authn.passwordless.tokens.sms.from=347746584",
     "cas.authn.passwordless.accounts.groovy.location=classpath:PasswordlessAccount.groovy"
 })
 @Tag("Mail")
@@ -42,7 +44,7 @@ class DisplayBeforePasswordlessAuthenticationActionTests extends BasePasswordles
     static class PasswordlessAuthenticationActionTestConfiguration {
         @Bean
         public SmsSender smsSender() {
-            return MockSmsSender.INSTANCE;
+            return MockSmsSender.withMessage("Your token is \\d+");
         }
     }
     

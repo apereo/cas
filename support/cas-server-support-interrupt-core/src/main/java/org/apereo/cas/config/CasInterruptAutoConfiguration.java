@@ -99,9 +99,12 @@ public class CasInterruptAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "interruptCookieGenerator")
-        public CasCookieBuilder interruptCookieGenerator(final CasConfigurationProperties casProperties) {
+        public CasCookieBuilder interruptCookieGenerator(
+            @Qualifier("interruptCookieValueManager")
+            final CookieValueManager interruptCookieValueManager,
+            final CasConfigurationProperties casProperties) {
             val props = casProperties.getInterrupt().getCookie();
-            return new CookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props));
+            return new CookieRetrievingCookieGenerator(CookieUtils.buildCookieGenerationContext(props), interruptCookieValueManager);
         }
 
         @Bean

@@ -12,9 +12,12 @@
         /*<![CDATA[*/
 
         function showErrorDetails() {
+            const errorTrace = "" // /*[[${#strings.escapeXml(trace)}]]*/ ;
+
             $("#errorMsg").hide();
-            $("#errorDetails").empty();
-            $("#errorDetails").append("<p><pre style='white-space: pre-wrap;'>" + /*[[${#strings.escapeXml(trace)}]]*/ + "</pre></p>");
+            $("#errorDetails")
+                .empty()
+                .append(`<p><pre style='white-space: pre-wrap;'>${errorTrace}</pre></p>`);
         }
         /*]]>*/
     </script>
