@@ -1,13 +1,15 @@
 package org.apereo.cas.grouper;
 
+import org.apereo.cas.util.MockWebServer;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
+import edu.internet2.middleware.grouperClient.ws.beans.WsGetPermissionAssignmentsResults;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
+import org.springframework.http.HttpStatus;
+import java.util.Map;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -80,6 +82,21 @@ class GrouperFacadeTests {
             }
         };
         assertTrue(facade.getGroupsForSubjectId("casuser").isEmpty());
+    }
+
+    @Test
+    void verifyPermissionAssignments() throws Throwable {
+        val facade = new DefaultGrouperFacade();
+        var body = "{ \"" + WsGetPermissionAssignmentsResults.class.getSimpleName() + "\": {}}";
+        try (val webServer = new MockWebServer(8080,
+            body, Map.of("X-Grouper-success", "T", "X-Grouper-resultCode", "200"), HttpStatus.OK)) {
+            webServer.start();
+            val assignments = facade.getPermissionAssignments(GrouperPermissionAssignmentsQuery.builder()
+                .subjectId("casuser")
+                .build());
+            assertNotNull(assignments);
+            assertNull(assignments.getWsPermissionAssigns());
+        }
     }
 }
 

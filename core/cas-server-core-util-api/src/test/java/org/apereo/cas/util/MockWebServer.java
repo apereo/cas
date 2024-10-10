@@ -459,6 +459,9 @@ public class MockWebServer implements Closeable {
 
     private static String toJsonString(final Object body) {
         try {
+            if (body instanceof final String s) {
+                return s;
+            }
             return MAPPER.writeValueAsString(body);
         } catch (final Exception e) {
             throw new IllegalArgumentException("Cannot convert object to JSON ", e);

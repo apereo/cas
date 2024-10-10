@@ -125,7 +125,7 @@ and you can find [most of them here](https://upstart.ubuntu.com/cookbook/).
 
 {% tab osserviceopts <i class="fa fa-windows px-1"></i>Windows Service %}
 
-CAS may be started as Windows service using [winsw](https://github.com/kohsuke/winsw).
+CAS may be started as a Windows service using [winsw](https://github.com/kohsuke/winsw).
 
 Winsw provides programmatic means to `install/uninstall/start/stop` a service. In addition, it may 
 be used to run any kind of executable as a service under Windows.
