@@ -34,6 +34,14 @@ public interface InterruptTrackingEngine {
     void trackInterrupt(RequestContext requestContext, InterruptResponse response) throws Throwable;
 
     /**
+     * Remove interrupt.
+     *
+     * @param requestContext the request context
+     * @throws Throwable the throwable
+     */
+    void removeInterrupt(RequestContext requestContext) throws Throwable;
+
+    /**
      * Gets current interrupt response.
      *
      * @param requestContext the request context

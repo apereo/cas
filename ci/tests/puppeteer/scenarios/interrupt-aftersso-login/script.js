@@ -1,10 +1,10 @@
-
 const cas = require("../../cas.js");
 
-(async () => {
-    const browser = await cas.newBrowser(cas.browserOptions());
+async function verifyInterruption(browser) {
+    const service = "https://localhost:9859/anything/cas";
+
     const page = await cas.newPage(browser);
-    await cas.gotoLogin(page, "https://apereo.github.io");
+    await cas.gotoLogin(page, service);
     await cas.loginWith(page);
     await cas.sleep(1000);
     await cas.assertTextContent(page, "#content h1", "Authentication Interrupt");
@@ -22,14 +22,31 @@ const cas = require("../../cas.js");
     await cas.logPage(page);
     await cas.sleep(1000);
     await cas.assertTicketParameter(page);
-
-    await cas.log("Attempt to log into the application again with the same user");
-    await cas.gotoLogin(page, "https://apereo.github.io");
+    await cas.log("Attempt to log into the application again using existing SSO session");
+    await cas.gotoLogin(page, service);
     await cas.assertTicketParameter(page);
 
-    await cas.gotoLogout(page);
+    await cas.gotoLogin(page, service);
+    await cas.assertCookie(page, true, "CASINTERRUPT");
 
-    await cas.gotoLogin(page, "https://apereo.github.io");
+    for (let i = 0; i < 3; i++) {
+        await cas.gotoLogin(page, service + i);
+        await cas.sleep(500);
+        await cas.assertTicketParameter(page);
+    }
+
+    await cas.gotoLogin(page, service);
+    await cas.assertCookie(page, true, "CASINTERRUPT");
+    
+    await cas.gotoLogout(page);
+    await cas.assertCookie(page, false, "CASINTERRUPT");
+}
+
+async function verifyInterruptionBlocked(context) {
+    const service = "https://localhost:9859/anything/cas";
+    
+    const page = await cas.newPage(context);
+    await cas.gotoLogin(page, service);
     const url = await page.url();
     await cas.loginWith(page, "casblock", "Mellon");
     await cas.screenshot(page);
@@ -60,6 +77,19 @@ const cas = require("../../cas.js");
     await cas.sleep(1000);
     await cas.assertInnerText(page, "#content h2", "Application Not Authorized to Use CAS");
     await cas.logPage(page);
+}
+
+(async () => {
+
+    const browser = await cas.newBrowser(cas.browserOptions());
+
+    let context = await browser.createBrowserContext();
+    await verifyInterruption(context);
+    await context.close();
+
+    context = await browser.createBrowserContext();
+    await verifyInterruptionBlocked(context);
+    await context.close();
 
     await browser.close();
 })();
