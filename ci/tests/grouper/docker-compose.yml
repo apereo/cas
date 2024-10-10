@@ -11,8 +11,8 @@ services:
     image: "i2incommon/grouper:5.13.0"
     restart: always
     ports:
-      - '443:8443'
-      - '80:8080'
+      - '7443:8443'
+      - '7080:8080'
     command:
       - quickstart
     environment:
@@ -28,7 +28,6 @@ services:
     restart: always
     ports:
       - '9443:8443'
-      - '9080:8080'
     command:
       - ws
     environment:
