@@ -9,11 +9,11 @@ docker compose -f $COMPOSE_FILE down >/dev/null 2>/dev/null || true
 docker compose -f $COMPOSE_FILE up -d
 docker compose -f $COMPOSE_FILE logs &
 echo "Waiting for Grouper server to come online..."
-sleep 120
+sleep 30
 docker ps | grep "grouper"
 retVal=$?
 if [ $retVal == 0 ]; then
-  until curl -k -L -u "GrouperSystem:@4HHXr6SS42@IHz2" --fail https://localhost/grouper; do
+  until curl -k -L -u "GrouperSystem:@4HHXr6SS42@IHz2" --fail https://localhost:7443/grouper; do
     echo -n '.'
     sleep 2
   done
