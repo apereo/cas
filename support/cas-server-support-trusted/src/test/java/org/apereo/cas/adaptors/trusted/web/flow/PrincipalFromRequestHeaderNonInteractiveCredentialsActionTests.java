@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.trusted.web.flow;
 
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
@@ -61,7 +60,7 @@ class PrincipalFromRequestHeaderNonInteractiveCredentialsActionTests extends Bas
         context.getHttpServletRequest().setRemoteUser("xyz");
         context.setRemoteAddr("1.2.3.4");
         context.setLocalAddr("1.2.3.4");
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "FIREFOX");
+        context.withUserAgent();
         context.setParameter("geolocation", "1000,1000,1000,1000");
         context.setClientInfo();
 

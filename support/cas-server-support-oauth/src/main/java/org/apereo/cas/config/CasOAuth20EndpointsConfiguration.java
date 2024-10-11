@@ -116,7 +116,7 @@ class CasOAuth20EndpointsConfiguration {
         public OAuth20TokenManagementEndpoint oauth20TokenManagementEndpoint(
             @Qualifier(TicketRegistry.BEAN_NAME)
             final ObjectProvider<TicketRegistry> ticketRegistry,
-            @Qualifier("accessTokenJwtBuilder")
+            @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
             final ObjectProvider<JwtBuilder> accessTokenJwtBuilder,
             final CasConfigurationProperties casProperties) {
             return new OAuth20TokenManagementEndpoint(casProperties, ticketRegistry, accessTokenJwtBuilder);

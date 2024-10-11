@@ -21,6 +21,7 @@ public interface ResourceAuthorizationPolicy extends Serializable {
      * @param resource the resource
      * @param request  the request
      * @return the authorization result
+     * @throws Throwable the exception
      */
-    AuthorizationResult evaluate(AuthorizableResource resource, AuthorizationRequest request);
+    AuthorizationResult evaluate(AuthorizableResource resource, AuthorizationRequest request) throws Throwable;
 }

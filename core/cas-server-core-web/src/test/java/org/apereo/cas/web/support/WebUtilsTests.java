@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.credential.OneTimeTokenCredential;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
@@ -146,7 +147,6 @@ class WebUtilsTests {
         assertTrue(WebUtils.getBrowserStoragePayload(context3).isEmpty());
     }
 
-
     @Test
     void verifyReadParametersFromRequestBody() throws Throwable {
         val context1 = MockRequestContext.create();
@@ -162,4 +162,10 @@ class WebUtilsTests {
         assertTrue(parameters.isEmpty());
     }
 
+    @Test
+    void verifyErrorViewWithRootCause() throws Throwable {
+        val view = WebUtils.produceErrorView(new RuntimeException(new AuthenticationException("error")));
+        val error = (Exception) view.getModel().get(CasWebflowConstants.ATTRIBUTE_ERROR_ROOT_CAUSE_EXCEPTION);
+        assertInstanceOf(AuthenticationException.class, error);
+    }
 }

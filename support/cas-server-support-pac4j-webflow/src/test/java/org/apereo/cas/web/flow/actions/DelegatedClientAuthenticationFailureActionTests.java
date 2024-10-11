@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
@@ -37,7 +36,7 @@ class DelegatedClientAuthenticationFailureActionTests {
     void verifyFailsOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
 
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.withUserAgent();
 
         assertNull(delegatedAuthenticationFailureAction.execute(context));
         assertFalse(context.getFlowScope().contains("code"));

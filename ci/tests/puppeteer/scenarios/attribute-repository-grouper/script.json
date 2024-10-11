@@ -8,6 +8,9 @@
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.http-client.host-name-verifier=none",
 
+    "--cas.authn.attribute-repository.core.expiration-time=1",
+    "--cas.authn.attribute-repository.core.expiration-time-unit=seconds",
+    
     "--cas.authn.attribute-repository.grouper.id=Grouper",
     "--cas.authn.attribute-repository.grouper.subject-type=SUBJECT_ID",
 

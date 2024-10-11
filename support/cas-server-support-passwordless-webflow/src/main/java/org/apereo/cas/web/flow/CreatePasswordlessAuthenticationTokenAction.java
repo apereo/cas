@@ -54,36 +54,44 @@ public class CreatePasswordlessAuthenticationTokenAction extends BasePasswordles
                                                    final PasswordlessAuthenticationRequest passwordlessRequest) {
         val token = passwordlessTokenRepository.createToken(user, passwordlessRequest);
         communicationsManager.validate();
-        emailToken(requestContext, user, token);
-        smsToken(requestContext, user, token);
 
-        LOGGER.info("Storing passwordless token for [{}]", user.getUsername());
-        passwordlessTokenRepository.deleteTokens(user.getUsername());
-        passwordlessTokenRepository.saveToken(user, passwordlessRequest, token);
-        return success(token);
+        val emailSent = emailToken(requestContext, user, token);
+        val smsSent = smsToken(requestContext, user, token);
+        if (emailSent || smsSent) {
+            LOGGER.info("Storing passwordless token for [{}]", user.getUsername());
+            passwordlessTokenRepository.deleteTokens(user.getUsername());
+            passwordlessTokenRepository.saveToken(user, passwordlessRequest, token);
+            return success(token);
+        }
+        LOGGER.error("Failed to send passwordless token to [{}]", user.getUsername());
+        return error();
     }
 
-    protected void smsToken(final RequestContext requestContext,
+    protected boolean smsToken(final RequestContext requestContext,
                             final PasswordlessUserAccount user,
                             final PasswordlessAuthenticationToken token) {
         if (communicationsManager.isSmsSenderDefined() && StringUtils.isNotBlank(user.getPhone())) {
             val passwordlessProperties = casProperties.getAuthn().getPasswordless();
-            FunctionUtils.doUnchecked(u -> {
+            FunctionUtils.doUnchecked(() -> {
                 val smsProperties = passwordlessProperties.getTokens().getSms();
-                val text = SmsBodyBuilder.builder().properties(smsProperties)
-                    .parameters(Map.of("token", token.getToken())).build().get();
+                val text = SmsBodyBuilder.builder()
+                    .properties(smsProperties)
+                    .parameters(Map.of("token", token.getToken()))
+                    .build()
+                    .get();
                 val smsRequest = SmsRequest
                     .builder()
                     .from(smsProperties.getFrom())
                     .to(List.of(user.getPhone()))
                     .text(text)
                     .build();
-                communicationsManager.sms(smsRequest);
+                return communicationsManager.sms(smsRequest);
             });
         }
+        return true;
     }
 
-    protected void emailToken(final RequestContext requestContext, final PasswordlessUserAccount user,
+    protected boolean emailToken(final RequestContext requestContext, final PasswordlessUserAccount user,
                               final PasswordlessAuthenticationToken token) {
         val passwordlessProperties = casProperties.getAuthn().getPasswordless();
         if (communicationsManager.isMailSenderDefined() && StringUtils.isNotBlank(user.getEmail())) {
@@ -100,8 +108,11 @@ public class CreatePasswordlessAuthenticationTokenAction extends BasePasswordles
             val emailRequest = EmailMessageRequest.builder()
                 .emailProperties(mail)
                 .locale(locale.orElseGet(Locale::getDefault))
-                .to(List.of(user.getEmail())).body(body).build();
-            communicationsManager.email(emailRequest);
+                .to(List.of(user.getEmail()))
+                .body(body)
+                .build();
+            return communicationsManager.email(emailRequest).isSuccess();
         }
+        return true;
     }
 }
