@@ -130,6 +130,11 @@ public interface SamlIdPConstants {
     String AUTHN_REQUEST_ID = "srid";
 
     /**
+     * The view rendered when SAML2 authn request is missing.
+     */
+    String VIEW_ID_SAML_IDP_ERROR = "saml2-idp/casSamlIdPErrorView";
+
+    /**
      * Structure to catalog known entity attributes
      * that drive SAML2 behavior in CAS.
      */

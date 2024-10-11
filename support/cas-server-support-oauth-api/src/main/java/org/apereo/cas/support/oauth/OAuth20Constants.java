@@ -449,6 +449,10 @@ public interface OAuth20Constants {
      * The sub claim.
      */
     String CLAIM_SUB = "sub";
+    /**
+     * The exp claim.
+     */
+    String CLAIM_EXP = "exp";
 
     /**
      * actor_token_type parameter.

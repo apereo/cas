@@ -3,6 +3,7 @@ package org.apereo.cas.heimdall.authorizer;
 import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 
 /**
  * This is {@link DefaultResourceAuthorizer}.
@@ -20,7 +21,7 @@ public class DefaultResourceAuthorizer implements ResourceAuthorizer {
     protected boolean enforceAnyPolicy(final AuthorizationRequest request, final AuthorizableResource resource) {
         return resource.getPolicies()
             .parallelStream()
-            .map(policy -> policy.evaluate(resource, request))
+            .map(Unchecked.function(policy -> policy.evaluate(resource, request)))
             .allMatch(AuthorizationResult::authorized);
     }
 
@@ -28,7 +29,7 @@ public class DefaultResourceAuthorizer implements ResourceAuthorizer {
                                          final AuthorizableResource resource) {
         return resource.getPolicies()
             .parallelStream()
-            .map(policy -> policy.evaluate(resource, request))
+            .map(Unchecked.function(policy -> policy.evaluate(resource, request)))
             .allMatch(AuthorizationResult::authorized);
     }
 }

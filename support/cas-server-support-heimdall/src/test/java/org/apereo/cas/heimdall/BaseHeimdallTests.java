@@ -7,11 +7,15 @@ import org.apereo.cas.config.CasCoreLogoutAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreMultifactorAuthenticationWebflowAutoConfiguration;
 import org.apereo.cas.config.CasCoreNotificationsAutoConfiguration;
+import org.apereo.cas.config.CasCoreScriptingAutoConfiguration;
 import org.apereo.cas.config.CasCoreServicesAutoConfiguration;
 import org.apereo.cas.config.CasCoreTicketsAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebAutoConfiguration;
 import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasHeimdallAutoConfiguration;
+import org.apereo.cas.config.CasOAuth20WebflowAutoConfiguration;
+import org.apereo.cas.config.CasOidcAutoConfiguration;
+import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
@@ -37,6 +41,12 @@ abstract class BaseHeimdallTests {
         CasCoreWebflowAutoConfiguration.class,
         CasCoreWebAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
+        CasCoreScriptingAutoConfiguration.class,
+        
+        CasThymeleafAutoConfiguration.class,
+        CasOAuth20WebflowAutoConfiguration.class,
+        CasOidcAutoConfiguration.class,
+
         CasHeimdallAutoConfiguration.class
     })
     public static class SharedTestConfiguration {

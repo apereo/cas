@@ -41,7 +41,7 @@ public class RequiredAttributesAuthorizationPolicy implements ResourceAuthorizat
      * Collection of required attributes
      * for this service to proceed.
      */
-    private Map<String, Set<String>> attributes = new HashMap<>(0);
+    private Map<String, Set<String>> attributes = new HashMap<>();
 
     @Override
     public AuthorizationResult evaluate(final AuthorizableResource resource, final AuthorizationRequest request) {

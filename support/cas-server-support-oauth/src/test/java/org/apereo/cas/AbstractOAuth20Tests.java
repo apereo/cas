@@ -280,7 +280,7 @@ public abstract class AbstractOAuth20Tests {
     protected OAuth20AccessTokenResponseGenerator accessTokenResponseGenerator;
 
     @Autowired
-    @Qualifier("accessTokenJwtBuilder")
+    @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
     protected JwtBuilder accessTokenJwtBuilder;
 
     @Autowired

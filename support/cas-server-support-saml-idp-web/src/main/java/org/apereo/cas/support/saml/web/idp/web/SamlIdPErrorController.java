@@ -22,6 +22,6 @@ public class SamlIdPErrorController {
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_ERROR)
     public ModelAndView handleRequest() {
-        return new ModelAndView("saml2-idp/casSamlIdPErrorView");
+        return new ModelAndView(SamlIdPConstants.VIEW_ID_SAML_IDP_ERROR);
     }
 }

@@ -8,7 +8,6 @@ import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClient
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegationWebflowUtils;
@@ -51,7 +50,7 @@ class DelegatedAuthenticationClientLogoutActionTests {
     @Test
     void verifyOperationWithProfile() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.withUserAgent();
 
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
 
@@ -77,7 +76,7 @@ class DelegatedAuthenticationClientLogoutActionTests {
     @Test
     void verifyOperationWithNoProfile() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.withUserAgent();
         val result = delegatedAuthenticationClientLogoutAction.execute(context);
         assertNull(result);
         assertNotEquals(HttpStatus.SC_MOVED_TEMPORARILY, context.getHttpServletResponse().getStatus());

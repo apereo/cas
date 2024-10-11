@@ -6,7 +6,6 @@ import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
@@ -60,7 +59,7 @@ class MultifactorAuthenticationRemoveTrustedDeviceActionTests {
         val context = MockRequestContext.create(applicationContext);
         context.setRemoteAddr("123.456.789.123");
         context.setLocalAddr("123.456.789.123");
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+        context.withUserAgent();
         context.setClientInfo();
         val authn = RegisteredServiceTestUtils.getAuthentication(UUID.randomUUID().toString());
         WebUtils.putAuthentication(authn, context);

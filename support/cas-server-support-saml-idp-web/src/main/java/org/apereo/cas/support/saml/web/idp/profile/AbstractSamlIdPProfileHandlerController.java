@@ -14,6 +14,7 @@ import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
+import org.apereo.cas.support.saml.idp.MissingSamlAuthnRequestException;
 import org.apereo.cas.support.saml.idp.SamlIdPSessionManager;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceMetadataAdaptor;
@@ -106,15 +107,20 @@ public abstract class AbstractSamlIdPProfileHandlerController {
     }
 
     /**
-     * Handle unauthorized service exception.
+     * Handle SAML2 exceptions.
      *
      * @param req the req
      * @param ex  the ex
      * @return the model and view
      */
     @ExceptionHandler({PrincipalException.class, UnauthorizedServiceException.class, SamlException.class})
-    public ModelAndView handleUnauthorizedServiceException(final HttpServletRequest req, final Exception ex) {
+    protected ModelAndView handleUnauthorizedServiceException(final HttpServletRequest req, final Exception ex) {
         return WebUtils.produceUnauthorizedErrorView(ex);
+    }
+
+    @ExceptionHandler(MissingSamlAuthnRequestException.class)
+    protected ModelAndView handleMissingAuthnRequest(final HttpServletRequest req, final Exception ex) {
+        return WebUtils.produceErrorView(SamlIdPConstants.VIEW_ID_SAML_IDP_ERROR, ex);
     }
 
     protected Optional<SamlRegisteredServiceMetadataAdaptor> getSamlMetadataFacadeFor(
@@ -510,15 +516,21 @@ public abstract class AbstractSamlIdPProfileHandlerController {
     protected final Pair<? extends RequestAbstractType, MessageContext> retrieveAuthenticationRequest(
         final HttpServletResponse response, final HttpServletRequest request) {
         return lock.tryLock(() -> {
-            LOGGER.info("Received SAML callback profile request [{}]", request.getRequestURI());
+            LOGGER.info("Received SAML2 callback profile request [{}]", request.getRequestURI());
             val webContext = new JEEContext(request, response);
             return SamlIdPSessionManager.of(configurationContext.getOpenSamlConfigBean(), configurationContext.getSessionStore())
                 .fetch(webContext, AuthnRequest.class)
-                .orElseThrow(() -> new IllegalArgumentException("SAML2 authentication request cannot be determined from the CAS session store. "
-                    + "This typically means that the original SAML2 authentication request that was submitted to CAS via a SAML2 service provider "
-                    + "cannot be retrieved and restored after an authentication attempt. If you are running a multi-node CAS deployment, you may "
-                    + "need to opt for a different session storage mechanism than what is configured now: %s"
-                    .formatted(configurationContext.getSessionStore().getClass().getName())));
+                .orElseThrow(() -> {
+                    val samlAuthnRequestId = webContext.getRequestParameter(SamlIdPConstants.AUTHN_REQUEST_ID).orElse("N/A");
+                    val message = """
+                        SAML2 authentication request cannot be determined from the CAS session store for request id %s.
+                        This typically means that the original SAML2 authentication request that was submitted to CAS via a SAML2 service provider
+                        cannot be retrieved and restored after an authentication attempt. If you are running a multi-node CAS deployment, you may
+                        need to opt for a different session storage mechanism than what is configured now: %s
+                        """;
+                    return new MissingSamlAuthnRequestException(message.stripIndent().stripLeading().trim()
+                        .formatted(samlAuthnRequestId, configurationContext.getSessionStore().getClass().getName()));
+                });
         });
     }
 

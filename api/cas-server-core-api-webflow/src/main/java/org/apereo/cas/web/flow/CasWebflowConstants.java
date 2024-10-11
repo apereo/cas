@@ -1339,6 +1339,11 @@ public interface CasWebflowConstants {
      */
 
     /**
+     * Action id 'interruptLogoutAction'.
+     */
+    String ACTION_ID_INTERRUPT_LOGOUT = "interruptLogoutAction";
+
+    /**
      * Action id 'accountUnlockStatusPrepareAction'.
      */
     String ACTION_ID_ACCOUNT_UNLOCK_PREPARE = "accountUnlockStatusPrepareAction";
