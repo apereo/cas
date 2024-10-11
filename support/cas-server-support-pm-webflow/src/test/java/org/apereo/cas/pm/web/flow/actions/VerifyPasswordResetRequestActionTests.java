@@ -10,7 +10,6 @@ import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -43,7 +42,7 @@ class VerifyPasswordResetRequestActionTests {
 
             context.setRemoteAddr("1.2.3.4");
             context.setLocalAddr("1.2.3.4");
-            context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+            context.withUserAgent();
             context.setClientInfo();
             val token = passwordManagementService.createToken(PasswordManagementQuery.builder().username("casuser").build());
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
@@ -68,7 +67,7 @@ class VerifyPasswordResetRequestActionTests {
             val context = MockRequestContext.create(applicationContext);
             context.setRemoteAddr("1.2.3.4");
             context.setLocalAddr("1.2.3.4");
-            context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+            context.withUserAgent();
             context.setClientInfo();
             val token = passwordManagementService.createToken(PasswordManagementQuery.builder().username("casuser").build());
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
@@ -102,7 +101,7 @@ class VerifyPasswordResetRequestActionTests {
 
             context.setRemoteAddr("1.2.3.4");
             context.setLocalAddr("1.2.3.4");
-            context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+            context.withUserAgent();
             context.setClientInfo();
 
             val tgt = new MockTicketGrantingTicket("casuser");
@@ -120,7 +119,7 @@ class VerifyPasswordResetRequestActionTests {
 
             context.setRemoteAddr("1.2.3.4");
             context.setLocalAddr("1.2.3.4");
-            context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+            context.withUserAgent();
             context.setClientInfo();
             val token = passwordManagementService.createToken(PasswordManagementQuery.builder().username("casuser").build());
             val transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
@@ -144,7 +143,7 @@ class VerifyPasswordResetRequestActionTests {
             val context = MockRequestContext.create(applicationContext);
             context.setRemoteAddr("1.2.3.4");
             context.setLocalAddr("1.2.3.4");
-            context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+            context.withUserAgent();
             context.setClientInfo();
 
             val token = passwordManagementService.createToken(PasswordManagementQuery.builder().username("casuser").build());
@@ -170,7 +169,7 @@ class VerifyPasswordResetRequestActionTests {
             
             context.setRemoteAddr("1.2.3.4");
             context.setLocalAddr("1.2.3.4");
-            context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+            context.withUserAgent();
             context.setClientInfo();
             
             val token = passwordManagementService.createToken(PasswordManagementQuery.builder().username("noquestions").build());

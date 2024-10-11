@@ -26,7 +26,6 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasThemesAutoConfiguration;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
@@ -55,7 +54,7 @@ public abstract class BaseDuoSecurityTests {
 
         context.setRemoteAddr("185.86.151.11");
         context.setLocalAddr("195.88.151.11");
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        context.withUserAgent();
         context.setClientInfo();
 
         val provider = getDuoSecurityMultifactorAuthenticationProvider();
