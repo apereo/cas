@@ -7,7 +7,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationWebflowManager;
 import org.apereo.cas.web.flow.actions.DelegatedClientAuthenticationAction;
@@ -67,7 +66,7 @@ class DelegatedClientAuthenticationActionSamlTests {
         val context = MockRequestContext.create(applicationContext);
         val client = identityProviders.findClient("SAML2Client").get();
 
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Chrome");
+        context.withUserAgent();
         context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, client.getName());
         val webContext = new JEEContext(context.getHttpServletRequest(), new MockHttpServletResponse());
         context.setMethod(HttpMethod.POST);

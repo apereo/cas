@@ -4,7 +4,6 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
@@ -40,14 +39,14 @@ class DelegatedClientAuthenticationStoreWebflowStateActionTests {
     @Test
     void verifyMissingClient() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.withUserAgent();
         assertThrows(UnauthorizedServiceException.class, () -> delegatedAuthenticationStoreWebflowAction.execute(context));
     }
 
     @Test
     void verifyClient() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.withUserAgent();
         context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "CasClient");
         val result = delegatedAuthenticationStoreWebflowAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_REDIRECT, result.getId());

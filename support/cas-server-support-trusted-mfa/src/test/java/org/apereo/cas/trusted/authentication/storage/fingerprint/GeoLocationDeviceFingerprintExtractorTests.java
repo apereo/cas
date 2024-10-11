@@ -7,7 +7,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.trusted.web.flow.fingerprint.GeoLocationDeviceFingerprintExtractor;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,7 @@ class GeoLocationDeviceFingerprintExtractorTests {
     void verifyGeoLocationDevice() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
         context.setRemoteAddr("1.2.3.4");
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "TestAgent");
+        context.withUserAgent();
         context.setParameter("geolocation", "40,70,1000,100");
 
         val geoResp = new GeoLocationResponse();

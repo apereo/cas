@@ -110,7 +110,7 @@ class InquireInterruptActionTests {
 
         @Test
         void verifyInterruptedAlreadyWithDifferentResponse() throws Throwable {
-            val context = MockRequestContext.create(applicationContext);
+            val context = MockRequestContext.create(applicationContext).withUserAgent();
             val authentication = CoreAuthenticationTestUtils.getAuthentication();
             WebUtils.putAuthentication(authentication, context);
             val registeredService = RegisteredServiceTestUtils.getRegisteredService();

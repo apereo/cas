@@ -4,7 +4,6 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -24,7 +23,7 @@ class WsFederationCookieManagerTests extends AbstractWsFederationTests {
 
         context.setRemoteAddr("185.86.151.11");
         context.setLocalAddr("185.88.151.11");
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        context.withUserAgent();
         context.setClientInfo();
 
         context.setParameter(CasProtocolConstants.PARAMETER_METHOD, "POST");
