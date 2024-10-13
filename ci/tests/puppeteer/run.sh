@@ -580,10 +580,10 @@ if [[ "${buildDockerImage}" == "true" ]]; then
 #  echo $buildArguments
   
   docker build \
-    $buildArguments \
+    "$buildArguments" \
     --file "$dockerContextDirectory/Dockerfile" \
-    -t cas-${scenarioName}:latest \
-    $dockerContextDirectory
+    -t cas-"${scenarioName}":latest \
+    "$dockerContextDirectory"
   RC=$?
   rm "$dockerContextDirectory/cas.${projectType}"
   rm "$dockerContextDirectory/thekeystore"

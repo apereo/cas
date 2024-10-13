@@ -81,6 +81,7 @@ layout: null
         *   [CAS](/cas/{{ version }}/configuration/Configuration-Properties-Security-CAS.html)
         *   [Spring Cloud](/cas/{{ version }}/configuration/Configuration-Properties-Security-SpringCloud.html)
         *   [HashiCorp Vault](/cas/{{ version }}/configuration/Configuration-Properties-Security-Vault.html)
+        *   [Docker Secrets](/cas/{{ version }}/configuration/Configuration-Properties-Security-DockerSecrets.html)
     *   [Configuration Metadata](/cas/{{ version }}/configuration/Configuration-Metadata-Repository.html)
     *   [Configuration Extensions](/cas/{{ version }}/configuration/Configuration-Management-Extensions.html)
     *   [Configuration Reloading](/cas/{{ version }}/configuration/Configuration-Management-Reload.html)
