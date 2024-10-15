@@ -68,7 +68,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `493` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `496` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
@@ -84,6 +84,12 @@ and this is just a preparatory step to ensure CAS is ready for the next version 
 - Failures to write to session/local storage via Javascript are now reported back to the CAS user interface.
 - `log4j-spring-boot` designed to support Spring Boot `2.x` is now removed from CAS.
 - In the event that the SAML2 authentication request cannot be retrieved and restored, an appropriate error message is now produced in the CAS user interface. 
+- There is now a [dedicated configuration source](../configuration/Configuration-Properties-Security-DockerSecrets.html) to pull CAS properties from Docker secrets. 
+- Storing trusted multifactor devices [using MongoDb](../mfa/Multifactor-TrustedDevice-Authentication-Storage-MongoDb.html) can now assign a correct ID to the device record.
+- Additional protections around proxy tickets and proxy-granting tickets are now in place to prevent validation errors under high load.
+- [Authentication interrupt tracking cookies](../webflow/Webflow-Customization-Interrupt-Tracking.html) are now removed from the browser when the user logs out of CAS. 
+- SMS messages sent by [passwordless authentication](../authentication/Passwordless-Authentication-Notifications.html) now correctly record the generated token id.
+- A dedicated [actuator endpoint](../password_management/Password-Management.html) to allow CAS to reset the user's password and kickstart the password reset flow. 
 
 ## Library Upgrades
           
@@ -91,4 +97,11 @@ and this is just a preparatory step to ensure CAS is ready for the next version 
 - Google Cloud Logging
 - Google Cloud SDK
 - Spring Boot Admin
-- 
+- Grouper
+- Apache Tomcat
+- Logback
+- LettuceMod
+- Kryo
+- Nimbus
+- Spring Boot
+- Gradle

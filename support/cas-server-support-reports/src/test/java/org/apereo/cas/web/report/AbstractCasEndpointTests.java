@@ -104,9 +104,11 @@ public abstract class AbstractCasEndpointTests {
         CasCoreValidationAutoConfiguration.class
     })
     @SpringBootConfiguration(proxyBeanMethods = false)
-    @Import({AbstractCasEndpointTests.AuditTestConfiguration.class,
+    @Import({
+        AbstractCasEndpointTests.AuditTestConfiguration.class,
         CasAuthenticationEventExecutionPlanTestConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class})
+        CasRegisteredServicesTestConfiguration.class
+    })
     public static class SharedTestConfiguration {
     }
 }

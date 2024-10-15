@@ -1,10 +1,28 @@
 {
   "dependencies": "pm-webflow",
-
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
-
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
-    "--cas.authn.pm.core.enabled=true"
-  ]
+
+    "--cas.authn.pm.core.enabled=true",
+    "--cas.authn.pm.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/passwords.json",
+    "--cas.authn.pm.reset.security-questions-enabled=false",
+
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+    
+    "--cas.authn.pm.reset.mail.from=cas@apereo.org",
+    "--cas.authn.pm.reset.mail.text=${url}",
+    "--cas.authn.pm.reset.mail.subject=Reset",
+    
+    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.web.exposure.include=*",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS"
+  ],
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh"
 }
