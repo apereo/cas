@@ -82,10 +82,10 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
         metadataDocument.setMetadata(FunctionUtils.doUnchecked(() -> IOUtils.toString(object, StandardCharsets.UTF_8)));
         val objectMetadata = object.response().metadata();
         LOGGER.debug("Located S3 object metadata [{}] from bucket [{}]", objectMetadata, bucketToUse);
-        metadataDocument.setEncryptionCertificate(getObjectMetadataEntry(objectMetadata, "encryptionCertificate"));
-        metadataDocument.setSigningCertificate(getObjectMetadataEntry(objectMetadata, "signingCertificate"));
-        metadataDocument.setEncryptionKey(getObjectMetadataEntry(objectMetadata, "encryptionKey"));
-        metadataDocument.setSigningKey(getObjectMetadataEntry(objectMetadata, "signingKey"));
+        metadataDocument.setEncryptionCertificate(restoreNewline(getObjectMetadataEntry(objectMetadata, "encryptionCertificate")));
+        metadataDocument.setSigningCertificate(restoreNewline(getObjectMetadataEntry(objectMetadata, "signingCertificate")));
+        metadataDocument.setEncryptionKey(restoreNewline(getObjectMetadataEntry(objectMetadata, "encryptionKey")));
+        metadataDocument.setSigningKey(restoreNewline(getObjectMetadataEntry(objectMetadata, "signingKey")));
         metadataDocument.setAppliesTo(bucketToUse);
         return metadataDocument;
     }
@@ -93,6 +93,12 @@ public class AmazonS3SamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocat
     private static String getObjectMetadataEntry(final Map<String, String> objectMetadata,
                                                  final String key) {
         return StringUtils.defaultIfBlank(objectMetadata.get(key), objectMetadata.get(key.toLowerCase(Locale.ENGLISH)));
+    }
+
+    private static String restoreNewline(final String s) {
+        val r = s.replaceAll("<br/>", "\n");
+        LOGGER.trace("[{}] => [{}]", s, r);
+        return r;
     }
 }
 
