@@ -102,6 +102,8 @@ and this is just a preparatory step to ensure CAS is ready for the next version 
 - Logback
 - LettuceMod
 - Kryo
+- Mockito
+- MySQL Driver
 - Nimbus
 - Spring Boot
 - Gradle

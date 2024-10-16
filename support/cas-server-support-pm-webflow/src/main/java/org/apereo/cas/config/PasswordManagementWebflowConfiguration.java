@@ -607,7 +607,7 @@ class PasswordManagementWebflowConfiguration {
             final ObjectProvider<PasswordResetUrlBuilder> passwordResetUrlBuilder,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer) {
-            return new PasswordManagementEndpoint(casProperties,applicationContext,
+            return new PasswordManagementEndpoint(casProperties, applicationContext,
                 communicationsManager, passwordManagementService,
                 passwordResetUrlBuilder, webApplicationServiceFactory,
                 servicesManager, defaultPrincipalResolver,
