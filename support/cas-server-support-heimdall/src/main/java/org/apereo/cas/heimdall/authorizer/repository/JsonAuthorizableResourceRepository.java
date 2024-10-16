@@ -36,7 +36,7 @@ public class JsonAuthorizableResourceRepository implements AuthorizableResourceR
     private final File directory;
     private final WatcherService watcherService;
 
-    public JsonAuthorizableResourceRepository(final File directory) throws Exception {
+    public JsonAuthorizableResourceRepository(final File directory) {
         this.directory = directory;
         Assert.isTrue(directory.isDirectory(), "JSON directory location must be a valid directory");
         loadJsonResources();
@@ -63,7 +63,7 @@ public class JsonAuthorizableResourceRepository implements AuthorizableResourceR
         this.watcherService.close();
     }
 
-    private void loadJsonResources() throws Exception {
+    private void loadJsonResources() {
         val jsonFiles = FileUtils.listFiles(directory, new String[]{"json"}, true);
         for (val jsonFile : jsonFiles) {
             loadJsonResourceFrom(jsonFile);
