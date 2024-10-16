@@ -3,16 +3,22 @@ package org.apereo.cas.support.saml.idp.metadata;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListBucketsRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -24,6 +30,8 @@ import java.util.Optional;
 @UtilityClass
 @Slf4j
 public class AmazonS3SamlIdPMetadataUtils {
+    private static final String NEW_LINE_REPLACEMENT = "<br/>";
+
     /**
      * Determine bucket name for service.
      *
@@ -38,7 +46,7 @@ public class AmazonS3SamlIdPMetadataUtils {
         if (result.isPresent()) {
             val bucket = getBucketForService(result.get());
             if (s3Client.listBuckets(ListBucketsRequest.builder().build())
-                .buckets().stream().anyMatch(b -> b.name().equalsIgnoreCase(bucket))) {
+                .buckets().stream().anyMatch(foundBucket -> foundBucket.name().equalsIgnoreCase(bucket))) {
                 return bucket;
             }
         }
@@ -73,15 +81,48 @@ public class AmazonS3SamlIdPMetadataUtils {
             .contentType(MediaType.TEXT_PLAIN_VALUE)
             .metadata(metadataDetails)
             .build();
-        
+
         val requestBody = StringUtils.isBlank(doc.getMetadata()) ? RequestBody.empty() : RequestBody.fromString(doc.getMetadata());
         s3Client.putObject(request, requestBody);
         return doc;
     }
 
+    /**
+     * Read metadata document from bucket.
+     *
+     * @param object      the object
+     * @param bucketToUse the bucket to use
+     * @return the saml id p metadata document
+     */
+    public static SamlIdPMetadataDocument readMetadataDocumentFromBucket(final ResponseInputStream<GetObjectResponse> object,
+                                                                         final String bucketToUse) {
+        val metadataDocument = new SamlIdPMetadataDocument();
+        metadataDocument.setMetadata(FunctionUtils.doUnchecked(() -> IOUtils.toString(object, StandardCharsets.UTF_8)));
+        val objectMetadata = object.response().metadata();
+        LOGGER.debug("Located S3 object metadata [{}] from bucket [{}]", objectMetadata, bucketToUse);
+        metadataDocument.setEncryptionCertificate(restoreNewline(getObjectMetadataEntry(objectMetadata, "encryptionCertificate")));
+        metadataDocument.setSigningCertificate(restoreNewline(getObjectMetadataEntry(objectMetadata, "signingCertificate")));
+        metadataDocument.setEncryptionKey(restoreNewline(getObjectMetadataEntry(objectMetadata, "encryptionKey")));
+        metadataDocument.setSigningKey(restoreNewline(getObjectMetadataEntry(objectMetadata, "signingKey")));
+        metadataDocument.setAppliesTo(bucketToUse);
+        return metadataDocument;
+    }
+
     private static String sanitizeNewline(final String s) {
-        val r = s.replaceAll("\n", "<br/>");
-        LOGGER.trace("[{}] => [{}]", s, r);
-        return r;
+        val replaced = StringUtils.replace(s, "\n", NEW_LINE_REPLACEMENT);
+        LOGGER.trace("Sanitized [{}] => [{}]", s, replaced);
+        return replaced;
+    }
+
+    private static String restoreNewline(final String s) {
+        val replaced = StringUtils.replace(s, NEW_LINE_REPLACEMENT, "\n");
+        LOGGER.trace("Restored [{}] => [{}]", s, replaced);
+        return replaced;
+    }
+
+    private static String getObjectMetadataEntry(final Map<String, String> objectMetadata,
+                                                 final String key) {
+        return StringUtils.defaultIfBlank(objectMetadata.get(key),
+            objectMetadata.get(key.toLowerCase(Locale.ENGLISH)));
     }
 }
