@@ -200,6 +200,7 @@ layout: null
 
 * [Authorization](#casauthorization)
     *   [Overview](/cas/{{ version }}/authorization/Authorization-Overview.html)
+    *   [Heimdall](/cas/{{ version }}/authorization/Heimdall-Authorization-Overview.html)
     *   [OpenFGA](/cas/{{ version }}/services/Service-Access-Strategy-OpenFGA.html)
     *   [Cerbos](/cas/{{ version }}/services/Service-Access-Strategy-Cerbos.html)
     *   [Permit.io](/cas/{{ version }}/services/Service-Access-Strategy-PermitIO.html)
