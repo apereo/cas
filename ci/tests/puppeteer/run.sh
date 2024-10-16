@@ -500,7 +500,7 @@ if [[ "${REBUILD}" == "true" && "${RERUN}" != "true" ]]; then
     ps -ef | grep $pid | grep java
     if [[ $? -ne 0 ]]; then
       # This check is mainly for running on windows in CI
-      printcyan "Java not running 20 seconds after starting gradlew ... trying again"
+      printcyan "Java not running after starting gradle ... trying again"
       cat build.log
       kill $pid
       $BUILD_COMMAND > build.log 2>&1 &
