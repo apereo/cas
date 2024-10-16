@@ -4,6 +4,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.CollectionUtils;
 import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ import java.util.Optional;
  * @since 6.2.0
  */
 @UtilityClass
+@Slf4j
 public class AmazonS3SamlIdPMetadataUtils {
     /**
      * Determine bucket name for service.
@@ -59,10 +61,10 @@ public class AmazonS3SamlIdPMetadataUtils {
                                                                        final SamlIdPMetadataDocument doc,
                                                                        final String bucketNameToUse) {
         val metadataDetails = CollectionUtils.<String, String>wrap(
-            "signingCertificate", StringUtils.defaultString(doc.getSigningCertificate()),
-            "signingKey", StringUtils.defaultString(doc.getSigningKey()),
-            "encryptionCertificate", StringUtils.defaultString(doc.getEncryptionCertificate()),
-            "encryptionKey", StringUtils.defaultString(doc.getEncryptionKey())
+            "signingCertificate", sanitizeNewline(StringUtils.defaultString(doc.getSigningCertificate())),
+            "signingKey", sanitizeNewline(StringUtils.defaultString(doc.getSigningKey())),
+            "encryptionCertificate", sanitizeNewline(StringUtils.defaultString(doc.getEncryptionCertificate())),
+            "encryptionKey", sanitizeNewline(StringUtils.defaultString(doc.getEncryptionKey()))
         );
         metadataDetails.entrySet().removeIf(entry -> StringUtils.isBlank(entry.getValue()));
         val request = PutObjectRequest.builder()
@@ -75,5 +77,11 @@ public class AmazonS3SamlIdPMetadataUtils {
         val requestBody = StringUtils.isBlank(doc.getMetadata()) ? RequestBody.empty() : RequestBody.fromString(doc.getMetadata());
         s3Client.putObject(request, requestBody);
         return doc;
+    }
+
+    private static String sanitizeNewline(final String s) {
+        val r = s.replaceAll("\n", "<br/>");
+        LOGGER.trace("[{}] => [{}]", s, r);
+        return r;
     }
 }
