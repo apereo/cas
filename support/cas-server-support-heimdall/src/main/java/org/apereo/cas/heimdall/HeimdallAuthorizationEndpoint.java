@@ -5,6 +5,7 @@ import org.apereo.cas.heimdall.authorizer.repository.AuthorizableResourceReposit
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -39,7 +40,8 @@ public class HeimdallAuthorizationEndpoint extends BaseCasRestActuatorEndpoint {
      * @throws Throwable the throwable
      */
     @PostMapping(path = "/resources", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Fetch authorizable resources matching the given authorization request in the body")
+    @Operation(summary = "Fetch authorizable resources matching the given authorization request in the body",
+        parameters = @Parameter(name = "request", required = true, description = "Authorization request in the body"))
     public ResponseEntity<AuthorizableResource> fetchResources(@RequestBody final AuthorizationRequest request) throws Throwable {
         return ResponseEntity.of(authorizableResourceRepository.find(request));
     }
