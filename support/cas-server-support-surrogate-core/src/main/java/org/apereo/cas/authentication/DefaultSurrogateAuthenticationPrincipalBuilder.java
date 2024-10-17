@@ -75,7 +75,11 @@ public class DefaultSurrogateAuthenticationPrincipalBuilder implements Surrogate
                 throw new SurrogateAuthenticationException("Unable to authorize surrogate authentication request for " + surrogateUsername);
             }
             val surrogatePrincipal = buildSurrogatePrincipal(surrogateUsername, principal, registeredService);
-            val auth = DefaultAuthenticationBuilder.newInstance(authentication).setPrincipal(surrogatePrincipal).build();
+            val builder = DefaultAuthenticationBuilder.newInstance(authentication).setPrincipal(surrogatePrincipal);
+            builder.addAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER, surrogateUsername);
+            builder.addAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL, principal.getId());
+            builder.addAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, Boolean.TRUE.toString());
+            val auth = builder.build();
             return Optional.of(authenticationResultBuilder.collect(auth));
         }
         return Optional.empty();
