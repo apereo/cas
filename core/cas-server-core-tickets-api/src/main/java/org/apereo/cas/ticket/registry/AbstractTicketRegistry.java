@@ -107,13 +107,15 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
                 val ticketAgeSeconds = getTicketAgeSeconds(ticket);
                 LOGGER.debug("Ticket [{}] has expired according to policy [{}] after [{}] seconds and [{}] uses and will be removed from the ticket registry",
                     ticketId, ticket.getExpirationPolicy().getName(), ticketAgeSeconds, ticket.getCountOfUses());
+                val clientInfo = ClientInfoHolder.getClientInfo();
                 if (ticket instanceof final TicketGrantingTicket tgt) {
-                    val clientInfo = ClientInfoHolder.getClientInfo();
                     applicationContext.publishEvent(new CasRequestSingleLogoutEvent(this, tgt, clientInfo));
-                    applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, tgt, clientInfo));
                 }
                 try {
                     deleteTicket(ticket);
+                    if (ticket instanceof final TicketGrantingTicket tgt) {
+                        applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, tgt, clientInfo));
+                    }
                 } catch (final Exception e) {
                     LoggingUtils.warn(LOGGER, e);
                 }
