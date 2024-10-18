@@ -101,6 +101,7 @@ public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifacto
 
     @Override
     protected MultifactorAuthenticationTrustRecord saveInternal(final MultifactorAuthenticationTrustRecord record) {
+    	FunctionUtils.doIf(record.getId() < 0, __ -> record.setId(System.nanoTime())).accept(record);
         this.mongoTemplate.save(record, getTrustedDevicesMultifactorProperties().getMongo().getCollection());
         return record;
     }
