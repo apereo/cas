@@ -98,6 +98,8 @@ and this is just a preparatory step to ensure CAS is ready for the next version 
 - Google Cloud SDK
 - Spring Boot Admin
 - Spring
+- Spring Retry
+- Spring Data
 - Grouper
 - Apache Tomcat
 - Logback
