@@ -244,6 +244,10 @@ public class RegisteredServiceTestUtils {
             .build();
     }
 
+    public static Authentication getAuthentication(final Credential credential) {
+        return new DefaultAuthenticationBuilder(getPrincipal(credential.getId())).addCredential(credential).build();
+    }
+    
     public static Authentication getAuthentication(final String principal, final AuthenticationHandler handler,
                                                    final Credential credential, final Map<String, List<Object>> attributes) {
         return new DefaultAuthenticationBuilder(getPrincipal(principal))
