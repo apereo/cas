@@ -364,6 +364,7 @@ subprojects {
                                                     '-Xep:JavaUtilDate:OFF',
                                                     '-Xep:AddressSelection:OFF']
             casCompilerArgs.add("-XDcompilePolicy=byfile")
+            casCompilerArgs.add("-XDshould-stop.ifError=FLOW")
         }
         it.options.compilerArgs += casCompilerArgs
     }
