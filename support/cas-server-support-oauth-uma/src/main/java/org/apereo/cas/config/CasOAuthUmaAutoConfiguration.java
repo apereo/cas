@@ -161,7 +161,7 @@ public class CasOAuthUmaAutoConfiguration {
             final SessionStore oauthDistributedSessionStore,
             @Qualifier("oauthTokenGenerator")
             final OAuth20TokenGenerator oauthTokenGenerator,
-            @Qualifier("accessTokenJwtBuilder")
+            @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
             final JwtBuilder accessTokenJwtBuilder,
             @Qualifier("umaRequestingPartyTokenGenerator")
             final IdTokenGeneratorService umaRequestingPartyTokenGenerator,
@@ -236,7 +236,7 @@ public class CasOAuthUmaAutoConfiguration {
             final SessionStore oauthDistributedSessionStore,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
-            @Qualifier("accessTokenJwtBuilder")
+            @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
             final JwtBuilder accessTokenJwtBuilder) {
             val authenticator = new UmaRequestingPartyTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
             return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_RPT_AUTH", oauthDistributedSessionStore, casProperties);
@@ -250,7 +250,7 @@ public class CasOAuthUmaAutoConfiguration {
             final SessionStore oauthDistributedSessionStore,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
-            @Qualifier("accessTokenJwtBuilder")
+            @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
             final JwtBuilder accessTokenJwtBuilder) {
             val authenticator = new UmaAuthorizationApiTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
             return getSecurityInterceptor(authenticator, "CAS_UMA_CLIENT_AAT_AUTH",

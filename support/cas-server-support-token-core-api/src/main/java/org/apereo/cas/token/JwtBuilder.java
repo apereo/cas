@@ -53,9 +53,13 @@ import java.util.Set;
 @Getter
 public class JwtBuilder {
     /**
-     * Bean name of the builder that builds tickets as JWTs.
+     * Bean name of the builder that builds CAS tickets as JWTs.
      */
     public static final String TICKET_JWT_BUILDER_BEAN_NAME = "tokenTicketJwtBuilder";
+    /**
+     * Bean name of the builder that builds access tokens as JWTs.
+     */
+    public static final String ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME = "accessTokenJwtBuilder";
 
     private final CipherExecutor<Serializable, String> defaultTokenCipherExecutor;
 

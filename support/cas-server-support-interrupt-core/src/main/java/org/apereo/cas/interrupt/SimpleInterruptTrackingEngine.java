@@ -40,7 +40,15 @@ public class SimpleInterruptTrackingEngine implements InterruptTrackingEngine {
         val authentication = WebUtils.getAuthentication(requestContext);
         authentication.addAttribute(AUTHENTICATION_ATTRIBUTE_FINALIZED_INTERRUPT, Boolean.TRUE);
         val cookieValue = EncodingUtils.encodeBase64(MAPPER.writeValueAsString(response));
-        casCookieBuilder.addCookie(httpRequest, httpResponse, cookieValue);
+        LOGGER.debug("Storing interrupt response as base64 cookie [{}]", cookieValue);
+        val cookie = casCookieBuilder.addCookie(httpRequest, httpResponse, cookieValue);
+        LOGGER.debug("Added interrupt cookie [{}] with value [{}]", cookie.getName(), cookie.getValue());
+    }
+
+    @Override
+    public void removeInterrupt(final RequestContext requestContext) throws Throwable {
+        val httpResponse = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+        casCookieBuilder.removeCookie(httpResponse);
     }
 
     @Override
@@ -48,6 +56,7 @@ public class SimpleInterruptTrackingEngine implements InterruptTrackingEngine {
         return FunctionUtils.doAndHandle(__ -> {
             val httpRequest = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val cookieValue = casCookieBuilder.retrieveCookieValue(httpRequest);
+            LOGGER.debug("Retrieved interrupt cookie value [{}]", cookieValue);
             return StringUtils.isNotBlank(cookieValue)
                 ? Optional.ofNullable(MAPPER.readValue(EncodingUtils.decodeBase64ToString(cookieValue), InterruptResponse.class))
                 : Optional.<InterruptResponse>empty();

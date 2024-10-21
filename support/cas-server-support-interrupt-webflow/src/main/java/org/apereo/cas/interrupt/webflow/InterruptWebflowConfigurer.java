@@ -33,15 +33,20 @@ public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
     @Override
     protected void doInitialize() {
         val flow = getLoginFlow();
+        createInquireActionState(flow);
+        createInterruptView(flow);
+        createTransitionStateToInterrupt(flow);
+        createTransitionStateForMultifactorSubflows(flow);
+        createTransitionStateForAuthenticationWarnings(flow);
+        createRedirectToInterruptLinkState(flow);
 
-        if (flow != null) {
-            createInquireActionState(flow);
-            createInterruptView(flow);
-            createTransitionStateToInterrupt(flow);
-            createTransitionStateForMultifactorSubflows(flow);
-            createTransitionStateForAuthenticationWarnings(flow);
-            createRedirectToInterruptLinkState(flow);
-        }
+        val logoutFlow = getLogoutFlow();
+        createInterruptLogoutActionState(logoutFlow);
+    }
+
+    private void createInterruptLogoutActionState(final Flow flow) {
+        val state = getState(flow, CasWebflowConstants.STATE_ID_DO_LOGOUT, ActionState.class);
+        state.getEntryActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INTERRUPT_LOGOUT));
     }
 
     private void createTransitionStateForAuthenticationWarnings(final Flow flow) {

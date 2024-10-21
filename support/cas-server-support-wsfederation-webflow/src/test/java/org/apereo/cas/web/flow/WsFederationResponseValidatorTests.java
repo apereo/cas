@@ -9,7 +9,6 @@ import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.beans.BeanContainer;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
@@ -95,7 +94,7 @@ class WsFederationResponseValidatorTests {
 
         context.setRemoteAddr("185.86.151.11");
         context.setLocalAddr("185.88.151.11");
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.withUserAgent();
         context.setClientInfo();
 
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("https://wsfedservice-validate");

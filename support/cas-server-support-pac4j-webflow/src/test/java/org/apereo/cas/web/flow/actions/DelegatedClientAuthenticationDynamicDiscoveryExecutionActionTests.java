@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow.actions;
 import org.apereo.cas.pac4j.discovery.DelegatedAuthenticationDynamicDiscoveryProviderLocator;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import lombok.val;
@@ -42,7 +41,7 @@ class DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests {
     void verifyOperationWithClient() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
 
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.withUserAgent();
         context.setParameter("username", "cas@example.org");
 
         val result = delegatedAuthenticationDiscoveryAction.execute(context);
@@ -56,7 +55,7 @@ class DelegatedClientAuthenticationDynamicDiscoveryExecutionActionTests {
     void verifyOperationWithoutClient() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
         context.setParameter("username", "cas@test.org");
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.withUserAgent();
         val result = delegatedAuthenticationDiscoveryAction.execute(context);
         assertNotNull(result);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, result.getId());

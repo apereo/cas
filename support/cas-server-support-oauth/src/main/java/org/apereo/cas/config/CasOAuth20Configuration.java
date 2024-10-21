@@ -253,7 +253,7 @@ class CasOAuth20Configuration {
             return new OAuth20RegisteredServiceJwtAccessTokenCipherExecutor();
         }
 
-        @ConditionalOnMissingBean(name = "accessTokenJwtBuilder")
+        @ConditionalOnMissingBean(name = JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public JwtBuilder accessTokenJwtBuilder(
@@ -286,7 +286,7 @@ class CasOAuth20Configuration {
             final OAuth20RequestParameterResolver oauthRequestParameterResolver,
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
-            @Qualifier("accessTokenJwtBuilder")
+            @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME)
             final JwtBuilder accessTokenJwtBuilder,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
@@ -788,7 +788,7 @@ class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public OAuth20RequestParameterResolver oauthRequestParameterResolver(
-            @Qualifier("accessTokenJwtBuilder") final JwtBuilder accessTokenJwtBuilder) {
+            @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME) final JwtBuilder accessTokenJwtBuilder) {
             return new DefaultOAuth20RequestParameterResolver(accessTokenJwtBuilder);
         }
 
@@ -1269,7 +1269,7 @@ class CasOAuth20Configuration {
             @Qualifier("accessTokenIdGenerator") final UniqueTicketIdGenerator accessTokenIdGenerator,
             @Qualifier("accessTokenExpirationPolicy") final ExpirationPolicyBuilder accessTokenExpirationPolicy,
             @Qualifier(ServicesManager.BEAN_NAME) final ServicesManager servicesManager,
-            @Qualifier("accessTokenJwtBuilder") final JwtBuilder accessTokenJwtBuilder,
+            @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME) final JwtBuilder accessTokenJwtBuilder,
             @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
             @Qualifier(TicketTrackingPolicy.BEAN_NAME_DESCENDANT_TICKET_TRACKING)
             final TicketTrackingPolicy descendantTicketsTrackingPolicy) {
@@ -1509,7 +1509,7 @@ class CasOAuth20Configuration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Authenticator oauthAccessTokenAuthenticator(
-            @Qualifier("accessTokenJwtBuilder") final JwtBuilder accessTokenJwtBuilder,
+            @Qualifier(JwtBuilder.ACCESS_TOKEN_JWT_BUILDER_BEAN_NAME) final JwtBuilder accessTokenJwtBuilder,
             @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
             return new OAuth20AccessTokenAuthenticator(ticketRegistry, accessTokenJwtBuilder);
         }

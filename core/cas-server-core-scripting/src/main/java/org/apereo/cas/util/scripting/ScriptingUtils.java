@@ -92,6 +92,9 @@ public class ScriptingUtils {
             "jakarta.servlet",
             "jakarta.servlet.http",
 
+            "org.ldaptive",
+            "org.jose4j.jwk",
+
             "org.springframework.context",
             "org.springframework.core",
             "org.springframework.core.io",
@@ -120,6 +123,8 @@ public class ScriptingUtils {
             "org.apereo.cas.web.support",
             "org.apereo.cas.authentication.mfa",
             "org.apereo.cas.services",
+            "org.apereo.cas.heimdall",
+            "org.apereo.cas.heimdall.authorizer",
             "org.apereo.cas.support.saml",
             "org.apereo.cas.support.saml.services"
         );

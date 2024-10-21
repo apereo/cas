@@ -11,7 +11,7 @@
     "--cas.authn.saml-idp.metadata.amazon-s3.region=us-east-1",
     "--cas.authn.saml-idp.metadata.amazon-s3.credential-access-key=test",
     "--cas.authn.saml-idp.metadata.amazon-s3.credential-secret-key=test",
-    "--cas.authn.saml-idp.metadata.amazon-s3.crypto.enabled=true",
+    "--cas.authn.saml-idp.metadata.amazon-s3.crypto.enabled=false",
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",

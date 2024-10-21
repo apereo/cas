@@ -9,7 +9,6 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
@@ -124,7 +123,7 @@ class MultifactorAuthenticationSetTrustActionTests extends AbstractMultifactorAu
 
         context.setRemoteAddr("123.456.789.000");
         context.setLocalAddr("123.456.789.000");
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+        context.withUserAgent();
         context.setClientInfo();
         
         val authn = RegisteredServiceTestUtils.getAuthentication("casuser-setdevice");

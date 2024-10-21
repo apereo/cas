@@ -15,7 +15,6 @@
         <h2 th:utext="#{screen.service.error.header}">Application Not Authorized to Use CAS</h2>
         <p th:if="${rootCauseException instanceof T(org.apereo.cas.authentication.RootCasException)}"
            th:utext="#{${rootCauseException.code}}" />
-
     </div>
 </main>
 </body>

@@ -19,7 +19,7 @@ class SpnegoNegotiateCredentialsActionTests extends AbstractSpnegoTests {
     @Test
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.addHeader("User-Agent", "MSIE");
+        context.withUserAgent();
 
         negociateSpnegoAction.execute(context);
         assertNotNull(context.getHttpServletResponse().getHeader(SpnegoConstants.HEADER_AUTHENTICATE));
@@ -30,15 +30,14 @@ class SpnegoNegotiateCredentialsActionTests extends AbstractSpnegoTests {
     void verifyEmptyAgent() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, negociateSpnegoAction.execute(context).getId());
-
-        context.addHeader("User-Agent", "UnknownBrowser");
+        context.withUserAgent();
         assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, negociateSpnegoAction.execute(context).getId());
     }
 
     @Test
     void verifyBadAuthzHeader() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.addHeader("User-Agent", "MSIE");
+        context.withUserAgent();
         context.addHeader(SpnegoConstants.HEADER_AUTHORIZATION, SpnegoConstants.NEGOTIATE + " XYZ");
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, negociateSpnegoAction.execute(context).getId());
     }
