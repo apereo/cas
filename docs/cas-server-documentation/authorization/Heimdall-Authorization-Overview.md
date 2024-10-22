@@ -78,9 +78,9 @@ using the details specified in the request.
 
 The authorization header value can be *one* of the following:
 
-- An OpenID Connect **ID token** produced by CAS when acting as a OpenID Connect Provider.
-- A **JWT access token** produced by CAS when acting as an OAuth/OpenID Connect Provider.
-- An **opaque access token** (i.e. `AT-1-...`) produced by CAS when acting as an OAuth/OpenID Connect Provider.
+- An OpenID Connect **ID token** produced by CAS when acting as a [OpenID Connect Provider](../authentication/OIDC-Authentication.html).
+- A **JWT access token** produced by CAS when acting as an [OAuth](../authentication/OAuth-Authentication.html) or [OpenID Connect](../authentication/OIDC-Authentication.html) identity provider.
+- An **opaque access token** (i.e. `AT-1-...`) produced by CAS when acting an [OAuth](../authentication/OAuth-Authentication.html) or [OpenID Connect](../authentication/OIDC-Authentication.html) identity provider.
                       
 Claims or attributes from all token types are extracted and attached to the final principal, which is then
 passed to the authorization policy engine to make decisions.
@@ -132,7 +132,23 @@ The list of API resources owned by the indicated namespace support the following
 | `policies`           | A list of policies that are attached to the resource to allow or deny access.                             |
 | `enforceAllPolicies` | Whether all policies must be consulted to authorize the request. Default is `false`.                      |
 | `properties`         | Arbitrary key-value pairs attached to the resource for advanced decision making.                          |
-              
+   
+### Custom
+
+You can also build your own repository implementation to register and load authorizable resources.
+This may be done by providing a dedicated implementation of `AuthorizableResourceRepository`
+and registering it with the runtime:
+
+```java
+@Bean
+public AuthorizableResourceRepository authorizableResourceRepository(
+    return new MyResourceRepository();
+}
+```
+
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn
+more about how to register configurations into the CAS runtime.
+
 ## Authorization Policies
 
 Policies are the rules attached to resources to allow or deny access. Each authorizable resource may have one or more
