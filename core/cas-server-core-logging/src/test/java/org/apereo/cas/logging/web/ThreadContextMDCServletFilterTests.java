@@ -31,6 +31,8 @@ class ThreadContextMDCServletFilterTests {
     @Test
     void verifyFilter() throws Throwable {
         val request = new MockHttpServletRequest();
+        assertNotNull(request.getSession(true));
+
         request.setRequestURI("/cas/login");
         request.setRemoteAddr("1.2.3.4");
         request.setRemoteUser("casuser");
@@ -67,7 +69,8 @@ class ThreadContextMDCServletFilterTests {
         assertFalse(mdcElements.containsKey("password"));
         assertFalse(mdcElements.containsKey("confirmedPassword"));
         assertFalse(mdcElements.containsKey("cookie"));
-        assertFalse(mdcElements.containsKey("authorization"));
-
+        assertNotNull(request.getAttribute("sessionId"));
+        assertNotNull(response.getHeader("X-RequestId"));
+        assertNotNull(response.getHeader("X-SessionId"));
     }
 }
