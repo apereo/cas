@@ -14,6 +14,7 @@ import org.springframework.boot.actuate.endpoint.invoke.OperationInvoker;
 import org.springframework.boot.actuate.endpoint.invoke.ParameterValueMapper;
 import org.springframework.boot.actuate.endpoint.web.PathMapper;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.core.annotation.MergedAnnotations;
 import java.util.Collection;
 import java.util.List;
@@ -56,6 +57,12 @@ public class RestActuatorEndpointDiscoverer extends EndpointDiscoverer<RestActua
     @Override
     protected EndpointDiscoverer.OperationKey createOperationKey(final Operation operation) {
         throw new IllegalStateException("RestActuatorEndpoint must not declare operation: %s".formatted(operation.toString()));
+    }
+
+    @Override
+    protected boolean isInvocable(final RestActuatorControllerEndpoint endpoint) {
+        val annotation = AnnotationUtils.findAnnotation(endpoint.getEndpointBean().getClass(), RestActuatorEndpoint.class);
+        return annotation != null;
     }
 
     @Getter

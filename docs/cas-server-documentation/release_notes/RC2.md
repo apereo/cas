@@ -78,7 +78,30 @@ As described, the JDK baseline requirement for this CAS release is and **MUST** 
 wider ecosystem of supporting frameworks and libraries to catch up to Java `23`. We anticipate the work to finalize in the next few
 release candidates and certainly prior to the final release. Remember that the baseline requirement will remain unchanged
 and this is just a preparatory step to ensure CAS is ready for the next version of Java.
-     
+ 
+### Actuator Endpoints
+
+As part of upgrading to Spring Boot `3.4`, the security configuration of actuator endpoints have been reworked with the following
+changes from Spring Boot itself:
+
+Support for enabling and disabling endpoints is replacing the on/off support that it provided with a 
+finer-grained access model that supports only allowing read-only access to endpoint operations in addition to 
+disabling an endpoint (access of `NONE`) and fully enabling it (access of `UNRESTRICTED`).
+
+The following properties have been deprecated:
+                                       
+```properties
+management.endpoints.enabled-by-default
+management.endpoint.<id>.enabled
+```
+
+Their replacements are:
+                                   
+```properties
+management.endpoints.access.default
+management.endpoint.<id>.access
+```
+
 ## Other Stuff
      
 - Failures to write to session/local storage via Javascript are now reported back to the CAS user interface.
@@ -90,6 +113,7 @@ and this is just a preparatory step to ensure CAS is ready for the next version 
 - [Authentication interrupt tracking cookies](../webflow/Webflow-Customization-Interrupt-Tracking.html) are now removed from the browser when the user logs out of CAS. 
 - SMS messages sent by [passwordless authentication](../authentication/Passwordless-Authentication-Notifications.html) now correctly record the generated token id.
 - A dedicated [actuator endpoint](../password_management/Password-Management.html) to allow CAS to reset the user's password and kickstart the password reset flow. 
+- The auto configuration for the embedded Apache Tomcat can now enable the [Session Initialization Filter](https://tomcat.apache.org/tomcat-10.1-doc/api/org/apache/catalina/filters/SessionInitializerFilter.html)
 
 ## Library Upgrades
           
