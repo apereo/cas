@@ -5,7 +5,7 @@
     "--cas.events.core.track-configuration-modifications=false",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-    "--management.endpoint.refresh.enabled=true",
+    "--management.endpoint.refresh.access=UNRESTRICTED",
     "--management.endpoints.web.exposure.include=refresh",
 
     "--cas.webflow.crypto.signing.key=Q4tQGAuJSmuJ5WA0zByB9P6hYr5dpTd2JJifyy6Tm_CJ35pkbdhFvcgG-3igDjA4CTjau6Z0yMft-dhVUbRnPQ",

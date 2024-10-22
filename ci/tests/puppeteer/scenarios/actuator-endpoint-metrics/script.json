@@ -12,13 +12,13 @@
     
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
 
-    "--management.endpoint.prometheus.enabled=true",
+    "--management.endpoint.prometheus.access=UNRESTRICTED",
     "--management.endpoint.health.show-details=always",
 
     "--management.prometheus.metrics.export.enabled=true",
 
     "--management.endpoints.web.exposure.include=*",
-    "--management.endpoints.enabled-by-default=true"
+    "--management.endpoints.access.default=UNRESTRICTED"
   ],
   "bootstrapScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh"
 }

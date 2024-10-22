@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "server.port=8181",
 
         "cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-        "management.endpoint.serviceAccess.enabled=true",
+        "management.endpoint.serviceAccess.access=UNRESTRICTED",
         "management.endpoints.web.exposure.include=*"
     },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)

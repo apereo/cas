@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @EnabledIfListeningOnPort(port = 6379)
 @Tag("Redis")
 @TestPropertySource(properties = {
-    "management.endpoint.redisTicketsCache.enabled=true",
+    "management.endpoint.redisTicketsCache.access=UNRESTRICTED",
     "cas.ticket.registry.core.enable-locking=false"
 })
 @Tag("ActuatorEndpoint")

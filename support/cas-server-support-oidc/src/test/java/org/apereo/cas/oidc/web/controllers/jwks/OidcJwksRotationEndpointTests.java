@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = {
     "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/oidc-jwks.jwks",
-    "management.endpoint.oidcJwks.enabled=true"
+    "management.endpoint.oidcJwks.access=UNRESTRICTED"
 })
 @Tag("ActuatorEndpoint")
 @Import(AbstractOidcTests.SharedTestConfiguration.class)

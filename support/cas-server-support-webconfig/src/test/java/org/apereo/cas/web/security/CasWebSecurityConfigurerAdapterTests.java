@@ -22,8 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTest(classes = BaseWebSecurityTests.SharedTestConfiguration.class,
     properties = {
-        "management.endpoint.info.enabled=true",
-        "management.endpoint.beans.enabled=true",
+        "management.endpoint.info.access=UNRESTRICTED",
+        "management.endpoint.beans.access=UNRESTRICTED",
         "management.endpoints.web.exposure.include=*",
 
         "cas.monitor.endpoints.jaas.login-config=classpath:/jaas-endpoints.conf",

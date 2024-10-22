@@ -19,7 +19,7 @@
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
     
     "--cas.authn.passwordless.accounts.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
     "--cas.authn.passwordless.core.delegated-authentication-selector-script.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/delegate-idp-selector.groovy",

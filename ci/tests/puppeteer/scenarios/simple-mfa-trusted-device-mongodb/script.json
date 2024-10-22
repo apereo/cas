@@ -28,7 +28,7 @@
     "--cas.webflow.crypto.signing.key=qFz3Gfa21Wl8jM_fIXCTJI85FgXTT3isDxbVaCh6v13vHl0QXVJuXC5viYAt6EM2Qrol8ZWTn5KUJd1Hgt9gKQ",
     "--cas.webflow.crypto.encryption.key=DGuA0B0xlllGNYN5-jQmJw",
     
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
     "--management.endpoints.web.exposure.include=*",
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
 

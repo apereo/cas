@@ -12,7 +12,7 @@
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     
-    "--management.endpoint.refresh.enabled=true",
+    "--management.endpoint.refresh.access=UNRESTRICTED",
     "--management.endpoints.web.exposure.include=refresh",
 
     "--cas.service-registry.core.init-from-json=true",

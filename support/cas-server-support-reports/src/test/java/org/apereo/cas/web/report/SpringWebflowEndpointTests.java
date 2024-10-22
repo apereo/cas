@@ -40,7 +40,7 @@ import static org.mockito.Mockito.*;
  */
 @Tag("ActuatorEndpoint")
 @Import(SpringWebflowEndpointTests.SpringWebflowEndpointTestConfiguration.class)
-@TestPropertySource(properties = "management.endpoint.springWebflow.enabled=true")
+@TestPropertySource(properties = "management.endpoint.springWebflow.access=UNRESTRICTED")
 class SpringWebflowEndpointTests extends AbstractCasEndpointTests {
     @Autowired
     @Qualifier("springWebflowEndpoint")

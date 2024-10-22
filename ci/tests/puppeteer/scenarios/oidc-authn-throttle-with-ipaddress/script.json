@@ -6,7 +6,7 @@
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
     
     "--cas.authn.throttle.failure.threshold=2",
     "--cas.authn.throttle.failure.range-seconds=3",

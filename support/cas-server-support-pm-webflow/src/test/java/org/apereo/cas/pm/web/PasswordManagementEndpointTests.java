@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(properties = {
     "cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "management.endpoints.web.exposure.include=*",
-    "management.endpoint.passwordManagement.enabled=true"
+    "management.endpoint.passwordManagement.access=UNRESTRICTED"
 })
 @ExtendWith(CasTestExtension.class)
 @Tag("Mail")

@@ -9,7 +9,7 @@
     
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=registeredServices",
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
 
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=classpath:/services/apereocas/development"

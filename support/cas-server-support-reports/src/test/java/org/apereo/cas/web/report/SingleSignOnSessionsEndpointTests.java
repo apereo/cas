@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@TestPropertySource(properties = "management.endpoint.ssoSessions.enabled=true")
+@TestPropertySource(properties = "management.endpoint.ssoSessions.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
 @Execution(ExecutionMode.SAME_THREAD)
 class SingleSignOnSessionsEndpointTests extends AbstractCasEndpointTests {

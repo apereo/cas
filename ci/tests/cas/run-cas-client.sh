@@ -20,7 +20,7 @@ cat ${TMPDIR}/sslConfig.properties
 #java -Xdebug -Xrunjdwp:transport=dt_socket,address=*:8000,server=y,suspend=n \
 java -jar ${TMPDIR}/bootiful-cas-client.jar \
   --management.endpoints.web.exposure.include=* \
-  --management.endpoint.shutdown.enabled=true \
+  --management.endpoint.shutdown.access=UNRESTRICTED \
   --endpoints.shutdown.enabled=true \
   --server.ssl.key-store="${KEYSTORE}" \
   --cas.single-logout.enabled=true \

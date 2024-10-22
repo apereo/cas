@@ -6,7 +6,7 @@
 
     "--cas.monitor.endpoints.endpoint.info.access=AUTHENTICATED",
     "--cas.monitor.endpoints.form-login-enabled=true",
-    "--management.endpoint.info.enabled=true",
+    "--management.endpoint.info.access=UNRESTRICTED",
     "--management.endpoints.web.exposure.include=info",
 
     "--spring.security.user.name=casuser",

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = {
     "cas.standalone.configuration-security.psw=Q7M9w4NjYnBxb2#mW",
-    "management.endpoint.casConfig.enabled=true"
+    "management.endpoint.casConfig.access=UNRESTRICTED"
 })
 @Tag("ActuatorEndpoint")
 @ImportAutoConfiguration(CasCoreEnvironmentBootstrapAutoConfiguration.class)
