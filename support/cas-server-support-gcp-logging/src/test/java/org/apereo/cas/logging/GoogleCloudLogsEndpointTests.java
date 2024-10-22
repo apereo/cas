@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
     "cas.logging.gcp.log-name=projects/cas-project-id/logs/cas-server",
     "cas.logging.gcp.project-id=hello-gkej2ee-test3",
     "cas.logging.gcp.labels.namespace_name=cas-idp-0-develop",
-    "management.endpoint.gcpLogs.enabled=true",
+    "management.endpoint.gcpLogs.access=UNRESTRICTED",
     "management.endpoints.web.exposure.include=*"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)

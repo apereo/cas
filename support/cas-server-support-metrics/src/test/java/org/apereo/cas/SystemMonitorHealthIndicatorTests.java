@@ -26,10 +26,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = AopAutoConfiguration.class, properties = {
-    "management.endpoint.metrics.enabled=true",
+    "management.endpoint.metrics.access=UNRESTRICTED",
     "management.endpoints.web.exposure.include=*",
     "management.metrics.export.simple.enabled=true",
-    "management.endpoint.health.enabled=true"
+    "management.endpoint.health.access=UNRESTRICTED"
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("Metrics")

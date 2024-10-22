@@ -13,6 +13,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
@@ -43,7 +44,7 @@ import java.util.Objects;
  * @since 5.3.0
  */
 @Slf4j
-@Endpoint(id = "attributeConsent", enableByDefault = false)
+@Endpoint(id = "attributeConsent", defaultAccess = Access.NONE)
 public class AttributeConsentReportEndpoint extends BaseCasRestActuatorEndpoint {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();

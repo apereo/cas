@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = {
     "cas.tgc.crypto.enabled=false",
-    "management.endpoint.sso.enabled=true"
+    "management.endpoint.sso.access=UNRESTRICTED"
 })
 @Tag("ActuatorEndpoint")
 class SingleSignOnSessionStatusEndpointTests extends AbstractCasEndpointTests {

@@ -17,6 +17,8 @@ dependencies {
     implementation libraries.nimbus
     implementation libraries.springsecurityweb
     implementation libraries.springsecurityconfig
+    
+    compileOnly libraries.grouper
 
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-tickets-api")
@@ -38,10 +40,17 @@ dependencies {
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-oauth-core-api")
     implementation project(":support:cas-server-support-oidc-core-api")
+    implementation project(":support:cas-server-support-oidc-core")
+    implementation project(":support:cas-server-support-oidc-services")
+    implementation project(":support:cas-server-support-oauth-services")
+    implementation project(":support:cas-server-support-grouper-core")
+    implementation project(":support:cas-server-support-person-directory-core")
+
+    testImplementation libraries.grouper
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-webconfig")
-
+    
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-authentication")
@@ -58,6 +67,11 @@ dependencies {
     testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-webflow")
 
+    testImplementation project(":support:cas-server-support-oidc")
+    testImplementation project(":support:cas-server-support-oauth-webflow")
+    testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-thymeleaf")
+    
     testImplementation libraries.springboottomcat
     
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

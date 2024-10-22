@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Tag("SAMLMetadata")
 @TestPropertySource(properties = {
     "management.endpoints.web.exposure.include=*",
-    "management.endpoint.samlIdPRegisteredServiceMetadataCache.enabled=true"
+    "management.endpoint.samlIdPRegisteredServiceMetadataCache.access=UNRESTRICTED"
 })
 @Execution(ExecutionMode.SAME_THREAD)
 class SamlRegisteredServiceCachedMetadataEndpointTests extends BaseSamlIdPConfigurationTests {

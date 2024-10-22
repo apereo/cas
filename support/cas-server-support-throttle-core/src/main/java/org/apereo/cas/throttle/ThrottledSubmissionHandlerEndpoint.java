@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
@@ -24,7 +25,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Endpoint(id = "throttles", enableByDefault = false)
+@Endpoint(id = "throttles", defaultAccess = Access.NONE)
 public class ThrottledSubmissionHandlerEndpoint extends BaseCasRestActuatorEndpoint {
 
     private final ObjectProvider<AuthenticationThrottlingExecutionPlan> authenticationThrottlingExecutionPlan;

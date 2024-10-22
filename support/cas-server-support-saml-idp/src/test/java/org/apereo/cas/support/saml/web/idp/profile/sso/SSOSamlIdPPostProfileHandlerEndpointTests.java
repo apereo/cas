@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("SAML2Web")
 @TestPropertySource(properties = {
     "management.endpoints.web.exposure.include=*",
-    "management.endpoint.samlPostProfileResponse.enabled=true"
+    "management.endpoint.samlPostProfileResponse.access=UNRESTRICTED"
 })
 class SSOSamlIdPPostProfileHandlerEndpointTests extends BaseSamlIdPConfigurationTests {
     @Autowired

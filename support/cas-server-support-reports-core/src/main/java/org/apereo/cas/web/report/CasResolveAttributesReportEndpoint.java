@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
@@ -24,7 +25,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Endpoint(id = "resolveAttributes", enableByDefault = false)
+@Endpoint(id = "resolveAttributes", defaultAccess = Access.NONE)
 public class CasResolveAttributesReportEndpoint extends BaseCasActuatorEndpoint {
     private final ObjectProvider<PrincipalResolver> defaultPrincipalResolver;
 

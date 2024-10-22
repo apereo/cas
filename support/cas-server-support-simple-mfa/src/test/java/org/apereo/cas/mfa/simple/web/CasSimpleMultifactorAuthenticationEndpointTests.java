@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.0.0
  */
 @Tag("ActuatorEndpoint")
-@TestPropertySource(properties = "management.endpoint.mfaSimple.enabled=true")
+@TestPropertySource(properties = "management.endpoint.mfaSimple.access=UNRESTRICTED")
 @Import({
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class

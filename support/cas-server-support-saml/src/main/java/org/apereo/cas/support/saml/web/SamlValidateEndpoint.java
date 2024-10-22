@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpHeaders;
@@ -45,7 +46,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Endpoint(id = "samlValidate", enableByDefault = false)
+@Endpoint(id = "samlValidate", defaultAccess = Access.NONE)
 public class SamlValidateEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<ServicesManager> servicesManager;
 

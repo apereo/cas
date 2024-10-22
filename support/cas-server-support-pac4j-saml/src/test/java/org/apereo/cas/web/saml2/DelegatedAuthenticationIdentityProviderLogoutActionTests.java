@@ -8,7 +8,6 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.MockWebServer;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
 import org.apereo.cas.web.support.WebUtils;
@@ -65,7 +64,7 @@ class DelegatedAuthenticationIdentityProviderLogoutActionTests {
     void verifyOperation() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
         context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "SAML2Client");
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.withUserAgent();
         assertEquals(CasWebflowConstants.TRANSITION_ID_PROCEED, action.execute(context).getId());
     }
 
@@ -75,7 +74,7 @@ class DelegatedAuthenticationIdentityProviderLogoutActionTests {
         context.setMethod(HttpMethod.POST);
         val tgt = prepCredential(context, UUID.randomUUID().toString(), "AutomaticPostLogoutClient");
         context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "AutomaticPostLogoutClient");
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.withUserAgent();
         try (val webServer = new MockWebServer(HttpStatus.OK)) {
             webServer.start();
             val continuation = SingleLogoutContinuation.builder().url("http://localhost:%s".formatted(webServer.getPort()));
@@ -91,7 +90,7 @@ class DelegatedAuthenticationIdentityProviderLogoutActionTests {
         val context = MockRequestContext.create(applicationContext);
         context.setMethod(HttpMethod.POST);
         context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "SAML2Client");
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.withUserAgent();
         val tgt = prepCredential(context, UUID.randomUUID().toString(), "SAML2Client");
         assertEquals(CasWebflowConstants.TRANSITION_ID_DONE, action.execute(context).getId());
         assertNotNull(configurationContext.getTicketRegistry().getTicket(tgt.getId()));

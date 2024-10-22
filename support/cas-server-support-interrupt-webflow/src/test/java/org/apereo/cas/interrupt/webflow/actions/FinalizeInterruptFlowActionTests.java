@@ -79,8 +79,7 @@ class FinalizeInterruptFlowActionTests {
 
     @Test
     void verifyFinalizedInterruptNonBlocked() throws Throwable {
-        val context = MockRequestContext.create(applicationContext);
-
+        val context = MockRequestContext.create(applicationContext).withUserAgent();
         val interrupt = InterruptResponse.interrupt();
 
         InterruptUtils.putInterruptIn(context, interrupt);

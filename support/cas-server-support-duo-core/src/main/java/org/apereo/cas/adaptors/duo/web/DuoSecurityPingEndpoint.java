@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.context.ApplicationContext;
@@ -27,7 +28,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Endpoint(id = "duoPing", enableByDefault = false)
+@Endpoint(id = "duoPing", defaultAccess = Access.NONE)
 public class DuoSecurityPingEndpoint extends BaseCasActuatorEndpoint {
     private final ApplicationContext applicationContext;
 

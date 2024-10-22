@@ -83,8 +83,7 @@ public class HeimdallAuthorizationController {
             .status(authorizationResponse.getStatus())
             .body(authorizationResponse);
     }
-
-
+    
     private static void logRequest(final BaseHeimdallRequest heimdallRequest) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(heimdallRequest.toJson());

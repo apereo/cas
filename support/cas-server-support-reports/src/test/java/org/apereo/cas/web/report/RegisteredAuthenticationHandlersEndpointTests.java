@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Francesco Chicchiriccò
  * @since 6.3.0
  */
-@TestPropertySource(properties = "management.endpoint.authenticationHandlers.enabled=true")
+@TestPropertySource(properties = "management.endpoint.authenticationHandlers.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
 class RegisteredAuthenticationHandlersEndpointTests extends AbstractCasEndpointTests {
 

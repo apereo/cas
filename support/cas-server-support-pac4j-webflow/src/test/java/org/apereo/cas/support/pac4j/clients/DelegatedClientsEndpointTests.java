@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @TestPropertySource(properties = {
-    "management.endpoint.delegatedClients.enabled=true",
+    "management.endpoint.delegatedClients.access=UNRESTRICTED",
     
     "cas.authn.pac4j.cas[0].login-url=https://localhost:8444/cas/login",
 

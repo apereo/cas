@@ -18,7 +18,7 @@
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=events",
-    "--management.endpoints.enabled-by-default=true"
+    "--management.endpoints.access.default=UNRESTRICTED"
   ],
   "jvmArgs": "-Djava.net.preferIPv4Addresses=true",
   "initScript": "${PWD}/ci/tests/mongodb/run-mongodb-server.sh"

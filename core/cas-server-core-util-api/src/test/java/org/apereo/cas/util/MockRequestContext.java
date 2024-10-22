@@ -51,8 +51,7 @@ public class MockRequestContext extends MockRequestControlContext {
     public MockHttpServletResponse getHttpServletResponse() {
         return (MockHttpServletResponse) getExternalContext().getNativeResponse();
     }
-
-
+    
     public MockRequestContext setParameter(final String name, final String value) {
         getHttpServletRequest().setParameter(name, value);
         putRequestParameter(name, value);
@@ -115,8 +114,7 @@ public class MockRequestContext extends MockRequestControlContext {
     public Object getSessionAttribute(final String name) {
         return Objects.requireNonNull(getHttpServletRequest().getSession(true)).getAttribute(name);
     }
-
-
+    
     public MockRequestContext setContentType(final String type) {
         getHttpServletRequest().setContentType(type);
         return this;
@@ -129,6 +127,11 @@ public class MockRequestContext extends MockRequestControlContext {
 
     public MockRequestContext setRequestCookiesFromResponse() {
         getHttpServletRequest().setCookies(getHttpServletResponse().getCookies());
+        return this;
+    }
+
+    public MockRequestContext withUserAgent() {
+        withUserAgent("Mozilla/5.0 (Windows NT 10.0; WOW64)");
         return this;
     }
 

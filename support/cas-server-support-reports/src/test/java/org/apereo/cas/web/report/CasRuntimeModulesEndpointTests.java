@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@TestPropertySource(properties = "management.endpoint.casModules.enabled=true")
+@TestPropertySource(properties = "management.endpoint.casModules.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
 class CasRuntimeModulesEndpointTests extends AbstractCasEndpointTests {
     @Autowired
