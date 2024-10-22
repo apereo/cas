@@ -44,6 +44,7 @@ layout: null
                     * [Connectors](/cas/{{ version }}/installation/Servlet-Container-Embedded-Tomcat-Connectors.html)
                     * [Logging](/cas/{{ version }}/installation/Servlet-Container-Embedded-Tomcat-Logging.html)
                     * [Remove User Valve](/cas/{{ version }}/installation/Servlet-Container-Embedded-Tomcat-RemoteUserValve.html)
+                    * [Session Initialization](/cas/{{ version }}/installation/Servlet-Container-Embedded-Tomcat-SessionInitialization.html)
                     * [SSL Valve](/cas/{{ version }}/installation/Servlet-Container-Embedded-Tomcat-SslValve.html)
                 *   [Jetty](/cas/{{ version }}/installation/Configuring-Servlet-Container-Embedded-Jetty.html)
                 *   [Undertow](/cas/{{ version }}/installation/Configuring-Servlet-Container-Embedded-Undertow.html)

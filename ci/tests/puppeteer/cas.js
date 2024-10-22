@@ -273,14 +273,16 @@ exports.assertInvisibility = async (page, selector) => {
     assert(result, `The element ${selector} must be invisible but it's not.`);
 };
 
-exports.deleteCookies = async(page) => {
+exports.deleteCookies = async(page, cookieName = undefined) => {
     const allCookies = await page.cookies();
     for (const cookie of allCookies) {
-        await this.log(`Deleting cookie ${cookie.name}`);
-        await page.deleteCookie({
-            name : cookie.name,
-            domain : cookie.domain
-        });
+        if (cookieName === undefined || cookie.name === cookieName) {
+            await this.logb(`Deleting cookie ${cookie.name}`);
+            await page.deleteCookie({
+                name : cookie.name,
+                domain : cookie.domain
+            });
+        }
     }
 };
 

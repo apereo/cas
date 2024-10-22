@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.val;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
@@ -24,7 +25,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-@Endpoint(id = "mfaDevices", enableByDefault = false)
+@Endpoint(id = "mfaDevices", defaultAccess = Access.NONE)
 public class MultifactorAuthenticationDevicesEndpoint extends BaseCasRestActuatorEndpoint {
 
     public MultifactorAuthenticationDevicesEndpoint(final CasConfigurationProperties casProperties,

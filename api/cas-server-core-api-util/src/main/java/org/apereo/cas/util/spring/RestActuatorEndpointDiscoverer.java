@@ -2,6 +2,7 @@ package org.apereo.cas.util.spring;
 
 import lombok.Getter;
 import lombok.val;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.EndpointFilter;
 import org.springframework.boot.actuate.endpoint.EndpointId;
 import org.springframework.boot.actuate.endpoint.Operation;
@@ -28,7 +29,7 @@ public class RestActuatorEndpointDiscoverer extends EndpointDiscoverer<RestActua
 
     public RestActuatorEndpointDiscoverer(final ApplicationContext applicationContext, final List<PathMapper> endpointPathMappers,
                                           final Collection<EndpointFilter<RestActuatorControllerEndpoint>> filters) {
-        super(applicationContext, ParameterValueMapper.NONE, List.of(), filters);
+        super(applicationContext, ParameterValueMapper.NONE, List.of(), filters, List.of());
         this.endpointPathMappers = List.copyOf(endpointPathMappers);
     }
 
@@ -38,23 +39,23 @@ public class RestActuatorEndpointDiscoverer extends EndpointDiscoverer<RestActua
         return annotations.isPresent(RestActuatorEndpoint.class) && annotations.isPresent(Endpoint.class);
     }
 
+
     @Override
-    protected RestActuatorControllerEndpoint createEndpoint(final Object endpointBean,
-                                                            final EndpointId id,
-                                                            final boolean enabledByDefault,
-                                                            final Collection<Operation> operations) {
+    protected RestActuatorControllerEndpoint createEndpoint(final Object endpointBean, final EndpointId id,
+                                                            final Access defaultAccess, final Collection<Operation> operations) {
+
         val rootPath = PathMapper.getRootPath(this.endpointPathMappers, id);
-        return new DiscoveredRestActuatorEndpoint(this, endpointBean, id, rootPath, enabledByDefault);
+        return new DiscoveredRestActuatorEndpoint(this, endpointBean, id, rootPath, defaultAccess);
     }
 
     @Override
     protected Operation createOperation(final EndpointId endpointId, final DiscoveredOperationMethod operationMethod, final OperationInvoker invoker) {
-        throw new IllegalStateException("RestActuatorEndpoint " + endpointId.toString() + " must not declare operations");
+        throw new IllegalStateException("RestActuatorEndpoint %s must not declare operations".formatted(endpointId.toString()));
     }
 
     @Override
     protected EndpointDiscoverer.OperationKey createOperationKey(final Operation operation) {
-        throw new IllegalStateException("RestActuatorEndpoint must not declare operation: " + operation.toString());
+        throw new IllegalStateException("RestActuatorEndpoint must not declare operation: %s".formatted(operation.toString()));
     }
 
     @Getter
@@ -62,8 +63,8 @@ public class RestActuatorEndpointDiscoverer extends EndpointDiscoverer<RestActua
         private final String rootPath;
 
         DiscoveredRestActuatorEndpoint(final EndpointDiscoverer<?, ?> discoverer, final Object endpointBean,
-                                       final EndpointId id, final String rootPath, final boolean enabledByDefault) {
-            super(discoverer, endpointBean, id, enabledByDefault, List.of());
+                                       final EndpointId id, final String rootPath, final Access defaultAccess) {
+            super(discoverer, endpointBean, id, defaultAccess, List.of());
             this.rootPath = rootPath;
         }
     }

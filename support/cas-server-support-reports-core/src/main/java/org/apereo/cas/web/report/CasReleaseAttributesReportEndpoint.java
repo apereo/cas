@@ -24,6 +24,7 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -38,7 +39,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Endpoint(id = "releaseAttributes", enableByDefault = false)
+@Endpoint(id = "releaseAttributes", defaultAccess = Access.NONE)
 public class CasReleaseAttributesReportEndpoint extends BaseCasActuatorEndpoint {
     private final ObjectProvider<ServicesManager> servicesManager;
 

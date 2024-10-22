@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.jooq.lambda.Unchecked;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
@@ -35,7 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @since 7.0.0
  */
 @Slf4j
-@Endpoint(id = "mfaSimple", enableByDefault = false)
+@Endpoint(id = "mfaSimple", defaultAccess = Access.NONE)
 public class CasSimpleMultifactorAuthenticationEndpoint extends BaseCasRestActuatorEndpoint {
     public CasSimpleMultifactorAuthenticationEndpoint(final CasConfigurationProperties casProperties,
                                                       final ConfigurableApplicationContext applicationContext) {
