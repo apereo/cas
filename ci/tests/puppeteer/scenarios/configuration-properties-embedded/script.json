@@ -18,7 +18,7 @@
     "--spring.profiles.active=embedded",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=AUTHENTICATED",
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
     
     "--cas.standalone.configuration-directory=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config"
   ],

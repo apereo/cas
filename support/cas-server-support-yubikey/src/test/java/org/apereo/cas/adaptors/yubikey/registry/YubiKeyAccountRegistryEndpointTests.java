@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.mfa.yubikey.json.watch-resource=false",
 
         "management.endpoints.web.exposure.include=*",
-        "management.endpoint.yubikeyAccountRepository.enabled=true"
+        "management.endpoint.yubikeyAccountRepository.access=UNRESTRICTED"
     })
 @Tag("MFAProvider")
 @ExtendWith(CasTestExtension.class)

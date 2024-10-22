@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.1.0
  */
 @TestPropertySource(properties = {
-    "management.endpoint.oauthTokens.enabled=true",
+    "management.endpoint.oauthTokens.access=UNRESTRICTED",
     "management.endpoints.web.exposure.include=*"
 })
 @Tag("OAuthWeb")

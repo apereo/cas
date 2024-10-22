@@ -8,8 +8,8 @@ createConfig() {
   mkdir -p ${configDir}
   cat > ${configDir}/cas.properties <<EOF
 management.endpoints.web.exposure.include=health,info,env,loggers
-management.endpoint.health.enabled=true
-management.endpoint.info.enabled=true
+management.endpoint.health.access=UNRESTRICTED
+management.endpoint.info.access=UNRESTRICTED
 cas.monitor.endpoints.endpoint.defaults.access[0]=IP_ADDRESS
 cas.monitor.endpoints.endpoint.defaults.required-ip-addresses[0]=.*
 management.endpoint.health.show-details=always
@@ -17,8 +17,8 @@ spring.cloud.discovery.client.composite-indicator.enabled=false
 management.health.defaults.enabled=false
 management.health.ping.enabled=true
 management.health.diskSpace.enabled=true
-management.endpoint.env.enabled=true
-management.endpoint.loggers.enabled=true
+management.endpoint.env.access=UNRESTRICTED
+management.endpoint.loggers.access=UNRESTRICTED
 management.health.memoryHealthIndicator.enabled=true
 spring.main.lazy-initialization=false
 EOF

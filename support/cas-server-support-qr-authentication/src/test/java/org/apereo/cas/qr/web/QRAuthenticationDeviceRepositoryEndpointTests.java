@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("ActuatorEndpoint")
 @SpringBootTest(classes = BaseQRAuthenticationTokenValidatorServiceTests.SharedTestConfiguration.class,
     properties = {
-        "management.endpoint.qrDevices.enabled=true",
+        "management.endpoint.qrDevices.access=UNRESTRICTED",
         "management.endpoints.web.exposure.include=*"
     })
 @ExtendWith(CasTestExtension.class)

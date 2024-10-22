@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@TestPropertySource(properties = "management.endpoint.mfaDevices.enabled=true")
+@TestPropertySource(properties = "management.endpoint.mfaDevices.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
 @Import(MultifactorAuthenticationDevicesEndpointTests.MultifactorProviderTestConfiguration.class)
 class MultifactorAuthenticationDevicesEndpointTests extends AbstractCasEndpointTests {

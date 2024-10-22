@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@TestPropertySource(properties = "management.endpoint.registeredServices.enabled=true")
+@TestPropertySource(properties = "management.endpoint.registeredServices.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
 class RegisteredServicesEndpointTests extends AbstractCasEndpointTests {
     @Autowired

@@ -6,7 +6,7 @@
   "properties": [
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=gauthCredentialRepository",
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
     
     "--cas.authn.pm.core.enabled=true",
     "--cas.authn.pm.core.password-policy-pattern=.+",

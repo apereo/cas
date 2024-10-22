@@ -17,7 +17,7 @@
 
     "--management.endpoints.web.exposure.include=health",
     "--management.endpoint.health.show-details=always",
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
 
     "--cas.service-registry.dynamo-db.endpoint=http://localhost:8000",
     "--cas.service-registry.dynamo-db.drop-tables-on-startup=true",

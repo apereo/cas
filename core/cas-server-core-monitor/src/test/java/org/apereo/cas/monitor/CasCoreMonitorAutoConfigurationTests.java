@@ -37,9 +37,9 @@ import static org.junit.jupiter.api.Assertions.*;
     properties = {
         "management.metrics.export.simple.enabled=true",
 
-        "management.endpoint.metrics.enabled=true",
+        "management.endpoint.metrics.access=UNRESTRICTED",
         "management.endpoints.web.exposure.include=*",
-        "management.endpoint.health.enabled=true",
+        "management.endpoint.health.access=UNRESTRICTED",
 
         "management.health.systemHealthIndicator.enabled=true",
         "management.health.memoryHealthIndicator.enabled=true",

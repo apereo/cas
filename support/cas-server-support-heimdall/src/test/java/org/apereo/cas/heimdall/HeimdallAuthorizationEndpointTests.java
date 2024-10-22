@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     properties = {
         "cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
         "management.endpoints.web.exposure.include=*",
-        "management.endpoint.heimdall.enabled=true",
+        "management.endpoint.heimdall.access=UNRESTRICTED",
         "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/heimdalloidc.jwks",
         "cas.authn.oidc.core.authentication-context-reference-mappings=something->mfa-something",
         "cas.heimdall.json.location=classpath:/policies",
