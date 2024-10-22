@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @Import(BaseGoogleAuthenticatorTests.SharedTestConfiguration.class)
-@TestPropertySource(properties = "management.endpoint.gauthCredentialRepository.enabled=true")
+@TestPropertySource(properties = "management.endpoint.gauthCredentialRepository.access=UNRESTRICTED")
 @Getter
 @Tag("MFAProvider")
 class GoogleAuthenticatorTokenCredentialRepositoryEndpointTests extends AbstractCasEndpointTests {

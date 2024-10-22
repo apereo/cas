@@ -3,7 +3,7 @@
 
   "properties": [
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
     "--management.endpoints.web.exposure.include=*",
 
     "--cas.server.name=https://localhost:8443",

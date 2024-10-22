@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@TestPropertySource(properties = "management.endpoint.releaseAttributes.enabled=true")
+@TestPropertySource(properties = "management.endpoint.releaseAttributes.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
 class CasReleaseAttributesReportEndpointTests extends AbstractCasEndpointTests {
     @Autowired

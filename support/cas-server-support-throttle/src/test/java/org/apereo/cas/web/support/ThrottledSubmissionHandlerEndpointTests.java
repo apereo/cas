@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @TestPropertySource(properties = {
     "cas.authn.throttle.failure.range-seconds=5",
-    "management.endpoint.throttles.enabled=true"
+    "management.endpoint.throttles.access=UNRESTRICTED"
 })
 @Import(BaseThrottledSubmissionHandlerInterceptorAdapterTests.SharedTestConfiguration.class)
 @Tag("ActuatorEndpoint")

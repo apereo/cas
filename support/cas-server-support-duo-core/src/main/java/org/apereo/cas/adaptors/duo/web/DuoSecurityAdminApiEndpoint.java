@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
@@ -34,7 +35,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Endpoint(id = "duoAdmin", enableByDefault = false)
+@Endpoint(id = "duoAdmin", defaultAccess = Access.NONE)
 public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
 
     public DuoSecurityAdminApiEndpoint(final CasConfigurationProperties casProperties,

@@ -51,7 +51,7 @@ class ConfirmLogoutActionTests extends AbstractWebflowActionsTests {
 
         context.setRemoteAddr("185.86.151.11");
         context.setLocalAddr("185.88.151.11");
-        context.addHeader("User-Agent", "agent");
+        context.withUserAgent();
         context.setClientInfo();
 
         val ticket = new MockTicketGrantingTicket("casuser");

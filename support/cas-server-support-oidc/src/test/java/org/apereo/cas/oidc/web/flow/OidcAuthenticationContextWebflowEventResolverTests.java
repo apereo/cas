@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
@@ -43,7 +42,7 @@ class OidcAuthenticationContextWebflowEventResolverTests extends AbstractOidcTes
         val context = MockRequestContext.create(applicationContext);
         context.setRemoteAddr("385.86.151.11");
         context.setLocalAddr("295.88.151.11");
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "MSIE");
+        context.withUserAgent();
         context.setParameter(OAuth20Constants.ACR_VALUES, TestMultifactorAuthenticationProvider.ID);
         context.setClientInfo();
 

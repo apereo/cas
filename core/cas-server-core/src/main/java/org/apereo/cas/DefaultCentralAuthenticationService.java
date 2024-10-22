@@ -159,23 +159,22 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         resourceResolverName = AuditResourceResolvers.GRANT_PROXY_TICKET_RESOURCE_RESOLVER)
     @Override
     public Ticket grantProxyTicket(final String proxyGrantingTicketId, final Service service) throws AbstractTicketException {
-
-        val proxyGrantingTicket = configurationContext.getTicketRegistry().getTicket(proxyGrantingTicketId, ProxyGrantingTicket.class);
-        val registeredService = configurationContext.getServicesManager().findServiceBy(service);
-        try {
-            enforceRegisteredServiceAccess(service, proxyGrantingTicket, registeredService);
-            RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, service, proxyGrantingTicket);
-        } catch (final Throwable e) {
-            LoggingUtils.warn(LOGGER, e);
-            throw new UnauthorizedSsoServiceException();
-        }
-
-        evaluateProxiedServiceIfNeeded(service, proxyGrantingTicket, registeredService);
-        getAuthenticationSatisfiedByPolicy(proxyGrantingTicket.getRoot().getAuthentication(), service, registeredService);
-
-        val authentication = proxyGrantingTicket.getRoot().getAuthentication();
-        return configurationContext.getLockRepository().execute(proxyGrantingTicket.getId(),
+        return configurationContext.getLockRepository().execute(proxyGrantingTicketId,
                 () -> FunctionUtils.doUnchecked(() -> {
+                    val proxyGrantingTicket = configurationContext.getTicketRegistry().getTicket(proxyGrantingTicketId, ProxyGrantingTicket.class);
+                    val registeredService = configurationContext.getServicesManager().findServiceBy(service);
+                    try {
+                        enforceRegisteredServiceAccess(service, proxyGrantingTicket, registeredService);
+                        RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, service, proxyGrantingTicket);
+                    } catch (final Throwable e) {
+                        LoggingUtils.warn(LOGGER, e);
+                        throw new UnauthorizedSsoServiceException();
+                    }
+
+                    evaluateProxiedServiceIfNeeded(service, proxyGrantingTicket, registeredService);
+                    getAuthenticationSatisfiedByPolicy(proxyGrantingTicket.getRoot().getAuthentication(), service, registeredService);
+
+                    val authentication = proxyGrantingTicket.getRoot().getAuthentication();
                     val principal = authentication.getPrincipal();
                     val factory = (ProxyTicketFactory) configurationContext.getTicketFactory().get(ProxyTicket.class);
                     val proxyTicket = factory.create(proxyGrantingTicket, service, ProxyTicket.class);

@@ -49,7 +49,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "spring.security.user.password=Mellon",
         "spring.web.resources.static-locations=file:${java.io.tmpdir}/static",
 
-        "management.endpoints.enabled-by-default=true",
+        "management.endpoints.access.default=UNRESTRICTED",
         "management.endpoints.web.exposure.include=*",
 
         "cas.monitor.endpoints.endpoint.beans.access=ANONYMOUS",

@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 6.2.0
  */
 @TestPropertySource(properties = {
-    "management.endpoint.logging-config.enabled=true",
+    "management.endpoint.loggingConfig.access=UNRESTRICTED",
     "logging.config=file:${java.io.tmpdir}/log4j2.xml"
 })
 @Tag("ActuatorEndpoint")

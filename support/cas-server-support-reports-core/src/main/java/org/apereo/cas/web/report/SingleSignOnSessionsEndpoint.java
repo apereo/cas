@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
@@ -56,7 +57,7 @@ import java.util.stream.Stream;
 @Slf4j
 @ToString
 @Getter
-@Endpoint(id = "ssoSessions", enableByDefault = false)
+@Endpoint(id = "ssoSessions", defaultAccess = Access.NONE)
 public class SingleSignOnSessionsEndpoint extends BaseCasRestActuatorEndpoint {
     private static final ISOStandardDateFormat DATE_FORMAT = new ISOStandardDateFormat();
 

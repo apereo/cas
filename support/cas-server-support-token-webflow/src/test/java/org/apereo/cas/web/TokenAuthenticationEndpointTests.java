@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@TestPropertySource(properties = "management.endpoint.tokenAuth.enabled=true")
+@TestPropertySource(properties = "management.endpoint.tokenAuth.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
 @ImportAutoConfiguration({
     CasTokenAuthenticationAutoConfiguration.class,

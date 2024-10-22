@@ -3,7 +3,6 @@ package org.apereo.cas.web.flow.actions;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -44,7 +43,7 @@ class DelegatedAuthenticationIdentityProviderFinalizeLogoutActionTests {
         val context = MockRequestContext.create(applicationContext);
         context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "CasClient");
         context.setParameter(casProperties.getLogout().getRedirectParameter().getFirst(), "https://github.com");
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.withUserAgent();
         assertNull(action.execute(context));
         assertNotNull(WebUtils.getLogoutRedirectUrl(context.getHttpServletRequest(), String.class));
     }

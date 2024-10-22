@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
@@ -35,7 +36,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Endpoint(id = "casValidate", enableByDefault = false)
+@Endpoint(id = "casValidate", defaultAccess = Access.NONE)
 public class CasProtocolValidationEndpoint extends BaseCasRestActuatorEndpoint {
     private final ServiceValidateConfigurationContext configurationContext;
 

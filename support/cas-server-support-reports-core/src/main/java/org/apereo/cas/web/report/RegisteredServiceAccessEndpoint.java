@@ -25,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -41,7 +42,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-@Endpoint(id = "serviceAccess", enableByDefault = false)
+@Endpoint(id = "serviceAccess", defaultAccess = Access.NONE)
 @Slf4j
 public class RegisteredServiceAccessEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<ServicesManager> servicesManager;

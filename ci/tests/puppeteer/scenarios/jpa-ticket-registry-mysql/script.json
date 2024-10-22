@@ -20,7 +20,7 @@
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
-    "--management.endpoints.enabled-by-default=true"
+    "--management.endpoints.access.default=UNRESTRICTED"
   ],
   "initScript": "${PWD}/ci/tests/mysql/run-mysql-server.sh"
 }

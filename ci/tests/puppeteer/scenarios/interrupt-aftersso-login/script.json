@@ -1,12 +1,22 @@
 {
-  "dependencies": "interrupt-webflow",
+  "dependencies": "interrupt-webflow,reports",
+  "conditions": {
+    "docker": "true"
+  },
   "properties": [
     "--cas.interrupt.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/accounts.json",
     "--cas.interrupt.core.trigger-mode=AFTER_SSO",
 
+    "--cas.interrupt.cookie.crypto.enabled=false",
+
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+    "--management.endpoints.web.exposure.include=*",
+    "--management.endpoints.access.default=UNRESTRICTED",
+    
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=${cas.server.name}/cas",
     "--cas.authn.accept.users=casuser::Mellon,casblock::Mellon",
     "--cas.service-registry.core.init-from-json=true"
-  ]
+  ],
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

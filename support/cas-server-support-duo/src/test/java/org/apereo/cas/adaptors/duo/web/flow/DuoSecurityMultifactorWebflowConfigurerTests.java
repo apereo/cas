@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
     BaseDuoSecurityTests.SharedTestConfiguration.class
 },
     properties = {
-        "management.endpoint.duoAdmin.enabled=true",
+        "management.endpoint.duoAdmin.access=UNRESTRICTED",
         "management.endpoints.web.exposure.include=*",
 
         "cas.authn.mfa.duo[0].duo-admin-secret-key=${#systemProperties['DUO_SECURITY_ADMIN_SKEY']}",

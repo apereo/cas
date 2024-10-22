@@ -1,7 +1,7 @@
 {
   "dependencies": "scripting",
   "properties": [
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoint.env.show-values=ALWAYS",
     

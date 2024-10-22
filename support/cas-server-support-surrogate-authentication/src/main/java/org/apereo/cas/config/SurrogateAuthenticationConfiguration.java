@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.DefaultSurrogateAuthenticationPrincipalBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationPrincipalResolver;
@@ -33,6 +34,8 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicyBuilder;
+import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
+import org.apereo.cas.ticket.SurrogateServiceTicketGeneratorAuthority;
 import org.apereo.cas.ticket.expiration.builder.TicketGrantingTicketExpirationPolicyBuilder;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -153,6 +156,20 @@ class SurrogateAuthenticationConfiguration {
     @Configuration(value = "SurrogateAuthenticationServiceConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class SurrogateAuthenticationServiceConfiguration {
+
+        @ConditionalOnMissingBean(name = "surrogateServiceTicketGeneratorAuthority")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public ServiceTicketGeneratorAuthority surrogateServiceTicketGeneratorAuthority(
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final PrincipalResolver defaultPrincipalResolver,
+            @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
+            final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+            @Qualifier(SurrogateAuthenticationService.BEAN_NAME)
+            final SurrogateAuthenticationService surrogateAuthenticationService) {
+            return new SurrogateServiceTicketGeneratorAuthority(
+                surrogateAuthenticationService, authenticationRequestServiceSelectionStrategies, defaultPrincipalResolver);
+        }
         
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = SurrogateAuthenticationService.BEAN_NAME)

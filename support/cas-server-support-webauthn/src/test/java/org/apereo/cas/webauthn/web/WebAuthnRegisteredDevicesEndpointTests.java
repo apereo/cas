@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
     properties = {
         "management.endpoints.web.exposure.include=*",
-        "management.endpoint.webAuthnDevices.enabled=true"
+        "management.endpoint.webAuthnDevices.access=UNRESTRICTED"
     })
 @Tag("MFAProvider")
 @ExtendWith(CasTestExtension.class)

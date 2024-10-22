@@ -451,6 +451,10 @@ form button i.mdi {
     font-weight: bold;
 }
 
+.hide {
+    display: none;
+}
+
 .text-warning {
     color: #664d03;
     color: var(--cas-theme-warning, #664d03);

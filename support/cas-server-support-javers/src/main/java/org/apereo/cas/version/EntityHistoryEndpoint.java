@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
@@ -25,7 +26,7 @@ import java.util.List;
  * @since 7.1.0
  */
 @Slf4j
-@Endpoint(id = "entityHistory", enableByDefault = false)
+@Endpoint(id = "entityHistory", defaultAccess = Access.NONE)
 public class EntityHistoryEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<EntityHistoryRepository> objectVersionRepository;
     private final ObjectProvider<ServicesManager> servicesManager;

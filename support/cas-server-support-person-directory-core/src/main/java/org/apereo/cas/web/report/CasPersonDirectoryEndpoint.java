@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,7 +24,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Endpoint(id = "personDirectory", enableByDefault = false)
+@Endpoint(id = "personDirectory", defaultAccess = Access.NONE)
 public class CasPersonDirectoryEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<PersonAttributeDao> cachingAttributeRepository;
 

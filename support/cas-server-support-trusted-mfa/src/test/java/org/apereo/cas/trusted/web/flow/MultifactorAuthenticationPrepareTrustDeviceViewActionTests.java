@@ -7,7 +7,6 @@ import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.trusted.AbstractMultifactorAuthenticationTrustStorageTests;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
@@ -53,7 +52,7 @@ class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
             WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.emptyMap()));
 
-            context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+            context.withUserAgent();
             val request = context.getHttpServletRequest();
             request.setRemoteAddr("223.456.789.000");
             request.setLocalAddr("123.456.789.000");
@@ -87,7 +86,7 @@ class MultifactorAuthenticationPrepareTrustDeviceViewActionTests {
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
             WebUtils.putRegisteredService(context, RegisteredServiceTestUtils.getRegisteredService("sample-service", Collections.emptyMap()));
 
-            context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
+            context.withUserAgent();
             val request = context.getHttpServletRequest();
             request.setRemoteAddr("123.456.789.000");
             request.setLocalAddr("123.456.789.000");

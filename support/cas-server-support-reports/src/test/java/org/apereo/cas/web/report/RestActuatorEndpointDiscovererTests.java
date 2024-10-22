@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -48,7 +49,7 @@ class RestActuatorEndpointDiscovererTests extends AbstractCasEndpointTests {
         }
 
         @RestActuatorEndpoint
-        @Endpoint(id = "myEndpoint", enableByDefault = true)
+        @Endpoint(id = "myEndpoint", defaultAccess = Access.UNRESTRICTED)
         public static class MyEndpoint {
 
             @GetMapping("/hello")

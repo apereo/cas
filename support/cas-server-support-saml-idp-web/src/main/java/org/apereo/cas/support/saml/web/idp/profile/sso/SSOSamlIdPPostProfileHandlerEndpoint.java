@@ -62,6 +62,7 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.opensaml.saml.saml2.metadata.SingleSignOnService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -90,7 +91,7 @@ import java.util.UUID;
  * @since 6.1.0
  */
 @Slf4j
-@Endpoint(id = "samlPostProfileResponse", enableByDefault = false)
+@Endpoint(id = "samlPostProfileResponse", defaultAccess = Access.NONE)
 public class SSOSamlIdPPostProfileHandlerEndpoint extends BaseCasRestActuatorEndpoint {
 
     private final ServicesManager servicesManager;

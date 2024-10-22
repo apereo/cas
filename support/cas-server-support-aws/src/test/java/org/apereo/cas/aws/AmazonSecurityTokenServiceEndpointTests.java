@@ -39,7 +39,7 @@ class AmazonSecurityTokenServiceEndpointTests {
         "cas.amazon-sts.credential-access-key=test",
         "cas.amazon-sts.credential-secret-key=test",
         "cas.authn.mfa.groovy-script.location=classpath:AmazonStsGroovyMfa.groovy",
-        "management.endpoint.awsSts.enabled=true"
+        "management.endpoint.awsSts.access=UNRESTRICTED"
     })
     @Import(CasAuthenticationEventExecutionPlanTestConfiguration.class)
     @ImportAutoConfiguration({

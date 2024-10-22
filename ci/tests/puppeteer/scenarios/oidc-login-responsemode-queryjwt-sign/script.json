@@ -8,7 +8,7 @@
     "--cas.server.prefix=${cas.server.name}/cas",
     
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
-    "--management.endpoint.refresh.enabled=true",
+    "--management.endpoint.refresh.access=UNRESTRICTED",
     "--management.endpoints.web.exposure.include=refresh",
                 
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",

@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@TestPropertySource(properties = "management.endpoint.multifactorTrustedDevices.enabled=true")
+@TestPropertySource(properties = "management.endpoint.multifactorTrustedDevices.access=UNRESTRICTED")
 @Tag("MFATrustedDevices")
 @ImportAutoConfiguration(CasMultifactorAuthnTrustAutoConfiguration.class)
 class MultifactorAuthenticationTrustedDevicesReportEndpointTests extends AbstractCasEndpointTests {

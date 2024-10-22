@@ -1,8 +1,8 @@
 package org.apereo.cas.grouper;
 
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
+import edu.internet2.middleware.grouperClient.ws.beans.WsGetPermissionAssignmentsResults;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
-
 import java.util.Collection;
 
 /**
@@ -12,8 +12,15 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@FunctionalInterface
 public interface GrouperFacade {
+
+    /**
+     * Gets permission assignments.
+     *
+     * @param query the query
+     * @return the permission assignments
+     */
+    WsGetPermissionAssignmentsResults getPermissionAssignments(GrouperPermissionAssignmentsQuery query);
 
     /**
      * Construct grouper group attribute.

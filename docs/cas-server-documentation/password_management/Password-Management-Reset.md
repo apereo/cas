@@ -36,3 +36,9 @@ the presence of reCAPTCHA settings for the basic integration and instructing
 the password management flow to turn on and verify requests via reCAPTCHA.
 
 {% include_cached casproperties.html properties="cas.authn.pm.google-recaptcha" %}
+
+## Actuator Endpoints
+
+The following endpoints are provided by CAS:
+
+{% include_cached actuators.html endpoints="passwordManagement" casModule="cas-server-support-pm-webflow" %}

@@ -93,7 +93,7 @@ if [ $retVal == 0 ]; then
       --cas.audit.slf4j.use-single-line=true \
       --cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS \
       --management.endpoints.web.exposure.include=* \
-      --management.endpoints.enabled-by-default=true \
+      --management.endpoints.access.default=UNRESTRICTED \
       --logging.level.org.apereo.cas=info ${casProperties} &
   pid=$!
   printgreen "Launched CAS with pid ${pid} with modules ${casModules}. Waiting for CAS server to come online..."

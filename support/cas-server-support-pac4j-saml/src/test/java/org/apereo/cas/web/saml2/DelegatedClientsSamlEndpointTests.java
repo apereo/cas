@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.6.0
  */
 @TestPropertySource(properties = {
-    "management.endpoint.delegatedClients.enabled=true",
+    "management.endpoint.delegatedClients.access=UNRESTRICTED",
 
     "cas.authn.pac4j.saml[0].keystore-path=file:/tmp/keystore-${#randomNumber6}.jks",
     "cas.authn.pac4j.saml[0].keystore-password=1234567890",

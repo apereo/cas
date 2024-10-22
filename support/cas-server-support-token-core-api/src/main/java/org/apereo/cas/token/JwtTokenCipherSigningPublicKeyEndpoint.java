@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.http.MediaType;
@@ -30,7 +31,7 @@ import java.security.spec.RSAPublicKeySpec;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Endpoint(id = "jwtTicketSigningPublicKey", enableByDefault = false)
+@Endpoint(id = "jwtTicketSigningPublicKey", defaultAccess = Access.NONE)
 public class JwtTokenCipherSigningPublicKeyEndpoint extends BaseCasActuatorEndpoint {
     private final CipherExecutor tokenCipherExecutor;
 

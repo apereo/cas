@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.DefaultCasConfigurationPropertiesSourceLocator;
+import org.apereo.cas.configuration.DockerSecretsPropertySourceLocator;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.crypto.CipherExecutor;
@@ -38,6 +39,12 @@ class CasCoreBaseStandaloneConfiguration {
     @Lazy(false)
     static class CasCoreBootstrapStandaloneSourcesConfiguration implements PriorityOrdered {
 
+        @Bean
+        @ConditionalOnMissingBean(name = "casDockerSecretsPropertySourceLocator")
+        public CasConfigurationPropertiesSourceLocator casDockerSecretsPropertySourceLocator() {
+            return new DockerSecretsPropertySourceLocator();
+        }
+        
         @Bean
         public static PropertySourceLocator casCoreBootstrapPropertySourceLocator(
             final List<CasConfigurationPropertiesSourceLocator> locatorList,

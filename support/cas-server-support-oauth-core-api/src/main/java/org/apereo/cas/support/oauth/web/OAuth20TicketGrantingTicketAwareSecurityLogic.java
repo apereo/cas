@@ -2,7 +2,6 @@ package org.apereo.cas.support.oauth.web;
 
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.support.CookieUtils;
@@ -46,18 +45,7 @@ public class OAuth20TicketGrantingTicketAwareSecurityLogic extends DefaultSecuri
     }
 
     protected Ticket getTicketGrantingTicket(final ProfileManager manager, final HttpServletRequest request) {
-        var ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
+        return CookieUtils.getTicketGrantingTicketFromRequest(
             ticketGrantingTicketCookieGenerator, ticketRegistry, request);
-        if (ticketGrantingTicket == null && !ticketGrantingTicketCookieGenerator.containsCookie(request)) {
-            try {
-                ticketGrantingTicket = manager.getProfile()
-                    .map(profile -> profile.getAttribute(TicketGrantingTicket.class.getName()))
-                    .map(ticketId -> ticketRegistry.getTicket(ticketId.toString(), TicketGrantingTicket.class))
-                    .orElse(null);
-            } catch (final Exception e) {
-                LOGGER.trace("Cannot find active ticket-granting ticket: [{}]", e.getMessage());
-            }
-        }
-        return ticketGrantingTicket;
     }
 }

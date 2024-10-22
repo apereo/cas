@@ -7,7 +7,6 @@ import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.wsfederation.AbstractWsFederationTests;
 import org.apereo.cas.util.MockRequestContext;
-import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -37,7 +36,7 @@ class WsFederationNavigationControllerTests extends AbstractWsFederationTests {
 
         context.setRemoteAddr("185.86.151.11");
         context.setLocalAddr("185.88.151.11");
-        context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
+        context.withUserAgent();
         context.setClientInfo();
 
         val config = wsFederationConfigurations.toList().getFirst();

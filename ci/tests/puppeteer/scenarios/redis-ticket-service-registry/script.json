@@ -15,7 +15,7 @@
 
     "--management.endpoints.web.exposure.include=health,ssoSessions,ticketRegistry",
     "--management.endpoint.health.show-details=always",
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
     
     "--cas.service-registry.redis.host=localhost",
     "--cas.service-registry.redis.port=6379",

@@ -32,6 +32,7 @@ import org.opensaml.saml.metadata.criteria.entity.impl.EvaluableEntityRoleEntity
 import org.opensaml.saml.saml2.common.TimeBoundSAMLObject;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -54,7 +55,7 @@ import java.util.stream.StreamSupport;
  * @since 6.1.0
  */
 @Slf4j
-@Endpoint(id = "samlIdPRegisteredServiceMetadataCache", enableByDefault = false)
+@Endpoint(id = "samlIdPRegisteredServiceMetadataCache", defaultAccess = Access.NONE)
 public class SamlRegisteredServiceCachedMetadataEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<SamlRegisteredServiceCachingMetadataResolver> cachingMetadataResolver;
 

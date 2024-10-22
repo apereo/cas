@@ -124,7 +124,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "server.port=8383",
         "cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
         "management.endpoints.web.exposure.include=*",
-        "management.endpoints.enabled-by-default=true",
+        "management.endpoints.access.default=UNRESTRICTED",
         
         "cas.webflow.crypto.encryption.key=qLhvLuaobvfzMmbo9U_bYA",
         "cas.webflow.crypto.signing.key=oZeAR5pEXsolruu4OQYsQKxf-FCvFzSsKlsVaKmfIl6pNzoPm6zPW94NRS1af7vT-0bb3DpPBeksvBXjloEsiA",

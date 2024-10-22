@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
@@ -55,7 +56,7 @@ import java.util.zip.ZipInputStream;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Endpoint(id = "registeredServices", enableByDefault = false)
+@Endpoint(id = "registeredServices", defaultAccess = Access.NONE)
 @Slf4j
 public class RegisteredServicesEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<ServicesManager> servicesManager;

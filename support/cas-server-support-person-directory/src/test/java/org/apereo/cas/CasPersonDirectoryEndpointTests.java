@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@TestPropertySource(properties = "management.endpoint.personDirectory.enabled=true")
+@TestPropertySource(properties = "management.endpoint.personDirectory.access=UNRESTRICTED")
 @Import(CasPersonDirectoryEndpointTests.CasPersonDirectoryTestConfiguration.class)
 @Tag("ActuatorEndpoint")
 class CasPersonDirectoryEndpointTests extends AbstractCasEndpointTests {

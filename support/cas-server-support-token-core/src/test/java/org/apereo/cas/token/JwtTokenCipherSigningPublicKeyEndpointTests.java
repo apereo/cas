@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "management.endpoints.web.exposure.include=*",
-        "management.endpoint.jwtTicketSigningPublicKey.enabled=true"
+        "management.endpoint.jwtTicketSigningPublicKey.access=UNRESTRICTED"
     })
 @Tag("ActuatorEndpoint")
 @ExtendWith(CasTestExtension.class)

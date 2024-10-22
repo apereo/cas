@@ -5,7 +5,7 @@ const cas = require("../../cas.js");
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await page.authenticate({"username":"GrouperSystem", "password": "@4HHXr6SS42@IHz2"});
-    await cas.goto(page, "https://localhost/grouper");
+    await cas.goto(page, "https://localhost:7443/grouper");
     await cas.sleep(10000);
     await cas.gotoLogin(page);
     await cas.loginWith(page, "GrouperSystem", "Mellon");

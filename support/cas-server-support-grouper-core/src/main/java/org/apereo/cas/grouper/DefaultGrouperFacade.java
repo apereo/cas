@@ -1,12 +1,15 @@
 package org.apereo.cas.grouper;
 
 import org.apereo.cas.util.CollectionUtils;
-
+import org.apereo.cas.util.function.FunctionUtils;
 import edu.internet2.middleware.grouperClient.api.GcGetGroups;
+import edu.internet2.middleware.grouperClient.api.GcGetPermissionAssignments;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
+import edu.internet2.middleware.grouperClient.ws.beans.WsGetPermissionAssignmentsResults;
+import edu.internet2.middleware.grouperClient.ws.beans.WsSubjectLookup;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
+import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -34,17 +37,30 @@ public class DefaultGrouperFacade implements GrouperFacade {
             LOGGER.warn("Grouper WS did not respond successfully. Ensure your credentials are correct "
                 + ", the url endpoint for Grouper WS is correctly configured and the subject [{}] exists in Grouper.", subjectId, e);
         }
-        return new ArrayList<>(0);
+        return new ArrayList<>();
     }
 
-    /**
-     * Fetch groups.
-     *
-     * @param subjectId the subject id
-     * @return the groups
-     */
     protected WsGetGroupsResult[] fetchGroupsFor(final String subjectId) {
         val groupsClient = new GcGetGroups().addSubjectId(subjectId);
         return groupsClient.execute().getResults();
+    }
+
+    @Override
+    public WsGetPermissionAssignmentsResults getPermissionAssignments(final GrouperPermissionAssignmentsQuery query) {
+        val gcGetPermissionAssignments = new GcGetPermissionAssignments();
+        FunctionUtils.doIfNotBlank(query.getAttributeDefinitionName(), gcGetPermissionAssignments::addAttributeDefName);
+        FunctionUtils.doIfNotBlank(query.getRoleName(), gcGetPermissionAssignments::addAttributeDefName);
+        FunctionUtils.doIfNotBlank(query.getRoleUuid(), gcGetPermissionAssignments::addRoleUuid);
+        FunctionUtils.doIfNotBlank(query.getSubjectAttributeName(), gcGetPermissionAssignments::addSubjectAttributeName);
+
+        if (StringUtils.isNotBlank(query.getSubjectId()) || StringUtils.isNotBlank(query.getSubjectIdentifier())) {
+            val wsSubjectLookup = new WsSubjectLookup();
+            wsSubjectLookup.setSubjectId(query.getSubjectId());
+            wsSubjectLookup.setSubjectIdentifier(query.getSubjectIdentifier());
+            wsSubjectLookup.setSubjectSourceId(query.getSubjectSourceId());
+            gcGetPermissionAssignments.addSubjectLookup(wsSubjectLookup);
+        }
+
+        return gcGetPermissionAssignments.execute();
     }
 }

@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.acct.AccountProfileServiceTicketGeneratorAuthority;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -8,6 +9,8 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.notifications.CommunicationsManager;
@@ -15,6 +18,7 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetUrlBuilder;
 import org.apereo.cas.pm.PasswordStrengthAuthenticationPostProcessor;
 import org.apereo.cas.pm.PasswordValidationService;
+import org.apereo.cas.pm.web.PasswordManagementEndpoint;
 import org.apereo.cas.pm.web.flow.PasswordManagementAccountProfileWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.PasswordManagementCaptchaWebflowConfigurer;
 import org.apereo.cas.pm.web.flow.PasswordManagementMultifactorTrustWebflowConfigurer;
@@ -61,7 +65,9 @@ import org.apereo.cas.web.flow.configurer.CasMultifactorWebflowCustomizer;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -576,7 +582,39 @@ class PasswordManagementWebflowConfiguration {
         }
     }
 
-
+    @Configuration(value = "PasswordManagementEndpointsConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    static class PasswordManagementEndpointsConfiguration {
+        @Bean
+        @ConditionalOnAvailableEndpoint
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public PasswordManagementEndpoint passwordManagementEndpoint(
+            @Qualifier(WebApplicationService.BEAN_NAME_FACTORY)
+            final ObjectProvider<ServiceFactory<WebApplicationService>> webApplicationServiceFactory,
+            @Qualifier(ServicesManager.BEAN_NAME)
+            final ObjectProvider<ServicesManager> servicesManager,
+            @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
+            final ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport,
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties,
+            @Qualifier(PasswordManagementService.DEFAULT_BEAN_NAME)
+            final ObjectProvider<PasswordManagementService> passwordManagementService,
+            @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
+            final ObjectProvider<PrincipalResolver> defaultPrincipalResolver,
+            @Qualifier(CommunicationsManager.BEAN_NAME)
+            final ObjectProvider<CommunicationsManager> communicationsManager,
+            @Qualifier(PasswordResetUrlBuilder.BEAN_NAME)
+            final ObjectProvider<PasswordResetUrlBuilder> passwordResetUrlBuilder,
+            @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
+            final ObjectProvider<AuditableExecution> registeredServiceAccessStrategyEnforcer) {
+            return new PasswordManagementEndpoint(casProperties, applicationContext,
+                communicationsManager, passwordManagementService,
+                passwordResetUrlBuilder, webApplicationServiceFactory,
+                servicesManager, defaultPrincipalResolver,
+                authenticationSystemSupport, registeredServiceAccessStrategyEnforcer);
+        }
+    }
+    
     @ConditionalOnClass(MultifactorAuthnTrustConfiguration.class)
     @Configuration(value = "PasswordManagementMultifactorTrustConfiguration", proxyBeanMethods = false)
     @DependsOn("passwordManagementWebflowConfigurer")

@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.val;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
@@ -33,7 +34,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Endpoint(id = "tokenAuth", enableByDefault = false)
+@Endpoint(id = "tokenAuth", defaultAccess = Access.NONE)
 public class TokenAuthenticationEndpoint extends BaseCasActuatorEndpoint {
     private final ObjectProvider<PrincipalResolver> principalResolver;
     private final ObjectProvider<ServicesManager> servicesManager;

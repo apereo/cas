@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Endpoint(id = "redisTicketsCache", enableByDefault = false)
+@Endpoint(id = "redisTicketsCache", defaultAccess = Access.NONE)
 public class RedisTicketRegistryCacheEndpoint extends BaseCasRestActuatorEndpoint {
 
     private final ObjectProvider<TicketRegistry> ticketRegistry;

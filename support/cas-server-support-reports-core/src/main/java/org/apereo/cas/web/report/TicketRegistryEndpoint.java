@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
@@ -36,7 +37,7 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Endpoint(id = "ticketRegistry", enableByDefault = false)
+@Endpoint(id = "ticketRegistry", defaultAccess = Access.NONE)
 @Slf4j
 @Getter
 public class TicketRegistryEndpoint extends BaseCasRestActuatorEndpoint {

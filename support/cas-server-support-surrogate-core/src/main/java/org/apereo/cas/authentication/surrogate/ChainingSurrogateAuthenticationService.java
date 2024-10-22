@@ -2,9 +2,11 @@ package org.apereo.cas.authentication.surrogate;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredServiceSurrogatePolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.WebBasedRegisteredService;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.jooq.lambda.Unchecked;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,14 +51,16 @@ public class ChainingSurrogateAuthenticationService implements SurrogateAuthenti
     }
 
     protected boolean isImpersonationAllowedFor(final Optional<? extends Service> givenService) {
-        return givenService
+        val surrogatePolicyResult = givenService
             .map(servicesManager::findServiceBy)
             .filter(WebBasedRegisteredService.class::isInstance)
             .map(WebBasedRegisteredService.class::cast)
             .filter(service -> Objects.nonNull(service.getSurrogatePolicy()))
-            .map(service -> service.getSurrogatePolicy().isEnabled())
+            .map(WebBasedRegisteredService::getSurrogatePolicy)
             .stream()
-            .findFirst()
+            .findFirst();
+        return surrogatePolicyResult
+            .map(RegisteredServiceSurrogatePolicy::isEnabled)
             .orElse(Boolean.TRUE);
     }
 }

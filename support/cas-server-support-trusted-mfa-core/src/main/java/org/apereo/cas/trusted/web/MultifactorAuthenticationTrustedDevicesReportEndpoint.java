@@ -16,6 +16,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
@@ -45,7 +46,7 @@ import java.util.Set;
  * @since 5.3.0
  */
 @Slf4j
-@Endpoint(id = "multifactorTrustedDevices", enableByDefault = false)
+@Endpoint(id = "multifactorTrustedDevices", defaultAccess = Access.NONE)
 public class MultifactorAuthenticationTrustedDevicesReportEndpoint extends BaseCasRestActuatorEndpoint {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
