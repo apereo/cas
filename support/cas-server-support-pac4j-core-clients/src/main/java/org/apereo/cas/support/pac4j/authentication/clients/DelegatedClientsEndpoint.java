@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.BaseClient;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
@@ -23,7 +24,7 @@ import java.util.TreeMap;
  * @since 6.6.0
  */
 @Slf4j
-@Endpoint(id = "delegatedClients", enableByDefault = false)
+@Endpoint(id = "delegatedClients", defaultAccess = Access.NONE)
 public class DelegatedClientsEndpoint extends BaseCasActuatorEndpoint {
     private final ObjectProvider<DelegatedIdentityProviderFactory> clientFactory;
     private final ObjectProvider<List<DelegatedClientsEndpointContributor>> delegatedClientsEndpointContributors;

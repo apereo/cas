@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.lang.Nullable;
@@ -36,7 +37,7 @@ import java.util.Optional;
  * @since 6.4.0
  */
 @Getter
-@Endpoint(id = "ticketExpirationPolicies", enableByDefault = false)
+@Endpoint(id = "ticketExpirationPolicies", defaultAccess = Access.NONE)
 public class TicketExpirationPoliciesEndpoint extends BaseCasActuatorEndpoint {
     private final List<ExpirationPolicyBuilder> expirationPolicyBuilders;
 

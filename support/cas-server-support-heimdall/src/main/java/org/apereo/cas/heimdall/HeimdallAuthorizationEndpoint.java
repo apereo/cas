@@ -7,6 +7,7 @@ import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @since 7.2.0
  */
 @Slf4j
-@Endpoint(id = "heimdall", enableByDefault = false)
+@Endpoint(id = "heimdall", defaultAccess = Access.NONE)
 public class HeimdallAuthorizationEndpoint extends BaseCasRestActuatorEndpoint {
     protected final AuthorizableResourceRepository authorizableResourceRepository;
 

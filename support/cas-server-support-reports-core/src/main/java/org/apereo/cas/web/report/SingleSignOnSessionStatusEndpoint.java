@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
@@ -25,7 +26,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Endpoint(id = "sso", enableByDefault = false)
+@Endpoint(id = "sso", defaultAccess = Access.NONE)
 public class SingleSignOnSessionStatusEndpoint extends BaseCasRestActuatorEndpoint {
 
     private final ObjectProvider<CasCookieBuilder> ticketGrantingTicketCookieGeneratorProvider;

@@ -150,7 +150,7 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator implements 
                 }
             }
             return Optional.ofNullable(cookie)
-                .map(ck -> this.casCookieValueManager.obtainCookieValue(ck, request))
+                .map(ck -> casCookieValueManager.obtainCookieValue(ck, request))
                 .orElse(null);
         } catch (final Exception e) {
             LoggingUtils.warn(LOGGER, e);

@@ -146,7 +146,7 @@ async function verifyAccessTokenAndProfile(context) {
     return {redirectUri, url, code, accessTokenUrl, payload};
 }
 
-async function verifyAuhotizedScopes(context) {
+async function verifyAuthorizedScopes(context) {
     const page = await cas.newPage(context);
     const redirectUri = "http://localhost:9889/anything/app1";
     const url = "https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code"
@@ -178,6 +178,36 @@ async function verifyAuhotizedScopes(context) {
         assert(err.response.data.error === "invalid_scope");
         assert(err.response.data.error_description === "Invalid or unauthorized scope");
     });
+}
+
+async function verifyMissingTicketGrantingCookie(context) {
+    const page = await cas.newPage(context);
+    const redirectUri = "http://localhost:9889/anything/app1";
+    const url = "https://localhost:8443/cas/oidc/oidcAuthorize?response_type=code"
+        + `&client_id=client&scope=${encodeURIComponent("openid profile MyCustomScope")}`
+        + `&redirect_uri=${redirectUri}`;
+    await cas.goto(page, url);
+    await cas.sleep(1000);
+    await cas.loginWith(page);
+    await cas.sleep(2000);
+    if (await cas.isVisible(page, "#allow")) {
+        await cas.click(page, "#allow");
+        await cas.waitForNavigation(page);
+    }
+    await cas.sleep(1000);
+    const code = await cas.assertParameter(page, "code");
+    await cas.log(`Current code is ${code}`);
+    await cas.gotoLogin(page);
+    await cas.assertCookie(page);
+    await cas.sleep(1000);
+    await cas.deleteCookies(page, "TGC");
+    await cas.gotoLogin(page);
+    await cas.assertCookie(page, false);
+    await cas.sleep(1000);
+    await cas.goto(page, url);
+    await cas.sleep(1000);
+    await cas.assertMissingParameter(page, "code");
+    await cas.assertVisibility(page, "#loginForm");
 }
 
 async function verifyMissingOpenIdScope(context) {
@@ -247,11 +277,15 @@ async function verifyMissingOpenIdScope(context) {
     await context.close();
 
     context = await browser.createBrowserContext();
-    await verifyAuhotizedScopes(context);
+    await verifyAuthorizedScopes(context);
     await context.close();
 
     context = await browser.createBrowserContext();
     await verifyMissingOpenIdScope(context);
+    await context.close();
+
+    context = await browser.createBrowserContext();
+    await verifyMissingTicketGrantingCookie(context);
     await context.close();
 
     await browser.close();

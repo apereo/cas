@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
@@ -30,7 +31,7 @@ import java.util.zip.ZipInputStream;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Endpoint(id = "events", enableByDefault = false)
+@Endpoint(id = "events", defaultAccess = Access.NONE)
 public class CasEventsReportEndpoint extends BaseCasRestActuatorEndpoint {
     public CasEventsReportEndpoint(final CasConfigurationProperties casProperties,
                                    final ConfigurableApplicationContext applicationContext) {

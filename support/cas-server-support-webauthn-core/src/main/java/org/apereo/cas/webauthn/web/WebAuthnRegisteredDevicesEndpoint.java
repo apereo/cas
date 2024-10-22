@@ -16,6 +16,7 @@ import lombok.val;
 import org.apache.commons.io.IOUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
@@ -42,7 +43,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Endpoint(id = "webAuthnDevices", enableByDefault = false)
+@Endpoint(id = "webAuthnDevices", defaultAccess = Access.NONE)
 @Slf4j
 public class WebAuthnRegisteredDevicesEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<WebAuthnCredentialRepository> registrationStorage;

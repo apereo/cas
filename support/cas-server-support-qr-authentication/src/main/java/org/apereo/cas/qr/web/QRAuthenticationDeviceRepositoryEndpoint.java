@@ -7,6 +7,7 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
@@ -21,7 +22,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Endpoint(id = "qrDevices", enableByDefault = false)
+@Endpoint(id = "qrDevices", defaultAccess = Access.NONE)
 public class QRAuthenticationDeviceRepositoryEndpoint extends BaseCasActuatorEndpoint {
     private final ObjectProvider<QRAuthenticationDeviceRepository> repository;
 

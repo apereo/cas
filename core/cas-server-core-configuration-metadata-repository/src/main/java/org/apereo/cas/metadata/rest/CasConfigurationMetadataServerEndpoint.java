@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
@@ -26,7 +27,7 @@ import java.util.stream.StreamSupport;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Endpoint(id = "configurationMetadata", enableByDefault = false)
+@Endpoint(id = "configurationMetadata", defaultAccess = Access.NONE)
 public class CasConfigurationMetadataServerEndpoint extends BaseCasActuatorEndpoint {
     private final CasConfigurationMetadataRepository repository;
 

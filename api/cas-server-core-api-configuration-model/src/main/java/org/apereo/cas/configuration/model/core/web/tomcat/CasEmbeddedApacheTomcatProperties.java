@@ -102,6 +102,12 @@ public class CasEmbeddedApacheTomcatProperties implements Serializable {
     private CasEmbeddedApacheTomcatCsrfProperties csrf = new CasEmbeddedApacheTomcatCsrfProperties();
 
     /**
+     * Enable Tomcat's session initialization filter.
+     */
+    @NestedConfigurationProperty
+    private CasEmbeddedApacheTomcatSessionInitializationProperties sessionInitialization = new CasEmbeddedApacheTomcatSessionInitializationProperties();
+    
+    /**
      * Enable basic authentication for the embedded tomcat.
      */
     @NestedConfigurationProperty

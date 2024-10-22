@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -42,7 +43,7 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@Endpoint(id = "awsSts", enableByDefault = false)
+@Endpoint(id = "awsSts", defaultAccess = Access.NONE)
 @Slf4j
 public class AmazonSecurityTokenServiceEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<RestAuthenticationService> restAuthenticationService;
