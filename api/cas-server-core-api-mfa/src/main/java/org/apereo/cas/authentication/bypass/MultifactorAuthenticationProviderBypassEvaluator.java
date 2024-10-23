@@ -114,7 +114,7 @@ public interface MultifactorAuthenticationProviderBypassEvaluator extends Serial
     default boolean isEmpty() {
         return false;
     }
-    
+
     /**
      * Indicate whether this bypass belongs to given multifactor authentication provider.
      *

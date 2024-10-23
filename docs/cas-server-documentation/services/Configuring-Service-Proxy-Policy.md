@@ -22,7 +22,7 @@ features and that you understand the why. Avoid where and when you can.</p></div
 
 {% tabs proxyauthnpolicy %}
 
-{% tab proxyauthnpolicy Refuse %}
+{% tab proxyauthnpolicy Refuse <i class="fa fa-ban px-1"></i> %}
 
 Disallows proxy authentication for a service. This is default policy and need not be configured explicitly.
 
@@ -40,7 +40,7 @@ Disallows proxy authentication for a service. This is default policy and need no
 
 {% endtab %}
 
-{% tab proxyauthnpolicy Regex %}
+{% tab proxyauthnpolicy Regex <i class="fa fa-registered px-1"></i> %}
 
 A proxy policy that only allows proxying to PGT urls that match the specified regex pattern.
 

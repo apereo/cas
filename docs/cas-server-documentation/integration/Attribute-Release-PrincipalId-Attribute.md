@@ -40,7 +40,7 @@ The following examples should provide useful:
 
 {% tabs accessstrategyprincipal %}
 
-{% tab accessstrategyprincipal Attribute %}
+{% tab accessstrategyprincipal Attribute <i class="fa fa-id-card px-1"></i> %}
         
 Select the username from the resolved attribute, `cn`, and make sure it's transformed into an uppercase string.
 

@@ -58,7 +58,7 @@ user may be asked for credentials. Such policies can be chained together and exe
         
 {% tabs ssoservicepolicy %}
 
-{% tab ssoservicepolicy Authentication Date %}
+{% tab ssoservicepolicy Authentication Date <i class="fa fa-calendar-days px-1"></i> %}
 
 Honor the existing single sign-on session, if any, if the authentication date is at most `5` seconds old. Otherwise, challenge
 the user for credentials and ignore the existing session.
@@ -121,7 +121,7 @@ the ticket continues to actively issue service tickets, etc.
 
 {% endtab %}
 
-{% tab ssoservicepolicy Attributes %}
+{% tab ssoservicepolicy Attributes <i class="fa fa-id-card px-1"></i> %}
 
 The policy calculation here typically includes evaluating all authentication and principal attributes linked to the SSO session to check whether
 the ticket-granting ticket may continue to actively issue service tickets, etc. Each attribute defined in the policy will be examined against each principal

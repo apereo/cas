@@ -33,7 +33,7 @@ allowed to [ask and process geodata](../authentication/Configuring-Authenticatio
 
 {% endtab %}
 
-{% tab devicefingerprint Cookie %}
+{% tab devicefingerprint Cookie <i class="fa fa-cookie-bite px-1"></i> %}
 
 {% include_cached casproperties.html properties="cas.authn.mfa.trusted.device-fingerprint.cookie" %}
 

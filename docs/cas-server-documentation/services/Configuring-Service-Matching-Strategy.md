@@ -23,7 +23,7 @@ needs to registered with CAS, or you may come up with a unifying pattern that ca
 
 {% tabs matchingstrategy %}
 
-{% tab matchingstrategy Full Regex %}
+{% tab matchingstrategy Full Regex <i class="fa fa-registered px-1"></i> %}
 
 This is the default option that treats the `serviceId` as a regular expression. With this option,
 CAS tries to match the expression against the entire requested service identifier and implicitly
@@ -45,7 +45,7 @@ A sample JSON file follows:
 
 {% endtab %}
 
-{% tab matchingstrategy Partial Regex %}
+{% tab matchingstrategy Partial Regex <i class="fa fa-registered px-1"></i> %}
 
 This strategy treats the `serviceId` as a regular expression. With this option, CAS will look and allow for substring matches.
 
