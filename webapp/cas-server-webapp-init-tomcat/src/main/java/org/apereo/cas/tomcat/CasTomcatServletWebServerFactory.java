@@ -77,7 +77,9 @@ public class CasTomcatServletWebServerFactory extends TomcatServletWebServerFact
                 context.addConstraint(securityConstraint);
             });
         context.setReloadable(false);
-        context.setResources(new ExtractingRoot());
+        val webResourceRoot = new ExtractingRoot();
+        webResourceRoot.setCachingAllowed(true);
+        context.setResources(webResourceRoot);
     }
 
     @Override
