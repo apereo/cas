@@ -15,7 +15,7 @@ You can implement the conditions using the following strategies.
         
 {% tabs attrreleaseconditions %}
 
-{% tab attrreleaseconditions Attributes %}
+{% tab attrreleaseconditions Attributes <i class="fa fa-id-card px-1"></i> %}
 
 The release policy can be conditionally activated based on available principal attributes.
 
