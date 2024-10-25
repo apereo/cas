@@ -78,6 +78,7 @@ public class CasRedisTicketRegistryAutoConfiguration {
     @Configuration(value = "RedisTicketRegistryCachingConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.TicketRegistry, module = "redis-messaging")
+    @ConditionalOnProperty(value="cas.ticket.registry.redis.enabled", havingValue = "true", matchIfMissing = true)
     @Lazy(false)
     static class RedisTicketRegistryCachingConfiguration {
         @Bean
