@@ -364,8 +364,14 @@ public class CasDocumentationApplication {
 
         var allToggleProps = new HashSet<String>();
         subTypes.forEach(clazz -> {
-            var features = clazz.getAnnotationsByType(ConditionalOnFeatureEnabled.class);
-            Arrays.stream(features).forEach(feature -> {
+            var features = Arrays.stream(clazz.getAnnotationsByType(ConditionalOnFeatureEnabled.class)).collect(Collectors.toList());
+            var declaredClasses = clazz.getDeclaredClasses();
+            for (var declaredClass : declaredClasses) {
+                var innerFeatures = Arrays.stream(declaredClass.getAnnotationsByType(ConditionalOnFeatureEnabled.class)).toList();
+                features.addAll(innerFeatures);
+            }
+
+            features.forEach(feature -> {
                 for (var featureDefn : feature.feature()) {
                     var propName = featureDefn.toProperty(feature.module());
                     if (!allToggleProps.contains(propName)) {
