@@ -20,6 +20,15 @@ Duo offers several options for authenticating users:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-duo" %}
 
+## Configuration
+
+{% include_cached casproperties.html properties="cas.authn.mfa.duo" %}
+
+### Bypass
+
+{% include_cached casproperties.html properties="cas.authn.mfa.duo" includes=".bypass" %}
+
+
 ## Actuator Endpoints
       
 The following endpoints are provided by CAS:
