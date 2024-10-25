@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.adaptors.radius.authentication.RadiusMultifactorBypassEvaluator;
 import org.apereo.cas.authentication.bypass.AuthenticationMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.CredentialMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.DefaultChainingMultifactorAuthenticationBypassProvider;
@@ -26,7 +27,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -43,14 +43,16 @@ class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator radiusBypassEvaluator(
-        final List<MultifactorAuthenticationProviderBypassEvaluator> currentBypassEvaluators,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
         val radius = casProperties.getAuthn().getMfa().getRadius();
+        val currentBypassEvaluators = applicationContext.getBeansWithAnnotation(RadiusMultifactorBypassEvaluator.class).values();
         currentBypassEvaluators
             .stream()
             .filter(BeanSupplier::isNotProxy)
+            .map(MultifactorAuthenticationProviderBypassEvaluator.class::cast)
+            .filter(evaluator -> !evaluator.isEmpty())
             .map(evaluator -> evaluator.belongsToMultifactorAuthenticationProvider(radius.getId()))
             .filter(Optional::isPresent)
             .map(Optional::get)
@@ -61,6 +63,7 @@ class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "radiusRestMultifactorAuthenticationProviderBypass")
     @Bean
+    @RadiusMultifactorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator radiusRestMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
@@ -76,6 +79,7 @@ class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "radiusGroovyMultifactorAuthenticationProviderBypass")
     @Bean
+    @RadiusMultifactorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator radiusGroovyMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
@@ -94,6 +98,7 @@ class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "radiusRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
     @Bean
+    @RadiusMultifactorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator radiusRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(
         final ConfigurableApplicationContext applicationContext,
@@ -104,6 +109,7 @@ class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "radiusHttpRequestMultifactorAuthenticationProviderBypass")
     @Bean
+    @RadiusMultifactorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator radiusHttpRequestMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
@@ -119,6 +125,7 @@ class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
     }
 
     @Bean
+    @RadiusMultifactorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "radiusCredentialMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator radiusCredentialMultifactorAuthenticationProviderBypass(
@@ -134,6 +141,7 @@ class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
     }
 
     @Bean
+    @RadiusMultifactorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "radiusRegisteredServiceMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator radiusRegisteredServiceMultifactorAuthenticationProviderBypass(
@@ -144,6 +152,7 @@ class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
     }
 
     @Bean
+    @RadiusMultifactorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "radiusPrincipalMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator radiusPrincipalMultifactorAuthenticationProviderBypass(
@@ -160,6 +169,7 @@ class RadiusTokenAuthenticationMultifactorProviderBypassConfiguration {
     }
 
     @Bean
+    @RadiusMultifactorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "radiusAuthenticationMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator radiusAuthenticationMultifactorAuthenticationProviderBypass(
