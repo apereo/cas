@@ -27,3 +27,7 @@ The integration adds support for both push mobile/desktop and browser authentica
 ## Configuration
 
 {% include_cached casproperties.html properties="cas.authn.mfa.inwebo" %}
+
+### Bypass
+
+{% include_cached casproperties.html properties="cas.authn.mfa.inwebo" includes=".bypass" %}

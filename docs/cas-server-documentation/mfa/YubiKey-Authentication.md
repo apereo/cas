@@ -50,6 +50,11 @@ in order to allow for a successful authentication event.
 | MongoDb     | [See this guide](YubiKey-Authentication-Registration-MongoDb.html).    |
 | Custom      | [See this guide](YubiKey-Authentication-Registration-Custom.html).     |
 
+### Bypass
+
+{% include_cached casproperties.html properties="cas.authn.mfa.yubikey" includes=".bypass" %}
+
+
 ## Device/Account Validation
 
 In the event that a new YubiKey should be registered, it may be desirable to 
