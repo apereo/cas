@@ -24,6 +24,10 @@ Support is enabled by including the following module in the overlay:
 
 {% include_cached casproperties.html properties="cas.authn.mfa.gauth" includes=".core,.crypto" %}
 
+### Bypass
+
+{% include_cached casproperties.html properties="cas.authn.mfa.gauth" includes=".bypass" %}
+
 ## Actuator Endpoints
 
 The following endpoints are provided by CAS:
