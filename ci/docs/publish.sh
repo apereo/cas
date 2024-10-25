@@ -236,7 +236,7 @@ if [[ $cloneRepository == "true" ]]; then
 
   cp -Rf "$PWD"/docs-latest/* "$PWD/gh-pages/$branchVersion"
   if [[ $branchVersion == "development" ]]; then
-    echo "Moving developer documentation into project documentation"
+    printgreen "Moving developer documentation into project documentation"
     mv "$PWD"/docs-latest/developer/* "$PWD/gh-pages/developer/"
   fi
   rm -Rf "$PWD/gh-pages/$branchVersion/developer"
