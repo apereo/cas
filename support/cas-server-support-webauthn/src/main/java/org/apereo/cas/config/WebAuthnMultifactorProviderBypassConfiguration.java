@@ -14,6 +14,7 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
+import org.apereo.cas.webauthn.WebAuthnMultifactorBypassEvaluator;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,7 +25,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -42,14 +42,16 @@ class WebAuthnMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator webAuthnBypassEvaluator(
-        final List<MultifactorAuthenticationProviderBypassEvaluator> currentBypassEvaluators,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
         val webauthn = casProperties.getAuthn().getMfa().getWebAuthn();
+        val currentBypassEvaluators = applicationContext.getBeansWithAnnotation(WebAuthnMultifactorBypassEvaluator.class).values();
         currentBypassEvaluators
             .stream()
             .filter(BeanSupplier::isNotProxy)
+            .map(MultifactorAuthenticationProviderBypassEvaluator.class::cast)
+            .filter(evaluator -> !evaluator.isEmpty())
             .map(evaluator -> evaluator.belongsToMultifactorAuthenticationProvider(webauthn.getId()))
             .filter(Optional::isPresent)
             .map(Optional::get)
@@ -60,6 +62,7 @@ class WebAuthnMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "webAuthnRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
     @Bean
+    @WebAuthnMultifactorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator webAuthnRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(
         final ConfigurableApplicationContext applicationContext,
@@ -75,6 +78,7 @@ class WebAuthnMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "webAuthnRestMultifactorAuthenticationProviderBypass")
     @Bean
+    @WebAuthnMultifactorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator webAuthnRestMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
@@ -86,6 +90,7 @@ class WebAuthnMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "webAuthnGroovyMultifactorAuthenticationProviderBypass")
     @Bean
+    @WebAuthnMultifactorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator webAuthnGroovyMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
@@ -104,6 +109,7 @@ class WebAuthnMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "webAuthnHttpRequestMultifactorAuthenticationProviderBypass")
     @Bean
+    @WebAuthnMultifactorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator webAuthnHttpRequestMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
@@ -119,6 +125,7 @@ class WebAuthnMultifactorProviderBypassConfiguration {
     }
 
     @Bean
+    @WebAuthnMultifactorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "webAuthnCredentialMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator webAuthnCredentialMultifactorAuthenticationProviderBypass(
@@ -134,6 +141,7 @@ class WebAuthnMultifactorProviderBypassConfiguration {
     }
 
     @Bean
+    @WebAuthnMultifactorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "webAuthnRegisteredServiceMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator webAuthnRegisteredServiceMultifactorAuthenticationProviderBypass(
@@ -144,6 +152,7 @@ class WebAuthnMultifactorProviderBypassConfiguration {
     }
 
     @Bean
+    @WebAuthnMultifactorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "webAuthnPrincipalMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator webAuthnPrincipalMultifactorAuthenticationProviderBypass(
@@ -159,6 +168,7 @@ class WebAuthnMultifactorProviderBypassConfiguration {
     }
 
     @Bean
+    @WebAuthnMultifactorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "webAuthnAuthenticationMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator webAuthnAuthenticationMultifactorAuthenticationProviderBypass(

@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
+import org.apereo.cas.adaptors.duo.authn.DuoSecurityBypassEvaluator;
 import org.apereo.cas.authentication.bypass.AuthenticationMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.ChainingMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.CredentialMultifactorAuthenticationProviderBypassEvaluator;
@@ -27,7 +28,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import java.util.List;
 
 /**
  * This is {@link DuoSecurityMultifactorProviderBypassConfiguration}.
@@ -44,7 +44,6 @@ class DuoSecurityMultifactorProviderBypassConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ChainingMultifactorAuthenticationProviderBypassEvaluator duoSecurityBypassEvaluator(
-        final List<MultifactorAuthenticationProviderBypassEvaluator> currentBypassEvaluators,
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext) {
 
@@ -55,9 +54,12 @@ class DuoSecurityMultifactorProviderBypassConfiguration {
             .toList();
 
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
+        val currentBypassEvaluators = applicationContext.getBeansWithAnnotation(DuoSecurityBypassEvaluator.class).values();
         currentBypassEvaluators
             .stream()
             .filter(BeanSupplier::isNotProxy)
+            .map(MultifactorAuthenticationProviderBypassEvaluator.class::cast)
+            .filter(evaluator -> !evaluator.isEmpty())
             .filter(evaluator -> duoProviderIds.stream().anyMatch(id -> evaluator.belongsToMultifactorAuthenticationProvider(id).isPresent()))
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .forEach(bypass::addMultifactorAuthenticationProviderBypassEvaluator);
@@ -66,6 +68,7 @@ class DuoSecurityMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "duoSecurityRestMultifactorAuthenticationProviderBypass")
     @Bean
+    @DuoSecurityBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator duoSecurityRestMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
@@ -88,6 +91,7 @@ class DuoSecurityMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "duoSecurityGroovyMultifactorAuthenticationProviderBypass")
     @Bean
+    @DuoSecurityBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator duoSecurityGroovyMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
@@ -111,6 +115,7 @@ class DuoSecurityMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "duoSecurityHttpRequestMultifactorAuthenticationProviderBypass")
     @Bean
+    @DuoSecurityBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator duoSecurityHttpRequestMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
@@ -136,6 +141,7 @@ class DuoSecurityMultifactorProviderBypassConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @DuoSecurityBypassEvaluator
     @ConditionalOnMissingBean(name = "duoSecurityCredentialMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator duoSecurityCredentialMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
@@ -157,6 +163,7 @@ class DuoSecurityMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "duoSecurityRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
     @Bean
+    @DuoSecurityBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator duoSecurityRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(
         final ConfigurableApplicationContext applicationContext,
@@ -176,6 +183,7 @@ class DuoSecurityMultifactorProviderBypassConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @DuoSecurityBypassEvaluator
     @ConditionalOnMissingBean(name = "duoSecurityRegisteredServiceMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator duoSecurityRegisteredServiceMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
@@ -196,6 +204,7 @@ class DuoSecurityMultifactorProviderBypassConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "duoSecurityPrincipalMultifactorAuthenticationProviderBypass")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @DuoSecurityBypassEvaluator
     public MultifactorAuthenticationProviderBypassEvaluator duoSecurityPrincipalMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
@@ -215,6 +224,7 @@ class DuoSecurityMultifactorProviderBypassConfiguration {
     }
 
     @Bean
+    @DuoSecurityBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "duoSecurityAuthenticationMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator duoSecurityAuthenticationMultifactorAuthenticationProviderBypass(

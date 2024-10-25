@@ -134,3 +134,5 @@ management.endpoint.<id>.access
 - Nimbus
 - Spring Boot
 - Gradle
+- Sentry
+- ZooKeeper

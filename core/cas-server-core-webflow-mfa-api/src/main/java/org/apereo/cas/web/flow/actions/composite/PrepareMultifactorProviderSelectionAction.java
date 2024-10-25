@@ -10,6 +10,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 /**
@@ -37,6 +38,7 @@ public class PrepareMultifactorProviderSelectionAction extends BaseCasWebflowAct
             .stream()
             .filter(provider -> provider.isAvailable(registeredService)
                 && provider.getBypassEvaluator().shouldMultifactorAuthenticationProviderExecute(authn, registeredService, provider, request, service))
+            .sorted(Comparator.comparing(MultifactorAuthenticationProvider::getOrder))
             .map(MultifactorAuthenticationProvider::getId)
             .collect(Collectors.toList());
 

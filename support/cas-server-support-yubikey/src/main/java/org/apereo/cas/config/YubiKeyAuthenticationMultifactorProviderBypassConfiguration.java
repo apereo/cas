@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.adaptors.yubikey.YubiKeyBypassEvaluator;
 import org.apereo.cas.authentication.bypass.AuthenticationMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.CredentialMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.DefaultChainingMultifactorAuthenticationBypassProvider;
@@ -25,7 +26,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -44,13 +44,15 @@ class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator yubikeyBypassEvaluator(
         final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties,
-        final List<MultifactorAuthenticationProviderBypassEvaluator> currentBypassEvaluators) {
+        final CasConfigurationProperties casProperties) {
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
         val yubikey = casProperties.getAuthn().getMfa().getYubikey();
+        val currentBypassEvaluators = applicationContext.getBeansWithAnnotation(YubiKeyBypassEvaluator.class).values();
         currentBypassEvaluators
             .stream()
             .filter(BeanSupplier::isNotProxy)
+            .map(MultifactorAuthenticationProviderBypassEvaluator.class::cast)
+            .filter(evaluator -> !evaluator.isEmpty())
             .map(evaluator -> evaluator.belongsToMultifactorAuthenticationProvider(yubikey.getId()))
             .filter(Optional::isPresent)
             .map(Optional::get)
@@ -62,6 +64,7 @@ class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
     @ConditionalOnMissingBean(name = "yubikeyRestMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @YubiKeyBypassEvaluator
     public MultifactorAuthenticationProviderBypassEvaluator yubikeyRestMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
@@ -76,6 +79,7 @@ class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "yubikeyGroovyMultifactorAuthenticationProviderBypass")
     @Bean
+    @YubiKeyBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator yubikeyGroovyMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
@@ -94,6 +98,7 @@ class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "yubikeyHttpRequestMultifactorAuthenticationProviderBypass")
     @Bean
+    @YubiKeyBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator yubikeyHttpRequestMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
@@ -110,6 +115,7 @@ class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "yubikeyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
     @Bean
+    @YubiKeyBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator yubikeyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(
         final ConfigurableApplicationContext applicationContext,
@@ -120,6 +126,7 @@ class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @YubiKeyBypassEvaluator
     @ConditionalOnMissingBean(name = "yubikeyCredentialMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator yubikeyCredentialMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
@@ -135,6 +142,7 @@ class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @YubiKeyBypassEvaluator
     @ConditionalOnMissingBean(name = "yubikeyRegisteredServiceMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator yubikeyRegisteredServiceMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
@@ -144,6 +152,7 @@ class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
     }
 
     @Bean
+    @YubiKeyBypassEvaluator
     @ConditionalOnMissingBean(name = "yubikeyPrincipalMultifactorAuthenticationProviderBypass")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator yubikeyPrincipalMultifactorAuthenticationProviderBypass(
@@ -159,6 +168,7 @@ class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
     }
 
     @Bean
+    @YubiKeyBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator yubikeyAuthenticationMultifactorAuthenticationProviderBypass(
