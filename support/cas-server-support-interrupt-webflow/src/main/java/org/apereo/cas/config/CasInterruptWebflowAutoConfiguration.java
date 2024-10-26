@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
 import org.apereo.cas.interrupt.InterruptTrackingEngine;
 import org.apereo.cas.interrupt.webflow.InterruptSingleSignOnParticipationStrategy;
@@ -12,6 +13,7 @@ import org.apereo.cas.interrupt.webflow.actions.InquireInterruptAction;
 import org.apereo.cas.interrupt.webflow.actions.InterruptLogoutAction;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -21,6 +23,7 @@ import org.apereo.cas.web.flow.SingleSignOnParticipationStrategyConfigurer;
 import org.apereo.cas.web.flow.actions.ConsumerExecutionAction;
 import org.apereo.cas.web.flow.actions.WebflowActionBeanSupplier;
 import lombok.val;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -68,14 +71,17 @@ public class CasInterruptWebflowAutoConfiguration {
     public Action inquireInterruptAction(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
+        @Qualifier(ScriptResourceCacheManager.BEAN_NAME)
+        final ObjectProvider<ScriptResourceCacheManager> scriptResourceCacheManager,
         @Qualifier(InterruptTrackingEngine.BEAN_NAME)
         final InterruptTrackingEngine interruptTrackingEngine,
-        @Qualifier("interruptInquirer")
+        @Qualifier(InterruptInquirer.BEAN_NAME)
         final InterruptInquiryExecutionPlan interruptInquirer) {
         return WebflowActionBeanSupplier.builder()
             .withApplicationContext(applicationContext)
             .withProperties(casProperties)
-            .withAction(() -> new InquireInterruptAction(interruptInquirer.getInterruptInquirers(), casProperties, interruptTrackingEngine))
+            .withAction(() -> new InquireInterruptAction(interruptInquirer.getInterruptInquirers(),
+                casProperties, interruptTrackingEngine, scriptResourceCacheManager))
             .withId(CasWebflowConstants.ACTION_ID_INQUIRE_INTERRUPT)
             .build()
             .get();

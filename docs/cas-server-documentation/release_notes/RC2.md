@@ -114,6 +114,8 @@ management.endpoint.<id>.access
 - SMS messages sent by [passwordless authentication](../authentication/Passwordless-Authentication-Notifications.html) now correctly record the generated token id.
 - A dedicated [actuator endpoint](../password_management/Password-Management.html) to allow CAS to reset the user's password and kickstart the password reset flow. 
 - The auto configuration for the embedded Apache Tomcat can now enable the [Session Initialization Filter](https://tomcat.apache.org/tomcat-10.1-doc/api/org/apache/catalina/filters/SessionInitializerFilter.html)
+- Small modifications to the `GoogleCloudAppender` to capture location information and encode JSON objects better. 
+- The login flow now has access to the http request headers via the `httpRequestHeaders` context variable. 
 
 ## Library Upgrades
           
@@ -136,3 +138,4 @@ management.endpoint.<id>.access
 - Gradle
 - Sentry
 - ZooKeeper
+- MariaDb
