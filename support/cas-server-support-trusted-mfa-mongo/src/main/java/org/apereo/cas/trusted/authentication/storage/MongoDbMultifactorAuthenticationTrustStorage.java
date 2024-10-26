@@ -3,16 +3,14 @@ package org.apereo.cas.trusted.authentication.storage;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecordKeyGenerator;
-import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
+import org.apereo.cas.util.function.FunctionUtils;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.HashSet;

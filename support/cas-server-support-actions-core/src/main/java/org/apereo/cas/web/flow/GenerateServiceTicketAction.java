@@ -19,6 +19,7 @@ import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.jooq.lambda.Unchecked;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
@@ -127,7 +128,7 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
             .sorted(AnnotationAwareOrderComparator.INSTANCE)
             .filter(auth -> auth.supports(authenticationResult, service))
             .findFirst()
-            .ifPresent(auth -> {
+            .ifPresent(Unchecked.consumer(auth -> {
                 if (auth.shouldGenerate(authenticationResult, service)) {
                     FunctionUtils.doUnchecked(__ -> {
                         val ticketGrantingTicket = WebUtils.getTicketGrantingTicketId(requestContext);
@@ -136,7 +137,7 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
                         LOGGER.debug("Granted service ticket [{}] and added it to the request scope", serviceTicketId);
                     });
                 }
-            });
+            }));
     }
 
     protected boolean isGatewayPresent(final RequestContext context) {
