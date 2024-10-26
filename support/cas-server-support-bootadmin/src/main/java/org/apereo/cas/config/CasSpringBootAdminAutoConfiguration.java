@@ -64,8 +64,8 @@ public class CasSpringBootAdminAutoConfiguration {
             objectMapper.findAndRegisterModules()
                 .registerModule(new AdminServerModule(new String[]{".*password$"}));
             var builder = new RestTemplateBuilder()
-                .setConnectTimeout(client.getConnectTimeout())
-                .setReadTimeout(client.getReadTimeout())
+                .connectTimeout(client.getConnectTimeout())
+                .readTimeout(client.getReadTimeout())
                 .customizers(template -> {
                     val requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient.wrappedHttpClient());
                     template.setRequestFactory(requestFactory);

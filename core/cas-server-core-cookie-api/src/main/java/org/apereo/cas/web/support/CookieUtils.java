@@ -125,7 +125,7 @@ public class CookieUtils {
         if (NumberUtils.isCreatable(maxAge)) {
             return Integer.parseInt(maxAge);
         }
-        return (int) Beans.newDuration(maxAge).getSeconds();
+        return (int) Beans.newDuration(maxAge).toSeconds();
     }
     
     private static CookieGenerationContext.CookieGenerationContextBuilder buildCookieGenerationContextBuilder(

@@ -38,7 +38,7 @@ public class OAuth20DeviceTokenUtils {
             val policy = oauthService.getDeviceTokenExpirationPolicy();
             val ttl = policy.getTimeToKill();
             if (StringUtils.isNotBlank(ttl)) {
-                return new OAuth20DeviceTokenExpirationPolicy(Beans.newDuration(ttl).getSeconds());
+                return new OAuth20DeviceTokenExpirationPolicy(Beans.newDuration(ttl).toSeconds());
             }
         }
         return expirationPolicy.buildTicketExpirationPolicy();

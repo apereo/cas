@@ -34,7 +34,7 @@ public class UmaIdTokenGeneratorService extends BaseIdTokenGeneratorService<UmaC
     @Override
     public OidcIdToken generate(final IdTokenGenerationContext context) throws Throwable {
         val timeoutInSeconds = Beans.newDuration(getConfigurationContext().getCasProperties()
-            .getAuthn().getOauth().getUma().getRequestingPartyToken().getMaxTimeToLiveInSeconds()).getSeconds();
+            .getAuthn().getOauth().getUma().getRequestingPartyToken().getMaxTimeToLiveInSeconds()).toSeconds();
         LOGGER.debug("Attempting to produce claims for the RPT access token [{}]", context.getAccessToken());
         val claims = buildJwtClaims(context.getAccessToken(), timeoutInSeconds,
             context.getUserProfile(), context.getRegisteredService(), context.getResponseType());

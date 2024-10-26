@@ -110,8 +110,8 @@ public class OAuth20DefaultAccessTokenFactory implements OAuth20AccessTokenFacto
             val ttl = policy.getTimeToKill();
             if (StringUtils.isNotBlank(maxTime) && StringUtils.isNotBlank(ttl)) {
                 return new OAuth20AccessTokenExpirationPolicy(
-                    Beans.newDuration(maxTime).getSeconds(),
-                    Beans.newDuration(ttl).getSeconds());
+                    Beans.newDuration(maxTime).toSeconds(),
+                    Beans.newDuration(ttl).toSeconds());
             }
         }
         return expirationPolicyBuilder.buildTicketExpirationPolicy();

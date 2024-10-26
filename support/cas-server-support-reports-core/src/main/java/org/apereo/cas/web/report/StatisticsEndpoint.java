@@ -49,7 +49,7 @@ public class StatisticsEndpoint extends BaseCasActuatorEndpoint {
         val model = new HashMap<String, Object>();
 
         val diff = Duration.between(upTimeStartDate, ZonedDateTime.now(ZoneOffset.UTC));
-        model.put("upTime", diff.getSeconds());
+        model.put("upTime", diff.toSeconds());
 
         val runtime = Runtime.getRuntime();
         model.put("totalMemory", FileUtils.byteCountToDisplaySize(runtime.totalMemory()));

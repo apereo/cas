@@ -112,7 +112,7 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
             val ttl = policy.getTimeToLive();
             if (count > 0 && StringUtils.isNotBlank(ttl)) {
                 return new MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy(count,
-                    Beans.newDuration(ttl).getSeconds());
+                    Beans.newDuration(ttl).toSeconds());
             }
         }
         return expirationPolicyBuilder.buildTicketExpirationPolicy();

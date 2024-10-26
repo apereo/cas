@@ -34,7 +34,7 @@ public class OidcTicketCatalogConfigurer extends BaseTicketCatalogConfigurer {
                                                          final CasConfigurationProperties casProperties) {
         val ciba = casProperties.getAuthn().getOidc().getCiba();
         metadata.getProperties().setStorageName(ciba.getStorageName());
-        val timeout = Beans.newDuration(ciba.getMaxTimeToLiveInSeconds()).getSeconds();
+        val timeout = Beans.newDuration(ciba.getMaxTimeToLiveInSeconds()).toSeconds();
         metadata.getProperties().setStorageTimeout(timeout);
         metadata.getProperties().setExcludeFromCascade(casProperties.getTicket().isTrackDescendantTickets());
         registerTicketDefinition(plan, metadata);
@@ -44,7 +44,7 @@ public class OidcTicketCatalogConfigurer extends BaseTicketCatalogConfigurer {
                                                                         final CasConfigurationProperties casProperties) {
         val par = casProperties.getAuthn().getOidc().getPar();
         metadata.getProperties().setStorageName(par.getStorageName());
-        val timeout = Beans.newDuration(par.getMaxTimeToLiveInSeconds()).getSeconds();
+        val timeout = Beans.newDuration(par.getMaxTimeToLiveInSeconds()).toSeconds();
         metadata.getProperties().setStorageTimeout(timeout);
         metadata.getProperties().setExcludeFromCascade(casProperties.getTicket().isTrackDescendantTickets());
         registerTicketDefinition(plan, metadata);

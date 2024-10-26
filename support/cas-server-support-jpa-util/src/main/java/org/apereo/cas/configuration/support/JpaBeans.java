@@ -95,7 +95,7 @@ public class JpaBeans {
         bean.setPassword(jpaProperties.getPassword());
 
         val poolSettings = jpaProperties.getPool();
-        FunctionUtils.doUnchecked(__ -> bean.setLoginTimeout((int) Beans.newDuration(poolSettings.getMaxWait()).getSeconds()));
+        FunctionUtils.doUnchecked(__ -> bean.setLoginTimeout((int) Beans.newDuration(poolSettings.getMaxWait()).toSeconds()));
         bean.setMaximumPoolSize(poolSettings.getMaxSize());
         bean.setMinimumIdle(poolSettings.getMinSize());
         bean.setIdleTimeout(Beans.newDuration(jpaProperties.getIdleTimeout()).toMillis());

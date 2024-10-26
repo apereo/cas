@@ -45,7 +45,7 @@ public class OAuth20TicketCatalogConfigurer extends BaseTicketCatalogConfigurer 
     protected void buildAndRegisterAccessTokenDefinition(final TicketCatalog plan, final TicketDefinition metadata,
                                                          final CasConfigurationProperties casProperties) {
         metadata.getProperties().setStorageName(casProperties.getAuthn().getOauth().getAccessToken().getStorageName());
-        val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds()).getSeconds();
+        val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds()).toSeconds();
         metadata.getProperties().setStorageTimeout(timeout);
         metadata.getProperties().setExcludeFromCascade(casProperties.getTicket().isTrackDescendantTickets());
         registerTicketDefinition(plan, metadata);
@@ -54,7 +54,7 @@ public class OAuth20TicketCatalogConfigurer extends BaseTicketCatalogConfigurer 
     protected void buildAndRegisterRefreshTokenDefinition(final TicketCatalog plan, final TicketDefinition metadata,
                                                           final CasConfigurationProperties casProperties) {
         metadata.getProperties().setStorageName(casProperties.getAuthn().getOauth().getRefreshToken().getStorageName());
-        val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds()).getSeconds();
+        val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds()).toSeconds();
         metadata.getProperties().setStorageTimeout(timeout);
         metadata.getProperties().setExcludeFromCascade(casProperties.getTicket().isTrackDescendantTickets());
         registerTicketDefinition(plan, metadata);
@@ -71,7 +71,7 @@ public class OAuth20TicketCatalogConfigurer extends BaseTicketCatalogConfigurer 
                                                          final TicketDefinition metadata,
                                                          final CasConfigurationProperties casProperties) {
         metadata.getProperties().setStorageName(casProperties.getAuthn().getOauth().getDeviceToken().getStorageName());
-        val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getDeviceToken().getMaxTimeToLiveInSeconds()).getSeconds();
+        val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getDeviceToken().getMaxTimeToLiveInSeconds()).toSeconds();
         metadata.getProperties().setStorageTimeout(timeout);
         metadata.getProperties().setExcludeFromCascade(true);
         registerTicketDefinition(plan, metadata);
@@ -80,7 +80,7 @@ public class OAuth20TicketCatalogConfigurer extends BaseTicketCatalogConfigurer 
     protected void buildAndRegisterDeviceUserCodeDefinition(final TicketCatalog plan, final TicketDefinition metadata,
                                                             final CasConfigurationProperties casProperties) {
         metadata.getProperties().setStorageName(casProperties.getAuthn().getOauth().getDeviceUserCode().getStorageName());
-        val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getDeviceUserCode().getMaxTimeToLiveInSeconds()).getSeconds();
+        val timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getDeviceUserCode().getMaxTimeToLiveInSeconds()).toSeconds();
         metadata.getProperties().setStorageTimeout(timeout);
         metadata.getProperties().setExcludeFromCascade(true);
         registerTicketDefinition(plan, metadata);

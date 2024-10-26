@@ -435,7 +435,7 @@ public class OAuth20Utils {
                 if (token.isStateless()) {
                     val duration = Duration.between(ZonedDateTime.now(Clock.systemUTC()),
                         token.getExpirationPolicy().toMaximumExpirationTime(token));
-                    return duration.getSeconds();
+                    return duration.toSeconds();
                 }
                 return ((OAuth20AccessToken) token).getExpiresIn();
             })
