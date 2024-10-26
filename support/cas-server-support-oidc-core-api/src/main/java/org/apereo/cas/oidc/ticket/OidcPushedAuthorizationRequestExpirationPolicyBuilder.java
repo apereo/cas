@@ -38,7 +38,7 @@ public record OidcPushedAuthorizationRequestExpirationPolicyBuilder(CasConfigura
     public ExpirationPolicy toTicketExpirationPolicy() {
         val par = casProperties.getAuthn().getOidc().getPar();
         val exp = Beans.newDuration(par.getMaxTimeToLiveInSeconds());
-        return new OidcPushedAuthorizationRequestExpirationPolicy(par.getNumberOfUses(), exp.getSeconds());
+        return new OidcPushedAuthorizationRequestExpirationPolicy(par.getNumberOfUses(), exp.toSeconds());
     }
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)

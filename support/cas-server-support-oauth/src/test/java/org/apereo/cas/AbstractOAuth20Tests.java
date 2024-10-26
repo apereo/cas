@@ -813,7 +813,7 @@ public abstract class AbstractOAuth20Tests {
 
     protected long getDefaultAccessTokenExpiration() {
         val seconds = casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds();
-        return Beans.newDuration(seconds).getSeconds();
+        return Beans.newDuration(seconds).toSeconds();
     }
 
     protected HttpSession storeProfileIntoSession(final HttpServletRequest request, final CommonProfile profile) {
