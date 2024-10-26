@@ -3,6 +3,7 @@ package org.apereo.cas.palantir.controller;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.palantir.PalantirConstants;
 import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -58,6 +59,7 @@ public class DashboardController {
         mav.addObject("casServerPrefix", casProperties.getServer().getPrefix());
         mav.addObject("httpRequestSecure", request.isSecure());
         mav.addObject("httpRequestMethod", request.getMethod());
+        mav.addObject("httpRequestHeaders", HttpRequestUtils.getRequestHeaders(request));
         val basePath = webEndpointProperties.getBasePath();
         val endpoints = endpointLinksResolver.resolveLinks(basePath);
         val actuatorEndpoints = endpoints

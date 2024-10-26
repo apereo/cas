@@ -10,7 +10,7 @@ import org.apereo.cas.services.WebBasedRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -42,6 +43,8 @@ public class InquireInterruptAction extends BaseCasWebflowAction {
 
     private final InterruptTrackingEngine interruptTrackingEngine;
 
+    private final ObjectProvider<ScriptResourceCacheManager> scriptResourceCacheManager;
+    
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         if (WebUtils.isInterruptAuthenticationFlowFinalized(requestContext)) {
@@ -94,9 +97,8 @@ public class InquireInterruptAction extends BaseCasWebflowAction {
         }
 
         val groovyScript = SpringExpressionLanguageValueResolver.getInstance().resolve(policy.getGroovyScript());
-        val cacheMgr = ApplicationContextProvider.getScriptResourceCacheManager()
-            .orElseThrow(() -> new RuntimeException("No groovy script cache manager is available to evaluate interrupt policy"));
-        val script = cacheMgr.resolveScriptableResource(groovyScript, registeredService.getServiceId(), registeredService.getName());
+        val script = scriptResourceCacheManager.getObject().resolveScriptableResource(
+            groovyScript, registeredService.getServiceId(), registeredService.getName());
 
         val attributes = new HashMap<>(authentication.getAttributes());
         attributes.putAll(authentication.getPrincipal().getAttributes());

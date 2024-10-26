@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(CasTestExtension.class)
 class CasInterruptConfigurationTests {
     @Autowired
-    @Qualifier("interruptInquirer")
+    @Qualifier(InterruptInquirer.BEAN_NAME)
     private InterruptInquiryExecutionPlan interruptInquirer;
 
     @Test
