@@ -1,5 +1,6 @@
 package org.apereo.cas.heimdall;
 
+import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
 import org.apereo.cas.config.CasCoreAutoConfiguration;
 import org.apereo.cas.config.CasCoreCookieAutoConfiguration;
@@ -15,10 +16,12 @@ import org.apereo.cas.config.CasCoreWebflowAutoConfiguration;
 import org.apereo.cas.config.CasHeimdallAutoConfiguration;
 import org.apereo.cas.config.CasOAuth20WebflowAutoConfiguration;
 import org.apereo.cas.config.CasOidcAutoConfiguration;
+import org.apereo.cas.config.CasPersonDirectoryAutoConfiguration;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
 import org.apereo.cas.config.CasWebAppAutoConfiguration;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.context.annotation.Import;
 
 /**
  * This is {@link BaseHeimdallTests}.
@@ -28,6 +31,7 @@ import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
  */
 abstract class BaseHeimdallTests {
     @SpringBootTestAutoConfigurations
+    @Import(CasAuthenticationEventExecutionPlanTestConfiguration.class)
     @ImportAutoConfiguration({
         CasWebAppAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
@@ -42,7 +46,7 @@ abstract class BaseHeimdallTests {
         CasCoreWebAutoConfiguration.class,
         CasCoreServicesAutoConfiguration.class,
         CasCoreScriptingAutoConfiguration.class,
-        
+        CasPersonDirectoryAutoConfiguration.class,
         CasThymeleafAutoConfiguration.class,
         CasOAuth20WebflowAutoConfiguration.class,
         CasOidcAutoConfiguration.class,
