@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.heimdall.HeimdallAuthorizationController;
@@ -45,6 +46,8 @@ public class CasHeimdallAutoConfiguration {
     @ConditionalOnMissingBean(name = "authorizationPrincipalParser")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public AuthorizationPrincipalParser authorizationPrincipalParser(
+        @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
+        final AuthenticationSystemSupport authenticationSystemSupport,
         final CasConfigurationProperties casProperties,
         @Qualifier("oidcTokenSigningAndEncryptionService")
         final ObjectProvider<OAuth20TokenSigningAndEncryptionService> oidcTokenSigningAndEncryptionService,
@@ -53,7 +56,7 @@ public class CasHeimdallAutoConfiguration {
         @Qualifier(TicketRegistry.BEAN_NAME)
         final TicketRegistry ticketRegistry) {
         return new DefaultAuthorizationPrincipalParser(ticketRegistry, casProperties,
-            accessTokenJwtBuilder, oidcTokenSigningAndEncryptionService);
+            accessTokenJwtBuilder, oidcTokenSigningAndEncryptionService, authenticationSystemSupport);
     }
 
     @Bean

@@ -52,6 +52,12 @@ support for the new version of Spring Boot:
 
 1. [Swagger](../integration/Swagger-Integration.html)
 2. [Spring Boot Admin](../monitoring/Configuring-SpringBootAdmin.html)
+ 
+### Heimdall Authorization Engine
+
+[Heimdall](../authorization/Heimdall-Authorization-Overview.html) is a simple rule-based authorization 
+engine whose main responsibility is to accept an authorization request
+in form of an HTTP payload and return a decision whether the request is allowed or denied in form of an HTTP response code.
 
 ### OpenRewrite Recipes
 

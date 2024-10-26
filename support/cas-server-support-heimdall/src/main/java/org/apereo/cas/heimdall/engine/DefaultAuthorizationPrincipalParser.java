@@ -1,6 +1,9 @@
 package org.apereo.cas.heimdall.engine;
 
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactoryUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -11,7 +14,9 @@ import org.apereo.cas.ticket.OAuth20TokenSigningAndEncryptionService;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import com.google.common.base.Splitter;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.util.DateUtils;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +28,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpHeaders;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -38,6 +44,7 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
     protected final CasConfigurationProperties casProperties;
     protected final ObjectProvider<JwtBuilder> accessTokenJwtBuilder;
     protected final ObjectProvider<OAuth20TokenSigningAndEncryptionService> oidcTokenSigningAndEncryptionService;
+    protected final AuthenticationSystemSupport authenticationSystemSupport;
 
     @Override
     public Principal parse(final String authorizationHeader) throws Throwable {
@@ -49,12 +56,28 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
     }
 
     protected JWTClaimsSet parseAuthorizationHeader(final String authorizationHeader) throws Throwable {
-        val token = StringUtils.removeStart(authorizationHeader, "Bearer ");
-        val claims = parseOidcIdToken(token)
-            .or(() -> parseJwtAccessToken(token))
-            .or(() -> getJwtClaimsSetFromAccessToken(token))
-            .orElseThrow(() -> new AuthenticationException("Unable to parse token"));
-        return validateClaims(claims);
+        if (authorizationHeader.startsWith("Basic ")) {
+            val token = StringUtils.removeStart(authorizationHeader, "Basic ");
+            return buildClaimSetFromAuthentication(token);
+        }
+        if (authorizationHeader.startsWith("Bearer ")) {
+            val token = StringUtils.removeStart(authorizationHeader, "Bearer ");
+            val claims = parseOidcIdToken(token)
+                .or(() -> parseJwtAccessToken(token))
+                .or(() -> getJwtClaimsSetFromAccessToken(token))
+                .orElseThrow(() -> new AuthenticationException("Unable to parse token"));
+            return validateClaims(claims);
+        }
+        throw new AuthenticationException("Unknown authorization header type");
+    }
+
+    protected JWTClaimsSet buildClaimSetFromAuthentication(final String token) throws Throwable {
+        val usernamePass = Splitter.on(':').splitToList(EncodingUtils.decodeBase64ToString(token));
+        val credential = new UsernamePasswordCredential(usernamePass.getFirst(), usernamePass.getLast());
+        val authResultBuilder = authenticationSystemSupport.handleInitialAuthenticationTransaction(null, credential);
+        val authentication = authenticationSystemSupport.finalizeAllAuthenticationTransactions(authResultBuilder, null);
+        val claimsMap = buildClaimsFromAuthentication(authentication.getAuthentication());
+        return JWTClaimsSet.parse(claimsMap);
     }
 
     protected JWTClaimsSet validateClaims(final JWTClaimsSet claimsSet) {
@@ -76,13 +99,10 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
             val ticket = ticketRegistry.getTicket(token, OAuth20AccessToken.class);
             FunctionUtils.throwIf(ticket == null || ticket.isExpired(),
                 () -> new AuthenticationException("Token %s is not found or has expired".formatted(token)));
-            val claimsMap = new HashMap<String, Object>(ticket.getClaims());
-            val authentication = ticket.getAuthentication();
-            claimsMap.putAll(authentication.getAttributes());
-            claimsMap.putAll(authentication.getPrincipal().getAttributes());
+            val claimsMap = buildClaimsFromAuthentication(ticket.getAuthentication());
+            claimsMap.putAll(ticket.getClaims());
             claimsMap.put(OAuth20Constants.SCOPE, ticket.getScopes());
             claimsMap.put(OAuth20Constants.TOKEN, token);
-            claimsMap.put(OAuth20Constants.CLAIM_SUB, authentication.getPrincipal().getId());
             return Optional.of(JWTClaimsSet.parse(claimsMap));
         } catch (final Throwable e) {
             LOGGER.debug(e.getMessage(), LOGGER.isTraceEnabled() ? e : null);
@@ -90,6 +110,14 @@ public class DefaultAuthorizationPrincipalParser implements AuthorizationPrincip
         }
     }
 
+    protected Map<String, Object> buildClaimsFromAuthentication(final Authentication authentication) {
+        val claimsMap = new HashMap<String, Object>();
+        claimsMap.putAll(authentication.getAttributes());
+        claimsMap.putAll(authentication.getPrincipal().getAttributes());
+        claimsMap.put(OAuth20Constants.CLAIM_SUB, authentication.getPrincipal().getId());
+        return claimsMap;
+    }
+    
     protected Optional<JWTClaimsSet> parseJwtAccessToken(final String token) {
         try {
             return accessTokenJwtBuilder

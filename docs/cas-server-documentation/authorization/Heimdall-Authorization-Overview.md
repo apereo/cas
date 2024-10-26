@@ -12,7 +12,11 @@ Heimdall is a simple rule-based authorization engine whose main responsibility i
 in form of an HTTP payload and return a decision whether the request is allowed or denied in form of an HTTP response code. You
 can put this authorization engine behind API gateways, and reverse proxies to protect your APIs and services and allow them
 to formulate an authorization request to CAS, receive a response and translate that back to the caller.
-            
+       
+> In Norse mythology, Heimdall is a god and gatekeeper who keeps watch for invaders and is 
+> attested as possessing foreknowledge and keen senses. As gatekeeper, he is responsible for
+> the rainbow bridge Bifrost and keeps a watchful eye on passengers.
+
 The general flow can be summarized using the following steps:
    
 - Authorizable resources are registered with CAS
@@ -33,7 +37,7 @@ an API gateway or nginx reverse proxy, etc.</p></div>
 
 ## Configuration
 
-Heimdall authorization support is enabled by only including the following dependency in the overlay:
+Heimdall authorization support is enabled by including the following dependency in the overlay:
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-heimdall" %}
 
@@ -72,16 +76,17 @@ Typical responses include `200`, `401` or `403`.
 
 ## Authorization Principal
        
-The authorization request is expected to provide an `Authorization` header using the `Bearer` scheme (`Authorization: Bearer ...`). 
+The authorization request is expected to provide an `Authorization` header using the `Bearer` or `Basic` schemes (`Authorization: Bearer/Basic ...`). 
 The token in the header must indicate the *who*, the subject or the authorization principal that wants to access the resource
 using the details specified in the request.
 
 The authorization header value can be *one* of the following:
 
-- An OpenID Connect **ID token** produced by CAS when acting as a [OpenID Connect Provider](../authentication/OIDC-Authentication.html).
-- A **JWT access token** produced by CAS when acting as an [OAuth](../authentication/OAuth-Authentication.html) or [OpenID Connect](../authentication/OIDC-Authentication.html) identity provider.
-- An **opaque access token** (i.e. `AT-1-...`) produced by CAS when acting an [OAuth](../authentication/OAuth-Authentication.html) or [OpenID Connect](../authentication/OIDC-Authentication.html) identity provider.
-                      
+- An OpenID Connect **ID token**, passed as a `Bearer` token, produced by CAS when acting as a [OpenID Connect Provider](../authentication/OIDC-Authentication.html).
+- A **JWT access token**, passed as a `Bearer` token, produced by CAS when acting as an [OAuth](../authentication/OAuth-Authentication.html) or [OpenID Connect](../authentication/OIDC-Authentication.html) identity provider.
+- An **opaque access token** (i.e. `AT-1-...`), passed as a `Bearer` token, produced by CAS when acting an [OAuth](../authentication/OAuth-Authentication.html) or [OpenID Connect](../authentication/OIDC-Authentication.html) identity provider.
+- A valid Base64-encoded `username:password`, passed as a `Basic` token, that can be accepted by the CAS authentication engine.
+
 Claims or attributes from all token types are extracted and attached to the final principal, which is then
 passed to the authorization policy engine to make decisions.
         
@@ -103,7 +108,7 @@ categorized by API owner or group (i.e. `API_EXAMPLE.json`) that describe a coll
         "method": "PUT",
         "enforceAllPolicies": false,
         "policies": [ "java.util.ArrayList", [
-            
+            {}
         ]],
         "properties" : {
             "@class" : "java.util.HashMap",
@@ -123,7 +128,7 @@ that operate on patterns, you may want to ensure that the most specific policies
 <p>Remember that the file name is mostly irrelevant. While we recommend reasonable naming conventions,
 the <code>namespace</code> field inside the policy is really the piece that determines its owner.</p></div>
    
-The list of API resources owned by the indicated namespace support the following elements:
+The authorization policies owned by the indicated namespace and resource support the following elements:
 
 | Field                | Description                                                                                               |
 |----------------------|-----------------------------------------------------------------------------------------------------------|
