@@ -18,6 +18,7 @@ const request = require("request");
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
     await page.setRequestInterception(true);
+    const jar = request.jar();
     page.on("request", (interceptedRequest) => {
         if (interceptedRequest.isInterceptResolutionHandled()) {
             return;
@@ -37,20 +38,27 @@ const request = require("request");
             headers: interceptedRequest.headers(),
             body: interceptedRequest.postData(),
             cert: cert,
-            key: key
+            key: key,
+            jar: jar
         };
 
-        request(options, (err, resp, body) => {
+        request(options, async (err, resp, body) => {
             if (err) {
-                cas.logr(`Unable to call ${options.uri}`, err);
+                await cas.logr(`Unable to call ${options.uri}`, err, body);
                 return interceptedRequest.abort("connectionrefused");
             }
 
-            cas.logb(`Responding with X.509 client certificate ${url}`);
+            const allCookies =jar.getCookies(options.uri);
+            const setCookieHeaders = allCookies.map((cookie) => cookie.cookieString());
+
+            await cas.logb(`Responding after X.509 authentication ${url}`);
             interceptedRequest.respond({
                 status: resp.statusCode,
                 contentType: resp.headers["content-type"],
-                headers: resp.headers,
+                headers: {
+                    ...resp.headers,
+                    "set-cookie": setCookieHeaders
+                },
                 body: body
             });
         });
@@ -59,14 +67,13 @@ const request = require("request");
     const redirectUri = "https://localhost:9859/anything/oidc";
     const url = `https://localhost:8443/cas/oidc/oidcAuthorize?client_id=client&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent("openid profile")}&response_type=code&nonce=vn4qulthnx`;
     await cas.goto(page, url);
-    await cas.sleep(1000);
-    await cas.screenshot(page);
-    await cas.sleep(1000);
+    await cas.sleep(3000);
+    await cas.logPage(page);
     if (await cas.isVisible(page, "#allow")) {
         await cas.click(page, "#allow");
         await cas.waitForNavigation(page);
     }
-    await cas.sleep(1000);
+    await cas.sleep(3000);
     await cas.logPage(page);
     await cas.assertPageUrlStartsWith(page, "https://localhost:9859/anything/oidc");
     const code = await cas.assertParameter(page, "code");

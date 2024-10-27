@@ -1045,6 +1045,7 @@ ext.libraries = [
                 dependencies.create("jakarta.persistence:jakarta.persistence-api:$jpaPersistenceApiVersion") {
                     exclude(group: "xml-apis", module: "xml-apis")
                 },
+                dependencies.create("jakarta.jms:jakarta.jms-api:$jakartaJmsVersion"),
                 dependencies.create("jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:$jakartaJstlVersion"),
                 dependencies.create("jakarta.transaction:jakarta.transaction-api:$jtaVersion"),
                 dependencies.create("jakarta.el:jakarta.el-api:$jakartaElVersion") {
