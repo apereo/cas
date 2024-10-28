@@ -12,13 +12,12 @@ import org.apereo.cas.authentication.bypass.RegisteredServicePrincipalAttributeM
 import org.apereo.cas.authentication.bypass.RestMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.gauth.GoogleAuthenticatorBypassEvaluator;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -26,6 +25,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import java.util.Optional;
 
 /**
  * This is {@link GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration}.
@@ -43,51 +44,27 @@ class GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorBypassEvaluator(
         final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("googleAuthenticatorPrincipalMultifactorAuthenticationProviderBypass")
-        final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorPrincipalMultifactorAuthenticationProviderBypass,
-        @Qualifier("googleAuthenticatorRegisteredServiceMultifactorAuthenticationProviderBypass")
-        final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorRegisteredServiceMultifactorAuthenticationProviderBypass,
-        @Qualifier("googleAuthenticatorRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
-        final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator,
-        @Qualifier("googleAuthenticatorAuthenticationMultifactorAuthenticationProviderBypass")
-        final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorAuthenticationMultifactorAuthenticationProviderBypass,
-        @Qualifier("googleAuthenticatorCredentialMultifactorAuthenticationProviderBypass")
-        final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorCredentialMultifactorAuthenticationProviderBypass,
-        @Qualifier("googleAuthenticatorHttpRequestMultifactorAuthenticationProviderBypass")
-        final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorHttpRequestMultifactorAuthenticationProviderBypass,
-        @Qualifier("googleAuthenticatorGroovyMultifactorAuthenticationProviderBypass")
-        final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorGroovyMultifactorAuthenticationProviderBypass,
-        @Qualifier("googleAuthenticatorRestMultifactorAuthenticationProviderBypass")
-        final MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorRestMultifactorAuthenticationProviderBypass) {
+        final CasConfigurationProperties casProperties) {
+
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
-        val props = casProperties.getAuthn().getMfa().getGauth().getBypass();
-        if (StringUtils.isNotBlank(props.getPrincipalAttributeName())) {
-            bypass.addMultifactorAuthenticationProviderBypassEvaluator(googleAuthenticatorPrincipalMultifactorAuthenticationProviderBypass);
-        }
-        bypass.addMultifactorAuthenticationProviderBypassEvaluator(googleAuthenticatorRegisteredServiceMultifactorAuthenticationProviderBypass);
-        bypass.addMultifactorAuthenticationProviderBypassEvaluator(googleAuthenticatorRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator);
-        if (StringUtils.isNotBlank(props.getAuthenticationAttributeName()) || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
-            || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
-            bypass.addMultifactorAuthenticationProviderBypassEvaluator(googleAuthenticatorAuthenticationMultifactorAuthenticationProviderBypass);
-        }
-        if (StringUtils.isNotBlank(props.getCredentialClassType())) {
-            bypass.addMultifactorAuthenticationProviderBypassEvaluator(googleAuthenticatorCredentialMultifactorAuthenticationProviderBypass);
-        }
-        if (StringUtils.isNotBlank(props.getHttpRequestHeaders()) || StringUtils.isNotBlank(props.getHttpRequestRemoteAddress())) {
-            bypass.addMultifactorAuthenticationProviderBypassEvaluator(googleAuthenticatorHttpRequestMultifactorAuthenticationProviderBypass);
-        }
-        if (props.getGroovy().getLocation() != null) {
-            bypass.addMultifactorAuthenticationProviderBypassEvaluator(googleAuthenticatorGroovyMultifactorAuthenticationProviderBypass);
-        }
-        if (StringUtils.isNotBlank(props.getRest().getUrl())) {
-            bypass.addMultifactorAuthenticationProviderBypassEvaluator(googleAuthenticatorRestMultifactorAuthenticationProviderBypass);
-        }
+        val gauth = casProperties.getAuthn().getMfa().getGauth();
+        val currentBypassEvaluators = applicationContext.getBeansWithAnnotation(GoogleAuthenticatorBypassEvaluator.class).values();
+        currentBypassEvaluators
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .map(MultifactorAuthenticationProviderBypassEvaluator.class::cast)
+            .filter(evaluator -> !evaluator.isEmpty())
+            .map(evaluator -> evaluator.belongsToMultifactorAuthenticationProvider(gauth.getId()))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .forEach(bypass::addMultifactorAuthenticationProviderBypassEvaluator);
         return bypass;
     }
 
     @ConditionalOnMissingBean(name = "googleAuthenticatorRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
     @Bean
+    @GoogleAuthenticatorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(
         final ConfigurableApplicationContext applicationContext,
@@ -98,17 +75,23 @@ class GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "googleAuthenticatorRestMultifactorAuthenticationProviderBypass")
     @Bean
+    @GoogleAuthenticatorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorRestMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         val props = gauth.getBypass();
-        return new RestMultifactorAuthenticationProviderBypassEvaluator(props, gauth.getId(), applicationContext);
+        return BeanSupplier.of(MultifactorAuthenticationProviderBypassEvaluator.class)
+            .when(BeanCondition.on("cas.authn.mfa.gauth.bypass.rest.url").given(applicationContext.getEnvironment()))
+            .supply(() -> new RestMultifactorAuthenticationProviderBypassEvaluator(props, gauth.getId(), applicationContext))
+            .otherwiseProxy()
+            .get();
     }
 
     @ConditionalOnMissingBean(name = "googleAuthenticatorGroovyMultifactorAuthenticationProviderBypass")
     @Bean
+    @GoogleAuthenticatorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorGroovyMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
@@ -128,16 +111,23 @@ class GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "googleAuthenticatorHttpRequestMultifactorAuthenticationProviderBypass")
     @Bean
+    @GoogleAuthenticatorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorHttpRequestMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         val props = gauth.getBypass();
-        return new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(props, gauth.getId(), applicationContext);
+        val bypassActive = StringUtils.isNotBlank(props.getHttpRequestHeaders()) || StringUtils.isNotBlank(props.getHttpRequestRemoteAddress());
+        return BeanSupplier.of(MultifactorAuthenticationProviderBypassEvaluator.class)
+            .when(bypassActive)
+            .supply(() -> new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(props, gauth.getId(), applicationContext))
+            .otherwiseProxy()
+            .get();
     }
 
     @Bean
+    @GoogleAuthenticatorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "googleAuthenticatorCredentialMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorCredentialMultifactorAuthenticationProviderBypass(
@@ -145,10 +135,15 @@ class GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration {
         final CasConfigurationProperties casProperties) {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         val props = gauth.getBypass();
-        return new CredentialMultifactorAuthenticationProviderBypassEvaluator(props, gauth.getId(), applicationContext);
+        return BeanSupplier.of(MultifactorAuthenticationProviderBypassEvaluator.class)
+            .when(StringUtils.isNotBlank(props.getCredentialClassType()))
+            .supply(() -> new CredentialMultifactorAuthenticationProviderBypassEvaluator(props, gauth.getId(), applicationContext))
+            .otherwiseProxy()
+            .get();
     }
 
     @Bean
+    @GoogleAuthenticatorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "googleAuthenticatorRegisteredServiceMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorRegisteredServiceMultifactorAuthenticationProviderBypass(
@@ -159,6 +154,7 @@ class GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration {
     }
 
     @Bean
+    @GoogleAuthenticatorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "googleAuthenticatorPrincipalMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorPrincipalMultifactorAuthenticationProviderBypass(
@@ -166,10 +162,15 @@ class GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration {
         final CasConfigurationProperties casProperties) {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         val props = gauth.getBypass();
-        return new PrincipalMultifactorAuthenticationProviderBypassEvaluator(props, gauth.getId(), applicationContext);
+        return BeanSupplier.of(MultifactorAuthenticationProviderBypassEvaluator.class)
+            .when(StringUtils.isNotBlank(props.getPrincipalAttributeName()))
+            .supply(() -> new PrincipalMultifactorAuthenticationProviderBypassEvaluator(props, gauth.getId(), applicationContext))
+            .otherwiseProxy()
+            .get();
     }
 
     @Bean
+    @GoogleAuthenticatorBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "googleAuthenticatorAuthenticationMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator googleAuthenticatorAuthenticationMultifactorAuthenticationProviderBypass(
@@ -177,6 +178,13 @@ class GoogleAuthenticatorAuthenticationMultifactorProviderBypassConfiguration {
         final CasConfigurationProperties casProperties) {
         val gauth = casProperties.getAuthn().getMfa().getGauth();
         val props = gauth.getBypass();
-        return new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(props, gauth.getId(), applicationContext);
+        val bypassActive = StringUtils.isNotBlank(props.getAuthenticationAttributeName())
+            || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
+            || StringUtils.isNotBlank(props.getAuthenticationMethodName());
+        return BeanSupplier.of(MultifactorAuthenticationProviderBypassEvaluator.class)
+            .when(bypassActive)
+            .supply(() -> new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(props, gauth.getId(), applicationContext))
+            .otherwiseProxy()
+            .get();
     }
 }

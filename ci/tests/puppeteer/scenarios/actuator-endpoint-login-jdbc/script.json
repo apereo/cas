@@ -25,7 +25,7 @@
     
     "--management.endpoint.health.show-details=always",
     "--management.endpoints.web.exposure.include=*",
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
 
     "management.health.systemHealthIndicator.enabled=true",
     "management.health.memoryHealthIndicator.enabled=true",

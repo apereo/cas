@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.val;
 import org.jose4j.jwk.JsonWebKey;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
-@Endpoint(id = "oidcJwks", enableByDefault = false)
+@Endpoint(id = "oidcJwks", defaultAccess = Access.NONE)
 public class OidcJwksRotationEndpoint extends BaseCasRestActuatorEndpoint {
     private final ObjectProvider<OidcJsonWebKeystoreRotationService> rotationService;
 

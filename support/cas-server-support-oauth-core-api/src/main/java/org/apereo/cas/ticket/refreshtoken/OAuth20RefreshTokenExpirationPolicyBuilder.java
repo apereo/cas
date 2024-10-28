@@ -34,7 +34,7 @@ public record OAuth20RefreshTokenExpirationPolicyBuilder(CasConfigurationPropert
      */
     public ExpirationPolicy toTicketExpirationPolicy() {
         val rtProps = casProperties.getAuthn().getOauth().getRefreshToken();
-        val timeout = Beans.newDuration(rtProps.getTimeToKillInSeconds()).getSeconds();
+        val timeout = Beans.newDuration(rtProps.getTimeToKillInSeconds()).toSeconds();
         return buildExpirationPolicyFor(timeout);
     }
 
@@ -44,7 +44,7 @@ public record OAuth20RefreshTokenExpirationPolicyBuilder(CasConfigurationPropert
             val policy = service.getRefreshTokenExpirationPolicy();
             val timeToKill = policy.getTimeToKill();
             if (StringUtils.isNotBlank(timeToKill)) {
-                val timeToKillInSeconds = Beans.newDuration(timeToKill).getSeconds();
+                val timeToKillInSeconds = Beans.newDuration(timeToKill).toSeconds();
                 return buildExpirationPolicyFor(timeToKillInSeconds);
             }
         }

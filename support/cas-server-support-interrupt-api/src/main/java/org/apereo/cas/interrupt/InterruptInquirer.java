@@ -19,6 +19,11 @@ import org.springframework.webflow.execution.RequestContext;
 public interface InterruptInquirer extends Ordered, NamedObject {
 
     /**
+     * The bean name of the interrupt inquirer.
+     */
+    String BEAN_NAME = "interruptInquirer";
+
+    /**
      * Inquire interrupt response.
      *
      * @param authentication    the authentication

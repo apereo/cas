@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
-@TestPropertySource(properties = "management.endpoint.ticketExpirationPolicies.enabled=true")
+@TestPropertySource(properties = "management.endpoint.ticketExpirationPolicies.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
 class TicketExpirationPoliciesEndpointTests extends AbstractCasEndpointTests {
     @Autowired

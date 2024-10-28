@@ -17,7 +17,7 @@
 
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoint.health.show-details=always",
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
 
     "--cas.javers.mongo.client-uri=mongodb://root:secret@localhost:27017/cas?authSource=admin",
     

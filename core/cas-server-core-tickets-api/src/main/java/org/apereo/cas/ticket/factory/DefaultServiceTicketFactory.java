@@ -124,7 +124,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
             val ttl = policy.getTimeToLive();
             if (count > 0 && StringUtils.isNotBlank(ttl)) {
                 return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(
-                    count, Beans.newDuration(ttl).getSeconds());
+                    count, Beans.newDuration(ttl).toSeconds());
             }
         }
         return expirationPolicyBuilder.buildTicketExpirationPolicy();

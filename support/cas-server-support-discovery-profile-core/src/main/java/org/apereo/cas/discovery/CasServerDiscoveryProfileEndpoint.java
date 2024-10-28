@@ -6,6 +6,7 @@ import org.apereo.cas.web.BaseCasActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 
@@ -18,7 +19,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Endpoint(id = "discoveryProfile", enableByDefault = false)
+@Endpoint(id = "discoveryProfile", defaultAccess = Access.NONE)
 public class CasServerDiscoveryProfileEndpoint extends BaseCasActuatorEndpoint {
     private final ObjectProvider<CasServerProfileRegistrar> casServerProfileRegistrar;
 

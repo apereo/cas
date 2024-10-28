@@ -28,6 +28,7 @@ import org.apache.logging.slf4j.Log4jLoggerFactory;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.Resource;
@@ -49,7 +50,7 @@ import java.util.Set;
  * @since 4.2
  */
 @Slf4j
-@Endpoint(id = "loggingConfig", enableByDefault = false)
+@Endpoint(id = "loggingConfig", defaultAccess = Access.NONE)
 @Getter
 public class LoggingConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
 

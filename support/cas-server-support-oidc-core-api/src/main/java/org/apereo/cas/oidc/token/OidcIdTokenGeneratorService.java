@@ -207,7 +207,7 @@ public class OidcIdTokenGeneratorService extends BaseIdTokenGeneratorService<Oid
         val timeoutInSeconds = Optional.ofNullable(registeredService.getIdTokenExpirationPolicy())
             .map(RegisteredServiceOidcIdTokenExpirationPolicy::getTimeToKill)
             .filter(StringUtils::isNotBlank)
-            .map(ttl -> Beans.newDuration(ttl).getSeconds())
+            .map(ttl -> Beans.newDuration(ttl).toSeconds())
             .orElseGet(expirationPolicy::getTimeToLive);
         LOGGER.debug("ID token expiration policy set to expire the ID token in [{}]", timeoutInSeconds);
 

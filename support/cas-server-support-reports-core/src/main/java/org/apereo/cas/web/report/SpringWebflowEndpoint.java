@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.binding.expression.Expression;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.context.ApplicationContext;
@@ -48,7 +49,7 @@ import java.util.stream.StreamSupport;
  * @since 5.1.0
  */
 @Slf4j
-@Endpoint(id = "springWebflow", enableByDefault = false)
+@Endpoint(id = "springWebflow", defaultAccess = Access.NONE)
 public class SpringWebflowEndpoint extends BaseCasActuatorEndpoint {
 
     private final ApplicationContext applicationContext;

@@ -29,7 +29,7 @@
     "--cas.authn.pm.reset.mail.subject=Reset",
     "--cas.authn.pm.reset.mail.attribute-name=mail",
 
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
     "--management.endpoints.web.exposure.include=*",
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     

@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "server.port=8282",
         "cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
         "cas.audit.engine.number-of-days-in-history=30",
-        "management.endpoint.auditLog.enabled=true",
+        "management.endpoint.auditLog.access=UNRESTRICTED",
         "management.endpoints.web.exposure.include=*"
     },
     webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)

@@ -38,7 +38,7 @@ You can also tune the ABAC strategy to conditionally activate and enforce the po
 
 {% tabs accessstrategy %}
 
-{% tab accessstrategy Required Attributes %}
+{% tab accessstrategy Required Attributes <i class="fa fa-id-card px-1"></i> %}
 
 Control access using a `Map` of required principal attribute names along with the set of values for each attribute.
 
@@ -69,7 +69,7 @@ To access the service, the principal must have a `cn` attribute with the value o
 ```
 {% endtab %}
 
-{% tab accessstrategy Optional Attributes %}
+{% tab accessstrategy Optional Attributes <i class="fa fa-id-card px-1"></i> %}
 To access the service, the principal must have a `cn` attribute with the value of `admin` **OR** a
 `givenName` attribute with the value of `Administrator`:
 
@@ -168,7 +168,7 @@ To prepare CAS to support and integrate with Apache Groovy, please [review this 
 
 {% endtab %}
 
-{% tab accessstrategy Rejected Attributes %}
+{% tab accessstrategy Rejected Attributes <i class="fa fa-ban px-1"></i> %}
 To access the service, the principal must have a `cn` attribute whose value
 is either `admin`, `Admin` or `TheAdmin`, OR the principal must have a `member` attribute
 whose value is either `admins`, `adminGroup` or `staff`. The principal also must not have an

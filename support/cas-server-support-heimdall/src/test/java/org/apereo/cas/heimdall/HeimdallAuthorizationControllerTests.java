@@ -18,6 +18,7 @@ import org.apereo.cas.ticket.idtoken.IdTokenGeneratorService;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.util.EncodingUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -39,8 +40,8 @@ import java.util.Set;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * This is {@link HeimdallAuthorizationControllerTests}.
@@ -53,6 +54,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest(classes = BaseHeimdallTests.SharedTestConfiguration.class,
     properties = {
+        "cas.authn.attribute-repository.stub.attributes.eduPersonAffiliation=developer",
         "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/heimdalloidc.jwks",
         "cas.authn.oidc.core.authentication-context-reference-mappings=something->mfa-something",
         "cas.heimdall.json.location=classpath:/policies",
@@ -266,6 +268,23 @@ class HeimdallAuthorizationControllerTests {
     }
 
     @Test
+    void verifyBasicUserAuthentication() throws Throwable {
+        val credentials = EncodingUtils.encodeBase64("casuser:resusac");
+        mockMvc.perform(post("/heimdall/authorize")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(AuthorizationRequest.builder()
+                .uri("/api/basic")
+                .method("POST")
+                .namespace("API_BASIC")
+                .build()
+                .toJson()
+            )
+            .header(HttpHeaders.AUTHORIZATION, "Basic %s".formatted(credentials))
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+    }
+
+    @Test
     void verifyUnauthorizedOperation() throws Throwable {
         val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(),
             Map.of("color", List.of("red", "green"), "memberOf", List.of("nothing")));
@@ -342,6 +361,22 @@ class HeimdallAuthorizationControllerTests {
         ).andExpect(status().isForbidden());
     }
 
+    @Test
+    void verifyUnknownAuthHeader() throws Throwable {
+        mockMvc.perform(post("/heimdall/authorize")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(AuthorizationRequest.builder()
+                .uri("/api/users")
+                .method("POST")
+                .namespace("API_UNKNOWN")
+                .build()
+                .toJson()
+            )
+            .header(HttpHeaders.AUTHORIZATION, "Unknown User")
+            .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isForbidden());
+    }
+    
     private static OAuth20AccessToken buildAccessToken(final ExpirationPolicy expirationPolicy,
                                                        final Authentication authentication) {
         val accessToken = mock(OAuth20AccessToken.class);

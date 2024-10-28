@@ -77,7 +77,7 @@ it has nothing to do with how the application manages its own sessions.
 
 {% endtab %}
 
-{% tab exppolicies Timeout %}
+{% tab exppolicies Timeout <i class="fa fa-hourglass px-1"></i> %}
 
 The expiration policy applied to TGTs provides for most-recently-used expiration policy, similar to a Web server session timeout.
 For example, a 2-hour time span with this policy in effect would require a `TGT` to be used every 2 hours or less, otherwise
@@ -87,7 +87,7 @@ it would be marked as expired.
 
 {% endtab %}
 
-{% tab exppolicies Hard Timeout %}
+{% tab exppolicies Hard Timeout <i class="fa fa-clock px-1"></i> %}
 
 The hard timeout policy provides for finite ticket lifetime as measured from the time of creation. For example, a 4-hour time span
 for this policy means that a ticket created at 1PM may be used up until 5PM; subsequent attempts to use it will mark it expired
@@ -107,7 +107,7 @@ attempts to consume CAS server resources by requesting high volumes of service t
 
 {% endtab %}
 
-{% tab exppolicies Never %}
+{% tab exppolicies Never <i class="fa fa-ban px-1"></i> %}
 
 The never expires policy allows tickets to exist indefinitely. This policy is activated when the primary ticket expiration
 policy is configured with negative timeout values.

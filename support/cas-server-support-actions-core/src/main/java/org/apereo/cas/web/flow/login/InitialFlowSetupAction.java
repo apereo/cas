@@ -12,6 +12,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.SingleSignOnParticipationRequest;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
@@ -182,6 +183,7 @@ public class InitialFlowSetupAction extends BaseCasWebflowAction {
         }
         context.getFlowScope().put("httpRequestSecure", request.isSecure());
         context.getFlowScope().put("httpRequestMethod", request.getMethod());
+        context.getFlowScope().put("httpRequestHeaders", HttpRequestUtils.getRequestHeaders(request));
     }
 
     protected List<String> determineAuthenticationHandlersForSourceSelection(final RequestContext context) {

@@ -98,7 +98,7 @@ public class OAuth20DefaultOAuthCodeFactory implements OAuth20CodeFactory {
             val count = policy.getNumberOfUses();
             val ttl = policy.getTimeToLive();
             if (count > 0 && StringUtils.isNotBlank(ttl)) {
-                return new OAuth20CodeExpirationPolicy(count, Beans.newDuration(ttl).getSeconds());
+                return new OAuth20CodeExpirationPolicy(count, Beans.newDuration(ttl).toSeconds());
             }
         }
         return this.expirationPolicyBuilder.buildTicketExpirationPolicy();

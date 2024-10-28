@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@TestPropertySource(properties = "management.endpoint.ticketRegistry.enabled=true")
+@TestPropertySource(properties = "management.endpoint.ticketRegistry.access=UNRESTRICTED")
 @Tag("ActuatorEndpoint")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class TicketRegistryEndpointTests extends AbstractCasEndpointTests {

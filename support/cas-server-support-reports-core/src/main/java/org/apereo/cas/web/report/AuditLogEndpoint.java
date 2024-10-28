@@ -14,6 +14,7 @@ import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.common.spi.AuditActionDateProvider;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
@@ -30,7 +31,7 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Endpoint(id = "auditLog", enableByDefault = false)
+@Endpoint(id = "auditLog", defaultAccess = Access.NONE)
 @Slf4j
 public class AuditLogEndpoint extends BaseCasRestActuatorEndpoint {
 

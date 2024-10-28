@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.DeleteOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 6.0.0
  */
-@Endpoint(id = "oauthTokens", enableByDefault = false)
+@Endpoint(id = "oauthTokens", defaultAccess = Access.NONE)
 @Slf4j
 public class OAuth20TokenManagementEndpoint extends BaseCasActuatorEndpoint {
 

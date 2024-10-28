@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "management.endpoints.web.exposure.include=*",
-        "management.endpoint.discoveryProfile.enabled=true"
+        "management.endpoint.discoveryProfile.access=UNRESTRICTED"
     })
 @Tag("ActuatorEndpoint")
 @ExtendWith(CasTestExtension.class)

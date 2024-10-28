@@ -35,13 +35,13 @@ public record OAuth20AccessTokenExpirationPolicyBuilder(CasConfigurationProperti
         val oauth = casProperties.getAuthn().getOauth().getAccessToken();
         if (casProperties.getTicket().isTrackDescendantTickets()) {
             return new OAuth20AccessTokenExpirationPolicy(
-                Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).getSeconds(),
-                Beans.newDuration(oauth.getTimeToKillInSeconds()).getSeconds()
+                Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).toSeconds(),
+                Beans.newDuration(oauth.getTimeToKillInSeconds()).toSeconds()
             );
         }
         return new OAuth20AccessTokenExpirationPolicy.OAuthAccessTokenSovereignExpirationPolicy(
-            Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).getSeconds(),
-            Beans.newDuration(oauth.getTimeToKillInSeconds()).getSeconds()
+            Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).toSeconds(),
+            Beans.newDuration(oauth.getTimeToKillInSeconds()).toSeconds()
         );
     }
 }

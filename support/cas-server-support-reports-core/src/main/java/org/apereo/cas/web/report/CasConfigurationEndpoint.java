@@ -5,6 +5,7 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Endpoint(id = "casConfig", enableByDefault = false)
+@Endpoint(id = "casConfig", defaultAccess = Access.NONE)
 public class CasConfigurationEndpoint extends BaseCasRestActuatorEndpoint {
     private final CipherExecutor<String, String> casConfigurationCipherExecutor;
 

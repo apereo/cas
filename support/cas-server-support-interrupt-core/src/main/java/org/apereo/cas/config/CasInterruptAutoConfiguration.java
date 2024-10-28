@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.interrupt.DefaultInterruptInquiryExecutionPlan;
 import org.apereo.cas.interrupt.GroovyScriptInterruptInquirer;
+import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlan;
 import org.apereo.cas.interrupt.InterruptInquiryExecutionPlanConfigurer;
 import org.apereo.cas.interrupt.InterruptTrackingCookieCipherExecutor;
@@ -123,7 +124,7 @@ public class CasInterruptAutoConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasInterruptInquiryConfiguration {
         @Bean
-        @ConditionalOnMissingBean(name = "interruptInquirer")
+        @ConditionalOnMissingBean(name = InterruptInquirer.BEAN_NAME)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public InterruptInquiryExecutionPlan interruptInquirer(final ConfigurableApplicationContext applicationContext) {
             val configurers = new ArrayList<>(applicationContext.getBeansOfType(InterruptInquiryExecutionPlanConfigurer.class).values());
