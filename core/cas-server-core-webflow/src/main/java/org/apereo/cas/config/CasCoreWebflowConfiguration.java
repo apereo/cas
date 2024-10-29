@@ -434,8 +434,9 @@ class CasCoreWebflowConfiguration {
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(CentralAuthenticationService.BEAN_NAME)
-            final CentralAuthenticationService centralAuthenticationService) {
-            return new DefaultSingleSignOnBuildingStrategy(ticketRegistrySupport, centralAuthenticationService);
+            final CentralAuthenticationService centralAuthenticationService,
+            final ConfigurableApplicationContext applicationContext) {
+            return new DefaultSingleSignOnBuildingStrategy(ticketRegistrySupport, centralAuthenticationService, applicationContext);
         }
 
         @Bean
