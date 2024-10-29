@@ -48,7 +48,7 @@ const request = require("request");
                 return interceptedRequest.abort("connectionrefused");
             }
 
-            const allCookies =jar.getCookies(options.uri);
+            const allCookies = jar.getCookies(options.uri);
             const setCookieHeaders = allCookies.map((cookie) => cookie.cookieString());
 
             await cas.logb(`Responding after X.509 authentication ${url}`);
