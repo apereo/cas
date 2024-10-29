@@ -24,7 +24,7 @@ the response includes a `Map` of attributes linked to their values.
     "headers": {
       "@class": "java.util.LinkedHashMap",
       "header": "value"
-    }
+    },
     "allowedAttributes" : {
       "@class" : "java.util.TreeMap",
       "cn" : "commonName"

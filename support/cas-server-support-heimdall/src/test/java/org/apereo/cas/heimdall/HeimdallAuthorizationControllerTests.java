@@ -19,6 +19,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.token.JwtBuilder;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.EncodingUtils;
+import org.apereo.cas.util.MockWebServer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -28,9 +29,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -202,6 +206,31 @@ class HeimdallAuthorizationControllerTests {
             .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
             .accept(MediaType.APPLICATION_JSON)
         ).andExpect(status().isForbidden());
+    }
+
+    @Test
+    void verifyRestfulPolicy() throws Throwable {
+        val principal = RegisteredServiceTestUtils.getPrincipal(UUID.randomUUID().toString(),
+            Map.of("color", List.of("red", "green"), "memberOf", List.of("admin")));
+        val authentication = RegisteredServiceTestUtils.getAuthentication(principal);
+        val accessToken = buildAccessToken(authentication);
+        ticketRegistry.addTicket(accessToken);
+
+        try (val webServer = new MockWebServer(9581, HttpStatus.OK)) {
+            webServer.start();
+            mockMvc.perform(post("/heimdall/authorize")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(AuthorizationRequest.builder()
+                    .uri("/api/rest")
+                    .method("POST")
+                    .namespace("API_REST")
+                    .build()
+                    .toJson()
+                )
+                .header(HttpHeaders.AUTHORIZATION, "Bearer %s".formatted(accessToken.getId()))
+                .accept(MediaType.APPLICATION_JSON)
+            ).andExpect(status().isOk());
+        }
     }
 
     @Test
