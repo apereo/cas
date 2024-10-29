@@ -275,15 +275,15 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
 
                                     <div>
                                         <p>Once the endpoint is available, here is an example of how you could use it with <code>curl</code>: </p>
-{%- capture curlrequest -%}
-```bash
-curl -k -u "username:password" \
-    -X {{ cfg.method }} \
-    -X "Content-Type: {{ cfg.consumes[0] | default: 'application/json' }}" \
-    -X "Accept: {{ cfg.produces[0] | default: 'application/json' }}" \
-    "https://sso.example.org/cas/actuator/{{ cfg.path }}?{{ allParams }}"
-```{%- endcapture -%}
-{{ curlrequest | markdownify }}
+                                        {%- capture curlrequest -%}
+                                        ```bash
+                                        curl -k -u "username:password" \
+                                        -X {{ cfg.method }} \
+                                        -X "Content-Type: {{ cfg.consumes[0] | default: 'application/json' }}" \
+                                        -X "Accept: {{ cfg.produces[0] | default: 'application/json' }}" \
+                                        "https://sso.example.org/cas/actuator/{{ cfg.path }}?{{ allParams }}"
+                                        ```{%- endcapture -%}
+                                        {{ curlrequest | markdownify }}
                                     </div>
 
                                     <p>CAS, being a Spring-Boot application at heart, includes a number of endpoints to help you monitor and manage the server when it’s pushed to production. You can choose to manage and monitor the deployment using HTTP endpoints, referred to as actuators.</p>
@@ -346,7 +346,8 @@ curl -k -u "username:password" \
 
 
                                     <p>To enable and expose an actuator endpoint:</p>
-                                    {%- capture epc -%}```properties
+                                    {%- capture epc -%}
+                                    ```properties
                                     management.endpoint.{{ cfg.name }}.enabled=true
                                     management.endpoints.web.exposure.include={{ cfg.name }}
 

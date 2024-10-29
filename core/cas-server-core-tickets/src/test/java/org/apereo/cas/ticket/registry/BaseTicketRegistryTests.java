@@ -119,8 +119,7 @@ public abstract class BaseTicketRegistryTests {
     protected TicketSerializationManager ticketSerializationManager;
 
     protected boolean useEncryption;
-
-
+    
     private TicketRegistry ticketRegistry;
 
     protected static ExpirationPolicyBuilder neverExpiresExpirationPolicyBuilder() {
@@ -500,6 +499,8 @@ public abstract class BaseTicketRegistryTests {
         val ticketGrantingTickets = new ArrayList<Ticket>();
         val serviceTickets = new ArrayList<Ticket>();
         FunctionUtils.doAndRetry(callback -> {
+            ticketGrantingTickets.clear();
+            serviceTickets.clear();
             for (var i = 0; i < TICKETS_IN_REGISTRY; i++) {
                 val auth = CoreAuthenticationTestUtils.getAuthentication();
                 val service = RegisteredServiceTestUtils.getService();
@@ -521,7 +522,7 @@ public abstract class BaseTicketRegistryTests {
             });
 
             await().untilAsserted(() -> {
-                val ticketCount = this.ticketRegistry.serviceTicketCount();
+                val ticketCount = ticketRegistry.serviceTicketCount();
                 assertEquals(serviceTickets.size(), ticketCount,
                     () -> "The serviceTicketCount " + ticketCount + " is not the same as the collection " + serviceTickets.size());
             });

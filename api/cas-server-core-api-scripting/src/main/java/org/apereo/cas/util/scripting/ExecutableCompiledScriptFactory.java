@@ -111,6 +111,7 @@ public interface ExecutableCompiledScriptFactory {
     static ExecutableCompiledScriptFactory getExecutableCompiledScriptFactory() {
         return findExecutableCompiledScriptFactory()
             .orElseThrow(() -> new IllegalArgumentException("No executable compiled script factory is found. "
+                + "Your CAS server is not configured to support scripting. "
                 + "Examine your build and make sure you have included the CAS dependency/module that provides the script factory implementation."));
     }
 
