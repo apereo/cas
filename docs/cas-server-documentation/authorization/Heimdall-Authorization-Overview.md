@@ -319,6 +319,28 @@ An authorization policy that requires the indicated scopes in the principal's pr
 
 {% endtab %}
 
+{% tab heimdallauthzpolicies Rest API %}
+
+An authorization policy can be outsources to a REST API that can make decisions based on the request and the resource:
+
+```json
+{
+    "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RestfulAuthorizationPolicy",
+    "url": "https://api.example.org",
+    "method": "POST",
+    "headers": {
+      "@class": "java.util.LinkedHashMap",
+      "header": "value"
+    }
+}
+```
+    
+- The request body will contain a map to present the `request` and the `resource` JSON payloads.
+- Authorized requests are expected to receive a `200` response code.
+- The `url` and header values can be constructed using the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html)
+
+{% endtab %}
+
 {% endtabs %}
 
 ## Actuator Endpoints
