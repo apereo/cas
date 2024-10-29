@@ -31,7 +31,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "management.endpoints.web.exposure.include=*",
         "management.endpoint.heimdall.access=UNRESTRICTED",
         "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/heimdalloidc.jwks",
-        "cas.authn.oidc.core.authentication-context-reference-mappings=something->mfa-something",
         "cas.heimdall.json.location=classpath:/policies",
         "server.port=8585"
     }, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -49,9 +48,17 @@ class HeimdallAuthorizationEndpointTests {
             .namespace("API_CLAIMS")
             .build()
             .toJson();
-        mockMvc.perform(post("/actuator/heimdall/resources")
+        mockMvc.perform(post("/actuator/heimdall/resource")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(authzRequest))
+            .andExpect(status().isOk());
+    }
+
+
+    @Test
+    void verifyAllResources() throws Exception {
+        mockMvc.perform(get("/actuator/heimdall/resources")
+                .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
     }
 
@@ -63,7 +70,7 @@ class HeimdallAuthorizationEndpointTests {
             .namespace("API_CLAIMS")
             .build()
             .toJson();
-        mockMvc.perform(post("/actuator/heimdall/resources")
+        mockMvc.perform(post("/actuator/heimdall/resource")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(authzRequest))
             .andExpect(status().isNotFound());
