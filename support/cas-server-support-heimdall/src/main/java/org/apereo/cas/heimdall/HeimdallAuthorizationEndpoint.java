@@ -12,8 +12,10 @@ import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import java.util.List;
 
 /**
  * This is {@link HeimdallAuthorizationEndpoint}.
@@ -40,10 +42,22 @@ public class HeimdallAuthorizationEndpoint extends BaseCasRestActuatorEndpoint {
      * @return the response entity
      * @throws Throwable the throwable
      */
-    @PostMapping(path = "/resources", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Fetch authorizable resources matching the given authorization request in the body",
+    @PostMapping(path = "/resource", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Fetch authorizable resource matching the given authorization request in the body",
         parameters = @Parameter(name = "request", required = true, description = "Authorization request in the body"))
-    public ResponseEntity<AuthorizableResource> fetchResources(@RequestBody final AuthorizationRequest request) throws Throwable {
+    public ResponseEntity<AuthorizableResource> fetchResource(@RequestBody final AuthorizationRequest request) throws Throwable {
         return ResponseEntity.of(authorizableResourceRepository.find(request));
+    }
+
+    /**
+     * Fetch resources.
+     *
+     * @return the response entity
+     * @throws Throwable the throwable
+     */
+    @GetMapping(path = "/resources", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Fetch authorizable resources")
+    public ResponseEntity<List<AuthorizableResource>> fetchResources() throws Throwable {
+        return ResponseEntity.ok(authorizableResourceRepository.findAll());
     }
 }

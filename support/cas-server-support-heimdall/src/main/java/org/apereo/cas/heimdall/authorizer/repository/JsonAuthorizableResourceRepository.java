@@ -59,6 +59,11 @@ public class JsonAuthorizableResourceRepository implements AuthorizableResourceR
     }
 
     @Override
+    public List<AuthorizableResource> findAll() {
+        return resources.values().stream().flatMap(List::stream).toList();
+    }
+
+    @Override
     public void destroy() throws Exception {
         this.watcherService.close();
     }
