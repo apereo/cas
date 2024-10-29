@@ -47,15 +47,18 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner {
     @Override
     public int cleanTicket(final Ticket ticket) {
         return lockRepository.execute(ticket.getId(), () -> {
+            val clientInfo = ClientInfoHolder.getClientInfo();
             if (ticket instanceof final TicketGrantingTicket tgt) {
-                val clientInfo = ClientInfoHolder.getClientInfo();
                 applicationContext.publishEvent(new CasRequestSingleLogoutEvent(this, tgt, clientInfo));
-                applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, tgt, clientInfo));
             }
 
             try {
                 LOGGER.debug("Cleaning up expired ticket [{}]", ticket.getId());
-                return ticketRegistry.deleteTicket(ticket);
+                val nb = ticketRegistry.deleteTicket(ticket);
+                if (ticket instanceof final TicketGrantingTicket tgt) {
+                    applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, tgt, clientInfo));
+                }
+                return nb;
             } catch (final Throwable e) {
                 LoggingUtils.error(LOGGER, e);
                 return 0;
