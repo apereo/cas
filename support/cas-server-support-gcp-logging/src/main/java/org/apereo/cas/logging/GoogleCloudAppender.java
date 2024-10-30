@@ -8,6 +8,7 @@ import org.apereo.cas.util.text.MessageSanitizer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.spring.core.DefaultGcpProjectIdProvider;
 import com.google.cloud.spring.logging.StackdriverTraceConstants;
+import com.google.common.base.Splitter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.core.Filter;
@@ -26,9 +27,10 @@ import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.message.ObjectMessage;
 import org.apache.logging.log4j.util.SortedArrayStringMap;
 import org.apache.logging.log4j.util.StringMap;
+import org.slf4j.MDC;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -43,6 +45,10 @@ public class GoogleCloudAppender extends AbstractAppender {
         .defaultTypingEnabled(false).build().toObjectMapper();
 
     private static final int TRACE_ID_64_BIT_LENGTH = 16;
+    
+    private static final List<String> TRACE_ID_MDC_FIELDS = List.of(
+        StackdriverTraceConstants.MDC_FIELD_TRACE_ID,
+        "X-B3-TraceId", "traceparent", "X-Cloud-Trace-Context");
 
     private final Configuration configuration;
 
@@ -54,11 +60,17 @@ public class GoogleCloudAppender extends AbstractAppender {
     private final String projectId;
 
     private final Boolean flattenMessage;
+    private final Boolean requiresLocation;
+
+    private final Map<String, String> labels = new LinkedHashMap<>();
 
     public GoogleCloudAppender(final String name, final Configuration config,
                                final AppenderRef appenderRef,
-                               final Filter filter, final String projectId,
-                               final Boolean flattenMessage) {
+                               final Filter filter,
+                               final String projectId,
+                               final Boolean flattenMessage,
+                               final Boolean requiresLocation,
+                               final String givenLabels) {
         super(name, filter, JsonLayout.createDefaultLayout(), false, Property.EMPTY_ARRAY);
         this.configuration = config;
         this.appenderRef = appenderRef;
@@ -67,6 +79,13 @@ public class GoogleCloudAppender extends AbstractAppender {
             return projectIdProvider.getProjectId();
         }, () -> projectId).get();
         this.flattenMessage = flattenMessage;
+        this.requiresLocation = requiresLocation;
+
+        org.springframework.util.StringUtils.commaDelimitedListToSet(givenLabels)
+            .forEach(label -> {
+                val keyValue = Splitter.on('=').splitToList(label);
+                labels.put(keyValue.getFirst(), keyValue.getLast());
+            });
     }
 
     /**
@@ -82,31 +101,49 @@ public class GoogleCloudAppender extends AbstractAppender {
      */
     @PluginFactory
     public static GoogleCloudAppender build(
-        @PluginAttribute("name")
-        final String name,
-        @PluginAttribute(value = "projectId", sensitive = true)
-        final String projectId,
-        @PluginAttribute(value = "flattenMessage", defaultBoolean = false, sensitive = false)
-        final Boolean flattenMessage,
-        @PluginElement("AppenderRef")
-        final AppenderRef appenderRef,
-        @PluginElement("Filter")
-        final Filter filter,
-        @PluginConfiguration
-        final Configuration config) {
-        return new GoogleCloudAppender(name, config, appenderRef, filter, projectId, flattenMessage);
+        @PluginAttribute("name") final String name,
+        @PluginAttribute(value = "projectId", sensitive = true) final String projectId,
+        @PluginAttribute(value = "labels", sensitive = false, defaultString = "application=cas") final String labels,
+        @PluginAttribute(value = "flattenMessage", defaultBoolean = false, sensitive = false) final Boolean flattenMessage,
+        @PluginAttribute(value = "requiresLocation", defaultBoolean = true, sensitive = false) final Boolean requiresLocation,
+        @PluginElement("AppenderRef") final AppenderRef appenderRef,
+        @PluginElement("Filter") final Filter filter,
+        @PluginConfiguration final Configuration config) {
+        return new GoogleCloudAppender(name, config, appenderRef, filter, projectId, flattenMessage, requiresLocation, labels);
     }
 
     @Override
     public void append(final LogEvent logEvent) {
         val contextData = new SortedArrayStringMap(logEvent.getContextData());
-        contextData.putValue("sourceLocation", Optional.ofNullable(logEvent.getSource())
-            .map(Object::toString).orElse(StringUtils.EMPTY));
-        contextData.putValue("severity", logEvent.getLevel().name());
+        collectSourceLocation(logEvent, contextData);
+        collectLabels(contextData);
+        collectInsertId(contextData);
         collectTraceId(contextData);
         collectHttpRequest(contextData);
         collectTimestamps(logEvent, contextData);
         appendLogEvent(logEvent, contextData);
+    }
+
+    protected void collectInsertId(final SortedArrayStringMap contextData) {
+        contextData.putValue("insertId", String.valueOf(configuration.getNanoClock().nanoTime()));
+    }
+
+    protected void collectLabels(final SortedArrayStringMap contextData) {
+        contextData.putValue("labels", labels);
+        labels.forEach((key, value) -> contextData.putValue("label-%s".formatted(key), value));
+    }
+
+    protected void collectSourceLocation(final LogEvent logEvent, final SortedArrayStringMap contextData) {
+        val source = logEvent.getSource();
+        if (source != null) {
+            val sourceLocationMap = Map.of(
+                "class", source.getClassName(),
+                "function", source.getMethodName(),
+                "file", StringUtils.defaultIfBlank(source.getFileName(), "N/A"),
+                "line", source.getLineNumber());
+            contextData.putValue("sourceLocation", sourceLocationMap);
+            sourceLocationMap.forEach((key, value) -> contextData.putValue("sourceLocation-%s".formatted(key), value));
+        }
     }
 
     protected void collectHttpRequest(final StringMap contextData) {
@@ -118,7 +155,8 @@ public class GoogleCloudAppender extends AbstractAppender {
                 "protocol", StringUtils.defaultString(contextData.getValue("protocol")),
                 "userAgent", StringUtils.defaultString(contextData.getValue("user-agent")),
                 "remoteIp", StringUtils.defaultString(contextData.getValue("remoteAddress")));
-            contextData.putValue("httpRequest", FunctionUtils.doUnchecked(() -> MAPPER.writeValueAsString(httpRequest)));
+            contextData.putValue("httpRequest", httpRequest);
+            httpRequest.forEach((key, value) -> contextData.putValue("httpRequest-%s".formatted(key), value));
         }
     }
 
@@ -146,17 +184,21 @@ public class GoogleCloudAppender extends AbstractAppender {
     }
 
     protected void collectTraceId(final StringMap contextData) {
-        val traceId = (String) contextData.getValue(StackdriverTraceConstants.MDC_FIELD_TRACE_ID);
-        if (StringUtils.isNotBlank(traceId) && StringUtils.isNotBlank(this.projectId)) {
-            contextData.putValue(StackdriverTraceConstants.MDC_FIELD_TRACE_ID,
-                StackdriverTraceConstants.composeFullTraceName(this.projectId, formatTraceId(traceId)));
+        if (StringUtils.isNotBlank(this.projectId)) {
+            TRACE_ID_MDC_FIELDS
+                .stream()
+                .map(MDC::get)
+                .filter(StringUtils::isNotBlank)
+                .findFirst()
+                .ifPresent(traceId -> contextData.putValue(StackdriverTraceConstants.MDC_FIELD_TRACE_ID,
+                    StackdriverTraceConstants.composeFullTraceName(this.projectId, formatTraceId(traceId))));
         }
     }
 
     protected Message buildLogMessage(final LogEvent logEvent,
                                       final Map<Object, Object> messagePayload) {
         val buildMessage = logEvent.getMarker() == null
-                           || !logEvent.getMarker().getName().equals(AsciiArtUtils.ASCII_ART_LOGGER_MARKER.getName());
+            || !logEvent.getMarker().getName().equals(AsciiArtUtils.ASCII_ART_LOGGER_MARKER.getName());
         if (buildMessage) {
             val messageSanitizer = ApplicationContextProvider.getMessageSanitizer().orElseGet(MessageSanitizer::disabled);
             val formattedMessage = messageSanitizer.sanitize(logEvent.getMessage().getFormattedMessage());
@@ -192,5 +234,10 @@ public class GoogleCloudAppender extends AbstractAppender {
             return "0000000000000000" + traceId;
         }
         return traceId;
+    }
+
+    @Override
+    public boolean requiresLocation() {
+        return this.requiresLocation;
     }
 }

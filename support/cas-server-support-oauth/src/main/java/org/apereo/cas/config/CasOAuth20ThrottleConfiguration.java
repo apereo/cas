@@ -129,7 +129,8 @@ class CasOAuth20ThrottleConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public HandlerInterceptor requiresAuthenticationAuthorizeInterceptor(
             @Qualifier("oauthSecConfig") final Config oauthSecConfig,
-            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER) final CasCookieBuilder ticketGrantingTicketCookieGenerator,
+            @Qualifier(CasCookieBuilder.BEAN_NAME_TICKET_GRANTING_COOKIE_BUILDER)
+            final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry) {
             val logic = new OAuth20TicketGrantingTicketAwareSecurityLogic(ticketGrantingTicketCookieGenerator, ticketRegistry);
             return new SecurityLogicInterceptor(oauthSecConfig.withSecurityLogic(logic), Authenticators.CAS_OAUTH_CLIENT);

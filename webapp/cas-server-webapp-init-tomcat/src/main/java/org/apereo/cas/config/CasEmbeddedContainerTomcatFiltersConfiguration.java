@@ -11,6 +11,7 @@ import org.apache.catalina.Globals;
 import org.apache.catalina.filters.CsrfPreventionFilter;
 import org.apache.catalina.filters.RemoteAddrFilter;
 import org.apache.catalina.filters.RequestFilter;
+import org.apache.catalina.filters.SessionInitializerFilter;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -40,6 +41,21 @@ import java.util.Optional;
 @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.ApacheTomcat)
 @AutoConfiguration
 class CasEmbeddedContainerTomcatFiltersConfiguration {
+    
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @Bean
+    @ConditionalOnMissingBean(name = "tomcatSessionInitializerFilter")
+    public FilterRegistrationBean<SessionInitializerFilter> tomcatSessionInitializerFilter(
+        final CasConfigurationProperties casProperties) {
+        val bean = new FilterRegistrationBean();
+        bean.setFilter(new SessionInitializerFilter());
+        bean.setUrlPatterns(CollectionUtils.wrap("/*"));
+        bean.setName("tomcatSessionInitializerFilter");
+        bean.setAsyncSupported(true);
+        bean.setEnabled(casProperties.getServer().getTomcat().getSessionInitialization().isEnabled());
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return bean;
+    }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean

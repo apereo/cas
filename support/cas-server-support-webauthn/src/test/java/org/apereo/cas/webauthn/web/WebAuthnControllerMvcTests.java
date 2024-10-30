@@ -52,7 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 },
     properties = {
         "server.port=8080",
-        "management.endpoints.enabled-by-default=true",
+        "management.endpoints.access.default=UNRESTRICTED",
         "management.endpoints.web.exposure.include=*",
 
         "--spring.security.user.name=s#kiooritea",

@@ -4,6 +4,8 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.PrincipalException;
+import org.apereo.cas.support.events.logout.CasRequestSingleLogoutEvent;
+import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketDestroyedEvent;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -13,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * This is {@link DefaultSingleSignOnBuildingStrategy}.
@@ -25,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 public class DefaultSingleSignOnBuildingStrategy implements SingleSignOnBuildingStrategy {
     protected final TicketRegistrySupport ticketRegistrySupport;
     protected final CentralAuthenticationService centralAuthenticationService;
+    protected final ConfigurableApplicationContext applicationContext;
 
     @Override
     public Ticket buildTicketGrantingTicket(final AuthenticationResult authenticationResult,
@@ -46,11 +51,21 @@ public class DefaultSingleSignOnBuildingStrategy implements SingleSignOnBuilding
     protected Ticket createTicketGrantingTicket(final AuthenticationResult authenticationResult,
                                                 final String ticketGrantingTicket) throws Throwable {
         if (StringUtils.isNotBlank(ticketGrantingTicket)) {
-            LOGGER.trace("Removing existing ticket-granting ticket [{}]", ticketGrantingTicket);
-            ticketRegistrySupport.getTicketRegistry().deleteTicket(ticketGrantingTicket);
+            removeTicketGrantingTicket(ticketGrantingTicket);
+
         }
         LOGGER.trace("Attempting to issue a new ticket-granting ticket...");
         return centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
+    }
+
+    protected void removeTicketGrantingTicket(final String ticketGrantingTicketId) throws Throwable {
+        LOGGER.trace("Removing existing ticket-granting ticket [{}]", ticketGrantingTicketId);
+        val ticket = (TicketGrantingTicket) ticketRegistrySupport.getTicket(ticketGrantingTicketId);
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        applicationContext.publishEvent(new CasRequestSingleLogoutEvent(this, ticket, clientInfo));
+
+        ticketRegistrySupport.getTicketRegistry().deleteTicket(ticketGrantingTicketId);
+        applicationContext.publishEvent(new CasTicketGrantingTicketDestroyedEvent(this, ticket, clientInfo));
     }
 
     protected Ticket updateTicketGrantingTicket(final Authentication authentication, final String ticketGrantingTicketId) throws Exception {
@@ -65,14 +80,14 @@ public class DefaultSingleSignOnBuildingStrategy implements SingleSignOnBuilding
     }
 
     protected boolean shouldIssueTicketGrantingTicket(final Authentication authentication,
-                                                      final String ticketGrantingTicket) throws Exception {
+                                                      final String ticketGrantingTicket) throws Throwable {
         LOGGER.trace("Located ticket-granting ticket in the context. Retrieving associated authentication");
         val authenticationFromTgt = ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
 
         if (authenticationFromTgt == null) {
             LOGGER.debug("Authentication session associated with [{}] is no longer valid", ticketGrantingTicket);
             if (StringUtils.isNotBlank(ticketGrantingTicket)) {
-                ticketRegistrySupport.getTicketRegistry().deleteTicket(ticketGrantingTicket);
+                removeTicketGrantingTicket(ticketGrantingTicket);
             }
             return true;
         }

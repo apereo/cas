@@ -15,7 +15,7 @@ You can implement the conditions using the following strategies.
 
 {% tabs abacconditions %}
 
-{% tab abacconditions Attributes %}
+{% tab abacconditions Attributes <i class="fa fa-id-card px-1"></i> %}
 
 The policy can be conditionally activated based on available principal attributes.
 

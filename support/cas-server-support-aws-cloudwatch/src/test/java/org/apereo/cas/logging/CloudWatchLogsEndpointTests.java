@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.logging.cloud-watch.log-group-name=cas-log-group",
         "cas.logging.cloud-watch.log-stream-name=cas-log-stream",
 
-        "management.endpoint.cloudWatchLogs.enabled=true",
+        "management.endpoint.cloudWatchLogs.access=UNRESTRICTED",
         "management.endpoints.web.exposure.include=*"
     })
 class CloudWatchLogsEndpointTests {

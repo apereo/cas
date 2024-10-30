@@ -116,7 +116,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             }
 
             if (deviceCodeTicket.getLastTimeUsed() != null) {
-                val interval = Beans.newDuration(casProperties.getAuthn().getOauth().getDeviceToken().getRefreshInterval()).getSeconds();
+                val interval = Beans.newDuration(casProperties.getAuthn().getOauth().getDeviceToken().getRefreshInterval()).toSeconds();
                 val shouldSlowDown = deviceCodeTicket.getLastTimeUsed().plusSeconds(interval)
                     .isAfter(ZonedDateTime.now(ZoneOffset.UTC));
                 if (shouldSlowDown) {

@@ -154,7 +154,7 @@ public class OAuth20AccessTokenEndpointController<T extends OAuth20Configuration
         final OAuth20TokenGeneratedResult result) {
         LOGGER.debug("Generating access token response for [{}]", result);
         val deviceRefreshInterval = Beans.newDuration(getConfigurationContext().getCasProperties()
-            .getAuthn().getOauth().getDeviceToken().getRefreshInterval()).getSeconds();
+            .getAuthn().getOauth().getDeviceToken().getRefreshInterval()).toSeconds();
         val deviceTokenExpirationPolicy = getConfigurationContext().getDeviceTokenExpirationPolicy();
         val accessTokenTimeout = determineAccessTokenTimeoutInSeconds(result);
 

@@ -84,7 +84,7 @@ syntax with the ability to specify comments.
 
 {% tabs hjson %}
 
-{% tab hjson Comments %}
+{% tab hjson Comments <i class="fa fa-comment-dots px-1"></i> %}
 
 A given JSON file for instance could be formatted as such in CAS:
 

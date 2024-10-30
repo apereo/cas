@@ -19,6 +19,11 @@ Support is enabled by including the following module in the overlay:
 
 {% include_cached casproperties.html properties="cas.authn.mfa.simple" excludes=".token,.mail,.sms,.bucket4j" %}
 
+### Bypass
+
+{% include_cached casproperties.html properties="cas.authn.mfa.simple" includes=".bypass" %}
+
+
 ## Registration
 
 Registration is expected to have occurred as an out-of-band process. Ultimately,

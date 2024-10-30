@@ -191,7 +191,7 @@ The following command-line options are supported for test execution:
 | `--native`, `--graalvm`, `--nb`           | Build the test scenario and produce a native-image as the final build artifact.          |
 | `--nr`, `--native-run`                    | Run the test scenario as a native-image. Requires a native build via `--nb`.             |
 | `--nbr`                                   | A combination of `--nb` and `--nr` flags.                                                |
-| `--no-lint`, `--nol`                      | Disable the linter that validates scenario scripts.                                      |
+| `--nl`, `--no-lint`, `--nol`              | Disable the linter that validates scenario scripts.                                      |
 | `--hol`                                   | A combination of `--headless` and `--offline` flags with linter disabled.                |
 
 For example, the `login-success` test scenario with a remote debugger may be run using: 
@@ -266,7 +266,13 @@ A basic modest outline of the test configuration may be:
   },
   "instance2": {
     "properties": [ ]
-  }
+  },
+  "variations": [
+    {
+      "properties": [
+      ]
+    }
+  ]
 }
 ```
   

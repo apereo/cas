@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
  * @author Francesco Chicchiriccò
  * @since 6.3.0
  */
-@Endpoint(id = "authenticationHandlers", enableByDefault = false)
+@Endpoint(id = "authenticationHandlers", defaultAccess = Access.NONE)
 public class RegisteredAuthenticationHandlersEndpoint extends BaseCasActuatorEndpoint {
 
     private final ObjectProvider<AuthenticationEventExecutionPlan> authenticationEventExecutionPlan;

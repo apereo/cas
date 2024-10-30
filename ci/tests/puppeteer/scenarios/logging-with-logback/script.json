@@ -6,7 +6,7 @@
     "--cas.server.prefix=${cas.server.name}/cas",
 
     "--management.endpoints.web.exposure.include=*",
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
 
     "--logging.config=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/logback.xml"

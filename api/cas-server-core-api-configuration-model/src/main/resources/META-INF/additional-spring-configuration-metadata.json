@@ -792,22 +792,6 @@
       }
     },
     {
-      "name": "cas.admin-pages-security.actuator-endpoints-enabled",
-      "type": "java.lang.Boolean",
-      "deprecation": {
-        "reason": "cas.adminPagesSecurity.* moved to management.endpoints.*., e.g. management.endpoints.enabled-by-default.",
-        "level": "error"
-      }
-    },
-    {
-      "name": "cas.admin-pages-security.ip",
-      "type": "java.lang.String",
-      "deprecation": {
-        "reason": "management endpoints security under cas.monitor.endpoints.endpoint.*",
-        "level": "error"
-      }
-    },
-    {
       "name": "cas.authn.pac4j.saml[0].single-logout-requests",
       "type": "java.lang.Boolean",
       "deprecation": {

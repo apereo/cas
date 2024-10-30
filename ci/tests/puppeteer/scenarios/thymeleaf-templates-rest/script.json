@@ -12,7 +12,7 @@
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=health",
-    "--management.endpoints.enabled-by-default=true"
+    "--management.endpoints.access.default=UNRESTRICTED"
   ]
 }
 

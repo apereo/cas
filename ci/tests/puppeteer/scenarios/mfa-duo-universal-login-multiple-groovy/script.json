@@ -29,6 +29,7 @@
     "--cas.authn.mfa.duo[0].duo-integration-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_IKEY']}",
     "--cas.authn.mfa.duo[0].duo-api-host=${#environmentVars['DUO_SECURITY_API_HOST']}",
     "--cas.authn.mfa.duo[0].id=mfa-duo",
+    "--cas.authn.mfa.duo[0].rank=1",
 
     "--cas.authn.mfa.duo[1].account-status-enabled=false",
     "--cas.authn.mfa.duo[1].name=AlternativeDuoSecurity",
@@ -38,10 +39,11 @@
     "--cas.authn.mfa.duo[1].duo-integration-key=${#environmentVars['DUO_SECURITY_UNIVERSAL_PROMPT_IKEY']}",
     "--cas.authn.mfa.duo[1].duo-api-host=${#environmentVars['DUO_SECURITY_API_HOST']}",
     "--cas.authn.mfa.duo[1].id=mfa-duo-alt",
+    "--cas.authn.mfa.duo[1].rank=2",
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=duoAdmin",
-    "--management.endpoints.enabled-by-default=true"
+    "--management.endpoints.access.default=UNRESTRICTED"
   ],
   "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
 }

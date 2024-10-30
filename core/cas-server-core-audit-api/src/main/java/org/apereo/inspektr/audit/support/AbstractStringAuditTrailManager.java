@@ -58,7 +58,7 @@ public abstract class AbstractStringAuditTrailManager implements AuditTrailManag
     }
 
     protected void buildSingleAuditLineForField(final AuditableFields field, final Object value, final StringBuilder builder) {
-        if (auditableFields.isEmpty() || auditableFields.contains(field)) {
+        if (isFieldAuditable(field)) {
             if (useSingleLine) {
                 builder.append(value);
                 builder.append(getEntrySeparator());
@@ -88,6 +88,7 @@ public abstract class AbstractStringAuditTrailManager implements AuditTrailManag
         buildSingleAuditLineForField(AuditableFields.CLIENT_IP, clientInfo.getClientIpAddress(), builder);
         buildSingleAuditLineForField(AuditableFields.SERVER_IP, clientInfo.getServerIpAddress(), builder);
         buildSingleAuditLineForField(AuditableFields.DEVICE_FINGERPRINT, clientInfo.getDeviceFingerprint(), builder);
+        buildSingleAuditLineForField(AuditableFields.HEADERS, clientInfo.getHeaders(), builder);
 
         if (!useSingleLine) {
             builder.append("=============================================================");
@@ -107,39 +108,43 @@ public abstract class AbstractStringAuditTrailManager implements AuditTrailManag
 
     protected Map<String, ?> getMappedAuditActionContext(final AuditActionContext auditActionContext) {
         var map = new LinkedHashMap<String, Object>();
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.WHO)) {
+        if (isFieldAuditable(AuditableFields.WHO)) {
             map.put("who", readFieldValue(auditActionContext.getPrincipal()));
         }
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.WHAT)) {
+        if (isFieldAuditable(AuditableFields.WHAT)) {
             map.put("what", readFieldValue(auditActionContext.getResourceOperatedUpon()));
         }
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.ACTION)) {
+        if (isFieldAuditable(AuditableFields.ACTION)) {
             map.put("action", readFieldValue(auditActionContext.getActionPerformed()));
         }
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.APPLICATION)) {
+        if (isFieldAuditable(AuditableFields.APPLICATION)) {
             map.put("application", readFieldValue(auditActionContext.getApplicationCode()));
         }
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.WHEN)) {
+        if (isFieldAuditable(AuditableFields.WHEN)) {
             map.put("when", readFieldValue(auditActionContext.getWhenActionWasPerformed().toString()));
         }
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.CLIENT_IP)) {
+        if (isFieldAuditable(AuditableFields.CLIENT_IP)) {
             map.put("clientIpAddress", readFieldValue(auditActionContext.getClientInfo().getClientIpAddress()));
         }
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.SERVER_IP)) {
+        if (isFieldAuditable(AuditableFields.SERVER_IP)) {
             map.put("serverIpAddress", readFieldValue(auditActionContext.getClientInfo().getServerIpAddress()));
         }
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.USER_AGENT)) {
+        if (isFieldAuditable(AuditableFields.USER_AGENT)) {
             map.put("userAgent", readFieldValue(auditActionContext.getClientInfo().getUserAgent()));
         }
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.HEADERS)) {
+        if (isFieldAuditable(AuditableFields.HEADERS)) {
             map.put("headers", auditActionContext.getClientInfo().getHeaders());
         }
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.GEO_LOCATION)) {
+        if (isFieldAuditable(AuditableFields.GEO_LOCATION)) {
             map.put("geoLocation", readFieldValue(auditActionContext.getClientInfo().getGeoLocation()));
         }
-        if (auditableFields.isEmpty() || auditableFields.contains(AuditableFields.DEVICE_FINGERPRINT)) {
+        if (isFieldAuditable(AuditableFields.DEVICE_FINGERPRINT)) {
             map.put("deviceFingerprint", readFieldValue(auditActionContext.getClientInfo().getDeviceFingerprint()));
         }
         return map;
+    }
+
+    private boolean isFieldAuditable(final AuditableFields field) {
+        return auditableFields.isEmpty() || auditableFields.contains(field);
     }
 }

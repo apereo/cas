@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 },
     properties = {
         "management.endpoints.web.exposure.include=*",
-        "management.endpoint.samlValidate.enabled=true"
+        "management.endpoint.samlValidate.access=UNRESTRICTED"
     })
 @Tag("SAML1")
 @ExtendWith(CasTestExtension.class)

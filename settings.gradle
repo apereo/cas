@@ -103,10 +103,20 @@ dependencyResolutionManagement {
         }
         maven {
             url "https://repo.spring.io/milestone"
+            content {
+                includeGroupByRegex ".*springframework.*"
+                includeGroupByRegex ".*projectreactor.*"
+                includeGroupByRegex ".*micrometer.*"
+            }
             mavenContent { releasesOnly() }
         }
         maven {
             url "https://repo.spring.io/snapshot"
+            content {
+                includeGroupByRegex ".*springframework.*"
+                includeGroupByRegex ".*projectreactor.*"
+                includeGroupByRegex ".*micrometer.*"
+            }
             mavenContent { snapshotsOnly() }
         }
         maven {

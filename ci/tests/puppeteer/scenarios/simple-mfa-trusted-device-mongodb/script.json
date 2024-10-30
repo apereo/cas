@@ -1,0 +1,42 @@
+{
+  "dependencies": "simple-mfa,trusted-mfa-mongo,scripting",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+
+    "--cas.authn.mfa.trusted.mongo.database-name=mfa-trusted",
+    "--cas.authn.mfa.trusted.mongo.host=localhost",
+    "--cas.authn.mfa.trusted.mongo.port=27017",
+    "--cas.authn.mfa.trusted.mongo.user-id=root",
+    "--cas.authn.mfa.trusted.mongo.password=secret",
+    "--cas.authn.mfa.trusted.mongo.authentication-database-name=admin",
+    "--cas.authn.mfa.trusted.mongo.drop-collection=true",
+
+    "--cas.authn.attribute-repository.stub.attributes.lastName=Apereo",
+    "--cas.authn.attribute-repository.stub.attributes.firstName=CAS",
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+
+    "--spring.mail.host=localhost",
+    "--spring.mail.port=25000",
+
+    "--cas.authn.mfa.simple.trusted-device-enabled=true",
+
+    "--cas.webflow.crypto.signing.key=qFz3Gfa21Wl8jM_fIXCTJI85FgXTT3isDxbVaCh6v13vHl0QXVJuXC5viYAt6EM2Qrol8ZWTn5KUJd1Hgt9gKQ",
+    "--cas.webflow.crypto.encryption.key=DGuA0B0xlllGNYN5-jQmJw",
+    
+    "--management.endpoints.access.default=UNRESTRICTED",
+    "--management.endpoints.web.exposure.include=*",
+    "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
+
+    "--cas.authn.mfa.simple.mail.html=false",
+    "--cas.authn.mfa.simple.mail.from=cas@example.com",
+    "--cas.authn.mfa.simple.mail.subject=Token",
+    "--cas.authn.mfa.simple.mail.text=Token->${token}"
+  ],
+  "initScript": "${PWD}/ci/tests/mail/run-mail-server.sh,${PWD}/ci/tests/mongodb/run-mongodb-server.sh"
+}
+

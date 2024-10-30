@@ -8,7 +8,7 @@
     "--cas.authn.oidc.core.issuer=https://localhost:8443/cas/oidc",
     "--cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/keystore.jwks",
 
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
     "--management.endpoints.web.exposure.include=oidcJwks",
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS"
   ]

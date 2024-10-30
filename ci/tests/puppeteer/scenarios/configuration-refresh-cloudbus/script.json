@@ -26,7 +26,7 @@
 
     "--cas.monitor.endpoints.endpoint.defaults.access=ANONYMOUS",
     "--management.endpoints.web.exposure.include=*",
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
 
     "--cas.events.core.track-configuration-modifications=false",
     "--cas.standalone.configuration-file=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/config.yml"

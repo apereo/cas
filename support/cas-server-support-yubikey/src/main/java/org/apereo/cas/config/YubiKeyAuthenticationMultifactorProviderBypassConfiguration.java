@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.adaptors.yubikey.YubiKeyBypassEvaluator;
 import org.apereo.cas.authentication.bypass.AuthenticationMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.CredentialMultifactorAuthenticationProviderBypassEvaluator;
 import org.apereo.cas.authentication.bypass.DefaultChainingMultifactorAuthenticationBypassProvider;
@@ -15,10 +16,8 @@ import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -26,6 +25,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import java.util.Optional;
 
 /**
  * This is {@link YubiKeyAuthenticationMultifactorProviderBypassConfiguration}.
@@ -43,62 +44,42 @@ class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator yubikeyBypassEvaluator(
         final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties,
-        @Qualifier("yubikeyPrincipalMultifactorAuthenticationProviderBypass")
-        final MultifactorAuthenticationProviderBypassEvaluator yubikeyPrincipalMultifactorAuthenticationProviderBypass,
-        @Qualifier("yubikeyRegisteredServiceMultifactorAuthenticationProviderBypass")
-        final MultifactorAuthenticationProviderBypassEvaluator yubikeyRegisteredServiceMultifactorAuthenticationProviderBypass,
-        @Qualifier("yubikeyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
-        final MultifactorAuthenticationProviderBypassEvaluator yubikeyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator,
-        @Qualifier("yubikeyAuthenticationMultifactorAuthenticationProviderBypass")
-        final MultifactorAuthenticationProviderBypassEvaluator yubikeyAuthenticationMultifactorAuthenticationProviderBypass,
-        @Qualifier("yubikeyCredentialMultifactorAuthenticationProviderBypass")
-        final MultifactorAuthenticationProviderBypassEvaluator yubikeyCredentialMultifactorAuthenticationProviderBypass,
-        @Qualifier("yubikeyHttpRequestMultifactorAuthenticationProviderBypass")
-        final MultifactorAuthenticationProviderBypassEvaluator yubikeyHttpRequestMultifactorAuthenticationProviderBypass,
-        @Qualifier("yubikeyGroovyMultifactorAuthenticationProviderBypass")
-        final MultifactorAuthenticationProviderBypassEvaluator yubikeyGroovyMultifactorAuthenticationProviderBypass,
-        @Qualifier("yubikeyRestMultifactorAuthenticationProviderBypass")
-        final MultifactorAuthenticationProviderBypassEvaluator yubikeyRestMultifactorAuthenticationProviderBypass) {
+        final CasConfigurationProperties casProperties) {
         val bypass = new DefaultChainingMultifactorAuthenticationBypassProvider(applicationContext);
-        val props = casProperties.getAuthn().getMfa().getYubikey().getBypass();
-        if (StringUtils.isNotBlank(props.getPrincipalAttributeName())) {
-            bypass.addMultifactorAuthenticationProviderBypassEvaluator(yubikeyPrincipalMultifactorAuthenticationProviderBypass);
-        }
-        bypass.addMultifactorAuthenticationProviderBypassEvaluator(yubikeyRegisteredServiceMultifactorAuthenticationProviderBypass);
-        bypass.addMultifactorAuthenticationProviderBypassEvaluator(yubikeyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator);
-        if (StringUtils.isNotBlank(props.getAuthenticationAttributeName()) || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
-            || StringUtils.isNotBlank(props.getAuthenticationMethodName())) {
-            bypass.addMultifactorAuthenticationProviderBypassEvaluator(yubikeyAuthenticationMultifactorAuthenticationProviderBypass);
-        }
-        if (StringUtils.isNotBlank(props.getCredentialClassType())) {
-            bypass.addMultifactorAuthenticationProviderBypassEvaluator(yubikeyCredentialMultifactorAuthenticationProviderBypass);
-        }
-        if (StringUtils.isNotBlank(props.getHttpRequestHeaders()) || StringUtils.isNotBlank(props.getHttpRequestRemoteAddress())) {
-            bypass.addMultifactorAuthenticationProviderBypassEvaluator(yubikeyHttpRequestMultifactorAuthenticationProviderBypass);
-        }
-        if (props.getGroovy().getLocation() != null) {
-            bypass.addMultifactorAuthenticationProviderBypassEvaluator(yubikeyGroovyMultifactorAuthenticationProviderBypass);
-        }
-        if (StringUtils.isNotBlank(props.getRest().getUrl())) {
-            bypass.addMultifactorAuthenticationProviderBypassEvaluator(yubikeyRestMultifactorAuthenticationProviderBypass);
-        }
+        val yubikey = casProperties.getAuthn().getMfa().getYubikey();
+        val currentBypassEvaluators = applicationContext.getBeansWithAnnotation(YubiKeyBypassEvaluator.class).values();
+        currentBypassEvaluators
+            .stream()
+            .filter(BeanSupplier::isNotProxy)
+            .map(MultifactorAuthenticationProviderBypassEvaluator.class::cast)
+            .filter(evaluator -> !evaluator.isEmpty())
+            .map(evaluator -> evaluator.belongsToMultifactorAuthenticationProvider(yubikey.getId()))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .sorted(AnnotationAwareOrderComparator.INSTANCE)
+            .forEach(bypass::addMultifactorAuthenticationProviderBypassEvaluator);
         return bypass;
     }
 
     @ConditionalOnMissingBean(name = "yubikeyRestMultifactorAuthenticationProviderBypass")
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @YubiKeyBypassEvaluator
     public MultifactorAuthenticationProviderBypassEvaluator yubikeyRestMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         val yubikey = casProperties.getAuthn().getMfa().getYubikey();
         val props = yubikey.getBypass();
-        return new RestMultifactorAuthenticationProviderBypassEvaluator(props, yubikey.getId(), applicationContext);
+        return BeanSupplier.of(MultifactorAuthenticationProviderBypassEvaluator.class)
+            .when(BeanCondition.on("cas.authn.mfa.yubikey.bypass.rest.url").given(applicationContext.getEnvironment()))
+            .supply(() -> new RestMultifactorAuthenticationProviderBypassEvaluator(props, yubikey.getId(), applicationContext))
+            .otherwiseProxy()
+            .get();
     }
 
     @ConditionalOnMissingBean(name = "yubikeyGroovyMultifactorAuthenticationProviderBypass")
     @Bean
+    @YubiKeyBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator yubikeyGroovyMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
@@ -117,17 +98,24 @@ class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
 
     @ConditionalOnMissingBean(name = "yubikeyHttpRequestMultifactorAuthenticationProviderBypass")
     @Bean
+    @YubiKeyBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator yubikeyHttpRequestMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         val yubikey = casProperties.getAuthn().getMfa().getYubikey();
         val props = yubikey.getBypass();
-        return new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(props, yubikey.getId(), applicationContext);
+        val bypassActive = StringUtils.isNotBlank(props.getHttpRequestHeaders()) || StringUtils.isNotBlank(props.getHttpRequestRemoteAddress());
+        return BeanSupplier.of(MultifactorAuthenticationProviderBypassEvaluator.class)
+            .when(bypassActive)
+            .supply(() -> new HttpRequestMultifactorAuthenticationProviderBypassEvaluator(props, yubikey.getId(), applicationContext))
+            .otherwiseProxy()
+            .get();
     }
 
     @ConditionalOnMissingBean(name = "yubikeyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator")
     @Bean
+    @YubiKeyBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator yubikeyRegisteredServicePrincipalAttributeMultifactorAuthenticationProviderBypassEvaluator(
         final ConfigurableApplicationContext applicationContext,
@@ -138,17 +126,23 @@ class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @YubiKeyBypassEvaluator
     @ConditionalOnMissingBean(name = "yubikeyCredentialMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator yubikeyCredentialMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         val yubikey = casProperties.getAuthn().getMfa().getYubikey();
         val props = yubikey.getBypass();
-        return new CredentialMultifactorAuthenticationProviderBypassEvaluator(props, yubikey.getId(), applicationContext);
+        return BeanSupplier.of(MultifactorAuthenticationProviderBypassEvaluator.class)
+            .when(StringUtils.isNotBlank(props.getCredentialClassType()))
+            .supply(() -> new CredentialMultifactorAuthenticationProviderBypassEvaluator(props, yubikey.getId(), applicationContext))
+            .otherwiseProxy()
+            .get();
     }
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @YubiKeyBypassEvaluator
     @ConditionalOnMissingBean(name = "yubikeyRegisteredServiceMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator yubikeyRegisteredServiceMultifactorAuthenticationProviderBypass(
         final ConfigurableApplicationContext applicationContext,
@@ -158,6 +152,7 @@ class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
     }
 
     @Bean
+    @YubiKeyBypassEvaluator
     @ConditionalOnMissingBean(name = "yubikeyPrincipalMultifactorAuthenticationProviderBypass")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public MultifactorAuthenticationProviderBypassEvaluator yubikeyPrincipalMultifactorAuthenticationProviderBypass(
@@ -165,10 +160,15 @@ class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
         final CasConfigurationProperties casProperties) {
         val yubikey = casProperties.getAuthn().getMfa().getYubikey();
         val props = yubikey.getBypass();
-        return new PrincipalMultifactorAuthenticationProviderBypassEvaluator(props, yubikey.getId(), applicationContext);
+        return BeanSupplier.of(MultifactorAuthenticationProviderBypassEvaluator.class)
+            .when(StringUtils.isNotBlank(props.getPrincipalAttributeName()))
+            .supply(() -> new PrincipalMultifactorAuthenticationProviderBypassEvaluator(props, yubikey.getId(), applicationContext))
+            .otherwiseProxy()
+            .get();
     }
 
     @Bean
+    @YubiKeyBypassEvaluator
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "yubikeyAuthenticationMultifactorAuthenticationProviderBypass")
     public MultifactorAuthenticationProviderBypassEvaluator yubikeyAuthenticationMultifactorAuthenticationProviderBypass(
@@ -176,6 +176,13 @@ class YubiKeyAuthenticationMultifactorProviderBypassConfiguration {
         final CasConfigurationProperties casProperties) {
         val yubikey = casProperties.getAuthn().getMfa().getYubikey();
         val props = yubikey.getBypass();
-        return new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(props, yubikey.getId(), applicationContext);
+        val bypassActive = StringUtils.isNotBlank(props.getAuthenticationAttributeName())
+            || StringUtils.isNotBlank(props.getAuthenticationHandlerName())
+            || StringUtils.isNotBlank(props.getAuthenticationMethodName());
+        return BeanSupplier.of(MultifactorAuthenticationProviderBypassEvaluator.class)
+            .when(bypassActive)
+            .supply(() -> new AuthenticationMultifactorAuthenticationProviderBypassEvaluator(props, yubikey.getId(), applicationContext))
+            .otherwiseProxy()
+            .get();
     }
 }

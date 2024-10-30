@@ -50,7 +50,7 @@ Chained attribute filters are sorted given their `order` property first before e
 
 {% endtab %}
 
-{% tab attrvaluefilters Regex %}
+{% tab attrvaluefilters Regex <i class="fa fa-registered px-1"></i> %}
 
 The regex filter that is responsible to make sure only attributes whose value
 matches a certain regex pattern are released.
@@ -87,7 +87,7 @@ is 3 characters. Therefore, out of the above list, only `groupMembership` is rel
 
 {% endtab %}
 
-{% tab attrvaluefilters Mapped Regex %}
+{% tab attrvaluefilters Mapped Regex <i class="fa fa-registered px-1"></i> %}
 
 The regex filter that is responsible to make sure only a selected set of attributes whose value matches a 
 certain regex pattern are released. The filter selectively applies patterns to attributes mapped in the 
@@ -134,7 +134,7 @@ The following fields are supported by this filter:
 
 {% endtab %}
 
-{% tab attrvaluefilters Reverse Mapped Regex %}
+{% tab attrvaluefilters Reverse Mapped Regex <i class="fa fa-registered px-1"></i> %}
 
 Identical to the *Mapped Regex* filter, except that the filter only allows a selected set of attributes whose value
 **does not match** a certain regex pattern are released.
@@ -166,7 +166,7 @@ Identical to the *Mapped Regex* filter, except that the filter only allows a sel
 
 {% endtab %}
 
-{% tab attrvaluefilters Mutant Mapped Regex %}
+{% tab attrvaluefilters Mutant Mapped Regex <i class="fa fa-registered px-1"></i> %}
 
 This filter structurally, in terms of settings and properties, is identical to the *Mapped Regex* filter. 
 Its main ability is to filter attribute values by a collection of patterns and then supplant the value 

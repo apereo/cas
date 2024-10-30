@@ -22,7 +22,7 @@
     
     "--management.endpoints.web.exposure.include=discoveryProfile",
     "--management.endpoint.health.show-details=always",
-    "--management.endpoints.enabled-by-default=true"
+    "--management.endpoints.access.default=UNRESTRICTED"
   ]
 }
 

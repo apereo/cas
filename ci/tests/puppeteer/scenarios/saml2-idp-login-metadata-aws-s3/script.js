@@ -1,4 +1,5 @@
 const cas = require("../../cas.js");
+const path = require("path");
 
 async function getActuatorEndpoint(entityId, password = "Mellon") {
     const baseEndpoint = "https://localhost:8443/cas/actuator/samlPostProfileResponse";
@@ -35,5 +36,6 @@ async function getActuatorEndpoint(entityId, password = "Mellon") {
     endpoint = await getActuatorEndpoint(entityId, "");
     await cas.log(`Trying ${endpoint} via POST without password`);
     await cas.log(await cas.doRequest(endpoint, "POST", {}, 200));
+    await cas.removeDirectoryOrFile(path.join(__dirname, "/saml-md"));
 })();
 

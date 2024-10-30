@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
@@ -27,7 +28,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-@Endpoint(id = "gcpLogs", enableByDefault = false)
+@Endpoint(id = "gcpLogs", defaultAccess = Access.NONE)
 @Slf4j
 public class GoogleCloudLogsEndpoint extends BaseCasRestActuatorEndpoint {
     private final Logging loggingService;

@@ -11,7 +11,6 @@
     "--cas.authn.saml-idp.metadata.amazon-s3.region=us-east-1",
     "--cas.authn.saml-idp.metadata.amazon-s3.credential-access-key=test",
     "--cas.authn.saml-idp.metadata.amazon-s3.credential-secret-key=test",
-    "--cas.authn.saml-idp.metadata.amazon-s3.crypto.enabled=false",
 
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
@@ -24,12 +23,24 @@
 
     "--management.endpoints.web.exposure.include=*",
     "--management.endpoint.health.show-details=always",
-    "--management.endpoints.enabled-by-default=true",
+    "--management.endpoints.access.default=UNRESTRICTED",
     
     "--cas.service-registry.core.init-from-json=true",
     "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
   ],
   "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
-  "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh"
+  "readyScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/ready.sh",
+  "variations": [
+    {
+      "properties": [
+        "--cas.authn.saml-idp.metadata.amazon-s3.crypto.enabled=true"
+      ]
+    },
+    {
+      "properties": [
+        "--cas.authn.saml-idp.metadata.amazon-s3.crypto.enabled=false"
+      ]
+    }
+  ]
 }
 
