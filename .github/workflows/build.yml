@@ -12,7 +12,7 @@ env:
   GH_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GH_PACKAGE_REGISTRY_TOKEN }}
   DEVELOCITY_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
   JDK_CURRENT: 21
-  JDK_LATEST: 22
+  JDK_LATEST: 23
   JDK_DISTRIBUTION: "oracle"
 
 ##########################################################################
@@ -79,12 +79,12 @@ jobs:
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
         shell: bash
       - name: Build with JDK ${{ matrix.jdk }}
-        run: ./gradlew build ${{ env.GRADLE_BUILD_OPTIONS }}
+        run: ./gradlew build -PsourceCompatibility=${{ matrix.jdk }} -PtargetCompatibility=${{ matrix.jdk }} ${{ env.GRADLE_BUILD_OPTIONS }}
       - uses: actions/upload-artifact@v4
         with:
           name: binary-artifacts
           path: ./**/build/libs/*.*
-
+          
   ##########################################################################
 
   build-graalvm:
