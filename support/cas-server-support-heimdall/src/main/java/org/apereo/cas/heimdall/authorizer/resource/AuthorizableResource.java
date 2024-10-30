@@ -37,6 +37,8 @@ public class AuthorizableResource implements Serializable {
     @Serial
     private static final long serialVersionUID = -1222481042826672523L;
 
+    private long id;
+    
     @JsonDeserialize(using = PatternJsonDeserializer.class)
     private Pattern pattern;
 

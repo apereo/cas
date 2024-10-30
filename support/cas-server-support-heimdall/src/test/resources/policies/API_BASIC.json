@@ -5,6 +5,7 @@
     [
       {
         "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 2453625,
         "enforceAllPolicies": true,
         "pattern": "/api/basic",
         "method": "POST",

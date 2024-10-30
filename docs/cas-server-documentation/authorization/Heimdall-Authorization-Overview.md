@@ -104,6 +104,7 @@ categorized by API owner or group (i.e. `API_EXAMPLE.json`) that describe a coll
     [
       {
         "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 1,
         "pattern": "/api/example.*",
         "method": "PUT",
         "enforceAllPolicies": false,
@@ -132,6 +133,7 @@ The authorization policies owned by the indicated namespace and resource support
 
 | Field                | Description                                                                                               |
 |----------------------|-----------------------------------------------------------------------------------------------------------|
+| `id`                 | Unique numeric identifier for this resource.                                                              |
 | `pattern`            | The URI regular expression pattern that describes the resource or API endpoint.                           |
 | `method`             | The HTTP method (as a regular expression pattern, or `*` for all) that is allowed to access the resource. |
 | `policies`           | A list of policies that are attached to the resource to allow or deny access.                             |

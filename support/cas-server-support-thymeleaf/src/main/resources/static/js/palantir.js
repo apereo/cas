@@ -183,7 +183,7 @@ function initializeFooterButtons() {
                             reader.readAsText(file);
                             reader.onload = e => {
                                 const fileContent = e.target.result;
-                                console.log("File content:", fileContent);
+
 
                                 $.ajax({
                                     url: `${actuatorEndpoints.registeredservices}`,
@@ -191,7 +191,7 @@ function initializeFooterButtons() {
                                     contentType: "application/json",
                                     data: fileContent,
                                     success: response => {
-                                        console.log("File upload successful:", response);
+
                                         $("#reloadAll").click();
                                     },
                                     error: (xhr, status, error) => {
@@ -249,6 +249,109 @@ function initializeFooterButtons() {
 /**
  * Initialization Functions
  */
+
+async function initializeHeimdallOperations() {
+    
+    if (!CAS_FEATURES.includes("Authorization")) {
+        $("#heimdall").addClass("d-none");
+        return;
+    }
+    
+    const heimdallResourcesTable = $("#heimdallResourcesTable").DataTable({
+        pageLength: 10,
+        columnDefs: [
+            {visible: false, targets: 0},
+            {visible: false, targets: 1},
+            {width: "50%", targets: 2},
+            {width: "20%", targets: 3},
+            {width: "9%", targets: 4},
+            {width: "10%", targets: 5},
+        ],
+        autoWidth: false,
+        drawCallback: settings => {
+            $("#heimdallResourcesTable tr").addClass("mdc-data-table__row");
+            $("#heimdallResourcesTable td").addClass("mdc-data-table__cell");
+
+            const api = settings.api;
+            const rows = api.rows({page: "current"}).nodes();
+            let last = null;
+            api.column(0, {page: "current"})
+                .data()
+                .each((group, i) => {
+                    if (last !== group) {
+                        $(rows).eq(i).before(
+                            `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
+                                            <td colspan="6">Namespace: ${group}</td>
+                                        </tr>`.trim());
+                        last = group;
+                    }
+                });
+        }
+    });
+    
+    if (actuatorEndpoints.heimdall) {
+        const heimdallViewResourceEditor = initializeAceEditor("heimdallViewResourceEditor", "json");
+        heimdallViewResourceEditor.setReadOnly(true);
+
+        function fetchHeimdallResources(heimdallViewResourceEditor) {
+            $.get(`${actuatorEndpoints.heimdall}/resources`, response => {
+                heimdallResourcesTable.clear();
+                for (const [key, value] of Object.entries(response)) {
+                    for (const resource of Object.values(value)) {
+                        let buttons = `
+                        <button type="button" name="viewHeimdallResource" href="#" 
+                            data-id="${resource.id}" data-namespace="${key}"
+                            class="mdc-button mdc-button--raised btn btn-link min-width-32x">
+                            <i class="mdi mdi-eye min-width-32x" aria-hidden="true"></i>
+                        </button>
+                    `;
+                        heimdallResourcesTable.row.add({
+                            0: `<code>${key}</code>`,
+                            1: `${resource.id}`,
+                            2: `<code>${resource.pattern}</code>`,
+                            3: `<code>${resource.method}</code>`,
+                            4: `<code>${resource.enforceAllPolicies ?? "false"}</code>`,
+                            5: buttons
+                        });
+                    }
+                }
+                heimdallResourcesTable.draw();
+
+                $("button[name=viewHeimdallResource]").off().on("click", function () {
+                    const namespace = $(this).data("namespace");
+                    const resourceId = $(this).data("id");
+                    $.get(`${actuatorEndpoints.heimdall}/resources/${namespace}/${resourceId}`, response => {
+                        heimdallViewResourceEditor.setValue(JSON.stringify(response, null, 2));
+                        heimdallViewResourceEditor.gotoLine(1);
+
+                        const beautify = ace.require("ace/ext/beautify");
+                        beautify.beautify(heimdallViewResourceEditor.session);
+
+                        const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("heimdallViewResourceDialog"));
+                        dialog["open"]();
+                    })
+                        .fail((xhr, status, error) => {
+                            console.error("Error fetching data:", error);
+                            displayBanner(xhr);
+                        });
+                });
+            }).fail((xhr, status, error) => {
+                console.error("Error fetching data:", error);
+                displayBanner(xhr);
+            });
+        }
+        
+        fetchHeimdallResources(heimdallViewResourceEditor);
+        
+        setInterval(() => {
+            if (currentActiveTab === Tabs.ACCESS_STRATEGY) {
+                fetchHeimdallResources();
+            }
+        }, DEFAULT_INTERVAL);
+    }
+    
+}
+
 async function initializeAccessStrategyOperations() {
 
     if (!CAS_FEATURES.includes("SAMLIdentityProvider")) {
@@ -379,14 +482,12 @@ function initializeJvmMetrics() {
         ].map(metric => fetchJvmThreadMetric(metric));
         const results = await Promise.all(promises);
         const numbersArray = results.map(result => Number(result));
-        console.log("Fetched JVM metrics:", numbersArray);
         return numbersArray;
     }
 
     async function fetchThreadDump() {
         return new Promise((resolve, reject) =>
             $.get(actuatorEndpoints.threaddump, response => {
-                console.log("Thread dump", response);
                 let threadData = {};
                 for (const thread of response.threads) {
                     if (!threadData[thread.threadState]) {
@@ -491,7 +592,6 @@ async function initializeScheduledTasksOperations() {
 
     if (actuatorEndpoints.scheduledtasks) {
         $.get(actuatorEndpoints.scheduledtasks, response => {
-            console.log(response);
             scheduledtasks.clear();
             for (const group of Object.keys(response)) {
                 addScheduledTaskCategory(group, response[group]);
@@ -514,7 +614,6 @@ async function initializeScheduledTasksOperations() {
 
     function fetchThreadDump() {
         $.get(actuatorEndpoints.threaddump, response => {
-            console.log(response);
             threadDumpTable.clear();
             for (const thread of response.threads) {
                 threadDumpTable.row.add({
@@ -584,7 +683,7 @@ async function initializeTicketsOperations() {
                     ticketEditor.gotoLine(1);
                 },
                 error: (xhr, status, error) => {
-                    console.log(`Error: ${status} / ${error} / ${xhr.responseText}`);
+                    console.error(`Error: ${status} / ${error} / ${xhr.responseText}`);
                     displayBanner(xhr);
                 }
             });
@@ -622,7 +721,6 @@ async function initializeTicketsOperations() {
 
     if (actuatorEndpoints.ticketregistry) {
         $.get(`${actuatorEndpoints.ticketregistry}/ticketCatalog`, response => {
-            console.log(response);
             response.forEach(entry => {
                 let item = `
                             <li class="mdc-list-item" data-value='${entry.prefix}' role="option">
@@ -679,7 +777,6 @@ async function initializeTicketsOperations() {
 
     if (actuatorEndpoints.ticketExpirationPolicies) {
         $.get(actuatorEndpoints.ticketExpirationPolicies, response => {
-            console.log(response);
             ticketExpirationPoliciesTable.clear();
             for (const key of Object.keys(response)) {
                 const policy = response[key];
@@ -861,7 +958,6 @@ async function initializeSsoSessionOperations() {
 
                     $("button[name=removeSsoSession]").off().on("click", function () {
                         const ticket = $(this).data("ticketgrantingticket");
-                        console.log("Removing ticket-granting ticket:", ticket);
 
                         Swal.fire({
                             title: "Are you sure you want to delete this session?",
@@ -950,7 +1046,6 @@ async function initializeLoggingOperations() {
             if (actuatorEndpoints.loggers) {
                 const logger = $(this).data("logger");
                 const level = $(this).val();
-                console.log("Logger:", logger, "Level:", level);
                 const loggerData = {
                     "configuredLevel": level
                 };
@@ -960,7 +1055,6 @@ async function initializeLoggingOperations() {
                     contentType: "application/json",
                     data: JSON.stringify(loggerData),
                     success: response => {
-                        console.log("Update successful:", response);
                         $(this).css("background-color", determineLoggerColor(level));
                     },
                     error: (xhr, status, error) => {
@@ -1002,8 +1096,6 @@ async function initializeLoggingOperations() {
                 });
             }
             
-            console.log(response);
-
             loggersTable.clear();
             for (const logger of response.loggers) {
                 addLoggerToTable(logger);
@@ -1066,7 +1158,7 @@ async function initializeLoggingOperations() {
                 const logDataStream = $("#logDataStream");
                 const level = $("#logLevelFilter").val();
                 const count = $("#logCountFilter").val();
-                console.log("Fetching log data", endpoint, level);
+
                 $.ajax({
                     url: `${endpoint}/stream?level=${level}&count=${count}`,
                     type: "GET",
@@ -1093,7 +1185,7 @@ async function initializeLoggingOperations() {
             return setInterval(() => {
                 if (currentActiveTab === Tabs.LOGGING) {
                     const logFileStream = $("#logFileStream");
-                    console.log("Fetching log data from", actuatorEndpoints.logfile);
+
                     $.ajax({
                         url: actuatorEndpoints.logfile,
                         type: "GET",
@@ -1161,7 +1253,7 @@ async function initializeAuditEventsOperations() {
                 if (currentActiveTab === Tabs.LOGGING) {
                     const interval = $("#auditEventsIntervalFilter").val();
                     const count = $("#auditEventsCountFilter").val();
-                    console.log("Fetching audit log with interval", interval);
+
                     $.ajax({
                         url: `${actuatorEndpoints.auditlog}?interval=${interval}&count=${count}`,
                         type: "GET",
@@ -1169,7 +1261,7 @@ async function initializeAuditEventsOperations() {
                             "Content-Type": "application/x-www-form-urlencoded"
                         },
                         success: (response, textStatus, xhr) => {
-                            console.log(response);
+
                             auditEventsTable.clear();
                             for (const entry of response) {
                                 auditEventsTable.row.add({
@@ -1270,7 +1362,7 @@ async function initializeSystemOperations() {
                         && !url.endsWith(".css");
                 }
 
-                console.log(response);
+
                 let httpSuccesses = [];
                 let httpFailures = [];
                 let httpSuccessesPerUrl = [];
@@ -1341,7 +1433,7 @@ async function initializeSystemOperations() {
     function configureHealthChart() {
         if (actuatorEndpoints.health) {
             $.get(actuatorEndpoints.health, response => {
-                console.log(response);
+
                 const payload = {
                     labels: [],
                     data: [],
@@ -1376,7 +1468,7 @@ async function initializeSystemOperations() {
     function configureStatistics() {
         if (actuatorEndpoints.statistics) {
             $.get(actuatorEndpoints.statistics, response => {
-                console.log("Updating statistics");
+
                 const expired = response.expiredTickets;
                 const valid = response.validTickets;
                 statisticsChart.data.datasets[0].data = [valid, expired];
@@ -1396,11 +1488,11 @@ async function initializeSystemOperations() {
 
     function configureSystemData() {
         fetchSystemData(response => {
-            console.log("Updating JVM memory");
+
             const maximum = convertMemoryToGB(response.systemInfo["JVM Maximum Memory"]);
             const free = convertMemoryToGB(response.systemInfo["JVM Free Memory"]);
             const total = convertMemoryToGB(response.systemInfo["JVM Total Memory"]);
-            console.log("Memory: ", maximum, total, free);
+
             memoryChart.data.datasets[0].data = [maximum, total, free];
             memoryChart.update();
         });
@@ -1476,7 +1568,7 @@ async function initializeCasFeatures() {
     return new Promise((resolve, reject) => {
         if (actuatorEndpoints.casFeatures) {
             $.get(actuatorEndpoints.casFeatures, response => {
-                console.log(response);
+
                 $("#casFeaturesChipset").empty();
                 for (const element of response) {
                     const featureName = element.trim().replace("CasFeatureModule.", "");
@@ -1579,7 +1671,7 @@ function initializeServiceButtons() {
                             url: `${actuatorEndpoints.registeredservices}/${serviceId}`,
                             type: "DELETE",
                             success: response => {
-                                console.log("Resource deleted successfully:", response);
+                                
                                 let nearestTr = $(this).closest("tr");
 
                                 let applicationsTable = $("#applicationsTable").DataTable();
@@ -1633,12 +1725,12 @@ function initializeServiceButtons() {
                             contentType: "application/json",
                             data: value,
                             success: response => {
-                                console.log("Update successful:", response);
+                                
                                 editServiceDialog["close"]();
                                 fetchServices(() => {
                                     let newServiceId = response.id;
                                     $("#applicationsTable tr").removeClass("selected");
-                                    console.log("New Service Id", newServiceId);
+                                    
                                     $(`#applicationsTable tr td span[serviceId=${newServiceId}]`).each(function () {
                                         $(this).closest("tr").addClass("selected");
                                     });
@@ -1743,7 +1835,7 @@ async function initializeServicesOperations() {
     $("a[name=serviceDefinitionEntry]").off().on("click", function () {
         let type = $(this).data("type");
         let id = $(this).data("id");
-        console.log("Selected service definition:", type, id);
+        
         const entries = serviceDefinitions[type];
         for (const entry of entries) {
             const definition = JSON.parse(entry);
@@ -2029,7 +2121,7 @@ async function initializePersonDirectoryOperations() {
                             type: "DELETE",
                             contentType: "application/json",
                             success: (response, status, xhr) => {
-                                console.log("Cache is now cleared");
+
                             },
                             error: (xhr, status, error) => {
                                 console.error("Error fetching data:", error);
@@ -2055,7 +2147,7 @@ async function initializePersonDirectoryOperations() {
                 type: "GET",
                 contentType: "application/json",
                 success: (response, status, xhr) => {
-                    console.log(response);
+
 
                     for (const [key, values] of Object.entries(response.attributes)) {
                         personDirectoryTable.row.add({
@@ -2218,12 +2310,11 @@ async function initializeAuthenticationOperations() {
                 dialog["open"]();
             }
 
-            console.log(response);
+
             for (const [key, idp] of Object.entries(response)) {
                 const details = flattenJSON(idp);
                 for (const [k, v] of Object.entries(details)) {
                     if (Object.keys(v).length > 0 && k !== "type") {
-                        let serviceButtons = null;
                         delegatedClientsTable.row.add({
                             0: `${key}`,
                             1: `<code>${toKebabCase(k)}</code>`,
@@ -2613,7 +2704,6 @@ async function initializeTrustedMultifactorOperations() {
             });
             
             $.get(`${actuatorEndpoints.multifactortrusteddevices}/${username}`, response => {
-                console.log(response);
                 for (const device of Object.values(response)) {
                     let buttons = `
                      <button type="button" name="removeMfaTrustedDevice" href="#" 
@@ -2708,7 +2798,6 @@ async function initializeMultifactorOperations() {
 
             mfaDevicesTable.clear();
             $.get(`${actuatorEndpoints.mfadevices}/${username}`, response => {
-                console.log(response);
                 for (const device of Object.values(response)) {
                     let buttons = `
                      <button type="button" name="removeMfaDevice" href="#" 
@@ -3098,7 +3187,7 @@ async function initializeOidcProtocolOperations() {
                         "Authorization": `Basic ${btoa(`${clientId}:${clientSecret}`)}`
                     },
                     success: (response, textStatus, xhr) => {
-                        console.log(response);
+
                         const oidcProtocolEditorTokens = initializeAceEditor("oidcProtocolEditorTokens", "json");
                         oidcProtocolEditorTokens.setReadOnly(true);
                         oidcProtocolEditorTokens.setValue(JSON.stringify(response, null, 2));
@@ -3267,7 +3356,7 @@ async function initializeSAML2ProtocolOperations() {
                     serviceId: $("#saml2MetadataCacheService").val()
                 },
                 success: (response, textStatus, jqXHR) => {
-                    console.log(response);
+
 
                     const editor = initializeAceEditor("saml2MetadataCacheEditor", "xml");
                     editor.setReadOnly(true);
@@ -3385,7 +3474,7 @@ async function initializePalantir() {
             }
             
             let visibleCount = $("nav.sidebar-navigation ul li:visible").length;
-            console.log("Number of visible list items:", visibleCount);
+
 
             if (visibleCount === 0) {
                 $("#dashboard").hide();
@@ -3398,11 +3487,11 @@ async function initializePalantir() {
             } else {
 
                 let selectedTab = window.localStorage.getItem("PalantirSelectedTab");
-                console.log("Selected tab", selectedTab);
+
                 if (!$(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).is(":visible")) {
                     selectedTab = Tabs.APPLICATIONS;
                 }
-                console.log("Activating Tab", selectedTab);
+
                 $(`nav.sidebar-navigation ul li[data-tab-index=${selectedTab}]`).click();
                 activateDashboardTab(selectedTab);
                 initializeCasFeatures().then(() => {
@@ -3411,6 +3500,7 @@ async function initializePalantir() {
                         initializeScheduledTasksOperations(),
                         initializeServicesOperations(),
                         initializeAccessStrategyOperations(),
+                        initializeHeimdallOperations(),
                         initializeTicketsOperations(),
                         initializeSystemOperations(),
                         initializeLoggingOperations(),
@@ -3441,7 +3531,7 @@ function activateDashboardTab(idx) {
     try {
         let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
         tabs.activateTab(Number(idx));
-        console.log("Activated tab", idx);
+
         currentActiveTab = Number(idx);
         updateNavigationSidebar();
     } catch (e) {
@@ -3453,7 +3543,7 @@ function selectSidebarMenuButton(selectedItem) {
     $("nav.sidebar-navigation ul li").removeClass("active");
     $(selectedItem).addClass("active");
     const index = $(selectedItem).data("tab-index");
-    console.log("Tracking tab", index);
+
     window.localStorage.setItem("PalantirSelectedTab", index);
     return index;
 }
@@ -3477,7 +3567,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     initializePalantir().then(r => {
-        console.log("Palantir ready!");
+
         Swal.fire({
             title: "Palantir is ready!",
             text: "Palantir is successfully initialized and is ready for use.",

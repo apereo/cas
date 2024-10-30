@@ -6,16 +6,20 @@ import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
 import org.apereo.cas.web.BaseCasRestActuatorEndpoint;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link HeimdallAuthorizationEndpoint}.
@@ -56,8 +60,46 @@ public class HeimdallAuthorizationEndpoint extends BaseCasRestActuatorEndpoint {
      * @throws Throwable the throwable
      */
     @GetMapping(path = "/resources", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Fetch authorizable resources")
-    public ResponseEntity<List<AuthorizableResource>> fetchResources() throws Throwable {
-        return ResponseEntity.ok(authorizableResourceRepository.findAll());
+    @Operation(summary = "Fetch all authorizable resources")
+    public ResponseEntity<Map<String, List<AuthorizableResource>>> fetchResources() throws Throwable {
+        val resources = authorizableResourceRepository.findAll();
+        return ResponseEntity.ok(resources);
     }
+
+    /**
+     * Fetch resources for namespace.
+     *
+     * @param namespace the namespace
+     * @return the response entity
+     * @throws Throwable the throwable
+     */
+    @GetMapping(path = "/resources/{namespace}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Fetch all authorizable resources for namespace",
+        parameters = @Parameter(name = "namespace", in = ParameterIn.PATH, required = true, description = "Namespace to fetch resources for"))
+    public ResponseEntity<List<AuthorizableResource>> fetchResourcesForNamespace(
+        @PathVariable final String namespace) throws Throwable {
+        val resources = authorizableResourceRepository.find(namespace);
+        return ResponseEntity.ok(resources);
+    }
+
+    /**
+     * Fetch resources for namespace by id.
+     *
+     * @param namespace the namespace
+     * @param id        the id
+     * @return the response entity
+     * @throws Throwable the throwable
+     */
+    @GetMapping(path = "/resources/{namespace}/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Fetch all authorizable resources for namespace by id",
+        parameters = {
+            @Parameter(name = "namespace", in = ParameterIn.PATH, required = true, description = "Namespace to fetch resources for"),
+            @Parameter(name = "id", in = ParameterIn.PATH, required = true, description = "Resource id to fetch")
+        })
+    public ResponseEntity<AuthorizableResource> fetchResourcesForNamespaceById(
+        @PathVariable final String namespace, @PathVariable final long id) throws Throwable {
+        val resource = authorizableResourceRepository.find(namespace, id);
+        return ResponseEntity.of(resource);
+    }
+
 }
