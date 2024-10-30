@@ -462,6 +462,31 @@ exports.doGet = async (url, successHandler, failureHandler, headers = {}, respon
         .catch((error) => failureHandler(error));
 };
 
+exports.doDelete = async (url, statusCode = 0, successHandler = undefined, failureHandler = undefined, headers = {}) => {
+    const instance = axios.create({
+        timeout: 5000,
+        httpsAgent: new https.Agent({
+            rejectUnauthorized: false
+        })
+    });
+    const config = {
+        headers: headers
+    };
+    await this.log(`Sending DELETE request to ${url}`);
+    return instance
+        .delete(url, config)
+        .then((res) => {
+            if (statusCode > 0) {
+                assert.equal(res.status, statusCode);
+            } else {
+                assert(statusCode === 200 || statusCode === 204, `Unexpected status code: ${res.status}`);
+            }
+            this.log(`DELETE response status: ${res.status}`);
+            return successHandler === undefined ? undefined : successHandler(res);
+        })
+        .catch((error) => failureHandler === undefined ? undefined : failureHandler(error));
+};
+
 exports.doPost = async (url, params = "", headers = {}, successHandler, failureHandler) => {
     const instance = axios.create({
         timeout: 12000,
