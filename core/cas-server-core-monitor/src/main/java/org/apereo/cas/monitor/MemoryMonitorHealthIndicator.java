@@ -6,7 +6,6 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
-import java.text.NumberFormat;
 
 /**
  * Monitors JVM memory usage.
