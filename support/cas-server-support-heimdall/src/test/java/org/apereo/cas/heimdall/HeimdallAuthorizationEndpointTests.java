@@ -53,11 +53,18 @@ class HeimdallAuthorizationEndpointTests {
                 .content(authzRequest))
             .andExpect(status().isOk());
     }
-
-
+    
     @Test
     void verifyAllResources() throws Exception {
         mockMvc.perform(get("/actuator/heimdall/resources")
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+        
+        mockMvc.perform(get("/actuator/heimdall/resources/API_CLAIMS")
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        mockMvc.perform(get("/actuator/heimdall/resources/API_CLAIMS/1453626")
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
     }

@@ -4,6 +4,7 @@ import org.apereo.cas.heimdall.AuthorizationRequest;
 import org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource;
 import org.springframework.beans.factory.DisposableBean;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -13,6 +14,18 @@ import java.util.Optional;
  * @since 7.2.0
  */
 public interface AuthorizableResourceRepository extends DisposableBean {
+
+    /**
+     * Find all resources.
+     *
+     * @return the map of resources
+     */
+    Map<String, List<AuthorizableResource>> findAll();
+
+    @Override
+    default void destroy() throws Exception {
+    }
+
     /**
      * Find authorizable resource.
      *
@@ -22,12 +35,19 @@ public interface AuthorizableResourceRepository extends DisposableBean {
     Optional<AuthorizableResource> find(AuthorizationRequest request);
 
     /**
-     * Find all resources.
+     * Find list of resources by namespace.
      *
-     * @return the list of resources
+     * @param namespace the namespace
+     * @return the list
      */
-    List<AuthorizableResource> findAll();
-    
-    @Override
-    default void destroy() throws Exception {}
+    List<AuthorizableResource> find(String namespace);
+
+    /**
+     * Find resource for namespace by id.
+     *
+     * @param namespace the namespace
+     * @param id        the id
+     * @return the optional
+     */
+    Optional<AuthorizableResource> find(String namespace, long id);
 }

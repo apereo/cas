@@ -5,6 +5,7 @@
     [
       {
         "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 25453625,
         "pattern": "/api/scopes",
         "method": "POST",
         "policies": [ "java.util.ArrayList", [
