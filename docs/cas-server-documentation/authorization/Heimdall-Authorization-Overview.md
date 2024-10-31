@@ -201,7 +201,7 @@ An authorization policy that fetches group memberships for the principal from
 
 ```json
 {
-  "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.GrouperRequiredGroupsAuthorizationPolicy",
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredGrouperGroupsAuthorizationPolicy",
   "groups" : [ "java.util.HashSet", [ "a:b:c" ] ]
 }
 ```
@@ -216,7 +216,7 @@ and allows or denied access based on whether permissions are found:
 
 ```json
 {
-  "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.GrouperRequiredPermissionsAuthorizationPolicy",
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredGrouperPermissionsAuthorizationPolicy",
   "attributeDefinition" : "a:b:c",
   "roleName": "..."
 }

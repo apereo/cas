@@ -18,7 +18,7 @@ import lombok.val;
 import java.io.Serial;
 
 /**
- * This is {@link GrouperRequiredPermissionsAuthorizationPolicy}.
+ * This is {@link RequiredGrouperPermissionsAuthorizationPolicy}.
  *
  * @author Misagh Moayyed
  * @since 7.2.0
@@ -32,7 +32,7 @@ import java.io.Serial;
 @NoArgsConstructor
 @AllArgsConstructor
 @Slf4j
-public class GrouperRequiredPermissionsAuthorizationPolicy implements ResourceAuthorizationPolicy {
+public class RequiredGrouperPermissionsAuthorizationPolicy implements ResourceAuthorizationPolicy {
     @Serial
     private static final long serialVersionUID = -7263181042826672523L;
 
