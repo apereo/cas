@@ -126,7 +126,6 @@ if (!providers.systemProperty("skipSonarqube").present) {
     }
 }
 
-ansi.green "Configuring CAS with Java source compatibility ${project.sourceCompatibility} and target compatibility ${project.targetCompatibility}"
 
 allprojects {
     apply plugin: "idea"
