@@ -126,7 +126,6 @@ if (!providers.systemProperty("skipSonarqube").present) {
     }
 }
 
-
 allprojects {
     apply plugin: "idea"
     apply plugin: "eclipse"
