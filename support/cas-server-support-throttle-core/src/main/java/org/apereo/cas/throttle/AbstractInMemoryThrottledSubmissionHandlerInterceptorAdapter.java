@@ -65,10 +65,16 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
             LOGGER.trace("Found existing throttled submission [{}] for key [{}]", submission, key);
             if (!submission.hasExpiredAlready()) {
                 LOGGER.warn("Throttled submission [{}] remains throttled; submission expires at [{}]", key, submission.getExpiration());
+                request.setAttribute(ThrottledSubmission.class.getSimpleName(), submission);
                 return true;
             }
         }
-        return store.exceedsThreshold(key, getThresholdRate());
+        if (store.exceedsThreshold(key, getThresholdRate())) {
+            val submission = store.get(key);
+            request.setAttribute(ThrottledSubmission.class.getSimpleName(), submission);
+            return true;
+        }
+        return false;
     }
 
     @Override
