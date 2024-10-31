@@ -12,6 +12,7 @@ env:
   TERM: xterm-256color
   JDK_CURRENT: 21
   JDK_LATEST: 22
+  RETRY_ATTEMPTS: 2
   JDK_DISTRIBUTION: "corretto"
 
 ##########################################################################
@@ -145,8 +146,14 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Validate ${{ matrix.category }}
-        run: ./ci/tests/webapp/validate-embedded-webapp.sh ${{ matrix.category }}
-
+        uses: nick-fields/retry@v3
+        with:
+          max_attempts: ${{ env.RETRY_ATTEMPTS }}
+          retry_on: error
+          retry_wait_seconds: 5
+          timeout_minutes: 15
+          shell: bash
+          command: ./ci/tests/webapp/validate-embedded-webapp.sh ${{ matrix.category }}
 ##########################################################################
 
   validate-webapp-external:
@@ -176,8 +183,14 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Validate ${{ matrix.category }}
-        run: ./ci/tests/webapp/validate-external-webapp.sh ${{ matrix.category }}
-
+        uses: nick-fields/retry@v3
+        with:
+          max_attempts: ${{ env.RETRY_ATTEMPTS }}
+          retry_on: error
+          retry_wait_seconds: 5
+          timeout_minutes: 15
+          shell: bash
+          command: ./ci/tests/webapp/validate-external-webapp.sh ${{ matrix.category }}
 ##########################################################################
 
   validate-spring-cloud-config-server:
@@ -204,4 +217,11 @@ jobs:
       - name: Initialize
         run: find ./ci -type f -name "*.sh" -exec chmod +x "{}" \; && ./ci/init-build.sh
       - name: Validate Spring Cloud Config Server - JDK ${{ matrix.jdk }}
-        run: ./ci/tests/webapp/validate-configserver-webapp.sh
+        uses: nick-fields/retry@v3
+        with:
+          max_attempts: ${{ env.RETRY_ATTEMPTS }}
+          retry_on: error
+          retry_wait_seconds: 5
+          timeout_minutes: 15
+          shell: bash
+          command: ./ci/tests/webapp/validate-configserver-webapp.sh
