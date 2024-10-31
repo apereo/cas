@@ -176,7 +176,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
         val duration = Beans.newDuration(getConfigurationContext().getCasProperties()
             .getAuthn().getThrottle().getFailure().getThrottleWindowSeconds());
         val expiration = ZonedDateTime.now(Clock.systemUTC()).plusSeconds(duration.toSeconds());
-        val submission = (ThrottledSubmission) request.getAttribute(ThrottledSubmission.class.getName());
+        val submission = (ThrottledSubmission) request.getAttribute(ThrottledSubmission.class.getSimpleName());
         if (submission != null && !submission.isStillInExpirationWindow()) {
             submission.setExpiration(expiration);
             LOGGER.info("Updated throttled submission's expiration date: [{}]", submission);
