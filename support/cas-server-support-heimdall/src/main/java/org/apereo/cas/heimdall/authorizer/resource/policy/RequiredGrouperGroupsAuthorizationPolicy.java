@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * This is {@link GrouperRequiredGroupsAuthorizationPolicy}.
+ * This is {@link RequiredGrouperGroupsAuthorizationPolicy}.
  *
  * @author Misagh Moayyed
  * @since 7.2.0
@@ -36,7 +36,7 @@ import java.util.stream.Stream;
 @NoArgsConstructor
 @AllArgsConstructor
 @Slf4j
-public class GrouperRequiredGroupsAuthorizationPolicy implements ResourceAuthorizationPolicy {
+public class RequiredGrouperGroupsAuthorizationPolicy implements ResourceAuthorizationPolicy {
     @Serial
     private static final long serialVersionUID = -1244481042826672523L;
 
