@@ -453,7 +453,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                 .map(this::decodeTicket)
                 .filter(predicate)
                 .findFirst()
-                .orElse(null));
+                .orElseGet(() -> handleMissingTicket(query, redisKeyPattern)));
+
         if (ticket != null && predicate.test(ticket) && !ticket.isExpired()) {
             ticketCache.ifAvailable(cache -> cache.put(query, ticket));
             return ticket;
@@ -463,6 +464,9 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         return null;
     }
 
+    protected Ticket handleMissingTicket(final String rawTicketId, final String redisKey) {
+        return null;
+    }
 
     private void addOrUpdateTicket(final Ticket ticket) {
         val digestedId = digestIdentifier(ticket.getId());
