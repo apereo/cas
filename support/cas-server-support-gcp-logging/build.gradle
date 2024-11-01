@@ -11,6 +11,7 @@ dependencies {
     api project(":api:cas-server-core-api-util")
 
     implementation libraries.googlecloudlogging
+    implementation libraries.googlecloudtrace
     implementation libraries.springcloudconfigclient
     implementation libraries.springcloudbootstrap
     implementation libraries.log4j
