@@ -88,7 +88,14 @@ public class GoogleAuthenticatorOneTimeTokenCredentialValidator implements
     @Override
     public boolean isTokenAuthorizedFor(final int token, final OneTimeTokenAccount account) {
         LOGGER.debug("Authorizing token [{}] against account [{}]", token, account);
-        return googleAuthenticatorInstance.authorize(account.getSecretKey(), token);
+        val authorized = googleAuthenticatorInstance.authorize(account.getSecretKey(), token);
+        if (!authorized && account.getScratchCodes().stream().map(Number::intValue).toList().contains(token)) {
+            LOGGER.debug("Token [{}] is a valid scratch code for account [{}]", token, account);
+            account.getScratchCodes().removeIf(code -> code.intValue() == token);
+            credentialRepository.update(account);
+            return true;
+        }
+        return authorized;
     }
 
     protected Optional<GoogleAuthenticatorAccount> getAuthorizedScratchCodeForToken(

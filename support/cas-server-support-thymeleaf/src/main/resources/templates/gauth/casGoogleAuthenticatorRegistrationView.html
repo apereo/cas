@@ -152,7 +152,7 @@
                         <div th:each="code : ${key.getScratchCodes()}" class="mdc-chip" role="row">
                             <div class="mdc-chip__ripple"></div>
                             <span role="gridcell">
-                              <span class="mdc-chip__text" th:text="${code}">Chip One</span>
+                              <span class="mdc-chip__text" name="gauth-scratchcode" th:text="${code}">Code</span>
                             </span>
                         </div>
                     </div>

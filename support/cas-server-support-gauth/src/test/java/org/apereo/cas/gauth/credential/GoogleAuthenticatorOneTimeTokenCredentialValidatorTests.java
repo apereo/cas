@@ -65,6 +65,14 @@ class GoogleAuthenticatorOneTimeTokenCredentialValidatorTests {
     }
 
     @Test
+    void verifyTokenAuthzWithScratchCode() throws Throwable {
+        val acct = getOneTimeTokenAccount(List.of(223856));
+        googleAuthenticatorAccountRegistry.save(acct);
+        assertTrue(validator.isTokenAuthorizedFor(223856, acct));
+        assertTrue(googleAuthenticatorAccountRegistry.get(acct.getId()).getScratchCodes().isEmpty());
+    }
+
+    @Test
     void verifyStore() throws Throwable {
         val token = new GoogleAuthenticatorToken(632435, "casuser");
         assertDoesNotThrow(() -> validator.store(token));
