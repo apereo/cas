@@ -7,10 +7,9 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.surrogate.BaseSurrogateAuthenticationServiceTests;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.DefaultRegisteredServiceSurrogatePolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.services.SurrogateRegisteredServiceAccessStrategy;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -33,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @ExtendWith(MockitoExtension.class)
 @Tag("Impersonation")
-@ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseSurrogateAuthenticationServiceTests.SharedTestConfiguration.class,
     properties = {
         "cas.authn.attribute-repository.stub.attributes.uid=uid",
@@ -66,12 +64,16 @@ class SurrogateServiceTicketGeneratorAuthorityTests {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());
         servicesManager.save(registeredService);
 
-        registeredService.setSurrogatePolicy(new DefaultRegisteredServiceSurrogatePolicy().setEnabled(false));
+        val accessStrategy = new SurrogateRegisteredServiceAccessStrategy();
+        accessStrategy.setSurrogateEnabled(false);
+        
+        registeredService.setAccessStrategy(accessStrategy);
         assertTrue(surrogateServiceTicketGeneratorAuthority.supports(authenticationResult, service));
         assertThrows(SurrogateAuthenticationException.class,
             () -> surrogateServiceTicketGeneratorAuthority.shouldGenerate(authenticationResult, service));
 
-        registeredService.setSurrogatePolicy(new DefaultRegisteredServiceSurrogatePolicy().setEnabled(true));
+        accessStrategy.setSurrogateEnabled(true);
+        registeredService.setAccessStrategy(accessStrategy);
         servicesManager.save(registeredService);
         assertTrue(surrogateServiceTicketGeneratorAuthority.shouldGenerate(authenticationResult, service));
     }
