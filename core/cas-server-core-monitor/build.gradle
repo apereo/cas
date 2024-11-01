@@ -2,6 +2,8 @@ description = "Apereo CAS Core Monitor Support"
 dependencies {
     api project(":api:cas-server-core-api-monitor")
     api project(":api:cas-server-core-api-ticket")
+
+    implementation libraries.metrics
     
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")

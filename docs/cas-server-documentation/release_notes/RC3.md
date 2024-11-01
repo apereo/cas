@@ -41,5 +41,49 @@ such as Amazon Corretto, Zulu, Eclipse Temurin, etc should work and are implicit
 
 The following items are new improvements and enhancements presented in this release.
 
-## Library Upgrades
+### Spring Boot 3.4
 
+The migration of the entire codebase to Spring Boot `3.4` is ongoing, and at the moment is waiting for the wider ecosystem
+of supporting frameworks and libraries to catch up to changes. We anticipate the work to finalize in the next few
+release candidates and certainly prior to the final release.
+
+The following integrations and extensions remain dysfunctional for now until the underlying library adds
+support for the new version of Spring Boot:
+
+1. [Swagger](../integration/Swagger-Integration.html)
+2. [Spring Boot Admin](../monitoring/Configuring-SpringBootAdmin.html)
+
+### OpenRewrite Recipes
+
+CAS continues to produce and publish [OpenRewrite](https://docs.openrewrite.org/) recipes that allow the project to upgrade installations
+in place from one version to the next. [See this guide](../installation/OpenRewrite-Upgrade-Recipes.html) to learn more.
+
+### Graal VM Native Images
+
+A CAS server installation and deployment process can be tuned to build and run
+as a [Graal VM native image](../installation/GraalVM-NativeImage-Installation.html). We continue to polish native runtime hints.
+The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) have selectively switched
+to build and verify Graal VM native images and we plan to extend the coverage to all such scenarios in the coming releases.
+
+### Testing Strategy
+
+The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
+and scenarios. At the moment, total number of jobs stands at approximately `499` distinct scenarios. The overall
+test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
+are now configured to run with parallelism enabled.
+
+### Java 23
+
+As described, the JDK baseline requirement for this CAS release is and **MUST** be JDK `21`. We are still waiting for the
+wider ecosystem of supporting frameworks and libraries to catch up to Java `23`. We anticipate the work to finalize in the next few
+release candidates and certainly prior to the final release. Remember that the baseline requirement will remain unchanged
+and this is just a preparatory step to ensure CAS is ready for the next version of Java.
+
+## Other Stuff
+      
+- A dedicated metric, `slow.requests.timer`, is now available once system health monitoring is enabled to track slow requests that take longer than 5 seconds.
+
+## Library Upgrades
+       
+- Gradle
+- Spring Boot
