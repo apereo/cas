@@ -40,7 +40,7 @@ public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepos
     public void cleanInternal() {
         transactionTemplate.executeWithoutResult(status -> {
             val count = entityManager.createQuery("DELETE FROM " + JpaGoogleAuthenticatorToken.class.getSimpleName()
-                                                  + " r WHERE r.issuedDateTime>= :expired")
+                                                  + " r WHERE r.issuedDateTime <= :expired")
                 .setParameter("expired", LocalDateTime.now(ZoneId.systemDefault()).minusSeconds(this.expireTokensInSeconds))
                 .executeUpdate();
             LOGGER.debug("Deleted [{}] expired previously used token record(s)", count);
