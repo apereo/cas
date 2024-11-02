@@ -1,7 +1,7 @@
 package org.apereo.cas.mail;
 
 /**
- * This is {@link org.apereo.cas.mail.MailjetEmailSenderTests}.
+ * This is {@link MailjetEmailSenderTests}.
  *
  * @author Misagh Moayyed
  * @since 7.1.0

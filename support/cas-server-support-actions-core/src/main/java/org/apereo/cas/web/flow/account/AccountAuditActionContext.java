@@ -7,7 +7,7 @@ import org.apereo.inspektr.audit.AuditActionContext;
 import java.io.Serial;
 
 /**
- * This is {@link org.apereo.cas.web.flow.account.AccountAuditActionContext}.
+ * This is {@link AccountAuditActionContext}.
  *
  * @author Misagh Moayyed
  * @since 7.1.0

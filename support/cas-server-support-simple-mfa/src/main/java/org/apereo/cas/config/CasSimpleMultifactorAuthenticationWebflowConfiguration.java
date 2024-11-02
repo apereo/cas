@@ -29,7 +29,7 @@ import org.springframework.webflow.engine.builder.FlowBuilder;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 /**
- * This is {@link org.apereo.cas.config.CasSimpleMultifactorAuthenticationWebflowConfiguration}.
+ * This is {@link CasSimpleMultifactorAuthenticationWebflowConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 7.1.0

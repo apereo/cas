@@ -17,7 +17,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import java.util.List;
 
 /**
- * This is {@link org.apereo.cas.pac4j.web.DelegatedClientOidcSessionManager}.
+ * This is {@link DelegatedClientOidcSessionManager}.
  *
  * @author Misagh Moayyed
  * @since 7.1.0
