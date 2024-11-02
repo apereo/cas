@@ -490,7 +490,7 @@ class RedisServerTicketRegistryTests {
         private TicketRegistry ticketRegistry;
 
         @Autowired
-        @Qualifier(org.apereo.cas.ticket.tracking.TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
+        @Qualifier(TicketTrackingPolicy.BEAN_NAME_SERVICE_TICKET_TRACKING)
         private TicketTrackingPolicy serviceTicketSessionTrackingPolicy;
 
         @Test

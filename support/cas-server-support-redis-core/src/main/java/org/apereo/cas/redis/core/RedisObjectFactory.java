@@ -3,6 +3,7 @@ package org.apereo.cas.redis.core;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import com.redis.lettucemod.RedisModulesClient;
 import com.redis.lettucemod.api.sync.RedisModulesCommands;
@@ -162,20 +163,24 @@ public class RedisObjectFactory {
         } else if (StringUtils.hasText(redis.getPassword())) {
             uriBuilder.withPassword(redis.getPassword().toCharArray());
         }
-        val redisModulesClient = RedisModulesClient.create(uriBuilder.build());
-        val clientOptions = createClientOptions(redis, casSslContext);
-        redisModulesClient.setOptions(clientOptions);
-        val result = redisModulesClient.connect().sync();
 
         try {
+            val redisModulesClient = RedisModulesClient.create(uriBuilder.build());
+            val clientOptions = createClientOptions(redis, casSslContext);
+            redisModulesClient.setOptions(clientOptions);
+            val connection = redisModulesClient.connect();
+            val result = connection.sync();
             result.ftInfo(UUID.randomUUID().toString());
+            return Optional.of(result);
         } catch (final RedisCommandExecutionException e) {
             if (e.getMessage().contains("ERR unknown command")) {
                 LOGGER.trace(e.getMessage(), e);
                 return Optional.empty();
             }
+        } catch (final Throwable e) {
+            LoggingUtils.error(LOGGER, e);
         }
-        return Optional.of(result);
+        return Optional.empty();
     }
 
     private static RedisClusterConfiguration getClusterConfig(final BaseRedisProperties redis) {

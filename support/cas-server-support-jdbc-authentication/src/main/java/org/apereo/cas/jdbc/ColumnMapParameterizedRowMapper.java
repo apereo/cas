@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.Map;
 
 /**
- * Clone of {@link org.springframework.jdbc.core.ColumnMapRowMapper}
+ * Clone of {@link ColumnMapRowMapper}
  * that ignores nulls.
  *
  * @author Eric Dalquist
