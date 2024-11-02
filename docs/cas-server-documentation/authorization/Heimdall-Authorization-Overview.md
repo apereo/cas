@@ -104,6 +104,7 @@ categorized by API owner or group (i.e. `API_EXAMPLE.json`) that describe a coll
     [
       {
         "@class": "org.apereo.cas.heimdall.authorizer.resource.AuthorizableResource",
+        "id": 1,
         "pattern": "/api/example.*",
         "method": "PUT",
         "enforceAllPolicies": false,
@@ -132,6 +133,7 @@ The authorization policies owned by the indicated namespace and resource support
 
 | Field                | Description                                                                                               |
 |----------------------|-----------------------------------------------------------------------------------------------------------|
+| `id`                 | Unique numeric identifier for this resource.                                                              |
 | `pattern`            | The URI regular expression pattern that describes the resource or API endpoint.                           |
 | `method`             | The HTTP method (as a regular expression pattern, or `*` for all) that is allowed to access the resource. |
 | `policies`           | A list of policies that are attached to the resource to allow or deny access.                             |
@@ -199,7 +201,7 @@ An authorization policy that fetches group memberships for the principal from
 
 ```json
 {
-  "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.GrouperRequiredGroupsAuthorizationPolicy",
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredGrouperGroupsAuthorizationPolicy",
   "groups" : [ "java.util.HashSet", [ "a:b:c" ] ]
 }
 ```
@@ -214,7 +216,7 @@ and allows or denied access based on whether permissions are found:
 
 ```json
 {
-  "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.GrouperRequiredPermissionsAuthorizationPolicy",
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RequiredGrouperPermissionsAuthorizationPolicy",
   "attributeDefinition" : "a:b:c",
   "roleName": "..."
 }
@@ -316,6 +318,28 @@ An authorization policy that requires the indicated scopes in the principal's pr
   "scopes" : [ "java.util.HashSet", [ "profile" ] ]
 }
 ```
+
+{% endtab %}
+
+{% tab heimdallauthzpolicies Rest API %}
+
+An authorization policy can be outsources to a REST API that can make decisions based on the request and the resource:
+
+```json
+{
+    "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.RestfulAuthorizationPolicy",
+    "url": "https://api.example.org",
+    "method": "POST",
+    "headers": {
+      "@class": "java.util.LinkedHashMap",
+      "header": "value"
+    }
+}
+```
+    
+- The request body will contain a map to present the `request` and the `resource` JSON payloads.
+- Authorized requests are expected to receive a `200` response code.
+- The `url` and header values can be constructed using the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html)
 
 {% endtab %}
 

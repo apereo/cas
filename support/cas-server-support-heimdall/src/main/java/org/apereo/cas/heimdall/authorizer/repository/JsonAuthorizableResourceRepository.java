@@ -59,6 +59,22 @@ public class JsonAuthorizableResourceRepository implements AuthorizableResourceR
     }
 
     @Override
+    public List<AuthorizableResource> find(final String namespace) {
+        return List.copyOf(resources.get(namespace));
+    }
+
+    @Override
+    public Optional<AuthorizableResource> find(final String namespace, final long id) {
+        val results = resources.get(namespace);
+        return results.stream().filter(r -> r.getId() == id).findFirst();
+    }
+
+    @Override
+    public Map<String, List<AuthorizableResource>> findAll() {
+        return Map.copyOf(resources);
+    }
+
+    @Override
     public void destroy() throws Exception {
         this.watcherService.close();
     }

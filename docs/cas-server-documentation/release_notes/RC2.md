@@ -145,3 +145,4 @@ management.endpoint.<id>.access
 - Sentry
 - ZooKeeper
 - MariaDb
+- Lombok

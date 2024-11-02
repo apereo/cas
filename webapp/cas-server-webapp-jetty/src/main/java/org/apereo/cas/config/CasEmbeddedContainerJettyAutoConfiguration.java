@@ -36,10 +36,12 @@ public class CasEmbeddedContainerJettyAutoConfiguration {
                 if (connector instanceof final ServerConnector serverConnector) {
                     val connectionFactory = serverConnector.getConnectionFactory(HttpConnectionFactory.class);
                     if (connectionFactory != null) {
-                        val secureRequestCustomizer = connectionFactory.getHttpConfiguration().getCustomizer(SecureRequestCustomizer.class);
-                        if (secureRequestCustomizer != null) {
-                            secureRequestCustomizer.setSniHostCheck(casProperties.getServer().getJetty().isSniHostCheck());
+                        var secureRequestCustomizer = connectionFactory.getHttpConfiguration().getCustomizer(SecureRequestCustomizer.class);
+                        if (secureRequestCustomizer == null) {
+                            secureRequestCustomizer = new SecureRequestCustomizer();
+                            connectionFactory.getHttpConfiguration().addCustomizer(secureRequestCustomizer);
                         }
+                        secureRequestCustomizer.setSniHostCheck(casProperties.getServer().getJetty().isSniHostCheck());
                     }
                 }
             }
