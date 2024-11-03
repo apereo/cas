@@ -347,13 +347,14 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
 
                                     <p>To enable and expose an actuator endpoint:</p>
                                     {%- capture epc -%}
-                                    ```properties
-                                    management.endpoint.{{ cfg.name }}.enabled=true
-                                    management.endpoints.web.exposure.include={{ cfg.name }}
+```properties
+management.endpoint.{{ cfg.name }}.enabled=true
+management.endpoints.web.exposure.include={{ cfg.name }}
 
-                                    # Choose the proper security access level...
-                                    # cas.monitor.endpoints.endpoint.{{ cfg.name }}.access=PERMIT
-                                    ```{%- endcapture -%}
+# Choose the proper security access level...
+# cas.monitor.endpoints.endpoint.{{ cfg.name }}.access=PERMIT
+```
+{%- endcapture -%}
                                     <div>
                                         {{ epc | markdownify }}
                                     </div>
