@@ -3,14 +3,9 @@ package org.apereo.cas.redis.core;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-import com.redis.lettucemod.RedisModulesClient;
-import com.redis.lettucemod.api.sync.RedisModulesCommands;
 import io.lettuce.core.ClientOptions;
 import io.lettuce.core.ReadFrom;
-import io.lettuce.core.RedisCommandExecutionException;
-import io.lettuce.core.RedisURI;
 import io.lettuce.core.SocketOptions;
 import io.lettuce.core.SslOptions;
 import io.lettuce.core.TimeoutOptions;
@@ -40,8 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -140,49 +133,6 @@ public class RedisObjectFactory {
             || (redis.getCluster() != null && !redis.getCluster().getNodes().isEmpty());
     }
 
-    /**
-     * New redis modules commands.
-     *
-     * @param redis         the redis
-     * @param casSslContext the cas ssl context
-     * @return the redis search commands
-     * @throws Exception the exception
-     */
-    public static Optional<RedisModulesCommands> newRedisModulesCommands(
-        final BaseRedisProperties redis, final CasSSLContext casSslContext) throws Exception {
-        val uriBuilder = RedisURI.builder()
-            .withStartTls(redis.isStartTls())
-            .withVerifyPeer(redis.isVerifyPeer())
-            .withHost(redis.getHost())
-            .withPort(redis.getPort())
-            .withDatabase(redis.getDatabase())
-            .withSsl(redis.isUseSsl());
-
-        if (StringUtils.hasText(redis.getUsername()) && StringUtils.hasText(redis.getPassword())) {
-            uriBuilder.withAuthentication(redis.getUsername(), redis.getPassword());
-        } else if (StringUtils.hasText(redis.getPassword())) {
-            uriBuilder.withPassword(redis.getPassword().toCharArray());
-        }
-
-        try {
-            val redisModulesClient = RedisModulesClient.create(uriBuilder.build());
-            val clientOptions = createClientOptions(redis, casSslContext);
-            redisModulesClient.setOptions(clientOptions);
-            val connection = redisModulesClient.connect();
-            val result = connection.sync();
-            result.ftInfo(UUID.randomUUID().toString());
-            return Optional.of(result);
-        } catch (final RedisCommandExecutionException e) {
-            if (e.getMessage().contains("ERR unknown command")) {
-                LOGGER.trace(e.getMessage(), e);
-                return Optional.empty();
-            }
-        } catch (final Throwable e) {
-            LoggingUtils.error(LOGGER, e);
-        }
-        return Optional.empty();
-    }
-
     private static RedisClusterConfiguration getClusterConfig(final BaseRedisProperties redis) {
         val redisConfiguration = new RedisClusterConfiguration();
         val cluster = redis.getCluster();
@@ -243,7 +193,7 @@ public class RedisObjectFactory {
             }
         }
 
-        val clientOptions = createClientOptions(redis, casSslContext);
+        val clientOptions = newClientOptions(redis, casSslContext);
         poolingClientConfig.clientOptions(clientOptions);
 
         val pool = redis.getPool();
@@ -274,8 +224,16 @@ public class RedisObjectFactory {
         return poolingClientConfig.build();
     }
 
-    private static ClientOptions createClientOptions(final BaseRedisProperties redis,
-                                                     final CasSSLContext casSslContext) throws Exception {
+    /**
+     * New client options.
+     *
+     * @param redis         the redis
+     * @param casSslContext the cas ssl context
+     * @return the client options
+     * @throws Exception the exception
+     */
+    public static ClientOptions newClientOptions(final BaseRedisProperties redis,
+                                                 final CasSSLContext casSslContext) throws Exception {
         val clientOptionsBuilder = initializeClientOptionsBuilder(redis);
         if (StringUtils.hasText(redis.getConnectTimeout())) {
             val connectTimeout = Beans.newDuration(redis.getConnectTimeout());

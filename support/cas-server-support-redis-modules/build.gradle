@@ -1,18 +1,19 @@
-description = "Apereo CAS Redis Ticket Registry"
+description = "Apereo CAS Redis Modules"
 ext {
 
     publishMetadata = true
     projectMetadata = [
             category: "Ticket Registries",
-            title: "Redis Ticket Registry",
-            aliases: ["redis"]
+            title: "Redis Modules",
+            aliases: ["redis", "lettucemod"]
     ]
 }
 dependencies {
+    api libraries.lettucemod
     implementation libraries.redis
 
     api project(":api:cas-server-core-api-util")
-    
+
     implementation project(":core:cas-server-core-logging")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-services")
@@ -22,7 +23,6 @@ dependencies {
     implementation project(":core:cas-server-core-web-api")
 
     implementation project(":support:cas-server-support-redis-core")
-    compileOnly project(":support:cas-server-support-redis-modules")
 
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
@@ -54,7 +54,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-webflow-mfa")
     testImplementation project(":core:cas-server-core-webflow")
 
-    testImplementation project(":support:cas-server-support-redis-modules")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-reports")
 }
