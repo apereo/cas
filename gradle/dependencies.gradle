@@ -2656,7 +2656,9 @@ ext.libraries = [
                     exclude(group: "org.springframework.integration", module: "spring-integration-core")
                     exclude(group: "org.springframework.data", module: "spring-data-redis")
                 },
-                dependencies.create("io.lettuce:lettuce-core:$redisLettuceVersion"),
+                dependencies.create("io.lettuce:lettuce-core:$redisLettuceVersion")
+        ],
+        lettucemod: [
                 dependencies.create("com.redis:lettucemod:$lettuceModVersion") {
                     exclude(group: "ch.qos.logback", module: "logback-core")
                     exclude(group: "ch.qos.logback", module: "logback-classic")

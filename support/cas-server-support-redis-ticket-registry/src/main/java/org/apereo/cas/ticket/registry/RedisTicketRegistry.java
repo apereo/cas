@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.redis.core.CasRedisTemplate;
+import org.apereo.cas.redis.modules.RedisModulesOperations;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.ServiceAwareTicket;
@@ -22,11 +23,6 @@ import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.thread.Cleanable;
 import com.github.benmanes.caffeine.cache.Cache;
-import com.redis.lettucemod.api.sync.RedisModulesCommands;
-import com.redis.lettucemod.search.CreateOptions;
-import com.redis.lettucemod.search.Document;
-import com.redis.lettucemod.search.Field;
-import com.redis.lettucemod.search.SearchResults;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -80,7 +76,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
 
     private final ObjectProvider<RedisTicketRegistryMessagePublisher> messagePublisher;
 
-    private final Optional<RedisModulesCommands> redisModuleCommands;
+    private final Optional<RedisModulesOperations> redisModulesOperations;
 
     private final RedisKeyGeneratorFactory redisKeyGeneratorFactory;
 
@@ -95,7 +91,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                                final CasRedisTemplates casRedisTemplates,
                                final ObjectProvider<Cache<String, Ticket>> ticketCache,
                                final ObjectProvider<RedisTicketRegistryMessagePublisher> messagePublisher,
-                               final Optional<RedisModulesCommands> redisModuleCommands,
+                               final Optional<RedisModulesOperations> redisModulesOperations,
                                final RedisKeyGeneratorFactory redisKeyGeneratorFactory,
                                final RedisKeyValueAdapter redisKeyValueAdapter,
                                final CasConfigurationProperties casProperties) {
@@ -103,7 +99,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
         this.casRedisTemplates = casRedisTemplates;
         this.ticketCache = ticketCache;
         this.messagePublisher = messagePublisher;
-        this.redisModuleCommands = redisModuleCommands;
+        this.redisModulesOperations = redisModulesOperations;
         this.redisKeyGeneratorFactory = redisKeyGeneratorFactory;
         this.casProperties = casProperties;
         this.redisKeyValueAdapter = redisKeyValueAdapter;
@@ -283,7 +279,8 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
 
     @Override
     public Stream<? extends Ticket> getSessionsWithAttributes(final Map<String, List<Object>> queryAttributes) {
-        return redisModuleCommands
+        return redisModulesOperations
+            .stream()
             .map(command -> {
                 val criteria = new ArrayList<String>();
                 queryAttributes.forEach((key, value) -> value.forEach(queryValue -> {
@@ -295,11 +292,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                 val query = String.format("(%s) @%s:%s", String.join("|", criteria),
                     RedisTicketDocument.FIELD_NAME_PREFIX, TicketGrantingTicket.PREFIX);
                 LOGGER.debug("Executing search query [{}]", query);
-                val results = (SearchResults<String, Document>) command.ftSearch(SEARCH_INDEX_NAME, query);
-                return results
-                    .parallelStream()
-                    .map(Document.class::cast)
-                    .filter(document -> !document.isEmpty())
+                return command.search(SEARCH_INDEX_NAME, query)
                     .map(RedisTicketDocument::from)
                     .filter(document -> StringUtils.isNotBlank(document.json()))
                     .map(redisDoc -> {
@@ -308,21 +301,19 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                     })
                     .filter(ticket -> !ticket.isExpired());
             })
+            .findFirst()
             .orElseGet(() -> (Stream<Ticket>) super.getSessionsWithAttributes(queryAttributes));
     }
 
     @Override
     public long countTicketsFor(final Service service) {
-        return redisModuleCommands
+        return redisModulesOperations
+            .stream()
             .map(command -> {
                 val originalUrl = URI.create(service.getOriginalUrl());
                 val host = String.format("%s?//%s", originalUrl.getScheme(), originalUrl.getHost());
                 val query = String.format("@%s:\"%s\"", RedisTicketDocument.FIELD_NAME_SERVICE, host);
-                val results = (SearchResults<String, Document>) command.ftSearch(SEARCH_INDEX_NAME, query);
-                return results
-                    .parallelStream()
-                    .map(Document.class::cast)
-                    .filter(document -> !document.isEmpty())
+                return command.search(SEARCH_INDEX_NAME, query)
                     .map(RedisTicketDocument::from)
                     .filter(document -> StringUtils.isNotBlank(document.json()))
                     .map(redisDoc -> {
@@ -332,6 +323,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                     .filter(ticket -> !ticket.isExpired())
                     .count();
             })
+            .findFirst()
             .orElseGet(() -> super.countTicketsFor(service));
     }
 
@@ -463,7 +455,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
                 .filter(predicate)
                 .findFirst()
                 .orElseGet(() -> handleMissingTicket(rawTicketId, redisKeyPattern)));
-        
+
         if (ticket != null && predicate.test(ticket) && !ticket.isExpired()) {
             ticketCache.ifAvailable(cache -> cache.put(rawTicketId, ticket));
             return ticket;
@@ -539,27 +531,21 @@ public class RedisTicketRegistry extends AbstractTicketRegistry implements Clean
 
     private void createIndexesIfNecessary() {
         val indexesOnNamespaces = new HashSet<String>();
-        redisModuleCommands.ifPresent(command ->
+        redisModulesOperations.ifPresent(ops ->
             redisKeyGeneratorFactory.getRedisKeyGenerators()
                 .stream()
                 .filter(RedisKeyGenerator::isTicketKeyGenerator)
                 .forEach(redisKeyGenerator -> {
                     val prefix = redisKeyGenerator.getNamespace() + ':';
-                    val options = CreateOptions.<String, RedisTicketDocument>builder()
-                        .prefix(prefix)
-                        .maxTextFields(true)
-                        .build();
-                    val createIndex = !indexesOnNamespaces.contains(prefix)
-                        && command.ftList().parallelStream().noneMatch(idx -> SEARCH_INDEX_NAME.equalsIgnoreCase(idx.toString()));
-                    if (createIndex) {
-                        val indexFields = CollectionUtils.wrapList(
-                            Field.text(RedisTicketDocument.FIELD_NAME_ID).build(),
-                            Field.text(RedisTicketDocument.FIELD_NAME_ATTRIBUTES).build(),
-                            Field.text(RedisTicketDocument.FIELD_NAME_PRINCIPAL).build(),
-                            Field.text(RedisTicketDocument.FIELD_NAME_TYPE).build(),
-                            Field.text(RedisTicketDocument.FIELD_NAME_SERVICE).build(),
-                            Field.text(RedisTicketDocument.FIELD_NAME_PREFIX).build());
-                        command.ftCreate(SEARCH_INDEX_NAME, options, indexFields.toArray(new Field[]{}));
+                    if (!indexesOnNamespaces.contains(prefix)) {
+                        val fields = CollectionUtils.wrapList(
+                            RedisTicketDocument.FIELD_NAME_ID,
+                            RedisTicketDocument.FIELD_NAME_ATTRIBUTES,
+                            RedisTicketDocument.FIELD_NAME_PRINCIPAL,
+                            RedisTicketDocument.FIELD_NAME_TYPE,
+                            RedisTicketDocument.FIELD_NAME_SERVICE,
+                            RedisTicketDocument.FIELD_NAME_PREFIX);
+                        ops.createIndexes(SEARCH_INDEX_NAME, prefix, fields);
                         indexesOnNamespaces.add(prefix);
                     }
                 }));
