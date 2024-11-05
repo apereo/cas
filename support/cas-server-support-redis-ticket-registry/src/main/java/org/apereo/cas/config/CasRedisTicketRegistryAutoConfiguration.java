@@ -6,9 +6,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.redis.core.CasRedisTemplate;
+import org.apereo.cas.redis.core.RedisModulesOperations;
 import org.apereo.cas.redis.core.RedisObjectFactory;
 import org.apereo.cas.redis.modules.LettuceRedisModulesOperations;
-import org.apereo.cas.redis.modules.RedisModulesOperations;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.CachedTicketExpirationPolicy;
@@ -340,7 +340,7 @@ public class CasRedisTicketRegistryAutoConfiguration {
             return BeanSupplier.of(RedisModulesOperations.class)
                 .when(redis.isEnableRedisSearch())
                 .supply(Unchecked.supplier(() -> {
-                    val commands = RedisModulesOperations.newRedisModulesCommands(redis, casSslContext);
+                    val commands = LettuceRedisModulesOperations.newRedisModulesCommands(redis, casSslContext);
                     return new LettuceRedisModulesOperations(commands);
                 }))
                 .otherwiseProxy()

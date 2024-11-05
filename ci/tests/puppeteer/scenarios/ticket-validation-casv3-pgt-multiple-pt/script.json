@@ -1,5 +1,5 @@
 {
-  "dependencies": "core,redis-ticket-registry",
+  "dependencies": "core,redis-ticket-registry,redis-modules",
   "conditions": {
     "docker": "true"
   },
