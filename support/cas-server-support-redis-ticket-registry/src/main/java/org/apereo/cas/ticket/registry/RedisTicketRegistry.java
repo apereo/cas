@@ -5,7 +5,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.redis.core.CasRedisTemplate;
-import org.apereo.cas.redis.modules.RedisModulesOperations;
+import org.apereo.cas.redis.core.RedisModulesOperations;
 import org.apereo.cas.ticket.AuthenticationAwareTicket;
 import org.apereo.cas.ticket.IdleExpirationPolicy;
 import org.apereo.cas.ticket.ServiceAwareTicket;

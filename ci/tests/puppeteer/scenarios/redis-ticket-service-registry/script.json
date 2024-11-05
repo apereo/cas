@@ -1,5 +1,5 @@
 {
-  "dependencies": "reports,redis-ticket-registry,redis-service-registry,gauth,gauth-redis,audit-redis,rest",
+  "dependencies": "reports,redis-ticket-registry,redis-modules,redis-service-registry,gauth,gauth-redis,audit-redis,rest",
   "conditions": {
     "docker": "true"
   },

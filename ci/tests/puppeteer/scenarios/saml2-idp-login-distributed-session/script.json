@@ -1,5 +1,5 @@
 {
-  "dependencies": "saml-idp,redis-ticket-registry",
+  "dependencies": "saml-idp,redis-ticket-registry,redis-modules",
   "conditions": {
     "docker": "true"
   },

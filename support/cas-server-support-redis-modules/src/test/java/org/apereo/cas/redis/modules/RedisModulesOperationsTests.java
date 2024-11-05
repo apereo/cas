@@ -27,7 +27,7 @@ class RedisModulesOperationsTests {
         props.setPort(16389);
         props.setUsername("default");
         props.setPassword("pAssw0rd123");
-        val connection = RedisModulesOperations.newRedisModulesCommands(props, CasSSLContext.disabled());
+        val connection = LettuceRedisModulesOperations.newRedisModulesCommands(props, CasSSLContext.disabled());
         assertNotNull(connection);
     }
 
@@ -36,7 +36,7 @@ class RedisModulesOperationsTests {
         val props = new BaseRedisProperties();
         props.setHost("localhost");
         props.setPort(6379);
-        val command = RedisModulesOperations.newRedisModulesCommands(props, CasSSLContext.disabled());
+        val command = LettuceRedisModulesOperations.newRedisModulesCommands(props, CasSSLContext.disabled());
         val indexName = UUID.randomUUID().toString();
         val result = command.ftCreate(indexName,
             Field.text("name").build(),
@@ -57,7 +57,7 @@ class RedisModulesOperationsTests {
         props.setKeyFile(new File("../../ci/tests/redis/certs/redis.key"));
         props.setVerifyPeer(false);
         props.setUseSsl(true);
-        val connection = RedisModulesOperations.newRedisModulesCommands(props, CasSSLContext.disabled());
+        val connection = LettuceRedisModulesOperations.newRedisModulesCommands(props, CasSSLContext.disabled());
         assertNotNull(connection);
         try (val con = connection.getStatefulConnection()) {
             assertTrue(con.isOpen());
@@ -71,6 +71,6 @@ class RedisModulesOperationsTests {
         props.setPort(16389);
         props.setUsername(null);
         props.setPassword("pAssw0rd123");
-        assertDoesNotThrow(() -> RedisModulesOperations.newRedisModulesCommands(props, CasSSLContext.system()));
+        assertDoesNotThrow(() -> LettuceRedisModulesOperations.newRedisModulesCommands(props, CasSSLContext.system()));
     }
 }
