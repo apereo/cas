@@ -60,7 +60,9 @@ public class LogoutAction extends AbstractLogoutAction {
                 logoutResponse.getService().ifPresent(service -> WebUtils.putServiceIntoFlowScope(requestContext, service));
                 logoutResponse.getLogoutRedirectUrl().ifPresent(url -> WebUtils.putLogoutRedirectUrl(requestContext, url));
                 logoutResponse.getLogoutPostUrl().ifPresent(url -> WebUtils.putLogoutPostUrl(requestContext, url));
-                WebUtils.putLogoutPostData(requestContext, logoutResponse.getLogoutPostData());
+                if (!logoutResponse.getLogoutPostData().isEmpty()) {
+                    WebUtils.putLogoutPostData(requestContext, logoutResponse.getLogoutPostData());
+                }
             });
 
         if (needFrontSlo) {
