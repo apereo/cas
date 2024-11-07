@@ -62,6 +62,13 @@ public class ActuatorEndpointsMonitorProperties implements Serializable {
     private LdapSecurityActuatorEndpointsMonitorProperties ldap = new LdapSecurityActuatorEndpointsMonitorProperties();
 
     /**
+     * Use a static JSON file to define users that have access
+     * to the actuator endpoints, etc.
+     */
+    @NestedConfigurationProperty
+    private JsonSecurityActuatorEndpointsMonitorProperties json = new JsonSecurityActuatorEndpointsMonitorProperties();
+
+    /**
      * Control whether access to endpoints can be controlled
      * via form-based login over the web via a special admin login endpoint.
      */

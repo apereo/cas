@@ -5,13 +5,20 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
 import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.security.CasWebSecurityConfigurerAdapter;
 import org.apereo.cas.web.security.CasWebflowSecurityContextRepository;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.val;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.inspektr.common.web.ClientInfoExtractionOptions;
 import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
 import org.springframework.beans.factory.InitializingBean;
@@ -36,8 +43,18 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
+import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
@@ -50,9 +67,12 @@ import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.webflow.context.servlet.FlowUrlHandler;
 import org.springframework.webflow.executor.FlowExecutor;
-
 import jakarta.annotation.Nonnull;
-
+import java.io.Serial;
+import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -102,10 +122,8 @@ class CasWebSecurityConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SecurityContextRepository securityContextRepository(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("loginFlowUrlHandler")
-            final FlowUrlHandler loginFlowUrlHandler,
-            @Qualifier("loginFlowExecutor")
-            final FlowExecutor loginFlowExecutor) {
+            @Qualifier("loginFlowUrlHandler") final FlowUrlHandler loginFlowUrlHandler,
+            @Qualifier("loginFlowExecutor") final FlowExecutor loginFlowExecutor) {
             return new DelegatingSecurityContextRepository(
                 new RequestAttributeSecurityContextRepository(),
                 new HttpSessionSecurityContextRepository(),
@@ -135,8 +153,7 @@ class CasWebSecurityConfiguration {
 
         @Bean
         public FilterRegistrationBean<SecurityContextHolderFilter> securityContextHolderFilter(
-            @Qualifier("securityContextRepository")
-            final SecurityContextRepository securityContextRepository) {
+            @Qualifier("securityContextRepository") final SecurityContextRepository securityContextRepository) {
             val bean = new FilterRegistrationBean<SecurityContextHolderFilter>();
             bean.setFilter(new SecurityContextHolderFilter(securityContextRepository));
             bean.setUrlPatterns(CollectionUtils.wrap("/*"));
@@ -149,8 +166,7 @@ class CasWebSecurityConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casWebSecurityCustomizer")
         public WebSecurityCustomizer casWebSecurityCustomizer(
-            @Qualifier("securityContextRepository")
-            final SecurityContextRepository securityContextRepository,
+            @Qualifier("securityContextRepository") final SecurityContextRepository securityContextRepository,
             final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
             final List<CasWebSecurityConfigurer> configurersList,
             final WebEndpointProperties webEndpointProperties,
@@ -165,8 +181,7 @@ class CasWebSecurityConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casWebSecurityConfigurerAdapter")
         public SecurityFilterChain casWebSecurityConfigurerAdapter(
-            @Qualifier("securityContextRepository")
-            final SecurityContextRepository securityContextRepository,
+            @Qualifier("securityContextRepository") final SecurityContextRepository securityContextRepository,
             final HttpSecurity http,
             final ObjectProvider<PathMappedEndpoints> pathMappedEndpoints,
             final List<CasWebSecurityConfigurer> configurersList,
@@ -204,6 +219,69 @@ class CasWebSecurityConfiguration {
             manager.setRolePrefix(jdbc.getRolePrefix());
             manager.setUsersByUsernameQuery(jdbc.getQuery());
             return manager;
+        }
+    }
+
+    @Configuration(value = "CasWebAppSecurityJsonUsersConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnProperty(name = "cas.monitor.endpoints.json.location")
+    @SuppressWarnings("ConditionalOnProperty")
+    static class CasWebAppSecurityJsonUsersConfiguration {
+        private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+            .defaultTypingEnabled(false).build().toObjectMapper();
+
+        @Bean
+        @ConditionalOnMissingBean(name = "jsonUserDetailsService")
+        public UserDetailsService userDetailsService(final CasConfigurationProperties casProperties) throws Exception {
+            val resource = casProperties.getMonitor().getEndpoints().getJson().getLocation();
+            val listOfUsers = MAPPER.readValue(resource.getInputStream(), new TypeReference<List<CasUserDetails>>() {
+            });
+            val userDetails = listOfUsers
+                .stream()
+                .map(user -> {
+                    val authorities = user.getAuthorities()
+                        .stream()
+                        .map(authority -> StringUtils.prependIfMissing(authority, "ROLE_"))
+                        .map(SimpleGrantedAuthority::new)
+                        .toList();
+                    var password = user.getPassword();
+                    if (!password.matches("^\\{.+\\}.*")) {
+                        password = "{noop}" + password;
+                    }
+                    return User.builder()
+                        .username(user.getUsername())
+                        .password(password)
+                        .authorities(authorities)
+                        .build();
+                })
+                .toList();
+            return new InMemoryUserDetailsManager(userDetails);
+        }
+
+        @Bean
+        @ConditionalOnMissingBean(name = "jsonUserDetailsPasswordEncoder")
+        public PasswordEncoder jsonUserDetailsPasswordEncoder() {
+            val encoders = new HashMap<String, PasswordEncoder>();
+            encoders.put("pbkdf2", Pbkdf2PasswordEncoder.defaultsForSpringSecurity_v5_8());
+            encoders.put("scrypt", SCryptPasswordEncoder.defaultsForSpringSecurity_v5_8());
+            encoders.put("argon2", Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8());
+            encoders.put("bcrypt", new BCryptPasswordEncoder());
+            encoders.put("sha256", new DefaultPasswordEncoder("SHA-256", StandardCharsets.UTF_8.name()));
+            encoders.put("sha512", new DefaultPasswordEncoder("SHA-512", StandardCharsets.UTF_8.name()));
+            encoders.put("noop", NoOpPasswordEncoder.getInstance());
+            return new DelegatingPasswordEncoder("sha512", encoders);
+        }
+
+        @Getter
+        @Setter
+        @NoArgsConstructor
+        private static final class CasUserDetails implements Serializable {
+            @Serial
+            private static final long serialVersionUID = -741527534790033702L;
+
+            private String username;
+            private String password;
+            private List<String> authorities = new ArrayList<>();
         }
     }
 }
