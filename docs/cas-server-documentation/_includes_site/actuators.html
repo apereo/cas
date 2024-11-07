@@ -71,6 +71,19 @@ properties="cas.monitor.endpoints.jaas" %}
     {{ jaasauthprops | markdownify }}
 </div>
 
+
+{%- capture jsonauthprops -%}{% include_cached casproperties.html
+disableSearch="true"
+id=actuatorEndpointRandomNumber
+disablePagination="true"
+disableNotes="true"
+forcePropertyTabsOnClick="true"
+properties="cas.monitor.endpoints.json" %}
+{%- endcapture -%}
+<div style="display:none" id="jsonauthpropReference">
+    {{ jsonauthprops | markdownify }}
+</div>
+
 {%- capture casendpointsconfigprops -%}{% include_cached casproperties.html
 disableSearch="true"
 id=actuatorEndpointRandomNumber
@@ -114,37 +127,37 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                 <tr>
                     <td style="width: 6%; border-bottom:none;">
 
-                        {%- if cfg.method == "DELETE" -%} 
+                        {%- if cfg.method == "DELETE" -%}
                         <span class="badge bg-danger">
-                            {%- elsif cfg.method == "GET" -%} 
+                            {%- elsif cfg.method == "GET" -%}
                             <span class="badge bg-primary">
-                                {%- elsif cfg.method == "POST" -%} 
+                                {%- elsif cfg.method == "POST" -%}
                                 <span class="badge bg-success">
-                                    {%- else -%} 
+                                    {%- else -%}
                                     <span class="badge bg-secondary">
-                                        {%- endif -%} 
+                                        {%- endif -%}
 
-                                        {%- if cfg.casEndpoint == true -%} 
+                                        {%- if cfg.casEndpoint == true -%}
                                         <i class="fas fa-copyright"></i>
-                                        {%- else -%} 
+                                        {%- else -%}
                                         <i class="fab fa-codepen"></i>
-                                        {%- endif -%} 
+                                        {%- endif -%}
                                         &nbsp;
-                                        {{ cfg.method }} 
+                                        {{ cfg.method }}
                                     </span>
                     </td>
                     <td style="border-bottom:none;"><span><code>/cas/actuator/{{ cfg.path }}</code>
                             <sup>
-                                {%- if cfg.casEndpoint == true -%} 
+                                {%- if cfg.casEndpoint == true -%}
                                 <img class="undecorated img-fluid" width="42px" src="../../images/cas-sm.png"
                                      data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true"
                                      title="This endpoint is owned, provided and controlled by CAS."
                                      class="fas fa-copyright">
-                                {%- else -%} 
+                                {%- else -%}
                                 <i data-bs-toggle="tooltip" data-bs-placment="top" data-bs-html="true"
                                    title="This endpoint is provided by a third-party framework to CAS."
                                    class="fa fa-code"></i>
-                                {%- endif -%} 
+                                {%- endif -%}
                             </sup>
                         </span></td>
                 </tr>
@@ -347,14 +360,14 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
 
                                     <p>To enable and expose an actuator endpoint:</p>
                                     {%- capture epc -%}
-```properties
-management.endpoint.{{ cfg.name }}.enabled=true
-management.endpoints.web.exposure.include={{ cfg.name }}
+                                    ```properties
+                                    management.endpoint.{{ cfg.name }}.enabled=true
+                                    management.endpoints.web.exposure.include={{ cfg.name }}
 
-# Choose the proper security access level...
-# cas.monitor.endpoints.endpoint.{{ cfg.name }}.access=PERMIT
-```
-{%- endcapture -%}
+                                    # Choose the proper security access level...
+                                    # cas.monitor.endpoints.endpoint.{{ cfg.name }}.access=PERMIT
+                                    ```
+                                    {%- endcapture -%}
                                     <div>
                                         {{ epc | markdownify }}
                                     </div>
@@ -436,6 +449,12 @@ management.endpoints.web.exposure.include={{ cfg.name }}
                                                 aria-expanded="false" aria-controls="collapseSecurityJdbc{{ key }}">
                                             JDBC Authentication
                                         </button>
+                                        <button class="btn btn-primary btn-sm" type="button" data-bs-toggle="collapse"
+                                                data-bs-target="#collapseSecurityJson{{ key}}"
+                                                onclick="collapseSecurityPanels{{ key }}('collapseSecurityJson');"
+                                                aria-expanded="false" aria-controls="collapseSecurityJson{{ key }}">
+                                            JSON Authentication
+                                        </button>
                                         <br />
                                     </div>
                                     <br/>
@@ -461,6 +480,35 @@ management.endpoints.web.exposure.include={{ cfg.name }}
 
                                         <div class="collapse" id="collapseSecurityJaas{{ key }}">
                                             <div class="card card-body" id="placeholderSecurityJaas{{ key }}">
+                                            </div>
+                                        </div>
+                                        <div class="collapse" id="collapseSecurityJson{{ key }}">
+
+                                            <p>
+                                                This option allows you to define a static list of users, passwords along with their role in a JSON file.
+                                                The JSON file should be formatted as follows:
+
+                                                {%- capture jsonauthfile -%}
+                                                ```json
+                                                [
+                                                {
+                                                "username": "casuser",
+                                                "password": "{sha512}<hashed-password>",
+                                                "authorities": [ "ROLE_ADMIN" ]
+                                                }
+                                                ]
+                                                ```
+                                                {%- endcapture -%}
+                                                <span>{{ jsonauthfile | markdownify }}</span>
+
+                                                <p>Supported password encoding schemes are:
+                                                    <code>{sha512}</code>, <code>{sha256}</code>, <code>{bcrypt}</code>,
+                                                    <code>{noop}</code>, <code>{pbkdf2}</code>, <code>{scrypt}</code>,
+                                                    <code>{argon2}</code>.
+                                                </p>
+                                            </p>
+
+                                            <div class="card card-body" id="placeholderSecurityJson{{ key }}">
                                             </div>
                                         </div>
                                     </div>
@@ -520,6 +568,9 @@ management.endpoints.web.exposure.include={{ cfg.name }}
 
                     content = $("#jaasauthpropReference").html();
                     $("#placeholderSecurityJaas{{ key }}").html(content);
+
+                    content = $("#jsonauthpropReference").html();
+                    $("#placeholderSecurityJson{{ key }}").html(content);
 
                     let elementId = "#casEndpointConfigPropsDiv .nav-item a.nav-link:first";
                     console.log(`Selecting configuration tab via ${elementId}`);

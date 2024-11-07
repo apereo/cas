@@ -20,7 +20,6 @@ import java.io.Serial;
 @Getter
 @Setter
 @RequiresModule(name = "cas-server-core-monitor", automated = true)
-
 @Accessors(chain = true)
 public class LdapSecurityActuatorEndpointsMonitorProperties extends AbstractLdapAuthenticationProperties {
 
