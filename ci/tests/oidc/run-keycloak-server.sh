@@ -31,7 +31,7 @@ docker run -d --rm --name keycloak \
   -e KC_METRICS_ENABLED=true \
   -v "$PWD"/ci/tests/oidc/keycloak/import:/opt/keycloak/data/import:ro \
   ${DOCKER_IMAGE} \
-  start-dev --import-realm
+  start-dev --import-realm --log-level=INFO
 echo "Waiting for Keycloak docker container to prepare..."
 sleep 15
 docker ps | grep "keycloak"

@@ -15,12 +15,14 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.pac4j.core.context.CallContext;
 import org.pac4j.core.credentials.extractor.CredentialsExtractor;
-import org.pac4j.core.exception.http.FoundAction;
-import org.pac4j.core.logout.processor.LogoutProcessor;
+import org.pac4j.core.exception.http.WithLocationAction;
+import org.pac4j.jee.context.JEEContext;
+import org.pac4j.jee.context.session.JEESessionStore;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.credentials.SAML2Credentials;
-import org.pac4j.saml.logout.processor.SAML2LogoutProcessor;
+import org.pac4j.saml.profile.SAML2Profile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -62,15 +64,26 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
         DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
         WebUtils.putLogoutRedirectUrl(context, "https://google.com");
 
-        val logoutRequest = DelegatedAuthenticationClientLogoutRequest.builder().status(200).build();
+        val samlClient = (SAML2Client) identityProviders.findClient("SAML2RedirectLogoutClient").orElseThrow();
+        samlClient.init();
+        val userProfile = new SAML2Profile();
+        userProfile.setId("casuser");
+
+        val callContext = new CallContext(new JEEContext(context.getHttpServletRequest(), context.getHttpServletResponse()), new JEESessionStore());
+        val action = (WithLocationAction) samlClient.getLogoutActionBuilder()
+            .getLogoutAction(callContext, userProfile, "https://google.com").orElseThrow();
+
+        val logoutRequest = DelegatedAuthenticationClientLogoutRequest.builder()
+            .target("https://google.com")
+            .location(action.getLocation())
+            .status(302)
+            .build();
         DelegationWebflowUtils.putDelegatedAuthenticationLogoutRequest(context, logoutRequest);
 
         val result = delegatedAuthenticationClientFinishLogoutAction.execute(context);
         assertNull(result);
-        val samlClient = (SAML2Client) identityProviders.findClient("SAML2Client").get();
-        val logoutProcessor = (SAML2LogoutProcessor) samlClient.getLogoutProcessor();
-        assertEquals("https://google.com", logoutProcessor.getPostLogoutURL());
         assertNull(WebUtils.getLogoutRedirectUrl(context, String.class));
+        assertNotNull(DelegationWebflowUtils.getDelegatedAuthenticationLogoutRequestTicket(context));
     }
 
     @Test
@@ -79,16 +92,10 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
         val context = MockRequestContext.create(applicationContext);
         context.withUserAgent();
         DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, "SAML2Client");
-        val samlClient = (SAML2Client) identityProviders.findClient("SAML2Client").get();
-        val logoutProcessor = (SAML2LogoutProcessor) samlClient.getLogoutProcessor();
-        logoutProcessor.setPostLogoutURL("https://google.com");
-
         val logoutRequest = DelegatedAuthenticationClientLogoutRequest.builder().status(200).build();
         DelegationWebflowUtils.putDelegatedAuthenticationLogoutRequest(context, logoutRequest);
-
         val result = delegatedAuthenticationClientFinishLogoutAction.execute(context);
         assertNull(result);
-        assertEquals("https://google.com", logoutProcessor.getPostLogoutURL());
         assertNull(WebUtils.getLogoutRedirectUrl(context, String.class));
     }
 
@@ -109,11 +116,6 @@ class DelegatedAuthenticationClientFinishLogoutActionTests {
         context.withUserAgent();
         context.setParameter(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE, "SAML2Client");
         val samlClient = (SAML2Client) identityProviders.findClient("SAML2Client").orElseThrow();
-
-        val handler = mock(LogoutProcessor.class);
-        when(handler.processLogout(any(), any())).thenReturn(new FoundAction("https://google.com"));
-        samlClient.setLogoutProcessor(handler);
-
         val credentialExtractor = mock(CredentialsExtractor.class);
         when(credentialExtractor.extract(any())).thenReturn(Optional.of(mock(SAML2Credentials.class)));
         samlClient.setCredentialsExtractor(credentialExtractor);

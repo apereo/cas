@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 6.2.0
  */
 @ExtendWith(CasTestExtension.class)
-@SpringBootTest(classes =BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = BaseDelegatedAuthenticationTests.SharedTestConfiguration.class)
 @Tag("Delegation")
 class DelegatedAuthenticationClientLogoutActionTests {
     @Autowired
@@ -62,7 +62,10 @@ class DelegatedAuthenticationClientLogoutActionTests {
         val result = delegatedAuthenticationClientLogoutAction.execute(context);
         assertNull(result);
         assertEquals(HttpStatus.SC_MOVED_TEMPORARILY, context.getHttpServletResponse().getStatus());
-        assertNotNull(DelegationWebflowUtils.getDelegatedAuthenticationLogoutRequest(context, DelegatedAuthenticationClientLogoutRequest.class));
+        val delegatedAuthenticationLogoutRequest = DelegationWebflowUtils.getDelegatedAuthenticationLogoutRequest(context, DelegatedAuthenticationClientLogoutRequest.class);
+        assertNotNull(delegatedAuthenticationLogoutRequest);
+        assertNotNull(delegatedAuthenticationLogoutRequest.getTarget());
+        assertNotNull(delegatedAuthenticationLogoutRequest.getLocation());
         val tgt = new MockTicketGrantingTicket("casuser");
 
         logoutManager.performLogout(SingleLogoutExecutionRequest.builder()

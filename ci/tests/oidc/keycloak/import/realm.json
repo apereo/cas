@@ -983,6 +983,64 @@
       ]
     },
     {
+      "id": "f0df6eb4-1210-4432-9d53-87bdebc928a7",
+      "clientId": "cas:apereo:pac4j:saml",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "name": "CAS Apereo Pac4j SAML Client",
+      "clientAuthenticatorType": "client-secret",
+      "secret": "**********",
+      "redirectUris": [
+        "https://localhost:8443/cas/login?client_name=keycloak"
+      ],
+      "webOrigins": [
+        "https://localhost:8443"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "publicClient": false,
+      "frontchannelLogout": false,
+      "protocol": "saml",
+      "attributes": {
+        "saml.force.post.binding": "true",
+        "saml_single_logout_service_url_post": "https://localhost:8443/cas/login?client_name=keycloak",
+        "saml.encrypt": "false",
+        "saml_assertion_consumer_url_post": "https://localhost:8443/cas/login?client_name=keycloak",
+        "saml.server.signature": "true",
+        "saml.server.signature.keyinfo.ext": "false",
+        "saml.signing.certificate": "MIIDszCCApugAwIBAgIEG5/cDDANBgkqhkiG9w0BAQsFADCBiTEQMA4GA1UEBxMHRmlyZW56ZTEPMA0GA1UECBMGSXRhbGlhMQswCQYDVQQGEwJJVDEOMAwGA1UECxMFVW5pRkkxKzApBgNVBAoMIlVuaXZlcnNpdMOgIGRlZ2xpIFN0dWRpIGRpIEZpcmVuemUxGjAYBgNVBAMTEWlkZW50aXR5LnVuaWZpLml0MB4XDTIwMDczMDE1MTAyMloXDTMwMDcyODE1MTAyMlowgYkxEDAOBgNVBAcTB0ZpcmVuemUxDzANBgNVBAgTBkl0YWxpYTELMAkGA1UEBhMCSVQxDjAMBgNVBAsTBVVuaUZJMSswKQYDVQQKDCJVbml2ZXJzaXTDoCBkZWdsaSBTdHVkaSBkaSBGaXJlbnplMRowGAYDVQQDExFpZGVudGl0eS51bmlmaS5pdDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAIXYkfjjH0SyRghlWo0D4hd7FqWMWj6IZDqfk7ZRBnI4ndGaF9s5XiBDVyQz19iNORzUrDo4UrLFtg8lFmsRqTo40YoA9el6AU3dXZ4YA4hcd0jF6fq3kj6lycLaW6HaOdK7OGJSzYviupXikINFooOHwy5TNr9sGoZA/xYCcKAhl5Cjx43Yr/Yg9ionYC4akzgSqRBtLTcWptWJ9d/iQeXMerqr+lfcZppxdCX4xZZ9/CEIxxCgl6Ik8NEraea8xFRHN3O+Hwtrv2sF8k88xkFRu99t3QMLrvudmeyT4Dmd87iIR4YqEPHtwhLxsA4vZO3XtuY0G3tMCzdjjvg9En8CAwEAAaMhMB8wHQYDVR0OBBYEFHXcXxd07qMUpEc7u3ErQdMRkVwkMA0GCSqGSIb3DQEBCwUAA4IBAQA/7F9Y9F0NcslIfmyJ5QZPJXzHqbMTaso1FxgPwLyDGiZ+ZGAxrGqRN3RjmV4fIt9cclxZi8ix6UPSakZu5hanjyJyZB8azIKCpVLsI4AWhs6VDrnalcCYaVdEQcIH+LGCikYrE2IEwYyJnImd9CNFeeKYd4EprkrCiFvKzkOPhDO3Z8vppCGT6hfhDVwTwz8aKL70YWQFmVuqr46wR9ICTQPDmY9etv70yjaQlKkkqnqVjgJM7HniDPhzQbUIFAK/NhCD5eJH0Ha5uXAVa9fsCHYttc4qmWeJIl4O3dF9xX9/Oh7kJkciichPVvbqQgfgLZwhRp7iJ6EKkpJG8xiA",
+        "saml_single_logout_service_url_redirect": "https://localhost:8443/cas/login?client_name=keycloak",
+        "saml.signature.algorithm": "RSA_SHA256",
+        "saml_force_name_id_format": "false",
+        "saml.client.signature": "false",
+        "saml.encryption.certificate": "MIIDszCCApugAwIBAgIEG5/cDDANBgkqhkiG9w0BAQsFADCBiTEQMA4GA1UEBxMHRmlyZW56ZTEPMA0GA1UECBMGSXRhbGlhMQswCQYDVQQGEwJJVDEOMAwGA1UECxMFVW5pRkkxKzApBgNVBAoMIlVuaXZlcnNpdMOgIGRlZ2xpIFN0dWRpIGRpIEZpcmVuemUxGjAYBgNVBAMTEWlkZW50aXR5LnVuaWZpLml0MB4XDTIwMDczMDE1MTAyMloXDTMwMDcyODE1MTAyMlowgYkxEDAOBgNVBAcTB0ZpcmVuemUxDzANBgNVBAgTBkl0YWxpYTELMAkGA1UEBhMCSVQxDjAMBgNVBAsTBVVuaUZJMSswKQYDVQQKDCJVbml2ZXJzaXTDoCBkZWdsaSBTdHVkaSBkaSBGaXJlbnplMRowGAYDVQQDExFpZGVudGl0eS51bmlmaS5pdDCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAIXYkfjjH0SyRghlWo0D4hd7FqWMWj6IZDqfk7ZRBnI4ndGaF9s5XiBDVyQz19iNORzUrDo4UrLFtg8lFmsRqTo40YoA9el6AU3dXZ4YA4hcd0jF6fq3kj6lycLaW6HaOdK7OGJSzYviupXikINFooOHwy5TNr9sGoZA/xYCcKAhl5Cjx43Yr/Yg9ionYC4akzgSqRBtLTcWptWJ9d/iQeXMerqr+lfcZppxdCX4xZZ9/CEIxxCgl6Ik8NEraea8xFRHN3O+Hwtrv2sF8k88xkFRu99t3QMLrvudmeyT4Dmd87iIR4YqEPHtwhLxsA4vZO3XtuY0G3tMCzdjjvg9En8CAwEAAaMhMB8wHQYDVR0OBBYEFHXcXxd07qMUpEc7u3ErQdMRkVwkMA0GCSqGSIb3DQEBCwUAA4IBAQA/7F9Y9F0NcslIfmyJ5QZPJXzHqbMTaso1FxgPwLyDGiZ+ZGAxrGqRN3RjmV4fIt9cclxZi8ix6UPSakZu5hanjyJyZB8azIKCpVLsI4AWhs6VDrnalcCYaVdEQcIH+LGCikYrE2IEwYyJnImd9CNFeeKYd4EprkrCiFvKzkOPhDO3Z8vppCGT6hfhDVwTwz8aKL70YWQFmVuqr46wR9ICTQPDmY9etv70yjaQlKkkqnqVjgJM7HniDPhzQbUIFAK/NhCD5eJH0Ha5uXAVa9fsCHYttc4qmWeJIl4O3dF9xX9/Oh7kJkciichPVvbqQgfgLZwhRp7iJ6EKkpJG8xiA",
+        "saml.authnstatement": "true",
+        "saml_name_id_format": "email",
+        "saml_signature_canonicalization_method": "http://www.w3.org/2001/10/xml-exc-c14n#"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "web-origins",
+        "role_list",
+        "profile",
+        "roles",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
       "id": "003f879f-c8fe-43ed-b9d8-5005478e389e",
       "clientId": "realm-management",
       "name": "${client_realm-management}",
