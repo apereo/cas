@@ -1,10 +1,12 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.BaseDelegatedAuthenticationTests;
 import org.apereo.cas.web.flow.CasWebflowConstants;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
@@ -44,6 +46,20 @@ class DelegatedAuthenticationIdentityProviderFinalizeLogoutActionTests {
         context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "CasClient");
         context.setParameter(casProperties.getLogout().getRedirectParameter().getFirst(), "https://github.com");
         context.withUserAgent();
+        assertNull(action.execute(context));
+        assertNotNull(WebUtils.getLogoutRedirectUrl(context.getHttpServletRequest(), String.class));
+    }
+
+    @Test
+    void verifyDelegatedLogoutRequestRedirect() throws Throwable {
+        val context = MockRequestContext.create(applicationContext).withUserAgent();
+        context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "CasClient");
+
+        val logoutRequest = DelegatedAuthenticationClientLogoutRequest.builder()
+            .target("https://google.com")
+            .status(200)
+            .build();
+        DelegationWebflowUtils.putDelegatedAuthenticationLogoutRequest(context, logoutRequest);
         assertNull(action.execute(context));
         assertNotNull(WebUtils.getLogoutRedirectUrl(context.getHttpServletRequest(), String.class));
     }

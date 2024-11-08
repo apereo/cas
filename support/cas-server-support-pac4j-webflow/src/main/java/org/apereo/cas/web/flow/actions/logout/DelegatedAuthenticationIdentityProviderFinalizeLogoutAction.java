@@ -1,10 +1,11 @@
 package org.apereo.cas.web.flow.actions.logout;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationConfigurationContext;
+import org.apereo.cas.web.flow.DelegationWebflowUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -13,7 +14,6 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.Optional;
 
 /**
@@ -35,24 +35,37 @@ public class DelegatedAuthenticationIdentityProviderFinalizeLogoutAction extends
         val clientName = configContext.getDelegatedClientNameExtractor().extract(webContext).orElse(StringUtils.EMPTY);
         val client = configContext.getIdentityProviders().findClient(clientName).orElseThrow();
         LOGGER.debug("Received logout request from [{}]", client.getName());
-
-        val redirectUrl = configContext.getCasProperties().getLogout().getRedirectParameter()
+        var redirectUrl = configContext.getCasProperties().getLogout().getRedirectParameter()
             .stream()
             .map(webContext::getRequestParameter)
             .filter(Optional::isPresent)
             .flatMap(Optional::stream)
             .filter(StringUtils::isNotBlank)
-            .findFirst();
-        redirectUrl.filter(StringUtils::isNotBlank).ifPresent(url -> {
-            val builder = UriComponentsBuilder.fromHttpUrl(url);
+            .findFirst()
+            .orElse(StringUtils.EMPTY);
+        if (StringUtils.isNotBlank(redirectUrl)) {
+            val builder = UriComponentsBuilder.fromUriString(redirectUrl);
             val logoutUrl = builder.build().toUriString();
             LOGGER.debug("Redirect URL after logout is: [{}]", logoutUrl);
             WebUtils.putLogoutRedirectUrl(request, logoutUrl);
-        });
-        request.getServletContext()
-            .getRequestDispatcher(CasProtocolConstants.ENDPOINT_LOGOUT)
-            .forward(request, response);
+        } else {
+            val logoutRequest = DelegationWebflowUtils.getDelegatedAuthenticationLogoutRequest(requestContext,
+                DelegatedAuthenticationClientLogoutRequest.class);
+            if (logoutRequest != null && StringUtils.isNotBlank(logoutRequest.getTarget())) {
+                redirectUrl = logoutRequest.getTarget();
+                WebUtils.putLogoutRedirectUrl(request, logoutRequest.getTarget());
+            }
+        }
+
+        val logoutEndpoint = logoutRedirectUrl(redirectUrl);
+        LOGGER.debug("Redirecting to [{}]", logoutEndpoint);
+        response.sendRedirect(logoutEndpoint);
         requestContext.getExternalContext().recordResponseComplete();
         return null;
+    }
+
+    private static String logoutRedirectUrl(final String logoutUrl) {
+        var logoutEndpoint = StringUtils.removeStart(CasProtocolConstants.ENDPOINT_LOGOUT, "/");
+        return logoutEndpoint.concat("?".concat(CasProtocolConstants.PARAMETER_SERVICE).concat("=").concat(logoutUrl));
     }
 }
