@@ -332,12 +332,18 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
             tokenRequestContext.getClaims(),
             tokenRequestContext.getResponseType(),
             tokenRequestContext.getGrantType());
-        LOGGER.debug("Adding refresh token [{}] to the registry", refreshToken);
-        val addedRefreshToken = addTicketToRegistry(refreshToken, ticketGrantingTicket);
-        if (tokenRequestContext.isExpireOldRefreshToken()) {
-            expireOldRefreshToken(tokenRequestContext);
+        
+        if (refreshToken.getExpirationPolicy().getTimeToLive() > 0) {
+            LOGGER.debug("Adding refresh token [{}] to the registry", refreshToken);
+            val addedRefreshToken = addTicketToRegistry(refreshToken, ticketGrantingTicket);
+            if (tokenRequestContext.isExpireOldRefreshToken()) {
+                expireOldRefreshToken(tokenRequestContext);
+            }
+            return addedRefreshToken;
         }
-        return addedRefreshToken;
+        LOGGER.debug("Refresh token expiration policy for [{}] does not allow refresh tokens to be added to the registry",
+            refreshToken.getId());
+        return null;
     }
 
     private OAuth20DeviceUserCode getDeviceUserCodeFromRegistry(final OAuth20DeviceToken deviceCodeTicket) {

@@ -54,6 +54,7 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
             .withGenerateRefreshToken(shouldRenewRefreshToken)
             .withExpireOldRefreshToken(shouldRenewRefreshToken));
     }
+    
     @Override
     protected OAuthRegisteredService getOAuthRegisteredServiceBy(final WebContext context) {
         val clientId = getRegisteredServiceIdentifierFromRequest(context);
