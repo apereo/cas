@@ -801,6 +801,7 @@ public abstract class AbstractOAuth20Tests {
             .grantType(grantType)
             .responseType(OAuth20ResponseTypes.CODE)
             .ticketGrantingTicket(ticketGrantingTicket)
+            .generateRefreshToken(true)
             .claims(oauthRequestParameterResolver.resolveRequestClaims(webContext))
             .requestedTokenType(oauthRequestParameterResolver.resolveRequestParameter(webContext, OAuth20Constants.REQUESTED_TOKEN_TYPE)
                 .map(OAuth20TokenExchangeTypes::from)

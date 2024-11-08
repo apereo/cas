@@ -78,7 +78,6 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
     protected String generateIdToken(final OAuth20AccessTokenResponseResult result,
                                      final OAuth20AccessToken accessToken) {
         return FunctionUtils.doUnchecked(() -> {
-
             val refreshToken = result.getGeneratedToken().getRefreshToken().orElse(null);
             val idTokenContext = IdTokenGenerationContext.builder()
                 .accessToken(accessToken)

@@ -395,4 +395,25 @@ class OAuth20DefaultTokenGeneratorTests {
             assertFalse(mv.getModel().containsKey(OAuth20Constants.ACCESS_TOKEN));
         }
     }
+
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.oauth.access-token.crypto.alg=" + ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256,
+        "cas.authn.oauth.access-token.crypto.encryption.key=AZ5y4I9qzKPYUVNL2Td4RMbpg6Z-ldui8VEFg8hsj1M",
+        "cas.authn.oauth.access-token.crypto.signing.key=cAPyoHMrOMWrwydOXzBA-ufZQM-TilnLjbRgMQWlUlwFmy07bOtAgCIdNBma3c5P4ae_JV6n1OpOAYqSh2NkmQ",
+        "cas.authn.oauth.access-token.crypto.enabled=true",
+        "cas.authn.oauth.refresh-token.time-to-kill-in-seconds=0"
+    })
+    class NoRefreshTokenTests extends AbstractOAuth20Tests {
+        @Test
+        void verifyOperation() throws Throwable {
+            val registeredService = getRegisteredService(UUID.randomUUID().toString(), "secret", new LinkedHashSet<>());
+            registeredService.setJwtAccessToken(true);
+            registeredService.setGenerateRefreshToken(true);
+            servicesManager.save(registeredService);
+            val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
+            val mv = generateAccessTokenResponseAndGetModelAndView(registeredService, authentication, OAuth20GrantTypes.AUTHORIZATION_CODE);
+            assertFalse(mv.getModel().containsKey(OAuth20Constants.REFRESH_TOKEN));
+        }
+    }
 }
