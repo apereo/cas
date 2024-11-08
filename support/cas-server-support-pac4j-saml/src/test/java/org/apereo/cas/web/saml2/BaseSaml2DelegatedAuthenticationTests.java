@@ -47,9 +47,16 @@ public abstract class BaseSaml2DelegatedAuthenticationTests {
             saml2PostClient.setCallbackUrl("http://callback.example.org");
             saml2PostClient.setName("SAML2ClientPostBinding");
 
+            val saml2RedirectLogoutConfig = getSAML2Configuration();
+            saml2RedirectLogoutConfig.setSpLogoutRequestBindingType("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect");
+            val saml2RedirectLogoutClient = new SAML2Client(saml2RedirectLogoutConfig);
+            saml2RedirectLogoutClient.setCallbackUrl("http://callback.example.org");
+            saml2RedirectLogoutClient.setName("SAML2RedirectLogoutClient");
+            
             return List.of(
                 new ConfigurableDelegatedClient(saml2Client),
-                new ConfigurableDelegatedClient(saml2PostClient)
+                new ConfigurableDelegatedClient(saml2PostClient),
+                new ConfigurableDelegatedClient(saml2RedirectLogoutClient)
             );
             
         }

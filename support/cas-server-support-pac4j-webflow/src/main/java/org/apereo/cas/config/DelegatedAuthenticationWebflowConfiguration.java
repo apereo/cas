@@ -482,6 +482,8 @@ class DelegatedAuthenticationWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action delegatedAuthenticationClientLogoutAction(
+            @Qualifier(TicketRegistry.BEAN_NAME)
+            final TicketRegistry ticketRegistry,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(DelegatedIdentityProviders.BEAN_NAME)
@@ -494,7 +496,8 @@ class DelegatedAuthenticationWebflowConfiguration {
                 .supply(() -> WebflowActionBeanSupplier.builder()
                     .withApplicationContext(applicationContext)
                     .withProperties(casProperties)
-                    .withAction(() -> new DelegatedAuthenticationClientLogoutAction(identityProviders, delegatedClientDistributedSessionStore))
+                    .withAction(() -> new DelegatedAuthenticationClientLogoutAction(identityProviders,
+                        delegatedClientDistributedSessionStore, ticketRegistry))
                     .withId(CasWebflowConstants.ACTION_ID_DELEGATED_AUTHENTICATION_CLIENT_LOGOUT)
                     .build()
                     .get())

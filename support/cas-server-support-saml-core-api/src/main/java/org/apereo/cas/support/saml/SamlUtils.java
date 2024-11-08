@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml;
 import org.apereo.cas.support.saml.util.credential.BasicResourceCredentialFactoryBean;
 import org.apereo.cas.support.saml.util.credential.BasicX509CredentialFactoryBean;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.function.FunctionUtils;
@@ -10,14 +11,17 @@ import org.apereo.cas.util.function.FunctionUtils;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import net.shibboleth.shared.codec.Base64Support;
 import net.shibboleth.shared.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.cryptacular.util.CertUtil;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
+import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.metadata.resolver.filter.impl.SignatureValidationFilter;
+import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.security.credential.BasicCredential;
 import org.opensaml.security.credential.impl.StaticCredentialResolver;
 import org.opensaml.soap.common.SOAPObject;
@@ -52,6 +56,8 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
 
 /**
  * This is {@link SamlUtils}.
@@ -382,5 +388,32 @@ public class SamlUtils {
             }
         }
         return criteriaSet;
+    }
+
+    /**
+     * Convert to saml object.
+     *
+     * @param <T>                the type parameter
+     * @param openSamlConfigBean the open saml config bean
+     * @param requestValue       the request value
+     * @param clazz              the clazz
+     * @return the final xml object
+     */
+    public static <T extends RequestAbstractType> T convertToSamlObject(final OpenSamlConfigBean openSamlConfigBean,
+                                                                        final String requestValue, final Class<T> clazz) {
+        try {
+            LOGGER.trace("Retrieving SAML request from [{}]", requestValue);
+            val decodedBytes = Base64Support.decode(requestValue);
+            try (val is = new InflaterInputStream(new ByteArrayInputStream(decodedBytes), new Inflater(true))) {
+                return clazz.cast(XMLObjectSupport.unmarshallFromInputStream(openSamlConfigBean.getParserPool(), is));
+            }
+        } catch (final Throwable e) {
+            return FunctionUtils.doUnchecked(() -> {
+                val encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes(StandardCharsets.UTF_8));
+                try (val is = new ByteArrayInputStream(encodedRequest)) {
+                    return clazz.cast(XMLObjectSupport.unmarshallFromInputStream(openSamlConfigBean.getParserPool(), is));
+                }
+            });
+        }
     }
 }
