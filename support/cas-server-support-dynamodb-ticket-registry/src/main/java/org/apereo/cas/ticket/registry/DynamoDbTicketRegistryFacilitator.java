@@ -159,7 +159,7 @@ public class DynamoDbTicketRegistryFacilitator {
                 .operator(ComparisonOperator.EQ)
                 .build());
         }
-        
+
         return DynamoDbTableUtils.scanPaginator(amazonDynamoDBClient,
             definition.getProperties().getStorageName(), criteria.getCount(),
             keys, DynamoDbTicketRegistryFacilitator::deserializeTicket);
@@ -379,12 +379,18 @@ public class DynamoDbTicketRegistryFacilitator {
 
     private static Map<String, AttributeValue> convertAttributes(final TicketPayload payload) {
         val attributes = new HashMap<String, AttributeValue>();
-        payload.getAttributes().forEach((key, values) -> {
-            val attributeValues = AttributeValue.builder()
-                .ss(values.stream().map(Object::toString).collect(Collectors.toList()))
-                .build();
-            attributes.put(key, attributeValues);
-        });
+        payload.getAttributes()
+            .entrySet()
+            .stream()
+            .filter(entry -> !entry.getValue().isEmpty())
+            .forEach(entry -> {
+                val attributeValues = AttributeValue.builder()
+                    .ss(entry.getValue().stream().map(Object::toString).collect(Collectors.toList()))
+                    .build();
+                if (!attributeValues.ss().isEmpty()) {
+                    attributes.put(entry.getKey(), attributeValues);
+                }
+            });
         return attributes;
     }
 
