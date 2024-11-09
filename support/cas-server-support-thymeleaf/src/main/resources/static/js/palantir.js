@@ -2658,14 +2658,27 @@ async function initializeCasProtocolOperations() {
             password: password,
             service: service
         }, data => {
-            const editor = initializeAceEditor("casProtocolEditor", format);
-            editor.setReadOnly(true);
-            editor.setValue(data);
-            editor.gotoLine(1);
+            const casProtocolEditor = initializeAceEditor("casProtocolEditor", format);
+            casProtocolEditor.setReadOnly(true);
+            casProtocolEditor.setValue(data.response);
+            casProtocolEditor.gotoLine(1);
+
+            const casProtocolServiceEditor = initializeAceEditor("casProtocolServiceEditor", "json");
+            casProtocolServiceEditor.setReadOnly(true);
+            casProtocolServiceEditor.setValue(JSON.stringify(data.registeredService, null, 2));
+            casProtocolServiceEditor.gotoLine(1);
+            
             $("#casProtocolEditorContainer").removeClass("d-none");
+            $("#casProtocolServiceEditorContainer").removeClass("d-none");
+
+            updateNavigationSidebar();
+            $("#casProtocolServiceNavigation").off().on("click", () => {
+                navigateToApplication(data.registeredService.id);
+            });
         }).fail((xhr, status, error) => {
             displayBanner(xhr);
             $("#casProtocolEditorContainer").addClass("d-none");
+            $("#casProtocolServiceEditorContainer").addClass("d-none");
         });
     }
 

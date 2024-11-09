@@ -23,11 +23,17 @@ import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.actuate.endpoint.Access;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -62,8 +68,8 @@ public class CasProtocolValidationEndpoint extends BaseCasRestActuatorEndpoint {
             @Parameter(name = "password", required = false, description = "The password"),
             @Parameter(name = "service", required = true, description = "The service")
         })
-    public void validate(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
-        renderValidationView(request, response, LegacyValidateController.class);
+    public ModelAndView validate(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
+        return renderValidationView(request, response, LegacyValidateController.class);
     }
 
     /**
@@ -82,8 +88,8 @@ public class CasProtocolValidationEndpoint extends BaseCasRestActuatorEndpoint {
             @Parameter(name = "password", required = false, description = "The password"),
             @Parameter(name = "service", required = true, description = "The service")
         })
-    public void serviceValidate(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
-        renderValidationView(request, response, ServiceValidateController.class);
+    public ModelAndView serviceValidate(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
+        return renderValidationView(request, response, ServiceValidateController.class);
     }
 
     /**
@@ -102,13 +108,13 @@ public class CasProtocolValidationEndpoint extends BaseCasRestActuatorEndpoint {
             @Parameter(name = "password", required = false, description = "The password"),
             @Parameter(name = "service", required = true, description = "The service")
         })
-    public void p3ServiceValidate(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
-        renderValidationView(request, response, V3ServiceValidateController.class);
+    public ModelAndView p3ServiceValidate(final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
+        return renderValidationView(request, response, V3ServiceValidateController.class);
     }
 
-    protected void renderValidationView(final HttpServletRequest request,
-                                        final HttpServletResponse response,
-                                        final Class viewClass) throws Throwable {
+    protected ModelAndView renderValidationView(final HttpServletRequest request,
+                                                final HttpServletResponse response,
+                                                final Class viewClass) throws Throwable {
         val selectedService = (WebApplicationService) configurationContext.getServiceFactory()
             .createService(request, WebApplicationService.class);
         Assert.notNull(selectedService, "Service is missing and must be specified");
@@ -148,7 +154,20 @@ public class CasProtocolValidationEndpoint extends BaseCasRestActuatorEndpoint {
 
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION, assertion);
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_SERVICE, selectedService);
-        modelAndView.getView().render(modelAndView.getModel(), request, response);
+        modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_REGISTERED_SERVICE, registeredService);
+
+        val requestWrapper = new ContentCachingRequestWrapper(request);
+        val responseWrapper = new ContentCachingResponseWrapper(response);
+        try {
+            Objects.requireNonNull(modelAndView.getView()).render(modelAndView.getModel(), requestWrapper, responseWrapper);
+        } finally {
+            val responseArray = responseWrapper.getContentAsByteArray();
+            val output = new String(responseArray, responseWrapper.getCharacterEncoding());
+            modelAndView.addObject("response", output);
+            modelAndView.setView(new MappingJackson2JsonView());
+            modelAndView.setStatus(HttpStatus.OK);
+        }
+        return modelAndView;
     }
 
     protected Authentication buildAuthentication(final HttpServletRequest request,

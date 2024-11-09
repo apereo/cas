@@ -1,6 +1,7 @@
 package org.apereo.cas.web.report;
 
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.config.CasThymeleafAutoConfiguration;
@@ -23,6 +24,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,14 +62,21 @@ class CasProtocolValidationEndpointTests extends AbstractCasEndpointTests {
         val request = prepareRequest(password);
         val response = new MockHttpServletResponse();
 
-        endpoint.validate(request, response);
-        assertNotNull(response.getContentAsString());
+        var mv = endpoint.validate(request, response);
+        assertModelAndView(mv);
+        mv = endpoint.serviceValidate(request, response);
+        assertModelAndView(mv);
+        mv = endpoint.p3ServiceValidate(request, response);
+        assertModelAndView(mv);
+    }
 
-        endpoint.serviceValidate(request, response);
-        assertNotNull(response.getContentAsString());
-
-        endpoint.p3ServiceValidate(request, response);
-        assertNotNull(response.getContentAsString());
+    private static void assertModelAndView(final ModelAndView mv) {
+        assertNotNull(mv);
+        assertTrue(mv.getStatus().is2xxSuccessful());
+        assertTrue(mv.getModel().containsKey(CasViewConstants.MODEL_ATTRIBUTE_REGISTERED_SERVICE));
+        assertTrue(mv.getModel().containsKey(CasViewConstants.MODEL_ATTRIBUTE_REGISTERED_SERVICE));
+        assertTrue(mv.getModel().containsKey(CasViewConstants.MODEL_ATTRIBUTE_NAME_ASSERTION));
+        assertTrue(mv.getModel().containsKey("response"));
     }
 
     private HttpServletRequest prepareRequest(final String password) {
