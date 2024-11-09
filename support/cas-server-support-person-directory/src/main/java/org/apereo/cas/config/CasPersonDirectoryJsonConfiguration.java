@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
  * @since 6.4.0
  */
 @Slf4j
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory, module = "json")
 @Configuration(value = "CasPersonDirectoryJsonConfiguration", proxyBeanMethods = false)
 class CasPersonDirectoryJsonConfiguration {
     private static final BeanCondition CONDITION = BeanCondition.on("cas.authn.attribute-repository.json[0].location").exists();

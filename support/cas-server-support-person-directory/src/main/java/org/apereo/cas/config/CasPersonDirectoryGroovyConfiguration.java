@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * @since 6.4.0
  */
 @Slf4j
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory, module = "groovy")
 @ConditionalOnMissingGraalVMNativeImage
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "CasPersonDirectoryGroovyConfiguration", proxyBeanMethods = false)
