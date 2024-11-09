@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  */
 
 @Slf4j
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory, module = "rest")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Configuration(value = "CasPersonDirectoryRestConfiguration", proxyBeanMethods = false)
 class CasPersonDirectoryRestConfiguration {

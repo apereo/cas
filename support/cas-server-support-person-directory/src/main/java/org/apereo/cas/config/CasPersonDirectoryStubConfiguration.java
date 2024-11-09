@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  */
 @Configuration(value = "CasPersonDirectoryStubConfiguration", proxyBeanMethods = false)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory)
+@ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.PersonDirectory, module = "stub")
 class CasPersonDirectoryStubConfiguration {
 
     @Configuration(value = "StubAttributeRepositoryConfiguration", proxyBeanMethods = false)
