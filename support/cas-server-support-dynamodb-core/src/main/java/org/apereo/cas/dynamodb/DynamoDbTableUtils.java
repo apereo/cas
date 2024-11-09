@@ -3,7 +3,6 @@ package org.apereo.cas.dynamodb;
 import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
-
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -26,7 +25,6 @@ import software.amazon.awssdk.services.dynamodb.model.TableDescription;
 import software.amazon.awssdk.services.dynamodb.model.TableStatus;
 import software.amazon.awssdk.services.dynamodb.model.TimeToLiveSpecification;
 import software.amazon.awssdk.services.dynamodb.model.UpdateTimeToLiveRequest;
-
 import java.io.Serial;
 import java.util.List;
 import java.util.Map;
@@ -131,14 +129,16 @@ public class DynamoDbTableUtils {
                                                final List<KeySchemaElement> keySchemaElements) throws Exception {
 
         val billingMode = BillingMode.fromValue(dynamoDbProperties.getBillingMode().name());
-        val throughput = billingMode == BillingMode.PROVISIONED ? ProvisionedThroughput.builder()
-            .readCapacityUnits(dynamoDbProperties.getReadCapacity())
-            .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
-            .build() : null;
+        val provisionedThroughput = billingMode == BillingMode.PROVISIONED
+            ? ProvisionedThroughput.builder()
+                .readCapacityUnits(dynamoDbProperties.getReadCapacity())
+                .writeCapacityUnits(dynamoDbProperties.getWriteCapacity())
+                .build()
+            : null;
         val request = CreateTableRequest.builder()
             .attributeDefinitions(attributeDefinitions)
             .keySchema(keySchemaElements)
-            .provisionedThroughput(throughput)
+            .provisionedThroughput(provisionedThroughput)
             .tableName(tableName)
             .billingMode(billingMode)
             .build();

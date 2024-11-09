@@ -77,7 +77,12 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         val currentAttributes = getCombinedTicketAttributes(ticket);
         if (isCipherExecutorEnabled()) {
             val encodedAttributes = new HashMap<String, Object>(currentAttributes.size());
-            currentAttributes.forEach((key, value) -> encodedAttributes.put(digestIdentifier(key), digestIdentifier(value)));
+            currentAttributes.forEach((key, value) -> {
+                val allValues = digestIdentifier(value);
+                if (!allValues.isEmpty()) {
+                    encodedAttributes.put(digestIdentifier(key), allValues);
+                }
+            });
             return encodedAttributes;
         }
         return currentAttributes;
