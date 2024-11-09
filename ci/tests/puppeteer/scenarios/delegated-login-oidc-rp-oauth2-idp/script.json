@@ -39,5 +39,5 @@
     "--cas.ticket.registry.jpa.url=jdbc:mysql://localhost:3306/mysql?allowPublicKeyRetrieval=true&characterEncoding=UTF-8&useSSL=FALSE",
     "--cas.ticket.registry.jpa.dialect=org.hibernate.dialect.MySQLDialect"
   ],
-  "initScript": "${PWD}/ci/tests/mysql/run-mysql-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/oidc/run-keycloak-server.sh"
+  "initScript": "${PWD}/ci/tests/mysql/run-mysql-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/keycloak/run-keycloak-server.sh"
 }
