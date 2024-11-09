@@ -47,6 +47,12 @@ public class OAuthAccessTokenProperties implements Serializable {
     private boolean createAsJwt;
 
     /**
+     * Whether CAS should include extra CAS attributes as claims in the JWT access token.
+     * This setting is only relevant if the access token is a determined to be a JWT.
+     */
+    private boolean includeClaimsInJwt = true;
+
+    /**
      * The storage object name used and created by CAS to hold OAuth access tokens
      * in the backing ticket registry implementation.
      */
