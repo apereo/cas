@@ -235,10 +235,10 @@ public class OAuth20JwtAccessTokenEncoder {
 
         @Override
         public String encode(final String value, final Object[] parameters) {
-            if (registeredService instanceof final OAuthRegisteredService oAuthRegisteredService
-                && shouldEncodeAsJwt(oAuthRegisteredService, accessToken)) {
+            if (registeredService instanceof final OAuthRegisteredService oauthRegisteredService
+                && shouldEncodeAsJwt(oauthRegisteredService, accessToken)) {
                 return FunctionUtils.doUnchecked(() -> {
-                    val request = getJwtRequestBuilder(oAuthRegisteredService, accessToken);
+                    val request = getJwtRequestBuilder(oauthRegisteredService, accessToken);
                     return configurationContext.getAccessTokenJwtBuilder().build(request);
                 });
             }
@@ -268,6 +268,12 @@ public class OAuth20JwtAccessTokenEncoder {
         protected Map<String, List<Object>> collectAttributes(final OAuth20AccessToken accessToken,
                                                               final OAuthRegisteredService registeredService) throws Throwable {
 
+            val accessTokenProps = configurationContext.getCasProperties().getAuthn().getOauth().getAccessToken();
+            if (!accessTokenProps.isIncludeClaimsInJwt()) {
+                LOGGER.debug("Access token JWT claims are not configured to include attributes as claims");
+                return new HashMap<>();
+            }
+            
             val activePrincipal = buildPrincipalForAttributeFilter(accessToken, registeredService);
             val principal = configurationContext.getProfileScopeToAttributesFilter()
                 .filter(accessToken.getService(), activePrincipal, registeredService, accessToken);

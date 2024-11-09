@@ -9,8 +9,10 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
+import org.apereo.cas.token.JwtBuilder;
 import lombok.val;
 import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
+import org.jose4j.jwt.JwtClaims;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -125,6 +127,38 @@ class OAuth20JwtAccessTokenEncoderTests {
             assertNotNull(encodedAccessToken1);
             val encodedAccessToken2 = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, registeredService, accessToken).encode(accessToken.getId());
             assertEquals(encodedAccessToken1, encodedAccessToken2);
+        }
+    }
+
+    @Nested
+    @TestPropertySource(properties = {
+        "cas.authn.oauth.access-token.crypto.enabled=false",
+        "cas.authn.oauth.access-token.create-as-jwt=true",
+        "cas.authn.oauth.access-token.include-claims-in-jwt=false"
+    })
+    class NoClaimsInJwt extends AbstractOAuth20Tests {
+
+        private OAuthRegisteredService getRegisteredServiceForJwtAccessTokenWithoutKeys(final OAuth20AccessToken accessToken) {
+            val registeredService = getRegisteredService(accessToken.getService().getId(), UUID.randomUUID().toString(), new LinkedHashSet<>());
+            registeredService.setJwtAccessToken(true);
+            servicesManager.save(registeredService);
+            return registeredService;
+        }
+
+        @Test
+        void verifyAccessTokenIdEncodingWithJwtWithNoCipher() throws Throwable {
+            val accessToken = getAccessToken();
+            val registeredService = getRegisteredServiceForJwtAccessTokenWithoutKeys(accessToken);
+            val encodedAccessToken = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, registeredService, accessToken).encode(accessToken.getId());
+            assertNotNull(encodedAccessToken);
+            val claims = JwtClaims.parse(JwtBuilder.parse(encodedAccessToken).toString());
+            assertEquals(6, claims.getClaimNames().size());
+            assertTrue(claims.hasClaim("sub"));
+            assertTrue(claims.hasClaim("iss"));
+            assertTrue(claims.hasClaim("aud"));
+            assertTrue(claims.hasClaim("exp"));
+            assertTrue(claims.hasClaim("iat"));
+            assertTrue(claims.hasClaim("jti"));
         }
     }
 
