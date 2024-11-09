@@ -10,8 +10,8 @@ const assert = require("assert");
     const codeChallenge = "cwr1RXW4wcqyi0Eq9h1tD2tliFRYf36HMqG0lumwCtE";
     const codeVerifier = "zkuyfY0CcG1yuVojREYwtbnpjOsOleD.OWkBpNVTHKyABMJ0ly_ZKTeOi."
         + "STPvshXsHyShcyAzm6z4ThKr2Y91RKFLvmOkJEiBhaSzIp~YHH3wkrzlB6m~y8h~td_pPg";
-
-    const url = "https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=client&scope="
+    const clientId = "client";
+    const url = `https://localhost:8443/cas/oidc/authorize?response_type=code&client_id=${clientId}&scope=`
         + `openid%20email%20profile%20address%20phone&redirect_uri=${redirectUrl}&code_challenge=${codeChallenge}`
         + "&code_challenge_method=S256&nonce=3d3a7457f9ad3&state=1735fd6c43c14";
 
@@ -63,5 +63,22 @@ const assert = require("assert");
     });
 
     assert(accessToken !== undefined, "Access Token cannot be null");
+
+    const value = `${clientId}:`;
+    const buff = Buffer.alloc(value.length, value);
+    const authzHeader = `Basic ${buff.toString("base64")}`;
+    await cas.log(`Authorization header: ${authzHeader}`);
+    
+    await cas.log(`Introspecting token ${accessToken}`);
+    await cas.doGet(`https://localhost:8443/cas/oidc/introspect?token=${accessToken}`,
+        (res) => {
+            assert(res.data.active === true);
+        }, (error) => {
+            throw `Introspection operation failed: ${error}`;
+        }, {
+            "Authorization": authzHeader,
+            "Content-Type": "application/json"
+        });
+    
     await browser.close();
 })();

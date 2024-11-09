@@ -57,6 +57,11 @@ public interface CasViewConstants {
     String MODEL_ATTRIBUTE_NAME_SERVICE = "service";
 
     /**
+     * The constant representing the registered service in the response.
+     */
+    String MODEL_ATTRIBUTE_REGISTERED_SERVICE = "registeredService";
+
+    /**
      * The constant representing the PGTIOU in the response.
      */
     String MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU = "pgtIou";

@@ -421,11 +421,19 @@ form button i.mdi {
 }
 
 .mr-2 {
-    margin-right: 2px;
+    margin-right: 2px !important;
 }
 
 .mr-4 {
-    margin-right: 4px;
+    margin-right: 4px !important;
+}
+
+.mr-8 {
+    margin-right: 8px !important;
+}
+
+.mr-12 {
+    margin-right: 12px !important;
 }
 
 .pr-2 {

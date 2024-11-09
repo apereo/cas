@@ -75,17 +75,17 @@
                     </section>
                     <div class="d-flex">
                         <button type="button" name="casProtocolV1Button" id="casProtocolV1Button"
-                                class="mdc-button mdc-button--raised">
+                                class="mdc-button mdc-button--raised mr-8">
                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
                                                                aria-hidden="true"></i>V1 Protocol</span>
                         </button>
                         <button type="button" name="casProtocolV2Button" id="casProtocolV2Button"
-                                class="mdc-button mdc-button--raised">
+                                class="mdc-button mdc-button--raised mr-8">
                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
                                                                aria-hidden="true"></i>V2 Protocol</span>
                         </button>
                         <button type="button" name="casProtocolV3Button" id="casProtocolV3Button"
-                                class="mdc-button mdc-button--raised">
+                                class="mdc-button mdc-button--raised mr-8">
                             <span class="mdc-button__label"><i class="mdc-tab__icon mdi mdi-check-all"
                                                                aria-hidden="true"></i>V3 Protocol</span>
                         </button>
@@ -94,6 +94,15 @@
                 <section class="my-3 d-flex h-250px d-none" id="casProtocolEditorContainer">
                       <pre class="ace-editor ace-relative w-100 h-100" id="casProtocolEditor"></pre>
                 </section>
+                  <br/>
+                  <span id="casProtocolServiceEditorContainer" class="d-none">
+                    <h3>Registered Service</h3>
+                    <p>This is the registered service definition that matches the request. You can
+                        <a id="casProtocolServiceNavigation" href="#">navigate to it</a>.</p>
+                    <section class="my-3 d-flex h-350px">
+                        <pre class="ace-editor ace-relative w-100 h-100" id="casProtocolServiceEditor"></pre>
+                    </section>
+                  </span>
             </section>
           </div>
 
