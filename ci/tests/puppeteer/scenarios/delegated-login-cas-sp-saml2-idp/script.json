@@ -35,5 +35,5 @@
     "--logging.level.PROTOCOL_MESSAGE=debug",
     "--logging.level.org.springframework.webflow=debug"
   ],
-  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/oidc/run-keycloak-server.sh"
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/keycloak/run-keycloak-server.sh"
 }

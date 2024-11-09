@@ -56,5 +56,5 @@
     "--cas.ticket.registry.mongo.user-id=root",
     "--cas.ticket.registry.mongo.password=secret"
   ],
-  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/oidc/run-keycloak-server.sh,${PWD}/ci/tests/postgres/run-postgres-server.sh,${PWD}/ci/tests/mongodb/run-mongodb-server.sh"
+  "initScript": "${PWD}/ci/tests/httpbin/run-httpbin-server.sh,${PWD}/ci/tests/keycloak/run-keycloak-server.sh,${PWD}/ci/tests/postgres/run-postgres-server.sh,${PWD}/ci/tests/mongodb/run-mongodb-server.sh"
 }
