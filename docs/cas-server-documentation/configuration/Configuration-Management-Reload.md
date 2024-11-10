@@ -35,7 +35,7 @@ is provided by Spring Cloud embedded in CAS is constantly monitoring sources tha
 The CAS application context and runtime environment that contains all Spring components and bean definitions
 can be reloaded using the following administrative endpoints:
 
-{% include_cached actuators.html endpoints="features,refresh,busenv,bus-refresh,busrefresh,serviceregistry" %}
+{% include_cached actuators.html endpoints="features,refresh,busenv,butshotdown,bus-refresh,busrefresh,serviceregistry" %}
 
 In the event that the [standalone configuration profile](Configuration-Server-Management.html#configuration-strategies) is used to control and direct settings and Spring Cloud configuration server is disabled, CAS may begin to automatically watch and monitor the configuration files indicated by the profile and will auto-reload the state of the runtime application context automatically.
 

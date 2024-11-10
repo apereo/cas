@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderByp
 import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.RegexUtils;
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
