@@ -43,15 +43,14 @@ The following items are new improvements and enhancements presented in this rele
 
 ### Spring Boot 3.4
 
-The migration of the entire codebase to Spring Boot `3.4` is ongoing, and at the moment is waiting for the wider ecosystem
+The migration of the entire codebase to Spring Boot `3.4.x` is ongoing, and at the moment is waiting for the wider ecosystem
 of supporting frameworks and libraries to catch up to changes. We anticipate the work to finalize in the next few
 release candidates and certainly prior to the final release.
 
 The following integrations and extensions remain dysfunctional for now until the underlying library adds
 support for the new version of Spring Boot:
 
-1. [Swagger](../integration/Swagger-Integration.html)
-2. [Spring Boot Admin](../monitoring/Configuring-SpringBootAdmin.html)
+- [Spring Boot Admin](../monitoring/Configuring-SpringBootAdmin.html)
 
 ### OpenRewrite Recipes
 
@@ -68,7 +67,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `499` distinct scenarios. The overall
+and scenarios. At the moment, total number of jobs stands at approximately `502` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
 are now configured to run with parallelism enabled.
 
@@ -82,8 +81,29 @@ and this is just a preparatory step to ensure CAS is ready for the next version 
 ## Other Stuff
       
 - A dedicated metric, `slow.requests.timer`, is now available once system health monitoring is enabled to track slow requests that take longer than 5 seconds.
+- Additional theme property to determine where CAS version details should be displayed in the page footer.
+- Multifactor provider selection is set to utilize ranking strategies when multiple competing MFA triggers vote for different MFA providers.
+- Configuration option to control whether JWT access tokens should include additional attributes and claims beyond the standard claims.
+- DynamoDb ticket registry is adjusted to not track attributes with empty values when storing tickets in string sets.
+- CAS may not generate refresh tokens if the expiration policy for refresh tokens is set to zero.
+- Redirecting to a destination URL after CAS logout is now remembered as a `TST` prior to sending SAML2 logout requests to external identity providers.
+- Actuator endpoints can be secured using a static JSON file that may contain user details and roles.
+- Support for Redis modules via Lettucemod is now extracted into a dedicated module.
+- Scratch codes may also be used to verify an account during Google Authenticator registration flow.
 
 ## Library Upgrades
        
 - Gradle
 - Spring Boot
+- Groovy
+- Swagger
+- Spring Cloud
+- Spring Cloud GCP
+- Apache Kafka
+- MongoDb Driver
+- Oracle Driver
+- Hibernate
+- Jetty
+- SpringDoc
+- Hikari
+- Pac4j
