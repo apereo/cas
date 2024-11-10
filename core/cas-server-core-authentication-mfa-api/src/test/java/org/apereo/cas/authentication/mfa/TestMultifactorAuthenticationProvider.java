@@ -11,6 +11,7 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import java.io.Serial;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
+@Accessors(chain = true)
 public class TestMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
     public static final String ID = "mfa-dummy";
 
