@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderAbsentException;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationRequiredException;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
@@ -183,7 +184,9 @@ class CasCoreWebflowConfiguration {
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
             @Qualifier(CasWebflowCredentialProvider.BEAN_NAME)
-            final CasWebflowCredentialProvider casWebflowCredentialProvider) {
+            final CasWebflowCredentialProvider casWebflowCredentialProvider,
+            @Qualifier(MultifactorAuthenticationProviderSelector.BEAN_NAME)
+            final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector) {
             return CasWebflowEventResolutionConfigurationContext
                 .builder()
                 .casWebflowCredentialProvider(casWebflowCredentialProvider)
@@ -204,6 +207,7 @@ class CasCoreWebflowConfiguration {
                 .ticketGrantingTicketCookieGenerator(ticketGrantingTicketCookieGenerator)
                 .authenticationEventExecutionPlan(authenticationEventExecutionPlan)
                 .principalFactory(principalFactory)
+                .multifactorAuthenticationProviderSelector(multifactorAuthenticationProviderSelector)
                 .build();
         }
     }

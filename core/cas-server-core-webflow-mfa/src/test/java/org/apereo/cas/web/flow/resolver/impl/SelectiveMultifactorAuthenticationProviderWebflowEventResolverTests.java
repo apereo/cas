@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.resolver.impl;
 
 import org.apereo.cas.BaseCasWebflowMultifactorAuthenticationTests;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.webflow.action.EventFactorySupport;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -30,6 +32,52 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowEvents")
 class SelectiveMultifactorAuthenticationProviderWebflowEventResolverTests {
+
+    @Import(WithMultipleProviders.TestMultifactorTestConfiguration.class)
+    @Nested
+    class WithMultipleProviders extends BaseCasWebflowMultifactorAuthenticationTests {
+        @Autowired
+        @Qualifier("selectiveAuthenticationProviderWebflowEventResolver")
+        private CasWebflowEventResolver selectiveAuthenticationProviderWebflowEventResolver;
+
+        @Test
+        void verifyOperation() throws Throwable {
+            val context = MockRequestContext.create();
+
+            val service = RegisteredServiceTestUtils.getRegisteredService(UUID.randomUUID().toString());
+            servicesManager.save(service);
+            WebUtils.putRegisteredService(context, service);
+
+            WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
+            WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService(service.getServiceId()));
+
+            val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext).values();
+            providers.forEach(provider -> context.addGlobalTransition(provider.getId(), provider.getId()));
+
+            val resolvedEvents = providers.stream()
+                .map(provider -> new EventFactorySupport().event(this, provider.getId()))
+                .collect(Collectors.toList());
+            WebUtils.putResolvedEventsAsAttribute(context, resolvedEvents);
+            val result = selectiveAuthenticationProviderWebflowEventResolver.resolve(context);
+            assertNotNull(result);
+            assertEquals(1, result.size());
+            assertEquals("mfa-fake", result.iterator().next().getId());
+            assertNotNull(MultifactorAuthenticationWebflowUtils.getResolvedMultifactorAuthenticationProviders(context));
+        }
+
+        @TestConfiguration(value = "TestMultifactorTestConfiguration", proxyBeanMethods = false)
+        static class TestMultifactorTestConfiguration {
+            @Bean
+            public MultifactorAuthenticationProvider dummyProvider() {
+                return new TestMultifactorAuthenticationProvider();
+            }
+
+            @Bean
+            public MultifactorAuthenticationProvider fakeProvider() {
+                return new TestMultifactorAuthenticationProvider("mfa-fake").setOrder(100);
+            }
+        }
+    }
 
     @Import(WithProvider.TestMultifactorTestConfiguration.class)
     @Nested
