@@ -9,14 +9,18 @@
 
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.highlight.css}}"/>
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.jqueryui.css}}" />
+    
     <script type="text/javascript" th:src="@{#{webjars.highlight.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.chart.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.ace-editor.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.ace-editor-languagetools.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.ace-editor-beautify.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.sweet-alert.js}}"></script>
+    <script type="text/javascript" th:src="@{#{webjars.notyf.js}}"></script>
+    
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.sweet-alert.css}}" />
     <link rel="stylesheet" type="text/css" th:href="@{#{webjars.animate.css}}" />
+    <link rel="stylesheet" type="text/css" th:href="@{#{webjars.notyf.css}}" />
 
     <script th:inline="javascript">
         /*<![CDATA[*/
@@ -32,7 +36,6 @@
 <body>
 
 <main class="container mt-3 mb-3">
-
     <div layout:fragment="content" id="dashboard" class="d-none">
         <div th:replace="~{fragments/palantir/navigationsidebar :: main}"/>
         <div class="mdc-card p-2 m-1" style="min-height: 100vh;">

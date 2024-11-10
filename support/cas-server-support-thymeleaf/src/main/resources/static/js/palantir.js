@@ -37,6 +37,8 @@ let currentActiveTab = Tabs.APPLICATIONS;
 
 const CAS_FEATURES = [];
 
+let notyf = null;
+
 function fetchServices(callback) {
     if (actuatorEndpoints.registeredservices) {
         $.get(actuatorEndpoints.registeredservices, response => {
@@ -424,8 +426,7 @@ async function initializeAccessStrategyOperations() {
 }
 
 function hideBanner() {
-    const snackbar = new mdc.snackbar.MDCSnackbar(document.getElementById("errorBanner"));
-    snackbar.close();
+    notyf.dismissAll();
 }
 
 function displayBanner(error) {
@@ -456,9 +457,8 @@ function displayBanner(error) {
     if (typeof error === "string") {
         message = error;
     }
-    const snackbar = new mdc.snackbar.MDCSnackbar(document.getElementById("errorBanner"));
-    snackbar.labelText = message;
-    snackbar.open();
+    notyf.dismissAll();
+    notyf.error(message);
 }
 
 function initializeJvmMetrics() {
@@ -3579,6 +3579,16 @@ document.addEventListener("DOMContentLoaded", () => {
         showConfirmButton: false
     });
 
+    notyf = new Notyf({
+        duration: 3000,
+        ripple: true,
+        dismissable: true,
+        position: {
+            x: "center",
+            y: "bottom"
+        }
+    });
+    
     initializePalantir().then(r => {
 
         Swal.fire({
