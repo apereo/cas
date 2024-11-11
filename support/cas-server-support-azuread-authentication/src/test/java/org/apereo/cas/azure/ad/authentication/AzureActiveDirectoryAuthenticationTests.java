@@ -84,10 +84,10 @@ class AzureActiveDirectoryAuthenticationTests {
             assertThrows(FailedLoginException.class, () -> microsoftAzureActiveDirectoryAuthenticationHandler.authenticate(credentials, mock(Service.class)));
         }
     }
-
+    
     @TestPropertySource(properties = {
         "cas.authn.azure-active-directory.client-id=d430f66f-bc3b-4e2d-a9bf-bf6c7ded8b7e",
-        "cas.authn.azure-active-directory.client-secret=Ro58Q~NbOEInGNGAEdxHGWJ3QkS0jVTLP1fuLcg-",
+        "cas.authn.azure-active-directory.client-secret=${#environmentVariables['AZURE_AD_CLIENT_SECRET']}",
         "cas.authn.azure-active-directory.login-url=https://login.microsoftonline.com/common/",
         "cas.authn.azure-active-directory.tenant=2bbf190a-1ee3-487d-b39f-4d5038acf9ad"
     })
@@ -108,7 +108,7 @@ class AzureActiveDirectoryAuthenticationTests {
 
     @TestPropertySource(properties = {
         "cas.authn.attribute-repository.azure-active-directory[0].client-id=d430f66f-bc3b-4e2d-a9bf-bf6c7ded8b7e",
-        "cas.authn.attribute-repository.azure-active-directory[0].client-secret=Ro58Q~NbOEInGNGAEdxHGWJ3QkS0jVTLP1fuLcg-",
+        "cas.authn.attribute-repository.azure-active-directory[0].client-secret=${#environmentVariables['AZURE_AD_CLIENT_SECRET']}",
         "cas.authn.attribute-repository.azure-active-directory[0].tenant=2bbf190a-1ee3-487d-b39f-4d5038acf9ad"
     })
     @Nested
