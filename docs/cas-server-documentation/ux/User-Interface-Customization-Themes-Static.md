@@ -42,6 +42,7 @@ Contents of this file may contain the following settings:
 | `cas.warn-on-redirect.enabled`            | Whether user should be warned prior to redirects to applications.                       | `false`                              |
 | `cas.browser-storage.show-progress`       | Whether to display progress when reading/writing browser storage data.                  | `true`                               |
 | `cas.footer.show`                         | Whether to display the CAS footer.                                                      | `true`                               |
+| `cas.footer.show-version`                 | Whether to display CAS version details in the footer..                                  | `true`                               |
 
 - Create the directory `src/main/resources/static/themes/[theme_name]`. Put the 
   theme-specific `cas.css` and `cas.js` inside the appropriate directories for `css` and `js`.
