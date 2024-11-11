@@ -83,13 +83,13 @@ and this is just a preparatory step to ensure CAS is ready for the next version 
 - A dedicated metric, `slow.requests.timer`, is now available once system health monitoring is enabled to track slow requests that take longer than 5 seconds.
 - Additional theme property to determine where CAS version details should be displayed in the page footer.
 - Multifactor provider selection is set to utilize ranking strategies when multiple competing MFA triggers vote for different MFA providers.
-- Configuration option to control whether JWT access tokens should include additional attributes and claims beyond the standard claims.
+- A new configuration option to control whether JWT access tokens should include additional attributes and claims beyond the standard claims.
 - DynamoDb ticket registry is adjusted to not track attributes with empty values when storing tickets in string sets.
 - CAS may not generate refresh tokens if the expiration policy for refresh tokens is set to zero.
 - Redirecting to a destination URL after CAS logout is now remembered as a `TST` prior to sending SAML2 logout requests to external identity providers.
 - Actuator endpoints can be secured using a static JSON file that may contain user details and roles.
-- Support for Redis modules via Lettucemod is now extracted into a dedicated module.
-- Scratch codes may also be used to verify an account during Google Authenticator registration flow.
+- Support for Redis modules via LettuceMod is now extracted into a dedicated module.
+- Scratch codes may also be used to verify an account during the Google Authenticator registration flow.
 
 ## Library Upgrades
        
@@ -103,6 +103,7 @@ and this is just a preparatory step to ensure CAS is ready for the next version 
 - MongoDb Driver
 - Oracle Driver
 - Hibernate
+- Apache Tomcat
 - Jetty
 - SpringDoc
 - Hikari
