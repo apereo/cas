@@ -304,7 +304,7 @@ public class DynamoDbTicketRegistryFacilitator {
     private PutItemRequest buildPutItemRequest(final TicketPayload payload) {
         val metadata = this.ticketCatalog.find(payload.getOriginalTicket());
         val values = buildTableAttributeValuesMapFromTicket(payload);
-        LOGGER.debug("Adding ticket id [{}] with attribute values [{}]", payload.getEncodedTicket().getId(), values);
+        LOGGER.debug("Building a put request for ticket id [{}] with attribute values [{}]", payload.getEncodedTicket().getId(), values);
         return PutItemRequest.builder().tableName(metadata.getProperties().getStorageName()).item(values).build();
     }
 
@@ -315,8 +315,8 @@ public class DynamoDbTicketRegistryFacilitator {
      */
     public void createTicketTables(final boolean deleteTables) {
         val metadata = this.ticketCatalog.findAll();
-        metadata.forEach(Unchecked.consumer(r -> {
-            val attributeDefns = List.of(
+        metadata.forEach(Unchecked.consumer(defn -> {
+            val attributeDefinitions = List.of(
                 AttributeDefinition.builder()
                     .attributeName(ColumnNames.ID.getColumnName())
                     .attributeType(ScalarAttributeType.S)
@@ -326,9 +326,9 @@ public class DynamoDbTicketRegistryFacilitator {
                 .keyType(KeyType.HASH)
                 .build());
             val tableDesc = DynamoDbTableUtils.createTable(amazonDynamoDBClient, dynamoDbProperties,
-                r.getProperties().getStorageName(),
+                defn.getProperties().getStorageName(),
                 deleteTables,
-                attributeDefns,
+                attributeDefinitions,
                 keySchemaElements);
             DynamoDbTableUtils.enableTimeToLiveOnTable(amazonDynamoDBClient,
                 tableDesc.tableName(), ColumnNames.EXPIRATION.getColumnName());
@@ -379,12 +379,17 @@ public class DynamoDbTicketRegistryFacilitator {
 
     private static Map<String, AttributeValue> convertAttributes(final TicketPayload payload) {
         val attributes = new HashMap<String, AttributeValue>();
-        payload.getAttributes().forEach((key, values) -> {
-            val attributeValues = AttributeValue.builder()
-                .ss(values.stream().map(Object::toString).collect(Collectors.toList()))
-                .build();
-            attributes.put(key, attributeValues);
-        });
+        payload.getAttributes()
+            .entrySet()
+            .stream()
+            .filter(entry -> !entry.getValue().isEmpty())
+            .forEach(entry -> {
+                val allValues = entry.getValue().stream().map(Object::toString).collect(Collectors.toList());
+                if (!allValues.isEmpty()) {
+                    val attributeValues = AttributeValue.builder().ss(allValues).build();
+                    attributes.put(entry.getKey(), attributeValues);
+                }
+            });
         return attributes;
     }
 
@@ -504,7 +509,7 @@ public class DynamoDbTicketRegistryFacilitator {
 
     @SuperBuilder
     @Getter
-    static class TicketPayload {
+    public static class TicketPayload {
         private final Ticket originalTicket;
 
         private final Ticket encodedTicket;
