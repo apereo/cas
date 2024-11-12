@@ -35,6 +35,7 @@ public class CasGoogleAuthenticatorDynamoDbAutoConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "dynamoDbGoogleAuthenticatorAccountRegistry")
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
         @Qualifier("googleAuthenticatorInstance")
         final IGoogleAuthenticator googleAuthenticatorInstance,
