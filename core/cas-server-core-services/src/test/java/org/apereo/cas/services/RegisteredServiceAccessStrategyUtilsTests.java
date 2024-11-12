@@ -57,6 +57,22 @@ class RegisteredServiceAccessStrategyUtilsTests {
     }
 
     @Test
+    void verifySsoAccessWithCredentialsProvided() throws Throwable {
+        val service = RegisteredServiceTestUtils.getRegisteredService();
+        service.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(true, false));
+        val tgt = mock(TicketGrantingTicket.class);
+        when(tgt.getAuthentication()).thenReturn(RegisteredServiceTestUtils.getAuthentication());
+        when(tgt.getCountOfUses()).thenReturn(2);
+        assertDoesNotThrow(() -> RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(service,
+            RegisteredServiceTestUtils.getService(), tgt, true));
+
+        assertThrows(UnauthorizedSsoServiceException.class, () ->
+            RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(service,
+                RegisteredServiceTestUtils.getService(), tgt, false));
+
+    }
+
+    @Test
     void verifyPrincipalAccess() throws Throwable {
         val service = RegisteredServiceTestUtils.getRegisteredService();
         val authentication = RegisteredServiceTestUtils.getAuthentication();
