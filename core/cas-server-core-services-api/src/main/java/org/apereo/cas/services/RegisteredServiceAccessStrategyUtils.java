@@ -108,7 +108,7 @@ public class RegisteredServiceAccessStrategyUtils {
             if (ticketGrantingTicket.getCountOfUses() == 0 && credentialsProvided) {
                 LOGGER.debug("The ticket-granting ticket [{}] has never been used before and "
                     + "the authentication request has supplied credentials to access service [{}]", ticketGrantingTicket.getId(), service.getId());
-            } else {
+            } else if (!credentialsProvided) {
                 throw new UnauthorizedSsoServiceException();
             }
         }
