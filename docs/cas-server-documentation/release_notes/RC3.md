@@ -90,6 +90,7 @@ and this is just a preparatory step to ensure CAS is ready for the next version 
 - Actuator endpoints can be secured using a static JSON file that may contain user details and roles.
 - Support for Redis modules via LettuceMod is now extracted into a dedicated module.
 - Scratch codes may also be used to verify an account during the Google Authenticator registration flow.
+- Tickets captured via JPA ticket registry will also track the ticket expiration time and the last-used time.
 
 ## Library Upgrades
        
