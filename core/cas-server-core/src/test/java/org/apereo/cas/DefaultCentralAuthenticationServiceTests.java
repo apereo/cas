@@ -370,18 +370,19 @@ class DefaultCentralAuthenticationServiceTests extends AbstractCentralAuthentica
         val ticket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx);
         assertNotNull(ticket);
         assertEquals(1, ticketGrantingTicket.getCountOfUses());
-        assertThrows(UnauthorizedSsoServiceException.class,
-            () -> getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx));
+        assertDoesNotThrow(() -> getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx));
     }
 
     @Test
     void verifyGrantServiceTicketWithNoCredsAndSsoFalse() throws Throwable {
         val svc = getService("TestSsoFalse");
-        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
+        val ctx = CoreAuthenticationTestUtils.getAuthenticationResult(svc);
+        when(ctx.isCredentialProvided()).thenReturn(true);
         val ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         val ticket = getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx);
         assertNotNull(ticket);
         assertEquals(1, ticketGrantingTicket.getCountOfUses());
+        when(ctx.isCredentialProvided()).thenReturn(false);
         assertThrows(UnauthorizedSsoServiceException.class,
             () -> getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx));
     }
