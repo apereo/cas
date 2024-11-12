@@ -98,6 +98,7 @@ public class CasGoogleAuthenticatorRedisAutoConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    @ConditionalOnMissingBean(name = "redisGoogleAuthenticatorAccountRegistry")
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("googleAuthenticatorInstance")

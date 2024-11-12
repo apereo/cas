@@ -32,7 +32,7 @@ public class CasGoogleAuthenticatorLdapAutoConfiguration {
 
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-    @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
+    @ConditionalOnMissingBean(name = "ldapGoogleAuthenticatorAccountRegistry")
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
         @Qualifier("googleAuthenticatorInstance")
         final IGoogleAuthenticator googleAuthenticatorInstance,
