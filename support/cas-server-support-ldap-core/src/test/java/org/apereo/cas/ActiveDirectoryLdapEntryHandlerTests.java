@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.2.0
  */
 @Tag("Ldap")
-public class ActiveDirectoryLdapEntryHandlerTests {
+class ActiveDirectoryLdapEntryHandlerTests {
     @Test
     void verifyAccountLocked() throws Exception {
         val handler = new ActiveDirectoryLdapEntryHandler();
