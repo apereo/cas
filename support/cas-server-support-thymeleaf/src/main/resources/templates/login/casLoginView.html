@@ -18,14 +18,15 @@
                 <a href="fragments/loginform.html">Login Form goes here</a>
             </div>
         </section>
-        <span th:if="${#bools.isFalse(delegatedAuthenticationDynamicProviderSelection) && #bools.isFalse(delegatedAuthenticationDisabled)}">
-            <section id="loginProviders" class="login-section login-providers card-body"
-                    th:if="${delegatedAuthenticationProviderConfigurations} OR ${wsfedUrls}">
-                <div th:replace="~{fragments/loginProviders :: loginProviders}">
-                    <a href="fragments/loginProviders.html">loginProviders</a>
-                </div>
-            </section>
-        </span>
+        <section id="loginProviders" class="login-section login-providers card-body"
+                th:if="${(#bools.isFalse(delegatedAuthenticationDynamicProviderSelection)
+                       && #bools.isFalse(delegatedAuthenticationDisabled))
+                       && (#bools.isTrue(delegatedAuthenticationProviderConfigurations)
+                       || #bools.isTrue(wsfedUrls))}">
+            <div th:replace="~{fragments/loginProviders :: loginProviders}">
+                <a href="fragments/loginProviders.html">loginProviders</a>
+            </div>
+        </section>
         <section id="qrlogin" class="login-section login-qr d-xs-none d-md-block card-body" th:if="${qrAuthenticationEnabled}">
             <div th:replace="~{fragments/qrAuthentication :: qrAuthentication}">
                 <a href="fragments/qrAuthentication.html">qrAuthentication</a>
