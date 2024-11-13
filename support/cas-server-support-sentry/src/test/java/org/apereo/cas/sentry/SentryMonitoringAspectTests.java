@@ -2,11 +2,8 @@ package org.apereo.cas.sentry;
 
 import org.apereo.cas.config.CasSentryAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.monitor.Monitorable;
-import org.apereo.cas.monitor.NotMonitorable;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.spring.boot.SpringBootTestAutoConfigurations;
-import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,11 +40,11 @@ class SentryMonitoringAspectTests {
     @Autowired
     @Qualifier("greeter")
     private Greeter greeter;
-    
+
     @Autowired
     @Qualifier("reporter")
     private Reporter reporter;
-    
+
     @Autowired
     @Qualifier("realReporter")
     private Reporter realReporter;
@@ -64,12 +61,7 @@ class SentryMonitoringAspectTests {
     static class SentryMonitoringTestConfiguration {
         @Bean
         public Greeter greeter() {
-            return fail -> {
-                if (fail) {
-                    throw new IllegalArgumentException("Failed");
-                }
-                return "Hello";
-            };
+            return Greeter.defaultInstance();
         }
 
         @Bean
@@ -85,27 +77,6 @@ class SentryMonitoringAspectTests {
         @Bean
         public Reporter realReporter() {
             return new RealReporter();
-        }
-    }
-
-    @FunctionalInterface
-    @Monitorable(type = "Greeting")
-    private interface Greeter {
-        Object greet(boolean fail);
-    }
-
-    @FunctionalInterface
-    @NotMonitorable
-    private interface Reporter {
-        Object report();
-    }
-    
-    @NoArgsConstructor
-    @NotMonitorable
-    static class RealReporter implements Reporter {
-        @Override
-        public Object report() {
-            return "RealReporter";
         }
     }
 }
