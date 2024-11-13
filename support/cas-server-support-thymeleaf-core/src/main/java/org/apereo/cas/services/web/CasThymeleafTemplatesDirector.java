@@ -34,6 +34,20 @@ public class CasThymeleafTemplatesDirector {
     }
 
     /**
+     * Gets the URL external form supplemented by a question mark or an ampersand.
+     *
+     * @param url the URL
+     * @return the supplemented URL external form
+     */
+    public String getSupplementedUrlExternalForm(final URL url) {
+        val externalForm = url.toExternalForm();
+        if (externalForm.contains("?")) {
+            return externalForm + "&";
+        }
+        return externalForm + "?";
+    }
+
+    /**
      * Gets exception class simple name.
      *
      * @param ex the ex

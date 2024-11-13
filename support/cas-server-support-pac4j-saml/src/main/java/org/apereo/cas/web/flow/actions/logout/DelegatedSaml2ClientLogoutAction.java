@@ -17,7 +17,6 @@ import lombok.val;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.LogoutResponse;
 import org.pac4j.saml.credentials.SAML2Credentials;
-import org.springframework.http.HttpMethod;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
@@ -63,8 +62,7 @@ public class DelegatedSaml2ClientLogoutAction extends BaseCasWebflowAction {
 
         if (clientCredential != null && clientCredential.getCredentials() instanceof final SAML2Credentials saml2Credentials) {
             val message = saml2Credentials.getContext().getMessageContext().getMessage();
-            if (message instanceof final LogoutRequest logoutRequest
-                && HttpMethod.POST.matches(request.getMethod())) {
+            if (message instanceof final LogoutRequest logoutRequest) {
                 val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
                 removeSsoSessionsForSessionIndexes(request, response, logoutRequest);
             }
