@@ -11,5 +11,10 @@ import org.apereo.cas.monitor.NotMonitorable;
 @FunctionalInterface
 @NotMonitorable
 public interface Reporter {
+    /**
+     * Report object.
+     *
+     * @return the object
+     */
     Object report();
 }

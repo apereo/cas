@@ -55,7 +55,7 @@ class SurrogateDelegatedAuthenticationCredentialExtractorTests {
         val uid = UUID.randomUUID().toString();
         val passwordlessRequest = PasswordlessAuthenticationRequest
             .builder()
-            .properties(Map.of(SurrogatePasswordlessAuthenticationRequestParser.PROPORTY_SURROGATE_USERNAME, "cassurrogate"))
+            .properties(Map.of(SurrogatePasswordlessAuthenticationRequestParser.PROPERTY_SURROGATE_USERNAME, "cassurrogate"))
             .username(uid)
             .build();
         PasswordlessWebflowUtils.putPasswordlessAuthenticationRequest(context, passwordlessRequest);

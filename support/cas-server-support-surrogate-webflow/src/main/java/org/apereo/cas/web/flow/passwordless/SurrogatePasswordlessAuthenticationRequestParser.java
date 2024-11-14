@@ -21,7 +21,7 @@ public class SurrogatePasswordlessAuthenticationRequestParser implements Passwor
     /**
      * Request property that indicates the surrogate username, if any.
      */
-    public static final String PROPORTY_SURROGATE_USERNAME = "surrogateUsername";
+    public static final String PROPERTY_SURROGATE_USERNAME = "surrogateUsername";
 
     private final SurrogateCredentialParser surrogateCredentialParser;
 
@@ -35,7 +35,7 @@ public class SurrogatePasswordlessAuthenticationRequestParser implements Passwor
                 .builder()
                 .providedUsername(username)
                 .username(sr.getUsername())
-                .properties(CollectionUtils.wrap(PROPORTY_SURROGATE_USERNAME, sr.getSurrogateUsername()))
+                .properties(CollectionUtils.wrap(PROPERTY_SURROGATE_USERNAME, sr.getSurrogateUsername()))
                 .build();
         }
         return PasswordlessAuthenticationRequest.builder().username(username).build();

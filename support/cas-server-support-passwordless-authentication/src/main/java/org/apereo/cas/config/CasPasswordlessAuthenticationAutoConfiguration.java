@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.api.PasswordlessTokenRepository;
 import org.apereo.cas.api.PasswordlessUserAccount;
+import org.apereo.cas.api.PasswordlessUserAccountCustomizer;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -13,6 +14,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.impl.account.ChainingPasswordlessAccountStore;
+import org.apereo.cas.impl.account.GroovyPasswordlessUserAccountCustomizer;
 import org.apereo.cas.impl.account.GroovyPasswordlessUserAccountStore;
 import org.apereo.cas.impl.account.JsonPasswordlessUserAccountStore;
 import org.apereo.cas.impl.account.RestfulPasswordlessUserAccountStore;
@@ -23,6 +25,8 @@ import org.apereo.cas.impl.token.RestfulPasswordlessTokenRepository;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.cipher.CipherExecutorUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -96,13 +100,39 @@ public class CasPasswordlessAuthenticationAutoConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "defaultPasswordlessUserAccountCustomizer")
+        public PasswordlessUserAccountCustomizer defaultPasswordlessUserAccountCustomizer() {
+            return PasswordlessUserAccountCustomizer.noOp();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "groovyPasswordlessUserAccountCustomizer")
+        public PasswordlessUserAccountCustomizer groovyPasswordlessUserAccountCustomizer(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            val resource = casProperties.getAuthn().getPasswordless().getCore()
+                .getPasswordlessAccountCustomizerScript().getLocation();
+            val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
+            if (resource != null && CasRuntimeHintsRegistrar.notInNativeImage() && scriptFactory.isPresent()) {
+                return new GroovyPasswordlessUserAccountCustomizer(casProperties, applicationContext,
+                    scriptFactory.get().fromResource(resource));
+            }
+            return PasswordlessUserAccountCustomizer.noOp();
+        }
+
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "jsonPasswordlessUserAccountStore")
         public BeanSupplier<PasswordlessUserAccountStore> jsonPasswordlessUserAccountStore(
+            final List<PasswordlessUserAccountCustomizer> customizerList,
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
             return BeanSupplier.of(PasswordlessUserAccountStore.class)
                 .when(() -> accounts.getJson().getLocation() != null)
-                .supply(() -> new JsonPasswordlessUserAccountStore(accounts.getJson().getLocation()))
+                .supply(() -> new JsonPasswordlessUserAccountStore(
+                    accounts.getJson().getLocation(), applicationContext, customizerList))
                 .otherwiseNull();
         }
 
@@ -110,11 +140,16 @@ public class CasPasswordlessAuthenticationAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "groovyPasswordlessUserAccountStore")
         public BeanSupplier<PasswordlessUserAccountStore> groovyPasswordlessUserAccountStore(
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
             return BeanSupplier.of(PasswordlessUserAccountStore.class)
                 .when(() -> accounts.getGroovy().getLocation() != null)
-                .supply(() -> new GroovyPasswordlessUserAccountStore(accounts.getGroovy().getLocation()))
+                .supply(() -> {
+                    val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
+                    val watchableScript = scriptFactory.fromResource(accounts.getGroovy().getLocation());
+                    return new GroovyPasswordlessUserAccountStore(watchableScript, applicationContext);
+                })
                 .otherwiseNull();
         }
 
@@ -127,7 +162,7 @@ public class CasPasswordlessAuthenticationAutoConfiguration {
             val accounts = casProperties.getAuthn().getPasswordless().getAccounts();
             return BeanSupplier.of(PasswordlessUserAccountStore.class)
                 .when(() -> StringUtils.isNotBlank(accounts.getRest().getUrl()))
-                .supply(() -> new RestfulPasswordlessUserAccountStore(accounts.getRest()))
+                .supply(() -> new RestfulPasswordlessUserAccountStore(accounts.getRest(), applicationContext))
                 .otherwiseNull();
         }
 
@@ -135,6 +170,8 @@ public class CasPasswordlessAuthenticationAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "simplePasswordlessUserAccountStore")
         public BeanSupplier<PasswordlessUserAccountStore> simplePasswordlessUserAccountStore(
+            final List<PasswordlessUserAccountCustomizer> customizerList,
+            final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             val allAccounts = casProperties.getAuthn().getPasswordless().getAccounts()
                 .getSimple()
@@ -153,7 +190,7 @@ public class CasPasswordlessAuthenticationAutoConfiguration {
                 }));
             return BeanSupplier.of(PasswordlessUserAccountStore.class)
                 .when(() -> !allAccounts.isEmpty())
-                .supply(() -> new SimplePasswordlessUserAccountStore(allAccounts))
+                .supply(() -> new SimplePasswordlessUserAccountStore(allAccounts, applicationContext, customizerList))
                 .otherwiseNull();
         }
 

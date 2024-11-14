@@ -41,4 +41,5 @@ public class PasswordlessAuthenticationRequest implements Serializable {
 
     @Builder.Default
     private Map<String, String> properties = new HashMap<>();
+
 }
