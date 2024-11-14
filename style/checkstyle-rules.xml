@@ -471,6 +471,16 @@
         </module>
 
         <module name="RegexpSinglelineJava">
+            <property name="id" value="lombok-sneaky-throws"/>
+            <metadata name="net.sf.eclipsecs.core.comment"
+                      value="Do not use @SneakyThrows as it may create a large maintenance cost.. Find alternatives in FunctionUtils to handle checked exceptions"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="@SneakyThrows"/>
+            <property name="message"
+                      value="Do not use @SneakyThrows as it may create a large maintenance cost. Find alternatives in FunctionUtils to handle checked exceptions"/>
+        </module>
+
+        <module name="RegexpSinglelineJava">
             <property name="id" value="collectionsEmpty"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Avoid using an empty immutable collection"/>
             <property name="severity" value="error"/>
