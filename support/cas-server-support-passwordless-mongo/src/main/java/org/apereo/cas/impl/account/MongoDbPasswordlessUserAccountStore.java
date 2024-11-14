@@ -25,13 +25,13 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 public class MongoDbPasswordlessUserAccountStore implements PasswordlessUserAccountStore {
-    private final MongoOperations mongoTemplate;
+    protected final MongoOperations mongoTemplate;
 
-    private final PasswordlessAuthenticationMongoDbAccountsProperties properties;
+    protected final PasswordlessAuthenticationMongoDbAccountsProperties properties;
 
-    private final ConfigurableApplicationContext applicationContext;
+    protected final ConfigurableApplicationContext applicationContext;
 
-    private final List<PasswordlessUserAccountCustomizer> customizerList;
+    protected final List<PasswordlessUserAccountCustomizer> customizerList;
     
     @Override
     public Optional<PasswordlessUserAccount> findUser(final PasswordlessAuthenticationRequest request) {

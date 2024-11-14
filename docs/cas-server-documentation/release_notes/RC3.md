@@ -91,6 +91,7 @@ and this is just a preparatory step to ensure CAS is ready for the next version 
 - Support for Redis modules via LettuceMod is now extracted into a dedicated module.
 - Scratch codes may also be used to verify an account during the Google Authenticator registration flow.
 - Tickets captured via JPA ticket registry will also track the ticket expiration time and the last-used time.
+- Passwordless accounts can be now customized and post-processed once fetched from the passwordless account store.  
 
 ## Library Upgrades
        
@@ -107,5 +108,7 @@ and this is just a preparatory step to ensure CAS is ready for the next version 
 - Apache Tomcat
 - Jetty
 - SpringDoc
+- Quartz
 - Hikari
+- Lombok
 - Pac4j
