@@ -1,14 +1,13 @@
 package org.apereo.cas.web;
 
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
-
+import org.apereo.cas.util.MockWebServer;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
-
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -21,12 +20,17 @@ import static org.junit.jupiter.api.Assertions.*;
 class FriendlyCaptchaValidatorTests {
     @Test
     void verifyOperation() throws Throwable {
-        val props = new GoogleRecaptchaProperties()
-            .setSecret(UUID.randomUUID().toString())
-            .setVerifyUrl("http://localhost:8812");
-        val validator = new FriendlyCaptchaValidator(props);
-        val request = new MockHttpServletRequest();
-        request.addParameter(FriendlyCaptchaValidator.REQUEST_PARAM_FRIENDLY_CAPTCHA_RESPONSE, UUID.randomUUID().toString());
-        assertNotNull(validator.getRecaptchaResponse(request));
+        try (val webServer = new MockWebServer(HttpStatus.OK, "{\"success\": true}")) {
+            webServer.start();
+            val response = UUID.randomUUID().toString();
+            val props = new GoogleRecaptchaProperties()
+                .setSecret(response)
+                .setVerifyUrl("http://localhost:%s".formatted(webServer.getPort()));
+            val validator = new FriendlyCaptchaValidator(props);
+            val request = new MockHttpServletRequest();
+            request.addParameter(FriendlyCaptchaValidator.REQUEST_PARAM_FRIENDLY_CAPTCHA_RESPONSE, response);
+            assertNotNull(validator.getRecaptchaResponse(request));
+            assertTrue(validator.validate(response, "Mozilla"));
+        }
     }
 }
