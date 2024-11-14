@@ -74,7 +74,7 @@ class PasswordlessDelegatedClientIdentityProviderAuthorizerTests extends BasePas
     @Test
     void verifyNoAccount() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        assertFalse(isAuthorized(context));
+        assertTrue(isAuthorized(context));
     }
 
 

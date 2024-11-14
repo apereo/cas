@@ -100,7 +100,7 @@ class SamlIdPDelegatedClientAuthenticationRequestCustomizerTests extends BaseSam
         val request = new MockHttpServletRequest();
         val response = new MockHttpServletResponse();
         val webContext = new JEEContext(request, response);
-        val webApplicationService = CoreAuthenticationTestUtils.getWebApplicationService();
+        val webApplicationService = CoreAuthenticationTestUtils.getWebApplicationService(UUID.randomUUID().toString());
 
         assertDoesNotThrow(() -> customizer.customize(saml2Client, webContext));
         
