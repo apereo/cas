@@ -27,7 +27,7 @@ public interface PasswordlessRequestParser {
     PasswordlessAuthenticationRequest parse(String username);
 
     /**
-     * Default asswordless request parser.
+     * Default passwordless request parser.
      *
      * @return the passwordless request parser
      */

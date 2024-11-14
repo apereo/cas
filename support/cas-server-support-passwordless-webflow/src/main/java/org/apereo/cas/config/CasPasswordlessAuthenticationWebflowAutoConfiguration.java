@@ -302,7 +302,8 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
                 .withAction(() -> {
                     val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
                     if (pp.getIfAvailable() != null && CasRuntimeHintsRegistrar.notInNativeImage() && scriptFactory.isPresent()) {
-                        val selectorScriptResource = casProperties.getAuthn().getPasswordless().getCore().getDelegatedAuthenticationSelectorScript().getLocation();
+                        val selectorScriptResource = casProperties.getAuthn().getPasswordless().getCore()
+                            .getDelegatedAuthenticationSelectorScript().getLocation();
                         return new PasswordlessDetermineDelegatedAuthenticationAction(casProperties,
                             pp.getObject(), scriptFactory.get().fromResource(selectorScriptResource));
                     }

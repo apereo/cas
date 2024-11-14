@@ -75,7 +75,9 @@ public class AcceptPasswordlessAuthenticationAction extends AbstractAuthenticati
             LoggingUtils.error(LOGGER, e);
             val attributes = new LocalAttributeMap<>();
             attributes.put("error", e);
-            val request = PasswordlessAuthenticationRequest.builder().username(principal.getUsername()).build();
+            val request = PasswordlessAuthenticationRequest.builder()
+                .username(principal.getUsername())
+                .build();
             var account = passwordlessUserAccountStore.findUser(request);
             account.ifPresent(o -> attributes.put("passwordlessAccount", principal));
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, attributes);

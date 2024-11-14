@@ -1,0 +1,51 @@
+{
+  "dependencies": "passwordless-webflow,passwordless-ldap,pac4j-webflow,pac4j-saml,scripting",
+  "conditions": {
+    "docker": "true"
+  },
+  "properties": [
+    "--cas.service-registry.core.init-from-json=true",
+    "--cas.service-registry.json.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/services"
+  ,
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.http-client.host-name-verifier=none",
+    "--cas.authn.accept.users=caspassword::p@$$word",
+    
+    "--cas.authn.passwordless.accounts.ldap.ldap-url=ldap://localhost:10389",
+    "--cas.authn.passwordless.accounts.ldap.base-dn=ou=people,dc=example,dc=org",
+    "--cas.authn.passwordless.accounts.ldap.search-filter=cn={0}",
+    "--cas.authn.passwordless.accounts.ldap.bind-credential=password",
+    "--cas.authn.passwordless.accounts.ldap.email-attribute=mail",
+    "--cas.authn.passwordless.accounts.ldap.phone-attribute=telephoneNumber",
+
+    "--cas.authn.passwordless.core.passwordless-account-customizer-script.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/account-customizer.groovy",
+    "--cas.authn.passwordless.core.delegated-authentication-selector-script.location=file:${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/delegate-idp-selector.groovy",
+
+    "--cas.authn.pac4j.saml[0].keystore-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].private-key-password=pac4j-demo-passwd",
+    "--cas.authn.pac4j.saml[0].service-provider-entity-id=cas:apereo:pac4j:saml",
+    "--cas.authn.pac4j.saml[0].metadata.service-provider.file-system.location=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/sp-metadata.xml",
+    "--cas.authn.pac4j.saml[0].keystore-path=${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/saml-md/samlKeystore.jks",
+    "--cas.authn.pac4j.saml[0].metadata.identity-provider-metadata-path=http://localhost:9443/simplesaml/saml2/idp/metadata.php",
+    "--cas.authn.pac4j.saml[0].destination-binding=urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
+    "--cas.authn.pac4j.saml[0].client-name=SAML2Client",
+    
+    "--cas.authn.passwordless.core.multifactor-authentication-activated=false",
+    "--cas.authn.passwordless.core.delegated-authentication-activated=true"
+  ],
+  "initScript": "${PWD}/ci/tests/puppeteer/scenarios/${SCENARIO}/init.sh",
+  "SPRING_APPLICATION_JSON": {
+    "cas": {
+      "authn": {
+        "passwordless": {
+          "accounts": {
+            "ldap": {
+              "bind-dn": "cn=Directory Manager"
+            }
+          }
+        }
+      }
+    }
+  }
+}

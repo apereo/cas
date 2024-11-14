@@ -11,8 +11,19 @@ import org.apereo.cas.monitor.Monitorable;
 @FunctionalInterface
 @Monitorable(type = "Greeting")
 public interface Greeter {
+    /**
+     * Greet object.
+     *
+     * @param fail the fail
+     * @return the object
+     */
     Object greet(boolean fail);
 
+    /**
+     * Default instance greeter.
+     *
+     * @return the greeter
+     */
     static Greeter defaultInstance() {
         return new Greeter() {
             @Override

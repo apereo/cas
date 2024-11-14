@@ -131,7 +131,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 val client = findDelegatedClientByName(clientName);
                 verifyClientIsAuthorizedForService(context, service, client);
                 DelegationWebflowUtils.putDelegatedAuthenticationClientName(context, client.getName());
-                if (isLogoutRequest(clientCredential)) {
+                if (isLogoutRequest) {
                     val callContext = new CallContext(webContext, configContext.getSessionStore());
                     throw client.processLogout(callContext, clientCredential.get().getCredentials());
                 }

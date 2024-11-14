@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.HttpEntityContainer;
 import org.apache.hc.core5.http.HttpResponse;
 import org.hjson.JsonValue;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import java.nio.charset.StandardCharsets;
@@ -36,7 +37,9 @@ public class RestfulPasswordlessUserAccountStore implements PasswordlessUserAcco
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .defaultTypingEnabled(false).build().toObjectMapper();
 
-    private final PasswordlessAuthenticationRestAccountsProperties restProperties;
+    protected final PasswordlessAuthenticationRestAccountsProperties restProperties;
+
+    protected final ConfigurableApplicationContext applicationContext;
 
     @Override
     public Optional<PasswordlessUserAccount> findUser(final PasswordlessAuthenticationRequest request) {

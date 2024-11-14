@@ -36,8 +36,8 @@ public class SurrogateDelegatedAuthenticationCredentialExtractor extends Default
         val passwordlessRequestResult = Optional.ofNullable(PasswordlessWebflowUtils.getPasswordlessAuthenticationRequest(requestContext, PasswordlessAuthenticationRequest.class));
         if (clientCredential.isPresent() && passwordlessRequestResult.isPresent()) {
             val passwordlessRequest = passwordlessRequestResult.get();
-            if (passwordlessRequest.getProperties().containsKey(SurrogatePasswordlessAuthenticationRequestParser.PROPORTY_SURROGATE_USERNAME)) {
-                val surrogateUsername = passwordlessRequest.getProperties().get(SurrogatePasswordlessAuthenticationRequestParser.PROPORTY_SURROGATE_USERNAME);
+            if (passwordlessRequest.getProperties().containsKey(SurrogatePasswordlessAuthenticationRequestParser.PROPERTY_SURROGATE_USERNAME)) {
+                val surrogateUsername = passwordlessRequest.getProperties().get(SurrogatePasswordlessAuthenticationRequestParser.PROPERTY_SURROGATE_USERNAME);
                 clientCredential.get().getCredentialMetadata().addTrait(new SurrogateCredentialTrait(surrogateUsername));
                 return clientCredential;
             }
