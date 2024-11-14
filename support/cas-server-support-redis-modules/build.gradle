@@ -5,7 +5,7 @@ ext {
     projectMetadata = [
             category: "Ticket Registries",
             title: "Redis Modules",
-            aliases: ["redis", "lettucemod"]
+            aliases: ["redis-modules", "lettucemod"]
     ]
 }
 dependencies {
