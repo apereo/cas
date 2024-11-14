@@ -24,22 +24,12 @@ public class CasThymeleafTemplatesDirector {
     private final CasWebflowExecutionPlan webflowExecutionPlan;
 
     /**
-     * Gets url external form.
+     * Gets the URL external form supplemented by a question mark or an ampersand.
      *
      * @param url the url
      * @return the url external form
      */
     public String getUrlExternalForm(final URL url) {
-        return url.toExternalForm();
-    }
-
-    /**
-     * Gets the URL external form supplemented by a question mark or an ampersand.
-     *
-     * @param url the URL
-     * @return the supplemented URL external form
-     */
-    public String getSupplementedUrlExternalForm(final URL url) {
         val externalForm = url.toExternalForm();
         if (externalForm.contains("?")) {
             return externalForm + "&";
