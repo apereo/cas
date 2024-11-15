@@ -34,15 +34,7 @@ public abstract class BaseServiceAuthorizationCheckAction extends BaseCasWebflow
         if (service == null) {
             return success();
         }
-
-        if (servicesManager.getAllServices().isEmpty()) {
-            val msg = String.format("No service definitions are found in the service manager. "
-                + "Service [%s] will not be automatically authorized to request authentication.", service.getId());
-            LOGGER.warn(msg);
-            throw UnauthorizedServiceException.denied(msg);
-        }
-        val registeredService = this.servicesManager.findServiceBy(service);
-
+        val registeredService = servicesManager.findServiceBy(service);
         if (registeredService == null) {
             val msg = String.format("Service [%s] is not found in service registry.", service.getId());
             LOGGER.warn(msg);

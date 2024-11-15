@@ -24,12 +24,13 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.jooq.lambda.Unchecked;
+import jakarta.annotation.Nonnull;
 import java.io.Serial;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -155,10 +156,8 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
     }
 
     @Override
-    public int compareTo(final AttributeDefinition o) {
-        return new CompareToBuilder()
-            .append(getKey(), o.getKey())
-            .build();
+    public int compareTo(@Nonnull final AttributeDefinition definition) {
+        return Comparator.comparing(AttributeDefinition::getKey).compare(this, definition);
     }
     
     @JsonIgnore

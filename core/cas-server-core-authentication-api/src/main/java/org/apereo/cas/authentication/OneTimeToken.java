@@ -8,8 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.springframework.data.annotation.Id;
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;
@@ -17,6 +17,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Comparator;
 
 /**
  * This is {@link OneTimeToken}.
@@ -56,13 +57,13 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
     }
 
     @Override
-    public int compareTo(final OneTimeToken o) {
-        return new CompareToBuilder()
-            .append(token, o.getToken())
-            .append(userId, o.getUserId())
-            .append(issuedDateTime, o.getIssuedDateTime())
-            .append(id, o.id)
-            .build();
+    public int compareTo(@Nonnull final OneTimeToken token) {
+        return Comparator
+            .comparing(OneTimeToken::getToken)
+            .thenComparing(OneTimeToken::getUserId)
+            .thenComparing(OneTimeToken::getIssuedDateTime)
+            .thenComparingLong(OneTimeToken::getId)
+            .compare(this, token);
     }
 
     /**
