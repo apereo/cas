@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.jooq.lambda.Unchecked;
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -30,6 +30,8 @@ import java.math.BigInteger;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -100,17 +102,17 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     private String source;
 
     @Override
-    public int compareTo(final OneTimeTokenAccount o) {
-        return new CompareToBuilder()
-            .append(this.scratchCodes.toArray(), o.getScratchCodes().toArray())
-            .append(this.validationCode, o.getValidationCode())
-            .append(this.secretKey, o.getSecretKey())
-            .append(this.username, o.getUsername())
-            .append(this.name, o.getName())
-            .append(this.lastUsedDateTime, o.getLastUsedDateTime())
-            .append(this.source, o.getSource())
-            .build()
-            .intValue();
+    public int compareTo(@Nonnull final OneTimeTokenAccount tokenAccount) {
+        return Comparator
+            .comparing((OneTimeTokenAccount account) -> account.getScratchCodes().toArray(),
+                Comparator.comparing(Arrays::toString))
+            .thenComparingInt(OneTimeTokenAccount::getValidationCode)
+            .thenComparing(OneTimeTokenAccount::getSecretKey)
+            .thenComparing(OneTimeTokenAccount::getUsername)
+            .thenComparing(OneTimeTokenAccount::getName)
+            .thenComparing(OneTimeTokenAccount::getLastUsedDateTime)
+            .thenComparing(OneTimeTokenAccount::getSource)
+            .compare(this, tokenAccount);
     }
 
     @Override

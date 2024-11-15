@@ -155,7 +155,7 @@ jobs:
         if: env.SONARCLOUD_TOKEN != null && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
         run: |
           ./gradlew sonar --build-cache --configure-on-demand --no-daemon -DskipAot=true --parallel \
-            -x javadoc -DskipNestedConfigMetadataGen=true -Dverbose=true \
+            -x javadoc -DskipNestedConfigMetadataGen=true \
             -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
       - name: "Upload to Codecov"
         uses: "codecov/codecov-action@v5"

@@ -2,7 +2,6 @@ package org.apereo.cas.services;
 
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.support.RegularExpressionCapable;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,11 +12,11 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.springframework.data.annotation.Id;
-
+import jakarta.annotation.Nonnull;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -101,14 +100,14 @@ public abstract class BaseRegisteredService implements RegisteredService {
     private List<RegisteredServiceContact> contacts = new ArrayList<>(0);
 
     @Override
-    public int compareTo(final RegisteredService other) {
-        return new CompareToBuilder()
-            .append(getEvaluationPriority(), other.getEvaluationPriority())
-            .append(getEvaluationOrder(), other.getEvaluationOrder())
-            .append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(Locale.ENGLISH),
-                StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase(Locale.ENGLISH))
-            .append(getServiceId(), other.getServiceId()).append(getId(), other.getId())
-            .toComparison();
+    public int compareTo(@Nonnull final RegisteredService other) {
+        return Comparator
+            .comparingInt(RegisteredService::getEvaluationPriority)
+            .thenComparingInt(RegisteredService::getEvaluationOrder)
+            .thenComparing(service -> StringUtils.defaultString(service.getName()).toLowerCase(Locale.ENGLISH))
+            .thenComparing(RegisteredService::getServiceId)
+            .thenComparingLong(RegisteredService::getId)
+            .compare(this, other);
     }
 
     @Override

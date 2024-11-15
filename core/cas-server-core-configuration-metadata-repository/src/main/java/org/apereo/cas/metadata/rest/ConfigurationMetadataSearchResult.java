@@ -6,7 +6,6 @@ import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.RegexUtils;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,11 +13,11 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.core.Ordered;
-
+import jakarta.annotation.Nonnull;
 import java.io.Serial;
+import java.util.Comparator;
 import java.util.regex.Pattern;
 
 /**
@@ -104,7 +103,10 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
 
 
     @Override
-    public int compareTo(final ConfigurationMetadataSearchResult o) {
-        return new CompareToBuilder().append(this.order, o.getOrder()).append(getName(), o.getName()).append(this.group, o.getGroup()).build();
+    public int compareTo(@Nonnull final ConfigurationMetadataSearchResult result) {
+        return Comparator.comparingInt(ConfigurationMetadataSearchResult::getOrder)
+            .thenComparing(ConfigurationMetadataSearchResult::getName)
+            .thenComparing(ConfigurationMetadataSearchResult::getGroup)
+            .compare(this, result);
     }
 }
