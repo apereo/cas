@@ -208,7 +208,7 @@ jobs:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: ${{ env.COVERAGE_REPORTS }}
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         if: ${{ env.CODECOV_TOKEN != null }}
         continue-on-error: true
         with:
