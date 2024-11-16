@@ -11,7 +11,6 @@ import org.pac4j.core.client.BaseClient;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcOperations;
-import org.springframework.jdbc.core.JdbcTemplate;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -86,11 +85,16 @@ public class JdbcDelegatedIdentityProviderFactory extends BaseDelegatedIdentityP
     @Table(name = JdbcIdentityProviderEntity.TABLE_NAME)
     @Accessors(chain = true)
     public static class JdbcIdentityProviderEntity implements Serializable {
+
+        /**
+         * The table name that holds the config in the database.
+         */
+        public static final String TABLE_NAME = "JdbcIdentityProviderEntity";
+
         @Serial
         private static final long serialVersionUID = 976705073390152323L;
 
-        public static final String TABLE_NAME = "JdbcIdentityProviderEntity";
-        
+
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private long id;

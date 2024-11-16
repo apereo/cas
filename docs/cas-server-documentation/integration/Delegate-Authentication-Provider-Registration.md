@@ -74,7 +74,8 @@ INSERT INTO JdbcIdentityProviderEntity (type, index, name, value)
     VALUES ('cas', 0, 'protocol', 'CAS30');
 ```
   
-The following types are supported: `cas` ,`oidc`, `saml`, `oauth`.
+You'll note that the value in the `name` column is appended to the configuration prefix `cas.authn.pac4j`. The 
+following types are supported: `cas` ,`oidc`, `saml`, `oauth`.
 
 ## REST
 
