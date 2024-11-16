@@ -15,11 +15,7 @@ import org.hjson.JsonValue;
 import org.pac4j.config.client.PropertiesConfigFactory;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.IndirectClient;
-import org.springframework.boot.context.properties.bind.Bindable;
-import org.springframework.boot.context.properties.bind.Binder;
-import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.env.MapPropertySource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import java.nio.charset.StandardCharsets;
@@ -81,11 +77,10 @@ public class RestfulDelegatedIdentityProviderFactory extends BaseDelegatedIdenti
     protected Collection<BaseClient> buildClientsBasedCasProperties(final String result) throws Exception {
         val payload = MAPPER.readValue(JsonValue.readHjson(result).toString(), Map.class);
         LOGGER.trace("CAS properties received as [{}]", payload);
-        val binder = new Binder(ConfigurationPropertySources.from(new MapPropertySource(getClass().getSimpleName(), payload)));
-        val bound = binder.bind(CasConfigurationProperties.PREFIX, Bindable.of(CasConfigurationProperties.class));
-        if (bound.isBound()) {
-            val properties = bound.get();
-            return buildAllIdentityProviders(properties);
+        val properties = CasConfigurationProperties.bindFrom(getClass().getSimpleName(), payload);
+        if (properties.isPresent()) {
+            val props = (CasConfigurationProperties) properties.get();
+            return buildAllIdentityProviders(props);
         }
         return List.of();
     }

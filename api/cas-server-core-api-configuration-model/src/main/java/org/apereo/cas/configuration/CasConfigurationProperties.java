@@ -53,12 +53,19 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import lombok.val;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.springframework.boot.context.properties.bind.Bindable;
+import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.boot.context.properties.source.ConfigurationPropertySources;
+import org.springframework.core.env.MapPropertySource;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link CasConfigurationProperties}.
@@ -378,4 +385,18 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private JaversProperties javers = new JaversProperties();
+
+
+    /**
+     * Bind from map.
+     *
+     * @param source  the source
+     * @param payload the payload
+     * @return the optional
+     */
+    public static Optional<CasConfigurationProperties> bindFrom(final String source, final Map<String, Object> payload) {
+        val binder = new Binder(ConfigurationPropertySources.from(new MapPropertySource(source, payload)));
+        val bound = binder.bind(CasConfigurationProperties.PREFIX, Bindable.of(CasConfigurationProperties.class));
+        return bound.isBound() ? Optional.of(bound.get()) : Optional.empty();
+    }
 }

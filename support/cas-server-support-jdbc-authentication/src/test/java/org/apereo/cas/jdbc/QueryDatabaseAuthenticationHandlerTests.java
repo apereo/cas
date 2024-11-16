@@ -58,7 +58,7 @@ class QueryDatabaseAuthenticationHandlerTests extends BaseDatabaseAuthentication
 
     @BeforeEach
     public void initialize() throws Exception {
-        try (val connection = this.dataSource.getConnection()) {
+        try (val connection = dataSource.getConnection()) {
             try (val statement = connection.createStatement()) {
                 connection.setAutoCommit(true);
 

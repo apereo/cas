@@ -168,6 +168,13 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
     private Pac4jDelegatedAuthenticationRestfulProperties rest = new Pac4jDelegatedAuthenticationRestfulProperties();
 
     /**
+     * Settings that allow CAS to fetch and build clients
+     * over a SQL database.
+     */
+    @NestedConfigurationProperty
+    private Pac4jDelegatedAuthenticationJdbcProperties jdbc = new Pac4jDelegatedAuthenticationJdbcProperties();
+
+    /**
      * Cookie settings to be used with delegated authentication
      * to store user preferences.
      */
