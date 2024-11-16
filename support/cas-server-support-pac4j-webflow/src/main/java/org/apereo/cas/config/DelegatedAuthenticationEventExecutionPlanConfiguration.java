@@ -20,6 +20,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.configuration.model.support.replication.CookieSessionReplicationProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.discovery.CasServerProfileCustomizer;
 import org.apereo.cas.logout.LogoutExecutionPlanConfigurer;
 import org.apereo.cas.pac4j.TicketRegistrySessionStore;
@@ -30,6 +31,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.DelegatedClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.clients.DefaultDelegatedIdentityProviderFactory;
 import org.apereo.cas.support.pac4j.authentication.clients.DelegatedClientFactoryCustomizer;
+import org.apereo.cas.support.pac4j.authentication.clients.JdbcDelegatedIdentityProviderFactory;
 import org.apereo.cas.support.pac4j.authentication.clients.RefreshableDelegatedIdentityProviders;
 import org.apereo.cas.support.pac4j.authentication.clients.RestfulDelegatedIdentityProviderFactory;
 import org.apereo.cas.support.pac4j.authentication.handler.support.DelegatedClientAuthenticationHandler;
@@ -70,6 +72,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.springframework.jdbc.core.JdbcOperations;
+import org.springframework.jdbc.core.JdbcTemplate;
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -264,7 +269,8 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
                 })
                 .orElseGet(() -> new ArrayList<>(0));
 
-            if (StringUtils.isNotBlank(casProperties.getAuthn().getPac4j().getRest().getUrl())) {
+            val pac4j = casProperties.getAuthn().getPac4j();
+            if (StringUtils.isNotBlank(pac4j.getRest().getUrl())) {
                 return new RestfulDelegatedIdentityProviderFactory(customizers,
                     casSslContext, casProperties, clientsCache, applicationContext);
             }
@@ -272,7 +278,57 @@ class DelegatedAuthenticationEventExecutionPlanConfiguration {
                 customizers, casSslContext, clientsCache, applicationContext);
         }
     }
+    
+    @Configuration(value = "DelegatedAuthenticationJdbcClientFactoryConfiguration", proxyBeanMethods = false)
+    @EnableConfigurationProperties(CasConfigurationProperties.class)
+    @ConditionalOnClass(JpaBeans.class)
+    @ConditionalOnFeatureEnabled(feature = CasFeatureModule.FeatureCatalog.DelegatedAuthentication, module = "jdbc", enabledByDefault = false)
+    static class DelegatedAuthenticationJdbcClientFactoryConfiguration {
+        
+        @Bean
+        @ConditionalOnMissingBean(name = "pac4jJdbcDelegatedClientFactory")
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public DelegatedIdentityProviderFactory pac4jDelegatedClientFactory(
+            @Qualifier("pac4jDelegatedClientJdbcTemplate")
+            final JdbcOperations jdbcTemplate,
+            final ConfigurableApplicationContext applicationContext,
+            @Qualifier("pac4jDelegatedClientFactoryCache")
+            final Cache<String, Collection<BaseClient>> clientsCache,
+            final CasConfigurationProperties casProperties,
+            final ObjectProvider<List<DelegatedClientFactoryCustomizer>> customizerList,
+            @Qualifier(CasSSLContext.BEAN_NAME)
+            final CasSSLContext casSslContext) {
 
+            val customizers = Optional.ofNullable(customizerList.getIfAvailable())
+                .map(result -> {
+                    AnnotationAwareOrderComparator.sortIfNecessary(result);
+                    return result;
+                })
+                .orElseGet(() -> new ArrayList<>(0));
+
+            return new JdbcDelegatedIdentityProviderFactory(jdbcTemplate,
+                casProperties, customizers, casSslContext, clientsCache, applicationContext);
+        }
+
+        @ConditionalOnMissingBean(name = "pac4jDelegatedClientJdbcTemplate")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public JdbcOperations pac4jDelegatedClientJdbcTemplate(
+            @Qualifier("pac4jDelegatedClientDataSource")
+            final DataSource pac4jDelegatedClientDataSource) {
+            return new JdbcTemplate(pac4jDelegatedClientDataSource);
+        }
+            
+        @ConditionalOnMissingBean(name = "pac4jDelegatedClientDataSource")
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public DataSource pac4jDelegatedClientDataSource(
+            final ConfigurableApplicationContext applicationContext,
+            final CasConfigurationProperties casProperties) {
+            return JpaBeans.newDataSource(casProperties.getAuthn().getPac4j().getJdbc());
+        }
+    }
+    
     @Configuration(value = "DelegatedAuthenticationEventExecutionPlanClientConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class DelegatedAuthenticationEventExecutionPlanClientConfiguration {

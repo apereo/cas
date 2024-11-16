@@ -68,7 +68,12 @@ test coverage of the CAS codebase is approximately `94%`.
 ### Java 23
 
 CAS is now able to build and run using Java `23`. As described, the JDK baseline requirement for this CAS release is and **MUST** be JDK `21`. 
-Remember that the baseline requirement will remain unchanged and this is just a preparatory step to ensure CAS is ready for the next version of Java.
+This is just a preparatory step to ensure CAS is ready for the next versions of Java.
+       
+### Delegate Authentication Providers
+                 
+The configuration of [delegated authentication providers](../integration/Delegate-Authentication-Provider-Registration.html) 
+is now extended to support SQL databases.
 
 ## Other Stuff
       
