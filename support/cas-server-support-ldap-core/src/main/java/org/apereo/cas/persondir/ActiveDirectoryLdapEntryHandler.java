@@ -43,7 +43,7 @@ public class ActiveDirectoryLdapEntryHandler extends AbstractEntryHandler<LdapEn
     public static final int PASSWORD_EXPIRED = 0x00800000;
 
     private static final int AD_STARTING_YEAR = 1601;
-    private static final int DATE_TO_MILISECONDS = 10000;
+    private static final int DATE_TO_MILLISECONDS = 10000;
 
     //CHECKSTYLE:OFF
     private static String decodeLogonBits(final byte b) {
@@ -66,7 +66,7 @@ public class ActiveDirectoryLdapEntryHandler extends AbstractEntryHandler<LdapEn
         if (attr != null) {
             val uac = Integer.parseInt(attr.getStringValue());
             if ((uac & LOCKOUT) == LOCKOUT) {
-                logger.warn("Account is disabled with UAC [{}] for entry [{}]", uac, ldapEntry);
+                logger.warn("Account is locked with UAC [{}] for entry [{}]", uac, ldapEntry);
                 return null;
             }
             if ((uac & ACCOUNT_DISABLED) == ACCOUNT_DISABLED) {
@@ -87,7 +87,7 @@ public class ActiveDirectoryLdapEntryHandler extends AbstractEntryHandler<LdapEn
                 val cal = new GregorianCalendar(TimeZone.getDefault());
                 cal.set(AD_STARTING_YEAR, Calendar.JANUARY, 1, 0, 0);
 
-                val converted = adDate / DATE_TO_MILISECONDS;
+                val converted = adDate / DATE_TO_MILLISECONDS;
                 val timeStamp = Long.valueOf(converted + cal.getTime().getTime());
                 val date = new Date(timeStamp);
                 val accountExpiresDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
@@ -139,8 +139,6 @@ public class ActiveDirectoryLdapEntryHandler extends AbstractEntryHandler<LdapEn
                     }
                 }
             }
-
-            return true;
         }
         return true;
     }
