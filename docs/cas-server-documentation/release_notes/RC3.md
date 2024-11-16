@@ -43,14 +43,9 @@ The following items are new improvements and enhancements presented in this rele
 
 ### Spring Boot 3.4
 
-The migration of the entire codebase to Spring Boot `3.4.x` is ongoing, and at the moment is waiting for the wider ecosystem
-of supporting frameworks and libraries to catch up to changes. We anticipate the work to finalize in the next few
-release candidates and certainly prior to the final release.
-
-The following integrations and extensions remain dysfunctional for now until the underlying library adds
-support for the new version of Spring Boot:
-
-- [Spring Boot Admin](../monitoring/Configuring-SpringBootAdmin.html)
+The migration of the entire codebase to Spring Boot `3.4.x` is complete, and most if not all libraries and
+supporting frameworks have shown to be compatible. There may be might glitches here and there but for the most part,
+CAS is now ready to take advantage of the latest and greatest features of Spring Boot `3.4.x`.
 
 ### OpenRewrite Recipes
 
@@ -103,9 +98,13 @@ Remember that the baseline requirement will remain unchanged and this is just a 
 - Oracle Driver
 - Hibernate
 - Apache Tomcat
+- Spring Data
 - Jetty
 - SpringDoc
 - Quartz
 - Hikari
 - Lombok
 - Pac4j
+- Spring Boot Admin
+- Micrometer
+- Twilio

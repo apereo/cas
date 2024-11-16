@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.CollectionTable;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This is {@link OneTimeTokenAccount}.
@@ -110,8 +112,8 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
             .thenComparing(OneTimeTokenAccount::getSecretKey)
             .thenComparing(OneTimeTokenAccount::getUsername)
             .thenComparing(OneTimeTokenAccount::getName)
-            .thenComparing(OneTimeTokenAccount::getLastUsedDateTime)
-            .thenComparing(OneTimeTokenAccount::getSource)
+            .thenComparing(acct -> Objects.requireNonNullElse(acct.getLastUsedDateTime(), StringUtils.EMPTY))
+            .thenComparing(acct -> StringUtils.defaultString(acct.getSource()))
             .compare(this, tokenAccount);
     }
 

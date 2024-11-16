@@ -56,8 +56,8 @@ class ActiveDirectoryLdapEntryHandlerTests {
     void verifyAccountLogonHours() throws Exception {
         val handler = new ActiveDirectoryLdapEntryHandler();
         val logonHours = new byte[21];
-        for (var day = 1; day <= 5; day++) {
-            for (var hour = 9; hour < 17; hour++) {
+        for (var day = 1; day <= 6; day++) {
+            for (var hour = 1; hour < 23; hour++) {
                 val bitIndex = day * 24 + hour;
                 val byteIndex = bitIndex / 8;
                 val bitPosition = 7 - (bitIndex % 8);
