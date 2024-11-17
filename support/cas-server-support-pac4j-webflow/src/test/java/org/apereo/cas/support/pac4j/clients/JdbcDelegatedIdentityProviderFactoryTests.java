@@ -68,7 +68,7 @@ public class JdbcDelegatedIdentityProviderFactoryTests {
                     INSERT INTO $table (type, index, name, value) VALUES ('cas', 0, 'login-url', 'https://cas.example.org');
                     INSERT INTO $table (type, index, name, value) VALUES ('cas', 0, 'protocol', 'CAS20');
                     
-                    INSERT INTO $table (type, index, name, value) VALUES ('saml2', 0, 'client-name', 'SAML2Client');
+                    INSERT INTO $table (type, index, name, value) VALUES ('saml', 0, 'client-name', 'SAML2Client');
                     
                     INSERT INTO $table (type, index, name, value) VALUES ('oidc', 0, 'generic.client-name', 'OidcClient');
                     

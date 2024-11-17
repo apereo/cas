@@ -3,9 +3,12 @@ package org.apereo.cas.support.pac4j.authentication.clients;
 import org.apereo.cas.authentication.CasSSLContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import com.github.benmanes.caffeine.cache.Cache;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.pac4j.core.client.BaseClient;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -21,7 +24,6 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * This is {@link JdbcDelegatedIdentityProviderFactory}.
@@ -29,7 +31,10 @@ import java.util.Locale;
  * @author Misagh Moayyed
  * @since 7.2.0
  */
+@Slf4j
 public class JdbcDelegatedIdentityProviderFactory extends BaseDelegatedIdentityProviderFactory {
+    private static final String SQL_SELECT = "SELECT * FROM " + JdbcIdentityProviderEntity.TABLE_NAME;
+    
     protected final JdbcOperations jdbcTemplate;
 
     public JdbcDelegatedIdentityProviderFactory(
@@ -45,31 +50,14 @@ public class JdbcDelegatedIdentityProviderFactory extends BaseDelegatedIdentityP
 
     @Override
     protected Collection<BaseClient> loadIdentityProviders() throws Exception {
-        val sql = "SELECT * FROM " + JdbcIdentityProviderEntity.TABLE_NAME;
-        val rowMapper = new BeanPropertyRowMapper<>(JdbcIdentityProviderEntity.class, true);
-        val configList = jdbcTemplate.query(sql, rowMapper);
-
-        val prefix = "cas.authn.pac4j";
+        val configList = fetchIdentityProviderConfiguration();
         val properties = new LinkedHashMap<String, Object>();
         for (val config : configList) {
-            switch (config.getType().toLowerCase(Locale.ENGLISH)) {
-                case "cas":
-                    properties.put((prefix + ".cas[%s].%s").formatted(config.getIndex(), config.getName()), config.getValue());
-                    break;
-                case "oauth2":
-                case "oauth":
-                    properties.put((prefix + ".oauth2[%s].%s").formatted(config.getIndex(), config.getName()), config.getValue());
-                    break;
-                case "oidc":
-                    properties.put((prefix + ".oidc[%s].%s").formatted(config.getIndex(), config.getName()), config.getValue());
-                    break;
-                case "saml":
-                case "saml2":
-                    properties.put((prefix + ".saml[%s].%s").formatted(config.getIndex(), config.getName()), config.getValue());
-                    break;
-            }
+            val property = config.toCasProperty();
+            LOGGER.debug("Loading delegated identity provider configuration [{}]", property);
+            properties.put(property, config.getValue());
         }
-        
+
         if (!properties.isEmpty()) {
             val bound = CasConfigurationProperties.bindFrom(getClass().getSimpleName(), properties);
             if (bound.isPresent()) {
@@ -79,13 +67,21 @@ public class JdbcDelegatedIdentityProviderFactory extends BaseDelegatedIdentityP
         return List.of();
     }
 
+    protected List<JdbcIdentityProviderEntity> fetchIdentityProviderConfiguration() {
+        val rowMapper = new BeanPropertyRowMapper<>(JdbcIdentityProviderEntity.class, true);
+        return jdbcTemplate.query(SQL_SELECT, rowMapper);
+    }
+
     @Getter
     @Entity
     @Setter
     @Table(name = JdbcIdentityProviderEntity.TABLE_NAME)
     @Accessors(chain = true)
+    @ToString
+    @EqualsAndHashCode
     public static class JdbcIdentityProviderEntity implements Serializable {
-
+        private static final String CONFIG_PREFIX = "cas.authn.pac4j";
+        
         /**
          * The table name that holds the config in the database.
          */
@@ -102,5 +98,9 @@ public class JdbcDelegatedIdentityProviderFactory extends BaseDelegatedIdentityP
         private int index;
         private String name;
         private String value;
+
+        String toCasProperty() {
+            return CONFIG_PREFIX + ".%s[%s].%s".formatted(getType(), getIndex(), getName());
+        }
     }
 }
