@@ -1,22 +1,22 @@
 apply plugin: "com.github.ben-manes.versions"
 
 def isNonStable = { String version ->
-    def keywords = ['RELEASE', 'FINAL', 'GA', "-RC", "-M"]
+    def keywords = ['RELEASE', 'FINAL', 'GA']
     def stableKeyword = keywords.any { it -> version.toUpperCase(Locale.ENGLISH).contains(it) }
     def regex = /^[0-9,.v-]+(-r)?$/
-    return !stableKeyword && !(version ==~ regex)
+    !stableKeyword && !(version ==~ regex)
 }
 
 def isCommonsCollectionsRejected = { candidate ->
-    return candidate.version == "20040616" && candidate.group == "commons-collections" && candidate.name == "commons-collections"
+    candidate.version == "20040616" && candidate.group == "commons-collections" && candidate.name == "commons-collections"
 }
 
 def isH2DatabaseRejected = { candidate ->
-    return candidate.group == "com.h2database" && candidate.name == "h2"
+    candidate.group == "com.h2database" && candidate.name == "h2"
 }
 
 def isAwsSDKRejected = { candidate ->
-    return candidate.group == "software.amazon.awssdk" && !candidate.version.endsWith("0")
+    candidate.group == "software.amazon.awssdk" && !candidate.version.endsWith("0")
 }
 
 tasks.named('dependencyUpdates') {
