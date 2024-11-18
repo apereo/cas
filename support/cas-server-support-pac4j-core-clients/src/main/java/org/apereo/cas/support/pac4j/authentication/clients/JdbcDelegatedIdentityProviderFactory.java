@@ -80,16 +80,13 @@ public class JdbcDelegatedIdentityProviderFactory extends BaseDelegatedIdentityP
     @ToString
     @EqualsAndHashCode
     public static class JdbcIdentityProviderEntity implements Serializable {
-        private static final String CONFIG_PREFIX = "cas.authn.pac4j";
-        
         /**
          * The table name that holds the config in the database.
          */
         public static final String TABLE_NAME = "JdbcIdentityProviderEntity";
-
+        private static final String CONFIG_PREFIX = "cas.authn.pac4j";
         @Serial
         private static final long serialVersionUID = 976705073390152323L;
-
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
