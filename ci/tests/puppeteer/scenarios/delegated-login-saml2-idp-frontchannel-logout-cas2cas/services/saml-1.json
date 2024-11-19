@@ -1,0 +1,11 @@
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "https://localhost:8444/cas/login\\?client_name=SAML",
+  "name" : "SAML",
+  "id" : 1,
+  "metadataLocation" : "./ci/tests/puppeteer/scenarios/delegated-login-saml2-idp-frontchannel-logout-cas2cas/saml-md/sp-metadata.xml",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllAttributeReleasePolicy"
+  },
+  "logoutType" : "FRONT_CHANNEL"
+}
