@@ -23,11 +23,13 @@ const path = require("path");
 
     await cas.log("Updating configuration and waiting for changes to reload...");
     await updateConfig(configFile, configFilePath, "casrefresh::p@$$word");
-    await cas.sleep(8000);
+    await cas.sleep(10000);
 
     await cas.log("Attempting to login with new updated credentials...");
     await cas.gotoLogin(page);
+    await cas.sleep(2000);
     await cas.loginWith(page, "casrefresh", "p@$$word");
+    await cas.sleep(2000);
     await cas.assertCookie(page);
 
     await updateConfig(configFile, configFilePath, users);
