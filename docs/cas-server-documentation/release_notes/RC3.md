@@ -94,6 +94,11 @@ is now extended to support SQL databases.
        
 - Gradle
 - Spring Boot
+- Spring
+- Spring Security
+- Spring Integration
+- Spring Shell
+- JaVers
 - Groovy
 - Swagger
 - Spring Cloud
@@ -113,3 +118,6 @@ is now extended to support SQL databases.
 - Spring Boot Admin
 - Micrometer
 - Twilio
+- Sentry
+- Elastic APM
+- Google Cloud Logging
