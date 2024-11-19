@@ -65,4 +65,11 @@ public class PasswordlessAuthenticationCoreProperties implements Serializable {
     @NestedConfigurationProperty
     private SpringResourceProperties delegatedAuthenticationSelectorScript = new SpringResourceProperties();
 
+    /**
+     * Provide the ability to customize and augment the passwordless user account
+     * once it's been fetched from the actual store.
+     */
+    @NestedConfigurationProperty
+    private SpringResourceProperties passwordlessAccountCustomizerScript = new SpringResourceProperties();
+
 }

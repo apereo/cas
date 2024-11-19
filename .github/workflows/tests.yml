@@ -21,6 +21,7 @@ env:
   AZURE_AD_USER_PASSWORD: ${{ secrets.AZURE_AD_USER_PASSWORD }}
   AZURE_AD_TENANT: ${{ secrets.AZURE_AD_TENANT }}
   AZURE_AD_DOMAIN: ${{ secrets.AZURE_AD_DOMAIN }}
+  PERMIT_IO_API_KEY: ${{ secrets.PERMIT_IO_API_KEY }}
   JDK_CURRENT: 21
   JDK_DISTRIBUTION: "corretto"
   RETRY_ATTEMPTS: 2
@@ -152,12 +153,13 @@ jobs:
           fi
       - name: Upload to SonarCloud
         if: env.SONARCLOUD_TOKEN != null && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
+        continue-on-error: true
         run: |
           ./gradlew sonar --build-cache --configure-on-demand --no-daemon -DskipAot=true --parallel \
-            -x javadoc -DskipNestedConfigMetadataGen=true -Dverbose=true \
+            -x javadoc -DskipNestedConfigMetadataGen=true \
             -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
       - name: "Upload to Codecov"
-        uses: "codecov/codecov-action@v4"
+        uses: "codecov/codecov-action@v5"
         continue-on-error: true
         if: env.CODECOV_TOKEN != null && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
         with:
@@ -207,7 +209,7 @@ jobs:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
           coverage-reports: ${{ env.COVERAGE_REPORTS }}
       - name: Upload to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         if: ${{ env.CODECOV_TOKEN != null }}
         continue-on-error: true
         with:

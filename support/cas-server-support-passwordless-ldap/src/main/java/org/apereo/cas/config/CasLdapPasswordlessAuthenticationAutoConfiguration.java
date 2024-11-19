@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.api.PasswordlessUserAccountCustomizer;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -17,6 +18,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ScopedProxyMode;
+import java.util.List;
 
 /**
  * This is {@link CasLdapPasswordlessAuthenticationAutoConfiguration}.
@@ -33,6 +35,7 @@ public class CasLdapPasswordlessAuthenticationAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = "ldapPasswordlessUserAccountStore")
     public BeanSupplier<PasswordlessUserAccountStore> ldapPasswordlessUserAccountStore(
+        final List<PasswordlessUserAccountCustomizer> customizerList,
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(PasswordlessUserAccountStore.class)
@@ -40,7 +43,8 @@ public class CasLdapPasswordlessAuthenticationAutoConfiguration {
             .supply(() -> {
                 val ldap = casProperties.getAuthn().getPasswordless().getAccounts().getLdap();
                 val connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-                return new LdapPasswordlessUserAccountStore(new LdapConnectionFactory(connectionFactory), ldap);
+                return new LdapPasswordlessUserAccountStore(new LdapConnectionFactory(connectionFactory),
+                    ldap, applicationContext, customizerList);
             })
             .otherwiseNull();
     }

@@ -62,6 +62,47 @@ using CAS settings and are activated depending on the presence of configuration 
 | Duo Security | Please [see this guide](Passwordless-Authentication-Storage-DuoSecurity.html). |
       
 Note that Multiple passwordless account stores can be used simultaneously to verify and locate passwordless accounts.
+ 
+### Account Customization
+
+When a passwordless account is located from store, it may be customized and post-processed to modify
+various aspects of the account such as the requirement to activate MFA, password flows, etc. CAS allows
+for a Groovy script that is passed the retrieved passwordless account and script is responsible for adjustments
+and modifications.
+
+```groovy
+import org.apereo.cas.api.*
+
+def run(Object[] args) {
+    def (account,applicationContext,logger) = args
+
+    logger.info("Customizing $account")
+    
+    // Update the account...
+    
+    return account
+}
+```
+
+The following parameters are passed to the script:
+
+| Parameter            | Description                                                                  |
+|----------------------|------------------------------------------------------------------------------|
+| `account`            | The object representing the `PasswordlessUserAccount` that is to be updated. |
+| `applicationContext` | The object representing the Spring application context.                      |
+| `logger`             | The object responsible for issuing log messages such as `logger.info(...)`.  |
+                                                                              
+Alternatively, you may build your own implementation of `PasswordlessUserAccountCustomizer` and register it as a Spring bean.
+
+```java
+@Bean
+public PasswordlessUserAccountCustomizer myCustomizer() {
+    return new MyPasswordlessUserAccountCustomizer();
+}
+```
+
+[See this guide](../configuration/Configuration-Management-Extensions.html) to learn
+more about how to register configurations into the CAS runtime.
 
 ## Token Management
 

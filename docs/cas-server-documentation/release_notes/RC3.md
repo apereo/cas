@@ -67,30 +67,28 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `502` distinct scenarios. The overall
-test coverage of the CAS codebase is approximately `94%`. Furthermore, a large number of test categories that group internal unit tests
-are now configured to run with parallelism enabled.
+and scenarios. At the moment, total number of jobs stands at approximately `504` distinct scenarios. The overall
+test coverage of the CAS codebase is approximately `94%`. 
 
 ### Java 23
 
-As described, the JDK baseline requirement for this CAS release is and **MUST** be JDK `21`. We are still waiting for the
-wider ecosystem of supporting frameworks and libraries to catch up to Java `23`. We anticipate the work to finalize in the next few
-release candidates and certainly prior to the final release. Remember that the baseline requirement will remain unchanged
-and this is just a preparatory step to ensure CAS is ready for the next version of Java.
+CAS is now able to build and run using Java `23`. As described, the JDK baseline requirement for this CAS release is and **MUST** be JDK `21`. 
+Remember that the baseline requirement will remain unchanged and this is just a preparatory step to ensure CAS is ready for the next version of Java.
 
 ## Other Stuff
       
 - A dedicated metric, `slow.requests.timer`, is now available once system health monitoring is enabled to track slow requests that take longer than 5 seconds.
-- Additional theme property to determine where CAS version details should be displayed in the page footer.
-- Multifactor provider selection is set to utilize ranking strategies when multiple competing MFA triggers vote for different MFA providers.
-- A new configuration option to control whether JWT access tokens should include additional attributes and claims beyond the standard claims.
-- DynamoDb ticket registry is adjusted to not track attributes with empty values when storing tickets in string sets.
+- Additional [theme property](../ux/User-Interface-Customization-Themes-Static.html) to determine where CAS version details should be displayed in the page footer.
+- [Multifactor provider selection](../mfa/Configuring-Multifactor-Authentication-Triggers.html) is set to utilize ranking strategies when multiple competing MFA triggers vote for different MFA providers.
+- A new configuration option to control whether [JWT access tokens](../authentication/OAuth-Authentication.html) should include additional attributes and claims beyond the standard claims.
+- [DynamoDb ticket registry](../ticketing/DynamoDb-Ticket-Registry.html) is adjusted to not track attributes with empty values when storing tickets in string sets.
 - CAS may not generate refresh tokens if the expiration policy for refresh tokens is set to zero.
-- Redirecting to a destination URL after CAS logout is now remembered as a `TST` prior to sending SAML2 logout requests to external identity providers.
+- Redirecting to a destination URL after [CAS logout](../installation/Logout-Single-Signout.html) is now remembered as a `TST` prior to sending SAML2 logout requests to external identity providers.
 - Actuator endpoints can be secured using a static JSON file that may contain user details and roles.
-- Support for Redis modules via LettuceMod is now extracted into a dedicated module.
-- Scratch codes may also be used to verify an account during the Google Authenticator registration flow.
-- Tickets captured via JPA ticket registry will also track the ticket expiration time and the last-used time.
+- Support for [Redis modules via LettuceMod](../ticketing/Redis-Ticket-Registry-RediSearch.html) is now extracted into a dedicated module.
+- Scratch codes may also be used to verify an account during the [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) registration flow.
+- Tickets captured via [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html) will also track the ticket expiration time and the last-used time.
+- [Passwordless accounts](../authentication/Passwordless-Authentication.html) can be now customized and post-processed once fetched from the passwordless account store.  
 
 ## Library Upgrades
        
@@ -107,5 +105,7 @@ and this is just a preparatory step to ensure CAS is ready for the next version 
 - Apache Tomcat
 - Jetty
 - SpringDoc
+- Quartz
 - Hikari
+- Lombok
 - Pac4j

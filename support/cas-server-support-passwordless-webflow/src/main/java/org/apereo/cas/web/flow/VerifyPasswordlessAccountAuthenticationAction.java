@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.api.PasswordlessRequestParser;
+import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.api.PasswordlessUserAccountStore;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.WebUtils;
@@ -42,9 +43,15 @@ public class VerifyPasswordlessAccountAuthenticationAction extends BasePasswordl
         PasswordlessWebflowUtils.putPasswordlessAuthenticationRequest(requestContext, passwordlessRequest);
         val isDelegationActive = isDelegatedAuthenticationActiveFor(requestContext, user);
         DelegationWebflowUtils.putDelegatedAuthenticationDisabled(requestContext, !isDelegationActive);
-        WebUtils.putCasLoginFormViewable(requestContext, user.isRequestPassword());
-        return user.isRequestPassword() || user.getAllowedDelegatedClients().size() > 1
+
+        val requestPassword = doesPasswordlessAccountRequestPassword(user);
+        WebUtils.putCasLoginFormViewable(requestContext, requestPassword);
+        return requestPassword || user.getAllowedDelegatedClients().size() > 1
             ? new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROMPT)
             : success();
+    }
+
+    protected boolean doesPasswordlessAccountRequestPassword(final PasswordlessUserAccount user) {
+        return user.isRequestPassword();
     }
 }

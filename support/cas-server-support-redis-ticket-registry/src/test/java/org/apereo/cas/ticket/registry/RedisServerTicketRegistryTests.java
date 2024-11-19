@@ -26,10 +26,10 @@ import org.apereo.cas.util.ProxyGrantingTicketIdGenerator;
 import org.apereo.cas.util.ProxyTicketIdGenerator;
 import org.apereo.cas.util.ServiceTicketIdGenerator;
 import org.apereo.cas.util.TicketGrantingTicketIdGenerator;
+import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.thread.Cleanable;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
@@ -459,14 +459,13 @@ class RedisServerTicketRegistryTests {
             private final int max;
 
             @Override
-            @SneakyThrows
             public void run() {
                 val authentication = CoreAuthenticationTestUtils.getAuthentication(principalId);
                 val ticketGenerator = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY);
                 for (int i = 0; i < max; i++) {
                     val tgtId = ticketGenerator.getNewTicketId(TicketGrantingTicket.PREFIX);
                     val tgt = new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
-                    ticketRegistry.addTicket(tgt);
+                    FunctionUtils.doUnchecked(__ -> ticketRegistry.addTicket(tgt));
                 }
             }
         }
@@ -540,13 +539,12 @@ class RedisServerTicketRegistryTests {
             private final int max;
 
             @Override
-            @SneakyThrows
             public void run() {
                 val ptGenerator = new ProxyTicketIdGenerator(10, StringUtils.EMPTY);
                 for (int i = 0; i < max; i++) {
                     val proxyTicket = proxyGrantingTicket.grantProxyTicket(ptGenerator.getNewTicketId(ProxyTicket.PREFIX),
                             service, new HardTimeoutExpirationPolicy(20), serviceTicketSessionTrackingPolicy);
-                    ticketRegistry.addTicket(proxyTicket);
+                    FunctionUtils.doUnchecked(__ -> ticketRegistry.addTicket(proxyTicket));
                 }
             }
         }
