@@ -16,6 +16,7 @@ import org.apereo.cas.authentication.CredentialMetadata;
 import org.apereo.cas.authentication.DefaultAuthentication;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.MessageDescriptor;
+import org.apereo.cas.authentication.PrePostAuthenticationHandler;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.PrincipalElectionStrategyConflictResolver;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
@@ -61,6 +62,8 @@ public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistr
         val credentials = findSubclassesInPackage(Credential.class, CentralAuthenticationService.NAMESPACE);
         registerReflectionHints(hints, credentials);
 
+        registerSpringProxy(hints, PrePostAuthenticationHandler.class, AuthenticationHandler.class);
+        
         registerProxyHints(hints, List.of(
             AuthenticationMetaDataPopulator.class,
             AuthenticationAccountStateHandler.class,
