@@ -2198,6 +2198,53 @@ async function initializeAuthenticationOperations() {
         }
     });
 
+    function configureSaml2ClientMetadataButtons() {
+        function showSamlMetadata(payload) {
+            const saml2Editor = initializeAceEditor("delegatedClientsSaml2Editor", "xml");
+            saml2Editor.setReadOnly(true);
+            
+            saml2Editor.setValue(new XMLSerializer().serializeToString(payload));
+            saml2Editor.gotoLine(1);
+
+            const beautify = ace.require("ace/ext/beautify");
+            beautify.beautify(saml2Editor.session);
+
+            const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("delegatedClientsSaml2Dialog"));
+            dialog["open"]();
+        }
+        
+        $("button[name=saml2ClientSpMetadata]").off().on("click", function () {
+            $(this).prop("disabled", true);
+            const url = `${casServerPrefix}/sp/${$(this).attr("clientName")}/metadata`;
+            $.get(url, payload => showSamlMetadata(payload))
+                .always(() => $(this).prop("disabled", false));
+
+        });
+        $("button[name=saml2ClientIdpMetadata]").off().on("click", function () {
+            $(this).prop("disabled", true);
+            const clientName = `${$(this).attr("clientName")}`;
+            const url = `${casServerPrefix}/sp/${clientName}/idp/metadata`;
+
+            Swal.fire({
+                icon: "info",
+                title: `Fetching SAML2 Identity Provider Metadata for ${clientName}`,
+                text: "Please wait while data is being retrieved...",
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            $.get(url, payload => {
+                showSamlMetadata(payload);
+                updateNavigationSidebar();
+                Swal.close();
+            })
+                .always(() => $(this).prop("disabled", false));
+        });
+    }
+
     authenticationHandlersTable.clear();
     if (actuatorEndpoints.authenticationHandlers) {
         $.get(actuatorEndpoints.authenticationHandlers, response => {
@@ -2267,26 +2314,30 @@ async function initializeAuthenticationOperations() {
                 .each((group, i) => {
                     if (last !== group) {
                         let samlButtons = "";
-                        if (rows.data()[i][3] === "saml2") {
-                            samlButtons = `<span class="px-2">
-                                <button type="button" title="Service Provider Metadata" name="saml2ClientSpMetadata" href="#" clientName='${group}'
-                                        class="mdc-button mdc-button--raised toolbar">
-                                    <i class="mdi mdi-text-box min-width-32x" aria-hidden="true"></i>
-                                    Service Provider Metadata
-                                </button>
-                                <button type="button" title="Identity Provider Metadata" name="saml2ClientIdpMetadata" href="#" clientName='${group}'
-                                        class="mdc-button mdc-button--raised toolbar">
-                                    <i class="mdi mdi-file-xml-box min-width-32x" aria-hidden="true"></i>
-                                    Identity Provider Metadata
-                                </button>
-                        </span>
-                            `;
-                        }
-
+                        rows.data().each(entry => {
+                            if (entry[0] === group && entry[3] === "saml2") {
+                                samlButtons = `
+                                    <span class="px-2">
+                                            <button type="button" title="Service Provider Metadata" name="saml2ClientSpMetadata" href="#" clientName='${group}'
+                                                    class="mdc-button mdc-button--raised toolbar">
+                                                <i class="mdi mdi-text-box min-width-32x" aria-hidden="true"></i>
+                                                Service Provider Metadata
+                                            </button>
+                                            <button type="button" title="Identity Provider Metadata" name="saml2ClientIdpMetadata" href="#" clientName='${group}'
+                                                    class="mdc-button mdc-button--raised toolbar">
+                                                <i class="mdi mdi-file-xml-box min-width-32x" aria-hidden="true"></i>
+                                                Identity Provider Metadata
+                                            </button>
+                                    </span>
+                                    `.trim();
+                            }
+                        });
                         $(rows).eq(i).before(
                             `<tr style='font-weight: bold; background-color:var(--cas-theme-primary); color:var(--mdc-text-button-label-text-color);'>
                                 <td colspan="3">${group} ${samlButtons.trim()} </td>
-                            </tr>`.trim());
+                            </tr>`.trim()
+                        );
+                        configureSaml2ClientMetadataButtons();
                         last = group;
                     }
                 });
@@ -2295,22 +2346,7 @@ async function initializeAuthenticationOperations() {
 
     delegatedClientsTable.clear();
     if (actuatorEndpoints.delegatedClients) {
-        const saml2Editor = initializeAceEditor("delegatedClientsSaml2Editor", "xml");
-        saml2Editor.setReadOnly(true);
-
         $.get(actuatorEndpoints.delegatedClients, response => {
-            function showSamlMetadata(payload) {
-                saml2Editor.setValue(new XMLSerializer().serializeToString(payload));
-                saml2Editor.gotoLine(1);
-
-                const beautify = ace.require("ace/ext/beautify");
-                beautify.beautify(saml2Editor.session);
-
-                const dialog = window.mdc.dialog.MDCDialog.attachTo(document.getElementById("delegatedClientsSaml2Dialog"));
-                dialog["open"]();
-            }
-
-
             for (const [key, idp] of Object.entries(response)) {
                 const details = flattenJSON(idp);
                 for (const [k, v] of Object.entries(details)) {
@@ -2326,27 +2362,19 @@ async function initializeAuthenticationOperations() {
             }
             delegatedClientsTable.draw();
             $("#delegatedClientsContainer").removeClass("d-none");
+            $("#delegatedclients").removeClass("d-none");
+            updateNavigationSidebar();
 
-            $("button[name=saml2ClientSpMetadata]").off().on("click", function () {
-                $(this).prop("disabled", true);
-                const url = `${casServerPrefix}/sp/${$(this).attr("clientName")}/metadata`;
-                $.get(url, payload => showSamlMetadata(payload))
-                    .always(() => $(this).prop("disabled", false));
-
-            });
-            $("button[name=saml2ClientIdpMetadata]").off().on("click", function () {
-                $(this).prop("disabled", true);
-                const url = `${casServerPrefix}/sp/${$(this).attr("clientName")}/idp/metadata`;
-                $.get(url, payload => showSamlMetadata(payload))
-                    .always(() => $(this).prop("disabled", false));
-            });
+            configureSaml2ClientMetadataButtons();
 
         }).fail((xhr, status, error) => {
             console.error("Error fetching data:", error);
             $("#delegatedClientsContainer").addClass("d-none");
+            $("#delegatedclients").addClass("d-none");
         });
     } else {
         $("#delegatedClientsContainer").addClass("d-none");
+        $("#delegatedclients").addClass("d-none");
     }
 }
 
