@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions.logout;
 
 import org.apereo.cas.authentication.principal.ClientCredential;
+import org.apereo.cas.logout.LogoutHttpMessage;
 import org.apereo.cas.logout.slo.SingleLogoutRequestExecutor;
 import org.apereo.cas.support.pac4j.authentication.DelegatedAuthenticationClientLogoutRequest;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -17,6 +18,7 @@ import lombok.val;
 import org.opensaml.saml.saml2.core.LogoutRequest;
 import org.opensaml.saml.saml2.core.LogoutResponse;
 import org.pac4j.saml.credentials.SAML2Credentials;
+import org.springframework.http.HttpMethod;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import jakarta.servlet.http.HttpServletRequest;
@@ -62,7 +64,7 @@ public class DelegatedSaml2ClientLogoutAction extends BaseCasWebflowAction {
 
         if (clientCredential != null && clientCredential.getCredentials() instanceof final SAML2Credentials saml2Credentials) {
             val message = saml2Credentials.getContext().getMessageContext().getMessage();
-            if (message instanceof final LogoutRequest logoutRequest) {
+            if (message instanceof final LogoutRequest logoutRequest && isDirectLogoutRequest(request)) {
                 val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
                 removeSsoSessionsForSessionIndexes(request, response, logoutRequest);
             }
@@ -86,5 +88,9 @@ public class DelegatedSaml2ClientLogoutAction extends BaseCasWebflowAction {
         }
         
         return success();
+    }
+
+    protected boolean isDirectLogoutRequest(final HttpServletRequest request) {
+        return HttpMethod.POST.matches(request.getMethod()) || request.getParameter(LogoutHttpMessage.LOGOUT_REQUEST_PARAMETER) != null;
     }
 }
