@@ -59,7 +59,7 @@
                 <script src="https://cdn.jsdelivr.net/npm/friendly-challenge@0.9.16/widget.min.js" async defer></script>
 
                 <section id="friendlyCaptchaSection" class="form-group">
-                    <div class="frc-captcha" th:attr="data-sitekey=${recaptchaSiteKey}"></div>
+                    <div class="frc-captcha" th:attr="data-sitekey=${recaptchaSiteKey},data-lang=${#locale.language}"></div>
                 </section>
             </span>
 
