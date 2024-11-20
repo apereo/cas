@@ -33,17 +33,11 @@ public class MultifactorAuthenticationTrustRecordExpiry implements Expiry<String
             LOGGER.trace("Multifactor trust record [{}] is expired", value);
             return 0;
         }
-        try {
-            val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
-            val zonedExp = DateTimeUtils.zonedDateTimeOf(value.getExpirationDate()).truncatedTo(ChronoUnit.SECONDS);
-            val nanos = Duration.between(now, zonedExp).toNanos();
-            LOGGER.trace("Multifactor trust record [{}] expires in [{}] nanoseconds", value, nanos);
-            return nanos;
-        } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
-        }
-        LOGGER.debug("Multifactor trust record [{}] will never expire", value);
-        return Long.MAX_VALUE;
+        val now = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS);
+        val zonedExp = DateTimeUtils.zonedDateTimeOf(value.getExpirationDate()).truncatedTo(ChronoUnit.SECONDS);
+        val nanos = Duration.between(now, zonedExp).toNanos();
+        LOGGER.trace("Multifactor trust record [{}] expires in [{}] nanoseconds", value, nanos);
+        return nanos;
     }
 
     @Override
