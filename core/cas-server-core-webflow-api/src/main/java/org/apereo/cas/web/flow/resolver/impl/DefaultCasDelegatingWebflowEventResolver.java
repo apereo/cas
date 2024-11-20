@@ -207,7 +207,11 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
             return strategies.resolveService(serviceFromRequest);
         }
         if (serviceFromRequest != null) {
-            serviceFromFlow.setFragment(serviceFromRequest.getFragment());
+            try {
+                serviceFromFlow.setFragment(serviceFromRequest.getFragment());
+            } catch (final Exception e) {
+                LOGGER.error("Unable to extract fragment from [{}]: [{}]", serviceFromRequest.getOriginalUrl(), e.getMessage());
+            }
         }
         return strategies.resolveService(serviceFromFlow);
     }
