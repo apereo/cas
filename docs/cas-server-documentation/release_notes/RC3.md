@@ -44,7 +44,7 @@ The following items are new improvements and enhancements presented in this rele
 ### Spring Boot 3.4
 
 The migration of the entire codebase to Spring Boot `3.4.x` is complete, and most if not all libraries and
-supporting frameworks have shown to be compatible. There may be might glitches here and there but for the most part,
+supporting frameworks have shown to be compatible. There may be slight glitches here and there but for the most part,
 CAS is now ready to take advantage of the latest and greatest features of Spring Boot `3.4.x`.
 
 ### OpenRewrite Recipes
