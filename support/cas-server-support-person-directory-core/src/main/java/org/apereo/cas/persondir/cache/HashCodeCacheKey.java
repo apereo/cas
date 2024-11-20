@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import lombok.val;
 import java.io.Serial;
 import java.io.Serializable;
 
@@ -26,26 +25,25 @@ class HashCodeCacheKey implements Serializable {
     /**
      * Number that helps keep the uniqueness of this key.
      */
-    private long checkSum;
+    private final long checkSum;
 
     /**
      * Pre-calculated hash code.
      */
-    private int hashCode;
+    private final int hashCode;
 
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof HashCodeCacheKey)) {
+        if (!(obj instanceof final HashCodeCacheKey other)) {
             return false;
         }
-        val other = (HashCodeCacheKey) obj;
-        if (checkSum != other.checkSum) {
+        if (checkSum != other.getCheckSum()) {
             return false;
         }
-        return hashCode == other.hashCode;
+        return hashCode == other.getHashCode();
     }
 
     @Override

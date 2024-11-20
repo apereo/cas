@@ -10,7 +10,6 @@ import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -29,7 +28,6 @@ import jakarta.annotation.Nonnull;
  * @since 7.0.0
  */
 @AutoConfigureOrder(Ordered.LOWEST_PRECEDENCE)
-@ConditionalOnBean(name = AuthenticationThrottlingExecutionPlan.BEAN_NAME)
 @ConditionalOnFeatureEnabled(feature = {
     CasFeatureModule.FeatureCatalog.Throttling,
     CasFeatureModule.FeatureCatalog.SAMLIdentityProvider
@@ -49,11 +47,12 @@ class SamlIdPThrottleConfiguration {
             return new WebMvcConfigurer() {
                 @Override
                 public void addInterceptors(@Nonnull final InterceptorRegistry registry) {
-                    val handler = new RefreshableHandlerInterceptor(
-                        () -> authenticationThrottlingExecutionPlan.getObject().getAuthenticationThrottleInterceptors());
-                    registry.addInterceptor(handler)
-                        .order(0)
-                        .addPathPatterns('/' + SamlIdPConstants.BASE_ENDPOINT_IDP + "/**");
+                    authenticationThrottlingExecutionPlan.ifAvailable(plan -> {
+                        val handler = new RefreshableHandlerInterceptor(plan::getAuthenticationThrottleInterceptors);
+                        registry.addInterceptor(handler)
+                            .order(0)
+                            .addPathPatterns('/' + SamlIdPConstants.BASE_ENDPOINT_IDP + "/**");
+                    });
                 }
             };
         }
