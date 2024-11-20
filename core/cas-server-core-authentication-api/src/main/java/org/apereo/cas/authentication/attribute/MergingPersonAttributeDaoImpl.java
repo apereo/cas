@@ -24,7 +24,8 @@ public class MergingPersonAttributeDaoImpl extends AbstractAggregatingDefaultQue
     }
 
     @Override
-    protected Set<PersonAttributes> getAttributesFromDao(final Map<String, List<Object>> seed, final boolean isFirstQuery,
+    protected Set<PersonAttributes> getAttributesFromDao(final Map<String, List<Object>> seed,
+                                                         final boolean isFirstQuery,
                                                          final PersonAttributeDao currentlyConsidering,
                                                          final Set<PersonAttributes> resultPeople,
                                                          final PersonAttributeDaoFilter filter) {

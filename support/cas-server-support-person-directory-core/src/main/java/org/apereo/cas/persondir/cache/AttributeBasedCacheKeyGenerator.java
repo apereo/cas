@@ -17,6 +17,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import static org.apache.commons.codec.digest.MessageDigestAlgorithms.*;
 
@@ -175,10 +176,7 @@ public class AttributeBasedCacheKeyGenerator implements CacheKeyGenerator {
         if (this.useAllAttributes) {
             return seed.keySet();
         }
-        if (this.cacheKeyAttributes != null) {
-            return this.cacheKeyAttributes;
-        }
-        return Set.of(defaultAttributeName);
+        return Objects.requireNonNullElseGet(this.cacheKeyAttributes, () -> Set.of(defaultAttributeName));
     }
 
     protected static void putAttributeInCache(final Map<String, Object> cacheKey, final String attr, final Object value) {

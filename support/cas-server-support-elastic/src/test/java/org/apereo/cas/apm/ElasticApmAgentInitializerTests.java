@@ -2,7 +2,6 @@ package org.apereo.cas.apm;
 
 import org.apereo.cas.config.CasElasticApmAutoConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.monitor.Monitorable;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.app.ApplicationEntrypointInitializer;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
@@ -31,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = {
-    CasElasticApmAutoConfiguration.class,
-    ElasticApmAgentInitializerTests.ElasticApmTestConfiguration.class
+    ElasticApmAgentInitializerTests.ElasticApmTestConfiguration.class,
+    CasElasticApmAutoConfiguration.class
 })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnabledIfListeningOnPort(port = 8800)
@@ -65,18 +64,7 @@ class ElasticApmAgentInitializerTests {
     static class ElasticApmTestConfiguration {
         @Bean
         public Greeter greeter() {
-            return fail -> {
-                if (fail) {
-                    throw new IllegalArgumentException("Failed");
-                }
-                return "Hello, World!";
-            };
+            return Greeter.defaultInstance();
         }
-    }
-
-    @FunctionalInterface
-    @Monitorable(type = "Greeting")
-    private interface Greeter {
-        String greet(boolean fail);
     }
 }

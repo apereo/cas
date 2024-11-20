@@ -13,6 +13,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.core.annotation.AnnotationUtils;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -26,7 +27,10 @@ import java.util.stream.Stream;
 @Aspect
 @Slf4j
 @SuppressWarnings("UnusedMethod")
-public record ElasticApmMonitoringAspect() implements Serializable {
+public class ElasticApmMonitoringAspect implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -6233930180591815087L;
+
     /**
      * Around pointcut to wrap all monitorable components in the CAS namespace.
      * Starts an exit span, and returns the result of the joinpoint in the end.
