@@ -3,12 +3,10 @@ package org.apereo.cas.logout.slo;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceLogoutType;
 import org.apereo.cas.services.WebBasedRegisteredService;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -53,12 +51,11 @@ public class SingleLogoutUrl implements Serializable {
      * @return the list
      */
     public static List<SingleLogoutUrl> from(final RegisteredService service) {
-        if (service instanceof final WebBasedRegisteredService registeredService) {
-            if (StringUtils.hasText(registeredService.getLogoutUrl())) {
-                return Arrays.stream(StringUtils.commaDelimitedListToStringArray(registeredService.getLogoutUrl()))
-                    .map(url -> new SingleLogoutUrl(url, registeredService.getLogoutType()))
-                    .collect(Collectors.toList());
-            }
+        if (service instanceof final WebBasedRegisteredService registeredService
+            && StringUtils.hasText(registeredService.getLogoutUrl())) {
+            return Arrays.stream(StringUtils.commaDelimitedListToStringArray(registeredService.getLogoutUrl()))
+                .map(url -> new SingleLogoutUrl(url, registeredService.getLogoutType()))
+                .collect(Collectors.toList());
         }
         return new ArrayList<>(0);
     }

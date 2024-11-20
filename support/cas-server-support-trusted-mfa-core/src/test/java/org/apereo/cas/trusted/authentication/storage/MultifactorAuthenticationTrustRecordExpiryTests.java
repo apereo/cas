@@ -1,28 +1,17 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 import org.apereo.cas.test.CasTestExtension;
+import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
+import org.apereo.cas.util.DateTimeUtils;
 import lombok.Getter;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.extension.ExtendWith;
-
-import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.TestPropertySource;
-
+import org.junit.jupiter.api.extension.ExtendWith;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.util.Optional;
 import java.util.UUID;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import static org.awaitility.Awaitility.*;
 
 /**
  * This is {@link MultifactorAuthenticationTrustRecordExpiryTests}.

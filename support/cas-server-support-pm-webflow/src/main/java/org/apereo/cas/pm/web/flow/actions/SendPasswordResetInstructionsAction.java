@@ -104,11 +104,11 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
     protected final AuthenticationSystemSupport authenticationSystemSupport;
 
     protected final ApplicationContext applicationContext;
-    
+
     @Audit(action = AuditableActions.REQUEST_CHANGE_PASSWORD,
-           principalResolverName = AuditPrincipalResolvers.REQUEST_CHANGE_PASSWORD_PRINCIPAL_RESOLVER,
-           actionResolverName = AuditActionResolvers.REQUEST_CHANGE_PASSWORD_ACTION_RESOLVER,
-           resourceResolverName = AuditResourceResolvers.REQUEST_CHANGE_PASSWORD_RESOURCE_RESOLVER)
+        principalResolverName = AuditPrincipalResolvers.REQUEST_CHANGE_PASSWORD_PRINCIPAL_RESOLVER,
+        actionResolverName = AuditActionResolvers.REQUEST_CHANGE_PASSWORD_ACTION_RESOLVER,
+        resourceResolverName = AuditResourceResolvers.REQUEST_CHANGE_PASSWORD_RESOURCE_RESOLVER)
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
         communicationsManager.validate();
@@ -128,12 +128,11 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
             return getInvalidContactEvent(requestContext);
         }
         WebUtils.putPasswordManagementQuery(requestContext, query);
-        if (doesPasswordResetRequireMultifactorAuthentication(requestContext)) {
-            if (!hasPrincipalRegisteredMultifactorAuthenticationDevice(requestContext)) {
-                LOGGER.warn("No registered devices for multifactor authentication could be found for [{}]", query.getUsername());
-                WebUtils.addErrorMessageToContext(requestContext, "screen.mfaDenied.message");
-                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_DENY);
-            }
+        if (doesPasswordResetRequireMultifactorAuthentication(requestContext)
+            && !hasPrincipalRegisteredMultifactorAuthenticationDevice(requestContext)) {
+            LOGGER.warn("No registered devices for multifactor authentication could be found for [{}]", query.getUsername());
+            WebUtils.addErrorMessageToContext(requestContext, "screen.mfaDenied.message");
+            return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_DENY);
         }
         val service = WebUtils.getService(requestContext);
         val url = buildPasswordResetUrl(query.getUsername(), service);
@@ -174,7 +173,7 @@ public class SendPasswordResetInstructionsAction extends BaseCasWebflowAction {
             ? authenticationSystemSupport.getPrincipalFactory().createPrincipal(username)
             : resolvedPrincipal;
     }
-    
+
     protected MultifactorAuthenticationProvider selectMultifactorAuthenticationProvider(final RequestContext requestContext,
                                                                                         final Principal principal) throws Throwable {
         val providers = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext);

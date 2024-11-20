@@ -127,23 +127,19 @@ public class GenerateJwtCommand {
         val algorithm = JWEAlgorithm.parse(encryptionAlgorithm);
         val encryptionMethodAlg = EncryptionMethod.parse(encryptionMethod);
 
-        if (DirectCryptoProvider.SUPPORTED_ALGORITHMS.contains(algorithm)) {
-            if (!DirectCryptoProvider.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethodAlg)) {
-                LOGGER.warn("Encrypted method [{}] is not supported for algorithm [{}]. Accepted methods are [{}]",
-                    encryptionMethod, encryptionAlgorithm, DirectCryptoProvider.SUPPORTED_ENCRYPTION_METHODS);
-                return;
-            }
+        if (DirectCryptoProvider.SUPPORTED_ALGORITHMS.contains(algorithm)
+            && !DirectCryptoProvider.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethodAlg)) {
+            LOGGER.warn("Encrypted method [{}] is not supported for algorithm [{}]. Accepted methods are [{}]",
+                encryptionMethod, encryptionAlgorithm, DirectCryptoProvider.SUPPORTED_ENCRYPTION_METHODS);
+            return;
         }
-        if (AESCryptoProvider.SUPPORTED_ALGORITHMS.contains(algorithm)) {
-            if (!AESCryptoProvider.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethodAlg)) {
-                LOGGER.warn("Encrypted method [{}] is not supported for algorithm [{}]. Accepted methods are [{}]",
-                    encryptionMethod, encryptionAlgorithm, AESCryptoProvider.SUPPORTED_ENCRYPTION_METHODS);
-                return;
-            }
+        if (AESCryptoProvider.SUPPORTED_ALGORITHMS.contains(algorithm)
+            && !AESCryptoProvider.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethodAlg)) {
+            LOGGER.warn("Encrypted method [{}] is not supported for algorithm [{}]. Accepted methods are [{}]",
+                encryptionMethod, encryptionAlgorithm, AESCryptoProvider.SUPPORTED_ENCRYPTION_METHODS);
+            return;
         }
-
         g.setEncryptionConfiguration(new SecretEncryptionConfiguration(encryptionSecret, algorithm, encryptionMethodAlg));
-
     }
 
     private static void configureJwtSigning(final int signingSecretSize, final String signingAlgorithm, final JwtGenerator g) {

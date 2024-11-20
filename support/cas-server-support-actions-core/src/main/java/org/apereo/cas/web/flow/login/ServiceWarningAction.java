@@ -74,11 +74,10 @@ public class ServiceWarningAction extends BaseCasWebflowAction {
         val authenticationResult = FunctionUtils.doUnchecked(() -> authenticationResultBuilder.build(principalElectionStrategy, service));
         grantServiceTicket(authenticationResult, service, requestContext);
 
-        if (request.getParameterMap().containsKey(PARAMETER_NAME_IGNORE_WARNING)) {
-            if (BooleanUtils.toBoolean(request.getParameter(PARAMETER_NAME_IGNORE_WARNING))) {
-                val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-                warnCookieGenerator.removeCookie(response);
-            }
+        if (request.getParameterMap().containsKey(PARAMETER_NAME_IGNORE_WARNING)
+            && BooleanUtils.toBoolean(request.getParameter(PARAMETER_NAME_IGNORE_WARNING))) {
+            val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
+            warnCookieGenerator.removeCookie(response);
         }
         return new Event(this, CasWebflowConstants.STATE_ID_REDIRECT);
     }

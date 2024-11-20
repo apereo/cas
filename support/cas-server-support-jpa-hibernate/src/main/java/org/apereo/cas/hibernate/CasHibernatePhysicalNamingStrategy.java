@@ -42,18 +42,16 @@ public class CasHibernatePhysicalNamingStrategy extends CamelCaseToUnderscoresNa
             val physicalName = tableNames.get(tableName);
 
             val scriptFactoryInstance = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
-            if (scriptFactoryInstance.isPresent()) {
-                if (scriptFactoryInstance.get().isExternalScript(physicalName)) {
-                    LOGGER.trace("Executing script [{}] to determine physical table name for [{}]", physicalName, tableName);
-                    return FunctionUtils.doUnchecked(() -> {
-                        val scriptResource = applicationContext.getResource(physicalName);
-                        val args = new Object[]{name, jdbcEnvironment, applicationContext, LOGGER};
-                        val script = scriptFactoryInstance.get().fromResource(scriptResource);
-                        val identifier = script.execute(args, Identifier.class, true);
-                        LOGGER.trace("Determine table physical name from script [{}] to be [{}]", scriptResource, identifier);
-                        return identifier;
-                    });
-                }
+            if (scriptFactoryInstance.isPresent() && scriptFactoryInstance.get().isExternalScript(physicalName)) {
+                LOGGER.trace("Executing script [{}] to determine physical table name for [{}]", physicalName, tableName);
+                return FunctionUtils.doUnchecked(() -> {
+                    val scriptResource = applicationContext.getResource(physicalName);
+                    val args = new Object[]{name, jdbcEnvironment, applicationContext, LOGGER};
+                    val script = scriptFactoryInstance.get().fromResource(scriptResource);
+                    val identifier = script.execute(args, Identifier.class, true);
+                    LOGGER.trace("Determine table physical name from script [{}] to be [{}]", scriptResource, identifier);
+                    return identifier;
+                });
             }
             LOGGER.trace("Located physical table name [{}] for [{}]", physicalName, tableName);
             return Identifier.toIdentifier(physicalName);

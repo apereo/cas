@@ -1,5 +1,6 @@
 package net.jradius.client;
 
+import lombok.val;
 import net.jradius.client.auth.CHAPAuthenticator;
 import net.jradius.client.auth.EAPMD5Authenticator;
 import net.jradius.client.auth.EAPMSCHAPv2Authenticator;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This is {@link RadiusClient}.
@@ -116,8 +118,8 @@ public class RadiusClient {
             }
             for (int p = 0; p < props.length; p++) {
                 var pd = props[p];
-                var m = pd.getWriteMethod();
-                if (m != null) {
+                var writeMethod = pd.getWriteMethod();
+                if (writeMethod != null) {
                     elements.put(pd.getName(), pd);
                 }
             }
@@ -128,9 +130,9 @@ public class RadiusClient {
                     var value = args[a].substring(eq + 1);
 
                     var pd = elements.get(name);
-                    var m = pd.getWriteMethod();
+                    var writeMethod = pd.getWriteMethod();
 
-                    if (m == null) {
+                    if (writeMethod == null) {
                         RadiusLog.error("Authenticator " + protocolName + " does not have a writable attribute " + name);
                     } else {
                         Object valueObject = value;
@@ -141,7 +143,7 @@ public class RadiusClient {
                             valueObject = Integer.valueOf(value);
                         }
                         try {
-                            m.invoke(auth, valueObject);
+                            writeMethod.invoke(auth, valueObject);
                         } catch (final Exception e) {
                             RadiusLog.error("Error setting attribute " + name + " for authenticator " + protocolName, e);
                         }
@@ -157,27 +159,25 @@ public class RadiusClient {
     }
 
     /**
-     * Authenicates using the specified method. For all methods, it is assumed
+     * Authenticates using the specified method. For all methods, it is assumed
      * that the user's password can be found in the User-Password attribute. All
-     * authentiation requests automatically contain the Message-Authenticator attribute.
+     * authentication requests automatically contain the Message-Authenticator attribute.
      *
-     * @param p       RadiusPacket to be send (should be AccessRequest)
-     * @param auth    The RadiusAuthenticator instance (if null, PAPAuthenticator is used)
-     * @param retries Number of times to retry (without response)
+     * @param p             RadiusPacket to be send (should be AccessRequest)
+     * @param authenticator the authenticator
+     * @param retries       Number of times to retry (without response)
      * @return Returns the reply RadiusPacket
+     * @throws RadiusException          the radius exception
+     * @throws NoSuchAlgorithmException the no such algorithm exception
      */
-    public RadiusResponse authenticate(final AccessRequest p, RadiusAuthenticator auth, final int retries)
+    public RadiusResponse authenticate(final AccessRequest p, final RadiusAuthenticator authenticator, final int retries)
         throws RadiusException, NoSuchAlgorithmException {
-        if (auth == null) {
-            auth = new PAPAuthenticator();
-        }
-
+        val auth = Objects.requireNonNullElseGet(authenticator, PAPAuthenticator::new);
         auth.setupRequest(this, p);
         auth.processRequest(p);
 
         while (true) {
-            RadiusResponse reply = transport.sendReceive(p, retries);
-
+            val reply = transport.sendReceive(p, retries);
             if (reply instanceof AccessChallenge) {
                 auth.processChallenge(p, reply);
             } else {

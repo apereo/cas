@@ -37,10 +37,8 @@ public class RegisteredServiceKafkaDistributedCacheListener {
     public void registeredServiceDistributedCacheKafkaListener(
         @Payload
         final DistributedCacheObject<RegisteredService> item) {
-        if (!item.getPublisherIdentifier().getId().equals(publisherIdentifier.getId())) {
-            if (!deleteObjectFromCache(item)) {
-                cacheManager.update(item.getValue(), item, false);
-            }
+        if (!item.getPublisherIdentifier().getId().equals(publisherIdentifier.getId()) && !deleteObjectFromCache(item)) {
+            cacheManager.update(item.getValue(), item, false);
         }
     }
 

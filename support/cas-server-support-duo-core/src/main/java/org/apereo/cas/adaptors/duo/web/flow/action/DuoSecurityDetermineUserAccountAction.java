@@ -46,13 +46,12 @@ public class DuoSecurityDetermineUserAccountAction extends AbstractMultifactorAu
         val principal = resolvePrincipal(authentication.getPrincipal(), requestContext);
         val account = getDuoSecurityUserAccount(principal);
         val eventFactorySupport = new EventFactorySupport();
-        if (account.getStatus() == DuoSecurityUserAccountStatus.ENROLL) {
-            if (StringUtils.isNotBlank(provider.getRegistration().getRegistrationUrl())) {
-                val url = buildDuoRegistrationUrlFor(requestContext, provider, principal);
-                LOGGER.info("Duo Security registration url for enrollment is [{}]", url);
-                requestContext.getFlowScope().put("duoRegistrationUrl", url);
-                return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
-            }
+        if (account.getStatus() == DuoSecurityUserAccountStatus.ENROLL
+            && StringUtils.isNotBlank(provider.getRegistration().getRegistrationUrl())) {
+            val url = buildDuoRegistrationUrlFor(requestContext, provider, principal);
+            LOGGER.info("Duo Security registration url for enrollment is [{}]", url);
+            requestContext.getFlowScope().put("duoRegistrationUrl", url);
+            return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_ENROLL);
         }
         if (account.getStatus() == DuoSecurityUserAccountStatus.ALLOW) {
             return eventFactorySupport.event(this, CasWebflowConstants.TRANSITION_ID_BYPASS);
