@@ -1,4 +1,4 @@
-package org.apereo.cas.authentication.principal;
+    package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.jpa.MultivaluedMapToJsonAttributeConverter;
@@ -96,7 +96,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     @Override
     @JsonIgnore
     public String getFragment() {
-        return FunctionUtils.doUnchecked(() -> new URIBuilder(this.id).getFragment());
+        return FunctionUtils.doAndHandle(() -> new URIBuilder(this.id).getFragment());
     }
 
     private static String collectFragmentFor(final String id, final String fragment) {
