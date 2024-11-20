@@ -1,13 +1,11 @@
 package org.apereo.cas.util.junit;
 
 import org.apereo.cas.util.SocketUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.extension.ConditionEvaluationResult;
 import org.junit.jupiter.api.extension.ExecutionCondition;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.support.AnnotationSupport;
-
 import java.lang.reflect.AnnotatedElement;
 import java.util.Arrays;
 
@@ -32,10 +30,8 @@ public class EnabledIfPortOpenCondition implements ExecutionCondition {
                 String.format("%s is enabled because %s environment variable is set", element, IGNORE_PORT_CHECK));
         }
         for (val port : ports) {
-            if (port > 0) {
-                if (SocketUtils.isTcpPortAvailable(port)) {
-                    return ConditionEvaluationResult.disabled(String.format("%s is disabled because %s is not in use", element, port));
-                }
+            if (port > 0 && SocketUtils.isTcpPortAvailable(port)) {
+                return ConditionEvaluationResult.disabled(String.format("%s is disabled because %s is not in use", element, port));
             }
         }
         return ConditionEvaluationResult.enabled(

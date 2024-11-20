@@ -65,11 +65,10 @@ public class OneTimeTokenAccountSaveRegistrationAction<T extends OneTimeTokenAcc
                 return getErrorEvent(requestContext);
             }
 
-            if (!casProperties.getAuthn().getMfa().getGauth().getCore().isMultipleDeviceRegistrationEnabled()) {
-                if (repository.count(currentAcct.getUsername()) > 0) {
-                    LOGGER.warn("Unable to register multiple devices for [{}]", currentAcct.getUsername());
-                    return getErrorEvent(requestContext);
-                }
+            if (!casProperties.getAuthn().getMfa().getGauth().getCore().isMultipleDeviceRegistrationEnabled()
+                && repository.count(currentAcct.getUsername()) > 0) {
+                LOGGER.warn("Unable to register multiple devices for [{}]", currentAcct.getUsername());
+                return getErrorEvent(requestContext);
             }
             val account = (T) buildOneTimeTokenAccount(requestContext);
             if (!validate(account, requestContext)) {

@@ -23,15 +23,7 @@ public class CheckMissingPuppeteerConfig {
         System.out.println();
         //CHECKSTYLE:ON
     }
-
-    private static String readFile(final Path file) {
-        try {
-            return Files.readString(file);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
+    
     protected static void checkFiles(final String arg) throws IOException {
         var count = new AtomicInteger(0);
 

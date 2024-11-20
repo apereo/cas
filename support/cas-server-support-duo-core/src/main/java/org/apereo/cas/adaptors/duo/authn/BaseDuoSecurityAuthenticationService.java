@@ -13,7 +13,6 @@ import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import com.duosecurity.client.Http;
 import com.duosecurity.client.Util;
-import com.duosecurity.duoweb.DuoWebException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.AccessLevel;
@@ -104,7 +103,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
             val result = MAPPER.readTree(jsonResponse);
             if (!result.has(RESULT_KEY_STAT)) {
                 LOGGER.warn("Duo response was received in unknown format: [{}]", jsonResponse);
-                throw new DuoWebException("Invalid response format received from Duo");
+                throw new DuoSecurityException("Invalid response format received from Duo");
             }
 
             if ("OK".equalsIgnoreCase(result.get(RESULT_KEY_STAT).asText())) {
@@ -124,7 +123,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
                 if (code > RESULT_CODE_ERROR_THRESHOLD) {
                     LOGGER.warn("Duo returned a failure response with code: [{}]. Duo will be considered unavailable",
                         result.get(RESULT_KEY_MESSAGE));
-                    throw new DuoWebException("Duo returned code 500: " + result.get(RESULT_KEY_MESSAGE));
+                    throw new DuoSecurityException("Duo returned code %s: %s".formatted(code, result.get(RESULT_KEY_MESSAGE)));
                 }
                 LOGGER.warn("Duo returned an Invalid response with message [{}] and detail [{}] "
                         + "when determining user account. This maybe a configuration error in the admin request and Duo will "

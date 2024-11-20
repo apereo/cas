@@ -32,14 +32,6 @@ public class CheckFunctionalConditionUsage {
         }
     }
 
-    private static void writeFile(final Path file, final String value) {
-        try {
-            Files.writeString(file, value, StandardCharsets.UTF_8);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     protected static void checkPattern(final String arg) throws IOException {
         var patternBlankString = Pattern.compile("(?<!else)(\\s+)if \\(StringUtils.isNotBlank\\((\\w+\\.\\w+\\(\\))\\)\\)\\s\\{\\n\\s+(\\w+\\.set\\w+)\\(\\w+\\.\\w+\\(\\)\\);\\n\\s+}(?!\\selse)");
 

@@ -4,7 +4,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
@@ -13,7 +12,6 @@ import lombok.val;
 import org.hjson.JsonValue;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
-
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -38,19 +36,17 @@ public class SamlIdentityProviderEntityParser implements DisposableBean {
     private FileWatcherService discoveryFeedResourceWatchers;
 
     public SamlIdentityProviderEntityParser(final Resource resource) throws Exception {
-        if (importResource(resource)) {
-            if (ResourceUtils.isFile(resource)) {
-                discoveryFeedResourceWatchers = new FileWatcherService(resource.getFile(), file -> {
-                    try {
-                        LOGGER.trace("Reloading identity providers...");
-                        clear();
-                        importResource(resource);
-                    } catch (final Exception e) {
-                        LoggingUtils.error(LOGGER, e);
-                    }
-                });
-                discoveryFeedResourceWatchers.start(getClass().getSimpleName());
-            }
+        if (importResource(resource) && ResourceUtils.isFile(resource)) {
+            discoveryFeedResourceWatchers = new FileWatcherService(resource.getFile(), file -> {
+                try {
+                    LOGGER.trace("Reloading identity providers...");
+                    clear();
+                    importResource(resource);
+                } catch (final Exception e) {
+                    LoggingUtils.error(LOGGER, e);
+                }
+            });
+            discoveryFeedResourceWatchers.start(getClass().getSimpleName());
         }
     }
 
