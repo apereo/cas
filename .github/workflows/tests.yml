@@ -156,7 +156,7 @@ jobs:
         continue-on-error: true
         run: |
           ./gradlew sonar --build-cache --configure-on-demand --no-daemon -DskipAot=true --parallel \
-            -x javadoc -DskipNestedConfigMetadataGen=true \
+            -x javadoc -DskipNestedConfigMetadataGen=true --info \
             -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
       - name: "Upload to Codecov"
         uses: "codecov/codecov-action@v5"
