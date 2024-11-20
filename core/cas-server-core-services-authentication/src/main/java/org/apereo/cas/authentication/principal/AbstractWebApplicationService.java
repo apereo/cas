@@ -1,4 +1,4 @@
-    package org.apereo.cas.authentication.principal;
+package org.apereo.cas.authentication.principal;
 
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.jpa.MultivaluedMapToJsonAttributeConverter;
