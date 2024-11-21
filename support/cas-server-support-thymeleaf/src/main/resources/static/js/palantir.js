@@ -1430,7 +1430,7 @@ async function initializeSystemOperations() {
         }
     }
 
-    function configureHealthChart() {
+    async function configureHealthChart() {
         if (actuatorEndpoints.health) {
             $.get(actuatorEndpoints.health, response => {
 
@@ -1465,7 +1465,7 @@ async function initializeSystemOperations() {
         }
     }
 
-    function configureStatistics() {
+    async function configureStatistics() {
         if (actuatorEndpoints.statistics) {
             $.get(actuatorEndpoints.statistics, response => {
 
@@ -1477,7 +1477,7 @@ async function initializeSystemOperations() {
         }
     }
 
-    function fetchSystemData(callback) {
+    async function fetchSystemData(callback) {
         if (actuatorEndpoints.info) {
             $.get(actuatorEndpoints.info, response => callback(response)).fail((xhr, status, error) => {
                 console.error("Error fetching data:", error);
@@ -1486,8 +1486,8 @@ async function initializeSystemOperations() {
         }
     }
 
-    function configureSystemData() {
-        fetchSystemData(response => {
+    async function configureSystemData() {
+        await fetchSystemData(response => {
 
             const maximum = convertMemoryToGB(response.systemInfo["JVM Maximum Memory"]);
             const free = convertMemoryToGB(response.systemInfo["JVM Free Memory"]);
@@ -1531,21 +1531,30 @@ async function initializeSystemOperations() {
     });
 
     let tabs = new mdc.tabBar.MDCTabBar(document.querySelector("#dashboardTabBar"));
+
+    async function configureSystemInfo() {
+        await fetchSystemData(response => {
+            const flattened = flattenJSON(response);
+            systemTable.clear();
+
+            for (const [key, value] of Object.entries(flattened)) {
+                systemTable.row.add({
+                    0: `<code>${key}</code>`,
+                    1: `<code>${value}</code>`
+                });
+            }
+            systemTable.draw();
+
+            hljs.highlightAll();
+            $("#casServerPrefix").text(casServerPrefix);
+            $("#casServerHost").text(response.server["host"]);
+        });
+    }
+
     tabs.listen("MDCTabBar:activated", ev => {
         let index = ev.detail.index;
         if (index === Tabs.SYSTEM) {
-            fetchSystemData(response => {
-                const flattened = flattenJSON(response);
-                systemTable.clear();
-
-                for (const [key, value] of Object.entries(flattened)) {
-                    systemTable.row.add({
-                        0: `<code>${key}</code>`,
-                        1: `<code>${value}</code>`
-                    });
-                }
-                systemTable.draw();
-            });
+            configureSystemInfo();
         }
     });
 
@@ -1558,10 +1567,10 @@ async function initializeSystemOperations() {
         }
     }, DEFAULT_INTERVAL);
 
-    configureSystemData();
-    configureStatistics();
-    configureHealthChart();
-
+    await configureSystemData()
+        .then(configureStatistics())
+        .then(configureHealthChart())
+        .then(configureSystemInfo);
 }
 
 async function initializeCasFeatures() {
