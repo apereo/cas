@@ -132,7 +132,6 @@ graalvmNative {
             buildArgs.add('-H:+ReportExceptionStackTraces')
             buildArgs.add('-H:+InlineBeforeAnalysis')
             buildArgs.add('-H:+TraceSecurityServices')
-            buildArgs.add('-H:+BuildReport')
             buildArgs.add('-H:+AddAllCharsets')
             buildArgs.add('-H:+UnlockExperimentalVMOptions')
             
@@ -140,8 +139,8 @@ graalvmNative {
             buildArgs.add('-J-Xms4G')
             buildArgs.add('--native-image-info')
             buildArgs.add('--enable-sbom')
+            buildArgs.add('--emit build-report')
             buildArgs.add('--gc=G1')
-            buildArgs.add('--strict-image-heap')
 
             buildArgs.add('-march=native')
 //            buildArgs.add('--pgo-instrument')
@@ -150,8 +149,6 @@ graalvmNative {
 //                ansi.blue("Using data collected for profile-guided optimizations of AOT-compiled code")
 //                buildArgs.add("--pgo=${profileFile.path}")
 //            }
-            buildArgs.add('--trace-class-initialization=true')
-
             buildArgs.add('--initialize-at-build-time=java.beans')
             buildArgs.add('--initialize-at-build-time=com.sun.beans')
             buildArgs.add('--initialize-at-build-time=groovyjarjarantlr4.v4.runtime')

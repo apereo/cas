@@ -1,0 +1,29 @@
+package org.apereo.cas.nativex;
+
+import org.apereo.cas.authentication.principal.PrincipalAttributesRepositoryCache;
+import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
+import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
+import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
+import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+import java.io.Closeable;
+
+/**
+ * This is {@link PersonDirectoryRuntimeHints}.
+ *
+ * @author Misagh Moayyed
+ * @since 7.0.0
+ */
+public class PersonDirectoryRuntimeHints implements CasRuntimeHintsRegistrar {
+    @Override
+    public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
+        registerSpringProxy(hints, PersonDirectoryAttributeRepositoryPlan.class, DisposableBean.class);
+        registerSpringProxy(hints, InitializingBean.class, PersonAttributeDao.class);
+        registerSpringProxy(hints, PrincipalAttributesRepositoryCache.class, Closeable.class);
+
+        registerProxyHints(hints, PersonDirectoryAttributeRepositoryPlanConfigurer.class);
+    }
+}
+

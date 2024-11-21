@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.TicketFactoryExecutionPlanConfigurer;
 import org.apereo.cas.ticket.registry.TicketCompactor;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.pubsub.QueueableTicketRegistry;
+import org.apereo.cas.ticket.registry.pubsub.queue.QueueableTicketRegistryMessageReceiver;
 import org.apereo.cas.ticket.serialization.TicketSerializationExecutionPlanConfigurer;
 import org.apereo.cas.util.crypto.CipherExecutor;
 import org.apereo.cas.util.crypto.PropertyBoundCipherExecutor;
@@ -44,5 +45,6 @@ public class CasCoreTicketsRuntimeHints implements CasRuntimeHintsRegistrar {
         registerProxyHints(hints, LockRegistry.class);
 
         registerReflectionHints(hints, findSubclassesInPackage(CipherExecutor.class, CentralAuthenticationService.NAMESPACE));
+        registerReflectionHints(hints, findSubclassesInPackage(QueueableTicketRegistryMessageReceiver.class, CentralAuthenticationService.NAMESPACE));
     }
 }
