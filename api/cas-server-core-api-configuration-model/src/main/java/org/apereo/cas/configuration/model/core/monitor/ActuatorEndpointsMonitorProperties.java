@@ -11,7 +11,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -74,6 +76,14 @@ public class ActuatorEndpointsMonitorProperties implements Serializable {
      */
     private boolean formLoginEnabled;
 
+    /**
+     * List of endpoint patterns that will be added to the
+     * Spring Security's filter chain to be completed ignored
+     * and removed from security considerations and enforcements.
+     * Example: {@code /endpoint.xyz} or {@code /endpoint/**}.
+     */
+    private List<String> ignoredEndpoints = new ArrayList<>();
+    
     public ActuatorEndpointsMonitorProperties() {
         val defaultProps = new ActuatorEndpointProperties();
         defaultProps.setAccess(Stream

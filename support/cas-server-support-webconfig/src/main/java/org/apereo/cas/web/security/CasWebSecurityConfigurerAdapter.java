@@ -170,6 +170,7 @@ public class CasWebSecurityConfigurerAdapter {
         patterns.add(CasWebSecurityConfigurer.ENDPOINT_URL_ADMIN_FORM_LOGIN);
         patterns.add("/");
         patterns.add(webEndpointProperties.getBasePath());
+        patterns.addAll(casProperties.getMonitor().getEndpoints().getIgnoredEndpoints());
         return patterns;
     }
 
