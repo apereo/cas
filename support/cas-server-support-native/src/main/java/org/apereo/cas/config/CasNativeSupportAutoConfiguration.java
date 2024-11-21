@@ -4,6 +4,8 @@ import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.nativex.CasNativeInfoContributor;
 import lombok.val;
+import org.springframework.boot.actuate.autoconfigure.info.ConditionalOnEnabledInfoContributor;
+import org.springframework.boot.actuate.autoconfigure.info.InfoContributorFallback;
 import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -46,6 +48,7 @@ public class CasNativeSupportAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnEnabledInfoContributor(value = "native", fallback = InfoContributorFallback.DISABLE)
     public InfoContributor casNativeInfoContributor() {
         return new CasNativeInfoContributor();
     }

@@ -87,6 +87,8 @@ import org.pac4j.jee.context.session.JEESessionStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.actuate.autoconfigure.info.ConditionalOnEnabledInfoContributor;
+import org.springframework.boot.actuate.autoconfigure.info.InfoContributorFallback;
 import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -544,6 +546,7 @@ class SamlIdPEndpointsConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "samlIdPInfoEndpointContributor")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnEnabledInfoContributor(value = "saml-idp", fallback = InfoContributorFallback.DISABLE)
         public InfoContributor samlIdPInfoEndpointContributor(
             final CasConfigurationProperties casProperties) {
             return new SamlIdPInfoEndpointContributor(casProperties);

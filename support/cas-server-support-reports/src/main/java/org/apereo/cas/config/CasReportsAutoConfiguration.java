@@ -54,6 +54,8 @@ import org.apereo.inspektr.common.spi.AuditActionDateProvider;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
+import org.springframework.boot.actuate.autoconfigure.info.ConditionalOnEnabledInfoContributor;
+import org.springframework.boot.actuate.autoconfigure.info.InfoContributorFallback;
 import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.boot.actuate.web.exchanges.HttpExchangeRepository;
 import org.springframework.boot.actuate.web.exchanges.HttpExchangesEndpoint;
@@ -234,10 +236,12 @@ public class CasReportsAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean(name = "casInfoEndpointContributor")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnEnabledInfoContributor(value = "cas", fallback = InfoContributorFallback.DISABLE)
         public InfoContributor casInfoEndpointContributor(
+            final CasConfigurationProperties casProperties,
             @Qualifier("casRuntimeModuleLoader")
             final CasRuntimeModuleLoader casRuntimeModuleLoader) {
-            return new CasInfoEndpointContributor(casRuntimeModuleLoader);
+            return new CasInfoEndpointContributor(casProperties, casRuntimeModuleLoader);
         }
     }
 
