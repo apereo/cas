@@ -99,7 +99,7 @@ public class ECPSamlIdPProfileHandlerController extends AbstractSamlIdPProfileHa
 
             LOGGER.trace("CAS assertion to use for building ECP SAML2 response is [{}]", casAssertion);
             buildSamlResponse(context.getHttpResponse(), context.getHttpRequest(),
-                authenticationContext, Optional.of(casAssertion), context.getBinding());
+                authenticationContext, Optional.of(casAssertion), context.getBinding(), null);
         } catch (final AuthenticationException e) {
             LoggingUtils.error(LOGGER, e);
             val error = e.getHandlerErrors().values()

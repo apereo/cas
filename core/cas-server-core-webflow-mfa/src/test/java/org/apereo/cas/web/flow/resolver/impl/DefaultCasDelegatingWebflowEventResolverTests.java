@@ -22,7 +22,10 @@ import org.springframework.binding.expression.support.LiteralExpression;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.engine.Transition;
 import org.springframework.webflow.engine.support.DefaultTargetStateResolver;
 import org.springframework.webflow.engine.support.DefaultTransitionCriteria;
@@ -92,6 +95,25 @@ class DefaultCasDelegatingWebflowEventResolverTests {
             WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService(id));
             val event = initialAuthenticationAttemptWebflowEventResolver.resolveSingle(context);
             assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, event.getId());
+        }
+
+        @Test
+        void verifyCanCatchUriParsingException() throws Throwable {
+            val context = MockRequestContext.create(applicationContext);
+            val requestContext = new MockHttpServletRequest();
+            requestContext.setParameter("service", "https://init.cas.org/?q=Illegal Character");
+
+            context.setExternalContext(new ServletExternalContext(null, requestContext, new MockHttpServletResponse()));
+
+            val id = UUID.randomUUID().toString();
+            val registeredService = RegisteredServiceTestUtils.getRegisteredService(id);
+            registeredService.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy().setEnabled(false));
+            servicesManager.save(registeredService);
+
+            WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService(id));
+            WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(), context);
+            val event = initialAuthenticationAttemptWebflowEventResolver.resolveSingle(context);
+            assertEquals(CasWebflowConstants.TRANSITION_ID_ERROR, event.getId());
         }
     }
 
