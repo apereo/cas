@@ -3,6 +3,7 @@ package org.apereo.cas.nativex;
 import org.apereo.cas.ticket.registry.HazelcastTicketDocument;
 import org.apereo.cas.ticket.registry.MapAttributeValueExtractor;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
+import com.hazelcast.internal.dynamicconfig.DynamicConfigurationAwareConfig;
 import com.hazelcast.internal.serialization.DataSerializerHook;
 import com.hazelcast.jet.sql.impl.connector.SqlConnector;
 import com.hazelcast.jet.sql.impl.connector.SqlConnectorCache;
@@ -135,6 +136,7 @@ public class HazelcastTicketRegistryRuntimeHints implements CasRuntimeHintsRegis
                 EnumUtils.class,
                 UnboundMetadata.class,
                 MetadataDef.class,
+                DynamicConfigurationAwareConfig.class,
 
                 SqlConnectorCache.class,
                 HazelcastRelMdRowCount.class,

@@ -26,6 +26,7 @@ import org.apereo.cas.authentication.attribute.AttributeDefinitionStore;
 import org.apereo.cas.authentication.metadata.CacheCredentialsCipherExecutor;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.apereo.cas.validation.ValidationResponseType;
 import lombok.val;
@@ -50,7 +51,6 @@ public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistr
             ValidationResponseType.class
         ));
 
-
         val subclassesInPackage = findSubclassesInPackage(Principal.class, CentralAuthenticationService.NAMESPACE);
         subclassesInPackage.addAll(findSubclassesInPackage(MessageDescriptor.class, CentralAuthenticationService.NAMESPACE));
         subclassesInPackage.addAll(findSubclassesInPackage(CredentialMetadata.class, CentralAuthenticationService.NAMESPACE));
@@ -63,7 +63,8 @@ public class CasCoreAuthenticationRuntimeHints implements CasRuntimeHintsRegistr
         registerReflectionHints(hints, credentials);
 
         registerSpringProxy(hints, PrePostAuthenticationHandler.class, AuthenticationHandler.class);
-        
+        registerSpringProxy(hints, WebApplicationService.class);
+
         registerProxyHints(hints, List.of(
             AuthenticationMetaDataPopulator.class,
             AuthenticationAccountStateHandler.class,
