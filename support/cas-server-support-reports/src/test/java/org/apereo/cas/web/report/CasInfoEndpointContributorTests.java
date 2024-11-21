@@ -21,7 +21,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 5.3.0
  */
 @Tag("ActuatorEndpoint")
-@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@SpringBootTest(classes = RefreshAutoConfiguration.class, properties = {
+    "cas.server.name=https://sso.example.org",
+    "cas.server.prefix=${cas.server.name}/cas",
+    "cas.host.name=localhost"
+})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ExtendWith(CasTestExtension.class)
 class CasInfoEndpointContributorTests {
