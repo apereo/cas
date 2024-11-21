@@ -301,14 +301,15 @@ public abstract class AbstractSamlIdPProfileHandlerController {
         val st = factory.create(ticketGrantingTicket, service, false, ServiceTicket.class);
         getConfigurationContext().getTicketRegistry().addTicket(st);
         getConfigurationContext().getTicketRegistry().updateTicket(ticketGrantingTicket);
-        buildSamlResponse(response, request, authenticationContext, Optional.of(assertion), binding);
+        buildSamlResponse(response, request, authenticationContext, Optional.of(assertion), binding, st.getId());
     }
 
     protected XMLObject buildSamlResponse(final HttpServletResponse response,
                                           final HttpServletRequest request,
                                           final Pair<? extends RequestAbstractType, MessageContext> authenticationContext,
                                           final Optional<AuthenticatedAssertionContext> casAssertion,
-                                          final String binding) throws Exception {
+                                          final String binding,
+                                          final String sessionIndex) throws Exception {
         val authnRequest = (AuthnRequest) authenticationContext.getKey();
         val pair = getRegisteredServiceAndFacade(authnRequest, request);
 
@@ -323,6 +324,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
             .adaptor(pair.getValue())
             .binding(binding)
             .messageContext(authenticationContext.getValue())
+            .sessionIndex(sessionIndex)
             .build();
         val samlResponse = configurationContext.getResponseBuilder().build(buildContext);
         LOGGER.info("Built the SAML2 response for [{}]", entityId);
