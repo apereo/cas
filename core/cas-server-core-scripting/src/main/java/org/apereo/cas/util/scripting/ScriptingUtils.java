@@ -148,17 +148,7 @@ public class ScriptingUtils {
      * Pattern indicating groovy script is a file/resource.
      */
     private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern(String.format(FILE_PATTERN, "groovy"));
-
-    /**
-     * Is groovy script?.
-     *
-     * @param script the script
-     * @return true/false
-     */
-    public static boolean isGroovyScript(final String script) {
-        return isInlineGroovyScript(script) || isExternalGroovyScript(script);
-    }
-
+    
     /**
      * Is inline groovy script ?.
      *
