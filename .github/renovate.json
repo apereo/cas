@@ -1,13 +1,33 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:base",
+    ":dependencyDashboard",
     ":rebaseStalePrs",
     ":preserveSemverRanges",
     ":disableRateLimiting",
-    ":disableDependencyDashboard",
     ":semanticCommits",
-    ":semanticCommitTypeAll(renovatebot)"
+    ":semanticCommitTypeAll(renovatebot)",
+    "group:monorepos",
+    "group:recommended",
+    "replacements:all",
+    "workarounds:all"
+  ],
+  "enabledManagers": [
+    "gradle",
+    "npm",
+    "regex",
+    "dockerfile",
+    "docker-compose",
+    "github-actions"
+  ],
+  "regexManagers": [
+    {
+      "fileMatch": ["run-.*\\.sh"],
+      "matchStrings": [
+        "export\\s+DOCKER_IMAGE\\s*=\\s*\"(?<depName>[^\"]+):(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "docker"
+    }
   ],
   "labels": ["Bot", "Renovate"],
   "schedule": [
@@ -22,15 +42,6 @@
   "docker-compose": {
     "enabled": true
   },
-  "regexManagers": [
-    {
-      "fileMatch": ["^.*\\.sh$"],
-      "matchStrings": [
-        "export\\s+DOCKER_IMAGE\\s*=\\s*\"(?<depName>[^\"]+):(?<currentValue>[^\"]+)\""
-      ],
-      "datasourceTemplate": "docker"
-    }
-  ],
   "packageRules": [
     {
       "matchManagers": ["gradle", "maven"],
