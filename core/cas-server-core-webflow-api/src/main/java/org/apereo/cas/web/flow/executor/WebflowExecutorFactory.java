@@ -70,6 +70,7 @@ public class WebflowExecutorFactory {
 
     private FlowExecutor buildFlowExecutorViaClientFlowExecution() {
         val repository = new ClientFlowExecutionRepository();
+        repository.setWebflowProperties(webflowProperties);
         repository.setFlowDefinitionLocator(flowDefinitionRegistry);
         repository.setTranscoder(getWebflowStateTranscoder());
 
