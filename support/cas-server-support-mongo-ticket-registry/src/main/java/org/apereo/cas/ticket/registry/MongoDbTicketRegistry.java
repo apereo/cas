@@ -222,7 +222,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             .flatMap(map -> {
                 val query = isCipherExecutorEnabled()
                     ? new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_PRINCIPAL).is(digestIdentifier(principalId)))
-                    : TextQuery.queryText(TextCriteria.forDefaultLanguage().matchingAny(principalId)).sortByScore().with(PageRequest.of(0, PAGE_SIZE));
+                    : new Query(Criteria.where(MongoDbTicketDocument.FIELD_NAME_PRINCIPAL).regex(principalId, "i"));
                 return mongoTemplate.stream(query, MongoDbTicketDocument.class, map);
             })
             .map(ticket -> decodeTicket(deserializeTicket(ticket.getJson(), ticket.getType())))
