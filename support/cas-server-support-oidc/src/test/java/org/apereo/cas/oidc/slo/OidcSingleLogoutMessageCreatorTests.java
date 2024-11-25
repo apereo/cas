@@ -61,9 +61,10 @@ class OidcSingleLogoutMessageCreatorTests extends AbstractOidcTests {
         assertEquals(service.getClientId(), claims.getAudience().getFirst());
         assertNotNull(claims.getClaim("iat"));
         assertNotNull(claims.getClaim("jti"));
+        assertNotNull(claims.getClaim("exp"));
         val events = (Map<String, Object>) claims.getClaim("events");
         assertNotNull(events.get("http://schemas.openid.net/event/backchannel-logout"));
-        assertEquals(DigestUtils.sha(TGT_ID), claims.getClaim(OidcConstants.CLAIM_SESSION_ID));
+        assertEquals(DigestUtils.sha(DigestUtils.sha512(TGT_ID)), claims.getClaim(OidcConstants.CLAIM_SESSION_ID));
     }
 
     @Test
