@@ -88,7 +88,7 @@ attributes from the source are always returned. But any of the following merging
   
 {% tabs attrmergingstrategy %}
 
-{% tab attrmergingstrategy Merge %}
+{% tab attrmergingstrategy <i class="fa fa-code-merge px-1"></i> Merge %}
 
 Attributes with the same name are merged into multi-valued lists.
 
@@ -119,7 +119,7 @@ For example:
 
 {% endtab %}
 
-{% tab attrmergingstrategy Add %}
+{% tab attrmergingstrategy <i class="fa fa-plus px-1"></i> Add %}
 
 Attributes are merged such that attributes from the source that don't already exist for the principal are produced.
 
@@ -149,7 +149,7 @@ For example:
 
 {% endtab %}
 
-{% tab attrmergingstrategy Replace %}
+{% tab attrmergingstrategy <i class="fa fa-square-minus px-1"></i> Replace %}
 
 Attributes are merged such that attributes from the source always replace principal attributes.
 

@@ -64,7 +64,7 @@ To prepare CAS to support and integrate with Apache Groovy, please [review this 
 
 {% endtab %}
 
-{% tab delegatedauthnprofileselection Custom %}
+{% tab delegatedauthnprofileselection <i class="fa fa-code px-1"></i> Custom %}
 
 If you wish to create your own profile resolution and selection strategy, you will need to
 design a component and register it with CAS to handle the rendering of the user profile:

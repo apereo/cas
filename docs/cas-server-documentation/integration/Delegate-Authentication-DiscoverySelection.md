@@ -20,7 +20,7 @@ you may want to take a look at <a href="Delegate-Authentication-SAML2.html">this
 
 {% tabs deldiscoverysel %}
 
-{% tab deldiscoverysel Menu %}
+{% tab deldiscoverysel <i class="fa fa-bars px-1"></i> Menu %}
 
 This is the default and most common strategy that allows external identity providers to be listed on the login page,
 allowing the user to *order one from the menu* and select one from the list of options.
@@ -60,7 +60,7 @@ The following parameters are available to the JSON resource:
 
 {% endtab %}
 
-{% tab deldiscoverysel Custom %}
+{% tab deldiscoverysel <i class="fa fa-code px-1"></i> Custom %}
 
 If you wish to create your own strategy to dynamically locate identity providers for
 delegated authentication discovery, you will need to design a component and register it with CAS as such:

@@ -164,7 +164,7 @@ supported by CAS:
 
 {% tabs heimdallauthzpolicies %}
 
-{% tab heimdallauthzpolicies Groovy %}
+{% tab heimdallauthzpolicies <i class="fa fa-code px-1"></i> Groovy %}
      
 An authorization policy that can accept an inline or external [Groovy script](../integration/Apache-Groovy-Scripting.html) to make decisions:
 
@@ -194,7 +194,7 @@ The following parameters are passed to the script:
 
 {% endtab %}
 
-{% tab heimdallauthzpolicies Grouper Groups %}
+{% tab heimdallauthzpolicies <i class="fa fa-user-group px-1"></i> Grouper Groups %}
 
 An authorization policy that fetches group memberships for the principal from 
 [Grouper](https://github.com/Internet2/grouper) and makes decisions based on required groups:
