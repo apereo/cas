@@ -18,6 +18,7 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -57,6 +58,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
             .map(Unchecked.function(client -> produce(context, client)))
             .filter(Optional::isPresent)
             .map(Optional::get)
+            .sorted(Comparator.comparing(DelegatedClientIdentityProviderConfiguration::getName))
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
         val delegatedClientIdentityProviderRedirectionStrategy = configurationContext.getObject().getDelegatedClientIdentityProviderRedirectionStrategy();
