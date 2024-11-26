@@ -74,7 +74,7 @@ Metadata location can use the [Spring Expression Language](../configuration/Conf
 
 {% tabs metadata %}
 
-{% tab metadata URL %}
+{% tab metadata <i class="fa fa-globe px-1"></i> URL %}
 
 ```json
 {

@@ -115,7 +115,7 @@ as usual with the following definition:
 {% endtab %}
 
 
-{% tab attrdefinitions Encrypted %}
+{% tab attrdefinitions <i class="fa fa-mask px-1"></i> Encrypted %}
 Same use case as above, except the attribute value will be encrypted and encoded using the service definition's public key:
 
 ```json 
