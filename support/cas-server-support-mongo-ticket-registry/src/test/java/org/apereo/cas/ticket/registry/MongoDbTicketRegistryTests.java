@@ -27,8 +27,11 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 /**
@@ -144,5 +147,54 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
 
         when(catalog.find(anyString())).thenThrow(new RuntimeException());
         assertNull(registry.getTicket(ticket.getId()));
+    }
+
+    @RepeatedTest(2)
+    void verifyGetSessionsFor() throws Throwable {
+        val principalId = UUID.randomUUID().toString();
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(principalId);
+        val ticketGrantingTicketToAdd = Stream.generate(() -> {
+                val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                    .getNewTicketId(TicketGrantingTicket.PREFIX);
+                return new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+            })
+            .limit(5);
+        getNewTicketRegistry().addTicket(ticketGrantingTicketToAdd);
+
+        val criteria1 = new TicketRegistryQueryCriteria()
+            .setCount(5L)
+            .setDecode(Boolean.FALSE)
+            .setType(TicketGrantingTicket.PREFIX);
+        val queryResults1 = getNewTicketRegistry().query(criteria1);
+        assertEquals(criteria1.getCount(), queryResults1.size());
+
+        assertEquals(5, getNewTicketRegistry().getSessionsFor(principalId).count());
+    }
+
+    @RepeatedTest(2)
+    void verifyDeleteSessionsFor() throws Throwable {
+        val principalId = UUID.randomUUID().toString();
+        val authentication = CoreAuthenticationTestUtils.getAuthentication(principalId);
+        val ticketGrantingTicketToAdd = Stream.generate(() -> {
+                val tgtId = new TicketGrantingTicketIdGenerator(10, StringUtils.EMPTY)
+                    .getNewTicketId(TicketGrantingTicket.PREFIX);
+                return new TicketGrantingTicketImpl(tgtId, authentication, NeverExpiresExpirationPolicy.INSTANCE);
+            })
+            .limit(5);
+        getNewTicketRegistry().addTicket(ticketGrantingTicketToAdd);
+
+        val tickets = getNewTicketRegistry().getSessionsFor(principalId).collect(Collectors.toList());
+        assertEquals(5, tickets.size());
+
+        tickets.forEach(ticket -> {
+            try {
+                getNewTicketRegistry().deleteTicket(ticket);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            } 
+        });
+
+        assertEquals(0, getNewTicketRegistry().getSessionsFor(principalId).count());
+
     }
 }
