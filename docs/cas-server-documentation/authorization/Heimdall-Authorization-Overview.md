@@ -343,6 +343,39 @@ An authorization policy can be outsources to a REST API that can make decisions 
 
 {% endtab %}
 
+{% tab heimdallauthzpolicies OpenFGA %}
+
+An authorization policy that passes the request to [OpenFGA](https://openfga.dev/) to make decisions:
+
+```json
+{
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.OpenFGAAuthorizationPolicy",
+  "token": "...",
+  "apiUrl": "...",
+  "storeId": "...",
+  "relation": "..."  
+}
+```
+
+The following parameters are passed to OpenFGA:
+
+| Parameter  | Description                                                                                        |
+|------------|----------------------------------------------------------------------------------------------------|
+| `token`    | <sup>[1]</sup> The bearer authorization token passed via the `Authorization` header.               |
+| `apiUrl`   | <sup>[1]</sup> OpenFGA base API endpoint that ultimately invokes the `check` API.                  |
+| `storeId`  | <sup>[1]</sup> The authorization store identifier.                                                 |
+| `relation` | <sup>[1]</sup> The relation or the type of access in the authorization tuple; defaults to `owner`. |
+  
+The `object` field in the API request is composed of the following elements:
+
+```bash
+$REQUEST_NAMESPACE + ':' + $REQUEST_METHOD + ':' + $REQUEST_URI
+```
+
+<sub><i>[1] This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.</i></sub>
+
+{% endtab %}
+
 {% endtabs %}
 
 ## Actuator Endpoints
