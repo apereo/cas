@@ -21,12 +21,9 @@ import org.hjson.JsonValue;
 import org.hjson.Stringify;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.domain.Limit;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.TextCriteria;
-import org.springframework.data.mongodb.core.query.TextQuery;
 import org.springframework.data.mongodb.core.query.Update;
 import java.io.Serializable;
 import java.time.Instant;
@@ -49,7 +46,6 @@ import java.util.stream.Stream;
 @Slf4j
 @Monitorable
 public class MongoDbTicketRegistry extends AbstractTicketRegistry {
-    private static final int PAGE_SIZE = 500;
 
     private final MongoOperations mongoTemplate;
 
