@@ -98,17 +98,13 @@ public class DelegatedClientAuthenticationAction extends AbstractAuthenticationA
                 LOGGER.trace("Found an existing single sign-on session");
                 service = populateContextWithService(context, service);
                 if (ssoEvaluator.singleSignOnSessionAuthorizedForService(context)) {
-                    return FunctionUtils.doUnchecked(() -> {
-                        val providers = configContext.getDelegatedClientIdentityProvidersProducer().produce(context);
-                        LOGGER.debug("Skipping delegation and routing back to CAS authentication flow with providers [{}]", providers);
-                        return super.doExecuteInternal(context);
-                    });
+                    val providers = configContext.getDelegatedClientIdentityProvidersProducer().produce(context);
+                    LOGGER.debug("Skipping delegation and routing back to CAS authentication flow with providers [{}]", providers);
+                    return super.doExecuteInternal(context);
                 }
-                FunctionUtils.doUnchecked(__ -> {
-                    val resolvedService = ssoEvaluator.resolveServiceFromRequestContext(context);
-                    LOGGER.debug("Single sign-on session in unauthorized for service [{}]", resolvedService);
-                    removeTicketGrantingTicketIfAny(context, clientName, resolvedService);
-                });
+                val resolvedService = ssoEvaluator.resolveServiceFromRequestContext(context);
+                LOGGER.debug("Single sign-on session in unauthorized for service [{}]", resolvedService);
+                removeTicketGrantingTicketIfAny(context, clientName, resolvedService);
             } else if (StringUtils.isNotBlank(clientName) && !isLogoutRequest(clientCredential)) {
                 LOGGER.debug("Single sign-on session in inactive for service [{}]", service);
                 removeTicketGrantingTicketIfAny(context, clientName, service);

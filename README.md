@@ -6,7 +6,6 @@
 
 [![License](https://img.shields.io/hexpm/l/plug.svg?style=for-the-badge&logo=apache)](https://github.com/apereo/cas/blob/master/LICENSE)
 [![Twitter](https://img.shields.io/badge/Apereo%20CAS-Twitter-blue.svg?style=for-the-badge&logo=twitter)](https://twitter.com/apereo)
-[![Gitter](https://img.shields.io/badge/Gitter-join%20chat-blue.svg?style=for-the-badge&colorB=a832a6&logo=gitter)][casgitter]
 [![Slack](https://img.shields.io/badge/Slack-join%20chat-blue.svg?style=for-the-badge&logo=slack)][casslack]
 [![Stack Overflow](http://img.shields.io/:stack%20overflow-cas-brightgreen.svg?style=for-the-badge&logo=stackoverflow)](http://stackoverflow.com/questions/tagged/cas)
 [![Support](https://img.shields.io/badge/Support-Mailing%20Lists-green.svg?colorB=ff69b4&style=for-the-badge)][cassupport]
@@ -110,7 +109,6 @@ If you (or your employer) benefit from this project, please consider becoming a 
 [casmavencentral]: https://search.maven.org/search?q=g:org.apereo.cas
 [releasenotes]: https://github.com/apereo/cas/releases
 [cassupport]: https://apereo.github.io/cas/Support.html
-[casgitter]: https://gitter.im/apereo/cas?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 [casslack]: https://apereo.slack.com/
 [blog]: https://apereo.github.io/
 [casbuildprocess]: https://apereo.github.io/cas/developer/Build-Process.html

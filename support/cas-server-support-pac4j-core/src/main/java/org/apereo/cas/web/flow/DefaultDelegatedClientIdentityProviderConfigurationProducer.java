@@ -8,7 +8,6 @@ import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfigurationFactory;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -19,7 +18,7 @@ import org.pac4j.jee.context.JEEContext;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
-
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -54,11 +53,12 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
         val providers = allClients
             .stream()
             .filter(client -> client instanceof IndirectClient
-                              && isDelegatedClientAuthorizedForService(client, service, context))
+                && isDelegatedClientAuthorizedForService(client, service, context))
             .map(IndirectClient.class::cast)
             .map(Unchecked.function(client -> produce(context, client)))
             .filter(Optional::isPresent)
             .map(Optional::get)
+            .sorted(Comparator.comparing(DelegatedClientIdentityProviderConfiguration::getName))
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
         val delegatedClientIdentityProviderRedirectionStrategy = configurationContext.getObject().getDelegatedClientIdentityProviderRedirectionStrategy();
@@ -81,7 +81,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
 
         } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
             LOGGER.warn("No delegated authentication providers could be determined based on the provided configuration. "
-                        + "Either no identity providers are configured, or the current access strategy rules prohibit CAS from using authentication providers");
+                + "Either no identity providers are configured, or the current access strategy rules prohibit CAS from using authentication providers");
         }
         return providers;
     }
@@ -116,7 +116,9 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
     }
 
     protected void initializeClientIdentityProvider(final IndirectClient client) throws Throwable {
-        client.init(true);
+        if (!client.isInitialized()) {
+            client.init(true);
+        }
         FunctionUtils.throwIf(!client.isInitialized(), DelegatedAuthenticationFailureException::new);
     }
 

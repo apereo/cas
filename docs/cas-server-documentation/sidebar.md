@@ -803,6 +803,7 @@ layout: null
         *   [Overview](/cas/{{ version }}/high_availability/High-Availability-Performance-Testing.html)
         *   [Locust](/cas/{{ version }}/high_availability/Performance-Testing-Locust.html)
         *   [JMeter](/cas/{{ version }}/high_availability/Performance-Testing-JMeter.html)
+        *   [Artillery](/cas/{{ version }}/high_availability/Performance-Testing-Artillery.html)
     *   [Service Discovery](#servicediscovery)
         *   [Overview](/cas/{{ version }}/installation/Service-Discovery-Guide.html)
         *   [Consul Service Discovery](/cas/{{ version }}/installation/Service-Discovery-Guide-Consul.html)

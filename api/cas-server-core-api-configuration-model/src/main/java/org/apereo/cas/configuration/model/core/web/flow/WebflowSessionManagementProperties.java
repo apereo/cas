@@ -39,4 +39,10 @@ public class WebflowSessionManagementProperties implements Serializable {
      */
     @RequiredProperty
     private boolean storage;
+
+    /**
+     * Controls whether the webflow session is pinned
+     * to the client's IP address and user-agent.
+     */
+    private boolean pinToSession;
 }

@@ -6,6 +6,7 @@ import org.apereo.cas.util.SystemUtils;
 import org.apereo.cas.util.feature.CasRuntimeModuleLoader;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
 import org.springframework.boot.actuate.info.Info;
 import org.springframework.boot.actuate.info.InfoContributor;
@@ -27,10 +28,10 @@ public class CasInfoEndpointContributor implements InfoContributor {
         builder.withDetail("systemInfo", SystemUtils.getSystemInfo());
         builder.withDetail("casModules", Unchecked.supplier(loader::load).get());
         builder.withDetail("server", Map.of(
-            "hostname", casProperties.getHost().getName(),
+            "hostname", StringUtils.defaultIfBlank(casProperties.getHost().getName(), "N/A"),
             "host", InetAddressUtils.getCasServerHostName(),
-            "name", casProperties.getServer().getName(),
-            "scope", casProperties.getServer().getScope()
+            "name", StringUtils.defaultIfBlank(casProperties.getServer().getName(), "N/A"),
+            "scope", StringUtils.defaultIfBlank(casProperties.getServer().getScope(), "N/A")
         ));
     }
 }

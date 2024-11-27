@@ -164,7 +164,7 @@ supported by CAS:
 
 {% tabs heimdallauthzpolicies %}
 
-{% tab heimdallauthzpolicies Groovy %}
+{% tab heimdallauthzpolicies <i class="fa fa-code px-1"></i> Groovy %}
      
 An authorization policy that can accept an inline or external [Groovy script](../integration/Apache-Groovy-Scripting.html) to make decisions:
 
@@ -194,7 +194,7 @@ The following parameters are passed to the script:
 
 {% endtab %}
 
-{% tab heimdallauthzpolicies Grouper Groups %}
+{% tab heimdallauthzpolicies <i class="fa fa-user-group px-1"></i> Grouper Groups %}
 
 An authorization policy that fetches group memberships for the principal from 
 [Grouper](https://github.com/Internet2/grouper) and makes decisions based on required groups:
@@ -340,6 +340,39 @@ An authorization policy can be outsources to a REST API that can make decisions 
 - The request body will contain a map to present the `request` and the `resource` JSON payloads.
 - Authorized requests are expected to receive a `200` response code.
 - The `url` and header values can be constructed using the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html)
+
+{% endtab %}
+
+{% tab heimdallauthzpolicies OpenFGA %}
+
+An authorization policy that passes the request to [OpenFGA](https://openfga.dev/) to make decisions:
+
+```json
+{
+  "@class": "org.apereo.cas.heimdall.authorizer.resource.policy.OpenFGAAuthorizationPolicy",
+  "token": "...",
+  "apiUrl": "...",
+  "storeId": "...",
+  "relation": "..."  
+}
+```
+
+The following parameters are passed to OpenFGA:
+
+| Parameter  | Description                                                                                        |
+|------------|----------------------------------------------------------------------------------------------------|
+| `token`    | <sup>[1]</sup> The bearer authorization token passed via the `Authorization` header.               |
+| `apiUrl`   | <sup>[1]</sup> OpenFGA base API endpoint that ultimately invokes the `check` API.                  |
+| `storeId`  | <sup>[1]</sup> The authorization store identifier.                                                 |
+| `relation` | <sup>[1]</sup> The relation or the type of access in the authorization tuple; defaults to `owner`. |
+  
+The `object` field in the API request is composed of the following elements:
+
+```bash
+$REQUEST_NAMESPACE + ':' + $REQUEST_METHOD + ':' + $REQUEST_URI
+```
+
+<sub><i>[1] This field supports the [Spring Expression Language](../configuration/Configuration-Spring-Expressions.html) syntax.</i></sub>
 
 {% endtab %}
 

@@ -27,7 +27,7 @@ allowed to [ask and process geodata](../authentication/Configuring-Authenticatio
 
 {% tabs devicefingerprint %}
 
-{% tab devicefingerprint Client IP %}
+{% tab devicefingerprint <i class="fa fa-computer px-1"></i> Client IP %}
 
 {% include_cached casproperties.html properties="cas.authn.mfa.trusted.device-fingerprint.client-ip" %}
 

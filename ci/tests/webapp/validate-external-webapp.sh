@@ -38,12 +38,19 @@ rm -Rf ${CATALINA_HOME}
 rm -Rf apache-tomcat-${tomcatVersion}.zip
 
 echo -e "Downloading Apache Tomcat from ${tomcatUrl}"
-wget --no-check-certificate ${tomcatUrl}
-if [[ $? -ne 0 ]]; then
-  echo "Unable to download Apache Tomcat ${tomcatVersion} from ${tomcatUrl}"
+success=false
+if [[ ! -f "apache-tomcat-${tomcatVersion}.zip" ]]; then
+  for i in $(seq 1 5); do
+      echo "Attempt $i - Downloading Apache Tomcat from ${tomcatUrl}"
+      wget --no-check-certificate --retry-connrefused "${tomcatUrl}" > /dev/null 2>&1 && success=true && break
+      echo "Download failed. Retrying..."
+      sleep 3
+  done
+fi
+if [ "$success" = false ]; then
+  echo "Failed to download Apache Tomcat ${tomcatVersion}"
   exit 1
 fi
-
 
 unzip apache-tomcat-${tomcatVersion}.zip >/dev/null 2>&1
 

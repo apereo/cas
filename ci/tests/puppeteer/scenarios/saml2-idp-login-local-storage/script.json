@@ -1,12 +1,10 @@
 {
-  "dependencies": "saml-idp,duo,reports",
+  "dependencies": "saml-idp,duo,reports,scripting",
   "conditions": {
     "docker": "true",
     "env": "DUO_SECURITY_ADMIN_SKEY,DUO_SECURITY_ADMIN_IKEY,DUO_SECURITY_UNIVERSAL_PROMPT_SKEY,DUO_SECURITY_UNIVERSAL_PROMPT_IKEY,DUO_SECURITY_API_HOST"
   },
-
   "properties": [
-
     "--cas.authn.mfa.triggers.global.global-provider-id=mfa-duo",
     
     "--cas.authn.attribute-repository.stub.attributes.uid=casuser",

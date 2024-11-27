@@ -232,7 +232,7 @@ To prepare CAS to support and integrate with Apache Groovy, please [review this 
 
 {% endtab %}
 
-{% tab ssoservicepolicy Custom %}
+{% tab ssoservicepolicy <i class="fa fa-code px-1"></i> Custom %}
 
 Participation in a single sign-on session can be customized and controlled using custom strategies registered with CAS per the below syntax:
 

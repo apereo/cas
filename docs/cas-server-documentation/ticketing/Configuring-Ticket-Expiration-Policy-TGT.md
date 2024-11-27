@@ -97,7 +97,7 @@ and the user will be forced to re-authenticate.
 
 {% endtab %}
 
-{% tab exppolicies Throttled %}
+{% tab exppolicies <i class="fa fa-lock px-1"></i> Throttled %}
 
 The throttled timeout policy extends the TimeoutExpirationPolicy with the concept of throttling where a ticket may be used at
 most every `N` seconds. This policy was designed to thwart denial of service conditions where a rogue or misconfigured client
