@@ -130,6 +130,7 @@ jobs:
           - undertow
         protocols:
           - cas
+          - saml
     name: artillery - ${{ matrix.category }} - ${{ matrix.protocols }}
     steps:
       - name: Checkout
