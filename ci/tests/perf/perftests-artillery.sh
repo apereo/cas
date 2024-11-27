@@ -13,11 +13,10 @@ function printgreen() {
   printf "☘️  ${GREEN}$1${ENDCOLOR}\n"
 }
 
-jmeterVersion=5.6.3
 gradle="./gradlew "
 gradleBuild=""
 gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel --max-workers=8 --no-configuration-cache "
-webAppServerType="$1"
+webAppServerType="${1:-tomcat}"
 testCategory="${2:-cas}"
 
 casProperties=""
@@ -29,7 +28,7 @@ case "$testCategory" in
     casProperties="${casProperties} --cas.service-registry.json.location=file://${PWD}/ci/tests/perf/saml/services"
     casProperties="${casProperties} --cas.http-client.host-name-verifier=none "
     casProperties="${casProperties} --spring.main.lazy-initialization=false "
-    jmeterScript="etc/loadtests/jmeter/CAS_SAML2.jmx"
+    artilleryScript="etc/loadtests/artillery/saml.yml"
     casModules="saml-idp,reports"
     ;;
   oidc)
@@ -37,18 +36,18 @@ case "$testCategory" in
     casProperties="${casProperties} --cas.service-registry.json.location=file://${PWD}/ci/tests/perf/oidc/services "
     casProperties="${casProperties} --cas.authn.oidc.jwks.file-system.jwks-file=file://${PWD}/ci/tests/perf/oidc/keystore.jwks "
     casProperties="${casProperties} --spring.main.lazy-initialization=false "
-    jmeterScript="etc/loadtests/jmeter/CAS_OIDC.jmx"
+    artilleryScript="etc/loadtests/artillery/oidc.yml"
     casModules="oidc,reports"
     ;;
   cas)
-    jmeterScript="etc/loadtests/jmeter/CAS_CAS.jmx"
+    artilleryScript="etc/loadtests/artillery/cas.yml"
     ;;
 esac
 
 retVal=0
-echo -e "**********************************************************"
-echo -e "Build started at $(date) for test category ${testCategory}"
-echo -e "**********************************************************"
+echo -e "******************************************************************************************"
+printgreen "Build started at $(date) for test category ${testCategory} and web application server ${webAppServerType}\n"
+echo -e "******************************************************************************************"
 gradleBuild="$gradleBuild clean :webapp:cas-server-webapp-${webAppServerType}:build -x check -x test -x javadoc --no-configuration-cache -DskipNestedConfigMetadataGen=true -DcasModules=${casModules} "
 tasks="$gradle $gradleBuildOptions $gradleBuild"
 printgreen "$tasks"
@@ -84,6 +83,7 @@ if [ $retVal == 0 ]; then
   echo "Properties: ${casProperties}"
   java -Dlog.console.stacktraces=true \
       -jar webapp/cas-server-webapp-"${webAppServerType}"/build/libs/cas.war \
+      --spring.profiles.active=none \
       --server.ssl.key-store=${keystore} \
       --cas.service-registry.core.init-from-json=true \
       --cas.server.name=https://localhost:8443 \
@@ -102,9 +102,7 @@ if [ $retVal == 0 ]; then
     echo -n '.'
     sleep 2
   done
-#  curl -k -H "Content-Type:application/json" \
-#    -X POST "https://localhost:8443/cas/actuator/loggers/org.apereo.cas" \
-#    -d '{"configuredLevel": "DEBUG"}'
+
   printgreen "\n\nReady!\n"
 
   case "$testCategory" in
@@ -119,40 +117,29 @@ if [ $retVal == 0 ]; then
       "${PWD}/ci/tests/saml2/run-saml-server.sh"
       ;;
   esac
-  
-#  read -r
-  
-  if [[ ! -f "/tmp/apache-jmeter-${jmeterVersion}.zip" ]]; then
-      printgreen "Downloading JMeter ${jmeterVersion}..."
-      curl -o /tmp/apache-jmeter-${jmeterVersion}.zip \
-        -L https://downloads.apache.org/jmeter/binaries/apache-jmeter-${jmeterVersion}.zip
-      rm -rf /tmp/apache-jmeter-${jmeterVersion}
-      unzip -q -d /tmp /tmp/apache-jmeter-${jmeterVersion}.zip
-      printgreen "Unzipped /tmp/apache-jmeter-${jmeterVersion}.zip rc=$?"
-      chmod +x /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter
-    echo "jmeter.save.saveservice.output_format=xml" >> /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter.properties
-    echo "jmeter.save.saveservice.response_data=true" >> /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter.properties
+
+  printgreen "Installing Artillery...\n"
+  npm install -g artillery
+  artillery --version
+  printgreen "Running Artillery tests via ${artilleryScript}...\n"
+  artillery run "${artilleryScript}" --insecure --output /tmp/artillery.json
+  failedUsers=$(< /tmp/artillery.json jq -r '.aggregate.counters."vusers.failed"')
+  if [ "$failedUsers" -gt 0 ]; then
+    printred "Artillery tests failed with ${failedUsers} failed users.\n"
+    retVal=1
+  else
+    printgreen "Artillery tests completed successfully.\n"
+    retVal=0
   fi
-
-  clear
-  echo -e "***************************************************************************************"
-  printgreen "Running JMeter tests via ${jmeterScript}..."
-  export HEAP="-Xms1g -Xmx6g -XX:MaxMetaspaceSize=512m"
-  /tmp/apache-jmeter-${jmeterVersion}/bin/jmeter -l /tmp/jmeter-results.xml -n -t "${jmeterScript}" >results.log
-  echo -n "JMeter results are written to " && ls /tmp/jmeter-results.xml
-  echo -e "***************************************************************************************"
-
-  java ci/tests/perf/EvalJMeterTestResults.java ./results.log
-  retVal=$?
 
   echo -e "***************************************************************************************"
   echo -e "Gradle build finished at $(date) with exit code $retVal"
   echo -e "***************************************************************************************"
 
   if [ $retVal == 0 ]; then
-    printgreen "Gradle build finished successfully."
+    printgreen "Gradle build finished successfully.\n"
   else
-    printred "Gradle build did NOT finish successfully."
+    printred "Gradle build did NOT finish successfully.\n"
   fi
 
   kill -9 "${pid}"

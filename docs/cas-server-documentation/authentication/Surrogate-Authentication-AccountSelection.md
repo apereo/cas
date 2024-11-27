@@ -28,7 +28,7 @@ primary user, and will then switch to `jsmith` when allowed.
 
 {% endtab %}
 
-{% tab impersonationoptions GUI %}
+{% tab impersonationoptions <i class="fa fa-masks-theater px-1"></i> GUI %}
 
 This is the case where the surrogate user identity is *not* known
 beforehand, and you wish to choose the account from a pre-populated

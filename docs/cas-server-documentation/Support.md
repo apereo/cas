@@ -72,8 +72,7 @@ Apereo commercial service providers if that is unacceptable. Also unless explici
 
 ### Chat Rooms
 
-The CAS community chat room is provided by [Gitter][casgitter]. Apereo also has an 
-official [Slack chat workspace](https://apereo.slack.com) where you may find a `#cas` 
+Apereo has an official [Slack chat workspace](https://apereo.slack.com) where you may find a `#cas` 
 channel. The sign-up page is [available here](https://apereo.slack.com/signup). A 
 specific `cas` tag is also available for StackOverflow.
 
@@ -89,5 +88,3 @@ The [Apereo Foundation](http://www.apereo.org/) (formerly Jasig) offers a number
 presentations and training on a number of software products, including CAS, that are relevant to Higher Education.
 Conferences are an excellent venue for strengthening ties to the larger CAS community and related open source software
 ecosystem.
-
-[casgitter]: https://app.gitter.im/#/room/#apereo_cas:gitter.im

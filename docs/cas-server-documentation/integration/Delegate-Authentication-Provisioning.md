@@ -71,7 +71,7 @@ delegated authentication is only handled via SCIM <code>v2</code>.</p></div>
 
 {% endtab %}
 
-{% tab delegatedauthnprov Custom %}
+{% tab delegatedauthnprov <i class="fa fa-code px-1"></i> Custom %}
 
 If you wish to create your own provisioner for delegated authentication, you will need to
 design a component and register it with CAS as such:

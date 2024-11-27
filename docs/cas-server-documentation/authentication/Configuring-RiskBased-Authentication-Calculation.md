@@ -17,7 +17,7 @@ request safe.
 
 {% tabs adaptiveriskcalc %}
 
-{% tab adaptiveriskcalc IP Address %}
+{% tab adaptiveriskcalc <i class="fa fa-computer px-1"></i> IP Address %}
 
 This calculator looks into past authentication events that match the client ip address. It is applicable if you wish
 to consider authentication requests from unknown ip addresses suspicious for the user. The story here is:

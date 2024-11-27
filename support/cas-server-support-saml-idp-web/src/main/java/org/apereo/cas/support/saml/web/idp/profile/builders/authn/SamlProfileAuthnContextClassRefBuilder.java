@@ -9,7 +9,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
-import org.apereo.cas.util.spring.ApplicationContextProvider;
+import org.apereo.cas.util.scripting.ScriptResourceCacheManager;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,6 +24,7 @@ import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestedAuthnContext;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
+import org.springframework.beans.factory.ObjectProvider;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,12 +47,16 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
 
     private final CasConfigurationProperties casProperties;
 
+    private final ObjectProvider<ScriptResourceCacheManager> scriptResourceCacheManager;
+
     public SamlProfileAuthnContextClassRefBuilder(final OpenSamlConfigBean configBean,
                                                   final MetadataResolver samlIdPMetadataResolver,
-                                                  final CasConfigurationProperties casProperties) {
+                                                  final CasConfigurationProperties casProperties,
+                                                  final ObjectProvider<ScriptResourceCacheManager> scriptResourceCacheManager) {
         super(configBean);
         this.samlIdPMetadataResolver = samlIdPMetadataResolver;
         this.casProperties = casProperties;
+        this.scriptResourceCacheManager = scriptResourceCacheManager;
     }
 
     @Override
@@ -84,16 +89,18 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
     }
 
     private String buildAuthnContextClassRefValue(final SamlProfileBuilderContext context) {
-        val requiredClass = SpringExpressionLanguageValueResolver.getInstance()
-            .resolve(context.getRegisteredService().getRequiredAuthenticationContextClass());
-        if (StringUtils.isNotBlank(requiredClass)) {
+        val assignedContextClass = context.getRegisteredService().getRequiredAuthenticationContextClass();
+        if (StringUtils.isNotBlank(assignedContextClass)) {
             LOGGER.debug("Using [{}] as indicated by SAML registered service [{}]",
-                requiredClass, context.getRegisteredService().getName());
+                assignedContextClass, context.getRegisteredService().getName());
             val scriptFactory = ExecutableCompiledScriptFactory.findExecutableCompiledScriptFactory();
-            if (scriptFactory.isPresent() && scriptFactory.get().isScript(requiredClass)) {
+            if (scriptFactory.isPresent() && scriptFactory.get().isScript(assignedContextClass)) {
+                val requiredClass = scriptFactory.get().isExternalScript(assignedContextClass)
+                    ? SpringExpressionLanguageValueResolver.getInstance().resolve(assignedContextClass)
+                    : assignedContextClass;
                 return buildScriptedAuthnContextClassRef(context, requiredClass);
             }
-            return requiredClass;
+            return SpringExpressionLanguageValueResolver.getInstance().resolve(assignedContextClass);
         }
 
         val defClass = getDefaultAuthenticationContextClass();
@@ -119,7 +126,8 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
     protected String buildScriptedAuthnContextClassRef(final SamlProfileBuilderContext context, final String requiredClass) {
         LOGGER.debug("Executing groovy script [{}] to determine authentication context class for [{}]",
             requiredClass, context.getAdaptor().getEntityId());
-        return ApplicationContextProvider.getScriptResourceCacheManager()
+        return scriptResourceCacheManager
+            .stream()
             .map(cacheMgr -> {
                 val script = cacheMgr.resolveScriptableResource(requiredClass,
                     requiredClass, context.getAdaptor().getEntityId());
@@ -131,6 +139,7 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
                     },
                     () -> requiredClass).get();
             })
+            .findFirst()
             .orElseThrow(() -> new RuntimeException("Unable to locate script cache manager or execute groovy script"));
     }
 

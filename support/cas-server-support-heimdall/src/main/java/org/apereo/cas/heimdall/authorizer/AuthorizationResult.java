@@ -27,4 +27,14 @@ public record AuthorizationResult(boolean authorized, String reason) {
     public static AuthorizationResult granted(final String reason) {
         return new AuthorizationResult(true, reason);
     }
+
+    /**
+     * From boolean result.
+     *
+     * @param allowed the allowed
+     * @return the authorization result
+     */
+    public static AuthorizationResult from(final Boolean allowed) {
+        return allowed ? granted("OK") : denied("Denied");
+    }
 }

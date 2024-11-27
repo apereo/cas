@@ -35,7 +35,10 @@ if [ $retVal == 0 ]; then
   echo "Launching CAS web application ${webAppServerType} server..."
   casOutput="/tmp/logs/cas.log"
   cmd="java -jar webapp/cas-server-webapp-${webAppServerType}/build/libs/cas.war \\
-      --server.ssl.key-store=${keystore} --cas.service-registry.core.init-from-json=true --logging.level.org.apereo.cas=info"
+      --spring.profiles.active=none \\
+      --server.ssl.key-store=${keystore} \\
+      --cas.service-registry.core.init-from-json=true \\
+      --logging.level.org.apereo.cas=info"
   #    exec $cmd > ${casOutput} 2>&1 &
   exec $cmd &
   pid=$!
