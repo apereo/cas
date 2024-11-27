@@ -82,9 +82,7 @@ public class MongoDbTicketRegistryFacilitator {
                     expectedIndexes.add(principalIdIndex);
                 }
             }
-
-
-
+            
             if (properties.getIndexes().isEmpty() || properties.getIndexes().contains(INDEX_NAME_EXPIRATION)) {
                 val expireIndex = new Index()
                     .named(INDEX_NAME_EXPIRATION)
