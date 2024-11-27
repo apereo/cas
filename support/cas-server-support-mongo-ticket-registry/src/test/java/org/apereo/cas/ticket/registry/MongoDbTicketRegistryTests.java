@@ -16,6 +16,7 @@ import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.Getter;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.lambda.Unchecked;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
@@ -183,18 +184,10 @@ class MongoDbTicketRegistryTests extends BaseTicketRegistryTests {
             .limit(5);
         getNewTicketRegistry().addTicket(ticketGrantingTicketToAdd);
 
-        val tickets = getNewTicketRegistry().getSessionsFor(principalId).collect(Collectors.toList());
+        val tickets = getNewTicketRegistry().getSessionsFor(principalId).toList();
         assertEquals(5, tickets.size());
 
-        tickets.forEach(ticket -> {
-            try {
-                getNewTicketRegistry().deleteTicket(ticket);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            } 
-        });
-
+        tickets.forEach(Unchecked.consumer(ticket -> getNewTicketRegistry().deleteTicket(ticket)));
         assertEquals(0, getNewTicketRegistry().getSessionsFor(principalId).count());
-
     }
 }
