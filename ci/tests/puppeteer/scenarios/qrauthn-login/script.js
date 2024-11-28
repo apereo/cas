@@ -1,6 +1,6 @@
 
 const cas = require("../../cas.js");
-const jimp = require("jimp");
+const { Jimp } = require("jimp");
 const fs = require("fs");
 const qrCode = require("qrcode-reader");
 const SockJS = require("sockjs-client");
@@ -21,25 +21,20 @@ const querystring = require("querystring");
 
     await cas.removeDirectoryOrFile(`${__dirname}/out.ignore`);
     await fs.writeFileSync(`${__dirname}/out.ignore`, data, "base64");
-    const buffer = fs.readFileSync(`${__dirname}/out.ignore`);
 
-    await jimp.read(buffer, (err, image) => {
+    const image = await Jimp.read(`${__dirname}/out.ignore`);
+    const qrcode = new qrCode();
+    qrcode.callback = (err, channelIdResult) => {
         if (err) {
             cas.logr(err);
             throw err;
         }
-        const qrcode = new qrCode();
-        qrcode.callback = (err, channelIdResult) => {
-            if (err) {
-                cas.logr(err);
-                throw err;
-            }
-            const channelId = channelIdResult.result;
-            cas.logg(`QR channel code is ${channelId}`);
-            connectAndLogin(channelId, page);
-        };
-        qrcode.decode(image.bitmap);
-    });
+        const channelId = channelIdResult.result;
+        cas.logg(`QR channel code is ${channelId}`);
+        connectAndLogin(channelId, page);
+    };
+    qrcode.decode(image.bitmap);
+    
     await browser.close();
 })();
 
