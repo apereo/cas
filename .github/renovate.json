@@ -31,7 +31,7 @@
   ],
   "labels": ["Bot", "Renovate"],
   "schedule": [
-    "after 10pm and before 6am every weekday"
+    "after 10pm and before 6am on sunday"
   ],
   "docker": {
     "enabled": true
