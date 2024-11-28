@@ -114,7 +114,6 @@ if [ $retVal == 0 ]; then
 
   case "$testCategory" in
     saml)
-      metadataDirectory=""
       cert=$(cat "${PWD}/ci/tests/perf/saml/md/idp-signing.crt" | sed 's/-----BEGIN CERTIFICATE-----//g' | sed 's/-----END CERTIFICATE-----//g')
       export IDP_SIGNING_CERTIFICATE=$cert
       echo -e "Using signing certificate:\n$IDP_SIGNING_CERTIFICATE"
