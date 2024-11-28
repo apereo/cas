@@ -68,7 +68,7 @@ while (("$#")); do
     proofRead=false
     
     audit=false
-    actuators=false
+    actuators=true
     thirdParty=false
     serviceProps=false
     publishDocs=false
