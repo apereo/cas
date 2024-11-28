@@ -249,8 +249,14 @@ public class MonitoredRepository {
     }
 
     public boolean mergePullRequestIntoBase(final PullRequest pr) {
+        var commitTitle = pr.getTitle();
+        var commitMessage = pr.getBody();
+        if (pr.isLabeledAs(CasLabels.LABEL_SKIP_CI)) {
+            commitTitle += " [ci skip]";
+            commitMessage += " [ci skip]";
+        }
         return gitHub.mergeIntoBase(getOrganization(), getName(),
-            pr, pr.getTitle(), pr.getBody(),
+            pr, commitTitle, commitMessage,
             pr.getHead().getSha(), "squash");
     }
 
@@ -335,6 +341,11 @@ public class MonitoredRepository {
             pages = pages.next();
         }
         return files;
+    }
+
+    public PullRequest updatePullRequestTitle(PullRequest pullRequest, String title) {
+        gitHub.updatePullRequest(this.getOrganization(), getName(), pullRequest, Map.of("title", title));
+        return getPullRequest(pullRequest.getNumber());
     }
 
     public PullRequest getPullRequest(String number) {

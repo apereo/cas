@@ -44,6 +44,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.DefaultResponseErrorHandler;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestOperations;
 import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
@@ -478,9 +479,15 @@ public class GitHubTemplate implements GitHubOperations {
     @Override
     public void removeWorkflowRun(final String organization, final String name, final Workflows.WorkflowRun run) {
         val url = "https://api.github.com/repos/" + organization + '/' + name + "/actions/runs/" + run.getId();
-        var response = this.rest.exchange(new RequestEntity<Void>(HttpMethod.DELETE, URI.create(url)), Workflows.WorkflowRun.class);
-        if (!response.getStatusCode().is2xxSuccessful()) {
-            log.warn("Failed to remove workflow run. Response status: {}", response.getStatusCode());
+        try {
+            var response = this.rest.exchange(new RequestEntity<Void>(HttpMethod.DELETE, URI.create(url)), Workflows.WorkflowRun.class);
+            if (!response.getStatusCode().is2xxSuccessful()) {
+                log.warn("Failed to remove workflow run. Response status: {}", response.getStatusCode());
+            }
+        } catch (final HttpClientErrorException.Forbidden e) {
+            log.error("{}: Cannot delete workflow run using {}: {}", e.getStatusText(), url, e.getMessage());
+        } catch (final Exception e) {
+            log.error(e.getMessage(), e);
         }
     }
 

@@ -134,6 +134,7 @@ public enum CasLabels {
     LABEL_X509("X.509", "x509|certificates|tls|\bclient authentication\b|CRL|EDIPI|bouncycastle"),
     LABEL_WIP("Pending: Work in Progress", "WIP|\\[WIP\\]"),
     LABEL_UNDER_REVIEW("Under Review", ""),
+    LABEL_SKIP_CI("Skip CI", ""),
     LABEL_RECAPTCHA("reCAPTCHA", "\\bcaptcha\\b"),
     LABEL_PUPPETEER("Puppeteer", "puppeteer"),
     LABEL_AUTO_MERGE("Auto Merge"),

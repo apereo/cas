@@ -45,10 +45,10 @@ public class CasPullRequestListener implements PullRequestListener {
     }
 
     private boolean processAutomaticMergeByChangeset(final PullRequest pr) {
-        if (pr.isRenovateBot() || pr.isDependaBot()) {
+        if (pr.isBot()) {
             var files = repository.getPullRequestFiles(pr);
             if (files.size() == 1) {
-                var firstFile = files.get(0).getFilename();
+                var firstFile = files.getFirst().getFilename();
 
                 if (firstFile.endsWith("locust/requirements.txt")
                     || firstFile.matches(".github/workflows/.+.yml")
@@ -337,7 +337,7 @@ public class CasPullRequestListener implements PullRequestListener {
             }
 
             var files = repository.getPullRequestFiles(pr);
-            if (files.size() == 1 && files.get(0).getFilename().endsWith("gradle.properties")) {
+            if (files.size() == 1 && files.getFirst().getFilename().endsWith("gradle.properties")) {
                 var template = IOUtils.toString(new ClassPathResource("template-security-policy.md").getInputStream(), StandardCharsets.UTF_8);
                 repository.addComment(pr, template);
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);

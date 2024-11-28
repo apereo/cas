@@ -148,4 +148,12 @@ public class PullRequest {
     public boolean isDependaBot() {
         return user.getLogin().equalsIgnoreCase("dependabot[bot]");
     }
+
+    public boolean isBot() {
+        return isDependaBot() || isRenovateBot();
+    }
+    
+    public boolean isClosed() {
+        return !isOpen();
+    }
 }

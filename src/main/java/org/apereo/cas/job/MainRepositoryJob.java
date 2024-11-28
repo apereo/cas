@@ -23,7 +23,7 @@ public class MainRepositoryJob {
 
     private final List<PullRequestListener> pullRequestListeners;
     
-    @Scheduled(fixedRate = ONE_MINUTE)
+    @Scheduled(fixedRate = ONE_MINUTE * 3)
     void monitorPullRequests() {
         log.info("Monitoring {}", this.repository.getFullName());
         try {
@@ -42,7 +42,7 @@ public class MainRepositoryJob {
         log.info("Monitoring of {} completed", this.repository.getFullName());
     }
 
-    @Scheduled(fixedRate = ONE_MINUTE)
+    @Scheduled(fixedRate = ONE_MINUTE * 5)
     void monitorWorkflowRuns() {
         log.info("Monitoring {}", this.repository.getFullName());
         try {

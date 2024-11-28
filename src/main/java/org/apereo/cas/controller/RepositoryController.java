@@ -118,20 +118,23 @@ public class RepositoryController {
     @PostMapping(value = "/repo/pulls/{prNumber}/labels/automerge", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({"ROLE_ADMIN"})
     public ResponseEntity automerge(@PathVariable final String prNumber) {
-        val pullRequest = repository.getPullRequest(prNumber);
+        var pullRequest = repository.getPullRequest(prNumber);
         if (pullRequest == null) {
             return ResponseEntity.notFound().build();
         }
         if (pullRequest.isLocked()) {
             return ResponseEntity.status(HttpStatus.LOCKED).build();
         }
-        repository.open(pullRequest);
+        if (pullRequest.isClosed()) {
+            repository.open(pullRequest);
+        }
         repository.removeAllCommentsFrom(pullRequest, "apereocas-bot");
         repository.removeLabelFrom(pullRequest, CasLabels.LABEL_PENDING_PORT_FORWARD);
         repository.removeLabelFrom(pullRequest, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
         repository.removeLabelFrom(pullRequest, CasLabels.LABEL_PROPOSAL_DECLINED);
         repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_AUTO_MERGE);
         repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_UNDER_REVIEW);
+        repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_SKIP_CI);
         return ResponseEntity.ok().build();
     }
 
