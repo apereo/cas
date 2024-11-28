@@ -13,6 +13,13 @@ function printgreen() {
   printf "☘️  ${GREEN}$1${ENDCOLOR}\n"
 }
 
+tmp="${TMPDIR}"
+if [[ -z "${tmp}" ]]; then
+  tmp="/tmp"
+fi
+export TMPDIR=${tmp}
+echo "Using temp directory: ${TMPDIR}"
+
 jmeterVersion=5.6.3
 gradle="./gradlew "
 gradleBuild=""

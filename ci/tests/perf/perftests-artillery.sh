@@ -13,6 +13,13 @@ function printgreen() {
   printf "☘️  ${GREEN}$1${ENDCOLOR}\n"
 }
 
+tmp="${TMPDIR}"
+if [[ -z "${tmp}" ]]; then
+  tmp="/tmp"
+fi
+export TMPDIR=${tmp}
+echo "Using temp directory: ${TMPDIR}"
+
 gradle="./gradlew "
 gradleBuild=""
 gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel --max-workers=8 --no-configuration-cache "

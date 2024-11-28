@@ -62,13 +62,15 @@ while (("$#")); do
     ;;
   --local)
     propFilter=$2
+    if [[ -z "$propFilter" ]]; then
+      propFilter="-none-"
+    fi
     shift 2
     printgreen "Generating documentation for property filter: ${propFilter}\n"
     serve=true
     proofRead=false
-    
     audit=false
-    actuators=true
+    actuators=false
     thirdParty=false
     serviceProps=false
     publishDocs=false
