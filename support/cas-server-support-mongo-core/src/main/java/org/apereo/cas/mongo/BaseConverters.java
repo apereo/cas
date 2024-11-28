@@ -165,7 +165,7 @@ public abstract class BaseConverters {
         @Override
         public ZonedDateTime convert(
             @Nonnull final Date source) {
-            return Optional.ofNullable(source)
+            return Optional.of(source)
                 .map(date -> ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()))
                 .orElse(null);
         }
@@ -201,7 +201,7 @@ public abstract class BaseConverters {
         @Override
         public Date convert(
             @Nonnull final ZonedDateTime source) {
-            return Optional.ofNullable(source).map(zonedDateTime -> Date.from(zonedDateTime.toInstant())).orElse(null);
+            return Optional.of(source).map(zonedDateTime -> Date.from(zonedDateTime.toInstant())).orElse(null);
         }
     }
 

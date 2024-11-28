@@ -32,9 +32,9 @@ public class CasThymeleafTemplatesDirector {
     public String getUrlExternalForm(final URL url) {
         val externalForm = url.toExternalForm();
         if (externalForm.contains("?")) {
-            return externalForm + "&";
+            return externalForm + '&';
         }
-        return externalForm + "?";
+        return externalForm + '?';
     }
 
     /**

@@ -37,12 +37,12 @@ public class MixedPrincipalException extends PrincipalException {
      *
      * @param authentication Authentication event.
      * @param a              First resolved principal.
-     * @param b              Second resolved principal.
+     * @param principal              Second resolved principal.
      */
-    public MixedPrincipalException(final Authentication authentication, final Principal a, final Principal b) {
-        super(a + " != " + b, authentication.getFailures(), authentication.getSuccesses());
+    public MixedPrincipalException(final Authentication authentication, final Principal a, final Principal principal) {
+        super(a + " != " + principal, authentication.getFailures(), authentication.getSuccesses());
         this.first = a;
-        this.second = b;
+        this.second = principal;
     }
 
 }

@@ -102,8 +102,8 @@ public interface TicketCompactor<T extends Ticket> {
      */
     default Ticket validate(final EncodedTicket finalTicket) {
         if (getMaximumTicketLength() > 0 && finalTicket.getId().length() >= getMaximumTicketLength()) {
-            LOGGER.warn("Final ticket id %s length %s exceeds %s characters"
-                .formatted(finalTicket.getId(), finalTicket.getId().length(), getMaximumTicketLength()));
+            LOGGER.warn("Final ticket id [{}] length [{}] exceeds [{}] characters",
+                finalTicket.getId(), finalTicket.getId().length(), getMaximumTicketLength());
         }
         return finalTicket;
     }

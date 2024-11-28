@@ -155,9 +155,9 @@ public class SamlIdPInitiatedProfileHandlerController extends AbstractSamlIdPPro
                 providerId, SAMLConstants.SAML2_POST_BINDING_URI);
             val acs = facade.getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);
             shire = Optional.ofNullable(acs)
-                .map(assertionConsumerService -> StringUtils.isBlank(assertionConsumerService.getResponseLocation())
-                    ? assertionConsumerService.getLocation()
-                    : assertionConsumerService.getResponseLocation()).orElse(null);
+                .map(service -> StringUtils.isBlank(service.getResponseLocation())
+                    ? service.getLocation()
+                    : service.getResponseLocation()).orElse(null);
         }
         if (StringUtils.isBlank(shire)) {
             LOGGER.warn("Unable to resolve service provider assertion consumer service URL for AuthnRequest construction for entityID: [{}]", providerId);

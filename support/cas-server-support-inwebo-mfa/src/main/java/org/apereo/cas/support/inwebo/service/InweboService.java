@@ -201,24 +201,16 @@ public record InweboService(CasConfigurationProperties casProperties, InweboCons
         } else {
             LOGGER.trace("Inwebo call: [{}] returned error: [{}]", operation, err);
 
-            if ("NOK:NOPUSH".equals(err)) {
-                response.setResult(InweboResult.NOPUSH);
-            } else if ("NOK:NOMA".equals(err)) {
-                response.setResult(InweboResult.NOMA);
-            } else if ("NOK:NOLOGIN".equals(err)) {
-                response.setResult(InweboResult.NOLOGIN);
-            } else if ("NOK:SN".equals(err)) {
-                response.setResult(InweboResult.SN);
-            } else if ("NOK:srv unknown".equals(err)) {
-                response.setResult(InweboResult.UNKNOWN_SERVICE);
-            } else if ("NOK:WAITING".equals(err)) {
-                response.setResult(InweboResult.WAITING);
-            } else if ("NOK:REFUSED".equals(err)) {
-                response.setResult(InweboResult.REFUSED);
-            } else if ("NOK:TIMEOUT".equals(err)) {
-                response.setResult(InweboResult.TIMEOUT);
-            } else {
-                response.setResult(InweboResult.NOK);
+            switch (err) {
+                case "NOK:NOPUSH" -> response.setResult(InweboResult.NOPUSH);
+                case "NOK:NOMA" -> response.setResult(InweboResult.NOMA);
+                case "NOK:NOLOGIN" -> response.setResult(InweboResult.NOLOGIN);
+                case "NOK:SN" -> response.setResult(InweboResult.SN);
+                case "NOK:srv unknown" -> response.setResult(InweboResult.UNKNOWN_SERVICE);
+                case "NOK:WAITING" -> response.setResult(InweboResult.WAITING);
+                case "NOK:REFUSED" -> response.setResult(InweboResult.REFUSED);
+                case "NOK:TIMEOUT" -> response.setResult(InweboResult.TIMEOUT);
+                case null, default -> response.setResult(InweboResult.NOK);
             }
         }
         return response;

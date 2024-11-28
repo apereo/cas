@@ -288,9 +288,9 @@ public class CasDocumentationApplication {
 
                     cmd.parameters = new ArrayList<Map<String, String>>();
                     var parameterAnnotations = method.getParameterAnnotations();
-                    for (var i = 0; i < parameterAnnotations.length; i++) {
-                        for (var j = 0; j < parameterAnnotations[i].length; j++) {
-                            var ann = (ShellOption) parameterAnnotations[i][j];
+                    for (var parameterAnnotation : parameterAnnotations) {
+                        for (var j = 0; j < parameterAnnotation.length; j++) {
+                            var ann = (ShellOption) parameterAnnotation[j];
                             cmd.parameters.add(Map.of(
                                 "name", String.join(",", ann.value()),
                                 "help", String.valueOf(ann.help()),

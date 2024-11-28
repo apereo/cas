@@ -79,7 +79,7 @@ public class ValidateEndpointCommand {
         while (pointer != null) {
             stringBuilder.append("  Caused by: ")
                 .append(pointer)
-                .append(System.getProperty("line.separator"));
+                .append(System.lineSeparator());
             pointer = pointer.getCause();
         }
 
