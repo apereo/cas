@@ -17,7 +17,7 @@ You can install Artillery via npm:
 
 ```bash
 npm install -g artillery
-artifact --version
+artillery --version
 ```
 
 ## Scripts
@@ -29,5 +29,6 @@ The scripts and scenarios can be downloaded from [here](https://github.com/apere
 For each test script, you can run the following command:
 
 ```bash
+cd ./etc/loadtests/artillery
 artillery run "${artilleryScript}"
 ```
