@@ -110,5 +110,9 @@
   {
     "name": "org.springframework.core.annotation.TypeMappedAnnotation[]",
     "unsafeAllocated": true
+  },
+  {
+    "name": "org.hibernate.query.sqm.tree.select.SqmQueryPart[]",
+    "unsafeAllocated": true
   }
 ]
