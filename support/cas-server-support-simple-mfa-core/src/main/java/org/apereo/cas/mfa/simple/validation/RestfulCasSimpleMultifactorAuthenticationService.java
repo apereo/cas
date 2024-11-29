@@ -142,7 +142,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimp
         HttpResponse response = null;
         try {
             val exec = HttpExecutionRequest.builder()
-                .method(HttpMethod.POST)
+                .method(HttpMethod.GET)
                 .headers(properties.getHeaders())
                 .url(StringUtils.appendIfMissing(properties.getUrl(), "/").concat(tokenCredential.getToken()))
                 .basicAuthPassword(properties.getBasicAuthPassword())
