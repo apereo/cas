@@ -57,7 +57,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimp
             Optional.ofNullable(service).ifPresent(s -> parameters.put("service", s.getId()));
 
             val exec = HttpExecutionRequest.builder()
-                .method(HttpMethod.GET)
+                .method(HttpMethod.POST)
                 .headers(properties.getHeaders())
                 .url(StringUtils.appendIfMissing(properties.getUrl(), "/").concat("new"))
                 .entity(writer.toString())
@@ -115,7 +115,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimp
         try (val writer = new StringWriter()) {
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, resolvedPrincipal);
             val exec = HttpExecutionRequest.builder()
-                .method(HttpMethod.GET)
+                .method(HttpMethod.POST)
                 .headers(properties.getHeaders())
                 .url(StringUtils.appendIfMissing(properties.getUrl(), "/").concat(credential.getToken()))
                 .entity(writer.toString())
@@ -142,7 +142,7 @@ public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimp
         HttpResponse response = null;
         try {
             val exec = HttpExecutionRequest.builder()
-                .method(HttpMethod.GET)
+                .method(HttpMethod.POST)
                 .headers(properties.getHeaders())
                 .url(StringUtils.appendIfMissing(properties.getUrl(), "/").concat(tokenCredential.getToken()))
                 .basicAuthPassword(properties.getBasicAuthPassword())
