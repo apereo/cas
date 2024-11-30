@@ -47,7 +47,7 @@ SAML metadata for registered service provider must be fetched from Amazon S3 def
 
 Metadata artifacts that belong to CAS as a SAML2 identity provider may also be managed and stored 
 via Amazon S3 buckets. Artifacts such as the metadata, signing and encryption keys, etc are kept
-inside a bucket with metadata that would have the following structure:
+inside a bucket that carries a *JSON document* with the following fields:
 
 | Field                   | Description                                       |
 |-------------------------|---------------------------------------------------|
@@ -57,9 +57,9 @@ inside a bucket with metadata that would have the following structure:
 | `encryptionCertificate` | The encryption certificate.                       |
 | `encryptionKey`         | The encryption key.                               |
 | `appliesTo`             | The owner of this metadata document (i.e. `CAS`). |
+| `metadata`              | The metadata document.                            |
 
-The actual object's content/body is expected to contain the SAML2 identity provider metadata. Note 
-that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys.
+Note that the signing and encryption keys are expected to be encrypted and signed using CAS crypto keys.
 
 ### Per Service
 

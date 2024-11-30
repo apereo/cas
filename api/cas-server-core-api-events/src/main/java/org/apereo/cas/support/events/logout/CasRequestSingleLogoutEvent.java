@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import lombok.Getter;
 import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
+import java.io.Serial;
 
 /**
  * Concrete subclass of {@link AbstractCasEvent} representing a request for SLO.
@@ -17,6 +18,9 @@ import org.apereo.inspektr.common.web.ClientInfo;
 @Getter
 public class CasRequestSingleLogoutEvent extends AbstractCasEvent {
 
+    @Serial
+    private static final long serialVersionUID = -186425713441224237L;
+    
     private final TicketGrantingTicket ticketGrantingTicket;
 
     /**

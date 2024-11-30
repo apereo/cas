@@ -351,14 +351,12 @@ public class ConfigurationMetadataGenerator {
                                 var names = RelaxedPropertyNames.forCamelCase(variable.getNameAsString()).getValues();
                                 if (names.contains(propShortName)) {
                                     variable.getInitializer().ifPresent(expression -> {
-                                        var value = (Object) null;
-                                        if (expression instanceof final LiteralStringValueExpr expr) {
-                                            value = expr.getValue();
-                                        } else if (expression instanceof final BooleanLiteralExpr expr) {
-                                            value = expr.getValue();
-                                        } else if (expression instanceof final FieldAccessExpr expr) {
-                                            value = expr.getNameAsString();
-                                        }
+                                        val value = switch (expression) {
+                                            case final LiteralStringValueExpr expr -> expr.getValue();
+                                            case final BooleanLiteralExpr expr -> expr.getValue();
+                                            case final FieldAccessExpr expr -> expr.getNameAsString();
+                                            default -> null;
+                                        };
                                         prop.setDefaultValue(value);
                                     });
                                 }

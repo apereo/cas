@@ -24,7 +24,7 @@ if [ $retVal == 0 ]; then
     docker exec localstack bash -c "awslocal logs create-log-stream --log-group-name cas-log-group --log-stream-name cas-log-stream"
 
     words=("info" "debug" "trace" "warn" "error")
-    
+
     for i in {1..25} ; do
         random_index=$((RANDOM % 5))
         logLevel=${words[$random_index]}

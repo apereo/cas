@@ -132,6 +132,7 @@ jobs:
         protocols:
           - cas
           - saml
+          - oidc
     name: artillery - ${{ matrix.category }} - ${{ matrix.protocols }}
     steps:
       - name: Checkout

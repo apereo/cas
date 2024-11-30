@@ -131,8 +131,8 @@ public class RandomUtils {
         IntStream.range(0, bytes.length).forEach(i -> {
             val left = bytes[i] >> SECURE_ID_SHIFT_LENGTH & HEX_HIGH_BITS_BITWISE_FLAG;
             val right = bytes[i] & HEX_HIGH_BITS_BITWISE_FLAG;
-            chars[i * 2] = charMappings[left];
-            chars[i * 2 + 1] = charMappings[right];
+            chars[i << 1] = charMappings[left];
+            chars[(i << 1) + 1] = charMappings[right];
         });
         return String.valueOf(chars);
     }

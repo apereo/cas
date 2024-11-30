@@ -112,16 +112,18 @@ if (!providers.systemProperty("skipSonarqube").present) {
         def exclusions = rootProject.excludedFilesFromTestCoverage.join(",")
         def token = providers.systemProperty("SONARCLOUD_TOKEN")
                 .getOrElse(System.getenv("SONARCLOUD_TOKEN"))
+
         properties {
-            property "sonar.host.url", "https://sonarcloud.io"
-            property "sonar.projectName", "cas"
+            property "sonar.host.url", "$sonarHostUrl"
+            property "sonar.organization", "$sonarOrganization"
+            property "sonar.projectName", "$sonarProjectName"
             property "sonar.sourceEncoding", "UTF-8"
             property "sonar.java.source", project.targetCompatibility
-            property "sonar.organization", "apereo"
             property "sonar.token", token
             property "sonar.gradle.skipCompile", true
             property "sonar.coverage.exclusions", exclusions
             property "sonar.java.coveragePlugin", "jacoco"
+            property "sonar.internal.analysis.dbd", false
         }
     }
 }

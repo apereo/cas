@@ -256,7 +256,7 @@ public class MicrosoftGraphPersonAttributeDao extends BasePersonAttributeDao {
         static List<String> getDefaultFieldQuery() {
             return List.of("businessPhones,displayName,givenName,id,"
                 + "jobTitle,mail,givenName,employeeId,"
-                + "mobilePhone,officeLocation,accountEnabled"
+                + "mobilePhone,officeLocation,accountEnabled,"
                 + "preferredLanguage,surname,userPrincipalName");
         }
 

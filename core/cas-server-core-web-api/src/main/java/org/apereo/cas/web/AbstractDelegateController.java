@@ -26,7 +26,7 @@ public abstract class AbstractDelegateController implements ApplicationContextAw
     protected ApplicationContext applicationContext;
 
     /**
-     * Determine if a {@link AbstractDelegateController} subclass can handle the current request.
+     * Determine if a subclass can handle the current request.
      *
      * @param request  the current request
      * @param response the response

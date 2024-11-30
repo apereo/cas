@@ -62,7 +62,6 @@ public class JsonWebTokenEncryptor {
         try {
             val jwe = new JsonWebEncryption();
             jwe.setPayload(payload.toString());
-            jwe.enableDefaultCompression();
             jwe.setAlgorithmHeaderValue(this.algorithm);
             jwe.setEncryptionMethodHeaderParameter(this.encryptionMethod);
 

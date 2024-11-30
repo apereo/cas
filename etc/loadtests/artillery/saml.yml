@@ -62,7 +62,6 @@ scenarios:
               header: 'location'
           expect:
             - statusCode: 302
-      - log: "#2 Captured redirectLocation: {{ redirectLocation }}"
       - get:
           url: "{{ redirectLocation }}"
           followRedirect: true
