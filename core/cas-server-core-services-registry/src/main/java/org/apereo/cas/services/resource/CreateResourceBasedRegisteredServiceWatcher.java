@@ -29,7 +29,7 @@ public class CreateResourceBasedRegisteredServiceWatcher extends BaseResourceBas
     public void accept(final File file) {
         val fileName = file.getName();
         val clientInfo = ClientInfoHolder.getClientInfo();
-        if (!fileName.startsWith(".") && Arrays.stream(serviceRegistryDao.getExtensions()).anyMatch(fileName::endsWith)) {
+        if (!(!fileName.isEmpty() && fileName.charAt(0) == '.') && Arrays.stream(serviceRegistryDao.getExtensions()).anyMatch(fileName::endsWith)) {
             LOGGER.debug("New service definition [{}] was created. Locating service entry from cache...", file);
             val services = serviceRegistryDao.load(file);
             services.stream()

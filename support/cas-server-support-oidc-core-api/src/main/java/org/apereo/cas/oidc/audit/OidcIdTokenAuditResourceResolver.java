@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
+import org.jose4j.jwt.JwtClaims;
 import java.util.HashMap;
 
 /**
@@ -29,13 +30,13 @@ public class OidcIdTokenAuditResourceResolver extends ReturnValueAsStringResourc
 
         val idTokenContext = (IdTokenGenerationContext) auditableTarget.getArgs()[0];
         val accessToken = idTokenContext.getAccessToken();
-        if (returnValue instanceof final OidcIdToken idToken) {
-            if (idToken.claims().hasClaim(OidcConstants.TXN)) {
-                val txn = FunctionUtils.doUnchecked(() -> idToken.claims().getStringClaimValue(OidcConstants.TXN));
+        if (returnValue instanceof OidcIdToken(String token, JwtClaims claims)) {
+            if (claims.hasClaim(OidcConstants.TXN)) {
+                val txn = FunctionUtils.doUnchecked(() -> claims.getStringClaimValue(OidcConstants.TXN));
                 FunctionUtils.doIfNotNull(txn, __ -> values.put(OidcConstants.TXN, txn));
                 values.put("authn_methods", accessToken.getAuthentication().getSuccesses().keySet());
             }
-            values.put(OidcConstants.ID_TOKEN, DigestUtils.abbreviate(idToken.token(), properties.getAbbreviationLength()));
+            values.put(OidcConstants.ID_TOKEN, DigestUtils.abbreviate(token, properties.getAbbreviationLength()));
         }
         val userProfile = idTokenContext.getUserProfile();
         values.put(OAuth20Constants.CLIENT_ID, accessToken.getClientId());

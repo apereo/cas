@@ -1,0 +1,93 @@
+config:
+  plugins:
+    metrics-by-endpoint:
+      useOnlyRequestNames: true
+  target: 'https://localhost:8443'
+  processor: "./oidc.js"
+  phases:
+    - duration: 30
+      arrivalRate: 5
+  http:
+    cookieJar: true
+  payload:
+    path: cas-users.csv
+    fields:
+      - username
+      - password
+  tls:
+    rejectUnauthorized: false
+  defaults:
+    headers:
+      Content-Type: application/x-www-form-urlencoded
+
+scenarios:
+  - flow:
+      - get:
+          url: "/cas/oidc/authorize?scope=openid profile&response_type=code&client_id=client&redirect_uri=https://localhost:9859/anything/oidc"
+          followRedirect: false
+          afterResponse: extractCookies
+          capture:
+            - as: redirectLocation
+              header: 'location'
+          expect:
+            - statusCode: 302
+      - get:
+          url: "{{ redirectLocation }}"
+          followRedirect: false
+          afterResponse: extractCookies
+          expect:
+            - statusCode: 200
+          capture:
+            - as: execution
+              group: 1
+              regexp: '<input type="hidden" name="execution" value="(.+?)"\s*/>'
+      - post:
+          url: "{{ redirectLocation }}"
+          followRedirect: false
+          afterResponse: extractCookies
+          form:
+            username: "{{ username }}"
+            password: "{{ password }}"
+            execution: "{{ execution }}"
+            _eventId: submit
+          capture:
+            - as: redirectLocation
+              header: 'location'
+          expect:
+            - statusCode: 302
+      - get:
+          url: "{{ redirectLocation }}"
+          followRedirect: false
+          afterResponse: extractCookies
+          expect:
+            - statusCode: 302
+          capture:
+            - as: redirectLocation
+              header: 'location'
+      - get:
+          url: "{{ redirectLocation }}"
+          followRedirect: false
+          afterResponse: extractCode
+          expect:
+            - statusCode: 302
+          capture:
+            - as: redirectLocation
+              header: 'location'
+      - post:
+          url: "/cas/oidc/token"
+          followRedirect: false
+          form:
+            grant_type: "authorization_code"
+            client_id: "client"
+            client_secret: "secret"
+            redirect_uri: "https://localhost:9859/anything/oidc"
+            code: "{{ code }}"
+          expect:
+            - statusCode: 200
+          capture:
+            - as: idToken
+              json: '$.id_token'
+            - as: accessToken
+              json: '$.access_token'
+            - as: refreshToken
+              json: '$.refresh_token'

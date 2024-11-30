@@ -74,6 +74,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * This is {@link CasWebSecurityConfiguration}.
@@ -229,6 +230,8 @@ class CasWebSecurityConfiguration {
     static class CasWebAppSecurityJsonUsersConfiguration {
         private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
             .defaultTypingEnabled(false).build().toObjectMapper();
+        
+        private static final Pattern PATTERN_PASSWORD_ALG = Pattern.compile("^\\{.+\\}.*");
 
         @Bean
         @ConditionalOnMissingBean(name = "jsonUserDetailsService")
@@ -245,7 +248,7 @@ class CasWebSecurityConfiguration {
                         .map(SimpleGrantedAuthority::new)
                         .toList();
                     var password = user.getPassword();
-                    if (!password.matches("^\\{.+\\}.*")) {
+                    if (!PATTERN_PASSWORD_ALG.matcher(password).matches()) {
                         password = "{noop}" + password;
                     }
                     return User.builder()

@@ -180,7 +180,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             .filter(entry -> !StringUtils.equalsIgnoreCase(entry.getKey(), "*") && !StringUtils.equalsIgnoreCase(entry.getKey(), "+"))
             .forEach(entry -> {
                 val attributeNames = CollectionUtils.toCollection(entry.getValue(), ArrayList.class);
-                if (attributeNames.size() == 1 && attributeNames.stream().allMatch(name -> name.toString().endsWith(";"))) {
+                if (attributeNames.size() == 1 && attributeNames.stream().allMatch(name -> !name.toString().isEmpty() && name.toString().charAt(name.toString().length() - 1) == ';')) {
                     val attrs = ldapEntry.getAttributes()
                         .stream()
                         .filter(attr -> attr.getName().startsWith(entry.getKey().concat(";"))).toList();

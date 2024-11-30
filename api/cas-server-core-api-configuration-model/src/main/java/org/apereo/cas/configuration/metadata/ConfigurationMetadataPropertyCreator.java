@@ -174,12 +174,12 @@ public class ConfigurationMetadataPropertyCreator {
                 }
             } catch (final Exception e) {
                 LOGGER.error("Processing [{}]:[{}]. Error [{}]", parentClass, name, e);
-                if (exp instanceof final LiteralStringValueExpr ex) {
-                    prop.setDefaultValue(ex.getValue());
-                } else if (exp instanceof final BooleanLiteralExpr ex) {
-                    prop.setDefaultValue(ex.getValue());
-                } else if (exp instanceof final FieldAccessExpr ex) {
-                    prop.setDefaultValue(ex.getNameAsString());
+                switch (exp) {
+                    case final LiteralStringValueExpr ex -> prop.setDefaultValue(ex.getValue());
+                    case final BooleanLiteralExpr ex -> prop.setDefaultValue(ex.getValue());
+                    case final FieldAccessExpr ex -> prop.setDefaultValue(ex.getNameAsString());
+                    default -> {
+                    }
                 }
             }
         }

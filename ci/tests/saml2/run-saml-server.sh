@@ -2,6 +2,13 @@
 
 export DOCKER_IMAGE="kenchan0130/simplesamlphp:latest"
 
+tmp="${TMPDIR}"
+if [[ -z "${tmp}" ]]; then
+  tmp="/tmp"
+fi
+export TMPDIR=${tmp}
+echo "Using temp directory: ${TMPDIR}"
+
 if [[ -z "${SP_SLO_SERVICE}" ]]; then
   export SP_SLO_SERVICE="https://localhost:8443/cas/login?client_name=SAML2Client"
 fi
@@ -23,7 +30,10 @@ echo "Creating private key and certificate for SP metadata"
 openssl req -newkey rsa:3072 -new -x509 -days 365 \
   -nodes -out ${TMPDIR}/saml.crt -keyout ${TMPDIR}/saml.pem \
   -subj "/C=PE/ST=Lima/L=Lima/O=Acme Inc. /OU=IT Department/CN=acme.com"
-
+if [ $? -ne 0 ]; then
+  echo "Failed to create private key and certificate for SP metadata"
+  exit 1
+fi
 echo "SP certificate..."
 chmod 777 "${TMPDIR}"/saml.crt
 cat "${TMPDIR}"/saml.crt

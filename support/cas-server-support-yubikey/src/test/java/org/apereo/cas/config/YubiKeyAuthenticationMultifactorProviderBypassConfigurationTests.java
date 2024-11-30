@@ -40,6 +40,4 @@ class YubiKeyAuthenticationMultifactorProviderBypassConfigurationTests {
         assertNotNull(yubikeyBypassEvaluator);
         assertEquals(8, yubikeyBypassEvaluator.size());
     }
-
-
 }

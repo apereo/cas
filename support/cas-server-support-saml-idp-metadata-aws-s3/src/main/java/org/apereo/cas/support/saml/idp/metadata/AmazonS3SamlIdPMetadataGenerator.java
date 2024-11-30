@@ -44,7 +44,7 @@ public class AmazonS3SamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerat
 
     @Override
     protected SamlIdPMetadataDocument finalizeMetadataDocument(final SamlIdPMetadataDocument doc,
-                                                               final Optional<SamlRegisteredService> registeredService) {
+                                                               final Optional<SamlRegisteredService> registeredService) throws Throwable {
         val bucketNameToUse = AmazonS3SamlIdPMetadataUtils.determineBucketNameFor(registeredService, this.bucketName, s3Client);
         if (s3Client.listBuckets(ListBucketsRequest.builder().build())
             .buckets().stream().noneMatch(b -> b.name().equalsIgnoreCase(bucketNameToUse))) {
