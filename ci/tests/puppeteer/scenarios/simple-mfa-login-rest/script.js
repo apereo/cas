@@ -9,12 +9,13 @@ const cas = require("../../cas.js");
 
     const payload = {
         "/new": {
-            "get": "514a61cc1518"
+            "post": "514a61cc1518"
         },
         "/": {
             "post": "514a61cc1518"
         },
         "/:id": {
+            "post": principal,
             "get": principal
         }
     };

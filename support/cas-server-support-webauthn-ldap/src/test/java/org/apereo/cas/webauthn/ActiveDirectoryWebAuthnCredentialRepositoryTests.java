@@ -25,7 +25,10 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(
     properties = {
-        "cas.authn.mfa.web-authn.ldap.account-attribute-name=streetAddress",
+        "cas.authn.mfa.web-authn.crypto.signing.key=dK6PhAi8JSfDk3-CHHf07sBesFh_0OXaDUOsYgf9KLF83riM3MF4UjhC47vJ8M4CPvi_n-O2D2ygU2DDxgugXw",
+        "cas.authn.mfa.web-authn.crypto.encryption.key=qv5XggQkdy9OYuEbdgiF7shq0aCA6F1EQpfTy168ypWYb-En6Kn18idrj3K8XSqr0z0xGU6cZl3eQGFOvRrPyg",
+        
+        "cas.authn.mfa.web-authn.ldap.account-attribute-name=description",
         "cas.authn.mfa.web-authn.ldap.ldap-url=ldaps://localhost:10636",
         "cas.authn.mfa.web-authn.ldap.bind-dn=CN=admin,CN=Users,DC=cas,DC=example,DC=org",
         "cas.authn.mfa.web-authn.ldap.bind-credential=P@ssw0rd",

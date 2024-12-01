@@ -16,7 +16,7 @@
 
 docker ps | grep samba > /dev/null
 if [[ $? -eq 0 ]]; then
-  echo "Samba already running, run docker rm -f samba to get clean directory"
+  echo "Samba docker container is already running, run docker rm -f samba to get clean directory"
   exit 0
 fi
 
@@ -75,7 +75,7 @@ docker volume create samba_conf
 # Having complexity enabled could be used to test handling for password change errors
 # Currently allowing INSECURELDAP so JndiProvider can be tested until JDK-8217606 is fixed
 # This container only exposes LDAP related ports but container also does kerberos, etc
-docker run --detach \
+docker run --rm --detach \
     -e "DOMAIN=${ORG}.${DOMAIN}" \
     -e "DOMAINPASS=${DOMAINPASS}" \
     -e "DNSFORWARDER=NONE" \
@@ -90,6 +90,7 @@ docker run --detach \
     --mount "type=volume,source=samba_data,destination=/var/lib/samba" \
     --mount "type=volume,source=samba_conf,destination=/etc/samba/external" \
     --mount "type=volume,source=samba_tls,destination=/etc/samba/tls" \
+    -v "$PWD"/ci/tests/ldap/ad:/etc/samba/external/ad \
     --add-host localdc.${ORG}.${DOMAIN}:${HOST_IP} \
     -h localdc \
     --name samba \
@@ -138,7 +139,6 @@ docker exec samba bash -c "samba-tool user setpassword --filter=cn=mustchangepas
 docker exec samba bash -c "samba-tool user create casuserx509 $DEFAULT_TESTUSER_PASSWORD --use-username-as-cn --mail-address=1234567890@college.edu"
 docker exec samba bash -c "samba-tool user setpassword --filter=cn=casuserx509 --newpassword=$DEFAULT_TESTUSER_PASSWORD"
 
-
 docker exec samba bash -c "samba-tool user setexpiry --days 0 expireduser"
 docker exec samba bash -c "samba-tool user disable disableduser"
 docker exec samba bash -c "samba-tool user list"
@@ -151,6 +151,8 @@ docker exec samba bash -c "samba-tool user setpassword --filter=cn=expirestomorr
 docker exec samba bash -c "samba-tool domain passwordsettings pso create expirepasswordsoon 10 --max-pwd-age=2"
 docker exec samba bash -c "samba-tool domain passwordsettings pso apply expirepasswordsoon expirestomorrow"
 
+echo "Updating schema for description attribute"
+docker exec samba bash -c 'ldbmodify -H /var/lib/samba/private/sam.ldb /etc/samba/external/ad/description.ldif --option="dsdb:schema update allowed"=true'
 
 # Copying certificate out of the container so it can be put in a Java certificate trust store.
 echo Putting cert in trust store for use by unit test
