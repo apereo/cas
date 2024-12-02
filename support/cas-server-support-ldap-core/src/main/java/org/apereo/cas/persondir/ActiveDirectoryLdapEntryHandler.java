@@ -26,7 +26,7 @@ import java.util.stream.IntStream;
  */
 @EqualsAndHashCode(callSuper = false)
 @ToString
-public class ActiveDirectoryLdapEntryHandler extends AbstractEntryHandler<LdapEntry> implements LdapEntryHandler {
+public class ActiveDirectoryLdapEntryHandler extends AbstractEntryHandler implements LdapEntryHandler {
     /**
      * The user account is disabled.
      */
