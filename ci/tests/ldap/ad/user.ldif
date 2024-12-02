@@ -1,0 +1,4 @@
+dn: CN=User,CN=Schema,CN=Configuration,DC=cas,DC=example,DC=org
+changetype: modify
+add: mayContain
+mayContain: webauthndevices
