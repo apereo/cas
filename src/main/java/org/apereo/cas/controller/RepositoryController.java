@@ -139,6 +139,9 @@ public class RepositoryController {
         repository.removeLabelFrom(pullRequest, CasLabels.LABEL_PROPOSAL_DECLINED);
         repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_AUTO_MERGE);
         repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_UNDER_REVIEW);
+        if (pullRequest.isBot()) {
+            repository.removeLabelFrom(pullRequest, CasLabels.LABEL_SKIP_CI);
+        }
         return ResponseEntity.ok().build();
     }
 
