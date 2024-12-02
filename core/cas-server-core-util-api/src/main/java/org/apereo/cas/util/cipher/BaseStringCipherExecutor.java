@@ -213,6 +213,8 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         configureSigningKey(signingKeyToUse);
     }
 
+// Deadlock detected
+        
     private void configureEncryptionParameters(final String secretKeyEncryption, final String contentEncryptionAlgorithmIdentifier) {
         var secretKeyToUse = secretKeyEncryption;
         if (StringUtils.isBlank(secretKeyToUse)) {
