@@ -2,9 +2,9 @@ package org.apereo.cas.persondir;
 
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.handler.AbstractEntryHandler;
 import org.ldaptive.handler.LdapEntryHandler;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -24,9 +24,10 @@ import java.util.stream.IntStream;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
+@Slf4j
 @EqualsAndHashCode(callSuper = false)
 @ToString
-public class ActiveDirectoryLdapEntryHandler extends AbstractEntryHandler<LdapEntry> implements LdapEntryHandler {
+public class ActiveDirectoryLdapEntryHandler implements LdapEntryHandler {
     /**
      * The user account is disabled.
      */
@@ -66,15 +67,15 @@ public class ActiveDirectoryLdapEntryHandler extends AbstractEntryHandler<LdapEn
         if (attr != null) {
             val uac = Integer.parseInt(attr.getStringValue());
             if ((uac & LOCKOUT) == LOCKOUT) {
-                logger.warn("Account is locked with UAC [{}] for entry [{}]", uac, ldapEntry);
+                LOGGER.warn("Account is disabled with UAC [{}] for entry [{}]", uac, ldapEntry);
                 return null;
             }
             if ((uac & ACCOUNT_DISABLED) == ACCOUNT_DISABLED) {
-                logger.warn("Account is disabled with UAC [{}] for entry [{}]", uac, ldapEntry);
+                LOGGER.warn("Account is disabled with UAC [{}] for entry [{}]", uac, ldapEntry);
                 return null;
             }
             if ((uac & PASSWORD_EXPIRED) == PASSWORD_EXPIRED) {
-                logger.warn("Account has expired");
+                LOGGER.warn("Account has expired");
                 return null;
             }
         }
@@ -82,7 +83,7 @@ public class ActiveDirectoryLdapEntryHandler extends AbstractEntryHandler<LdapEn
         val accountExpires = ldapEntry.getAttribute("accountExpires");
         if (accountExpires != null) {
             val adDate = Long.parseLong(accountExpires.getStringValue());
-            logger.debug("Current active directory account expiration date [{}]", adDate);
+            LOGGER.debug("Current active directory account expiration date [{}]", adDate);
             if (adDate > 0) {
                 val cal = new GregorianCalendar(TimeZone.getDefault());
                 cal.set(AD_STARTING_YEAR, Calendar.JANUARY, 1, 0, 0);
@@ -92,16 +93,16 @@ public class ActiveDirectoryLdapEntryHandler extends AbstractEntryHandler<LdapEn
                 val date = new Date(timeStamp);
                 val accountExpiresDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
                 val now = LocalDateTime.now(ZoneId.systemDefault());
-                logger.debug("Now: [{}], account expires at [{}]", now, accountExpiresDate);
+                LOGGER.debug("Now: [{}], account expires at [{}]", now, accountExpiresDate);
                 if (accountExpiresDate.isBefore(now)) {
-                    logger.warn("Account has expired with date [{}]", accountExpiresDate);
+                    LOGGER.warn("Account has expired with date [{}]", accountExpiresDate);
                     return null;
                 }
             }
         }
 
         if (!isValidLogonHour(ldapEntry)) {
-            logger.warn("Logon Hours are invalid and no attributes will be used");
+            LOGGER.warn("Logon Hours are invalid and no attributes will be used");
             return null;
         }
         return ldapEntry;
@@ -126,15 +127,15 @@ public class ActiveDirectoryLdapEntryHandler extends AbstractEntryHandler<LdapEn
             if (currentHour < 0) {
                 currentHour = 0;
             }
-            logger.debug("Current day [{}], current hour [{}]", currentDay, currentHour);
+            LOGGER.debug("Current day [{}], current hour [{}]", currentDay, currentHour);
             for (var day = 0; day < days.length; day++) {
                 if (days[day] == currentDay) {
                     val validHours = result[day];
-                    logger.debug("Valid hours are [{}]", validHours);
+                    LOGGER.debug("Valid hours are [{}]", validHours);
                     val hourEnabled = String.valueOf(validHours.charAt(currentHour));
-                    logger.debug("Hour enabled at [{}] is [{}]", currentHour, hourEnabled);
+                    LOGGER.debug("Hour enabled at [{}] is [{}]", currentHour, hourEnabled);
                     if (!"1".equalsIgnoreCase(hourEnabled)) {
-                        logger.warn("Invalid login hour");
+                        LOGGER.warn("Invalid login hour");
                         return false;
                     }
                 }
