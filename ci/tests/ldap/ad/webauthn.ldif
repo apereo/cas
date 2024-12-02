@@ -1,0 +1,9 @@
+dn: CN=webauthndevices,CN=Schema,CN=Configuration,DC=cas,DC=example,DC=org
+objectClass: attributeSchema
+attributeID: 1.2.840.113556.1.8000.2554
+attributeSyntax: 2.5.5.12
+oMSyntax: 64
+isSingleValued: FALSE
+rangeUpper: 65535
+lDAPDisplayName: webauthndevices
+description: Custom attribute for storing webauthn data

@@ -151,8 +151,10 @@ docker exec samba bash -c "samba-tool user setpassword --filter=cn=expirestomorr
 docker exec samba bash -c "samba-tool domain passwordsettings pso create expirepasswordsoon 10 --max-pwd-age=2"
 docker exec samba bash -c "samba-tool domain passwordsettings pso apply expirepasswordsoon expirestomorrow"
 
-echo "Updating schema for description attribute"
+echo "Updating schema for attributes"
 docker exec samba bash -c 'ldbmodify -H /var/lib/samba/private/sam.ldb /etc/samba/external/ad/description.ldif --option="dsdb:schema update allowed"=true'
+docker exec samba bash -c 'ldbmodify -H /var/lib/samba/private/sam.ldb /etc/samba/external/ad/webauthn.ldif --option="dsdb:schema update allowed"=true'
+docker exec samba bash -c 'ldbmodify -H /var/lib/samba/private/sam.ldb /etc/samba/external/ad/user.ldif --option="dsdb:schema update allowed"=true'
 
 # Copying certificate out of the container so it can be put in a Java certificate trust store.
 echo Putting cert in trust store for use by unit test
