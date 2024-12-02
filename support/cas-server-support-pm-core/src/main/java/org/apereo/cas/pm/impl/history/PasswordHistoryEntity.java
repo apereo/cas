@@ -36,7 +36,7 @@ public class PasswordHistoryEntity implements Serializable {
 
     @Id
     @Transient
-    private long id = -1;
+    private long id;
 
     @Column(nullable = false)
     private String username;

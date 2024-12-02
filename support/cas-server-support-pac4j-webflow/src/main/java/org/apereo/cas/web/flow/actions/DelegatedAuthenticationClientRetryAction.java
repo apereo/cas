@@ -31,8 +31,8 @@ public class DelegatedAuthenticationClientRetryAction extends BaseCasWebflowActi
         return FunctionUtils.doUnchecked(() -> {
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
             val clientName = DelegationWebflowUtils.getDelegatedAuthenticationClientName(requestContext);
-            val client = identityProviders.findClient(clientName).map(IndirectClient.class::cast).get();
-            val config = providerConfigurationProducer.produce(requestContext, client).get();
+            val client = identityProviders.findClient(clientName).map(IndirectClient.class::cast).orElseThrow();
+            val config = providerConfigurationProducer.produce(requestContext, client).orElseThrow();
 
             val urlBuilder = new URIBuilder(config.getRedirectUrl());
             urlBuilder.addParameter(RedirectionActionBuilder.ATTRIBUTE_FORCE_AUTHN, Boolean.TRUE.toString());

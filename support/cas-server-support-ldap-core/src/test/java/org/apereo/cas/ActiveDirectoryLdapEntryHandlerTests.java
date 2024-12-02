@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.2.0
  */
-@Tag("Ldap")
+@Tag("ActiveDirectory")
 class ActiveDirectoryLdapEntryHandlerTests {
     @Test
     void verifyAccountLocked() throws Exception {
@@ -70,7 +70,7 @@ class ActiveDirectoryLdapEntryHandlerTests {
                 .values(logonHours)
                 .build())
             .build();
-        assertNotNull(handler.apply(entry));
+        assertDoesNotThrow(() -> handler.apply(entry));
     }
     
     @Test

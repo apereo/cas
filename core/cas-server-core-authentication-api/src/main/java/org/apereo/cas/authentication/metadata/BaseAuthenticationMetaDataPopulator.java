@@ -21,7 +21,7 @@ import org.springframework.core.Ordered;
 @Setter
 public abstract class BaseAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
-    private int order = Ordered.HIGHEST_PRECEDENCE;
+    private int order;
 
     protected BaseAuthenticationMetaDataPopulator() {
         this(Ordered.HIGHEST_PRECEDENCE);

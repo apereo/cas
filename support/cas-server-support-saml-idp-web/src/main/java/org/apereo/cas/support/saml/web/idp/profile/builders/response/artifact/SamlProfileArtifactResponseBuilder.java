@@ -36,7 +36,7 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
 
     @Override
     protected Envelope buildResponse(final Optional<Assertion> assertion, final SamlProfileBuilderContext context) throws Exception {
-        val ticket = (SamlArtifactTicket) context.getAuthenticatedAssertion().get().getAttributes().get("artifact");
+        val ticket = (SamlArtifactTicket) context.getAuthenticatedAssertion().orElseThrow().getAttributes().get("artifact");
         val artifactResponse = new ArtifactResponseBuilder().buildObject();
         artifactResponse.setIssueInstant(ZonedDateTime.now(ZoneOffset.UTC).toInstant());
         artifactResponse.setIssuer(newIssuer(ticket.getIssuer()));

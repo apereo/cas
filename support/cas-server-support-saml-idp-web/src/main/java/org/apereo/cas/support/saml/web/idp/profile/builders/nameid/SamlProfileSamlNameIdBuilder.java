@@ -220,7 +220,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
      */
     protected String prepareNameIdAttribute(final SamlProfileBuilderContext context,
                                             final String nameFormat) {
-        val principalId = context.getAuthenticatedAssertion().get().getName();
+        val principalId = context.getAuthenticatedAssertion().orElseThrow().getName();
         LOGGER.debug("Preparing NameID attribute for principal [{}]", principalId);
         val nameIdValue = getNameIdValueFromNameFormat(nameFormat, context);
         LOGGER.debug("NameID attribute value is set to [{}]", nameIdValue);
@@ -229,7 +229,7 @@ public class SamlProfileSamlNameIdBuilder extends AbstractSaml20ObjectBuilder im
 
     private String getNameIdValueFromNameFormat(final String nameFormat,
                                                 final SamlProfileBuilderContext context) {
-        val principalId = context.getAuthenticatedAssertion().get().getName();
+        val principalId = context.getAuthenticatedAssertion().orElseThrow().getName();
         if (NameIDType.TRANSIENT.equalsIgnoreCase(StringUtils.trim(nameFormat))) {
             val entityId = context.getAdaptor().getEntityId();
             if (context.getRegisteredService().isSkipGeneratingTransientNameId()) {
