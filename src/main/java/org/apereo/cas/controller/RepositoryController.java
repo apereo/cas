@@ -83,6 +83,9 @@ public class RepositoryController {
         repository.removeLabelFrom(pullRequest, CasLabels.LABEL_PROPOSAL_DECLINED);
         repository.removeLabelFrom(pullRequest, CasLabels.LABEL_PENDING_NEEDS_TESTS);
         repository.removeLabelFrom(pullRequest, CasLabels.LABEL_UNDER_REVIEW);
+        if (pullRequest.isClosed()) {
+            repository.open(pullRequest);
+        }
         return ResponseEntity.ok().build();
     }
 
