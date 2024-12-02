@@ -107,7 +107,7 @@ public class AuditableExecutionResult {
      */
     public void throwExceptionIfNeeded() throws Throwable {
         if (isExecutionFailure()) {
-            throw getException().get();
+            throw getException().orElseThrow();
         }
     }
 

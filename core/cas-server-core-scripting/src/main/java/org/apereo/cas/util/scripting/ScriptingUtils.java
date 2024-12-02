@@ -275,12 +275,11 @@ public class ScriptingUtils {
      * @param clazz        the clazz
      * @param args         the args
      * @return the type to return
-     * @throws Throwable the exception
      */
     public static <T> T executeGroovyScript(final Resource groovyScript,
                                             final String methodName,
                                             final Class<T> clazz,
-                                            final Object... args) throws Throwable {
+                                            final Object... args) {
         return executeGroovyScript(groovyScript, methodName, args, clazz, false);
     }
 
@@ -467,20 +466,6 @@ public class ScriptingUtils {
             throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
         }
         return (T) result;
-    }
-
-    /**
-     * Gets object instance from groovy resource.
-     *
-     * @param <T>          the type parameter
-     * @param resource     the resource
-     * @param expectedType the expected type
-     * @return the object instance from groovy resource
-     */
-    public static <T> T getObjectInstanceFromGroovyResource(final Resource resource,
-                                                            final Class<T> expectedType) {
-        return getObjectInstanceFromGroovyResource(resource, ArrayUtils.EMPTY_CLASS_ARRAY,
-            ArrayUtils.EMPTY_OBJECT_ARRAY, expectedType);
     }
 
     /**

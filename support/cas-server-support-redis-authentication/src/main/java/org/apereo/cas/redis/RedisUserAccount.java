@@ -3,10 +3,8 @@ package org.apereo.cas.redis;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.redis.core.RedisHash;
-
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,9 +25,9 @@ public class RedisUserAccount implements Serializable {
 
     private String password;
 
-    private Map<String, List<Object>> attributes = new LinkedHashMap<>();
+    private Map<String, List<Object>> attributes;
 
-    private AccountStatus status = AccountStatus.OK;
+    private AccountStatus status;
 
     /**
      * Indicates user account status.

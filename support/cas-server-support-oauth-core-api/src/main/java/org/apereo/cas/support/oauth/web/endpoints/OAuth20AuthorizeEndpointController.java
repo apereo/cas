@@ -196,7 +196,7 @@ public class OAuth20AuthorizeEndpointController<T extends OAuth20ConfigurationCo
             .filter(Optional::isPresent)
             .findFirst()
             .orElseThrow(() -> new IllegalArgumentException("Unable to build authorization request"))
-            .get()
+            .orElseThrow()
             .build();
 
         val payload = Optional.ofNullable(authzRequest.getAccessTokenRequest())

@@ -188,7 +188,7 @@ public class JwtBuilder {
             .filter(entry -> !entry.getValue().isEmpty())
             .forEach(entry -> {
                 val value = entry.getValue();
-                var claimValue = value.size() == 1 ? CollectionUtils.firstElement(value).get() : value;
+                var claimValue = value.size() == 1 ? CollectionUtils.firstElement(value).orElseThrow() : value;
                 if (claimValue instanceof ZonedDateTime) {
                     claimValue = claimValue.toString();
                 }

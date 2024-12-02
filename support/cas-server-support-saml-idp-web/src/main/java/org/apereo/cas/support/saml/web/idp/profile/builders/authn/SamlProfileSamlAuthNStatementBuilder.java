@@ -69,7 +69,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     protected AuthnStatement buildAuthnStatement(final SamlProfileBuilderContext context) throws Exception {
         
         val id = buildAuthnStatementSessionIdex(context);
-        val authnInstant = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().get().getAuthenticationDate());
+        val authnInstant = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().orElseThrow().getAuthenticationDate());
 
         val authnContextClass = authnContextClassRefBuilder.build(context);
         val statement = newAuthnStatement(authnContextClass, authnInstant, id);
@@ -95,7 +95,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     }
 
     protected Instant buildSessionNotOnOrAfter(final SamlProfileBuilderContext context) {
-        val dt = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().get().getValidUntilDate());
+        val dt = DateTimeUtils.zonedDateTimeOf(context.getAuthenticatedAssertion().orElseThrow().getValidUntilDate());
         val skewAllowance = context.getRegisteredService().getSkewAllowance() != 0
             ? context.getRegisteredService().getSkewAllowance()
             : Beans.newDuration(casProperties.getAuthn().getSamlIdp().getResponse().getSkewAllowance()).toSeconds();

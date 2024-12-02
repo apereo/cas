@@ -61,7 +61,7 @@ public class AsciiArtUtils {
              \\    |  |  |  l     !|  |  |  T
               \\___j  l__j   \\___/ l__j  l__j
                                            \s
-                        """;
+            """;
         out.warn(ASCII_ART_LOGGER_MARKER, ANSI_CYAN);
         out.warn(ASCII_ART_LOGGER_MARKER, "\n\n".concat(ascii).concat(additional));
         out.warn(ASCII_ART_LOGGER_MARKER, ANSI_RESET);

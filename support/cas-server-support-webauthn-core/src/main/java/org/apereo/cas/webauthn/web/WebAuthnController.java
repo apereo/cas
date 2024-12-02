@@ -75,9 +75,9 @@ public class WebAuthnController {
                                                          final String responseJson) throws Exception {
         if (result.isRight()) {
             LOGGER.trace("Response: [{}]", responseJson);
-            return ResponseEntity.ok(writeJson(result.right().get()));
+            return ResponseEntity.ok(writeJson(result.right().orElseThrow()));
         }
-        return messagesJson(ResponseEntity.badRequest(), result.left().get());
+        return messagesJson(ResponseEntity.badRequest(), result.left().orElseThrow());
     }
 
     private static ResponseEntity<Object> messagesJson(final ResponseEntity.BodyBuilder response, final String message) {
@@ -162,9 +162,9 @@ public class WebAuthnController {
         final String username) throws Exception {
         val request = server.startAuthentication(Optional.ofNullable(username));
         if (request.isRight()) {
-            return startResponse(new StartAuthenticationResponse(request.right().get()));
+            return startResponse(new StartAuthenticationResponse(request.right().orElseThrow()));
         }
-        return messagesJson(ResponseEntity.badRequest(), request.left().get());
+        return messagesJson(ResponseEntity.badRequest(), request.left().orElseThrow());
     }
 
     /**

@@ -69,16 +69,14 @@ public class AuditTrailManagementAspect {
 
             currentPrincipal = getCurrentPrincipal(joinPoint, audits, retVal);
 
-            if (currentPrincipal != null) {
-                for (var i = 0; i < audits.value().length; i++) {
-                    val auditActionResolver = auditActionResolvers.get(audits.value()[i].actionResolverName());
+            for (var i = 0; i < audits.value().length; i++) {
+                val auditActionResolver = auditActionResolvers.get(audits.value()[i].actionResolverName());
 
-                    val auditResourceResolver = auditResourceResolvers.get(audits.value()[i].resourceResolverName());
-                    auditResourceResolver.setAuditFormat(this.auditFormat);
+                val auditResourceResolver = auditResourceResolvers.get(audits.value()[i].resourceResolverName());
+                auditResourceResolver.setAuditFormat(this.auditFormat);
 
-                    auditableResources[i] = auditResourceResolver.resolveFrom(joinPoint, retVal);
-                    actions[i] = auditActionResolver.resolveFrom(joinPoint, retVal, audits.value()[i]);
-                }
+                auditableResources[i] = auditResourceResolver.resolveFrom(joinPoint, retVal);
+                actions[i] = auditActionResolver.resolveFrom(joinPoint, retVal, audits.value()[i]);
             }
             return retVal;
         } catch (final Throwable t) {
