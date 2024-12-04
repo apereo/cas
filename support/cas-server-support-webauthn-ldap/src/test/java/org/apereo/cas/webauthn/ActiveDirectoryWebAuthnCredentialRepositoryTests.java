@@ -34,11 +34,12 @@ import org.springframework.test.context.TestPropertySource;
         "cas.authn.mfa.web-authn.ldap.bind-credential=P@ssw0rd",
         "cas.authn.mfa.web-authn.ldap.base-dn=CN=Users,DC=cas,DC=example,DC=org",
         "cas.authn.mfa.web-authn.ldap.search-filter=cn={user}",
-        "cas.authn.mfa.web-authn.ldap.trust-store=file:/tmp/adcacerts.jks",
+        "cas.authn.mfa.web-authn.ldap.trust-store=file:${#systemProperties['java.io.tmpdir']}/adcacerts.jks",
         "cas.authn.mfa.web-authn.ldap.trust-store-type=JKS",
         "cas.authn.mfa.web-authn.ldap.trust-store-password=changeit",
         "cas.authn.mfa.web-authn.ldap.min-pool-size=0",
-        "cas.authn.mfa.web-authn.ldap.hostname-verifier=DEFAULT"
+        "cas.authn.mfa.web-authn.ldap.hostname-verifier=ANY",
+        "cas.authn.mfa.web-authn.ldap.trust-manager=ANY"
     })
 @Tag("ActiveDirectory")
 @EnabledIfListeningOnPort(port = 10636)

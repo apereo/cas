@@ -15,6 +15,7 @@
     "--cas.http-client.host-name-verifier=none",
     
     "--eureka.client.enabled=true",
+    "--eureka.client.tls.enabled=false",
     "--eureka.client.healthcheck=true",
     "--eureka.client.service-url.defaultZone=https://localhost:8761/eureka/",
     "--eureka.client.fetch-registry=false",
