@@ -80,7 +80,7 @@ class DelegatedAuthenticationIdentityProviderLogoutActionTests {
             webServer.start();
             val continuation = SingleLogoutContinuation.builder().url("http://localhost:%s".formatted(webServer.getPort()));
             context.setRequestAttribute(SingleLogoutContinuation.class.getName(), continuation.build());
-            assertEquals(CasWebflowConstants.TRANSITION_ID_DONE, action.execute(context).getId());
+            assertEquals(CasWebflowConstants.TRANSITION_ID_PROCEED, action.execute(context).getId());
             assertNotNull(configurationContext.getTicketRegistry().getTicket(tgt.getId()));
             assertNull(context.getHttpServletRequest().getAttribute(SingleLogoutContinuation.class.getName()));
         }
@@ -93,7 +93,7 @@ class DelegatedAuthenticationIdentityProviderLogoutActionTests {
         context.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "SAML2Client");
         context.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "Mozilla/5.0 (Windows NT 10.0; WOW64)");
         val tgt = prepCredential(context, UUID.randomUUID().toString(), "SAML2Client");
-        assertEquals(CasWebflowConstants.TRANSITION_ID_DONE, action.execute(context).getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_PROCEED, action.execute(context).getId());
         assertNotNull(configurationContext.getTicketRegistry().getTicket(tgt.getId()));
     }
 

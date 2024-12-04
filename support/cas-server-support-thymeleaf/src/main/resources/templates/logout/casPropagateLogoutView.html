@@ -68,7 +68,7 @@
                     </p>
 
                     <iframe width="1px" height="1px" style="display: none"
-                            th:src="${@casThymeleafTemplatesDirector.getUrlExternalForm(entry.key.logoutUrl) + '?' + entry.value.message}"
+                            th:src="${@casThymeleafTemplatesDirector.getUrlExternalForm(entry.key.logoutUrl) + entry.value.message}"
                             th:if="${#strings.equalsIgnoreCase(logoutPropagationType, 'IFRAME')}"/>
                 </li>
             </ul>

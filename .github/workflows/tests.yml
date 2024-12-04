@@ -141,6 +141,7 @@ jobs:
           fi
       - name: Upload to SonarCloud
         if: ${{ env.SONARCLOUD_TOKEN != null }}
+        continue-on-error: true
         run: |
           ./gradlew sonar --build-cache --configure-on-demand --no-daemon -DskipAot=true --parallel \
             -x javadoc -DskipNestedConfigMetadataGen=true -Dverbose=true \

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -71,4 +72,6 @@ public class CasWebflowEventResolutionConfigurationContext {
     private final CasWebflowCredentialProvider casWebflowCredentialProvider;
 
     private final SingleSignOnBuildingStrategy singleSignOnBuildingStrategy;
+
+    private final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
 }

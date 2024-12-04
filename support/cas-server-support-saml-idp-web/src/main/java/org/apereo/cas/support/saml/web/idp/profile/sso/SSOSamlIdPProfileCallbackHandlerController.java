@@ -103,7 +103,7 @@ public class SSOSamlIdPProfileCallbackHandlerController extends AbstractSamlIdPP
             LOGGER.error("Unable to determine profile binding");
             return WebUtils.produceErrorView(new IllegalArgumentException("Unable to determine profile binding"));
         }
-        val resultObject = buildSamlResponse(response, request, authenticationContext, assertion, binding);
+        val resultObject = buildSamlResponse(response, request, authenticationContext, assertion, binding, ticket);
         request.setAttribute(Response.class.getName(), resultObject);
         return null;
     }

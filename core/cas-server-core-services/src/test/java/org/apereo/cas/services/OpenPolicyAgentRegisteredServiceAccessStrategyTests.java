@@ -48,7 +48,7 @@ class OpenPolicyAgentRegisteredServiceAccessStrategyTests {
     @Test
     void verifyOperation() throws Throwable {
         val strategy = new OpenPolicyAgentRegisteredServiceAccessStrategy();
-        strategy.setApiUrl("http://localhost:8755");
+        strategy.setApiUrl("http://localhost:8756");
         strategy.setDecision("example/authz/allow");
         strategy.setToken(UUID.randomUUID().toString());
         strategy.setContext(Map.of("Param1", List.of("Value1")));
@@ -65,7 +65,7 @@ class OpenPolicyAgentRegisteredServiceAccessStrategyTests {
 
         val mapper = JacksonObjectMapperFactory.builder().defaultTypingEnabled(false).build().toObjectMapper();
         val data = mapper.writeValueAsString(CollectionUtils.wrap("result", true));
-        try (val webServer = new MockWebServer(8755,
+        try (val webServer = new MockWebServer(8756,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             assertTrue(strategy.authorizeRequest(request));

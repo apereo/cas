@@ -59,7 +59,6 @@ public class DelegatedAuthenticationIdentityProviderLogoutAction extends BaseCas
                         r -> LOGGER.warn("Submitting logout response to [{}] failed with response [{}]", continuation.getUrl(), r)).accept(logoutResponse);
                     request.removeAttribute(SingleLogoutContinuation.class.getName());
                 });
-            return new Event(this, CasWebflowConstants.TRANSITION_ID_DONE);
         }
         return new Event(this, CasWebflowConstants.TRANSITION_ID_PROCEED);
     }

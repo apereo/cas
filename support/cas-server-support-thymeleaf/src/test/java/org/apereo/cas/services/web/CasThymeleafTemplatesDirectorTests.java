@@ -2,7 +2,6 @@ package org.apereo.cas.services.web;
 
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
@@ -36,6 +35,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(CasTestExtension.class)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class CasThymeleafTemplatesDirectorTests {
+
+    private static final String LOGIN_URL = "http://localhost:8080/cas/login";
+    private static final String LOGIN_URL_WITH_CLIENT_NAME = "http://localhost:8080/cas/login?client_name=Client1";
+
     @Autowired
     private ConfigurableApplicationContext applicationContext;
     
@@ -48,7 +51,8 @@ class CasThymeleafTemplatesDirectorTests {
 
         val director = new CasThymeleafTemplatesDirector(plan);
         assertNotNull(director.getExceptionClassSimpleName(new AuthenticationException()));
-        assertNotNull(director.getUrlExternalForm(new URI(RegisteredServiceTestUtils.CONST_TEST_URL).toURL()));
+        assertEquals(LOGIN_URL + "?", director.getUrlExternalForm(new URI(LOGIN_URL).toURL()));
+        assertEquals(LOGIN_URL_WITH_CLIENT_NAME + "&", director.getUrlExternalForm(new URI(LOGIN_URL_WITH_CLIENT_NAME).toURL()));
         assertTrue(director.isLoginFormViewable(mock(WebEngineContext.class)));
         assertTrue(director.isLoginFormUsernameInputVisible(mock(WebEngineContext.class)));
         assertFalse(director.isLoginFormUsernameInputDisabled(mock(WebEngineContext.class)));

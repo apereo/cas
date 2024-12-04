@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -87,10 +86,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
     }
 
     private static String buildAuthnStatementSessionIdex(final SamlProfileBuilderContext context) {
-        var id = Optional.ofNullable(context.getHttpRequest())
-            .map(request -> request.getParameter(CasProtocolConstants.PARAMETER_TICKET))
-            .filter(StringUtils::isNotBlank)
-            .orElse(StringUtils.EMPTY);
+        var id = context.getSessionIndex();
         if (StringUtils.isBlank(id)) {
             LOGGER.info("Unable to locate service ticket as the session index; Generating random identifier instead...");
             id = '_' + String.valueOf(RandomUtils.nextLong());

@@ -69,7 +69,7 @@ public class CasGoogleAuthenticatorJpaAutoConfiguration {
     static class GoogleAuthenticatorJpaRepositoryConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        @ConditionalOnMissingBean(name = "googleAuthenticatorAccountRegistry")
+        @ConditionalOnMissingBean(name = "jpaGoogleAuthenticatorAccountRegistry")
         public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(
             @Qualifier("googleAuthenticatorInstance")
             final IGoogleAuthenticator googleAuthenticatorInstance,

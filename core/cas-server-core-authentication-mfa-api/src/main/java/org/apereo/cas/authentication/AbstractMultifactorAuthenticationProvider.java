@@ -4,16 +4,14 @@ import org.apereo.cas.authentication.bypass.MultifactorAuthenticationProviderByp
 import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManager;
 import org.apereo.cas.configuration.model.support.mfa.BaseMultifactorAuthenticationProviderProperties.MultifactorAuthenticationProviderFailureModes;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.RegexUtils;
-
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.Serial;
 
 /**
@@ -28,6 +26,7 @@ import java.io.Serial;
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = {"order", "id"})
+@Accessors(chain = true)
 public abstract class AbstractMultifactorAuthenticationProvider implements MultifactorAuthenticationProvider {
 
     @Serial
@@ -53,6 +52,6 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
     @Override
     public boolean matches(final String identifier) {
         return StringUtils.isNotBlank(getId()) && StringUtils.isNotBlank(identifier)
-               && RegexUtils.find(identifier, getId());
+               && StringUtils.equalsIgnoreCase(getId(), identifier);
     }
 }

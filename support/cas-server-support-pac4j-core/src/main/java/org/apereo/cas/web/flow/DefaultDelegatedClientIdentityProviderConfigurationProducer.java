@@ -116,7 +116,9 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
     }
 
     protected void initializeClientIdentityProvider(final IndirectClient client) throws Throwable {
-        client.init(true);
+        if (!client.isInitialized()) {
+            client.init(true);
+        }
         FunctionUtils.throwIf(!client.isInitialized(), DelegatedAuthenticationFailureException::new);
     }
 
