@@ -31,11 +31,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         "cas.authn.mfa.gauth.ldap.bind-credential=P@ssw0rd",
         "cas.authn.mfa.gauth.ldap.base-dn=CN=Users,DC=cas,DC=example,DC=org",
         "cas.authn.mfa.gauth.ldap.search-filter=cn={user}",
-        "cas.authn.mfa.gauth.ldap.trust-store=file:/tmp/adcacerts.jks",
+        "cas.authn.mfa.gauth.ldap.trust-store=file:${#systemProperties['java.io.tmpdir']}/adcacerts.jks",
         "cas.authn.mfa.gauth.ldap.trust-store-type=JKS",
         "cas.authn.mfa.gauth.ldap.trust-store-password=changeit",
         "cas.authn.mfa.gauth.ldap.min-pool-size=0",
-        "cas.authn.mfa.gauth.ldap.hostname-verifier=DEFAULT",
+        "cas.authn.mfa.gauth.ldap.hostname-verifier=ANY",
+        "cas.authn.mfa.gauth.ldap.trust-manager=ANY",
         "cas.authn.mfa.gauth.crypto.enabled=true"
     })
 @EnableScheduling

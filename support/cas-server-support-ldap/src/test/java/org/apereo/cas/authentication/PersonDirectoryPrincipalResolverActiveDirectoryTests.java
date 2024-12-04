@@ -10,12 +10,14 @@ import org.apereo.cas.authentication.principal.attribute.PersonAttributeDao;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "cas.authn.attribute-repository.ldap[0].trust-store=" + PersonDirectoryPrincipalResolverActiveDirectoryTests.AD_TRUST_STORE,
         "cas.authn.attribute-repository.ldap[0].trust-store-type=JKS",
         "cas.authn.attribute-repository.ldap[0].trust-manager=ANY",
+        "cas.authn.attribute-repository.ldap[0].hostname-verifier=ANY",
         "cas.authn.attribute-repository.ldap[0].trust-store-password=changeit",
         "cas.authn.attribute-repository.ldap[0].attributes.displayName=description",
         "cas.authn.attribute-repository.ldap[0].attributes.objectGUID=objectGUID",
@@ -48,8 +51,9 @@ import static org.junit.jupiter.api.Assertions.*;
     })
 @EnabledIfListeningOnPort(port = 10390)
 @Tag("ActiveDirectory")
+@ExtendWith(CasTestExtension.class)
 class PersonDirectoryPrincipalResolverActiveDirectoryTests {
-    public static final String AD_TRUST_STORE = "file:/tmp/adcacerts.jks";
+    public static final String AD_TRUST_STORE = "file:${#systemProperties['java.io.tmpdir']}/adcacerts.jks";
 
     public static final String AD_ADMIN_PASSWORD = "M3110nM3110n#1";
 
