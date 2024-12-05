@@ -59,7 +59,7 @@ public class CasPullRequestListener implements PullRequestListener {
                 }
 
                 try {
-                    var pattern = Pattern.compile("\\| `(\\d+\\.\\d+\\.\\d+)` \\-\\> `(\\d+\\.\\d+\\.\\d+)` \\|");
+                    var pattern = Pattern.compile("`(\\d+\\.\\d+\\.\\d+)` \\-\\> `(\\d+\\.\\d+\\.\\d+)`");
                     var matcher = pattern.matcher(pr.getBody());
                     if (matcher.find()) {
                         var startingVersion = new Semver(matcher.group(1));
@@ -68,7 +68,17 @@ public class CasPullRequestListener implements PullRequestListener {
                             && startingVersion.getMinor().equals(endingVersion.getMinor())
                             && endingVersion.getPatch() > startingVersion.getPatch()) {
                             log.info("Merging patch dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
+                            repository.labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
                             return repository.approveAndMergePullRequest(pr);
+                        }
+
+                        if (firstFile.endsWith("package.json")) {
+                            if (startingVersion.getMajor().equals(endingVersion.getMajor())
+                                && endingVersion.getMinor() > startingVersion.getMinor()) {
+                                log.info("Merging minor dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
+                                repository.labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
+                                return repository.approveAndMergePullRequest(pr);
+                            }
                         }
                     }
                 } catch (final Exception e) {
