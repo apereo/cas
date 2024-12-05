@@ -75,6 +75,17 @@ This is just a preparatory step to ensure CAS is ready for the next versions of 
 The configuration of [delegated authentication providers](../integration/Delegate-Authentication-Provider-Registration.html) 
 is now extended to support SQL databases.
 
+### SAML2 IdP Metadata via AWS S3
+
+[SAML2 metadata via AWS S3](../installation/Configuring-SAML2-DynamicMetadata-AmazonS3.html) has changed its strategy 
+for metadata storage to no longer track certificate and keys for signing and encryption operations as part of 
+the *S3 object's metadata*, which may cause failures due to size limitations. Instead, all SAML2 metadata elements are put 
+inside the S3 object's content as a JSON document.
+
+<div class="alert alert-warning">:warning: <strong>Breaking Change</strong><p>
+This may be a breaking change. Consult the documentation to learn more.
+</div>
+
 ## Other Stuff
      
 - Performance tests are now available based on the [Artillery](../high_availability/Performance-Testing-Artillery.html) framework.
@@ -91,7 +102,8 @@ is now extended to support SQL databases.
 - Tickets captured via [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html) will also track the ticket expiration time and the last-used time.
 - [Passwordless accounts](../authentication/Passwordless-Authentication.html) can be now customized and post-processed once fetched from the passwordless account store.  
 - [MongoDb Ticket Registry](../ticketing/MongoDb-Ticket-Registry.html) has now removed a "text" index on the full json contents of the ticket to improve performance.
-- [SAML2 metadata via AWS S3](../installation/Configuring-SAML2-DynamicMetadata-AmazonS3.html) has changed its strategy for metadata storage to no longer track certificate and keys for signing and encryption operations as part of the *S3 object's metadata*, which may cause failures due to size limitations. Instead, all SAML2 metadata elements are put inside the S3 object's content as a JSON document.
+- Managing tokens for [Simple Multifactor Authentication via REST](../mfa/Simple-Multifactor-Authentication-TokenManagement-REST.html) has switched the HTTP method to `POST` in some cases to better align with RESTful principles. 
+- A small number of performance improvements and documentation updates. 
 
 ## Library Upgrades
        
@@ -104,6 +116,7 @@ is now extended to support SQL databases.
 - JaVers
 - Groovy
 - Swagger
+- JGit
 - Spring Cloud
 - Spring Cloud GCP
 - Apache Kafka

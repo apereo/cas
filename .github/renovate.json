@@ -2,7 +2,6 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     ":dependencyDashboard",
-    ":rebaseStalePrs",
     ":preserveSemverRanges",
     ":disableRateLimiting",
     ":semanticCommits",
@@ -20,6 +19,8 @@
     "docker-compose",
     "github-actions"
   ],
+  "rebaseWhen": "never",
+  "automerge": false,
   "regexManagers": [
     {
       "fileMatch": ["run-.*\\.sh"],
@@ -31,7 +32,7 @@
   ],
   "labels": ["Bot", "Renovate"],
   "schedule": [
-    "after 10pm and before 6am on sunday"
+    "after 10pm and before 6am every weekday"
   ],
   "docker": {
     "enabled": true
