@@ -235,6 +235,7 @@ class SamlConfiguration {
         }
 
         @Bean
+        @ConditionalOnMissingBean(name = "samlValidateController")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlValidateController samlValidateController(
             @Qualifier("casValidationConfigurationContext")

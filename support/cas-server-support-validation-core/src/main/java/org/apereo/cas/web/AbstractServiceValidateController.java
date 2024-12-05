@@ -229,6 +229,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     protected void onSuccessfulValidation(final String serviceTicketId, final Assertion assertion) {
     }
 
+    protected void beforeErrorResponse(final String code, final String description, final HttpServletRequest request, final WebApplicationService service) {
+    }
+
     /**
      * Enforce ticket validation authorization for.
      *
@@ -275,6 +278,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                                            final String description,
                                            final HttpServletRequest request,
                                            final WebApplicationService service) {
+        beforeErrorResponse(code, description, request, service);
+
         val modelAndView = serviceValidateConfigurationContext.getValidationViewFactory()
             .getModelAndView(request, false, service, getClass());
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_CODE, StringEscapeUtils.escapeHtml4(code));
