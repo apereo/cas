@@ -318,7 +318,7 @@ public class RedisObjectFactory {
                 .map(hostAndPort -> StringUtils.split(hostAndPort, ":"))
                 .filter(Objects::nonNull)
                 .map(args -> new RedisNode(args[0], Integer.parseInt(args[1])))
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
         }
         return new ArrayList<>(0);
     }

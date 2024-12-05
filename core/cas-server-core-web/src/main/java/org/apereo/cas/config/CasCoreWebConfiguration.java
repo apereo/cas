@@ -140,7 +140,7 @@ class CasCoreWebConfiguration {
             AnnotationAwareOrderComparator.sortIfNecessary(configurers);
             val serviceFactoryList = configurers.stream()
                 .flatMap(configurer -> configurer.buildServiceFactories().stream())
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
             return new DefaultArgumentExtractor(serviceFactoryList);
         }
 

@@ -9,15 +9,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
-import lombok.val;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import java.io.Serial;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 /**
@@ -39,9 +36,6 @@ public class SimplePrincipal implements Principal {
     @Serial
     private static final long serialVersionUID = -1255260750151385796L;
 
-    /**
-     * The unique identifier for the principal.
-     */
     @JsonProperty
     private String id;
 
@@ -51,12 +45,6 @@ public class SimplePrincipal implements Principal {
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private Map<String, List<Object>> attributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
-    /**
-     * Instantiates a new simple principal.
-     *
-     * @param id         the id
-     * @param attributes the attributes
-     */
     @JsonCreator
     protected SimplePrincipal(@JsonProperty("id") final @NonNull String id,
                               @JsonProperty("attributes") final Map<String, List<Object>> attributes) {
@@ -66,22 +54,17 @@ public class SimplePrincipal implements Principal {
 
     @Override
     public int hashCode() {
-        val builder = new HashCodeBuilder(83, 31);
-        builder.append(id.toLowerCase(Locale.ENGLISH));
-        return builder.toHashCode();
+        return Objects.hash(id.toLowerCase(Locale.ENGLISH));
     }
 
     @Override
     public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
+        if (this == obj) {
             return true;
         }
-        if (!(obj instanceof final SimplePrincipal rhs)) {
-            return false;
+        if (obj instanceof SimplePrincipal rhs) {
+            return id != null && id.equalsIgnoreCase(rhs.getId());
         }
-        return StringUtils.equalsIgnoreCase(id, rhs.getId());
+        return false;
     }
 }

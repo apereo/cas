@@ -87,7 +87,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         return currentValues
             .stream()
             .map(value -> String.format("%s@%s", value, scope))
-            .collect(Collectors.toCollection(ArrayList::new));
+            .collect(Collectors.toList());
     }
 
     private static List<Object> encryptValues(final List<Object> currentValues, final RegisteredService registeredService) {
@@ -110,7 +110,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
                 LOGGER.trace("Encrypted attribute value [{}]", result);
                 return result;
             }))
-            .collect(Collectors.toCollection(ArrayList::new));
+            .collect(Collectors.toList());
     }
 
     private static List<Object> fetchAttributeValueFromExternalGroovyScript(final String attributeName,
@@ -216,7 +216,7 @@ public class DefaultAttributeDefinition implements AttributeDefinition {
         return currentValues
             .stream()
             .map(value -> MessageFormat.format(getPatternFormat(), value))
-            .collect(Collectors.toCollection(ArrayList::new));
+            .collect(Collectors.toList());
     }
 
     private List<Object> getScriptedAttributeValue(final String attributeKey,

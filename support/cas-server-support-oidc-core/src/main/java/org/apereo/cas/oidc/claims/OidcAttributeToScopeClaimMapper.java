@@ -9,7 +9,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -93,6 +92,6 @@ public interface OidcAttributeToScopeClaimMapper {
                 }
                 return value;
             })
-            .collect(Collectors.toCollection(ArrayList::new));
+            .collect(Collectors.toList());
     }
 }

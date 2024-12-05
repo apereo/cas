@@ -966,7 +966,7 @@ public class CasDocumentationApplication {
             var methods = clazz.getMethods();
             annotatedMethods = Arrays.stream(methods)
                 .filter(method -> method.isAnnotationPresent(annotationClass))
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
         } catch (final Throwable throwable) {
             LOGGER.info("Failed to locate annotated methods: {}", throwable.getMessage());
         }

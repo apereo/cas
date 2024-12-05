@@ -137,7 +137,7 @@ class PersonDirectoryPrincipalResolverConcurrencyTests {
     @Test
     void validatePersonDirConcurrency() throws Throwable {
         val userList = IntStream.range(0, NUM_USERS).mapToObj(i -> "user_" + i)
-            .collect(Collectors.toCollection(ArrayList::new));
+            .collect(Collectors.toList());
 
         val runnables = userList.stream().map(user -> new PersonAttrGetter(personDirectoryResolver, user))
             .collect(Collectors.toCollection(() -> new ArrayList<CheckedRunnable>()));

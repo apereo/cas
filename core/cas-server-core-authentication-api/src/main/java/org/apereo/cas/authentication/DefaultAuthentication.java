@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.val;
-import org.apache.commons.lang3.builder.EqualsBuilder;
 import java.io.Serial;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -103,15 +102,13 @@ public class DefaultAuthentication implements Authentication {
     }
 
     @Override
-    public boolean isEqualTo(final Authentication auth2) {
-        if (auth2 == null) {
-            return false;
+    public boolean isEqualTo(final Authentication authn) {
+        if (this == authn) {
+            return true;
         }
-        val builder = new EqualsBuilder();
-        builder.append(getPrincipal(), auth2.getPrincipal());
-        builder.append(getCredentials(), auth2.getCredentials());
-        builder.append(getSuccesses(), auth2.getSuccesses());
-        return builder.isEquals();
+        return Objects.equals(getPrincipal(), authn.getPrincipal())
+            && Objects.equals(getCredentials(), authn.getCredentials())
+            && Objects.equals(getSuccesses(), authn.getSuccesses());
     }
 
     @Override

@@ -518,7 +518,7 @@ public abstract class AbstractServicesManager implements IndexableServicesManage
     @SafeVarargs
     private static Predicate<RegisteredService> getRegisteredServicesFilteringPredicate(
         final Predicate<RegisteredService>... p) {
-        val predicates = Stream.of(p).collect(Collectors.toCollection(ArrayList::new));
+        val predicates = Stream.of(p).collect(Collectors.toList());
         return predicates.stream().reduce(x -> true, Predicate::and);
     }
 }

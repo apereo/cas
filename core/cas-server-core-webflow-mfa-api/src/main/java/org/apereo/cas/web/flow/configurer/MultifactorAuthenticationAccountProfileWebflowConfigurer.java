@@ -16,7 +16,6 @@ import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -51,7 +50,7 @@ public class MultifactorAuthenticationAccountProfileWebflowConfigurer extends Ab
                 .stream()
                 .filter(BeanSupplier::isNotProxy)
                 .filter(action -> !currentActions.contains(action.getName()))
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
             AnnotationAwareOrderComparator.sort(providerActions);
             accountView.getRenderActionList().addAll(providerActions.toArray(new Action[]{}));
             
@@ -66,7 +65,7 @@ public class MultifactorAuthenticationAccountProfileWebflowConfigurer extends Ab
                 .stream()
                 .filter(BeanSupplier::isNotProxy)
                 .filter(action -> !currentTrustActions.contains(action.getName()))
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
             AnnotationAwareOrderComparator.sort(trustedActions);
             accountView.getRenderActionList().addAll(trustedActions.toArray(new Action[]{}));
         }

@@ -10,7 +10,6 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -116,7 +115,7 @@ public class ActiveDirectoryLdapEntryHandler implements LdapEntryHandler {
             val ret = IntStream.range(0, days.length)
                 .mapToObj(day -> day == 6 ? new byte[]{raw[19], raw[20], raw[0]} : new byte[]{raw[day * 3], raw[day * 3 + 1], raw[day * 3 + 2]})
                 .map(vBits -> IntStream.range(0, 3).mapToObj(b -> decodeLogonBits(vBits[b])).collect(Collectors.joining()))
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
             //CHECKSTYLE:ON
 
             val result = new String[ret.size()];
