@@ -62,7 +62,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `505` distinct scenarios. The overall
+and scenarios. At the moment, the total number of jobs stands at approximately `506` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. 
 
 ### Java 23
@@ -103,7 +103,7 @@ This may be a breaking change. Consult the documentation to learn more.
 - [Passwordless accounts](../authentication/Passwordless-Authentication.html) can be now customized and post-processed once fetched from the passwordless account store.  
 - [MongoDb Ticket Registry](../ticketing/MongoDb-Ticket-Registry.html) has now removed a "text" index on the full json contents of the ticket to improve performance.
 - Managing tokens for [Simple Multifactor Authentication via REST](../mfa/Simple-Multifactor-Authentication-TokenManagement-REST.html) has switched the HTTP method to `POST` in some cases to better align with RESTful principles. 
-- A small number of performance improvements and documentation updates. 
+- Various small performance improvements and documentation updates. 
 
 ## Library Upgrades
        

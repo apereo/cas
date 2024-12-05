@@ -9,7 +9,6 @@ import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -18,8 +17,6 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -44,10 +41,11 @@ public class LoadSurrogatesListAction extends BaseCasWebflowAction {
             LOGGER.debug("Loading eligible accounts for [{}] to proxy", username);
             val service = Optional.ofNullable(WebUtils.getService(requestContext));
             val surrogates = surrogateService.getImpersonationAccounts(username, service)
-                .stream()
+                .parallelStream()
+                .filter(StringUtils::isNotBlank)
                 .sorted()
                 .distinct()
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
             LOGGER.debug("Surrogate accounts found are [{}]", surrogates);
             if (!surrogates.isEmpty()) {
                 if (!surrogates.contains(username) && !surrogateService.isWildcardedAccount(surrogates, service)) {

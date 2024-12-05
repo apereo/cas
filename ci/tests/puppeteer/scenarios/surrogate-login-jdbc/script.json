@@ -1,0 +1,27 @@
+{
+  "dependencies": "surrogate-webflow,surrogate-authentication-jdbc",
+  "conditions": {
+    "docker": "true"
+  },
+  "environmentVariables": [
+    "SEARCH_QUERY=select count(*) from surrogate_accounts where username=? and surrogateAccount=?",
+    "ACCOUNT_QUERY=select surrogateAccount from surrogate_accounts where username=?"
+  ],
+  "properties": [
+    "--cas.server.name=https://localhost:8443",
+    "--cas.server.prefix=${cas.server.name}/cas",
+    "--cas.service-registry.core.init-from-json=true",
+
+    "--cas.authn.attribute-repository.stub.attributes.phone=13477464523",
+    "--cas.authn.attribute-repository.stub.attributes.mail=casuser@example.org",
+    
+    "--cas.authn.surrogate.jdbc.driver-class=org.postgresql.Driver",
+    "--cas.authn.surrogate.jdbc.dialect=org.hibernate.dialect.PostgreSQLDialect",
+    "--cas.authn.surrogate.jdbc.user=postgres",
+    "--cas.authn.surrogate.jdbc.password=password",
+    "--cas.authn.surrogate.jdbc.url=jdbc:postgresql://localhost:5432/impersonation",
+    "--cas.authn.surrogate.jdbc.surrogate-search-query=${SEARCH_QUERY}",
+    "--cas.authn.surrogate.jdbc.surrogate-account-query=${ACCOUNT_QUERY}"
+  ],
+  "initScript": "${PWD}/ci/tests/postgres/run-postgres-server.sh,${PWD}/ci/tests/httpbin/run-httpbin-server.sh"
+}

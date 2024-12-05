@@ -33,7 +33,7 @@ async function testBasicLoginLogout(browser) {
 }
 
 async function logoutEverywhere(page) {
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await cas.goto(page, "https://localhost:8444/cas/logout");
 }
 

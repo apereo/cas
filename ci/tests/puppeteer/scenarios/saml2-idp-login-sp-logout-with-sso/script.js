@@ -23,7 +23,7 @@ const cas = require("../../cas.js");
     const authData = JSON.parse(await cas.innerHTML(page, "details pre"));
     await cas.log(authData);
 
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await cas.sleep(2000);
     const content = await page.content();
     assert(content.includes("id=\"service1\""));

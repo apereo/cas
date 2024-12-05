@@ -42,7 +42,7 @@ async function testService(page, clientId, oidc = true, redirectUrl = "https://l
     assert(decodedAccessToken.iss === "https://localhost:8443/cas/oidc");
     assert(decodedAccessToken.client_id === clientId);
     
-    await cas.goto(page, "https://localhost:8443/cas/logout");
+    await cas.gotoLogout(page);
     await cas.sleep(1000);
     return {accessToken: decodedAccessToken};
 }

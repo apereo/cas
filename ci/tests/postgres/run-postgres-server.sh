@@ -1,19 +1,24 @@
 #!/bin/bash
 
-# while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
+GREEN="\e[32m"
+ENDCOLOR="\e[0m"
 
-echo "Building Postgres image..."
+function printgreen() {
+  printf "🍀 ${GREEN}$1${ENDCOLOR}\n"
+}
+
+printgreen "Building Postgres image..."
 docker build ci/tests/postgres/ -t cas/postgres:latest
 
-echo "Running Postgres docker container..."
-docker stop postgres-server || true
+printgreen "Running Postgres docker container..."
+docker stop postgres-server || true >/dev/null 2>&1
 docker run --rm --name postgres-server --rm -e POSTGRES_PASSWORD=password -d -p 5432:5432 cas/postgres
 
 docker ps | grep "postgres-server"
 retVal=$?
 if [ $retVal == 0 ]; then
-    echo "Postgres docker container is running."
+    printgreen "Postgres docker container is running."
 else
     echo "Postgres docker container failed to start."
-    exit $retVal
 fi
+exit $retVal
