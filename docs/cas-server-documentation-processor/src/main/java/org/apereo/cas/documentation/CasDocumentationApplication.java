@@ -961,15 +961,14 @@ public class CasDocumentationApplication {
 
     private static List<Method> findAnnotatedMethods(final Class<?> clazz,
                                                      final Class<? extends Annotation> annotationClass) {
-        var annotatedMethods = new ArrayList<Method>();
         try {
             var methods = clazz.getMethods();
-            annotatedMethods = Arrays.stream(methods)
+            return Arrays.stream(methods)
                 .filter(method -> method.isAnnotationPresent(annotationClass))
                 .collect(Collectors.toList());
         } catch (final Throwable throwable) {
             LOGGER.info("Failed to locate annotated methods: {}", throwable.getMessage());
         }
-        return annotatedMethods;
+        return new ArrayList<>();
     }
 }

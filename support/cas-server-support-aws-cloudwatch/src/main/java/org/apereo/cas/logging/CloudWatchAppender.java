@@ -295,7 +295,7 @@ public class CloudWatchAppender extends AbstractAppender implements Serializable
                         return event;
                     })
                     .sorted(Comparator.comparing(InputLogEvent::timestamp))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toCollection(ArrayList::new));
             }
 
             lastReportedTimestamp = logEvents.getLast().timestamp();
