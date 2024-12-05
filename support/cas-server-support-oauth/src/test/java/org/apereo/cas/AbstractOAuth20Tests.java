@@ -129,7 +129,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -466,7 +465,7 @@ public abstract class AbstractOAuth20Tests {
         service.setClientId(clientId);
         service.setClientSecret(secret);
         service.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        val types = grantTypes.stream().map(OAuth20GrantTypes::getType).collect(Collectors.toCollection(HashSet::new));
+        val types = grantTypes.stream().map(OAuth20GrantTypes::getType).collect(Collectors.toSet());
         service.setSupportedGrantTypes(types);
         return service;
     }
