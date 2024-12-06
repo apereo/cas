@@ -49,7 +49,7 @@ public class CasCaptchaAutoConfiguration {
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry loginFlowDefinitionRegistry,
         @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-        final FlowBuilderServices flowBuilderServices) throws Exception {
+        final FlowBuilderServices flowBuilderServices) {
         return BeanSupplier.of(CasWebflowConfigurer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> new CasCaptchaWebflowConfigurer(flowBuilderServices,
@@ -63,7 +63,7 @@ public class CasCaptchaAutoConfiguration {
     @ConditionalOnMissingBean(name = "captchaValidator")
     public CaptchaValidator captchaValidator(
         final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(CaptchaValidator.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> CaptchaValidator.getInstance(casProperties.getGoogleRecaptcha()))
@@ -80,7 +80,7 @@ public class CasCaptchaAutoConfiguration {
         final CaptchaActivationStrategy captchaActivationStrategy,
         @Qualifier("captchaValidator")
         final CaptchaValidator captchaValidator,
-        final ConfigurableApplicationContext applicationContext) throws Exception {
+        final ConfigurableApplicationContext applicationContext) {
         return WebflowActionBeanSupplier.builder()
             .withApplicationContext(applicationContext)
             .withProperties(casProperties)
@@ -100,7 +100,7 @@ public class CasCaptchaAutoConfiguration {
     public CaptchaActivationStrategy captchaActivationStrategy(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(ServicesManager.BEAN_NAME)
-        final ServicesManager servicesManager) throws Exception {
+        final ServicesManager servicesManager) {
         return BeanSupplier.of(CaptchaActivationStrategy.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> new DefaultCaptchaActivationStrategy(servicesManager))
@@ -115,7 +115,7 @@ public class CasCaptchaAutoConfiguration {
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier("captchaActivationStrategy")
-        final CaptchaActivationStrategy captchaActivationStrategy) throws Exception {
+        final CaptchaActivationStrategy captchaActivationStrategy) {
         return WebflowActionBeanSupplier.builder()
             .withApplicationContext(applicationContext)
             .withProperties(casProperties)
@@ -138,7 +138,7 @@ public class CasCaptchaAutoConfiguration {
     public CasWebflowExecutionPlanConfigurer captchaCasWebflowExecutionPlanConfigurer(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("captchaWebflowConfigurer")
-        final CasWebflowConfigurer captchaWebflowConfigurer) throws Exception {
+        final CasWebflowConfigurer captchaWebflowConfigurer) {
         return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> plan -> plan.registerWebflowConfigurer(captchaWebflowConfigurer))

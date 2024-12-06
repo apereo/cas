@@ -265,7 +265,7 @@ public class MicrosoftGraphPersonAttributeDao extends BasePersonAttributeDao {
             val fields = new HashMap<String, Object>();
             ReflectionUtils.doWithFields(getClass(), field -> {
                 field.setAccessible(true);
-                fields.put(field.getName(), field.get(User.this));
+                fields.put(field.getName(), field.get(this));
             });
             return fields;
         }

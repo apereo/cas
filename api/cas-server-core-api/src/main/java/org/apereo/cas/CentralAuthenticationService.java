@@ -84,9 +84,8 @@ public interface CentralAuthenticationService {
      * @param proxyGrantingTicket Proof of prior authentication.
      * @param service             The target service of the ServiceTicket.
      * @return Non -null service ticket identifier.
-     * @throws Throwable the throwable
      */
-    Ticket grantProxyTicket(String proxyGrantingTicket, Service service) throws Throwable;
+    Ticket grantProxyTicket(String proxyGrantingTicket, Service service);
 
     /**
      * Validate a {@link ServiceTicket} for a particular Service.

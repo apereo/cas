@@ -121,7 +121,7 @@ public class CasAuthenticationAuthenticationEventListener implements CasAuthenti
     }
 
     @Override
-    public void handleCasRequestSingleLogoutEvent(final CasRequestSingleLogoutEvent event) throws Throwable {
+    public void handleCasRequestSingleLogoutEvent(final CasRequestSingleLogoutEvent event) {
         try {
             val ticket = event.getTicketGrantingTicket();
             LOGGER.debug("Performing single logout for expired ticket-granting ticket [{}]", ticket.getId());

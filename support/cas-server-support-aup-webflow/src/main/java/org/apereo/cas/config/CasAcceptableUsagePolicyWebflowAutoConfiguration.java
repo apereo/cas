@@ -84,7 +84,7 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
-            final TicketRegistrySupport ticketRegistrySupport) throws Exception {
+            final TicketRegistrySupport ticketRegistrySupport) {
             return BeanSupplier.of(AcceptableUsagePolicyRepository.class)
                 .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
                 .supply(() -> {
@@ -125,7 +125,7 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
-            final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository) throws Exception {
+            final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -148,7 +148,7 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
             @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
             final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer) throws Exception {
+            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -169,7 +169,7 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
-            final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository) throws Exception {
+            final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -193,7 +193,7 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
             @Qualifier(AcceptableUsagePolicyRepository.BEAN_NAME)
             final AcceptableUsagePolicyRepository acceptableUsagePolicyRepository,
             @Qualifier(AuditableExecution.AUDITABLE_EXECUTION_REGISTERED_SERVICE_ACCESS)
-            final AuditableExecution registeredServiceAccessStrategyEnforcer) throws Exception {
+            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
@@ -217,7 +217,7 @@ public class CasAcceptableUsagePolicyWebflowAutoConfiguration {
         public AuditTrailRecordResolutionPlanConfigurer casAcceptableUsagePolicyAuditTrailRecordResolutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("nullableReturnValueResourceResolver")
-            final AuditResourceResolver resourceResolver) throws Exception {
+            final AuditResourceResolver resourceResolver) {
 
             return BeanSupplier.of(AuditTrailRecordResolutionPlanConfigurer.class)
                 .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))

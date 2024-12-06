@@ -74,7 +74,7 @@ public class YubiKeyAccount implements Serializable, Cloneable {
     private String username;
 
     @Override
-    public YubiKeyAccount clone() {
+    public final YubiKeyAccount clone() {
         return FunctionUtils.doUnchecked(() -> {
             val account = (YubiKeyAccount) super.clone();
             account.setDevices(getDevices()

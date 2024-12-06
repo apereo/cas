@@ -19,13 +19,13 @@ import java.util.TreeMap;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
+@Getter
+@Setter
 public abstract class BaseEntityCategoryAttributeReleasePolicy extends MetadataEntityAttributesAttributeReleasePolicy {
-    
+
     @Serial
     private static final long serialVersionUID = 1532960981124784595L;
 
-    @Getter
-    @Setter
     private boolean useUniformResourceName;
 
     public BaseEntityCategoryAttributeReleasePolicy() {

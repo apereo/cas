@@ -43,7 +43,7 @@ public class CasSupportRedisAuditAutoConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("auditRedisTemplate")
         final CasRedisTemplate auditRedisTemplate,
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(AuditTrailManager.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
@@ -61,7 +61,7 @@ public class CasSupportRedisAuditAutoConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(RedisConnectionFactory.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(Unchecked.supplier(() -> {
@@ -78,7 +78,7 @@ public class CasSupportRedisAuditAutoConfiguration {
     public CasRedisTemplate auditRedisTemplate(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("redisAuditConnectionFactory")
-        final RedisConnectionFactory redisAuditConnectionFactory) throws Exception {
+        final RedisConnectionFactory redisAuditConnectionFactory) {
         return BeanSupplier.of(CasRedisTemplate.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> RedisObjectFactory.newRedisTemplate(redisAuditConnectionFactory))
@@ -92,7 +92,7 @@ public class CasSupportRedisAuditAutoConfiguration {
     public AuditTrailExecutionPlanConfigurer redisAuditTrailExecutionPlanConfigurer(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("redisAuditTrailManager")
-        final AuditTrailManager redisAuditTrailManager) throws Exception {
+        final AuditTrailManager redisAuditTrailManager) {
         return BeanSupplier.of(AuditTrailExecutionPlanConfigurer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> plan -> plan.registerAuditTrailManager(redisAuditTrailManager))

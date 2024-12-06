@@ -30,7 +30,7 @@ public class DefaultExecutableObserver implements ExecutableObserver {
     }
 
     @Override
-    public <T> T supply(final MonitorableTask task, final CheckedSupplier<T> supplier) throws Throwable {
+    public <T> T supply(final MonitorableTask task, final CheckedSupplier<T> supplier) {
         return prepareObservation(task).observe(CheckedSupplier.sneaky(supplier));
     }
 

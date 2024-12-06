@@ -21,6 +21,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
+@Getter
 @NoArgsConstructor
 @Accessors(chain = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
@@ -29,7 +30,6 @@ public class AccountRegistrationResponse implements Serializable {
     @Serial
     private static final long serialVersionUID = -1822843820128948428L;
 
-    @Getter
     private final Map<String, Object> properties = new LinkedHashMap<>();
 
     public AccountRegistrationResponse(final Map<String, Object> properties) {

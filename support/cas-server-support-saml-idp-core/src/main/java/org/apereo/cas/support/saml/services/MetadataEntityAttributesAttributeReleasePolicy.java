@@ -47,7 +47,7 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
-        final RegisteredServiceAttributeReleasePolicyContext context) throws Throwable {
+        final RegisteredServiceAttributeReleasePolicyContext context) {
 
         LOGGER.trace("Loading entity attribute predicate filter for candidate [{}] with values [{}]",
             getEntityAttribute(), getEntityAttributeValues());

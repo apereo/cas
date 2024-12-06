@@ -292,7 +292,7 @@ public class CasCoreAuditAutoConfiguration {
         @ConditionalOnMissingBean(name = "inMemoryAuditEventRepository")
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditEventRepository inMemoryAuditEventRepository(
-            final ConfigurableApplicationContext applicationContext) throws Exception {
+            final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(AuditEventRepository.class)
                 .when(CONDITION_AUDIT.given(applicationContext.getEnvironment()))
                 .supply(InMemoryAuditEventRepository::new)
@@ -514,7 +514,7 @@ public class CasCoreAuditAutoConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuditTrailExecutionPlanConfigurer casAuditTrailExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(AuditTrailExecutionPlanConfigurer.class)
                 .when(BeanCondition.on("cas.audit.slf4j.enabled").isTrue().evenIfMissing().given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> {

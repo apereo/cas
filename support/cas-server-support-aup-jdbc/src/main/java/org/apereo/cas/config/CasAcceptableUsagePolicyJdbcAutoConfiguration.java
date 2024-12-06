@@ -40,7 +40,7 @@ public class CasAcceptableUsagePolicyJdbcAutoConfiguration {
     @ConditionalOnMissingBean(name = "acceptableUsagePolicyDataSource")
     public DataSource acceptableUsagePolicyDataSource(
         final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(DataSource.class)
             .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
             .supply(() -> {
@@ -56,7 +56,7 @@ public class CasAcceptableUsagePolicyJdbcAutoConfiguration {
     public PlatformTransactionManager jdbcAcceptableUsagePolicyTransactionManager(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("acceptableUsagePolicyDataSource")
-        final DataSource acceptableUsagePolicyDataSource) throws Exception {
+        final DataSource acceptableUsagePolicyDataSource) {
         return BeanSupplier.of(PlatformTransactionManager.class)
             .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
             .supply(() -> new DataSourceTransactionManager(acceptableUsagePolicyDataSource))
@@ -71,7 +71,7 @@ public class CasAcceptableUsagePolicyJdbcAutoConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("jdbcAcceptableUsagePolicyTransactionManager")
         final PlatformTransactionManager jdbcAcceptableUsagePolicyTransactionManager,
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(TransactionOperations.class)
             .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
             .supply(() -> {
@@ -94,7 +94,7 @@ public class CasAcceptableUsagePolicyJdbcAutoConfiguration {
         final TransactionOperations jdbcAcceptableUsagePolicyTransactionTemplate,
         final CasConfigurationProperties casProperties,
         @Qualifier(TicketRegistrySupport.BEAN_NAME)
-        final TicketRegistrySupport ticketRegistrySupport) throws Exception {
+        final TicketRegistrySupport ticketRegistrySupport) {
         return BeanSupplier.of(AcceptableUsagePolicyRepository.class)
             .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
             .supply(() -> new JdbcAcceptableUsagePolicyRepository(ticketRegistrySupport,

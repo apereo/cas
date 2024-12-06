@@ -55,7 +55,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
     private ChainingMetadataResolver metadataResolver;
 
     protected AbstractMetadataResolverAdapter() {
-        this(new HashMap<>(0));
+        this(new HashMap<>());
     }
 
     protected AbstractMetadataResolverAdapter(final Map<Resource, MetadataFilterChain> metadataResources) {

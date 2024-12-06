@@ -48,7 +48,7 @@ public class JsonYubiKeyAccountRegistry extends PermissiveYubiKeyAccountRegistry
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         FunctionUtils.doIfNotNull(watcherService, WatcherService::close);
     }
 

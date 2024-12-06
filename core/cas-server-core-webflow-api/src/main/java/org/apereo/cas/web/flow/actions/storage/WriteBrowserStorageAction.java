@@ -23,7 +23,7 @@ public class WriteBrowserStorageAction extends BaseBrowserStorageAction {
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val ticketGrantingTicket = (String) requestContext.getCurrentEvent().getAttributes().get(TicketGrantingTicket.class.getName());
         val payload = CollectionUtils.wrap(ticketGrantingCookieBuilder.getCookieName(),

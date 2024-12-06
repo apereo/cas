@@ -113,7 +113,7 @@ class SamlIdPMetadataConfiguration {
             @Qualifier("samlIdPMetadataLocator")
             final SamlIdPMetadataLocator samlIdPMetadataLocator,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) throws Exception {
+            final ServicesManager servicesManager) {
             return new SamlIdPMetadataController(samlIdPMetadataGenerator,
                 samlIdPMetadataLocator, servicesManager, webApplicationServiceFactory);
         }
@@ -314,7 +314,7 @@ class SamlIdPMetadataConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public SamlIdPMetadataGenerator samlIdPMetadataGenerator(
             @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
-            final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext) throws Exception {
+            final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext) {
             return new FileSystemSamlIdPMetadataGenerator(samlIdPMetadataGeneratorConfigurationContext);
         }
 
@@ -428,7 +428,7 @@ class SamlIdPMetadataConfiguration {
             @Qualifier(OpenSamlConfigBean.DEFAULT_BEAN_NAME)
             final OpenSamlConfigBean openSamlConfigBean,
             @Qualifier("velocityEngineFactoryBean")
-            final VelocityEngine velocityEngineFactoryBean) throws Exception {
+            final VelocityEngine velocityEngineFactoryBean) {
             return SamlIdPMetadataGeneratorConfigurationContext.builder()
                 .samlIdPMetadataLocator(samlIdPMetadataLocator)
                 .samlIdPCertificateAndKeyWriter(samlSelfSignedCertificateWriter)

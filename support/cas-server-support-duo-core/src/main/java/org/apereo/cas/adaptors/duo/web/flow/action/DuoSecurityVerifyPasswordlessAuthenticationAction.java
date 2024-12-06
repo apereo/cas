@@ -35,7 +35,7 @@ public class DuoSecurityVerifyPasswordlessAuthenticationAction extends DuoSecuri
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val beanFactory = ((ConfigurableApplicationContext) requestContext.getActiveFlow().getApplicationContext()).getBeanFactory();
         val providers = new ArrayList<>(BeanFactoryUtils.beansOfTypeIncludingAncestors(beanFactory, DuoSecurityMultifactorAuthenticationProvider.class).values());
         return providers

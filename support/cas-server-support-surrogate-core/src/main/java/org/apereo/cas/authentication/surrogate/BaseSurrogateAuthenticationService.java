@@ -47,7 +47,7 @@ public abstract class BaseSurrogateAuthenticationService implements SurrogateAut
     }
 
     protected boolean isPrincipalAuthorizedForImpersonation(final String surrogate, final Principal principal,
-                                                            final Optional<? extends Service> givenService) throws Throwable {
+                                                            final Optional<? extends Service> givenService) {
         val core = casProperties.getAuthn().getSurrogate().getCore();
         if (!core.getPrincipalAttributeNames().isEmpty() && !core.getPrincipalAttributeValues().isEmpty()) {
             return core.getPrincipalAttributeNames()

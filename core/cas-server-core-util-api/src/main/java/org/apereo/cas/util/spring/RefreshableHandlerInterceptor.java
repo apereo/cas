@@ -35,7 +35,7 @@ public class RefreshableHandlerInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(
         @Nonnull final HttpServletRequest request, @Nonnull final HttpServletResponse response,
-        @Nonnull final Object handler) throws Exception {
+        @Nonnull final Object handler) {
         return getHandlerInterceptors()
             .stream()
             .allMatch(Unchecked.predicate(i -> i.preHandle(request, response, handler)));

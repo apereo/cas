@@ -353,16 +353,6 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
     default Collection<Class> findSubclassesOf(final Class superClass) {
         return findSubclassesInPackage(superClass, "org.apereo.cas");
     }
-
-    /**
-     * Find subclasses in class package.
-     *
-     * @param superClass the super class
-     * @return the collection
-     */
-    default Collection<Class> findSubclassesInClassPackage(final Class superClass) {
-        return findSubclassesInPackage(superClass, superClass.getPackageName());
-    }
     
     /**
      * Find subclasses in packages and exclude tests.
@@ -390,18 +380,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
         filteredResults.add(superClass);
         return filteredResults;
     }
-
-    /**
-     * Is type present?.
-     *
-     * @param classLoader the class loader
-     * @param typeName    the type name
-     * @return true/false
-     */
-    default boolean isTypePresent(final ClassLoader classLoader, final Class typeName) {
-        return isTypePresent(classLoader, typeName.getTypeName());
-    }
-
+    
     /**
      * Is type present?
      *

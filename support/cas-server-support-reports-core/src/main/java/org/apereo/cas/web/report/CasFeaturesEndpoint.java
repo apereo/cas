@@ -28,11 +28,10 @@ public class CasFeaturesEndpoint extends BaseCasActuatorEndpoint {
      * Report features.
      *
      * @return the list
-     * @throws Exception the exception
      */
     @ReadOperation
     @Operation(summary = "Get all present and registered CAS features")
-    public Set<String> features() throws Exception {
+    public Set<String> features() {
         return CasFeatureModule.FeatureCatalog.getRegisteredFeatures();
     }
 }

@@ -407,7 +407,7 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
         @ConditionalOnMissingBean(name = "passwordlessCaptchaValidator")
         public CaptchaValidator passwordlessCaptchaValidator(
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(CaptchaValidator.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> CaptchaValidator.getInstance(casProperties.getAuthn().getPasswordless().getGoogleRecaptcha()))
@@ -424,7 +424,7 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
             final CaptchaActivationStrategy captchaActivationStrategy,
             @Qualifier("passwordlessCaptchaValidator")
             final CaptchaValidator passwordlessCaptchaValidator,
-            final ConfigurableApplicationContext applicationContext) throws Exception {
+            final ConfigurableApplicationContext applicationContext) {
             return WebflowActionBeanSupplier.builder()
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)

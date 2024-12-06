@@ -15,7 +15,7 @@ import java.util.Map;
  * @since 7.0.0
  */
 @Converter
-public class MapToJsonAttributeConverter implements AttributeConverter<Map<String, ? extends Object>, String> {
+public class MapToJsonAttributeConverter implements AttributeConverter<Map<String, ?>, String> {
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
         .minimal(true).defaultTypingEnabled(true).build().toObjectMapper();
 

@@ -32,17 +32,17 @@ public class Attestation implements Serializable {
     /**
      * A unique identifier for a particular version of the data source of the data in this object.
      */
-    private final String metadataIdentifier;
+    String metadataIdentifier;
 
     /**
      * Free-form information about the authenticator vendor.
      */
-    private Map<String, String> vendorProperties;
+    Map<String, String> vendorProperties;
 
     /**
      * Free-form information about the authenticator model.
      */
-    private Map<String, String> deviceProperties;
+    Map<String, String> deviceProperties;
 
     @JsonCreator
     private Attestation(

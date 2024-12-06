@@ -71,9 +71,8 @@ public interface CommunicationsManager {
      *
      * @param request the request
      * @return true /false
-     * @throws Throwable the throwable
      */
-    boolean sms(SmsRequest request) throws Throwable;
+    boolean sms(SmsRequest request);
 
     /**
      * Sms multiple requests.

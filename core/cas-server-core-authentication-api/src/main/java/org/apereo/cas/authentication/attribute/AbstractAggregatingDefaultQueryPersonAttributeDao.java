@@ -27,34 +27,28 @@ import java.util.Set;
  * @since 7.1.0
  */
 @Slf4j
+@Getter
+@Setter
 public abstract class AbstractAggregatingDefaultQueryPersonAttributeDao extends AbstractDefaultAttributePersonAttributeDao {
     /**
      * A List of child {@link PersonAttributeDao} instances which we will poll in order.
      */
-    @Getter
-    @Setter
     protected List<PersonAttributeDao> personAttributeDaos;
 
     /**
      * Strategy for merging together the results from successive PersonAttributeDaos.
      */
-    @Getter
-    @Setter
     protected AttributeMerger attributeMerger = new MultivaluedAttributeMerger();
 
     /**
      * True if we should catch, logger, and ignore Throwables propogated by
      * individual DAOs.
      */
-    @Getter
-    @Setter
     protected boolean recoverExceptions = true;
 
     /**
      * The Stop on success.
      */
-    @Getter
-    @Setter
     protected boolean stopOnSuccess;
 
     /**
@@ -62,8 +56,6 @@ public abstract class AbstractAggregatingDefaultQueryPersonAttributeDao extends 
      * produce results, and otherwise, halt execution
      * if any of them cannot resolve the principal and return null.
      */
-    @Getter
-    @Setter
     protected boolean requireAll;
 
     @Override

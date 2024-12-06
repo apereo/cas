@@ -72,7 +72,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
     }
 
     @Override
-    public <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) throws Throwable {
+    public <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) {
         return lock.tryLock(() -> {
             try {
                 LOGGER.trace("Beginning to execute script [{}]", this);
@@ -96,7 +96,7 @@ public class WatchableGroovyScriptResource implements ExecutableCompiledScript {
      * @return the t
      */
     public <T> T execute(final String methodName, final Class<T> clazz, final boolean failOnError,
-                         final Object... args) throws Throwable {
+                         final Object... args) {
         return lock.tryLock(() -> {
             try {
                 LOGGER.trace("Beginning to execute script [{}]", this);

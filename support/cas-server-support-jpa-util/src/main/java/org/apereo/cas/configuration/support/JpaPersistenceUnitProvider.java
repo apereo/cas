@@ -44,7 +44,7 @@ public interface JpaPersistenceUnitProvider extends DisposableBean {
     }
 
     @Override
-    default void destroy() throws Exception {
+    default void destroy() {
         FunctionUtils.doAndHandle(__ -> getEntityManager().close());
     }
 }

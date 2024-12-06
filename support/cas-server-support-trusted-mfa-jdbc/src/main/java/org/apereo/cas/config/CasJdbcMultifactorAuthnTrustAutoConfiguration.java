@@ -124,7 +124,7 @@ public class CasJdbcMultifactorAuthnTrustAutoConfiguration {
             @Qualifier("dataSourceMfaTrustedAuthn") final DataSource dataSourceMfaTrustedAuthn,
             @Qualifier("jpaMfaTrustedAuthnPackagesToScan") final BeanContainer<String> jpaMfaTrustedAuthnPackagesToScan,
             @Qualifier("jpaMfaTrustedAuthnVendorAdapter") final JpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter,
-            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME) final JpaBeanFactory jpaBeanFactory) throws Exception {
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME) final JpaBeanFactory jpaBeanFactory) {
             val ctx = JpaConfigurationContext.builder().dataSource(dataSourceMfaTrustedAuthn)
                 .packagesToScan(jpaMfaTrustedAuthnPackagesToScan.toSet())
                 .persistenceUnitName("jpaMfaTrustedAuthnContext")

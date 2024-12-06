@@ -39,7 +39,7 @@ public class MetadataEntityGroupAttributeReleasePolicy extends BaseSamlRegistere
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
-        final RegisteredServiceAttributeReleasePolicyContext context) throws Throwable {
+        final RegisteredServiceAttributeReleasePolicyContext context) {
 
         val affiliationDescriptor = entityDescriptor.getAffiliationDescriptor();
         if (affiliationDescriptor != null) {

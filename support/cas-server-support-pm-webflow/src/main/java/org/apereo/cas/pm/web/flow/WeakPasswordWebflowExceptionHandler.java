@@ -20,12 +20,12 @@ public class WeakPasswordWebflowExceptionHandler implements CasWebflowExceptionH
     private int order;
 
     @Override
-    public Event handle(final WeakPasswordException exception, final RequestContext requestContext) throws Throwable {
+    public Event handle(final WeakPasswordException exception, final RequestContext requestContext) {
         return new Event(this, exception.getClass().getSimpleName(), new LocalAttributeMap<>("exception", exception));
     }
 
     @Override
-    public boolean supports(final Exception exception, final RequestContext requestContext) throws Throwable {
+    public boolean supports(final Exception exception, final RequestContext requestContext) {
         return exception instanceof WeakPasswordException;
     }
 }

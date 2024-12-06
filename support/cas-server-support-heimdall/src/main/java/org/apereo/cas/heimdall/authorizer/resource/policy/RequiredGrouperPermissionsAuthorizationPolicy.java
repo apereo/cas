@@ -40,7 +40,7 @@ public class RequiredGrouperPermissionsAuthorizationPolicy implements ResourceAu
     private String roleName;
 
     @Override
-    public AuthorizationResult evaluate(final AuthorizableResource resource, final AuthorizationRequest request) throws Throwable {
+    public AuthorizationResult evaluate(final AuthorizableResource resource, final AuthorizationRequest request) {
         val facade = new DefaultGrouperFacade();
         val assignments = facade.getPermissionAssignments(GrouperPermissionAssignmentsQuery.builder()
             .attributeDefinitionName(attributeDefinition)

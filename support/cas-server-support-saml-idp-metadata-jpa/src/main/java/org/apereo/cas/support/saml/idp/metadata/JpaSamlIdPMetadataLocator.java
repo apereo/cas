@@ -43,7 +43,7 @@ public class JpaSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocator {
     }
 
     @Override
-    public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) throws Exception {
+    public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
         try {
             if (registeredService.isPresent()) {
                 val query = buildQuery(registeredService);

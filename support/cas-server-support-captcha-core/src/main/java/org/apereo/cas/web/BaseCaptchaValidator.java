@@ -26,12 +26,12 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
+@Getter
 @RequiredArgsConstructor
 @Slf4j
 public abstract class BaseCaptchaValidator implements CaptchaValidator {
     protected static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    @Getter
     protected final GoogleRecaptchaProperties recaptchaProperties;
 
     @Override

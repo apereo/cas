@@ -35,7 +35,7 @@ public class RestfulSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerato
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         FunctionUtils.doUnchecked(__ -> generate(Optional.empty()));
     }
 

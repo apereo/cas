@@ -46,7 +46,7 @@ public class CasLdapServiceRegistryAutoConfiguration {
     @ConditionalOnMissingBean(name = "ldapServiceRegistryMapper")
     public LdapRegisteredServiceMapper ldapServiceRegistryMapper(
         final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(LdapRegisteredServiceMapper.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> new DefaultLdapRegisteredServiceMapper(casProperties.getServiceRegistry().getLdap(),
@@ -63,7 +63,7 @@ public class CasLdapServiceRegistryAutoConfiguration {
         final LdapRegisteredServiceMapper ldapServiceRegistryMapper,
         final CasConfigurationProperties casProperties,
         final ConfigurableApplicationContext applicationContext,
-        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners) throws Exception {
+        final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners) {
         return BeanSupplier.of(ServiceRegistry.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
@@ -85,7 +85,7 @@ public class CasLdapServiceRegistryAutoConfiguration {
     public ServiceRegistryExecutionPlanConfigurer ldapServiceRegistryExecutionPlanConfigurer(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("ldapServiceRegistry")
-        final ServiceRegistry ldapServiceRegistry) throws Exception {
+        final ServiceRegistry ldapServiceRegistry) {
         return BeanSupplier.of(ServiceRegistryExecutionPlanConfigurer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> plan -> plan.registerServiceRegistry(ldapServiceRegistry))

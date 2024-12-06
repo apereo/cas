@@ -84,7 +84,7 @@ public class CasOAuthUmaJpaAutoConfiguration {
             @Qualifier("jpaUmaPackagesToScan")
             final BeanContainer<String> jpaUmaPackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) throws Exception {
+            final JpaBeanFactory jpaBeanFactory) {
             return BeanSupplier.of(EntityManagerFactory.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {

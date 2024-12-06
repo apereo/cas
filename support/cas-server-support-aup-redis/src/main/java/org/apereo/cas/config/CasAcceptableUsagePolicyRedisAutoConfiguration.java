@@ -46,7 +46,7 @@ public class CasAcceptableUsagePolicyRedisAutoConfiguration {
     public CasRedisTemplate redisAcceptableUsagePolicyTemplate(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("redisAcceptableUsagePolicyConnectionFactory")
-        final RedisConnectionFactory redisAcceptableUsagePolicyConnectionFactory) throws Exception {
+        final RedisConnectionFactory redisAcceptableUsagePolicyConnectionFactory) {
         return BeanSupplier.of(CasRedisTemplate.class)
             .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
             .and(CONDITION_AUP_REDIS_ENABLED.given(applicationContext.getEnvironment()))
@@ -62,7 +62,7 @@ public class CasAcceptableUsagePolicyRedisAutoConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(RedisConnectionFactory.class)
             .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
             .and(CONDITION_AUP_REDIS_ENABLED.given(applicationContext.getEnvironment()))
@@ -82,7 +82,7 @@ public class CasAcceptableUsagePolicyRedisAutoConfiguration {
         @Qualifier("redisAcceptableUsagePolicyTemplate")
         final CasRedisTemplate redisAcceptableUsagePolicyTemplate,
         @Qualifier(TicketRegistrySupport.BEAN_NAME)
-        final TicketRegistrySupport ticketRegistrySupport) throws Exception {
+        final TicketRegistrySupport ticketRegistrySupport) {
         return BeanSupplier.of(AcceptableUsagePolicyRepository.class)
             .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
             .and(CONDITION_AUP_REDIS_ENABLED.given(applicationContext.getEnvironment()))

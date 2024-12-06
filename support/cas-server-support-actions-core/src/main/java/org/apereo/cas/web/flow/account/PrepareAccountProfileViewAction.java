@@ -51,7 +51,7 @@ public class PrepareAccountProfileViewAction extends BaseCasWebflowAction {
     private final GeoLocationService geoLocationService;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val ticketGrantingTicketId = WebUtils.getTicketGrantingTicketId(requestContext);
         val ticketGrantingTicket = FunctionUtils.doAndHandle(
             () -> Optional.of(ticketRegistry.getTicket(ticketGrantingTicketId, TicketGrantingTicket.class)),

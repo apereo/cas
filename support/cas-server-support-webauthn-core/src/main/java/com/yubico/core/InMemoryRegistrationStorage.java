@@ -42,9 +42,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 @Slf4j
+@Getter
 public class InMemoryRegistrationStorage extends BaseWebAuthnCredentialRepository {
 
-    @Getter
     private final Cache<String, Set<CredentialRegistration>> storage = Caffeine.newBuilder()
         .maximumSize(5000)
         .expireAfterAccess(1, TimeUnit.DAYS)

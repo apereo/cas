@@ -30,7 +30,7 @@ public class DelegatedAuthenticationGenerateClientsAction extends BaseCasWebflow
     private final DelegatedAuthenticationSingleSignOnEvaluator singleSignOnEvaluator;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> {
             produceDelegatedAuthenticationClientsForContext(requestContext);
             return success();

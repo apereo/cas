@@ -29,7 +29,7 @@ public class AmazonSimpleEmailServiceEmailSender implements EmailSender {
     private final CasConfigurationProperties casProperties;
 
     @Override
-    public EmailCommunicationResult send(final EmailMessageRequest emailRequest) throws Exception {
+    public EmailCommunicationResult send(final EmailMessageRequest emailRequest) {
         val recipients = emailRequest.getRecipients();
 
         val destinationBuilder = Destination.builder();

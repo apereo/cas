@@ -65,7 +65,7 @@ public class DefaultSamlIdentityProviderDiscoveryFeedService implements SamlIden
     @Override
     public DelegatedClientIdentityProviderConfiguration getProvider(final String entityID,
                                                                     final HttpServletRequest httpServletRequest,
-                                                                    final HttpServletResponse httpServletResponse) throws Throwable {
+                                                                    final HttpServletResponse httpServletResponse) {
         val idp = getDiscoveryFeed()
             .stream()
             .filter(entity -> entity.getEntityID().equals(entityID))

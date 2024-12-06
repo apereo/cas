@@ -15,7 +15,7 @@ public interface SessionManager {
         return new ByteArray(bytes);
     }
 
-    ByteArray createSession(@NonNull final ByteArray paramByteArray) throws ExecutionException;
+    ByteArray createSession(@NonNull final ByteArray paramByteArray);
 
     Optional<ByteArray> getSession(@NonNull final ByteArray paramByteArray);
     default boolean isSessionForUser(

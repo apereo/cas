@@ -118,7 +118,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     }
 
     @Override
-    public OneTimeTokenAccount clone() {
+    public final OneTimeTokenAccount clone() {
         return Unchecked.supplier(() -> (OneTimeTokenAccount) super.clone()).get();
     }
 

@@ -44,7 +44,7 @@ public class CreatePasswordlessAuthenticationTokenAction extends BasePasswordles
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val user = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
         val passwordlessRequest = PasswordlessWebflowUtils.getPasswordlessAuthenticationRequest(requestContext, PasswordlessAuthenticationRequest.class);
         return createAndSendPasswordlessToken(requestContext, user, passwordlessRequest);

@@ -38,7 +38,7 @@ public class JsonServiceRegistry extends AbstractResourceBasedServiceRegistry {
                                final ConfigurableApplicationContext applicationContext,
                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy,
                                final RegisteredServiceResourceNamingStrategy resourceNamingStrategy,
-                               final Collection<ServiceRegistryListener> serviceRegistryListeners) throws Exception {
+                               final Collection<ServiceRegistryListener> serviceRegistryListeners) {
         super(configDirectory,
             CollectionUtils.wrapList(new RegisteredServiceJsonSerializer(applicationContext)),
             applicationContext, registeredServiceReplicationStrategy, resourceNamingStrategy,

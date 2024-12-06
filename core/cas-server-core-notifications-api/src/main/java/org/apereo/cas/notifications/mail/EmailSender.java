@@ -55,7 +55,7 @@ public interface EmailSender {
 
         val pattern = RegexUtils.createPattern("#\\{(.+)\\}");
         val matcher = pattern.matcher(subject);
-        while (matcher.find()) {
+        if (matcher.find()) {
             val args = new ArrayList<>();
             if (emailRequest.getPrincipal() != null) {
                 args.add(emailRequest.getPrincipal().getId());

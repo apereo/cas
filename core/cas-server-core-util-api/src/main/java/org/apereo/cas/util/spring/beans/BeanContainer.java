@@ -174,7 +174,7 @@ public interface BeanContainer<T> extends DisposableBean {
         }
 
         @Override
-        public void destroy() throws Exception {
+        public void destroy() {
             items.forEach(Unchecked.consumer(entry -> {
                 if (entry instanceof final DisposableBean disposable) {
                     disposable.destroy();

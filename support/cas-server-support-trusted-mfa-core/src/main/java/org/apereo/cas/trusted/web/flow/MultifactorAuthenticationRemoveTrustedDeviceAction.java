@@ -20,7 +20,7 @@ public class MultifactorAuthenticationRemoveTrustedDeviceAction extends BaseCasW
     protected final MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val key = requestContext.getRequestParameters().getRequired("key");
         mfaTrustEngine.remove(key);
         return success();

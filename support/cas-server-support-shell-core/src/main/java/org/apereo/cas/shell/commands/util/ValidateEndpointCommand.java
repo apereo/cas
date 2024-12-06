@@ -183,7 +183,6 @@ public class ValidateEndpointCommand {
      * @param proxy   the proxy
      * @param timeout the timeout
      * @return true /false
-     * @throws Exception the exception
      */
     @ShellMethod(key = "validate-endpoint", value = "Test connections to an endpoint to verify connectivity, SSL, etc")
     public boolean validateEndpoint(
@@ -197,7 +196,7 @@ public class ValidateEndpointCommand {
         @ShellOption(value = {"timeout", "--timeout"},
             help = "Timeout to use in milliseconds when testing the url",
             defaultValue = "5000")
-        final int timeout) throws Exception {
+        final int timeout) {
 
         try {
             LOGGER.info("Trying to connect to [{}]", url);

@@ -86,7 +86,7 @@ class DelegatedAuthenticationProvisioningConfiguration {
         @ConditionalOnMissingBean(name = "restDelegatedClientUserProfileProvisioner")
         public Supplier<DelegatedClientUserProfileProvisioner> restDelegatedClientUserProfileProvisioner(
             final ConfigurableApplicationContext applicationContext,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties) {
             return BeanSupplier.of(Supplier.class)
                 .when(BeanCondition.on("cas.authn.pac4j.provisioning.rest.url").isUrl().given(applicationContext.getEnvironment()))
                 .supply(() -> {

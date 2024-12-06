@@ -45,9 +45,8 @@ public interface TicketRegistry {
      * Save.
      *
      * @param toSave the to save
-     * @throws Exception the exception
      */
-    default List<? extends Ticket> addTicket(final Stream<? extends Ticket> toSave) throws Exception {
+    default List<? extends Ticket> addTicket(final Stream<? extends Ticket> toSave) {
         return toSave.parallel().map(Unchecked.function(this::addTicket)).filter(Objects::nonNull).collect(Collectors.toList());
     }
 

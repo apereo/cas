@@ -39,8 +39,7 @@ public interface DelegatedClientAuthenticationWebflowStateContributor {
      * @param ticket         the ticket
      * @param client         the client
      * @return the service
-     * @throws Throwable the throwable
      */
     Service restore(RequestContext requestContext, WebContext webContext,
-                    Optional<TransientSessionTicket> ticket, Client client) throws Throwable;
+                    Optional<TransientSessionTicket> ticket, Client client);
 }

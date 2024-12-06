@@ -30,9 +30,8 @@ public interface ExecutableObserver {
      *
      * @param task     the task
      * @param runnable the runnable
-     * @throws Throwable the throwable
      */
-    default void run(final MonitorableTask task, final Runnable runnable) throws Throwable {}
+    default void run(final MonitorableTask task, final Runnable runnable) {}
 
     /**
      * Observe a task as a supplier.
@@ -41,9 +40,8 @@ public interface ExecutableObserver {
      * @param task     the task
      * @param supplier the supplier
      * @return the t
-     * @throws Throwable the throwable
      */
-    <T> T supply(MonitorableTask task, CheckedSupplier<T> supplier) throws Throwable;
+    <T> T supply(MonitorableTask task, CheckedSupplier<T> supplier);
 
     /**
      * Observe invocation.

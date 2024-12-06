@@ -9,13 +9,13 @@ import lombok.Getter;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
+@Getter
 public class TurnstileCaptchaValidator extends BaseCaptchaValidator {
     /**
      * Recaptcha token as a request parameter.
      */
     public static final String REQUEST_PARAM_TURNSTILE_RESPONSE = "cf-turnstile-response";
 
-    @Getter
     private final String recaptchaResponseParameterName = REQUEST_PARAM_TURNSTILE_RESPONSE;
     
     public TurnstileCaptchaValidator(final GoogleRecaptchaProperties recaptchaProperties) {

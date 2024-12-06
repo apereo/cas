@@ -39,7 +39,7 @@ class SyncopePersonDirectoryConfiguration {
     @SuppressWarnings("unchecked")
     public BeanContainer<PersonAttributeDao> syncopePersonAttributeDaos(
         final ConfigurableApplicationContext applicationContext,
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties) {
 
         return BeanSupplier.of(BeanContainer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))

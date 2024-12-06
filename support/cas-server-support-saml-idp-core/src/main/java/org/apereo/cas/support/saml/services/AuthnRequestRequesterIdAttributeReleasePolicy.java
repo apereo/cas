@@ -42,7 +42,7 @@ public class AuthnRequestRequesterIdAttributeReleasePolicy extends BaseSamlRegis
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
-        final RegisteredServiceAttributeReleasePolicyContext context) throws Throwable {
+        final RegisteredServiceAttributeReleasePolicyContext context) {
 
         val releaseAttributes = new HashMap<String, List<Object>>();
         getSamlAuthnRequest(context)

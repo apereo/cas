@@ -289,8 +289,8 @@ public class CasDocumentationApplication {
                     cmd.parameters = new ArrayList<Map<String, String>>();
                     var parameterAnnotations = method.getParameterAnnotations();
                     for (var parameterAnnotation : parameterAnnotations) {
-                        for (var j = 0; j < parameterAnnotation.length; j++) {
-                            var ann = (ShellOption) parameterAnnotation[j];
+                        for (var annotation : parameterAnnotation) {
+                            var ann = (ShellOption) annotation;
                             cmd.parameters.add(Map.of(
                                 "name", String.join(",", ann.value()),
                                 "help", String.valueOf(ann.help()),
@@ -350,7 +350,7 @@ public class CasDocumentationApplication {
         return description;
     }
 
-    private static void exportFeatureToggles(final File dataPath) throws Exception {
+    private static void exportFeatureToggles(final File dataPath) {
         var parentPath = new File(dataPath, "features");
         if (parentPath.exists()) {
             FileUtils.deleteQuietly(parentPath);
@@ -426,7 +426,7 @@ public class CasDocumentationApplication {
         return null;
     }
 
-    private static void exportActuatorEndpoints(final File dataPath) throws Exception {
+    private static void exportActuatorEndpoints(final File dataPath) {
         var parentPath = new File(dataPath, "actuators");
         if (parentPath.exists()) {
             FileUtils.deleteQuietly(parentPath);

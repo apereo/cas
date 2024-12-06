@@ -74,7 +74,7 @@ class AmazonS3SamlIdPMetadataConfiguration {
         @Qualifier("samlIdPMetadataGeneratorConfigurationContext")
         final SamlIdPMetadataGeneratorConfigurationContext samlIdPMetadataGeneratorConfigurationContext,
         @Qualifier("amazonS3Client")
-        final S3Client amazonS3Client) throws Exception {
+        final S3Client amazonS3Client) {
         return BeanSupplier.of(SamlIdPMetadataGenerator.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(Unchecked.supplier(() -> {

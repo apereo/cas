@@ -38,7 +38,7 @@ public class GroovyDelegatedClientAuthenticationCredentialResolver
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         watchableScript.close();
     }
 }

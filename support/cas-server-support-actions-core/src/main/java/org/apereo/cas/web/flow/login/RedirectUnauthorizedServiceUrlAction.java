@@ -34,7 +34,7 @@ public class RedirectUnauthorizedServiceUrlAction extends BaseCasWebflowAction {
     private final ApplicationContext applicationContext;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         var redirectUrl = determineUnauthorizedServiceRedirectUrl(requestContext);
         val url = redirectUrl.toString();
 

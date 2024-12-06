@@ -26,20 +26,20 @@ public class ChainingSurrogateAuthenticationService implements SurrogateAuthenti
     private final ServicesManager servicesManager;
 
     @Override
-    public boolean canImpersonate(final String surrogate, final Principal principal, final Optional<? extends Service> givenService) throws Throwable {
+    public boolean canImpersonate(final String surrogate, final Principal principal, final Optional<? extends Service> givenService) {
         return isImpersonationAllowedFor(givenService)
             && surrogateServices.stream().anyMatch(Unchecked.predicate(impl -> impl.canImpersonate(surrogate, principal, givenService)));
     }
 
     @Override
-    public Collection<String> getImpersonationAccounts(final String username, final Optional<? extends Service> givenService) throws Throwable {
+    public Collection<String> getImpersonationAccounts(final String username, final Optional<? extends Service> givenService) {
         return isImpersonationAllowedFor(givenService)
             ? surrogateServices.stream().map(Unchecked.function(impl -> impl.getImpersonationAccounts(username, givenService))).flatMap(Collection::stream).toList()
             : new ArrayList<>();
     }
 
     @Override
-    public boolean isWildcardedAccount(final String surrogate, final Principal principal, final Optional<? extends Service> givenService) throws Throwable {
+    public boolean isWildcardedAccount(final String surrogate, final Principal principal, final Optional<? extends Service> givenService) {
         return isImpersonationAllowedFor(givenService)
             && surrogateServices.stream().anyMatch(Unchecked.predicate(impl -> impl.isWildcardedAccount(surrogate, principal, givenService)));
     }

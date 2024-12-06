@@ -64,7 +64,7 @@ public class GroovyRegisteredServiceAccessStrategy extends BaseRegisteredService
     }
 
     @Override
-    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) throws Throwable {
+    public boolean authorizeRequest(final RegisteredServiceAccessStrategyRequest request) {
         try {
             buildGroovyAccessStrategyInstanceIfNeeded();
             return Boolean.TRUE.equals(watchableScript.execute("authorizeRequest", Boolean.class, request));

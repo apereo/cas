@@ -35,6 +35,8 @@ import java.util.Set;
  * @author Eric Dalquist
  * @since 7.1.0
  */
+@Getter
+@Setter
 public class CascadingPersonAttributeDao extends AbstractAggregatingDefaultQueryPersonAttributeDao {
 
     /**
@@ -43,12 +45,8 @@ public class CascadingPersonAttributeDao extends AbstractAggregatingDefaultQuery
      *
      * @since 1.6.0
      */
-    @Getter
-    @Setter
     private boolean stopIfFirstDaoReturnsNull;
 
-    @Getter
-    @Setter
     private boolean addOriginalAttributesToQuery;
     
     public CascadingPersonAttributeDao() {

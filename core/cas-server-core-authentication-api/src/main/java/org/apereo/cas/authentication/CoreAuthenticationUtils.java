@@ -70,7 +70,7 @@ public class CoreAuthenticationUtils {
      * @param attributes the attributes
      * @return the map
      */
-    public static Map<String, Object> convertAttributeValuesToObjects(final Map<String, ? extends Object> attributes) {
+    public static Map<String, Object> convertAttributeValuesToObjects(final Map<String, ?> attributes) {
         val entries = attributes.entrySet();
         return entries
             .stream()

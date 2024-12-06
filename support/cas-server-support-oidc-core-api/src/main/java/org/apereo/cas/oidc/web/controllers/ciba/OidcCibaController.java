@@ -77,7 +77,6 @@ public class OidcCibaController extends BaseOidcController {
      * @param clientId  the client id
      * @param requestId the request id
      * @return the model and view
-     * @throws Throwable the throwable
      */
     @GetMapping({
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.CIBA_URL + "/{clientId}/{requestId}",
@@ -85,7 +84,7 @@ public class OidcCibaController extends BaseOidcController {
     })
     public Object initializeBackchannelVerificationRequest(
         @PathVariable("clientId") final String clientId,
-        @PathVariable("requestId") final String requestId) throws Throwable {
+        @PathVariable("requestId") final String requestId) {
         try {
             val registeredService = findRegisteredService(clientId);
             val cibaRequest = fetchOidcCibaRequest(requestId);

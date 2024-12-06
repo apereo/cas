@@ -86,7 +86,7 @@ class SurrogateAuthenticationConfiguration {
             final AuditableExecution registeredServiceAccessStrategyEnforcer,
             @Qualifier("surrogateEligibilityAuditableExecution")
             final AuditableExecution surrogateEligibilityAuditableExecution,
-            final ConfigurableApplicationContext applicationContext) throws Exception {
+            final ConfigurableApplicationContext applicationContext) {
             return new SurrogateAuthenticationPostProcessor(surrogateAuthenticationService,
                 servicesManager, applicationContext, registeredServiceAccessStrategyEnforcer,
                 surrogateEligibilityAuditableExecution);
@@ -252,7 +252,7 @@ class SurrogateAuthenticationConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public AuthenticationEventExecutionPlanConfigurer surrogateAuthenticationEventExecutionPlanConfigurer(
             @Qualifier("surrogateAuthenticationPostProcessor")
-            final AuthenticationPostProcessor surrogateAuthenticationPostProcessor) throws Exception {
+            final AuthenticationPostProcessor surrogateAuthenticationPostProcessor) {
             return plan -> plan.registerAuthenticationPostProcessor(surrogateAuthenticationPostProcessor);
         }
 
@@ -273,7 +273,7 @@ class SurrogateAuthenticationConfiguration {
             @Qualifier("surrogatePrincipalFactory")
             final PrincipalFactory surrogatePrincipalFactory,
             @Qualifier(PrincipalResolver.BEAN_NAME_ATTRIBUTE_REPOSITORY)
-            final PersonAttributeDao attributeRepository) throws Exception {
+            final PersonAttributeDao attributeRepository) {
             return new DefaultSurrogateAuthenticationPrincipalBuilder(surrogatePrincipalFactory,
                 attributeRepository, surrogateAuthenticationService, attributeRepositoryResolver, casProperties);
         }

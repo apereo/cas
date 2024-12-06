@@ -156,12 +156,4 @@ public interface AttributeDefinitionStore {
      * @return the attribute definition store
      */
     AttributeDefinitionStore store(Resource resource);
-
-    /**
-     * Import store.
-     *
-     * @param definitionStore the saml store
-     * @return the attribute definition store
-     */
-    AttributeDefinitionStore importStore(AttributeDefinitionStore definitionStore);
 }

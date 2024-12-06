@@ -56,7 +56,7 @@ class RadiusMultifactorConfiguration {
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
             final FlowBuilderServices flowBuilderServices,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER)
-            final FlowBuilder flowBuilder) throws Exception {
+            final FlowBuilder flowBuilder) {
             return BeanSupplier.of(FlowDefinitionRegistry.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
@@ -79,7 +79,7 @@ class RadiusMultifactorConfiguration {
         public Action radiusAuthenticationWebflowAction(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("radiusAuthenticationWebflowEventResolver")
-            final CasWebflowEventResolver radiusAuthenticationWebflowEventResolver) throws Exception {
+            final CasWebflowEventResolver radiusAuthenticationWebflowEventResolver) {
             return BeanSupplier.of(Action.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new RadiusAuthenticationWebflowAction(radiusAuthenticationWebflowEventResolver))
@@ -99,7 +99,7 @@ class RadiusMultifactorConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("casWebflowConfigurationContext")
-            final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) throws Exception {
+            final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext) {
             return BeanSupplier.of(CasWebflowEventResolver.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> new RadiusAuthenticationWebflowEventResolver(casWebflowConfigurationContext,
@@ -123,7 +123,7 @@ class RadiusMultifactorConfiguration {
             @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
             final FlowDefinitionRegistry loginFlowDefinitionRegistry,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES)
-            final FlowBuilderServices flowBuilderServices) throws Exception {
+            final FlowBuilderServices flowBuilderServices) {
             return BeanSupplier.of(CasWebflowConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
@@ -148,7 +148,7 @@ class RadiusMultifactorConfiguration {
         public CasWebflowExecutionPlanConfigurer radiusMultifactorCasWebflowExecutionPlanConfigurer(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("radiusMultifactorWebflowConfigurer")
-            final CasWebflowConfigurer radiusMultifactorWebflowConfigurer) throws Exception {
+            final CasWebflowConfigurer radiusMultifactorWebflowConfigurer) {
             return BeanSupplier.of(CasWebflowExecutionPlanConfigurer.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> plan -> plan.registerWebflowConfigurer(radiusMultifactorWebflowConfigurer))

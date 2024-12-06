@@ -65,7 +65,7 @@ public class OidcJwtAuthenticator implements Authenticator {
     protected final OidcServerDiscoverySettings oidcServerDiscoverySettings;
 
     protected JWT verifyCredentials(final UsernamePasswordCredentials credentials,
-                                    final WebContext webContext) throws Throwable {
+                                    final WebContext webContext) {
         if (!StringUtils.equalsIgnoreCase(OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER, credentials.getUsername())) {
             LOGGER.debug("client assertion type is not set to [{}]", OAuth20Constants.CLIENT_ASSERTION_TYPE_JWT_BEARER);
             return null;
@@ -155,7 +155,7 @@ public class OidcJwtAuthenticator implements Authenticator {
     }
 
     protected void determineUserProfile(final UsernamePasswordCredentials credentials,
-                                        final JwtConsumer consumer) throws Exception {
+                                        final JwtConsumer consumer) {
         FunctionUtils.doAndHandle(__ -> {
             val jwt = consumer.processToClaims(credentials.getPassword());
             val userProfile = new CommonProfile(true);

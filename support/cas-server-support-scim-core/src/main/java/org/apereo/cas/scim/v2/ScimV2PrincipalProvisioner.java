@@ -74,7 +74,7 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
 
     protected boolean updateUserResource(final User user, final Principal principal,
                                          final Credential credential,
-                                         final Optional<RegisteredService> registeredService) throws Exception {
+                                         final Optional<RegisteredService> registeredService) {
         this.mapper.map(user, principal, credential);
         LOGGER.trace("Updating user resource [{}]", user);
         val response = getScimService(registeredService)
@@ -85,7 +85,7 @@ public class ScimV2PrincipalProvisioner implements PrincipalProvisioner {
     }
 
     protected boolean createUserResource(final Principal principal, final Credential credential,
-                                         final Optional<RegisteredService> registeredService) throws Exception {
+                                         final Optional<RegisteredService> registeredService) {
         val user = new User();
         mapper.map(user, principal, credential);
         LOGGER.trace("Creating user resource [{}]", user);

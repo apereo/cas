@@ -1,12 +1,9 @@
 package org.apereo.cas.adaptors.x509.authentication;
 
 import org.springframework.core.io.Resource;
-
 import jakarta.validation.constraints.Size;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.security.cert.CRLException;
 import java.security.cert.X509CRL;
 import java.util.Collection;
 
@@ -23,10 +20,8 @@ public interface CRLFetcher {
      *
      * @param crls resources to retrieve
      * @return map of crl entries and their urls
-     * @throws IOException  the exception thrown if resources cant be fetched
-     * @throws CRLException the exception thrown if resources cant be fetched
      */
-    Collection<X509CRL> fetch(@Size(min = 1) Collection<Resource> crls) throws IOException, CRLException;
+    Collection<X509CRL> fetch(@Size(min = 1) Collection<Resource> crls);
 
     /**
      * Fetches a single of crl from the specified resource
