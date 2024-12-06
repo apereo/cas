@@ -60,7 +60,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         "cas.authn.oidc.jwks.file-system.jwks-file=file:${#systemProperties['java.io.tmpdir']}/heimdalloidc.jwks",
         "cas.authn.oidc.core.authentication-context-reference-mappings=something->mfa-something",
         "cas.heimdall.json.location=classpath:/policies",
-        "server.port=8585"
+        "server.port=8589"
     }, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class HeimdallAuthorizationControllerTests {
