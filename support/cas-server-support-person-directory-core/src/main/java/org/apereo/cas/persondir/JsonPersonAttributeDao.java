@@ -1,5 +1,6 @@
 package org.apereo.cas.persondir;
 
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -28,9 +29,8 @@ public class JsonPersonAttributeDao extends MappablePersonAttributeDao implement
     @Setter
     private Closeable resourceWatcherService;
 
-    private final ObjectMapper jacksonObjectMapper = new ObjectMapper().findAndRegisterModules();
-
-    private final Object synchronizationMonitor = new Object();
+    private final ObjectMapper jacksonObjectMapper = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     /**
      * Init method un-marshals JSON representation of the person attributes.
@@ -38,22 +38,16 @@ public class JsonPersonAttributeDao extends MappablePersonAttributeDao implement
      * @throws IOException invalid config file URI
      */
     public void init() throws IOException {
-        unmarshalAndSetBackingMap();
+        LOGGER.info("Un-marshaling person attributes from the config file [{}]", this.personAttributesConfigFile);
+        val backingMap = jacksonObjectMapper.readValue(personAttributesConfigFile.getInputStream(), Map.class);
+        LOGGER.debug("Person attributes have been successfully read into the map ");
+        setBackingMap(backingMap);
     }
 
     @Override
     public void close() throws IOException {
         if (this.resourceWatcherService != null) {
             resourceWatcherService.close();
-        }
-    }
-
-    private void unmarshalAndSetBackingMap() throws IOException {
-        LOGGER.info("Un-marshaling person attributes from the config file [{}]", this.personAttributesConfigFile);
-        val backingMap = jacksonObjectMapper.readValue(personAttributesConfigFile.getInputStream(), Map.class);
-        LOGGER.debug("Person attributes have been successfully read into the map ");
-        synchronized (this.synchronizationMonitor) {
-            setBackingMap(backingMap);
         }
     }
 
