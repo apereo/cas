@@ -49,7 +49,7 @@ public class RestfulSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
     }
 
     @Override
-    public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) throws Exception {
+    public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
         val url = StringUtils.appendIfMissing(properties.getUrl(), "/").concat("idp");
         HttpResponse response = null;
         try {

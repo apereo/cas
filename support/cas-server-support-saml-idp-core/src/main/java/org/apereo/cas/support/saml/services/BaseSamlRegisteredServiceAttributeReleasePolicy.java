@@ -154,5 +154,5 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
         SamlRegisteredServiceCachingMetadataResolver resolver,
         SamlRegisteredServiceMetadataAdaptor facade,
         EntityDescriptor entityDescriptor,
-        RegisteredServiceAttributeReleasePolicyContext context) throws Throwable;
+        RegisteredServiceAttributeReleasePolicyContext context);
 }

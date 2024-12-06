@@ -37,7 +37,7 @@ public class DelegatedSaml2ClientTerminateSessionAction extends BaseCasWebflowAc
     private final SessionStore sessionStore;
     
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val context = new JEEContext(request, response);

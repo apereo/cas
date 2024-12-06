@@ -102,7 +102,7 @@ class SamlIdPJpaRegisteredServiceMetadataConfiguration {
             @Qualifier("jpaSamlMetadataPackagesToScan")
             final BeanContainer<String> jpaSamlMetadataPackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) throws Exception {
+            final JpaBeanFactory jpaBeanFactory) {
             val idp = casProperties.getAuthn().getSamlIdp().getMetadata();
             val ctx = JpaConfigurationContext.builder().jpaVendorAdapter(jpaSamlMetadataVendorAdapter)
                 .persistenceUnitName("jpaSamlMetadataContext").dataSource(dataSourceSamlMetadata)

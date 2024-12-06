@@ -58,7 +58,7 @@ class FileAuthenticationEventExecutionPlanConfiguration {
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
         final CasConfigurationProperties casProperties,
-        final ConfigurableApplicationContext applicationContext) throws Exception {
+        final ConfigurableApplicationContext applicationContext) {
         return BeanSupplier.of(AuthenticationHandler.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {
@@ -83,7 +83,7 @@ class FileAuthenticationEventExecutionPlanConfiguration {
         final AuthenticationHandler fileAuthenticationHandler,
         final CasConfigurationProperties casProperties,
         @Qualifier(PrincipalResolver.BEAN_NAME_PRINCIPAL_RESOLVER)
-        final PrincipalResolver defaultPrincipalResolver) throws Exception {
+        final PrincipalResolver defaultPrincipalResolver) {
         return BeanSupplier.of(AuthenticationEventExecutionPlanConfigurer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> plan -> {

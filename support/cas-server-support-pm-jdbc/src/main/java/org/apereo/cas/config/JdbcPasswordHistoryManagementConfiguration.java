@@ -80,7 +80,7 @@ class JdbcPasswordHistoryManagementConfiguration {
             @Qualifier("jdbcPasswordManagementDataSource")
             final DataSource jdbcPasswordManagementDataSource,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) throws Exception {
+            final JpaBeanFactory jpaBeanFactory) {
             return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {
@@ -105,7 +105,7 @@ class JdbcPasswordHistoryManagementConfiguration {
         public PlatformTransactionManager transactionManagerPasswordHistory(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("passwordHistoryEntityManagerFactory")
-            final FactoryBean<EntityManagerFactory> emf) throws Exception {
+            final FactoryBean<EntityManagerFactory> emf) {
             return BeanSupplier.of(PlatformTransactionManager.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {

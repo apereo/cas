@@ -135,7 +135,7 @@ public class CasJpaServiceRegistryAutoConfiguration {
             @Qualifier("jpaServiceVendorAdapter") final JpaVendorAdapter jpaServiceVendorAdapter,
             @Qualifier("jpaServicePersistenceProvider") final PersistenceProvider jpaServicePersistenceProvider,
             @Qualifier("jpaServicePackagesToScan") final BeanContainer<String> jpaServicePackagesToScan,
-            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME) final JpaBeanFactory jpaBeanFactory) throws Exception {
+            @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME) final JpaBeanFactory jpaBeanFactory) {
             return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(Unchecked.supplier(() -> {

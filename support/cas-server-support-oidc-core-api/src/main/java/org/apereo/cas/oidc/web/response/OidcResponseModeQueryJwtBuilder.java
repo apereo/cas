@@ -27,7 +27,7 @@ public class OidcResponseModeQueryJwtBuilder extends BaseOAuth20JwtResponseModeB
 
     @Override
     public ModelAndView build(final RegisteredService registeredService,
-                              final String redirectUrl, final Map<String, String> parameters) throws Exception {
+                              final String redirectUrl, final Map<String, String> parameters) {
 
         return configurationContext
             .stream()

@@ -69,7 +69,7 @@ public class CasCoreSamlAutoConfiguration {
         @Qualifier("shibboleth.VelocityEngine")
         final VelocityEngine velocityEngine,
         @Qualifier("shibboleth.ParserPool")
-        final ParserPool parserPool) throws Exception {
+        final ParserPool parserPool) {
         return new DefaultOpenSamlConfigBean(parserPool, velocityEngine, applicationContext);
     }
 

@@ -15,8 +15,6 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Optional;
@@ -184,7 +182,7 @@ public class ResponseHeadersEnforcementFilter extends AbstractSecurityFilter imp
 
     @Override
     public void doFilter(final ServletRequest servletRequest, final ServletResponse servletResponse,
-                         final FilterChain filterChain) throws IOException, ServletException {
+                         final FilterChain filterChain) {
         if (servletResponse instanceof final HttpServletResponse response
             && servletRequest instanceof final HttpServletRequest request) {
             try {

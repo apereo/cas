@@ -43,7 +43,7 @@ public class PatternMatchingEntityIdAttributeReleasePolicy extends BaseSamlRegis
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
-        final RegisteredServiceAttributeReleasePolicyContext context) throws Throwable {
+        final RegisteredServiceAttributeReleasePolicyContext context) {
         val pattern = RegexUtils.createPattern(this.entityIds);
         val entityID = entityDescriptor.getEntityID();
         val matcher = pattern.matcher(entityID);

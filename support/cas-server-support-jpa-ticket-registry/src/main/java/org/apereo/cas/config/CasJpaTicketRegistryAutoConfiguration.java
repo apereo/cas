@@ -106,7 +106,7 @@ public class CasJpaTicketRegistryAutoConfiguration {
             @Qualifier("ticketPackagesToScan")
             final BeanContainer<String> ticketPackagesToScan,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) throws Exception {
+            final JpaBeanFactory jpaBeanFactory) {
             ApplicationContextProvider.holdApplicationContext(applicationContext);
             return BeanSupplier.of(FactoryBean.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))

@@ -2,7 +2,6 @@ package org.apereo.cas.oidc.services;
 
 import org.apereo.cas.oidc.AbstractOidcTests;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.RandomUtils;
 import lombok.val;
 import org.junit.jupiter.api.Tag;

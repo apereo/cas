@@ -46,7 +46,7 @@ public class SimpleInterruptTrackingEngine implements InterruptTrackingEngine {
     }
 
     @Override
-    public void removeInterrupt(final RequestContext requestContext) throws Throwable {
+    public void removeInterrupt(final RequestContext requestContext) {
         val httpResponse = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         casCookieBuilder.removeCookie(httpResponse);
     }

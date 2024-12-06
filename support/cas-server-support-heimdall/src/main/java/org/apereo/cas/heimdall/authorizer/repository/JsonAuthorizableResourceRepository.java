@@ -75,7 +75,7 @@ public class JsonAuthorizableResourceRepository implements AuthorizableResourceR
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         this.watcherService.close();
     }
 

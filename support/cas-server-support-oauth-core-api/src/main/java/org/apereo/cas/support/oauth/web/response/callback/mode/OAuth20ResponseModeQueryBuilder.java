@@ -22,7 +22,7 @@ public class OAuth20ResponseModeQueryBuilder implements OAuth20ResponseModeBuild
     @Override
     public ModelAndView build(final RegisteredService registeredService,
                               final String redirectUrl,
-                              final Map<String, String> parameters) throws Exception {
+                              final Map<String, String> parameters) {
         val mv = new RedirectView(redirectUrl);
         return new ModelAndView(mv, parameters);
     }

@@ -225,7 +225,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry implements JpaPe
     }
 
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         FunctionUtils.doAndHandle(__ -> entityManager.close());
     }
 }

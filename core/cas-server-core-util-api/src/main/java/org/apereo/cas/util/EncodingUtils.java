@@ -85,21 +85,6 @@ public class EncodingUtils {
     }
 
     /**
-     * Hex decode to byte array.
-     *
-     * @param data the data
-     * @return the byte [ ]
-     */
-    public static byte[] hexDecodeToByteArray(final String data) {
-        try {
-            return Hex.decodeHex(data.toCharArray());
-        } catch (final Exception e) {
-            LOGGER.trace(e.getMessage(), e);
-            return null;
-        }
-    }
-
-    /**
      * Hex encode string.
      *
      * @param data the data
@@ -420,23 +405,6 @@ public class EncodingUtils {
             .key(key)
             .headers(headers)
             .algorithm(AlgorithmIdentifiers.HMAC_SHA512)
-            .build()
-            .sign(value);
-    }
-
-    /**
-     * Sign jws hmac sha 256.
-     *
-     * @param key     the key
-     * @param value   the value
-     * @param headers the headers
-     * @return the byte [ ]
-     */
-    public static byte[] signJwsHMACSha256(final Key key, final byte[] value, final Map<String, Object> headers) {
-        return JsonWebTokenSigner.builder()
-            .key(key)
-            .headers(headers)
-            .algorithm(AlgorithmIdentifiers.HMAC_SHA256)
             .build()
             .sign(value);
     }

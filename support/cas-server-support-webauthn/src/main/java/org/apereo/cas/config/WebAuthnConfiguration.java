@@ -201,7 +201,7 @@ class WebAuthnConfiguration {
         @Lazy(false)
         public Cleanable webAuthnDeviceRepositoryCleanerScheduler(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(WebAuthnCredentialRepository.BEAN_NAME) final WebAuthnCredentialRepository webAuthnCredentialRepository) throws Exception {
+            @Qualifier(WebAuthnCredentialRepository.BEAN_NAME) final WebAuthnCredentialRepository webAuthnCredentialRepository) {
             return BeanSupplier.of(Cleanable.class)
                 .when(BeanCondition.on("cas.authn.mfa.web-authn.cleaner.schedule.enabled").isTrue().evenIfMissing().given(applicationContext.getEnvironment()))
                 .supply(() -> new WebAuthnDeviceRepositoryCleanerScheduler(webAuthnCredentialRepository))
@@ -374,7 +374,7 @@ class WebAuthnConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties,
             @Qualifier("webAuthnCredentialRegistrationCipherExecutor")
-            final CipherExecutor webAuthnCredentialRegistrationCipherExecutor) throws Exception {
+            final CipherExecutor webAuthnCredentialRegistrationCipherExecutor) {
             return BeanSupplier.of(WebAuthnCredentialRepository.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> {
@@ -413,7 +413,7 @@ class WebAuthnConfiguration {
                 @Qualifier("failureModeEvaluator")
                 final MultifactorAuthenticationFailureModeEvaluator failureModeEvaluator,
                 @Qualifier("webAuthnBypassEvaluator")
-                final MultifactorAuthenticationProviderBypassEvaluator webAuthnBypassEvaluator) throws Exception {
+                final MultifactorAuthenticationProviderBypassEvaluator webAuthnBypassEvaluator) {
                 return BeanSupplier.of(MultifactorAuthenticationProvider.class)
                     .when(CONDITION.given(applicationContext.getEnvironment()))
                     .supply(() -> {
@@ -464,7 +464,7 @@ class WebAuthnConfiguration {
             @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
             public CipherExecutor webAuthnCredentialRegistrationCipherExecutor(
                 final ConfigurableApplicationContext applicationContext,
-                final CasConfigurationProperties casProperties) throws Exception {
+                final CasConfigurationProperties casProperties) {
                 return BeanSupplier.of(CipherExecutor.class)
                     .when(CONDITION.given(applicationContext.getEnvironment()))
                     .supply(() -> {

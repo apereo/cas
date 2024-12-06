@@ -135,7 +135,7 @@ public class CosmosDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    protected Ticket addSingleTicket(final Ticket ticket) throws Exception {
+    protected Ticket addSingleTicket(final Ticket ticket) {
         val metadata = ticketCatalog.find(ticket);
         val container = getTicketContainer(metadata);
         val document = getCosmosDbTicketDocument(ticket, metadata);

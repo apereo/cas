@@ -36,9 +36,8 @@ public interface ExecutableCompiledScript extends AutoCloseable {
      * @param clazz       the clazz
      * @param failOnError the fail on error
      * @return the t
-     * @throws Throwable the throwable
      */
-    <T> T execute(Object[] args, Class<T> clazz, boolean failOnError) throws Throwable;
+    <T> T execute(Object[] args, Class<T> clazz, boolean failOnError);
 
     /**
      * Execute t.

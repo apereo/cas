@@ -27,6 +27,8 @@ import static org.apache.commons.codec.digest.MessageDigestAlgorithms.*;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
+@Getter
+@Setter
 @Slf4j
 public class AttributeBasedCacheKeyGenerator implements CacheKeyGenerator {
 
@@ -68,7 +70,7 @@ public class AttributeBasedCacheKeyGenerator implements CacheKeyGenerator {
         AVAILABLE_QUERY_ATTRIBUTES("getAvailableQueryAttributes", new Class[]{PersonAttributeDaoFilter.class});
 
         private final String name;
-        
+
         @SuppressWarnings("ImmutableEnumChecker")
         private final Class<?>[] args;
     }
@@ -76,20 +78,9 @@ public class AttributeBasedCacheKeyGenerator implements CacheKeyGenerator {
     /*
      * The set of attributes to use to generate the cache key.
      */
-    @Getter
-    @Setter
     private Set<String> cacheKeyAttributes;
-
-    @Getter
-    @Setter
     private String defaultAttributeName = "username";
-
-
-    @Getter
-    @Setter
     private boolean useAllAttributes;
-    @Getter
-    @Setter
     private boolean ignoreEmptyAttributes;
 
     @Override

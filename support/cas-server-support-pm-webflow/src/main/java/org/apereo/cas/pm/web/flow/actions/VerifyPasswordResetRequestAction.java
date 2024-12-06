@@ -39,7 +39,7 @@ public class VerifyPasswordResetRequestAction extends BasePasswordManagementActi
     private final TicketRegistrySupport ticketRegistrySupport;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         var transientTicket = request.getParameter(PasswordManagementService.PARAMETER_PASSWORD_RESET_TOKEN);
         var resetRequest = PasswordManagementWebflowUtils.getPasswordResetRequest(requestContext);

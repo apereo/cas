@@ -41,7 +41,7 @@ public class MetadataRegistrationAuthorityAttributeReleasePolicy extends BaseSam
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
-        final RegisteredServiceAttributeReleasePolicyContext context) throws Throwable {
+        final RegisteredServiceAttributeReleasePolicyContext context) {
         val extensions = Optional.ofNullable(facade.getExtensions())
             .map(ElementExtensibleXMLObject::getUnknownXMLObjects).orElseGet(List::of);
 

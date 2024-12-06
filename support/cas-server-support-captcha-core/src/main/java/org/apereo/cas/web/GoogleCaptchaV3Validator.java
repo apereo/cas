@@ -10,6 +10,7 @@ import lombok.Getter;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
+@Getter
 public class GoogleCaptchaV3Validator extends BaseCaptchaValidator {
 
     /**
@@ -17,7 +18,6 @@ public class GoogleCaptchaV3Validator extends BaseCaptchaValidator {
      */
     public static final String REQUEST_PARAM_RECAPTCHA_TOKEN = "g-recaptcha-token";
 
-    @Getter
     private final String recaptchaResponseParameterName = REQUEST_PARAM_RECAPTCHA_TOKEN;
     
     public GoogleCaptchaV3Validator(final GoogleRecaptchaProperties recaptchaProperties) {

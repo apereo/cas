@@ -45,7 +45,7 @@ public class RequiredGrouperGroupsAuthorizationPolicy implements ResourceAuthori
     private Set<String> groups;
 
     @Override
-    public AuthorizationResult evaluate(final AuthorizableResource resource, final AuthorizationRequest request) throws Throwable {
+    public AuthorizationResult evaluate(final AuthorizableResource resource, final AuthorizationRequest request) {
         val facade = new DefaultGrouperFacade();
         val subjectGroups = facade.getGroupsForSubjectId(request.getPrincipal().getId());
         val subjectGroupNames = subjectGroups.stream()

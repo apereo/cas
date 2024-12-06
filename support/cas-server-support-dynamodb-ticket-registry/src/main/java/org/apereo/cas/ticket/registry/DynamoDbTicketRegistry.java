@@ -97,7 +97,7 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     @Override
-    public List<? extends Ticket> addTicket(final Stream<? extends Ticket> toSave) throws Exception {
+    public List<? extends Ticket> addTicket(final Stream<? extends Ticket> toSave) {
         val initialList = toSave.toList();
         val toPut = initialList.stream().map(Unchecked.function(this::toTicketPayload));
         dbTableService.put(toPut);

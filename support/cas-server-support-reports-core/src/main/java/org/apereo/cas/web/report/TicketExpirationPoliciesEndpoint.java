@@ -61,12 +61,11 @@ public class TicketExpirationPoliciesEndpoint extends BaseCasActuatorEndpoint {
      *
      * @param serviceId the service
      * @return the map
-     * @throws Exception the exception
      */
     @ReadOperation
     @Operation(summary = "Produce expiration policies given an optional service id",
         parameters = @Parameter(name = "serviceId", required = false, description = "The service id to look up"))
-    public Map<String, ?> handle(@Nullable final String serviceId) throws Exception {
+    public Map<String, ?> handle(@Nullable final String serviceId) {
         val model = new HashMap<String, Object>();
         expirationPolicyBuilders.forEach(Unchecked.consumer(builder -> {
             val policy = builder.buildTicketExpirationPolicy();

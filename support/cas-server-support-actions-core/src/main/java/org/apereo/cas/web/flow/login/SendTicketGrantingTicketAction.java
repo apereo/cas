@@ -83,7 +83,7 @@ public class SendTicketGrantingTicketAction extends BaseCasWebflowAction {
             || singleSignOnParticipationStrategy.isParticipating(ssoRequest);
     }
 
-    protected Event createSingleSignOnCookie(final RequestContext requestContext, final String ticketGrantingTicketId) throws Exception {
+    protected Event createSingleSignOnCookie(final RequestContext requestContext, final String ticketGrantingTicketId) {
         val ticketGrantingTicket = ticketRegistry.getTicket(ticketGrantingTicketId);
         if (ticketGrantingTicket.isStateless()) {
             return result(CasWebflowConstants.TRANSITION_ID_WRITE_BROWSER_STORAGE,

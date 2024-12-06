@@ -24,7 +24,7 @@ public class OidcAccountProfileAccessTokenAction extends BaseCasWebflowAction {
     private final TicketRegistry ticketRegistry;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val tgt = WebUtils.getTicketGrantingTicket(requestContext);
         if (tgt instanceof final AuthenticationAwareTicket aat) {
             val criteria = TicketRegistryQueryCriteria
