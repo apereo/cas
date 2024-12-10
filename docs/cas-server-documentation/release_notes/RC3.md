@@ -90,7 +90,7 @@ This may be a breaking change. Consult the documentation to learn more.
      
 - Performance tests are now available based on the [Artillery](../high_availability/Performance-Testing-Artillery.html) framework.
 - A dedicated metric, `slow.requests.timer`, is now available once system health monitoring is enabled to track slow requests that take longer than 5 seconds.
-- Additional [theme property](../ux/User-Interface-Customization-Themes-Static.html) to determine where CAS version details should be displayed in the page footer.
+- Additional [theme property](../ux/User-Interface-Customization-Themes-Static.html) to determine whether CAS version details should be displayed in the page footer.
 - [Multifactor provider selection](../mfa/Configuring-Multifactor-Authentication-Triggers.html) is set to utilize ranking strategies when multiple competing MFA triggers vote for different MFA providers.
 - A new configuration option to control whether [JWT access tokens](../authentication/OAuth-Authentication.html) should include additional attributes and claims beyond the standard claims.
 - [DynamoDb ticket registry](../ticketing/DynamoDb-Ticket-Registry.html) is adjusted to not track attributes with empty values when storing tickets in string sets.

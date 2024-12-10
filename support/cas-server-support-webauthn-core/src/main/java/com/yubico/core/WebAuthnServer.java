@@ -263,8 +263,8 @@ public class WebAuthnServer {
                     return Either.left(List.of("Assertion failed: Invalid assertion."));
                 }
             } catch (final AssertionFailedException e) {
-                LOGGER.debug("Assertion failed", e);
-                return Either.left(List.of("Assertion failed!", e.getMessage()));
+                LOGGER.warn("Assertion failed", e);
+                return Either.left(List.of("Assertion failed", e.getMessage()));
             } catch (final Exception e) {
                 LOGGER.error("Assertion failed", e);
                 return Either.left(List.of("Assertion failed unexpectedly; this is likely a bug.", e.getMessage()));

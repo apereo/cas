@@ -47,7 +47,7 @@ class WebAuthnAuthenticationWebflowActionTests {
     private WebAuthnCredentialRepository webAuthnCredentialRepository;
 
     @Autowired
-    @Qualifier("webAuthnSessionManager")
+    @Qualifier(SessionManager.BEAN_NAME)
     private SessionManager webAuthnSessionManager;
 
     @Autowired

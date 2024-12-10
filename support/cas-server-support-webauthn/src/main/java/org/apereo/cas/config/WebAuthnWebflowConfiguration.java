@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.device.MultifactorAuthenticationDeviceManag
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.spring.beans.BeanCondition;
 import org.apereo.cas.util.spring.beans.BeanSupplier;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -223,11 +225,16 @@ class WebAuthnWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnStartAuthenticationAction(
+            final CasConfigurationProperties casProperties,
+            @Qualifier(TicketFactory.BEAN_NAME) final TicketFactory ticketFactory,
+            @Qualifier(TicketRegistry.BEAN_NAME) final TicketRegistry ticketRegistry,
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier(WebAuthnCredentialRepository.BEAN_NAME) final RegistrationStorage webAuthnCredentialRepository) {
+            @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
+            final RegistrationStorage webAuthnCredentialRepository) {
             return BeanSupplier.of(Action.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
-                .supply(() -> new WebAuthnStartAuthenticationAction(webAuthnCredentialRepository))
+                .supply(() -> new WebAuthnStartAuthenticationAction(casProperties,
+                    ticketRegistry, ticketFactory, webAuthnCredentialRepository))
                 .otherwise(() -> ConsumerExecutionAction.NONE)
                 .get();
         }
@@ -263,7 +270,7 @@ class WebAuthnWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnSaveAccountRegistrationAction(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("webAuthnSessionManager") final SessionManager webAuthnSessionManager,
+            @Qualifier(SessionManager.BEAN_NAME) final SessionManager webAuthnSessionManager,
             @Qualifier(WebAuthnCredentialRepository.BEAN_NAME) final RegistrationStorage webAuthnCredentialRepository) {
             return BeanSupplier.of(Action.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
@@ -290,7 +297,7 @@ class WebAuthnWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action webAuthnValidateSessionCredentialTokenAction(
             final ConfigurableApplicationContext applicationContext,
-            @Qualifier("webAuthnSessionManager") final SessionManager webAuthnSessionManager,
+            @Qualifier(SessionManager.BEAN_NAME) final SessionManager webAuthnSessionManager,
             @Qualifier("webAuthnPrincipalFactory") final PrincipalFactory webAuthnPrincipalFactory,
             @Qualifier(WebAuthnCredentialRepository.BEAN_NAME) final RegistrationStorage webAuthnCredentialRepository) {
             return BeanSupplier.of(Action.class)
