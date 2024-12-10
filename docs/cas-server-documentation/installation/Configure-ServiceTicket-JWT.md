@@ -27,7 +27,9 @@ exchanged with client applications to unpack the JWT and access claims.
 
 ## Flow Diagram
 
-<a href="../images/cas_flow_jwt_diagram.png" target="_blank"><img src="../images/cas_flow_jwt_diagram.png" alt="CAS Web flow JWT diagram" title="CAS Web flow JWT diagram" /></a>
+<a href="../images/cas_flow_jwt_diagram.png" data-lightbox="image-0">
+    <img src="../images/cas_flow_jwt_diagram.png" alt="CAS Web flow JWT diagram" title="CAS Web flow JWT diagram" />
+</a>
 
 Note that per the above diagram, the JWT request by default internally causes CAS to generate an `ST` for the application and immediately then validate it in
 order to get access to the authenticated principal and attributes per policies associated with the application registration record in the
