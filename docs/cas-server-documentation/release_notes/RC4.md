@@ -75,3 +75,4 @@ using a FIDO2-enabled device by scanning a QR code presented by CAS.
 - Java Melody
 - Apache CXF
 - Zipkin Brave
+- Spring Shell
