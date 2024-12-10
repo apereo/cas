@@ -45,7 +45,8 @@ class DefaultAccountRegistrationServiceTests {
             mock(AccountRegistrationPropertyLoader.class),
             casProperties, CipherExecutor.noOpOfSerializableToString(),
             AccountRegistrationUsernameBuilder.asDefault(),
-            mock(AccountRegistrationProvisioner.class));
+            mock(AccountRegistrationProvisioner.class),
+            AccountRegistrationRequestValidator.noOp());
 
         val request = new MockHttpServletRequest();
         request.setRemoteAddr("1.2.3.4");
