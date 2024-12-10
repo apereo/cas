@@ -29,6 +29,13 @@ public interface AccountRegistrationService {
     AccountRegistrationUsernameBuilder getAccountRegistrationUsernameBuilder();
 
     /**
+     * Gets account registration request validator.
+     *
+     * @return the account registration request validator
+     */
+    AccountRegistrationRequestValidator getAccountRegistrationRequestValidator();
+
+    /**
      * Gets account registration provisioner.
      *
      * @return the account registration provisioner

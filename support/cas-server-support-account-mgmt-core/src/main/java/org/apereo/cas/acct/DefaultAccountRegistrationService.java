@@ -41,6 +41,8 @@ public class DefaultAccountRegistrationService implements AccountRegistrationSer
 
     private final AccountRegistrationProvisioner accountRegistrationProvisioner;
 
+    private final AccountRegistrationRequestValidator accountRegistrationRequestValidator;
+    
     @Audit(action = AuditableActions.ACCOUNT_REGISTRATION,
         actionResolverName = AuditActionResolvers.ACCOUNT_REGISTRATION_TOKEN_VALIDATION_ACTION_RESOLVER,
         resourceResolverName = AuditResourceResolvers.ACCOUNT_REGISTRATION_TOKEN_VALIDATION_RESOURCE_RESOLVER)
@@ -88,6 +90,8 @@ public class DefaultAccountRegistrationService implements AccountRegistrationSer
         resourceResolverName = AuditResourceResolvers.ACCOUNT_REGISTRATION_TOKEN_CREATION_RESOURCE_RESOLVER)
     @Override
     public String createToken(final AccountRegistrationRequest registrationRequest) {
+        accountRegistrationRequestValidator.validate(registrationRequest);
+
         val token = UUID.randomUUID().toString();
         val claims = new JwtClaims();
         claims.setJwtId(token);
