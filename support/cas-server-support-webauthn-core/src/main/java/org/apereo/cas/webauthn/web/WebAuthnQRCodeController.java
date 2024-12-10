@@ -7,6 +7,7 @@ import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.spring.SecurityContextUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.webauthn.WebAuthnCredential;
 import com.yubico.core.RegistrationStorage;
@@ -16,11 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,8 +27,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * This is {@link WebAuthnQRCodeController}.
@@ -54,6 +51,7 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
     protected final TicketFactory ticketFactory;
     protected final RegistrationStorage webAuthnCredentialRepository;
     protected final SessionManager sessionManager;
+    protected final SecurityContextRepository securityContextRepository;
 
     /**
      * Start authentication model and view.
@@ -66,24 +64,16 @@ public class WebAuthnQRCodeController extends BaseWebAuthnController {
     @GetMapping(ENDPOINT_QR_VERIFY + "/{ticketId}")
     public ModelAndView startAuthentication(
         final HttpServletRequest request,
+        final HttpServletResponse response,
         @PathVariable("ticketId") final String ticketId) throws Throwable {
         try {
             verifyQRCodeAuthenticationIsEnabled();
             val transientTicket = ticketRegistry.getTicket(ticketId, TransientSessionTicket.class);
             Assert.isTrue(transientTicket != null && !transientTicket.isExpired(), "Ticket not found or has expired");
+            val context = SecurityContextUtils.createSecurityContext(transientTicket, request);
+            securityContextRepository.saveContext(context, request, response);
 
             val principal = transientTicket.getProperty(Principal.class.getName(), Principal.class);
-            val authorities = principal.getAttributes().keySet().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-            val secAuth = new PreAuthenticatedAuthenticationToken(principal, transientTicket, authorities);
-            secAuth.setAuthenticated(true);
-            secAuth.setDetails(new PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails(request, authorities));
-            val context = SecurityContextHolder.getContext();
-            context.setAuthentication(secAuth);
-            val session = request.getSession(true);
-            LOGGER.trace("Storing security context in session [{}] for [{}]", session.getId(), principal);
-            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
-
             return new ModelAndView(CasWebflowConstants.VIEW_ID_WEBAUTHN_QRCODE_VERIFY,
                 Map.of("QRCodeTicket", transientTicket, "principal", principal, "QRCodeAuthentication", true));
         } catch (final Exception e) {

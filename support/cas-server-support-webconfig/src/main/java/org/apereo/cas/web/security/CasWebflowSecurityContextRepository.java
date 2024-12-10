@@ -1,6 +1,7 @@
 package org.apereo.cas.web.security;
 
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.util.spring.SecurityContextUtils;
 import org.apereo.cas.web.flow.executor.CasFlowExecutor;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.RequiredArgsConstructor;
@@ -8,13 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
-import org.springframework.security.core.context.TransientSecurityContext;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-import org.springframework.security.web.authentication.preauth.PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails;
 import org.springframework.security.web.context.HttpRequestResponseHolder;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.webflow.executor.FlowExecutor;
@@ -42,12 +39,7 @@ public class CasWebflowSecurityContextRepository implements SecurityContextRepos
         if (containsContext(request)) {
             val authentication = Objects.requireNonNull(getInProgressAuthentication(request));
             val principal = authentication.getPrincipal();
-            val authorities = principal.getAttributes().keySet().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-            val springSecurityAuthentication = new PreAuthenticatedAuthenticationToken(principal, authentication.getCredentials(), authorities);
-            springSecurityAuthentication.setAuthenticated(true);
-            springSecurityAuthentication.setDetails(new PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails(request, authorities));
-            return new TransientSecurityContext(springSecurityAuthentication);
+            return SecurityContextUtils.createSecurityContext(principal, request);
         }
         return securityContextHolderStrategy.createEmptyContext();
     }
