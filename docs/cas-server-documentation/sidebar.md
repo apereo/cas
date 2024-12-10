@@ -354,6 +354,7 @@ layout: null
         *   [FIDO2 WebAuthn](#mfafido2)
             *   [Overview](/cas/{{ version }}/mfa/FIDO2-WebAuthn-Authentication.html)
             *   [Attestation Trust](/cas/{{ version }}/mfa/FIDO2-WebAuthn-Authentication-Attestation.html)
+            *   [QR Code](/cas/{{ version }}/mfa/FIDO2-WebAuthn-Authentication-QRCode.html)
             *   [Device Registration](#mfafido2registration)
                 *   [Overview](/cas/{{ version }}/mfa/FIDO2-WebAuthn-Authentication-Registration.html)
                 *   [JSON](/cas/{{ version }}/mfa/FIDO2-WebAuthn-Authentication-Registration-JSON.html)
