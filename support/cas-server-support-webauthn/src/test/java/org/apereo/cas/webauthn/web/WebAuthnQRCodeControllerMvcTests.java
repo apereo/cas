@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -68,10 +67,7 @@ class WebAuthnQRCodeControllerMvcTests {
     @Autowired
     @Qualifier("webAuthnCsrfTokenRepository")
     private CsrfTokenRepository csrfTokenRepository;
-
-    @Autowired
-    private SecurityProperties securityProperties;
-
+    
     private MockMvc mvc;
 
     @Autowired
