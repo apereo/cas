@@ -82,6 +82,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
@@ -404,7 +405,8 @@ class WebAuthnConfiguration {
             final ObjectProvider<MultifactorAuthenticationProvider> webAuthnMultifactorAuthenticationProvider,
             @Qualifier("webAuthnCredentialRepository")
             final WebAuthnCredentialRepository webAuthnCredentialRepository) {
-            return new WebAuthnMultifactorAuthenticationDeviceManager(webAuthnCredentialRepository, webAuthnMultifactorAuthenticationProvider);
+            return new WebAuthnMultifactorAuthenticationDeviceManager(
+                webAuthnCredentialRepository, webAuthnMultifactorAuthenticationProvider);
         }
         
         @Configuration(value = "WebAuthnMultifactorProviderConfiguration", proxyBeanMethods = false)
@@ -475,11 +477,13 @@ class WebAuthnConfiguration {
                 final TicketRegistry ticketRegistry,
                 final ConfigurableApplicationContext applicationContext,
                 @Qualifier(WebAuthnCredentialRepository.BEAN_NAME)
-                final RegistrationStorage webAuthnCredentialRepository) {
+                final RegistrationStorage webAuthnCredentialRepository,
+                @Qualifier("securityContextRepository")
+                final SecurityContextRepository securityContextRepository) {
                 return new WebAuthnQRCodeController(casProperties, ticketRegistry,
-                    ticketFactory, webAuthnCredentialRepository, webAuthnSessionManager);
+                    ticketFactory, webAuthnCredentialRepository,
+                    webAuthnSessionManager, securityContextRepository);
             }
-            
         }
 
         @Configuration(value = "WebAuthnCryptoConfiguration", proxyBeanMethods = false)
