@@ -84,4 +84,15 @@ public interface TransientSessionTicketFactory<T extends TransientSessionTicket>
     default T create(final Service service) throws Throwable {
         return create(service, new LinkedHashMap<>(0));
     }
+
+    /**
+     * Create ticket.
+     *
+     * @param properties the properties
+     * @return the t
+     * @throws Throwable the throwable
+     */
+    default T create(final Map<String, Serializable> properties) throws Throwable {
+        return create((Service) null, properties);
+    }
 }

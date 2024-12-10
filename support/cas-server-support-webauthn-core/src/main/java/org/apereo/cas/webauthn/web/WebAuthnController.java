@@ -1,10 +1,8 @@
 package org.apereo.cas.webauthn.web;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yubico.core.WebAuthnServer;
 import com.yubico.data.AssertionRequestWrapper;
 import com.yubico.data.RegistrationRequest;
-import com.yubico.internal.util.JacksonCodecs;
 import com.yubico.util.Either;
 import com.yubico.webauthn.data.ByteArray;
 import com.yubico.webauthn.data.ResidentKeyRequirement;
@@ -21,11 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,16 +32,11 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@RestController("webAuthnController")
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping(WebAuthnController.BASE_ENDPOINT_WEBAUTHN)
-public class WebAuthnController {
-    /**
-     * Base endpoint for all webauthn web resources.
-     */
-    public static final String BASE_ENDPOINT_WEBAUTHN = "/webauthn";
-
+@RequestMapping(BaseWebAuthnController.BASE_ENDPOINT_WEBAUTHN)
+@ResponseBody
+public class WebAuthnController extends BaseWebAuthnController {
     /**
      * webauthn registration endpoint.
      */
@@ -58,17 +49,12 @@ public class WebAuthnController {
 
     private static final String WEBAUTHN_ENDPOINT_FINISH = "/finish";
 
-    private static final ObjectMapper MAPPER = JacksonCodecs.json().findAndRegisterModules();
 
     private final WebAuthnServer server;
 
     private static ResponseEntity<Object> startResponse(final Object request) throws Exception {
         LOGGER.trace("Response: [{}]", request);
         return ResponseEntity.ok(writeJson(request));
-    }
-
-    private static String writeJson(final Object o) throws Exception {
-        return MAPPER.writeValueAsString(o);
     }
 
     private static ResponseEntity<Object> finishResponse(final Either<List<String>, ?> result,
@@ -207,12 +193,12 @@ public class WebAuthnController {
     @Getter
     @SuppressWarnings("UnusedMethod")
     private static final class StartRegistrationActions {
-        private final String finish = BASE_ENDPOINT_WEBAUTHN.substring(1) + WEBAUTHN_ENDPOINT_REGISTER + WEBAUTHN_ENDPOINT_FINISH;
+        private final String finish = BASE_ENDPOINT_WEBAUTHN + WEBAUTHN_ENDPOINT_REGISTER + WEBAUTHN_ENDPOINT_FINISH;
     }
 
     @Getter
     @SuppressWarnings("UnusedMethod")
     private static final class StartAuthenticationActions {
-        private final String finish = BASE_ENDPOINT_WEBAUTHN.substring(1) + WEBAUTHN_ENDPOINT_AUTHENTICATE + WEBAUTHN_ENDPOINT_FINISH;
+        private final String finish = BASE_ENDPOINT_WEBAUTHN + WEBAUTHN_ENDPOINT_AUTHENTICATE + WEBAUTHN_ENDPOINT_FINISH;
     }
 }

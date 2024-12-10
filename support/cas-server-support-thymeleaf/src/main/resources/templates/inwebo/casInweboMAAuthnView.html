@@ -27,9 +27,9 @@
         </div>
         <script th:inline="javascript">
             /*<![CDATA[*/
-            let casLogin = /*[[${login}]]*/ '';
-            let siteAlias = /*[[${siteAlias}]]*/ '';
-            let siteDescription = /*[[${siteDescription}]]*/ '';
+            const casLogin = /*[[${login}]]*/ '';
+            const siteAlias = /*[[${siteAlias}]]*/ '';
+            const siteDescription = /*[[${siteDescription}]]*/ '';
 
             window.onload = () => {
                 neon = new Neon.Neon(siteAlias, siteDescription);
@@ -40,13 +40,11 @@
                         }
                         $('#otpForm').css('display', 'block');
                     })
-                    .catch(e => {
-                        $('#inweboErrorForm').submit();
-                    });
+                    .catch(e => $("#inweboErrorForm").submit());
             };
 
             function getOtp() {
-                let pin = document.getElementById('pin').value;
+                const pin = document.getElementById('pin').value;
                 if (pin !== '') {
                     neon.getOnlineOtpWithPin(casLogin, pin)
                         .then(otp => {

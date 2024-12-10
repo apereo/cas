@@ -155,6 +155,15 @@ function showGeoPosition(position) {
     $("[name=\"geolocation\"]").val(loc);
 }
 
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+        return parts.pop().split(';').shift();
+    }
+    return null;
+}
+
 function preserveAnchorTagOnForm() {
     $("#fm1").submit(() => {
         let location = self.document.location;
@@ -173,7 +182,10 @@ function preserveAnchorTagOnForm() {
 
 function preventFormResubmission() {
     $("form").submit(() => {
-        $(":submit").attr("disabled", true);
+        const dataDisableSubmitValue = $(this).attr('data-disable-submit');
+        if (dataDisableSubmitValue) {
+            $(":submit").attr("disabled", true);
+        }
         let altText = $(":submit").attr("data-processing-text");
         if (altText) {
             $(":submit").attr("value", altText);
@@ -287,6 +299,9 @@ function resourceLoadedSuccessfully() {
         // console.log(`JQuery Ready: ${typeof (jqueryReady)}`);
         if (typeof (jqueryReady) == "function") {
             jqueryReady();
+        }
+        if (typeof hljs !== 'undefined') {
+            hljs.highlightAll();
         }
     });
 }

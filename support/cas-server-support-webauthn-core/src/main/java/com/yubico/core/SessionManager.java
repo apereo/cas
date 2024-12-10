@@ -8,6 +8,11 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public interface SessionManager {
+    /**
+     * The bean name.
+     */
+    String BEAN_NAME = "webAuthnSessionManager";
+
     static ByteArray generateRandom(final int length) {
         var random = RandomUtils.getNativeInstance();
         var bytes = new byte[length];
@@ -15,9 +20,10 @@ public interface SessionManager {
         return new ByteArray(bytes);
     }
 
-    ByteArray createSession(@NonNull final ByteArray paramByteArray);
+    ByteArray createSession(@NonNull final ByteArray userHandle);
 
-    Optional<ByteArray> getSession(@NonNull final ByteArray paramByteArray);
+    Optional<ByteArray> getSession(@NonNull final ByteArray sessionId);
+    
     default boolean isSessionForUser(
         @NonNull final ByteArray claimedUserHandle,
         @NonNull final ByteArray token) {

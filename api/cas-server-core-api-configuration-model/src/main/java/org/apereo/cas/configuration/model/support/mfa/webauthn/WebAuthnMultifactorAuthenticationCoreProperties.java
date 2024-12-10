@@ -137,6 +137,15 @@ public class WebAuthnMultifactorAuthenticationCoreProperties implements Serializ
      */
     private boolean multipleDeviceRegistrationEnabled;
 
+    /**
+     * When enabled, allows the user to a scan a QR code on an external device
+     * and authenticate later on the primary device. This is useful in scenarios
+     * where the primary authentication device is not registered with CAS
+     * and the user has a secondary device that is registered and does not wish
+     * to use the primary device to authenticate for security or other practical reasons.
+     */
+    private boolean qrCodeAuthenticationEnabled;
+    
     public WebAuthnMultifactorAuthenticationCoreProperties() {
         trustSource.getTrustedDeviceMetadata().setLocation(new ClassPathResource("webauthn-metadata.json"));
     }

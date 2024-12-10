@@ -31,6 +31,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 class MongoSessionConfigurationTests {
     @Test
-    void verifyOperation() throws Exception {
+    void verifyOperation() {
     }
 }

@@ -1290,6 +1290,15 @@ public interface CasWebflowConstants {
      */
     String VIEW_ID_DYNAMIC_HTML = "dynamicHtmlView";
 
+    /**
+     * The view id 'casWebAuthnQRCodeVerifyView'.
+     */
+    String VIEW_ID_WEBAUTHN_QRCODE_VERIFY = "webauthn/casWebAuthnQRCodeVerifyView";
+    /**
+     * The view id 'casWebAuthnQRCodeVerifyDoneView'.
+     */
+    String VIEW_ID_WEBAUTHN_QRCODE_VERIFY_DONE = "webauthn/casWebAuthnQRCodeVerifyDoneView";
+
     /*
      ****************************************
      * Decisions.

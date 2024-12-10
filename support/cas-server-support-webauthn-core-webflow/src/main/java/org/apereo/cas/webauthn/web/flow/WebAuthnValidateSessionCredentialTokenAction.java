@@ -63,7 +63,7 @@ public class WebAuthnValidateSessionCredentialTokenAction extends AbstractMultif
                 .addCredential(credential)
                 .setPrincipal(principalFactory.createPrincipal(username))
                 .build();
-            LOGGER.warn("Finalized authentication attempt based on [{}]", authentication);
+            LOGGER.debug("Finalized authentication attempt based on [{}]", authentication);
             WebUtils.putAuthentication(authentication, requestContext);
             return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINALIZE);
         });

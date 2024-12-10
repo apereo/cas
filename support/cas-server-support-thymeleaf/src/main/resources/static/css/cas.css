@@ -742,6 +742,14 @@ span button.toolbar {
     margin-top: 0;
 }
 
+.mt-2 {
+    margin-top: 2px;
+}
+
+.mt-4 {
+    margin-top: 4px;
+}
+
 .ml-2 {
     margin-left: 0.5rem;
 }
