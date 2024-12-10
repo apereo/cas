@@ -10,7 +10,6 @@ import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.context.TransientSecurityContext;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails;
@@ -61,7 +60,7 @@ public class SecurityContextUtils {
 
     @Getter
     @RequiredArgsConstructor
-    private static class SecurityContextCredential implements Credential {
+    private static final class SecurityContextCredential implements Credential {
 
         @Serial
         private static final long serialVersionUID = -6075800625583285084L;
