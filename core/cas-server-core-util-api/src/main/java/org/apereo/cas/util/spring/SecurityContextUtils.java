@@ -10,7 +10,7 @@ import lombok.experimental.UtilityClass;
 import lombok.val;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.TransientSecurityContext;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,12 +49,12 @@ public class SecurityContextUtils {
     public static SecurityContext createSecurityContext(final Principal principal, final HttpServletRequest request) {
         val authorities = principal.getAttributes().keySet().stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-        val secAuth = new PreAuthenticatedAuthenticationToken(principal,
+        val authenticationToken = new PreAuthenticatedAuthenticationToken(principal,
             new SecurityContextCredential(principal.getId()), authorities);
-        secAuth.setAuthenticated(true);
-        secAuth.setDetails(new PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails(request, authorities));
-        val context = new TransientSecurityContext(secAuth);
-        context.setAuthentication(secAuth);
+        authenticationToken.setAuthenticated(true);
+        authenticationToken.setDetails(new PreAuthenticatedGrantedAuthoritiesWebAuthenticationDetails(request, authorities));
+        val context = new SecurityContextImpl(authenticationToken);
+        context.setAuthentication(authenticationToken);
         return context;
     }
 
