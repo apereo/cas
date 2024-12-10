@@ -4,7 +4,6 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.MockRequestContext;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -13,13 +12,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.webflow.execution.Action;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -43,14 +40,11 @@ class PopulateSpringSecurityContextActionTests extends AbstractWebflowActionsTes
     @Test
     void verifyOperation() throws Throwable {
         ApplicationContextProvider.holdApplicationContext(applicationContext);
-
         val context = MockRequestContext.create(applicationContext);
-
         WebUtils.putAuthentication(CoreAuthenticationTestUtils.getAuthentication(), context);
         val result = populateSpringSecurityContextAction.execute(context);
         assertNull(result);
-        val sec = (SecurityContext) context.getHttpServletRequest().getSession()
-            .getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+        val sec = securityContextRepository.loadDeferredContext(context.getHttpServletRequest()).get();
         assertNotNull(sec);
         assertNotNull(sec.getAuthentication());
         assertTrue(securityContextRepository.containsContext(context.getHttpServletRequest()));

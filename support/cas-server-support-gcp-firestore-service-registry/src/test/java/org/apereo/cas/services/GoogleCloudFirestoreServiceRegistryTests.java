@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import org.apereo.cas.config.CasGoogleCloudFirestoreServiceRegistryAutoConfiguration;
 import org.apereo.cas.test.CasTestExtension;
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider;
+import com.google.auth.ApiKeyCredentials;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.spring.autoconfigure.core.GcpContextAutoConfiguration;
 import com.google.cloud.spring.autoconfigure.firestore.GcpFirestoreAutoConfiguration;
@@ -67,7 +68,7 @@ class GoogleCloudFirestoreServiceRegistryTests extends AbstractServiceRegistryTe
         @Bean
         public FirestoreOptions firestoreOptions(final GcpFirestoreProperties properties) {
             return FirestoreOptions.getDefaultInstance().toBuilder()
-                .setCredentials(new FirestoreOptions.EmulatorCredentials())
+                .setCredentials(ApiKeyCredentials.create(UUID.randomUUID().toString()))
                 .setProjectId(properties.getProjectId())
                 .setChannelProvider(InstantiatingGrpcChannelProvider.newBuilder()
                     .setEndpoint(properties.getHostPort())
