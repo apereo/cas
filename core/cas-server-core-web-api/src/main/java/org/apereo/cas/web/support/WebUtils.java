@@ -1647,17 +1647,7 @@ public class WebUtils {
     public static void putInterruptAuthenticationFlowFinalized(final RequestContext requestContext) {
         requestContext.getRequestScope().put("authenticationFlowInterruptFinalized", Boolean.TRUE);
     }
-
-    /**
-     * Remove interrupt authentication flow finalized.
-     *
-     * @param requestContext the request context
-     */
-    public static void removeInterruptAuthenticationFlowFinalized(final RequestContext requestContext) {
-        requestContext.getRequestScope().remove("authenticationFlowInterruptFinalized");
-    }
-
-
+    
     /**
      * Put ws federation delegated clients.
      *
@@ -1800,9 +1790,8 @@ public class WebUtils {
      *
      * @param httpServletRequest the http servlet request
      * @return the browser storage
-     * @throws Exception the exception
      */
-    public static Optional<String> getBrowserStoragePayload(final HttpServletRequest httpServletRequest) throws Exception {
+    public static Optional<String> getBrowserStoragePayload(final HttpServletRequest httpServletRequest) {
         val parameters = getHttpRequestParametersFromRequestBody(httpServletRequest);
         FunctionUtils.doIfNotBlank(httpServletRequest.getParameter(BrowserStorage.PARAMETER_BROWSER_STORAGE),
             value -> parameters.put(BrowserStorage.PARAMETER_BROWSER_STORAGE, value));

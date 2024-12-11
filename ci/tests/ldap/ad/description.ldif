@@ -1,0 +1,4 @@
+dn: CN=description,CN=Schema,CN=Configuration,DC=cas,DC=example,DC=org
+changetype: modify
+replace: rangeUpper
+rangeUpper: 32767

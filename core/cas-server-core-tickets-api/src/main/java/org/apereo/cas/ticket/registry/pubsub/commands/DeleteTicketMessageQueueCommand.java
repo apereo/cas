@@ -41,7 +41,7 @@ public class DeleteTicketMessageQueueCommand extends BaseMessageQueueCommand imp
     }
 
     @Override
-    public void execute(final QueueableTicketRegistry registry) throws Exception {
+    public void execute(final QueueableTicketRegistry registry) {
         LOGGER.debug("Executing queue command on ticket registry id [{}] to delete ticket [{}]", getPublisherIdentifier().getId(), ticketId);
         registry.deleteTicketFromQueue(this.ticketId);
     }

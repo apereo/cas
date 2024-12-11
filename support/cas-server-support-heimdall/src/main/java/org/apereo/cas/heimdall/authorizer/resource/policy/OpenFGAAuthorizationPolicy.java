@@ -71,7 +71,7 @@ public class OpenFGAAuthorizationPolicy implements ResourceAuthorizationPolicy {
     private String relation;
     
     @Override
-    public AuthorizationResult evaluate(final AuthorizableResource resource, final AuthorizationRequest request) throws Throwable {
+    public AuthorizationResult evaluate(final AuthorizableResource resource, final AuthorizationRequest request) {
         HttpResponse response = null;
         try {
             val headers = new HashMap<String, String>();

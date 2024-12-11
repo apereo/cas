@@ -32,7 +32,7 @@ class RadiusTokenAuthenticationComponentSerializationConfiguration {
     @ConditionalOnMissingBean(name = "radiusTokenComponentSerializationPlanConfigurer")
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public ComponentSerializationPlanConfigurer radiusTokenComponentSerializationPlanConfigurer(
-        final ConfigurableApplicationContext applicationContext) throws Exception {
+        final ConfigurableApplicationContext applicationContext) {
         return BeanSupplier.of(ComponentSerializationPlanConfigurer.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> plan -> plan.registerSerializableClass(RadiusTokenCredential.class))

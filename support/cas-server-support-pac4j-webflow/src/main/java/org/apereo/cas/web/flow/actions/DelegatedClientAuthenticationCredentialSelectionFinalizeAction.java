@@ -22,7 +22,7 @@ public class DelegatedClientAuthenticationCredentialSelectionFinalizeAction exte
     protected final DelegatedClientAuthenticationConfigurationContext configContext;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         if (!DelegationWebflowUtils.hasDelegatedClientAuthenticationCandidateProfile(requestContext)) {
             val key = WebUtils.getRequestParameterOrAttribute(requestContext, "key").orElseThrow();
             val candidates = DelegationWebflowUtils.getDelegatedClientAuthenticationResolvedCredentials(requestContext, DelegatedAuthenticationCandidateProfile.class);

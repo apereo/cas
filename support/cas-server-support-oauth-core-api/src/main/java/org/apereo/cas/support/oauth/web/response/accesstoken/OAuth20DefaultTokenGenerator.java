@@ -399,9 +399,6 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     }
 
     protected record AccessAndRefreshTokens(Ticket accessToken, Ticket refreshToken) {
-        public static AccessAndRefreshTokens empty() {
-            return new AccessAndRefreshTokens(null, null);
-        }
     }
 
     protected record DeviceTokens(Ticket deviceCode, Ticket userCode) {

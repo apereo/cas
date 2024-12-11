@@ -254,7 +254,7 @@ class CasCoreServicesConfiguration {
             final ConfigurableApplicationContext applicationContext,
             final ObjectProvider<List<ServiceRegistryListener>> serviceRegistryListeners,
             @Qualifier("serviceRegistryExecutionPlan")
-            final ServiceRegistryExecutionPlan serviceRegistryExecutionPlan) throws Exception {
+            final ServiceRegistryExecutionPlan serviceRegistryExecutionPlan) {
             val filter = (Predicate) Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
             val chainingRegistry = new DefaultChainingServiceRegistry(applicationContext);
             if (serviceRegistryExecutionPlan.find(filter).isEmpty()) {

@@ -73,7 +73,7 @@ class OidcJwksConfiguration {
         public Runnable oidcJsonWebKeystoreRotationScheduler(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier("oidcJsonWebKeystoreRotationService")
-            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) throws Exception {
+            final OidcJsonWebKeystoreRotationService oidcJsonWebKeystoreRotationService) {
             return BeanSupplier.of(Runnable.class)
                 .when(BeanCondition.on("cas.authn.oidc.jwks.rotation.schedule").isTrue().given(applicationContext.getEnvironment()))
                 .supply(() -> new OidcJsonWebKeystoreRotationScheduler(oidcJsonWebKeystoreRotationService))

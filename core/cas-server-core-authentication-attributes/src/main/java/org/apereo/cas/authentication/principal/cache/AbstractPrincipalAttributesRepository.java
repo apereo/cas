@@ -45,6 +45,8 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(of = {"mergingStrategy", "attributeRepositoryIds"})
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Accessors(chain = true)
+@Getter
+@Setter
 public abstract class AbstractPrincipalAttributesRepository implements RegisteredServicePrincipalAttributesRepository {
     @Serial
     private static final long serialVersionUID = 6350245643948535906L;
@@ -54,17 +56,11 @@ public abstract class AbstractPrincipalAttributesRepository implements Registere
      * and those that are retrieved from the source. By default, existing attributes
      * are ignored and the source is always consulted.
      */
-    @Getter
-    @Setter
     private PrincipalAttributesCoreProperties.MergingStrategyTypes mergingStrategy =
         PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED;
 
-    @Getter
-    @Setter
     private Set<String> attributeRepositoryIds = new LinkedHashSet<>(0);
 
-    @Getter
-    @Setter
     private boolean ignoreResolvedAttributes;
 
     protected static Map<String, List<Object>> convertPrincipalAttributesToPersonAttributes(final Map<String, ?> attributes) {

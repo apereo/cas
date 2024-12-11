@@ -37,7 +37,7 @@ public class ConsentAccountProfilePrepareAction extends BaseCasWebflowAction {
     private final ConsentEngine consentEngine;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = authentication.getPrincipal();
         val decisions = consentEngine.getConsentRepository().findConsentDecisions(principal.getId());

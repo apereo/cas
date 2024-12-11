@@ -79,14 +79,13 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
      * @param request  the request
      * @param response the response
      * @return the model and view
-     * @throws Exception the exception
      */
     @GetMapping(value = {
         '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_INITIAL_TOKEN_URL,
         "/**/" + OidcConstants.REGISTRATION_INITIAL_TOKEN_URL
     }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ModelAndView handleRequestInternal(
-        final HttpServletRequest request, final HttpServletResponse response) throws Throwable {
+        final HttpServletRequest request, final HttpServletResponse response) {
         val webContext = new JEEContext(request, response);
         if (!getConfigurationContext().getIssuerService().validateIssuer(webContext, OidcConstants.REGISTRATION_INITIAL_TOKEN_URL)) {
             val body = OAuth20Utils.getErrorResponseBody(OAuth20Constants.INVALID_REQUEST, "Invalid issuer");
@@ -160,7 +159,7 @@ public class OidcInitialAccessTokenController extends BaseOidcController {
     protected Optional<Ticket> generateInitialAccessToken(final AccessTokenRequestContext holder) {
         return FunctionUtils.doAndHandle(() -> {
             val accessTokenResult = getConfigurationContext().getAccessTokenGenerator().generate(holder);
-            val accessToken = accessTokenResult.getAccessToken().get();
+            val accessToken = accessTokenResult.getAccessToken().orElseThrow();
             return Optional.of(getConfigurationContext().getTicketRegistry().addTicket(accessToken));
         }, e -> Optional.<Ticket>empty()).get();
     }

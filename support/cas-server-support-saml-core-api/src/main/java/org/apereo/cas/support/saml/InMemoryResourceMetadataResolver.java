@@ -17,7 +17,7 @@ import java.nio.file.Files;
  */
 public class InMemoryResourceMetadataResolver extends DOMMetadataResolver {
 
-    public InMemoryResourceMetadataResolver(final String metadataResource, final OpenSamlConfigBean configBean) throws IOException {
+    public InMemoryResourceMetadataResolver(final String metadataResource, final OpenSamlConfigBean configBean) {
         this(new ByteArrayInputStream(metadataResource.getBytes(StandardCharsets.UTF_8)), configBean);
     }
 

@@ -36,7 +36,7 @@ public class OidcAccessTokenCibaGrantRequestValidator extends BaseOAuth20TokenRe
 
     @Override
     protected boolean validateInternal(final WebContext context, final String grantType,
-                                       final ProfileManager manager, final UserProfile userProfile) throws Throwable {
+                                       final ProfileManager manager, final UserProfile userProfile) {
         val authRequestId = getConfigurationContext().getRequestParameterResolver().resolveRequestParameter(context, OidcConstants.AUTH_REQ_ID).orElseThrow();
         val cibaFactory = (OidcCibaRequestFactory) getConfigurationContext().getTicketFactory().get(OidcCibaRequest.class);
         val decodedId = cibaFactory.decodeId(authRequestId);

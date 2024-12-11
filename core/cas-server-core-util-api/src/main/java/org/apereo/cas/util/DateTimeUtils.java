@@ -3,7 +3,6 @@ package org.apereo.cas.util;
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.experimental.UtilityClass;
 import lombok.val;
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -253,26 +252,6 @@ public class DateTimeUtils {
 
     public static Date dateOf(final Instant time) {
         return Date.from(time);
-    }
-
-    /**
-     * Gets Timestamp for ZonedDateTime.
-     *
-     * @param time Time object to be converted.
-     * @return Timestamp representing time
-     */
-    public static Timestamp timestampOf(final ChronoZonedDateTime time) {
-        return timestampOf(time.toInstant());
-    }
-
-    /**
-     * Gets Timestamp for Instant.
-     *
-     * @param time Time object to be converted.
-     * @return Timestamp representing time
-     */
-    private static Timestamp timestampOf(final Instant time) {
-        return Timestamp.from(time);
     }
 
     /**

@@ -187,7 +187,7 @@ class CasServiceRegistryInitializationConfiguration {
         EmbeddedResourceBasedServiceRegistry(final ConfigurableApplicationContext applicationContext,
                                              final Resource location,
                                              final Collection<ServiceRegistryListener> serviceRegistryListeners,
-                                             final WatcherService watcherService) throws Exception {
+                                             final WatcherService watcherService) {
             super(location, CollectionUtils.wrapList(new RegisteredServiceJsonSerializer(applicationContext)),
                 applicationContext, serviceRegistryListeners, watcherService);
         }

@@ -10,13 +10,13 @@ import lombok.Getter;
  * @author Misagh Moayyed
  * @since 6.4.0
  */
+@Getter
 public class GoogleCaptchaV2Validator extends BaseCaptchaValidator {
     /**
      * Recaptcha response as a request parameter.
      */
     public static final String REQUEST_PARAM_RECAPTCHA_RESPONSE = "g-recaptcha-response";
 
-    @Getter
     private final String recaptchaResponseParameterName = REQUEST_PARAM_RECAPTCHA_RESPONSE;
 
     public GoogleCaptchaV2Validator(final GoogleRecaptchaProperties recaptchaProperties) {

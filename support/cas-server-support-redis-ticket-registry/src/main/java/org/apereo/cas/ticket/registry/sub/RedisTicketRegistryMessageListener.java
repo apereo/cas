@@ -15,7 +15,6 @@ public interface RedisTicketRegistryMessageListener {
      *
      * @param command the command
      * @param topic   the topic
-     * @throws Exception the exception
      */
-    void handleMessage(RedisMessagePayload command, String topic) throws Exception;
+    void handleMessage(RedisMessagePayload command, String topic);
 }

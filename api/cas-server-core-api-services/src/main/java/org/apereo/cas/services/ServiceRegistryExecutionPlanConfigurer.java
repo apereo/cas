@@ -14,8 +14,7 @@ public interface ServiceRegistryExecutionPlanConfigurer extends NamedObject {
      * Configure service registry.
      *
      * @param plan the plan
-     * @throws Exception the exception
      */
-    void configureServiceRegistry(ServiceRegistryExecutionPlan plan) throws Exception;
+    void configureServiceRegistry(ServiceRegistryExecutionPlan plan);
     
 }

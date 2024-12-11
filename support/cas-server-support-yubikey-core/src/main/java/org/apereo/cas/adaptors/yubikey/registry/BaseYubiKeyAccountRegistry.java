@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.time.Clock;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
@@ -141,7 +140,7 @@ public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegist
             .stream()
             .map(device -> decodeYubiKeyRegisteredDevice(account, device))
             .filter(Objects::nonNull)
-            .collect(Collectors.toCollection(ArrayList::new));
+            .collect(Collectors.toList());
         yubiKeyAccount.setDevices(devices);
         return Optional.of(yubiKeyAccount);
     }

@@ -39,7 +39,7 @@ public class OidcPushedAuthorizationRequestValidator extends BaseOAuth20Authoriz
     }
 
     @Override
-    public boolean validate(final WebContext context) throws Exception {
+    public boolean validate(final WebContext context) {
         return FunctionUtils.doAndHandle(() -> {
             val requestUri = context.getRequestParameter(OidcConstants.REQUEST_URI).get();
             val uriToken = ticketRegistry.getTicket(requestUri, OidcPushedAuthorizationRequest.class);

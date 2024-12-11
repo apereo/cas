@@ -38,7 +38,7 @@ public class CasAcceptableUsagePolicyMongoDbAutoConfiguration {
         final ConfigurableApplicationContext applicationContext,
         final CasConfigurationProperties casProperties,
         @Qualifier(CasSSLContext.BEAN_NAME)
-        final CasSSLContext casSslContext) throws Exception {
+        final CasSSLContext casSslContext) {
 
         return BeanSupplier.of(MongoOperations.class)
             .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))
@@ -61,7 +61,7 @@ public class CasAcceptableUsagePolicyMongoDbAutoConfiguration {
         @Qualifier("mongoAcceptableUsagePolicyTemplate")
         final MongoOperations mongoAcceptableUsagePolicyTemplate,
         @Qualifier(TicketRegistrySupport.BEAN_NAME)
-        final TicketRegistrySupport ticketRegistrySupport) throws Exception {
+        final TicketRegistrySupport ticketRegistrySupport) {
 
         return BeanSupplier.of(AcceptableUsagePolicyRepository.class)
             .when(AcceptableUsagePolicyRepository.CONDITION_AUP_ENABLED.given(applicationContext.getEnvironment()))

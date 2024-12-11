@@ -126,7 +126,7 @@ public class CasServicesStreamingKafkaAutoConfiguration {
         @Qualifier("registeredServiceDistributedCacheKafkaTopic")
         final NewTopic registeredServiceDistributedCacheKafkaTopic,
         @Qualifier("registeredServiceDistributedKafkaTemplate")
-        final KafkaOperations<String, DistributedCacheObject<RegisteredService>> registeredServiceDistributedKafkaTemplate) throws Exception {
+        final KafkaOperations<String, DistributedCacheObject<RegisteredService>> registeredServiceDistributedKafkaTemplate) {
         return BeanSupplier.of(DistributedCacheManager.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(Unchecked.supplier(() -> {

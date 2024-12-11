@@ -57,20 +57,19 @@ public class YubicoJsonMetadataService implements AttestationMetadataSource {
         @NonNull
         final Map<String, DeviceMatcher> matchers) {
         this.trustRootCertificates =
-            Collections.unmodifiableSet(
-                metadataObjects.stream()
-                    .flatMap(metadataObject -> metadataObject.getTrustedCertificates().stream())
-                    .map(
-                        pemEncodedCert -> {
-                            try {
-                                return CertificateParser.parsePem(pemEncodedCert);
-                            } catch (final CertificateException e) {
-                                LOGGER.error("Failed to parse trusted certificate", e);
-                                return null;
-                            }
-                        })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toSet()));
+            metadataObjects.stream()
+                .flatMap(metadataObject -> metadataObject.getTrustedCertificates().stream())
+                .map(
+                    pemEncodedCert -> {
+                        try {
+                            return CertificateParser.parsePem(pemEncodedCert);
+                        } catch (final CertificateException e) {
+                            LOGGER.error("Failed to parse trusted certificate", e);
+                            return null;
+                        }
+                    })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toUnmodifiableSet());
         this.metadataObjects = metadataObjects;
         this.matchers = CollectionUtil.immutableMap(matchers);
     }

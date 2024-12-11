@@ -186,7 +186,7 @@ public class SamlProfileAuthnContextClassRefBuilder extends AbstractSaml20Object
                                                        final Pair<AuthnContextClassRef, String> mappedMethod) {
 
         val requestedMappedValues = new ArrayList<>(org.springframework.util.StringUtils.commaDelimitedListToSet(mappedMethod.getValue()));
-        val attributes = context.getAuthenticatedAssertion().get().getAttributes();
+        val attributes = context.getAuthenticatedAssertion().orElseThrow().getAttributes();
         val contextAttributes = org.springframework.util.StringUtils.commaDelimitedListToSet(
             casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute());
         for (val contextAttribute : contextAttributes) {

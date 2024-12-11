@@ -41,7 +41,7 @@ public class DefaultCasThemeSource extends ResourceBundleThemeSource {
             .orElseGet(Unchecked.supplier(() -> createExtendedMessageSource(basename)));
     }
 
-    protected MessageSource createExtendedMessageSource(final String basename) throws Exception {
+    protected MessageSource createExtendedMessageSource(final String basename) {
         val source = (HierarchicalMessageSource) super.createMessageSource(StringUtils.replace(basename, "-default", "-custom"));
         source.setParentMessageSource(super.createMessageSource(basename));
         return source;

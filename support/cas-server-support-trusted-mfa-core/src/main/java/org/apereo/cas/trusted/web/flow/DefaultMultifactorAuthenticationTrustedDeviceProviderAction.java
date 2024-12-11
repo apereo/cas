@@ -28,7 +28,7 @@ public class DefaultMultifactorAuthenticationTrustedDeviceProviderAction extends
     protected final MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val authentication = WebUtils.getAuthentication(requestContext);
         val principal = authentication.getPrincipal();
         val devices = mfaTrustEngine.get(principal.getId())

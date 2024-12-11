@@ -38,7 +38,7 @@ public class ConfirmConsentAction extends AbstractConsentAction {
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         return FunctionUtils.doUnchecked(() -> {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val webService = WebUtils.getService(requestContext);

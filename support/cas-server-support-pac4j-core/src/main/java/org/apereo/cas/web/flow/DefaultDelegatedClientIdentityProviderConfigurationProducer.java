@@ -88,7 +88,7 @@ public class DefaultDelegatedClientIdentityProviderConfigurationProducer impleme
 
     @Override
     public Optional<DelegatedClientIdentityProviderConfiguration> produce(final RequestContext requestContext,
-                                                                          final IndirectClient client) throws Throwable {
+                                                                          final IndirectClient client) {
         return FunctionUtils.doAndHandle(() -> {
             val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);

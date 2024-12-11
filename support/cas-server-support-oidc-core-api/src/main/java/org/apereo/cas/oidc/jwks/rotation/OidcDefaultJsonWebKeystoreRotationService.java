@@ -30,7 +30,7 @@ public class OidcDefaultJsonWebKeystoreRotationService implements OidcJsonWebKey
     private final OidcJsonWebKeystoreGeneratorService generatorService;
 
     @Override
-    public JsonWebKeySet rotate() throws Throwable {
+    public JsonWebKeySet rotate() {
         return whenKeystoreResourceExists()
             .map(Unchecked.function(resource -> {
                 LOGGER.trace("Rotating keys found in [{}]", resource);

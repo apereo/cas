@@ -4,7 +4,6 @@ import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.webflow.execution.RequestContext;
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -27,7 +26,7 @@ public interface DelegatedClientIdentityProviderConfigurationPostProcessor exten
     }
 
     @Override
-    default void close() throws IOException {
+    default void close() {
     }
 
     @Override

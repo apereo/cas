@@ -51,7 +51,7 @@ public class DelegatedClientOidcLogoutAction extends BaseCasWebflowAction {
     }
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Throwable {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val clientCredential = WebUtils.getCredential(requestContext, ClientCredential.class);
         if (clientCredential != null && clientCredential.getCredentials() instanceof final SessionKeyCredentials sessionKeyCredentials) {

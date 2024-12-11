@@ -29,6 +29,7 @@ import java.util.Set;
  * @since 7.1.0
  */
 @Slf4j
+@Getter
 public class MultiRowJdbcPersonAttributeDao extends AbstractJdbcPersonAttributeDao<Map<String, Object>> {
     private static final RowMapper<Map<String, Object>> MAPPER = new ColumnMapParameterizedRowMapper();
 
@@ -36,7 +37,6 @@ public class MultiRowJdbcPersonAttributeDao extends AbstractJdbcPersonAttributeD
      * {@link Map} of columns from a name column to value columns.
      * Keys are Strings, Values are Strings or Set of Strings.
      */
-    @Getter
     private Map<String, Set<String>> nameValueColumnMappings;
 
     public MultiRowJdbcPersonAttributeDao(final DataSource ds, final String sql) {

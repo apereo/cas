@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.apereo.cas.util.LoggingUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -68,16 +69,14 @@ public class AuditTrailManagementAspect {
 
             currentPrincipal = getCurrentPrincipal(joinPoint, audits, retVal);
 
-            if (currentPrincipal != null) {
-                for (var i = 0; i < audits.value().length; i++) {
-                    val auditActionResolver = auditActionResolvers.get(audits.value()[i].actionResolverName());
+            for (var i = 0; i < audits.value().length; i++) {
+                val auditActionResolver = auditActionResolvers.get(audits.value()[i].actionResolverName());
 
-                    val auditResourceResolver = auditResourceResolvers.get(audits.value()[i].resourceResolverName());
-                    auditResourceResolver.setAuditFormat(this.auditFormat);
+                val auditResourceResolver = auditResourceResolvers.get(audits.value()[i].resourceResolverName());
+                auditResourceResolver.setAuditFormat(this.auditFormat);
 
-                    auditableResources[i] = auditResourceResolver.resolveFrom(joinPoint, retVal);
-                    actions[i] = auditActionResolver.resolveFrom(joinPoint, retVal, audits.value()[i]);
-                }
+                auditableResources[i] = auditResourceResolver.resolveFrom(joinPoint, retVal);
+                actions[i] = auditActionResolver.resolveFrom(joinPoint, retVal, audits.value()[i]);
             }
             return retVal;
         } catch (final Throwable t) {
@@ -199,8 +198,9 @@ public class AuditTrailManagementAspect {
                 if (this.failOnAuditFailures) {
                     throw e;
                 }
-                LOGGER.error("Failed to record audit context for %s and principal %s"
-                    .formatted(auditContext.getActionPerformed(), auditContext.getPrincipal()), e);
+                LOGGER.error("Failed to record audit context for [{}] and principal [{}]",
+                    auditContext.getActionPerformed(), auditContext.getPrincipal());
+                LoggingUtils.error(LOGGER, e);
             }
         }
     }

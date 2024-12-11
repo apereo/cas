@@ -34,7 +34,7 @@ public class AuthenticationRiskEmailNotifier extends BaseAuthenticationRiskNotif
     }
 
     @Override
-    public void publish() throws Throwable {
+    public void publish() {
         val mail = casProperties.getAuthn().getAdaptive().getRisk().getResponse().getMail();
         val principal = authentication.getPrincipal();
         mail.getAttributeName().forEach(attributeName -> {

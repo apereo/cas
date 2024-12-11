@@ -25,7 +25,7 @@ public class DelegatedClientAuthenticationDynamicDiscoveryExecutionAction extend
     private final DelegatedAuthenticationDynamicDiscoveryProviderLocator selector;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val userid = requestContext.getRequestParameters().get("username");
         val request = DelegatedAuthenticationDynamicDiscoveryProviderLocator.DynamicDiscoveryProviderRequest
             .builder()

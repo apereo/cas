@@ -335,7 +335,7 @@ public class CasRedisTicketRegistryAutoConfiguration {
         public RedisModulesOperations redisModulesOperations(
             final CasConfigurationProperties casProperties,
             @Qualifier(CasSSLContext.BEAN_NAME)
-            final CasSSLContext casSslContext) throws Exception {
+            final CasSSLContext casSslContext) {
             val redis = casProperties.getTicket().getRegistry().getRedis();
             return BeanSupplier.of(RedisModulesOperations.class)
                 .when(redis.isEnableRedisSearch())

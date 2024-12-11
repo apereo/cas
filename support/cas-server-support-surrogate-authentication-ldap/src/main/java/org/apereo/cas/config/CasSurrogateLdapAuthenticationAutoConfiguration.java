@@ -38,7 +38,7 @@ public class CasSurrogateLdapAuthenticationAutoConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(ServicesManager.BEAN_NAME)
         final ServicesManager servicesManager,
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(SurrogateAuthenticationService.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> new SurrogateLdapAuthenticationService(casProperties, servicesManager))

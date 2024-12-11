@@ -69,7 +69,7 @@ public class YubiKeyRegisteredDevice implements Serializable, Cloneable {
     private ZonedDateTime registrationDate = ZonedDateTime.now(ZoneOffset.UTC);
 
     @Override
-    public YubiKeyRegisteredDevice clone() {
+    public final YubiKeyRegisteredDevice clone() {
         return FunctionUtils.doUnchecked(() -> (YubiKeyRegisteredDevice) super.clone());
     }
 

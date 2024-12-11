@@ -6,7 +6,6 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import lombok.experimental.UtilityClass;
 import lombok.val;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,7 +33,7 @@ public class RequestValidatorTestUtils {
         registeredService.setServiceId(serviceId);
         registeredService.setSupportedGrantTypes(grantTypes.stream()
             .map(OAuth20GrantTypes::getType)
-            .collect(Collectors.toCollection(HashSet::new)));
+            .collect(Collectors.toSet()));
         return registeredService;
     }
 

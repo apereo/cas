@@ -21,13 +21,13 @@ For any given credential the manager does the following:
 1. Iterate over all configured authentication handlers.
 2. Attempt to authenticate a credential if a handler supports it.
 3. On success attempt to resolve a principal.
-  1. Check whether a resolver is configured for the handler that authenticated the credential.
-  2. If a suitable resolver is found, attempt to resolve the principal.
-  3. If a suitable resolver is not found, use the principal resolved by the authentication handler.
-4. Check whether the security policy (e.g. any, all) is satisfied.
-  1. If security policy is met return immediately.
-  2. Continue if security policy is not met.
-5. After all credentials have been attempted check security policy again and throw `AuthenticationException` if not satisfied.
+4. Check whether a resolver is configured for the handler that authenticated the credential.
+5. If a suitable resolver is found, attempt to resolve the principal.
+6. If a suitable resolver is not found, use the principal resolved by the authentication handler.
+7. Check whether the security policy (e.g. any, all) is satisfied.
+8. If security policy is met return immediately.
+9. Continue if security policy is not met.
+10. After all credentials have been attempted check security policy again and throw `AuthenticationException` if not satisfied.
 
 There is an implicit security policy that requires at least one handler to successfully authenticate a credential.
 

@@ -77,7 +77,7 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
         }
-        return List.of().toArray(CacheStatistics[]::new);
+        return List.<CacheStatistics>of().toArray(CacheStatistics[]::new);
     }
 
     private MemcachedClientIF getClientFromPool() throws Exception {

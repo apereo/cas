@@ -537,7 +537,7 @@ public abstract class AbstractSamlIdPProfileHandlerController {
     }
 
     protected void storeAuthenticationRequest(final HttpServletRequest request, final HttpServletResponse response,
-                                              final Pair<? extends SignableSAMLObject, MessageContext> context) throws Exception {
+                                              final Pair<? extends SignableSAMLObject, MessageContext> context) {
         lock.tryLock(__ -> {
             val webContext = new JEEContext(request, response);
             SamlIdPSessionManager.of(configurationContext.getOpenSamlConfigBean(),
