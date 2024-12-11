@@ -28,6 +28,33 @@
         "export\\s+DOCKER_IMAGE\\s*=\\s*\"(?<depName>[^\"]+):(?<currentValue>[^\"]+)\""
       ],
       "datasourceTemplate": "docker"
+    },
+    {
+      "fileMatch": [".github/workflows/.*\\.yml$"],
+      "matchStrings": [
+        "NODE_CURRENT:\\s*'(?<currentValue>\\d+\\.\\d+\\.\\d+)'"
+      ],
+      "datasourceTemplate": "node",
+      "depNameTemplate": "node",
+      "versioningTemplate": "node"
+    },
+    {
+      "fileMatch": [".github/workflows/.*\\.yml$"],
+      "matchStrings": [
+        "PYTHON_VERSION:\\s*'(?<currentValue>\\d+\\.\\d+\\.\\d+)'"
+      ],
+      "datasourceTemplate": "pypi",
+      "depNameTemplate": "python",
+      "versioningTemplate": "pep440"
+    },
+    {
+      "fileMatch": [".github/workflows/.*\\.yml$"],
+      "matchStrings": [
+        "RUBY_VERSION:\\s*'(?<currentValue>\\d+\\.\\d+\\.\\d+)'"
+      ],
+      "datasourceTemplate": "ruby-version",
+      "depNameTemplate": "ruby",
+      "versioningTemplate": "semver"
     }
   ],
   "labels": ["Bot", "Renovate"],
@@ -58,7 +85,7 @@
     },
     {
       "matchDatasources": ["docker"],
-      "versioning": "semver"
+      "versioning": "docker"
     },
     {
       "matchFileNames": ["**/package.json"],
