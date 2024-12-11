@@ -307,7 +307,7 @@ class OidcConfiguration {
             final OAuth20TokenSigningAndEncryptionService oidcUserProfileSigningAndEncryptionService,
             @Qualifier(ServicesManager.BEAN_NAME)
             final ServicesManager servicesManager,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties) {
             return new OidcUserProfileViewRenderer(casProperties.getAuthn().getOauth(),
                 servicesManager, oidcUserProfileSigningAndEncryptionService, attributeDefinitionStore);
         }
@@ -664,7 +664,7 @@ class OidcConfiguration {
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) throws Exception {
+            final ServicesManager servicesManager) {
             return new OidcAccessTokenAuthenticator(ticketRegistry,
                 oidcTokenSigningAndEncryptionService, servicesManager, accessTokenJwtBuilder);
         }
@@ -680,7 +680,7 @@ class OidcConfiguration {
             @Qualifier(TicketRegistry.BEAN_NAME)
             final TicketRegistry ticketRegistry,
             @Qualifier(ServicesManager.BEAN_NAME)
-            final ServicesManager servicesManager) throws Exception {
+            final ServicesManager servicesManager) {
             val authenticator = new OidcAccessTokenAuthenticator(ticketRegistry,
                 oidcTokenSigningAndEncryptionService, servicesManager, accessTokenJwtBuilder);
             authenticator.setRequiredScopes(Set.of(OidcConstants.CLIENT_REGISTRATION_SCOPE));

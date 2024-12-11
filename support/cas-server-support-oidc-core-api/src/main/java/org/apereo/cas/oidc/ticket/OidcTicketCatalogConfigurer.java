@@ -20,7 +20,7 @@ public class OidcTicketCatalogConfigurer extends BaseTicketCatalogConfigurer {
 
     @Override
     public void configureTicketCatalog(final TicketCatalog plan,
-                                       final CasConfigurationProperties casProperties) throws Throwable {
+                                       final CasConfigurationProperties casProperties) {
         LOGGER.trace("Registering OpenID Connect protocol ticket definitions...");
         buildAndRegisterCibaRequestDefinition(plan, buildTicketDefinition(plan, OidcCibaRequest.PREFIX,
             OidcCibaRequest.class, OidcDefaultCibaRequest.class, Ordered.HIGHEST_PRECEDENCE), casProperties);

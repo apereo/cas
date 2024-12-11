@@ -30,7 +30,7 @@ public class DelegatedClientCasBuilder implements ConfigurableDelegatedClientBui
     private final CasSSLContext casSSLContext;
 
     @Override
-    public List<ConfigurableDelegatedClient> build(final CasConfigurationProperties casProperties) throws Exception {
+    public List<ConfigurableDelegatedClient> build(final CasConfigurationProperties casProperties) {
         return buildCasIdentityProviders(casProperties);
     }
 

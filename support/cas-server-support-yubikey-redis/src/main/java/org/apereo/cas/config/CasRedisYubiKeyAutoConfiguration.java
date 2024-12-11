@@ -42,7 +42,7 @@ public class CasRedisYubiKeyAutoConfiguration {
     public CasRedisTemplate redisYubiKeyTemplate(
         final ConfigurableApplicationContext applicationContext,
         @Qualifier("redisYubiKeyConnectionFactory")
-        final RedisConnectionFactory redisYubiKeyConnectionFactory) throws Exception {
+        final RedisConnectionFactory redisYubiKeyConnectionFactory) {
         return BeanSupplier.of(CasRedisTemplate.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> RedisObjectFactory.newRedisTemplate(redisYubiKeyConnectionFactory))
@@ -57,7 +57,7 @@ public class CasRedisYubiKeyAutoConfiguration {
         final ConfigurableApplicationContext applicationContext,
         @Qualifier(CasSSLContext.BEAN_NAME)
         final CasSSLContext casSslContext,
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(RedisConnectionFactory.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(Unchecked.supplier(() -> {
@@ -78,7 +78,7 @@ public class CasRedisYubiKeyAutoConfiguration {
         final YubiKeyAccountValidator yubiKeyAccountValidator,
         @Qualifier("yubikeyAccountCipherExecutor")
         final CipherExecutor yubikeyAccountCipherExecutor,
-        final CasConfigurationProperties casProperties) throws Exception {
+        final CasConfigurationProperties casProperties) {
         return BeanSupplier.of(YubiKeyAccountRegistry.class)
             .when(CONDITION.given(applicationContext.getEnvironment()))
             .supply(() -> {

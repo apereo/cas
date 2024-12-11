@@ -131,7 +131,7 @@ class LdapAuthenticationConfiguration {
 
             @Override
             @CanIgnoreReturnValue
-            public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) throws Exception {
+            public CasWebSecurityConfigurer<HttpSecurity> configure(final HttpSecurity http) {
                 val ldap = casProperties.getMonitor().getEndpoints().getLdap();
                 if (StringUtils.isNotBlank(ldap.getLdapUrl()) && StringUtils.isNotBlank(ldap.getSearchFilter())) {
                     configureLdapAuthenticationProvider(http, ldap);

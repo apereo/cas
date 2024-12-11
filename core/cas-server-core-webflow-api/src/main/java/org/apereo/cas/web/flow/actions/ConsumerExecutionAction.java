@@ -57,7 +57,7 @@ public class ConsumerExecutionAction extends BaseCasWebflowAction {
     private String eventId;
 
     @Override
-    public Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    public Event doExecuteInternal(final RequestContext requestContext) {
         this.task.accept(requestContext);
         return StringUtils.isNotBlank(this.eventId) ? new EventFactorySupport().event(this, this.eventId) : null;
     }

@@ -36,7 +36,7 @@ public class RegisteredServiceChainingAttributeFilter implements RegisteredServi
     private List<RegisteredServiceAttributeFilter> filters = new ArrayList<>(0);
 
     @Override
-    public Map<String, List<Object>> filter(final Map<String, List<Object>> givenAttributes) throws Throwable {
+    public Map<String, List<Object>> filter(final Map<String, List<Object>> givenAttributes) {
         AnnotationAwareOrderComparator.sort(this.filters);
         val attributes = new HashMap<String, List<Object>>();
         filters

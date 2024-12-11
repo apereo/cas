@@ -1,6 +1,7 @@
 package org.apereo.cas.support.spnego.util;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -29,6 +30,7 @@ public class ReverseDNSRunnable implements Runnable {
     /**
      * Remote user hostname.
      **/
+    @Setter
     private String hostName;
 
     /**
@@ -50,20 +52,10 @@ public class ReverseDNSRunnable implements Runnable {
         try {
             LOGGER.debug("Attempting to resolve [{}]", this.ipAddress);
             val address = InetAddress.getByName(this.ipAddress);
-            set(address.getCanonicalHostName());
+            setHostName(address.getCanonicalHostName());
         } catch (final UnknownHostException e) {
             /* N/A -- Default to IP address, but that's already done. **/
             LOGGER.debug("Unable to identify the canonical hostname for ip address.", e);
         }
-    }
-
-    /**
-     * Glorified setter with logging.
-     *
-     * @param hostName the resolved hostname
-     */
-    public synchronized void set(final String hostName) {
-        LOGGER.trace("ReverseDNS -- Found hostName: [{}].", hostName);
-        this.hostName = hostName;
     }
 }

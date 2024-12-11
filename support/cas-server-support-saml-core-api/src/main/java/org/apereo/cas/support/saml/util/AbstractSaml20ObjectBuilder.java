@@ -19,7 +19,6 @@ import org.opensaml.saml.saml2.core.AttributeValue;
 import org.opensaml.saml.saml2.core.Audience;
 import org.opensaml.saml.saml2.core.AudienceRestriction;
 import org.opensaml.saml.saml2.core.AuthnContext;
-import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnStatement;
 import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.EncryptedID;
@@ -44,7 +43,6 @@ import java.net.InetAddress;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -147,22 +145,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     }
 
     /**
-     * Create a new SAML2 Assertion object.
-     *
-     * @param authnStatement the authn statement
-     * @param issuer         the issuer
-     * @param issuedAt       the issued at
-     * @param id             the id
-     * @return the assertion
-     */
-    public Assertion newAssertion(final AuthnStatement authnStatement, final String issuer,
-                                  final ZonedDateTime issuedAt, final String id) {
-        val list = new ArrayList<Statement>(1);
-        list.add(authnStatement);
-        return newAssertion(list, issuer, issuedAt, id);
-    }
-
-    /**
      * Create a new SAML1 response object.
      *
      * @param authnStatement the authn statement
@@ -253,24 +235,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
     }
 
     /**
-     * New authn statement.
-     *
-     * @param contextClassRef the context class ref such as {@link AuthnContext#PASSWORD_AUTHN_CTX}
-     * @param authnInstant    the authn instant
-     * @param sessionIndex    the session index
-     * @return the authn statement
-     */
-    public AuthnStatement newAuthnStatement(final String contextClassRef,
-                                            final ZonedDateTime authnInstant,
-                                            final String sessionIndex) {
-        val ctx = newSamlObject(AuthnContext.class);
-        val classRef = newSamlObject(AuthnContextClassRef.class);
-        classRef.setURI(contextClassRef);
-        ctx.setAuthnContextClassRef(classRef);
-        return newAuthnStatement(ctx, authnInstant, sessionIndex);
-    }
-
-    /**
      * New authn statement authn statement.
      *
      * @param context      the context
@@ -338,20 +302,6 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         FunctionUtils.doIfNotNull(notBefore, __ -> data.setNotBefore(notBefore.toInstant()));
         confirmation.setSubjectConfirmationData(data);
         return confirmation;
-    }
-
-    /**
-     * New subject subject.
-     *
-     * @param nameIdFormat        the name id format
-     * @param nameIdValue         the name id value
-     * @param subjectConfirmation the subject confirmation
-     * @return the subject
-     */
-    public Subject newSubject(final String nameIdFormat, final String nameIdValue,
-                              final SubjectConfirmation subjectConfirmation) {
-        val nameID = newNameID(nameIdFormat, nameIdValue);
-        return newSubject(nameID, null, subjectConfirmation);
     }
 
     /**

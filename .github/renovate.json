@@ -2,7 +2,6 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     ":dependencyDashboard",
-    ":rebaseStalePrs",
     ":preserveSemverRanges",
     ":disableRateLimiting",
     ":semanticCommits",
@@ -20,6 +19,8 @@
     "docker-compose",
     "github-actions"
   ],
+  "rebaseWhen": "never",
+  "automerge": false,
   "regexManagers": [
     {
       "fileMatch": ["run-.*\\.sh"],

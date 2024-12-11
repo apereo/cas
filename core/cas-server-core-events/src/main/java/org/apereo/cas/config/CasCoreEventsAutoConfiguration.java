@@ -83,7 +83,7 @@ public class CasCoreEventsAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasEventRepository casEventRepository(
-            final ConfigurableApplicationContext applicationContext) throws Exception {
+            final ConfigurableApplicationContext applicationContext) {
             return BeanSupplier.of(CasEventRepository.class)
                 .when(CONDITION.given(applicationContext.getEnvironment()))
                 .supply(() -> NoOpCasEventRepository.INSTANCE)

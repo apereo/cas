@@ -124,7 +124,7 @@ public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticat
         return LdapUtils.containsResultEntry(response);
     }
 
-    protected boolean doesSurrogateAccountExistInLdap(final String surrogate) throws Throwable {
+    protected boolean doesSurrogateAccountExistInLdap(final String surrogate) {
         val ldapProperties = casProperties.getAuthn().getSurrogate().getLdap();
         for (val ldap : ldapProperties) {
             try (val connectionFactory = new LdapConnectionFactory(LdapUtils.newLdaptiveConnectionFactory(ldap))) {

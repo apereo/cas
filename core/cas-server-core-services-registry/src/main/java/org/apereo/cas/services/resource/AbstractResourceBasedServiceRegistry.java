@@ -288,7 +288,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
             LOGGER.debug("[{}] appears to be empty so no service definition will be loaded", fileName);
             return new ArrayList<>(0);
         }
-        if (fileName.startsWith(".")) {
+        if (!fileName.isEmpty() && fileName.charAt(0) == '.') {
             LOGGER.debug("[{}] starts with ., ignoring", fileName);
             return new ArrayList<>(0);
         }
@@ -361,7 +361,7 @@ public abstract class AbstractResourceBasedServiceRegistry extends AbstractServi
 
     protected RegisteredService getRegisteredServiceFromFile(final File file) {
         val fileName = file.getName();
-        if (fileName.startsWith(".")) {
+        if (!fileName.isEmpty() && fileName.charAt(0) == '.') {
             LOGGER.trace("[{}] starts with ., ignoring...", fileName);
             return null;
         }

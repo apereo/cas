@@ -288,15 +288,15 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
 
                                     <div>
                                         <p>Once the endpoint is available, here is an example of how you could use it with <code>curl</code>: </p>
-                                        {%- capture curlrequest -%}
-                                        ```bash
-                                        curl -k -u "username:password" \
-                                        -X {{ cfg.method }} \
-                                        -X "Content-Type: {{ cfg.consumes[0] | default: 'application/json' }}" \
-                                        -X "Accept: {{ cfg.produces[0] | default: 'application/json' }}" \
-                                        "https://sso.example.org/cas/actuator/{{ cfg.path }}?{{ allParams }}"
-                                        ```{%- endcapture -%}
-                                        {{ curlrequest | markdownify }}
+{% capture curlrequest %}
+```bash
+curl -k -u "username:password" \
+-X {{ cfg.method }} \
+-X "Content-Type: {{ cfg.consumes[0] | default: 'application/json' }}" \
+-X "Accept: {{ cfg.produces[0] | default: 'application/json' }}" \
+"https://sso.example.org/cas/actuator/{{ cfg.path }}?{{ allParams }}"
+```{% endcapture %}
+{{ curlrequest | markdownify }}
                                     </div>
 
                                     <p>CAS, being a Spring-Boot application at heart, includes a number of endpoints to help you monitor and manage the server when it’s pushed to production. You can choose to manage and monitor the deployment using HTTP endpoints, referred to as actuators.</p>
@@ -359,17 +359,17 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
 
 
                                     <p>To enable and expose an actuator endpoint:</p>
-                                    {%- capture epc -%}
-                                    ```properties
-                                    management.endpoint.{{ cfg.name }}.enabled=true
-                                    management.endpoints.web.exposure.include={{ cfg.name }}
+{% capture epc %}
 
-                                    # Choose the proper security access level...
-                                    # cas.monitor.endpoints.endpoint.{{ cfg.name }}.access=PERMIT
-                                    ```
-                                    {%- endcapture -%}
+```properties
+management.endpoint.{{ cfg.name }}.enabled=true
+management.endpoints.web.exposure.include={{ cfg.name }}
+
+# Choose the proper security access level...
+# cas.monitor.endpoints.endpoint.{{ cfg.name }}.access=PERMIT
+```{% endcapture %}
                                     <div>
-                                        {{ epc | markdownify }}
+{{ epc | markdownify }}
                                     </div>
 
                                     <div id="casEndpointConfigPropsDiv">
@@ -382,9 +382,10 @@ properties="cas.monitor.endpoints.form-login-enabled,cas.monitor.endpoints.endpo
                                         to remap the <code>health</code> endpoint to <code>healthcheck</code>,
                                         specify the following settings:
 
-                                        {%- capture health -%}```properties
-                                        management.endpoints.web.path-mapping.health=healthcheck
-                                        ```{%- endcapture -%}
+{% capture health %}
+```properties
+management.endpoints.web.path-mapping.health=healthcheck
+```{% endcapture %}
                                         <span>
 {{ health | markdownify }}
 </span>

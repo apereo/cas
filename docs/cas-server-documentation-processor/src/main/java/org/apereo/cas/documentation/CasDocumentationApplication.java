@@ -288,9 +288,9 @@ public class CasDocumentationApplication {
 
                     cmd.parameters = new ArrayList<Map<String, String>>();
                     var parameterAnnotations = method.getParameterAnnotations();
-                    for (var i = 0; i < parameterAnnotations.length; i++) {
-                        for (var j = 0; j < parameterAnnotations[i].length; j++) {
-                            var ann = (ShellOption) parameterAnnotations[i][j];
+                    for (var parameterAnnotation : parameterAnnotations) {
+                        for (var annotation : parameterAnnotation) {
+                            var ann = (ShellOption) annotation;
                             cmd.parameters.add(Map.of(
                                 "name", String.join(",", ann.value()),
                                 "help", String.valueOf(ann.help()),
@@ -350,7 +350,7 @@ public class CasDocumentationApplication {
         return description;
     }
 
-    private static void exportFeatureToggles(final File dataPath) throws Exception {
+    private static void exportFeatureToggles(final File dataPath) {
         var parentPath = new File(dataPath, "features");
         if (parentPath.exists()) {
             FileUtils.deleteQuietly(parentPath);
@@ -426,7 +426,7 @@ public class CasDocumentationApplication {
         return null;
     }
 
-    private static void exportActuatorEndpoints(final File dataPath) throws Exception {
+    private static void exportActuatorEndpoints(final File dataPath) {
         var parentPath = new File(dataPath, "actuators");
         if (parentPath.exists()) {
             FileUtils.deleteQuietly(parentPath);
@@ -961,15 +961,14 @@ public class CasDocumentationApplication {
 
     private static List<Method> findAnnotatedMethods(final Class<?> clazz,
                                                      final Class<? extends Annotation> annotationClass) {
-        var annotatedMethods = new ArrayList<Method>();
         try {
             var methods = clazz.getMethods();
-            annotatedMethods = Arrays.stream(methods)
+            return Arrays.stream(methods)
                 .filter(method -> method.isAnnotationPresent(annotationClass))
-                .collect(Collectors.toCollection(ArrayList::new));
+                .collect(Collectors.toList());
         } catch (final Throwable throwable) {
             LOGGER.info("Failed to locate annotated methods: {}", throwable.getMessage());
         }
-        return annotatedMethods;
+        return new ArrayList<>();
     }
 }

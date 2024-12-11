@@ -138,7 +138,7 @@ class CasCoreHttpConfiguration {
         public FactoryBean<SimpleHttpClient> httpClient(
             @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext,
             @Qualifier("trustStoreSslSocketFactory") final LayeredConnectionSocketFactory trustStoreSslSocketFactory,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties) {
             return buildHttpClientFactoryBean(casSslContext, trustStoreSslSocketFactory, casProperties);
         }
 
@@ -148,7 +148,7 @@ class CasCoreHttpConfiguration {
         public HttpClient noRedirectHttpClient(
             @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext,
             @Qualifier("trustStoreSslSocketFactory") final LayeredConnectionSocketFactory trustStoreSslSocketFactory,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties) {
             return getHttpClient(false, casSslContext, trustStoreSslSocketFactory, casProperties);
         }
 
@@ -158,7 +158,7 @@ class CasCoreHttpConfiguration {
         public HttpClient supportsTrustStoreSslSocketFactoryHttpClient(
             @Qualifier(CasSSLContext.BEAN_NAME) final CasSSLContext casSslContext,
             @Qualifier("trustStoreSslSocketFactory") final LayeredConnectionSocketFactory trustStoreSslSocketFactory,
-            final CasConfigurationProperties casProperties) throws Exception {
+            final CasConfigurationProperties casProperties) {
             return getHttpClient(true, casSslContext, trustStoreSslSocketFactory, casProperties);
         }
     }

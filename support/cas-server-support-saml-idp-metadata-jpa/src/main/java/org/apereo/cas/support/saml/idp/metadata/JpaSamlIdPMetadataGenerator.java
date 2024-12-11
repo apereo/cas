@@ -54,7 +54,7 @@ public class JpaSamlIdPMetadataGenerator extends BaseSamlIdPMetadataGenerator im
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         FunctionUtils.doUnchecked(__ -> generate(Optional.empty()));
     }
 

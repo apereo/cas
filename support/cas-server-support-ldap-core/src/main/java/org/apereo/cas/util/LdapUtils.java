@@ -539,7 +539,6 @@ public class LdapUtils {
                 }
             }
         }
-
         LOGGER.debug("Initializing ldap connection pool for [{}] and bindDn [{}]", props.getLdapUrl(), props.getBindDn());
         pooledCf.initialize();
         return pooledCf;
@@ -618,7 +617,10 @@ public class LdapUtils {
             if (StringUtils.isNotBlank(properties.getTrustManager())) {
                 val manager = properties.getTrustManager().trim().toUpperCase(Locale.ENGLISH);
                 switch (AbstractLdapProperties.LdapTrustManagerOptions.valueOf(manager)) {
-                    case ANY -> sslConfig.setTrustManagers(new AllowAnyTrustManager());
+                    case ANY -> {
+                        sslConfig.setCredentialConfig(null);
+                        sslConfig.setTrustManagers(new AllowAnyTrustManager());
+                    }
                     case DEFAULT -> sslConfig.setTrustManagers(new DefaultTrustManager());
                 }
             }

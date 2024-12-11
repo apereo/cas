@@ -23,7 +23,7 @@ public interface AuthorizableResourceRepository extends DisposableBean {
     Map<String, List<AuthorizableResource>> findAll();
 
     @Override
-    default void destroy() throws Exception {
+    default void destroy() {
     }
 
     /**

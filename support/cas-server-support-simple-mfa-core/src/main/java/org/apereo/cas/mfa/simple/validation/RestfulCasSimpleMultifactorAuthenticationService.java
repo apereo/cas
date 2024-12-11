@@ -56,15 +56,17 @@ public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimp
             val parameters = new LinkedHashMap<String, String>();
             Optional.ofNullable(service).ifPresent(s -> parameters.put("service", s.getId()));
 
+            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(properties.getHeaders());
+            
             val exec = HttpExecutionRequest.builder()
-                .method(HttpMethod.GET)
-                .headers(properties.getHeaders())
+                .method(HttpMethod.POST)
+                .headers(headers)
                 .url(StringUtils.appendIfMissing(properties.getUrl(), "/").concat("new"))
                 .entity(writer.toString())
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
                 .parameters(parameters)
-                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .build();
             response = HttpUtils.execute(exec);
             val statusCode = response.getCode();
@@ -89,14 +91,16 @@ public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimp
         HttpResponse response = null;
         try (val writer = new StringWriter()) {
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, token);
+
+            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(properties.getHeaders());
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.POST)
-                .headers(properties.getHeaders())
+                .headers(headers)
                 .url(properties.getUrl())
                 .entity(writer.toString())
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
-                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .build();
             response = HttpUtils.execute(exec);
             val statusCode = response.getCode();
@@ -114,14 +118,15 @@ public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimp
         HttpResponse response = null;
         try (val writer = new StringWriter()) {
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, resolvedPrincipal);
+            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(properties.getHeaders());
             val exec = HttpExecutionRequest.builder()
-                .method(HttpMethod.GET)
-                .headers(properties.getHeaders())
+                .method(HttpMethod.POST)
+                .headers(headers)
                 .url(StringUtils.appendIfMissing(properties.getUrl(), "/").concat(credential.getToken()))
                 .entity(writer.toString())
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
-                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .build();
             response = HttpUtils.execute(exec);
             val statusCode = response.getCode();
@@ -141,13 +146,14 @@ public class RestfulCasSimpleMultifactorAuthenticationService implements CasSimp
     public Principal fetch(final CasSimpleMultifactorTokenCredential tokenCredential) throws Exception {
         HttpResponse response = null;
         try {
+            val headers = CollectionUtils.<String, String>wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE);
+            headers.putAll(properties.getHeaders());
             val exec = HttpExecutionRequest.builder()
                 .method(HttpMethod.GET)
-                .headers(properties.getHeaders())
+                .headers(headers)
                 .url(StringUtils.appendIfMissing(properties.getUrl(), "/").concat(tokenCredential.getToken()))
                 .basicAuthPassword(properties.getBasicAuthPassword())
                 .basicAuthUsername(properties.getBasicAuthUsername())
-                .headers(CollectionUtils.wrap("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .build();
             response = HttpUtils.execute(exec);
             val statusCode = response.getCode();

@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -42,17 +43,19 @@ public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticat
 
     @Override
     public boolean canImpersonateInternal(final String username, final Principal surrogate, final Optional<? extends Service> service) {
-        val surrogateSearchQuery = casProperties.getAuthn().getSurrogate().getJdbc().getSurrogateSearchQuery();
+        val surrogateSearchQuery = SpringExpressionLanguageValueResolver.getInstance()
+            .resolve(casProperties.getAuthn().getSurrogate().getJdbc().getSurrogateSearchQuery());
         LOGGER.debug("Executing SQL query [{}]", surrogateSearchQuery);
-        val count = this.jdbcTemplate.queryForObject(surrogateSearchQuery, Integer.class, surrogate.getId(), username);
+        val count = jdbcTemplate.queryForObject(surrogateSearchQuery, Integer.class, surrogate.getId(), username);
         return Objects.requireNonNull(count) > 0;
     }
 
     @Override
     public Collection<String> getImpersonationAccounts(final String username, final Optional<? extends Service> service) {
-        val surrogateAccountQuery = casProperties.getAuthn().getSurrogate().getJdbc().getSurrogateAccountQuery();
+        val surrogateAccountQuery = SpringExpressionLanguageValueResolver.getInstance()
+            .resolve(casProperties.getAuthn().getSurrogate().getJdbc().getSurrogateAccountQuery());
         val results = jdbcTemplate.query(surrogateAccountQuery, new BeanPropertyRowMapper<>(SurrogateAccount.class), username);
-        return results.stream().map(SurrogateAccount::getSurrogateAccount).collect(Collectors.toList());
+        return results.parallelStream().map(SurrogateAccount::getSurrogateAccount).collect(Collectors.toList());
     }
 
     /**

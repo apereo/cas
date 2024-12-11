@@ -33,7 +33,7 @@ public class PathRegexPatternTreeFilter extends TreeFilter {
 
     //CHECKSTYLE:OFF
     @Override
-    public TreeFilter clone() {
+    public final TreeFilter clone() {
         return new PathRegexPatternTreeFilter(this.pattern);
     }
     //CHECKSTYLE:ON

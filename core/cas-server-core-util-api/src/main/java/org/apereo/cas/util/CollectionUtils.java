@@ -499,9 +499,8 @@ public class CollectionUtils {
         val list = new ArrayList<T>();
         if (source != null) {
             if (source instanceof final Collection values) {
-                val it = values.iterator();
-                while (it.hasNext()) {
-                    list.add((T) it.next());
+                for (val value : values) {
+                    list.add((T) value);
                 }
             } else if (source.getClass().isArray()) {
                 if (source.getClass().isAssignableFrom(byte[].class)) {
@@ -569,6 +568,7 @@ public class CollectionUtils {
      * @param source the source
      * @return the set
      */
+    @SafeVarargs
     public static <T> Set<T> wrapSet(final T... source) {
         val list = new LinkedHashSet<T>();
         addToCollection(list, source);
@@ -582,6 +582,7 @@ public class CollectionUtils {
      * @param source the source
      * @return the set
      */
+    @SafeVarargs
     public static <T> Set<T> wrapHashSet(final T... source) {
         val list = new HashSet<T>();
         addToCollection(list, source);
@@ -606,6 +607,7 @@ public class CollectionUtils {
      * @param source the source
      * @return the set
      */
+    @SafeVarargs
     public static <T> List<T> wrapList(final T... source) {
         val list = new ArrayList<T>();
         addToCollection(list, source);
@@ -619,6 +621,7 @@ public class CollectionUtils {
      * @param source the source
      * @return the array list
      */
+    @SafeVarargs
     public static <T> List<T> wrapArrayList(final T... source) {
         val list = new ArrayList<T>();
         addToCollection(list, source);
@@ -699,6 +702,7 @@ public class CollectionUtils {
      * @param source the source
      * @return the collection
      */
+    @SafeVarargs
     public static <T> Collection<T> wrapCollection(final T... source) {
         val list = new LinkedHashSet<T>();
         addToCollection(list, source);
@@ -720,6 +724,7 @@ public class CollectionUtils {
      * @param attributes the attributes
      * @return the map
      */
+    @SafeVarargs
     public static Map<String, Object> merge(final Map<String, ?>... attributes) {
         val result = new LinkedHashMap<String, Object>();
         Arrays.stream(attributes).forEach(result::putAll);

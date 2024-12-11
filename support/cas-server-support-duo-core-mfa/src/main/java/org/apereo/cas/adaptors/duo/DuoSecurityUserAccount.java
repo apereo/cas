@@ -135,11 +135,11 @@ public class DuoSecurityUserAccount implements Serializable {
     }
 
     public Instant getLastLogin() {
-        return Instant.ofEpochMilli(Long.valueOf(metadata.getOrDefault("last_login", "0")));
+        return Instant.ofEpochMilli(Long.parseLong(metadata.getOrDefault("last_login", "0")));
     }
 
     public Instant getCreated() {
-        return Instant.ofEpochMilli(Long.valueOf(metadata.getOrDefault("created", "0")));
+        return Instant.ofEpochMilli(Long.parseLong(metadata.getOrDefault("created", "0")));
     }
 
     public boolean isEnrolled() {

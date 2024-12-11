@@ -6,11 +6,13 @@ import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerat
 import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.JsonResourceMetadataResolver;
+import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketImpl;
 import org.apereo.cas.ticket.query.SamlAttributeQueryTicketImpl;
 import org.apereo.cas.util.nativex.CasRuntimeHintsRegistrar;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.beans.factory.DisposableBean;
 import java.util.List;
 
 /**
@@ -44,5 +46,7 @@ public class SamlIdPRuntimeHints implements CasRuntimeHintsRegistrar {
             findSubclassesInPackage(SamlIdPMetadataLocator.class, CentralAuthenticationService.NAMESPACE));
         registerReflectionHints(hints,
             findSubclassesInPackage(SamlIdPMetadataGenerator.class, CentralAuthenticationService.NAMESPACE));
+
+        registerSpringProxy(hints, DisposableBean.class, SamlRegisteredServiceMetadataResolver.class);
     }
 }

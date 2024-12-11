@@ -66,7 +66,7 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
     default boolean preHandle(
         final HttpServletRequest request,
         final HttpServletResponse response,
-        final Object handler) throws Exception {
+        final Object handler) {
         return true;
     }
 
@@ -83,13 +83,13 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
         final HttpServletRequest request,
         final HttpServletResponse response,
         final Object handler,
-        final Exception e) throws Exception {
+        final Exception e) {
     }
 
     @Override
     default void afterConcurrentHandlingStarted(
         @Nonnull final HttpServletRequest request,
         @Nonnull final HttpServletResponse response,
-        @Nonnull final Object handler) throws Exception {
+        @Nonnull final Object handler) {
     }
 }

@@ -115,7 +115,9 @@ public class LdapWebAuthnCredentialRepository extends BaseWebAuthnCredentialRepo
                 .map(Unchecked.function(reg -> WebAuthnUtils.getObjectMapper().writeValueAsString(records)))
                 .map(reg -> getCipherExecutor().encode(reg))
                 .collect(Collectors.toSet());
-            executeModifyOperation(results, Optional.ofNullable(locateLdapEntryFor(username)));
+            if (!executeModifyOperation(results, Optional.ofNullable(locateLdapEntryFor(username)))) {
+                LOGGER.error("Failed to update records for [{}]", username);
+            }
         }
     }
 

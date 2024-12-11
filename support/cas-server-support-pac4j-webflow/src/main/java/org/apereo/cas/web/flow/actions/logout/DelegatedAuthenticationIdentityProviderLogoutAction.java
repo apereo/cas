@@ -31,7 +31,7 @@ public class DelegatedAuthenticationIdentityProviderLogoutAction extends BaseCas
     private final DelegatedClientAuthenticationConfigurationContext configContext;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
         val webContext = new JEEContext(request, response);

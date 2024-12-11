@@ -294,7 +294,7 @@ class CoreWsSecuritySecurityTokenServiceConfiguration {
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CoreWsSecuritySecurityTokenServiceTransportConfiguration {
         @Bean
-        public WebServiceContext transportSTSWebServiceContext() throws Exception {
+        public WebServiceContext transportSTSWebServiceContext() {
             return new WebServiceContextImpl();
         }
 

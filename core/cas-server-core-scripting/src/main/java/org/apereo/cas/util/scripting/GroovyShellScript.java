@@ -45,7 +45,7 @@ public class GroovyShellScript implements ExecutableCompiledScript {
     }
 
     @Override
-    public <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) throws Throwable {
+    public <T> T execute(final Object[] args, final Class<T> clazz, final boolean failOnError) {
         if (lock.tryLock()) {
             try {
                 LOGGER.trace("Beginning to execute script [{}]", this);

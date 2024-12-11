@@ -115,7 +115,7 @@ public class CasJpaWebAuthnAutoConfiguration {
             final BeanContainer<String> jpaWebAuthnPackagesToScan,
             final CasConfigurationProperties casProperties,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) throws Exception {
+            final JpaBeanFactory jpaBeanFactory) {
             val ctx = JpaConfigurationContext.builder()
                 .dataSource(dataSourceWebAuthn)
                 .packagesToScan(jpaWebAuthnPackagesToScan.toSet())

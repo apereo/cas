@@ -62,7 +62,7 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, total number of jobs stands at approximately `504` distinct scenarios. The overall
+and scenarios. At the moment, the total number of jobs stands at approximately `506` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`. 
 
 ### Java 23
@@ -75,8 +75,19 @@ This is just a preparatory step to ensure CAS is ready for the next versions of 
 The configuration of [delegated authentication providers](../integration/Delegate-Authentication-Provider-Registration.html) 
 is now extended to support SQL databases.
 
+### SAML2 IdP Metadata via AWS S3
+
+[SAML2 metadata via AWS S3](../installation/Configuring-SAML2-DynamicMetadata-AmazonS3.html) has changed its strategy 
+for metadata storage to no longer track certificate and keys for signing and encryption operations as part of 
+the *S3 object's metadata*, which may cause failures due to size limitations. Instead, all SAML2 metadata elements are put 
+inside the S3 object's content as a JSON document.
+
+<div class="alert alert-warning">:warning: <strong>Breaking Change</strong><p>
+This may be a breaking change. Consult the documentation to learn more.</p></div>
+
 ## Other Stuff
-      
+     
+- Performance tests are now available based on the [Artillery](../high_availability/Performance-Testing-Artillery.html) framework.
 - A dedicated metric, `slow.requests.timer`, is now available once system health monitoring is enabled to track slow requests that take longer than 5 seconds.
 - Additional [theme property](../ux/User-Interface-Customization-Themes-Static.html) to determine where CAS version details should be displayed in the page footer.
 - [Multifactor provider selection](../mfa/Configuring-Multifactor-Authentication-Triggers.html) is set to utilize ranking strategies when multiple competing MFA triggers vote for different MFA providers.
@@ -89,6 +100,9 @@ is now extended to support SQL databases.
 - Scratch codes may also be used to verify an account during the [Google Authenticator](../mfa/GoogleAuthenticator-Authentication.html) registration flow.
 - Tickets captured via [JPA ticket registry](../ticketing/JPA-Ticket-Registry.html) will also track the ticket expiration time and the last-used time.
 - [Passwordless accounts](../authentication/Passwordless-Authentication.html) can be now customized and post-processed once fetched from the passwordless account store.  
+- [MongoDb Ticket Registry](../ticketing/MongoDb-Ticket-Registry.html) has now removed a "text" index on the full json contents of the ticket to improve performance.
+- Managing tokens for [Simple Multifactor Authentication via REST](../mfa/Simple-Multifactor-Authentication-TokenManagement-REST.html) has switched the HTTP method to `POST` in some cases to better align with RESTful principles. 
+- Various small performance improvements and documentation updates. 
 
 ## Library Upgrades
        
@@ -101,6 +115,7 @@ is now extended to support SQL databases.
 - JaVers
 - Groovy
 - Swagger
+- JGit
 - Spring Cloud
 - Spring Cloud GCP
 - Apache Kafka

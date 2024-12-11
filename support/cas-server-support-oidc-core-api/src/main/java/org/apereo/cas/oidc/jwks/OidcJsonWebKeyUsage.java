@@ -16,6 +16,7 @@ import org.jose4j.jwk.Use;
  * @author Misagh Moayyed
  * @since 6.5.0
  */
+@Getter
 @RequiredArgsConstructor
 public enum OidcJsonWebKeyUsage {
     /**
@@ -27,7 +28,6 @@ public enum OidcJsonWebKeyUsage {
      */
     SIGNING(Use.SIGNATURE);
 
-    @Getter
     private final String value;
 
     /**

@@ -40,7 +40,7 @@ public class MongoDbSamlIdPMetadataLocator extends AbstractSamlIdPMetadataLocato
     }
 
     @Override
-    public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) throws Exception {
+    public SamlIdPMetadataDocument fetchInternal(final Optional<SamlRegisteredService> registeredService) {
         if (registeredService.isPresent()) {
             val query = new Query();
             val appliesTo = getAppliesToFor(registeredService);

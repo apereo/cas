@@ -97,7 +97,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
 
     @Override
     public void afterCompletion(final HttpServletRequest request, final HttpServletResponse response,
-                                final Object handler, final Exception e) throws Exception {
+                                final Object handler, final Exception e) {
         if (!isRequestIgnoredForThrottling(request, response) && shouldResponseBeRecordedAsFailure(response)) {
             recordSubmissionFailure(request);
         }

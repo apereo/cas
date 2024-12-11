@@ -41,8 +41,8 @@ public class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X50
             if (CertUtils.isExpired(crl, cutoff.minusSeconds(this.threshold))) {
                 throw new ExpiredCRLException(crl.toString(), cutoff, this.threshold);
             }
-            LOGGER.info(String.format("CRL expired on %s but is within threshold period, %s seconds.",
-                crl.getNextUpdate(), this.threshold));
+            LOGGER.info("CRL expired on [{}] but is within threshold period, [{}] seconds.",
+                crl.getNextUpdate(), this.threshold);
         }
     }
 }

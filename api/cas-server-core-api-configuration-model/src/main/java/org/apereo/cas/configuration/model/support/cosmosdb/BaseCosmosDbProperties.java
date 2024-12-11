@@ -31,7 +31,7 @@ public abstract class BaseCosmosDbProperties implements Serializable {
     private static final long serialVersionUID = 2528153816791719898L;
 
     /**
-     * Document Db host address (i.e. https://localhost:8081).
+     * Document Db host address (i.e. {@code https://localhost:8081}).
      */
     @RequiredProperty
     @ExpressionLanguageCapable

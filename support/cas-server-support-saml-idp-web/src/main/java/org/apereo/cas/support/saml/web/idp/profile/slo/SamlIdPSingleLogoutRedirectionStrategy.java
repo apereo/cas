@@ -73,7 +73,7 @@ public class SamlIdPSingleLogoutRedirectionStrategy implements LogoutRedirection
     @Override
     public LogoutRedirectionResponse handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         val samlRegisteredService = (SamlRegisteredService) WebUtils.getRegisteredService(request);
-        val samlLogoutRequest = getLogoutRequest(request).get();
+        val samlLogoutRequest = getLogoutRequest(request).orElseThrow();
 
         val logoutRequestIssuer = SamlIdPUtils.getIssuerFromSamlObject(samlLogoutRequest);
         val adaptorRes = SamlRegisteredServiceMetadataAdaptor.get(

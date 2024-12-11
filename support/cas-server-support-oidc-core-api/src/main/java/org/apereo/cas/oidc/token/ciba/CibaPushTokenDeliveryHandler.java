@@ -61,7 +61,7 @@ public class CibaPushTokenDeliveryHandler implements CibaTokenDeliveryHandler {
     @SuppressWarnings("FutureReturnValueIgnored")
     protected void sendPushNotification(final OidcRegisteredService registeredService,
                                         final OidcCibaRequest cibaRequest,
-                                        final Map payload) throws Exception {
+                                        final Map payload) {
 
         val verification = configurationContext.getCasProperties().getAuthn().getOidc().getCiba().getVerification();
         val delayInSeconds = Beans.newDuration(verification.getDelay()).toSeconds();

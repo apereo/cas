@@ -240,13 +240,7 @@ public class DefaultAttributeDefinitionStore implements AttributeDefinitionStore
             return this;
         });
     }
-
-    @Override
-    @CanIgnoreReturnValue
-    public AttributeDefinitionStore importStore(final AttributeDefinitionStore definitionStore) {
-        definitionStore.getAttributeDefinitions().forEach(this::registerAttributeDefinition);
-        return this;
-    }
+    
 
     /**
      * Import store.

@@ -13,6 +13,13 @@ function printgreen() {
   printf "☘️  ${GREEN}$1${ENDCOLOR}\n"
 }
 
+tmp="${TMPDIR}"
+if [[ -z "${tmp}" ]]; then
+  tmp="/tmp"
+fi
+export TMPDIR=${tmp}
+echo "Using temp directory: ${TMPDIR}"
+
 gradle="./gradlew "
 gradleBuild=""
 gradleBuildOptions="--build-cache --configure-on-demand --no-daemon --parallel --max-workers=8 --no-configuration-cache "
@@ -107,7 +114,6 @@ if [ $retVal == 0 ]; then
 
   case "$testCategory" in
     saml)
-      metadataDirectory=""
       cert=$(cat "${PWD}/ci/tests/perf/saml/md/idp-signing.crt" | sed 's/-----BEGIN CERTIFICATE-----//g' | sed 's/-----END CERTIFICATE-----//g')
       export IDP_SIGNING_CERTIFICATE=$cert
       echo -e "Using signing certificate:\n$IDP_SIGNING_CERTIFICATE"

@@ -43,7 +43,7 @@ public class AttributeQueryAttributeReleasePolicy extends BaseSamlRegisteredServ
         final SamlRegisteredServiceCachingMetadataResolver resolver,
         final SamlRegisteredServiceMetadataAdaptor facade,
         final EntityDescriptor entityDescriptor,
-        final RegisteredServiceAttributeReleasePolicyContext context) throws Throwable {
+        final RegisteredServiceAttributeReleasePolicyContext context) {
 
         LOGGER.trace("Evaluating attribute release policy for service request [{}]", context.getService());
         return authorizeReleaseOfAllowedAttributes(context, attributes);

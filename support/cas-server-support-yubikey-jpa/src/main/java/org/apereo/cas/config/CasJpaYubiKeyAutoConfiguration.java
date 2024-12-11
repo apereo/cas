@@ -71,7 +71,7 @@ public class CasJpaYubiKeyAutoConfiguration {
             @Qualifier("jpaYubiKeyVendorAdapter")
             final JpaVendorAdapter jpaYubiKeyVendorAdapter,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) throws Exception {
+            final JpaBeanFactory jpaBeanFactory) {
             val ctx = JpaConfigurationContext.builder()
                 .dataSource(dataSourceYubiKey)
                 .packagesToScan(jpaYubiKeyPackagesToScan.toSet())

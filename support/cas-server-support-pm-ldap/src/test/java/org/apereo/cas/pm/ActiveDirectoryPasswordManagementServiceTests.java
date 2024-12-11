@@ -37,7 +37,8 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.pm.ldap[0].trust-store-type=JKS",
     "cas.authn.pm.ldap[0].trust-store-password=changeit",
     "cas.authn.pm.ldap[0].min-pool-size=0",
-    "cas.authn.pm.ldap[0].hostname-verifier=DEFAULT"
+    "cas.authn.pm.ldap[0].hostname-verifier=ANY",
+    "cas.authn.pm.ldap[0].trust-manager=ANY"
 })
 @EnabledIfListeningOnPort(port = 10636)
 class ActiveDirectoryPasswordManagementServiceTests extends BaseLdapPasswordManagementServiceTests {

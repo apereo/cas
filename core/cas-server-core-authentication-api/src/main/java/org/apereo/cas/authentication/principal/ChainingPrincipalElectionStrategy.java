@@ -56,7 +56,7 @@ public class ChainingPrincipalElectionStrategy implements PrincipalElectionStrat
 
     @Override
     public Principal nominate(final Collection<Authentication> authentications,
-                              final Map<String, List<Object>> principalAttributes) throws Throwable {
+                              final Map<String, List<Object>> principalAttributes) {
         val principal = this.chain
             .stream()
             .sorted(Comparator.comparing(PrincipalElectionStrategy::getOrder))
@@ -69,7 +69,7 @@ public class ChainingPrincipalElectionStrategy implements PrincipalElectionStrat
     }
 
     @Override
-    public Principal nominate(final List<Principal> principals, final Map<String, List<Object>> attributes) throws Throwable {
+    public Principal nominate(final List<Principal> principals, final Map<String, List<Object>> attributes) {
         val principal = this.chain
             .stream()
             .sorted(Comparator.comparing(PrincipalElectionStrategy::getOrder))

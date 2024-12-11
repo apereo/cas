@@ -323,7 +323,7 @@ public class MongoDbConnectionFactory {
     private Set<Class<?>> getInitialEntitySet() {
         return getMappingBasePackages().stream()
             .flatMap(basePackage -> scanForEntities(basePackage).stream())
-            .collect(Collectors.toCollection(HashSet::new));
+            .collect(Collectors.toSet());
     }
 
     private Set<Class<?>> scanForEntities(final String basePackage) {

@@ -33,7 +33,7 @@ import org.springframework.core.io.Resource;
 @AutoConfiguration
 public class CasGeoLocationMaxmindAutoConfiguration {
 
-    private static DatabaseReader readDatabase(final Resource maxmindDatabase) throws Exception {
+    private static DatabaseReader readDatabase(final Resource maxmindDatabase) {
         return FunctionUtils.doIf(ResourceUtils.doesResourceExist(maxmindDatabase),
                 Unchecked.supplier(() ->
                     new DatabaseReader.Builder(maxmindDatabase.getFile())

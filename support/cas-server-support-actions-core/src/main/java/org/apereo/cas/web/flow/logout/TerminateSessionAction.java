@@ -109,7 +109,7 @@ public class TerminateSessionAction extends BaseCasWebflowAction {
         return tgtId;
     }
 
-    protected Event terminate(final RequestContext requestContext) throws Exception {
+    protected Event terminate(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
 

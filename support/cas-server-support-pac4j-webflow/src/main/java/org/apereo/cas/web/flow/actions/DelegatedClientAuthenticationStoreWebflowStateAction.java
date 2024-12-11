@@ -46,7 +46,7 @@ public class DelegatedClientAuthenticationStoreWebflowStateAction extends BaseCa
     protected final DelegatedClientAuthenticationWebflowManager delegatedClientAuthenticationWebflowManager;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
 

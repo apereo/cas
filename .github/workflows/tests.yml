@@ -51,7 +51,7 @@ concurrency:
 
 jobs:
   trigger-ci:
-    if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'CI')) && !contains(github.event.pull_request.labels.*.name, 'Renovate') && !contains(github.event.head_commit.message, 'trigger dependency update') && !contains(github.event.head_commit.message, 'documentation update') }}
+    if: ${{ (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'CI')) }}
     runs-on: ubuntu-latest
     steps:
       - name: Trigger CI
@@ -157,7 +157,8 @@ jobs:
         run: |
           ./gradlew sonar --build-cache --configure-on-demand --no-daemon -DskipAot=true --parallel \
             -x javadoc -DskipNestedConfigMetadataGen=true \
-            -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
+            -PsonarOrganization="${{ github.repository_owner }}" \
+            -Dsonar.coverage.jacoco.xmlReportPaths=$PWD/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
       - name: "Upload to Codecov"
         uses: "codecov/codecov-action@v5"
         continue-on-error: true

@@ -123,7 +123,7 @@ public abstract class BasePersonAttributeDao implements PersonAttributeDao {
      *                to attribute names or Sets of such names.
      * @return a Map from String to Set of Strings
      */
-    public static Map<String, Set<String>> parseAttributeToAttributeMapping(final Map<String, ? extends Object> mapping) {
+    public static Map<String, Set<String>> parseAttributeToAttributeMapping(final Map<String, ?> mapping) {
         val mappedAttributesBuilder = new LinkedCaseInsensitiveMap<Set<String>>();
         for (val mappingEntry : mapping.entrySet()) {
             val sourceAttrName = mappingEntry.getKey();

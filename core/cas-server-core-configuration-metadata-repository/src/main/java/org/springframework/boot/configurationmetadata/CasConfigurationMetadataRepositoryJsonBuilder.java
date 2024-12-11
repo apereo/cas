@@ -24,7 +24,7 @@ public class CasConfigurationMetadataRepositoryJsonBuilder {
 
     private final List<SimpleConfigurationMetadataRepository> repositories = new ArrayList<>(0);
 
-    private Charset defaultCharset = StandardCharsets.UTF_8;
+    private final Charset defaultCharset;
 
     CasConfigurationMetadataRepositoryJsonBuilder(final Charset defaultCharset) {
         this.defaultCharset = defaultCharset;

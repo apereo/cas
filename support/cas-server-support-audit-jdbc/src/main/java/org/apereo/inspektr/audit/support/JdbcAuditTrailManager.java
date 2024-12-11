@@ -212,7 +212,7 @@ public class JdbcAuditTrailManager extends AbstractAuditTrailManager {
                 val sql = String.format(DELETE_SQL_TEMPLATE, tableName, cleanupCriteria);
                 val params = cleanupCriteria.getParameterValues();
                 LOGGER.info("Cleaning audit records with query [{}]", sql);
-                LOGGER.debug("Query parameters: " + params);
+                LOGGER.debug("Query parameters: [{}]", params);
                 val count = jdbcTemplate.update(sql, params.toArray());
                 LOGGER.info("[{}] records deleted.", count);
             }

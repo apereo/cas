@@ -116,18 +116,17 @@ public class RadiusClient {
                 RadiusLog.error("Could not instanciate authenticator " + protocolName, e);
                 return auth;
             }
-            for (int p = 0; p < props.length; p++) {
-                var pd = props[p];
+            for (var pd : props) {
                 var writeMethod = pd.getWriteMethod();
                 if (writeMethod != null) {
                     elements.put(pd.getName(), pd);
                 }
             }
-            for (int a = 0; a < args.length; a++) {
-                int eq = args[a].indexOf('=');
+            for (var arg : args) {
+                int eq = arg.indexOf('=');
                 if (eq > 0) {
-                    var name = args[a].substring(0, eq);
-                    var value = args[a].substring(eq + 1);
+                    var name = arg.substring(0, eq);
+                    var value = arg.substring(eq + 1);
 
                     var pd = elements.get(name);
                     var writeMethod = pd.getWriteMethod();

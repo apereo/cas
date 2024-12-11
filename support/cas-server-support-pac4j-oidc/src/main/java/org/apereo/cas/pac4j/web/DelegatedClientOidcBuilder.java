@@ -63,7 +63,7 @@ public class DelegatedClientOidcBuilder implements ConfigurableDelegatedClientBu
     private final CasSSLContext casSslContext;
 
     @Override
-    public List<ConfigurableDelegatedClient> build(final CasConfigurationProperties casProperties) throws Exception {
+    public List<ConfigurableDelegatedClient> build(final CasConfigurationProperties casProperties) {
         val newClients = new ArrayList<ConfigurableDelegatedClient>();
         newClients.addAll(buildFacebookIdentityProviders(casProperties));
         newClients.addAll(buildOidcIdentityProviders(casProperties));

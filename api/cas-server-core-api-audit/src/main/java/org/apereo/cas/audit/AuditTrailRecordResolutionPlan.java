@@ -58,21 +58,7 @@ public interface AuditTrailRecordResolutionPlan {
     default void registerAuditActionResolvers(final AuditActionResolver resolver, final String... keys) {
         Arrays.stream(keys).forEach(k -> registerAuditActionResolver(k, resolver));
     }
-
-    /**
-     * Register audit action resolvers.
-     *
-     * @param resolvers the resolvers
-     */
-    void registerAuditActionResolvers(Map<String, AuditActionResolver> resolvers);
-
-    /**
-     * Register audit resource resolvers.
-     *
-     * @param resolvers the resolvers
-     */
-    void registerAuditResourceResolvers(Map<String, AuditResourceResolver> resolvers);
-
+    
     /**
      * Register audit resource resolvers.
      *

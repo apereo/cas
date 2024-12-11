@@ -138,7 +138,7 @@ public class CasGoogleAuthenticatorJpaAutoConfiguration {
             @Qualifier("jpaPackagesToScanGoogleAuthenticator")
             final BeanContainer<String> jpaPackagesToScanGoogleAuthenticator,
             @Qualifier(JpaBeanFactory.DEFAULT_BEAN_NAME)
-            final JpaBeanFactory jpaBeanFactory) throws Exception {
+            final JpaBeanFactory jpaBeanFactory) {
             val ctx = JpaConfigurationContext.builder()
                 .jpaVendorAdapter(jpaGoogleAuthenticatorVendorAdapter)
                 .persistenceUnitName("jpaGoogleAuthenticatorContext")

@@ -3,7 +3,9 @@ package org.apereo.cas.support.saml.idp.metadata;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlIdPMetadataDocument;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.function.FunctionUtils;
+import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -30,7 +32,8 @@ import java.util.Optional;
 @UtilityClass
 @Slf4j
 public class AmazonS3SamlIdPMetadataUtils {
-    private static final String NEW_LINE_REPLACEMENT = "<br/>";
+    private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()
+        .defaultTypingEnabled(false).build().toObjectMapper();
 
     /**
      * Determine bucket name for service.
@@ -64,25 +67,27 @@ public class AmazonS3SamlIdPMetadataUtils {
      * @param doc             the doc
      * @param bucketNameToUse the bucket name to use
      * @return the saml id p metadata document
+     * @throws Throwable the throwable
      */
     public static SamlIdPMetadataDocument putSamlIdPMetadataIntoBucket(final S3Client s3Client,
                                                                        final SamlIdPMetadataDocument doc,
-                                                                       final String bucketNameToUse) {
-        val metadataDetails = CollectionUtils.<String, String>wrap(
-            "signingCertificate", sanitizeNewline(StringUtils.defaultString(doc.getSigningCertificate())),
-            "signingKey", sanitizeNewline(StringUtils.defaultString(doc.getSigningKey())),
-            "encryptionCertificate", sanitizeNewline(StringUtils.defaultString(doc.getEncryptionCertificate())),
-            "encryptionKey", sanitizeNewline(StringUtils.defaultString(doc.getEncryptionKey()))
+                                                                       final String bucketNameToUse) throws Throwable {
+        val metadataObject = CollectionUtils.<String, String>wrap(
+            "signingCertificate", StringUtils.defaultString(doc.getSigningCertificate()),
+            "signingKey", StringUtils.defaultString(doc.getSigningKey()),
+            "encryptionCertificate", StringUtils.defaultString(doc.getEncryptionCertificate()),
+            "encryptionKey", StringUtils.defaultString(doc.getEncryptionKey()),
+            "metadata", doc.getMetadata()
         );
-        metadataDetails.entrySet().removeIf(entry -> StringUtils.isBlank(entry.getValue()));
+        metadataObject.entrySet().removeIf(entry -> StringUtils.isBlank(entry.getValue()));
+
         val request = PutObjectRequest.builder()
             .key(String.valueOf(doc.getId()))
             .bucket(bucketNameToUse)
-            .contentType(MediaType.TEXT_PLAIN_VALUE)
-            .metadata(metadataDetails)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
             .build();
 
-        val requestBody = StringUtils.isBlank(doc.getMetadata()) ? RequestBody.empty() : RequestBody.fromString(doc.getMetadata());
+        val requestBody = RequestBody.fromString(MAPPER.writeValueAsString(metadataObject));
         s3Client.putObject(request, requestBody);
         return doc;
     }
@@ -93,36 +98,20 @@ public class AmazonS3SamlIdPMetadataUtils {
      * @param object      the object
      * @param bucketToUse the bucket to use
      * @return the saml id p metadata document
+     * @throws Exception the exception
      */
     public static SamlIdPMetadataDocument readMetadataDocumentFromBucket(final ResponseInputStream<GetObjectResponse> object,
-                                                                         final String bucketToUse) {
+                                                                         final String bucketToUse) throws Exception {
+        val metadataObject = MAPPER.readValue(IOUtils.toString(object, StandardCharsets.UTF_8), new TypeReference<Map<String, String>>() {
+        });
         val metadataDocument = new SamlIdPMetadataDocument();
-        metadataDocument.setMetadata(FunctionUtils.doUnchecked(() -> IOUtils.toString(object, StandardCharsets.UTF_8)));
-        val objectMetadata = object.response().metadata();
-        LOGGER.debug("Located S3 object metadata [{}] from bucket [{}]", objectMetadata, bucketToUse);
-        metadataDocument.setEncryptionCertificate(restoreNewline(getObjectMetadataEntry(objectMetadata, "encryptionCertificate")));
-        metadataDocument.setSigningCertificate(restoreNewline(getObjectMetadataEntry(objectMetadata, "signingCertificate")));
-        metadataDocument.setEncryptionKey(restoreNewline(getObjectMetadataEntry(objectMetadata, "encryptionKey")));
-        metadataDocument.setSigningKey(restoreNewline(getObjectMetadataEntry(objectMetadata, "signingKey")));
+        metadataDocument.setMetadata(metadataObject.get("metadata"));
+        LOGGER.debug("Located S3 object metadata [{}] from bucket [{}]", metadataObject, bucketToUse);
+        metadataDocument.setEncryptionCertificate(metadataObject.get("encryptionCertificate"));
+        metadataDocument.setSigningCertificate(metadataObject.get("signingCertificate"));
+        metadataDocument.setEncryptionKey(metadataObject.get("encryptionKey"));
+        metadataDocument.setSigningKey(metadataObject.get("signingKey"));
         metadataDocument.setAppliesTo(bucketToUse);
         return metadataDocument;
-    }
-
-    private static String sanitizeNewline(final String s) {
-        val replaced = StringUtils.replace(s, "\n", NEW_LINE_REPLACEMENT);
-        LOGGER.trace("Sanitized [{}] => [{}]", s, replaced);
-        return replaced;
-    }
-
-    private static String restoreNewline(final String s) {
-        val replaced = StringUtils.replace(s, NEW_LINE_REPLACEMENT, "\n");
-        LOGGER.trace("Restored [{}] => [{}]", s, replaced);
-        return replaced;
-    }
-
-    private static String getObjectMetadataEntry(final Map<String, String> objectMetadata,
-                                                 final String key) {
-        return StringUtils.defaultIfBlank(objectMetadata.get(key),
-            objectMetadata.get(key.toLowerCase(Locale.ENGLISH)));
     }
 }

@@ -72,6 +72,7 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Getter
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 @Slf4j
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -98,7 +99,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     /**
      * The Config bean.
      */
-    @Getter
     protected final transient OpenSamlConfigBean openSamlConfigBean;
 
     /**

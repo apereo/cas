@@ -42,7 +42,7 @@ public class OidcMongoDbJsonWebKeystoreGeneratorService implements OidcJsonWebKe
     }
 
     @Override
-    public JsonWebKeySet store(final JsonWebKeySet jsonWebKeySet) throws Exception {
+    public JsonWebKeySet store(final JsonWebKeySet jsonWebKeySet) {
         val issuer = oidcProperties.getCore().getIssuer();
         val collectionName = oidcProperties.getJwks().getMongo().getCollection();
         val result = mongoTemplate.findById(issuer, OidcJsonWebKeystoreEntity.class, collectionName);
@@ -60,7 +60,7 @@ public class OidcMongoDbJsonWebKeystoreGeneratorService implements OidcJsonWebKe
     }
 
     @Override
-    public Optional<Resource> find() throws Exception {
+    public Optional<Resource> find() {
         val issuer = oidcProperties.getCore().getIssuer();
         val entity = mongoTemplate.findById(issuer, OidcJsonWebKeystoreEntity.class,
             oidcProperties.getJwks().getMongo().getCollection());

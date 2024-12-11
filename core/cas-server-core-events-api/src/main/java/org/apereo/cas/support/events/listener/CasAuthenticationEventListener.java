@@ -73,9 +73,8 @@ public interface CasAuthenticationEventListener extends CasEventListener {
      * Handle CAS request SLO event.
      *
      * @param event the event
-     * @throws Throwable the throwable
      */
     @EventListener
     @Async
-    void handleCasRequestSingleLogoutEvent(CasRequestSingleLogoutEvent event) throws Throwable;
+    void handleCasRequestSingleLogoutEvent(CasRequestSingleLogoutEvent event);
 }

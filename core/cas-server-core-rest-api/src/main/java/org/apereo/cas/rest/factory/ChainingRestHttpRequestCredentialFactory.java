@@ -49,7 +49,7 @@ public class ChainingRestHttpRequestCredentialFactory implements RestHttpRequest
 
     @Override
     public List<Credential> fromRequest(final HttpServletRequest request,
-                                        final MultiValueMap<String, String> requestBody) throws Throwable {
+                                        final MultiValueMap<String, String> requestBody) {
         return this.chain
             .stream()
             .sorted(Comparator.comparing(RestHttpRequestCredentialFactory::getOrder))

@@ -43,7 +43,7 @@ public class AccountProfileUpdateSecurityQuestionsAction extends BaseCasWebflowA
     private final CasConfigurationProperties casProperties;
 
     @Override
-    protected Event doExecuteInternal(final RequestContext requestContext) throws Exception {
+    protected Event doExecuteInternal(final RequestContext requestContext) {
         val messages = requestContext.getMessageContext();
         try {
             val requestParameters = requestContext.getRequestParameters();
