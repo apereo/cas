@@ -14,6 +14,7 @@ import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.UnauthorizedProxyingException;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.support.events.ticket.CasServiceTicketValidationFailedEvent;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.AbstractTicketValidationException;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -32,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -275,6 +277,10 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                                            final String description,
                                            final HttpServletRequest request,
                                            final WebApplicationService service) {
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        val event = new CasServiceTicketValidationFailedEvent(this, code, description, service, clientInfo);
+        getServiceValidateConfigurationContext().getApplicationContext().publishEvent(event);
+
         val modelAndView = serviceValidateConfigurationContext.getValidationViewFactory()
             .getModelAndView(request, false, service, getClass());
         modelAndView.addObject(CasViewConstants.MODEL_ATTRIBUTE_NAME_ERROR_CODE, StringEscapeUtils.escapeHtml4(code));

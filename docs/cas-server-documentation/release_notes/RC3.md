@@ -83,8 +83,7 @@ the *S3 object's metadata*, which may cause failures due to size limitations. In
 inside the S3 object's content as a JSON document.
 
 <div class="alert alert-warning">:warning: <strong>Breaking Change</strong><p>
-This may be a breaking change. Consult the documentation to learn more.
-</div>
+This may be a breaking change. Consult the documentation to learn more.</p></div>
 
 ## Other Stuff
      
