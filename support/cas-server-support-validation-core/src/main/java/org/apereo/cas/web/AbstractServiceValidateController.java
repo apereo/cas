@@ -14,7 +14,7 @@ import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.UnauthorizedProxyingException;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.support.events.ticket.CasServiceTicketValidateErrorEvent;
+import org.apereo.cas.support.events.ticket.CasServiceTicketValidationFailedEvent;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.AbstractTicketValidationException;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -278,7 +278,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                                            final HttpServletRequest request,
                                            final WebApplicationService service) {
         val clientInfo = ClientInfoHolder.getClientInfo();
-        val event = new CasServiceTicketValidateErrorEvent(this, code, description, request, service, clientInfo);
+        val event = new CasServiceTicketValidationFailedEvent(this, code, description, service, clientInfo);
         getServiceValidateConfigurationContext().getApplicationContext().publishEvent(event);
 
         val modelAndView = serviceValidateConfigurationContext.getValidationViewFactory()
