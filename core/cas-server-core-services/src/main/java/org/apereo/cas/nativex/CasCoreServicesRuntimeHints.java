@@ -102,8 +102,8 @@ public class CasCoreServicesRuntimeHints implements CasRuntimeHintsRegistrar {
             ServiceRegistry.class,
             ServiceRegistryExecutionPlanConfigurer.class));
 
-        registerSpringProxy(hints, ChainingServiceRegistry.class, ServiceRegistry.class);
-        registerSerializableSpringProxy(hints, ServiceRegistryInitializerEventListener.class);
+        registerSpringProxyHints(hints, ChainingServiceRegistry.class, ServiceRegistry.class);
+        registerSerializableSpringProxyHints(hints, ServiceRegistryInitializerEventListener.class);
 
         registerSerializationHints(hints,
             BaseRegisteredService.class,

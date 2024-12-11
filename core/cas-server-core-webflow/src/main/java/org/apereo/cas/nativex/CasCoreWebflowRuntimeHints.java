@@ -52,8 +52,8 @@ public class CasCoreWebflowRuntimeHints implements CasRuntimeHintsRegistrar {
             CasWebflowExecutionPlanConfigurer.class,
             CasWebflowExceptionHandler.class
         ));
-        registerSpringProxy(hints, CasFlowExecutor.class);
-        registerSpringProxy(hints, CasDelegatingWebflowEventResolver.class, CasWebflowEventResolver.class);
+        registerSpringProxyHints(hints, CasFlowExecutor.class);
+        registerSpringProxyHints(hints, CasDelegatingWebflowEventResolver.class, CasWebflowEventResolver.class);
         registerSerializationHints(hints,
             ClientFlowExecutionRepository.SerializedFlowExecutionState.class,
             ConversationContainer.class,

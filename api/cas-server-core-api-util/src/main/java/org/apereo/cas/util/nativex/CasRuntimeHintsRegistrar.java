@@ -63,7 +63,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      * @return the cas runtime hints registrar
      */
     @CanIgnoreReturnValue
-    default CasRuntimeHintsRegistrar registerSerializableSpringProxy(final RuntimeHints hints, final Class... clazz) {
+    default CasRuntimeHintsRegistrar registerSerializableSpringProxyHints(final RuntimeHints hints, final Class... clazz) {
         val proxies = Arrays.stream(clazz).collect(Collectors.toList());
         proxies.add(Serializable.class);
         addSpringProxyInterfaces(proxies);
@@ -81,7 +81,7 @@ public interface CasRuntimeHintsRegistrar extends RuntimeHintsRegistrar {
      * @return the cas runtime hints registrar
      */
     @CanIgnoreReturnValue
-    default CasRuntimeHintsRegistrar registerSpringProxy(final RuntimeHints hints, final Class... clazz) {
+    default CasRuntimeHintsRegistrar registerSpringProxyHints(final RuntimeHints hints, final Class... clazz) {
         val proxies = Arrays.stream(clazz).collect(Collectors.toList());
         addSpringProxyInterfaces(proxies);
         hints.proxies()
