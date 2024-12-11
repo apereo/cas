@@ -14,6 +14,7 @@ import org.apereo.cas.services.CasModelRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.UnauthorizedProxyingException;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.support.events.ticket.CasServiceTicketValidateErrorEvent;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.AbstractTicketValidationException;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -32,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -229,9 +231,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     protected void onSuccessfulValidation(final String serviceTicketId, final Assertion assertion) {
     }
 
-    protected void beforeErrorResponse(final String code, final String description, final HttpServletRequest request, final WebApplicationService service) {
-    }
-
     /**
      * Enforce ticket validation authorization for.
      *
@@ -278,7 +277,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                                            final String description,
                                            final HttpServletRequest request,
                                            final WebApplicationService service) {
-        beforeErrorResponse(code, description, request, service);
+        val clientInfo = ClientInfoHolder.getClientInfo();
+        val event = new CasServiceTicketValidateErrorEvent(this, code, description, request, service, clientInfo);
+        getServiceValidateConfigurationContext().getApplicationContext().publishEvent(event);
 
         val modelAndView = serviceValidateConfigurationContext.getValidationViewFactory()
             .getModelAndView(request, false, service, getClass());
