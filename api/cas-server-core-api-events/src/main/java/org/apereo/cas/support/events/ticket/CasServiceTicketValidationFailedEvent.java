@@ -1,12 +1,10 @@
 package org.apereo.cas.support.events.ticket;
 
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.Getter;
-import lombok.ToString;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.events.AbstractCasEvent;
+import lombok.Getter;
+import lombok.ToString;
 import org.apereo.inspektr.common.web.ClientInfo;
-
 import java.io.Serial;
 
 /**

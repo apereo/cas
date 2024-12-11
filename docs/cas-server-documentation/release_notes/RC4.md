@@ -79,3 +79,4 @@ using a FIDO2-enabled secondary device by scanning a QR code presented by CAS.
 - Micrometer
 - Thymeleaf
 - Amazon SDK
+- Jetty
