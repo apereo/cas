@@ -63,7 +63,7 @@ test coverage of the CAS codebase is approximately `94%`.
 
 CAS can be configured to support FIDO2 WebAuthn authentication using QR codes. Once 
 enabled, [this feature](../mfa/FIDO2-WebAuthn-Authentication-QRCode.html) allows users to authenticate
-using a FIDO2-enabled device by scanning a QR code presented by CAS.
+using a FIDO2-enabled secondary device by scanning a QR code presented by CAS.
 
 ## Other Stuff
 
@@ -76,3 +76,6 @@ using a FIDO2-enabled device by scanning a QR code presented by CAS.
 - Apache CXF
 - Zipkin Brave
 - Spring Shell
+- Micrometer
+- Thymeleaf
+- Amazon SDK
