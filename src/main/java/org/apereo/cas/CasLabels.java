@@ -125,7 +125,7 @@ public enum CasLabels {
     LABEL_STATISTICS_METRICS("Statistics & Metrics", "metrics|dropwizard|micrometer|statistics"),
     LABEL_SURROGATE_AUTHENTICATION("Surrogate Authentication", "surrogate|impersonation"),
     LABEL_TICKET_EXPIRATION_POLICY("Ticket Expiration Policy", "expiration policy|expiration policies"),
-    LABEL_TICKET_VALIDATION("Ticket Validation"),
+    LABEL_TICKET_VALIDATION("Ticket Validation", "service validate|service validation"),
     LABEL_TICKETS_REGISTRIES("Tickets & Registries", "ticket registry|ticket id|ticketid|ticket catalog|TicketCatalog"),
     LABEL_UNIT_INTEGRATION_TESTS("Unit/Integration Tests", "\\btest\\b|junit|coverage|tests|mockito|suite|\\bunit test\\b|junit5"),
     LABEL_USER_INTERFACE_THEMES("User Interface & Themes",
