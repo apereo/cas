@@ -302,6 +302,10 @@ public class OAuth20JwtAccessTokenEncoder {
                 attributesToRelease.put(OAuth20Constants.X509_CERTIFICATE_DIGEST, originalAttributes.get(OAuth20Constants.X509_CERTIFICATE_DIGEST));
             }
             attributesToRelease.remove(CasProtocolConstants.PARAMETER_PASSWORD);
+            FunctionUtils.doIfNotNull(accessToken.getGrantType(), type ->
+                attributesToRelease.put(OAuth20Constants.GRANT_TYPE, List.of(type.getType())));
+            FunctionUtils.doIfNotNull(accessToken.getResponseType(), type ->
+                attributesToRelease.put(OAuth20Constants.RESPONSE_TYPE, List.of(type.getType())));
             return attributesToRelease;
         }
 

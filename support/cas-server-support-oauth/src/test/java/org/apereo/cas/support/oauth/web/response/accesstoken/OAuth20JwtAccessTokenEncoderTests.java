@@ -3,7 +3,9 @@ package org.apereo.cas.support.oauth.web.response.accesstoken;
 import org.apereo.cas.AbstractOAuth20Tests;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.OAuth20TokenExchangeTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
@@ -21,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link OAuth20JwtAccessTokenEncoderTests}.
@@ -81,6 +84,19 @@ class OAuth20JwtAccessTokenEncoderTests {
             assertEquals(accessToken.getId(), decoded);
         }
 
+        @Test
+        void verifyAccessTokenIdEncodingAsJwtWithServiceKeysSigningOnly() throws Throwable {
+            val accessToken = getAccessToken();
+            when(accessToken.getResponseType()).thenReturn(OAuth20ResponseTypes.TOKEN_IDTOKEN);
+            val registeredService = getRegisteredServiceForJwtAccessTokenWithKeys(accessToken, true, false);
+            val encoder = OAuth20JwtAccessTokenEncoder.toEncodableCipher(configurationContext, registeredService, accessToken);
+            val encodedAccessToken = encoder.encode(accessToken.getId());
+            assertNotNull(encodedAccessToken);
+            val claims = JwtBuilder.parse(encodedAccessToken);
+            assertNotNull(claims.getStringClaim(OAuth20Constants.GRANT_TYPE));
+            assertNotNull(claims.getStringClaim(OAuth20Constants.RESPONSE_TYPE));
+        }
+
         private OAuthRegisteredService getRegisteredServiceForJwtAccessTokenWithoutKeys(final OAuth20AccessToken accessToken) {
             val registeredService = getRegisteredService(accessToken.getService().getId(), "secret", new LinkedHashSet<>());
             registeredService.setJwtAccessToken(true);
@@ -89,14 +105,20 @@ class OAuth20JwtAccessTokenEncoderTests {
         }
 
         private OAuthRegisteredService getRegisteredServiceForJwtAccessTokenWithKeys(final OAuth20AccessToken accessToken) {
+            return getRegisteredServiceForJwtAccessTokenWithKeys(accessToken, true, true);
+        }
+
+        private OAuthRegisteredService getRegisteredServiceForJwtAccessTokenWithKeys(final OAuth20AccessToken accessToken,
+                                                                                     final boolean signingEnabled,
+                                                                                     final boolean encryptionEnabled) {
             val registeredService = getRegisteredService(accessToken.getService().getId(), "secret", new LinkedHashSet<>());
             registeredService.setProperties(Map.of(
                 RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_ENCRYPTION_ALG.getPropertyName(),
                 new DefaultRegisteredServiceProperty(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256),
                 RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_ENCRYPTION_ENABLED.getPropertyName(),
-                new DefaultRegisteredServiceProperty("true"),
+                new DefaultRegisteredServiceProperty(Boolean.toString(encryptionEnabled)),
                 RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_SIGNING_ENABLED.getPropertyName(),
-                new DefaultRegisteredServiceProperty("true"),
+                new DefaultRegisteredServiceProperty(Boolean.toString(signingEnabled)),
                 RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_ENCRYPTION_KEY.getPropertyName(),
                 new DefaultRegisteredServiceProperty("1PbwSbnHeinpkZOSZjuSJ8yYpUrInm5aaV18J2Ar4rM"),
                 RegisteredServiceProperty.RegisteredServiceProperties.ACCESS_TOKEN_AS_JWT_SIGNING_KEY.getPropertyName(),
