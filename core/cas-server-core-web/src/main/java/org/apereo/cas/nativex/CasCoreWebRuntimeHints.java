@@ -21,6 +21,6 @@ public class CasCoreWebRuntimeHints implements CasRuntimeHintsRegistrar {
         registerSerializationHints(hints, DefaultBrowserStorage.class);
         registerReflectionHints(hints, List.of(TypeReference.of("org.springframework.web.servlet.handler.AbstractHandlerMethodMapping$EmptyHandler")));
 
-        registerSpringProxy(hints, WebServerFactoryCustomizer.class, Ordered.class);
+        registerSpringProxyHints(hints, WebServerFactoryCustomizer.class, Ordered.class);
     }
 }

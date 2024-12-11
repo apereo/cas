@@ -15,7 +15,7 @@ public class YubiKeyRuntimeHints implements CasRuntimeHintsRegistrar {
 
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        registerSpringProxy(hints, DisposableBean.class, YubiKeyAccountRegistry.class);
+        registerSpringProxyHints(hints, DisposableBean.class, YubiKeyAccountRegistry.class);
     }
 }
 

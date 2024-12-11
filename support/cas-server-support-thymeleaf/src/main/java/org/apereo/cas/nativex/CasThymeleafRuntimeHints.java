@@ -51,6 +51,6 @@ public class CasThymeleafRuntimeHints implements CasRuntimeHintsRegistrar {
         ));
 
         registerReflectionHints(hints, List.of("org.thymeleaf.engine.Text"));
-        registerSpringProxy(hints, ThemeViewResolverFactory.class, ApplicationContextAware.class);
+        registerSpringProxyHints(hints, ThemeViewResolverFactory.class, ApplicationContextAware.class);
     }
 }

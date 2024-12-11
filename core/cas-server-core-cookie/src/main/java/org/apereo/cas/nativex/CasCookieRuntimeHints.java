@@ -15,6 +15,6 @@ public class CasCookieRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
         registerProxyHints(hints, CasCookieBuilder.class);
-        registerSpringProxy(hints, Serializable.class, CasCookieBuilder.class);
+        registerSpringProxyHints(hints, Serializable.class, CasCookieBuilder.class);
     }
 }

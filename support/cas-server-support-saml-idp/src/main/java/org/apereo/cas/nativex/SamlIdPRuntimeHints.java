@@ -47,6 +47,7 @@ public class SamlIdPRuntimeHints implements CasRuntimeHintsRegistrar {
         registerReflectionHints(hints,
             findSubclassesInPackage(SamlIdPMetadataGenerator.class, CentralAuthenticationService.NAMESPACE));
 
-        registerSpringProxy(hints, DisposableBean.class, SamlRegisteredServiceMetadataResolver.class);
+        registerProxyHints(hints, SamlRegisteredServiceMetadataResolver.class);
+        registerSpringProxyHints(hints, DisposableBean.class, SamlRegisteredServiceMetadataResolver.class);
     }
 }
