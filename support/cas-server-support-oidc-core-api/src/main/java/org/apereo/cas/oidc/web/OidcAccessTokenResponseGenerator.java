@@ -10,6 +10,7 @@ import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20AccessTokenResponseResult;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20DefaultAccessTokenResponseGenerator;
 import org.apereo.cas.support.oauth.web.response.accesstoken.response.OAuth20JwtAccessTokenEncoder;
+import org.apereo.cas.ticket.OAuth20Token;
 import org.apereo.cas.ticket.accesstoken.OAuth20AccessToken;
 import org.apereo.cas.ticket.idtoken.IdTokenGenerationContext;
 import org.apereo.cas.ticket.refreshtoken.OAuth20RefreshToken;
@@ -35,8 +36,8 @@ public class OidcAccessTokenResponseGenerator extends OAuth20DefaultAccessTokenR
     }
 
     @Override
-    protected String encodeAccessToken(final OAuth20AccessToken accessToken,
-                                       final OAuth20AccessTokenResponseResult result) {
+    protected String encodeOAuthToken(final OAuth20Token accessToken,
+                                      final OAuth20AccessTokenResponseResult result) {
         val oidcRegisteredService = Optional.ofNullable(result.getRegisteredService())
             .filter(OidcRegisteredService.class::isInstance)
             .map(OidcRegisteredService.class::cast);

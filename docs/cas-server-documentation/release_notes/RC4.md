@@ -66,6 +66,8 @@ enabled, [this feature](../mfa/FIDO2-WebAuthn-Authentication-QRCode.html) allows
 using a FIDO2-enabled secondary device by scanning a QR code presented by CAS.
 
 ## Other Stuff
+   
+- [OAuth Refresh Tokens](../authentication/OAuth-Authentication-Clients.html) can now be generated as JWTs. 
 
 ## Library Upgrades
 
