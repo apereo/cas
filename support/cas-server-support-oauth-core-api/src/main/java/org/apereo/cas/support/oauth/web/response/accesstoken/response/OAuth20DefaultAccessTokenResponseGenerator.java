@@ -116,7 +116,12 @@ public class OAuth20DefaultAccessTokenResponseGenerator<T extends OAuth20Configu
         generatedToken.getRefreshToken().ifPresent(ticket -> {
             val refreshToken = resolveToken(ticket, OAuth20RefreshToken.class);
             val encodedRefreshToken = encodeOAuthToken(refreshToken, result);
-            model.put(OAuth20Constants.REFRESH_TOKEN, encodedRefreshToken);
+
+            if (StringUtils.equals(encodedRefreshToken, refreshToken.getId()) && ticket.isStateless()) {
+                model.put(OAuth20Constants.REFRESH_TOKEN, ticket.getId());
+            } else {
+                model.put(OAuth20Constants.REFRESH_TOKEN, encodedRefreshToken);
+            }
         });
         return model;
     }
