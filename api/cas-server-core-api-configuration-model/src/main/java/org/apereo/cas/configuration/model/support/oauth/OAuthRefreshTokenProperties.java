@@ -45,4 +45,9 @@ public class OAuthRefreshTokenProperties implements Serializable {
      */
     private long maxActiveTokensAllowed;
 
+    /**
+     * Create access token as JWTs.
+     */
+    private boolean createAsJwt;
+    
 }

@@ -93,7 +93,7 @@ decryption can occur. Here's a sample code snippet:
 
 ```java
 var attributes = ...
-varencodedPsw = (String) attributes.get("credential");
+var encodedPsw = (String) attributes.get("credential");
 
 /* Use the private.key file generated above. */
 var privateKey = ...
