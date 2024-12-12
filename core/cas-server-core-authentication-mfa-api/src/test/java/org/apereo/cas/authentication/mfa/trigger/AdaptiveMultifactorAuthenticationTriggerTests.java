@@ -5,14 +5,10 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-
 import lombok.val;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-
+import org.springframework.context.support.StaticApplicationContext;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -23,22 +19,21 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("MFATrigger")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
 
     @Test
-    @Order(0)
-    @Tag("DisableProviderRegistration")
     void verifyNoProviders() throws Throwable {
+        val appContext = new StaticApplicationContext();
+        appContext.refresh();
+        
         val props = new CasConfigurationProperties();
         props.getAuthn().getAdaptive().getPolicy().getRequireMultifactor().put("mfa-dummy", ".+London.+");
-        val trigger = new AdaptiveMultifactorAuthenticationTrigger(null, props, this.applicationContext);
+        val trigger = new AdaptiveMultifactorAuthenticationTrigger(null, props, appContext);
         assertThrows(AuthenticationException.class,
             () -> trigger.isActivated(authentication, registeredService, this.httpRequest, this.httpResponse, mock(Service.class)));
     }
 
     @Test
-    @Order(1)
     void verifyOperationByRequestIP() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getAdaptive().getPolicy().getRequireMultifactor().put("mfa-dummy", "185.86.151.11");
@@ -48,7 +43,6 @@ class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthe
     }
 
     @Test
-    @Order(2)
     void verifyOperationByRequestUserAgent() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getAdaptive().getPolicy().getRequireMultifactor().put("mfa-dummy", "^Mozilla.+");
@@ -58,7 +52,6 @@ class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthe
     }
 
     @Test
-    @Order(3)
     void verifyOperationByRequestGeoLocation() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getAdaptive().getPolicy().getRequireMultifactor().put("mfa-dummy", ".+London.+");
@@ -72,7 +65,6 @@ class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthe
 
 
     @Test
-    @Order(5)
     void verifyMissingProviders() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getAdaptive().getPolicy().getRequireMultifactor().put("mfa-xyz", ".+London.+");
@@ -83,7 +75,6 @@ class AdaptiveMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthe
 
 
     @Test
-    @Order(7)
     void verifyNoLocation() throws Throwable {
         val props = new CasConfigurationProperties();
         props.getAuthn().getAdaptive().getPolicy().getRequireMultifactor().put("mfa-dummy", ".+London.+");
