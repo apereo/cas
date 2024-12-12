@@ -32,7 +32,7 @@ env:
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 15 * * *'
+    - cron: '0 17 * * *'
     - cron: '0 10 * * *'  # This needs to match the condition below that disables PTS mode.
   push:
     branches:
