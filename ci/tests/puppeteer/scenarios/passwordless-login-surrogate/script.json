@@ -3,7 +3,6 @@
   "conditions": {
     "docker": "true"
   },
-
   "properties": [
     "--cas.server.name=https://localhost:8443",
     "--cas.server.prefix=https://localhost:8443/cas",
@@ -11,6 +10,7 @@
     "--spring.mail.host=localhost",
     "--spring.mail.port=25000",
 
+    "--cas.authn.attribute-repository.stub.attributes.organization=Apereo",
     "--cas.service-registry.core.init-from-json=true",
 
     "--cas.authn.passwordless.tokens.mail.html=false",

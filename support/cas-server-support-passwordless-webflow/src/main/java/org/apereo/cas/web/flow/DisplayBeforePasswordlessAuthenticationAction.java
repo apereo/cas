@@ -49,31 +49,27 @@ public class DisplayBeforePasswordlessAuthenticationAction extends BasePasswordl
             PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(requestContext, user);
             return success();
         }
-
-        val account = findPasswordlessUserAccount(requestContext);
-        if (account.isEmpty()) {
-            LOGGER.error("Unable to locate passwordless user account");
-            throw UnauthorizedServiceException.denied("Denied passwordless account access");
-        }
-        val user = account.get();
-        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(requestContext, user);
-
-        val passwordlessRequest = passwordlessRequestParser.parse(user.getUsername());
-        PasswordlessWebflowUtils.putPasswordlessAuthenticationRequest(requestContext, passwordlessRequest);
+        val account = findPasswordlessUserAccount(requestContext).orElseThrow(
+            () -> UnauthorizedServiceException.denied("Unable to locate passwordless user account"));
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationAccount(requestContext, account);
         return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_CREATE);
     }
 
 
-    protected Optional<? extends PasswordlessUserAccount> findPasswordlessUserAccount(final RequestContext requestContext) throws Throwable {
+    protected Optional<? extends PasswordlessUserAccount> findPasswordlessUserAccount(
+        final RequestContext requestContext) throws Throwable {
+        val username = requestContext.getRequestParameters().get(PasswordlessRequestParser.PARAMETER_USERNAME);
+        if (StringUtils.isNotBlank(username)) {
+            val passwordlessRequest = passwordlessRequestParser.parse(username);
+            PasswordlessWebflowUtils.putPasswordlessAuthenticationRequest(requestContext, passwordlessRequest);
+            return passwordlessUserAccountStore.findUser(passwordlessRequest);
+        }
         val account = PasswordlessWebflowUtils.getPasswordlessAuthenticationAccount(requestContext, PasswordlessUserAccount.class);
         if (account != null) {
+            val passwordlessRequest = passwordlessRequestParser.parse(account.getUsername());
+            PasswordlessWebflowUtils.putPasswordlessAuthenticationRequest(requestContext, passwordlessRequest);
             return Optional.of(account);
         }
-        val username = requestContext.getRequestParameters().get(PasswordlessRequestParser.PARAMETER_USERNAME);
-        if (StringUtils.isBlank(username)) {
-            throw UnauthorizedServiceException.denied("Denied");
-        }
-        val passwordlessRequest = passwordlessRequestParser.parse(username);
-        return passwordlessUserAccountStore.findUser(passwordlessRequest);
+        throw UnauthorizedServiceException.denied("Denied");
     }
 }

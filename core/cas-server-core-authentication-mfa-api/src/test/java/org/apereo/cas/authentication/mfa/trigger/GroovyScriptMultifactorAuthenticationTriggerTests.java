@@ -9,12 +9,11 @@ import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.scripting.ExecutableCompiledScriptFactory;
 import lombok.val;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.junitpioneer.jupiter.SetSystemProperty;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -26,13 +25,11 @@ import static org.mockito.Mockito.*;
  * @since 6.1.0
  */
 @Tag("GroovyAuthentication")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SetSystemProperty(key = ExecutableCompiledScriptFactory.SYSTEM_PROPERTY_GROOVY_COMPILE_STATIC, value = "true")
 class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMultifactorAuthenticationTriggerTests {
     @Test
-    @Order(1)
     void verifyOperationByProvider() throws Throwable {
-        val trigger = buildGroovyTrigger();
+        val trigger = buildGroovyTrigger(applicationContext);
         var result = trigger.isActivated(authentication, registeredService,
             this.httpRequest, this.httpResponse, mock(Service.class));
         assertTrue(result.isPresent());
@@ -44,9 +41,8 @@ class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMultifactorA
     }
 
     @Test
-    @Order(2)
     void verifyCompositeProvider() throws Throwable {
-        val trigger = buildGroovyTrigger();
+        val trigger = buildGroovyTrigger(applicationContext);
         val service = MultifactorAuthenticationTestUtils.getService("composite");
         val result = trigger.isActivated(authentication, registeredService,
             this.httpRequest, this.httpResponse, service);
@@ -54,9 +50,8 @@ class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMultifactorA
     }
 
     @Test
-    @Order(3)
     void verifyBadInputParameters() throws Throwable {
-        val trigger = buildGroovyTrigger();
+        val trigger = buildGroovyTrigger(applicationContext);
         var result = trigger.isActivated(null, registeredService,
             this.httpRequest, this.httpResponse, mock(Service.class));
         assertFalse(result.isPresent());
@@ -72,10 +67,11 @@ class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMultifactorA
     }
 
     @Test
-    @Order(0)
-    @Tag("DisableProviderRegistration")
     void verifyNoProvider() throws Throwable {
-        val trigger = buildGroovyTrigger();
+        val appContext = new StaticApplicationContext();
+        appContext.refresh();
+
+        val trigger = buildGroovyTrigger(appContext);
         assertThrows(AuthenticationException.class,
             () -> trigger.isActivated(authentication, registeredService,
                 this.httpRequest, this.httpResponse, mock(Service.class)));
@@ -86,14 +82,14 @@ class GroovyScriptMultifactorAuthenticationTriggerTests extends BaseMultifactorA
         assertNotNull(trigger.getWatchableScript());
     }
 
-    private GroovyScriptMultifactorAuthenticationTrigger buildGroovyTrigger() throws Throwable {
+    private static GroovyScriptMultifactorAuthenticationTrigger buildGroovyTrigger(final ApplicationContext appContext) throws Throwable {
         val selector = mock(MultifactorAuthenticationProviderSelector.class);
         when(selector.resolve(any(), any(), any())).thenReturn(new TestMultifactorAuthenticationProvider());
         val scriptFactory = ExecutableCompiledScriptFactory.getExecutableCompiledScriptFactory();
         val resource = new ClassPathResource("GroovyMfaTrigger.groovy");
         return new GroovyScriptMultifactorAuthenticationTrigger(
             scriptFactory.fromResource(resource),
-            applicationContext,
+            appContext,
             new DefaultMultifactorAuthenticationProviderResolver(MultifactorAuthenticationPrincipalResolver.identical()),
             selector);
     }
