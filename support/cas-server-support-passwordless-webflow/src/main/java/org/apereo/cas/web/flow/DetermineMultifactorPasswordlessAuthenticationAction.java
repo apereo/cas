@@ -42,7 +42,7 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BasePa
             WebUtils.addErrorMessageToContext(requestContext, "passwordless.error.invalid.user");
             return error();
         }
-        if (multifactorTriggerSelectionStrategy.multifactorAuthenticationTriggers().isEmpty()) {
+        if (multifactorTriggerSelectionStrategy.getMultifactorAuthenticationTriggers().isEmpty()) {
             LOGGER.debug("No multifactor authentication triggers are available or defined");
             return success();
         }

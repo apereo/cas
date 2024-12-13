@@ -44,5 +44,5 @@ public interface MultifactorAuthenticationTriggerSelectionStrategy {
      *
      * @return the multifactor authentication triggers
      */
-    Collection<MultifactorAuthenticationTrigger> multifactorAuthenticationTriggers();
+    Collection<MultifactorAuthenticationTrigger> getMultifactorAuthenticationTriggers();
 }

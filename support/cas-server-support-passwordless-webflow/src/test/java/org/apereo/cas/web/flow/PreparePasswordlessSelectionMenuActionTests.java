@@ -1,6 +1,9 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
+import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
+import org.apereo.cas.config.CasDelegatedAuthenticationCasAutoConfiguration;
 import org.apereo.cas.configuration.support.TriStateBoolean;
 import org.apereo.cas.util.MockRequestContext;
 import lombok.val;
@@ -8,6 +11,10 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.webflow.execution.Action;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,6 +25,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @since 7.2.0
  */
 @Tag("WebflowAuthenticationActions")
+@Import({
+    PreparePasswordlessSelectionMenuActionTests.MultifactorTestConfiguration.class,
+    CasDelegatedAuthenticationCasAutoConfiguration.class,
+    BaseWebflowConfigurerTests.SharedTestConfiguration.class
+})
+@TestPropertySource(properties = {
+    "cas.authn.pac4j.cas[0].login-url=https://casserver.herokuapp.com/cas/login",
+    "cas.authn.pac4j.cas[0].protocol=CAS30",
+    "cas.authn.mfa.triggers.global.global-provider-id=" + TestMultifactorAuthenticationProvider.ID
+})
 class PreparePasswordlessSelectionMenuActionTests extends BasePasswordlessAuthenticationActionTests {
 
     @Autowired
@@ -40,6 +57,14 @@ class PreparePasswordlessSelectionMenuActionTests extends BasePasswordlessAuthen
         assertNull(prepareLoginAction.execute(context));
         assertTrue(PasswordlessWebflowUtils.isMultifactorAuthenticationAllowed(context));
         assertTrue(PasswordlessWebflowUtils.isDelegatedAuthenticationAllowed(context));
+    }
+
+    @TestConfiguration(value = "MultifactorTestConfiguration", proxyBeanMethods = false)
+    static class MultifactorTestConfiguration {
+        @Bean
+        public MultifactorAuthenticationProvider dummyProvider() {
+            return new TestMultifactorAuthenticationProvider();
+        }
     }
     
 }
