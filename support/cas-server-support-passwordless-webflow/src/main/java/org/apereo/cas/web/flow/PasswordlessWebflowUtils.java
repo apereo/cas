@@ -129,4 +129,44 @@ public class PasswordlessWebflowUtils {
         val enabled = Objects.requireNonNullElse(requestContext.getFlowScope().getBoolean("passwordlessCaptchaEnabled", Boolean.FALSE), Boolean.FALSE);
         return BooleanUtils.toBoolean(enabled);
     }
+
+    /**
+     * Put multifactor authentication allowed.
+     *
+     * @param requestContext the request context
+     * @param value          the value
+     */
+    public static void putMultifactorAuthenticationAllowed(final RequestContext requestContext, final boolean value) {
+        requestContext.getFlowScope().put("passwordlessMultifactorAuthenticationAllowed", value);
+    }
+
+    /**
+     * Put delegated authentication allowed.
+     *
+     * @param requestContext the request context
+     * @param value          the value
+     */
+    public static void putDelegatedAuthenticationAllowed(final RequestContext requestContext, final boolean value) {
+        requestContext.getFlowScope().put("passwordlessDelegatedAuthenticationAllowed", value);
+    }
+
+    /**
+     * Is multifactor authentication allowed.
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    public static boolean isMultifactorAuthenticationAllowed(final RequestContext context) {
+        return context.getFlowScope().getBoolean("passwordlessMultifactorAuthenticationAllowed", Boolean.FALSE);
+    }
+
+    /**
+     * Is delegated authentication allowed.
+     *
+     * @param context the context
+     * @return the boolean
+     */
+    public static boolean isDelegatedAuthenticationAllowed(final RequestContext context) {
+        return context.getFlowScope().getBoolean("passwordlessDelegatedAuthenticationAllowed", Boolean.FALSE);
+    }
 }

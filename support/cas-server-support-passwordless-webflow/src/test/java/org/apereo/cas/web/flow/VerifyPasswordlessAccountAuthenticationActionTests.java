@@ -62,6 +62,13 @@ class VerifyPasswordlessAccountAuthenticationActionTests extends BasePasswordles
     }
 
     @Test
+    void verifySelectionMenu() throws Throwable {
+        val context = getRequestContext("needs-selection");
+        assertEquals(CasWebflowConstants.TRANSITION_ID_SELECT,
+            verifyPasswordlessAccountAuthenticationAction.execute(context).getId());
+    }
+
+    @Test
     void verifyRequestPasswordForUserWithoutEmailOrPhone() throws Throwable {
         val context = getRequestContext("needs-password-user-without-email-or-phone");
         assertEquals(CasWebflowConstants.TRANSITION_ID_PROMPT, verifyPasswordlessAccountAuthenticationAction.execute(context).getId());

@@ -1,6 +1,9 @@
 package org.apereo.cas.web.flow.delegation;
 
 import org.apereo.cas.api.PasswordlessUserAccount;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.scripting.ExecutableCompiledScript;
 import org.apereo.cas.web.DelegatedClientIdentityProviderConfiguration;
@@ -34,9 +37,12 @@ public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePass
 
     public PasswordlessDetermineDelegatedAuthenticationAction(
         final CasConfigurationProperties casProperties,
+        final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
+        final PrincipalFactory passwordlessPrincipalFactory,
+        final AuthenticationSystemSupport authenticationSystemSupport,
         final DelegatedClientIdentityProviderConfigurationProducer providerConfigurationProducer,
         final ExecutableCompiledScript watchableScript) {
-        super(casProperties);
+        super(casProperties, multifactorTriggerSelectionStrategy, passwordlessPrincipalFactory, authenticationSystemSupport);
         this.providerConfigurationProducer = providerConfigurationProducer;
         this.watchableScript = watchableScript;
     }
@@ -100,8 +106,7 @@ public class PasswordlessDetermineDelegatedAuthenticationAction extends BasePass
         final Set<? extends DelegatedClientIdentityProviderConfiguration> clients) throws Throwable {
         val request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         val args = new Object[]{user, clients, request, LOGGER};
-        return Optional.ofNullable(watchableScript.execute(args, DelegatedClientIdentityProviderConfiguration.class))
-            .map(DelegatedClientIdentityProviderConfiguration.class::cast);
+        return Optional.ofNullable(watchableScript.execute(args, DelegatedClientIdentityProviderConfiguration.class));
     }
 
 }

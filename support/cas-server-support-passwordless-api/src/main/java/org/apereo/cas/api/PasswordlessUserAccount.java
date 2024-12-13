@@ -72,6 +72,9 @@ public class PasswordlessUserAccount implements Serializable {
     @JsonProperty("requestPassword")
     private boolean requestPassword;
 
+    @JsonProperty("allowSelectionMenu")
+    private boolean allowSelectionMenu;
+
     @JsonProperty("source")
     private String source;
 }

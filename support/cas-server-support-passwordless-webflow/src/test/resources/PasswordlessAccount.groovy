@@ -27,6 +27,16 @@ def run(Object[] args) {
                 .build()
     }
 
+    if (request.username.equals("needs-selection")) {
+        return PasswordlessUserAccount.builder()
+                .username("nouserinfo")
+                .name("CAS")
+                .email("casuser@example.org")
+                .phone("123-456-7890")
+                .allowSelectionMenu(true)
+                .build()
+    }
+
     if (request.username.equals("needs-password-user-without-email-or-phone")) {
         return PasswordlessUserAccount.builder()
                 .username("nouserinfo")

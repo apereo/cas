@@ -37,11 +37,27 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
             createStateInitialPasswordless(flow);
             createStateGetUserIdentifier(flow);
             createStateVerifyPasswordlessAccount(flow);
+            createStateDisplaySelectionMenu(flow);
             createStateDisplayPasswordless(flow);
             createStateDetermineDelegatedAuthenticationAction(flow);
             createStateDetermineMultifactorAuthenticationAction(flow);
             createStateAcceptPasswordless(flow);
         }
+    }
+
+    private void createStateDisplaySelectionMenu(final Flow flow) {
+        val viewState = createViewState(flow, CasWebflowConstants.STATE_ID_PASSWORDLESS_DISPLAY_SELECTION_MENU, "passwordless/casPasswordlessSelectionMenuView");
+        viewState.getRenderActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_PASSWORDLESS_PREPARE_SELECTION_MENU));
+        createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_PASSWORDLESS_GET_USERID);
+        createTransitionForState(viewState, CasWebflowConstants.TRANSITION_ID_SUBMIT, CasWebflowConstants.STATE_ID_PASSWORDLESS_ACCEPT_SELECTION_MENU);
+        
+        val acceptState = createActionState(flow, CasWebflowConstants.STATE_ID_PASSWORDLESS_ACCEPT_SELECTION_MENU,
+            CasWebflowConstants.ACTION_ID_PASSWORDLESS_ACCEPT_SELECTION_MENU);
+        createTransitionForState(acceptState, CasWebflowConstants.TRANSITION_ID_PROMPT, getPromptTargetStateId(flow));
+        createTransitionForState(acceptState, CasWebflowConstants.TRANSITION_ID_DISPLAY, CasWebflowConstants.STATE_ID_PASSWORDLESS_DISPLAY);
+        createTransitionForState(acceptState, CasWebflowConstants.TRANSITION_ID_MFA, CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_MFA);
+        createTransitionForState(acceptState, CasWebflowConstants.TRANSITION_ID_DELEGATED_AUTHENTICATION_REDIRECT, CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_DELEGATED_AUTHN);
+        createTransitionForState(acceptState, CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_PASSWORDLESS_GET_USERID);
     }
 
     protected void createStateInitialPasswordless(final Flow flow) {
@@ -77,6 +93,9 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
         createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_ERROR,
             CasWebflowConstants.STATE_ID_PASSWORDLESS_GET_USERID);
 
+        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SELECT,
+            CasWebflowConstants.STATE_ID_PASSWORDLESS_DISPLAY_SELECTION_MENU);
+        
         if (applicationContext.containsBean(CasWebflowConstants.ACTION_ID_DETERMINE_PASSWORDLESS_DELEGATED_AUTHN)) {
             createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_SUCCESS,
                 CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_DELEGATED_AUTHN);
@@ -85,9 +104,14 @@ public class PasswordlessAuthenticationWebflowConfigurer extends AbstractCasWebf
                 CasWebflowConstants.STATE_ID_PASSWORDLESS_DETERMINE_MFA);
         }
 
+        val targetStateId = getPromptTargetStateId(flow);
+        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_PROMPT, targetStateId);
+    }
+
+    private String getPromptTargetStateId(final Flow flow) {
         val state = getTransitionableState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         val transition = state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
-        createTransitionForState(verifyAccountState, CasWebflowConstants.TRANSITION_ID_PROMPT, transition.getTargetStateId());
+        return transition.getTargetStateId();
     }
 
     protected void createStateDetermineDelegatedAuthenticationAction(final Flow flow) {
