@@ -38,7 +38,7 @@ public class DetermineMultifactorPasswordlessAuthenticationAction extends BasePa
             LOGGER.error("Unable to locate passwordless account in the flow");
             return error();
         }
-        if (StringUtils.isBlank(user.getPhone()) && StringUtils.isBlank(user.getEmail())) {
+        if (!user.hasContactInformation()) {
             WebUtils.addErrorMessageToContext(requestContext, "passwordless.error.invalid.user");
             return error();
         }

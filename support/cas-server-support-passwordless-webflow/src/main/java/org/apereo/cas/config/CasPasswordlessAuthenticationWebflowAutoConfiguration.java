@@ -201,6 +201,8 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
         @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_PASSWORDLESS_PREPARE_SELECTION_MENU)
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public Action preparePasswordlessSelectionMenuAction(
+            @Qualifier(CommunicationsManager.BEAN_NAME)
+            final CommunicationsManager communicationsManager,
             @Qualifier("passwordlessPrincipalFactory")
             final PrincipalFactory passwordlessPrincipalFactory,
             @Qualifier(AuthenticationSystemSupport.BEAN_NAME)
@@ -218,7 +220,8 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> new PreparePasswordlessSelectionMenuAction(casProperties,
                     multifactorTriggerSelectionStrategy, passwordlessPrincipalFactory, authenticationSystemSupport,
-                    passwordlessUserAccountStore, applicationContext, delegatedClientIdentityProviderConfigurationProducer))
+                    passwordlessUserAccountStore, applicationContext,
+                    delegatedClientIdentityProviderConfigurationProducer, communicationsManager))
                 .withId(CasWebflowConstants.ACTION_ID_PASSWORDLESS_PREPARE_SELECTION_MENU)
                 .build()
                 .get();

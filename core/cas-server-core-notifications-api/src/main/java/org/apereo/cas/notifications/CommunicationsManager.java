@@ -105,4 +105,13 @@ public interface CommunicationsManager {
      * @return true, if email or sms providers, etc are defined for CAS.
      */
     boolean validate();
+
+    /**
+     * Is communication channel available.
+     *
+     * @return the boolean
+     */
+    default boolean isCommunicationChannelAvailable() {
+        return isMailSenderDefined() || isSmsSenderDefined() || isPhoneOperatorDefined() || isNotificationSenderDefined();
+    }
 }
