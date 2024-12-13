@@ -209,6 +209,8 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
             final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
             final CasConfigurationProperties casProperties,
             final ConfigurableApplicationContext applicationContext,
+            @Qualifier(DelegatedClientIdentityProviderConfigurationProducer.BEAN_NAME)
+            final ObjectProvider<DelegatedClientIdentityProviderConfigurationProducer> delegatedClientIdentityProviderConfigurationProducer,
             @Qualifier(PasswordlessUserAccountStore.BEAN_NAME)
             final PasswordlessUserAccountStore passwordlessUserAccountStore) {
             return WebflowActionBeanSupplier.builder()
@@ -216,7 +218,7 @@ public class CasPasswordlessAuthenticationWebflowAutoConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> new PreparePasswordlessSelectionMenuAction(casProperties,
                     multifactorTriggerSelectionStrategy, passwordlessPrincipalFactory, authenticationSystemSupport,
-                    passwordlessUserAccountStore, applicationContext))
+                    passwordlessUserAccountStore, applicationContext, delegatedClientIdentityProviderConfigurationProducer))
                 .withId(CasWebflowConstants.ACTION_ID_PASSWORDLESS_PREPARE_SELECTION_MENU)
                 .build()
                 .get();
