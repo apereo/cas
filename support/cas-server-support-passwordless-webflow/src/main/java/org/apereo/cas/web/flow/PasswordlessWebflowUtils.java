@@ -37,6 +37,16 @@ public class PasswordlessWebflowUtils {
     }
 
     /**
+     * Is passwordless authentication enabled.
+     *
+     * @param requestContext the request context
+     * @return true/false
+     */
+    public static boolean isPasswordlessAuthenticationEnabled(final RequestContext requestContext) {
+        return requestContext.getFlowScope().getBoolean("passwordlessAuthenticationEnabled", Boolean.FALSE);
+    }
+    
+    /**
      * Put passwordless authentication request.
      *
      * @param requestContext      the request context

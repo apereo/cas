@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.util.function.FunctionUtils;
 import org.apereo.cas.web.support.WebUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -31,17 +32,22 @@ public class PreparePasswordlessSelectionMenuAction extends BasePasswordlessCasW
 
     private final ObjectProvider<DelegatedClientIdentityProviderConfigurationProducer> providerConfigurationProducer;
 
-    public PreparePasswordlessSelectionMenuAction(final CasConfigurationProperties casProperties,
-                                                  final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
-                                                  final PrincipalFactory passwordlessPrincipalFactory,
-                                                  final AuthenticationSystemSupport authenticationSystemSupport,
-                                                  final PasswordlessUserAccountStore passwordlessUserAccountStore,
-                                                  final ConfigurableApplicationContext applicationContext,
-                                                  final ObjectProvider<DelegatedClientIdentityProviderConfigurationProducer> providerConfigurationProducer) {
+    private final CommunicationsManager communicationsManager;
+
+    public PreparePasswordlessSelectionMenuAction(
+        final CasConfigurationProperties casProperties,
+        final MultifactorAuthenticationTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
+        final PrincipalFactory passwordlessPrincipalFactory,
+        final AuthenticationSystemSupport authenticationSystemSupport,
+        final PasswordlessUserAccountStore passwordlessUserAccountStore,
+        final ConfigurableApplicationContext applicationContext,
+        final ObjectProvider<DelegatedClientIdentityProviderConfigurationProducer> providerConfigurationProducer,
+        final CommunicationsManager communicationsManager) {
         super(casProperties, multifactorTriggerSelectionStrategy, passwordlessPrincipalFactory, authenticationSystemSupport);
         this.passwordlessUserAccountStore = passwordlessUserAccountStore;
         this.applicationContext = applicationContext;
         this.providerConfigurationProducer = providerConfigurationProducer;
+        this.communicationsManager = communicationsManager;
     }
 
     @Override
@@ -50,7 +56,12 @@ public class PreparePasswordlessSelectionMenuAction extends BasePasswordlessCasW
         FunctionUtils.throwIf(!user.isAllowSelectionMenu(), () -> new IllegalStateException("Passwordless account is not allowed to select options"));
         PasswordlessWebflowUtils.putMultifactorAuthenticationAllowed(requestContext, isMultifactorAuthenticationAllowed(requestContext));
         PasswordlessWebflowUtils.putDelegatedAuthenticationAllowed(requestContext, isDelegatedAuthenticationAllowed(requestContext));
+        PasswordlessWebflowUtils.putPasswordlessAuthenticationEnabled(requestContext, isPasswordlessAuthenticationAllowed(user));
         return null;
+    }
+
+    protected boolean isPasswordlessAuthenticationAllowed(final PasswordlessUserAccount user) {
+        return user.hasContactInformation() && communicationsManager.isCommunicationChannelAvailable();
     }
 
     protected boolean isDelegatedAuthenticationAllowed(final RequestContext requestContext) throws Throwable {
