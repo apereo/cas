@@ -15,7 +15,7 @@ case "$1" in
         sudo mkdir -p /etc/cas
         keystore="/etc/cas/casconfigserver.jks"
         echo "Generating keystore ${keystore} for CAS with DN=${dname}, SAN=${subjectAltName}"
-        [ -f "${keystore}" ] && rm "${keystore}"
+        [ -f "${keystore}" ] && sudo rm "${keystore}"
         sudo keytool -genkey -noprompt -alias cas -keyalg RSA -keypass changeit -storepass changeit \
           -keystore "${keystore}" -dname "${dname}" -ext SAN="${subjectAltName}"
         ;;
@@ -44,7 +44,7 @@ if [[ ! -f "apache-tomcat-${tomcatVersion}.zip" ]]; then
       echo "Attempt $i - Downloading Apache Tomcat from ${tomcatUrl}"
       wget --no-check-certificate --timeout=30 --tries=3 "${tomcatUrl}" > /dev/null 2>&1 && success=true && break
       echo "Download failed. Retrying..."
-      sleep 3
+      sleep 5
   done
 fi
 if [ "$success" = false ]; then
