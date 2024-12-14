@@ -56,18 +56,18 @@ to build and verify Graal VM native images and we plan to extend the coverage to
 ### Testing Strategy
 
 The collection of end-to-end [browser tests based on Puppeteer](../../developer/Test-Process.html) continue to grow to cover more use cases
-and scenarios. At the moment, the total number of jobs stands at approximately `506` distinct scenarios. The overall
+and scenarios. At the moment, the total number of jobs stands at approximately `507` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
    
 ## WebAuthN via QR Codes
 
 CAS can be configured to support FIDO2 WebAuthn authentication using QR codes. Once 
 enabled, [this feature](../mfa/FIDO2-WebAuthn-Authentication-QRCode.html) allows users to authenticate
-using a FIDO2-enabled secondary device by scanning a QR code presented by CAS.
+using a secondary FIDO2-enabled secondary device by scanning a QR code presented by CAS.
   
 ## Passwordless Authentication Selection
 
-[Passwordless Authentication](../authentication/Passwordless-Authentication.html) at the direction of the
+[Passwordless Authentication](../authentication/Passwordless-Authentication-UserSelectionMenu.html) at the direction of the
 account store can now be instructed to allow the user to select from a menu of available authentication options.
 
 ## Other Stuff
@@ -81,6 +81,7 @@ account store can now be instructed to allow the user to select from a menu of a
 - Apache Tomcat
 - Java Melody
 - Apache CXF
+- Spring Retry
 - Zipkin Brave
 - Spring Shell
 - Micrometer
@@ -88,4 +89,8 @@ account store can now be instructed to allow the user to select from a menu of a
 - Amazon SDK
 - Jetty
 - Gradle
+- Spring Data
+- Apache Log4j
+- Apache CXF
 - Sentry
+- GCP Logging
