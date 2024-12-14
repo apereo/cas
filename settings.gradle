@@ -67,7 +67,7 @@ dependencyResolutionManagement {
         }
         mavenCentral()
         maven {
-            url "https://build.shibboleth.net/maven/snapshots"
+            url = "https://build.shibboleth.net/maven/snapshots"
             mavenContent { snapshotsOnly() }
             content {
                 includeGroupByRegex "org\\.opensaml.*"
@@ -75,7 +75,7 @@ dependencyResolutionManagement {
             }
         }
         maven {
-            url "https://build.shibboleth.net/maven/releases/"
+            url = "https://build.shibboleth.net/maven/releases/"
             mavenContent {releasesOnly() }
             content {
                 includeGroupByRegex "org\\.opensaml.*"
@@ -83,30 +83,30 @@ dependencyResolutionManagement {
             }
         }
         maven {
-            url "https://oss.sonatype.org/content/repositories/snapshots"
+            url = "https://oss.sonatype.org/content/repositories/snapshots"
             mavenContent { snapshotsOnly() }
         }
         maven {
-            url "https://repository.apache.org/content/repositories/snapshots"
+            url = "https://repository.apache.org/content/repositories/snapshots"
             mavenContent { snapshotsOnly() }
         }
         maven {
-            url "https://repository.apache.org/content/repositories/releases"
+            url = "https://repository.apache.org/content/repositories/releases"
             mavenContent { releasesOnly() }
         }
         maven {
-            url "https://oss.sonatype.org/content/repositories/releases"
+            url = "https://oss.sonatype.org/content/repositories/releases"
             mavenContent { releasesOnly() }
         }
         maven {
-            url "https://splunk.jfrog.io/splunk/ext-releases-local"
+            url = "https://splunk.jfrog.io/splunk/ext-releases-local"
             content {
                 includeGroupByRegex ".*splunk.*"
             }
             mavenContent { releasesOnly() }
         }
         maven {
-            url "https://repo.spring.io/milestone"
+            url = "https://repo.spring.io/milestone"
             content {
                 includeGroupByRegex ".*springframework.*"
                 includeGroupByRegex ".*projectreactor.*"
@@ -115,7 +115,7 @@ dependencyResolutionManagement {
             mavenContent { releasesOnly() }
         }
         maven {
-            url "https://repo.spring.io/snapshot"
+            url = "https://repo.spring.io/snapshot"
             content {
                 includeGroupByRegex ".*springframework.*"
                 includeGroupByRegex ".*projectreactor.*"
@@ -124,38 +124,19 @@ dependencyResolutionManagement {
             mavenContent { snapshotsOnly() }
         }
         maven {
-            url "https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates"
+            url = "https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates"
             content {
                 includeGroupByRegex ".*netflix.*"
             }
             mavenContent { releasesOnly() }
         }
         maven {
-            url "https://jitpack.io"
-            content {
-                includeGroupByRegex ".*wss4j.*"
-            }
-            mavenContent { releasesOnly() }
-        }
-        maven {
-            url "https://projectlombok.org/edge-releases"
+            url = "https://projectlombok.org/edge-releases"
             content {
                 includeGroupByRegex ".*projectlombok.*"
             }
             mavenContent { snapshotsOnly() }
         }
-//        if (githubPackageRegistryUser != null && githubPackageRegistryPassword != null) {
-//            maven {
-//                url "https://maven.pkg.github.com/mmoayyed/ws-wss4j"
-//                content {
-//                    includeGroupByRegex "org.apache.wss4j"
-//                }
-//                credentials {
-//                    username githubPackageRegistryUser
-//                    password githubPackageRegistryPassword
-//                }
-//            }
-//        }
     }
 }
 
