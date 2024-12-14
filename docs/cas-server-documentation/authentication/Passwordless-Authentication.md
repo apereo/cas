@@ -27,7 +27,8 @@ validate, expire or save operations in appropriate data stores.
 
 Qualifying passwordless accounts may also directly be routed to selected [multifactor authentication](Passwordless-Authentication-MFA.html) providers
 or [delegated to external identity providers](Passwordless-Authentication-Delegation.html) for further verification. Alternatively,
-the passwordless account may be instructed to allow the user to select from a menu of available authentication options.
+the passwordless account may be instructed to allow the user to select from 
+a [menu of available authentication options](Passwordless-Authentication-UserSelectionMenu.html).
 
 ## Passwordless Variants
 

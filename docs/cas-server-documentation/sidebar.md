@@ -184,6 +184,7 @@ layout: null
         *   [Notifications](/cas/{{ version }}/authentication/Passwordless-Authentication-Notifications.html)
         *   [Delegation](/cas/{{ version }}/authentication/Passwordless-Authentication-Delegation.html)
         *   [Multifactor Authentication](/cas/{{ version }}/authentication/Passwordless-Authentication-MFA.html)
+        *   [Selection Menu](/cas/{{ version }}/authentication/Passwordless-Authentication-UserSelectionMenu.html)
         *   [Accounts](#passwordlessauthnaccts)
             *   [Custom](/cas/{{ version }}/authentication/Passwordless-Authentication-Storage-Custom.html)
             *   [Groovy](/cas/{{ version }}/authentication/Passwordless-Authentication-Storage-Groovy.html)
