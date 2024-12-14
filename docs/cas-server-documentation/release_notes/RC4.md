@@ -72,7 +72,8 @@ account store can now be instructed to allow the user to select from a menu of a
 
 ## Other Stuff
    
-- [OAuth Refresh Tokens](../authentication/OAuth-Authentication-Clients.html) can now be generated as JWTs. 
+- [OAuth Refresh Tokens](../authentication/OAuth-Authentication-Clients.html) can optionally be generated as JWTs. 
+- [Email notifications](../notifications/Sending-Email-Configuration.html) now test the connection to the email server before sending the actual message.
 
 ## Library Upgrades
 
