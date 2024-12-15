@@ -9,8 +9,7 @@ const cas = require("../../cas.js");
     await cas.gotoLogin(page);
     await cas.sleep(1000);
 
-    const pswd = await page.$("#password");
-    assert(pswd === null);
+    await cas.assertElementDoesNotExist(page, "#password");
 
     await cas.type(page,"#username", "user3+casuser");
     await cas.pressEnter(page);

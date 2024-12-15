@@ -5,8 +5,7 @@ async function authenticateWithPassword(browser) {
     const context = await browser.createBrowserContext();
     const page = await cas.newPage(context);
     await cas.gotoLogin(page);
-    const pswd = await page.$("#password");
-    assert(pswd === null);
+    await cas.assertElementDoesNotExist(page, "#password");
     await cas.type(page, "#username", "caspassword");
     await cas.pressEnter(page);
     await cas.waitForNavigation(page);
@@ -32,8 +31,7 @@ async function authenticateWithDelegation(browser) {
     const context = await browser.createBrowserContext();
     const page = await cas.newPage(context);
     await cas.gotoLogin(page);
-    const pswd = await page.$("#password");
-    assert(pswd === null);
+    await cas.assertElementDoesNotExist(page, "#password");
     await cas.type(page, "#username", "casdelegation");
     await cas.pressEnter(page);
     await cas.waitForNavigation(page);
@@ -57,8 +55,7 @@ async function authenticateWithPasswordlessToken(browser) {
     const context = await browser.createBrowserContext();
     const page = await cas.newPage(context);
     await cas.gotoLogin(page);
-    const pswd = await page.$("#password");
-    assert(pswd === null);
+    await cas.assertElementDoesNotExist(page, "#password");
     await cas.type(page, "#username", "castoken");
     await cas.pressEnter(page);
     await cas.waitForNavigation(page);
@@ -88,8 +85,7 @@ async function authenticateWithMfa(browser) {
     const context = await browser.createBrowserContext();
     const page = await cas.newPage(context);
     await cas.gotoLogin(page);
-    const pswd = await page.$("#password");
-    assert(pswd === null);
+    await cas.assertElementDoesNotExist(page, "#password");
     await cas.type(page, "#username", "casmfa");
     await cas.pressEnter(page);
     await cas.waitForNavigation(page);
