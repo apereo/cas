@@ -30,6 +30,6 @@
       "transports" : [ "USB", "NFC" ]
     },
     "username" : "casuser",
-    "registrationTime" : "2038-11-25T05:34:16.366768Z"
+    "registrationTime" : "2048-11-25T05:34:16.366768Z"
   } ]
 }

@@ -1,8 +1,4 @@
-
 const cas = require("../../cas.js");
-const { Jimp } = require("jimp");
-const fs = require("fs");
-const qrCode = require("qrcode-reader");
 const SockJS = require("sockjs-client");
 const StompJS = require("@stomp/stompjs");
 const querystring = require("querystring");
@@ -16,25 +12,11 @@ const querystring = require("querystring");
     await cas.assertVisibility(page, "#qrlogin .card-text img");
     await cas.assertVisibility(page, "#qrchannel");
 
-    const src = await page.$eval("#qrcode", (element) => element.getAttribute("src"));
-    const data = src.replace(/^data:image\/jpeg;base64,/, "");
+    const qrCode = await cas.parseQRCode(page, "#qrcode");
+    const channelId = qrCode.data;
+    await cas.logg(`QR channel code is ${channelId}`);
+    await connectAndLogin(channelId, page);
 
-    await cas.removeDirectoryOrFile(`${__dirname}/out.ignore`);
-    await fs.writeFileSync(`${__dirname}/out.ignore`, data, "base64");
-
-    const image = await Jimp.read(`${__dirname}/out.ignore`);
-    const qrcode = new qrCode();
-    qrcode.callback = (err, channelIdResult) => {
-        if (err) {
-            cas.logr(err);
-            throw err;
-        }
-        const channelId = channelIdResult.result;
-        cas.logg(`QR channel code is ${channelId}`);
-        connectAndLogin(channelId, page);
-    };
-    qrcode.decode(image.bitmap);
-    
     await browser.close();
 })();
 
@@ -50,7 +32,7 @@ async function connectAndLogin(channelId, page) {
     if (typeof WebSocket !== "function") {
         client.webSocketFactory = () => new SockJS("https://localhost:8443/cas/qr-websocket");
     }
-    
+
     client.onConnect = (frame) => {
         const deviceId = "QRDevicePuppeteer";
         cas.logg(`We have now connected ${frame.headers["message"]}`);

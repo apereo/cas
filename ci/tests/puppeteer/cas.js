@@ -24,6 +24,8 @@ const archiver = require("archiver");
 const unzipper = require("unzipper");
 const puppeteer = require("puppeteer");
 const speakeasy = require("speakeasy");
+const {createCanvas, loadImage} = require("canvas");
+const jsQR = require("jsqr");
 
 const LOGGER = pino({
     level: "debug",
@@ -80,6 +82,11 @@ function inspect(text) {
     }
     return util.inspect(result, {colors: false, depth: null});
 }
+
+exports.assertElementDoesNotExist = async (page, s) => {
+    const element = await page.$(s);
+    assert(element === null);
+};
 
 exports.newBrowser = async (options) => {
     let retry = 0;
@@ -318,6 +325,21 @@ exports.assertCookie = async (page, cookieMustBePresent = true, cookieName = "TG
         await this.logb(msg);
         throw msg;
     }
+};
+
+exports.parseQRCode = async (page, id) => {
+    const src = await page.$eval(id, (element) => element.getAttribute("src"));
+    const base64Data = src.replace(/^data:image\/jpeg;base64,/, "");
+    const imageBuffer = Buffer.from(base64Data, "base64");
+
+    const img = await loadImage(imageBuffer);
+    const canvas = createCanvas(img.width, img.height);
+    const ctx = canvas.getContext("2d");
+
+    ctx.drawImage(img, 0, 0, img.width, img.height);
+    const imageData = ctx.getImageData(0, 0, img.width, img.height);
+
+    return jsQR(imageData.data, imageData.width, imageData.height);
 };
 
 exports.submitForm = async (page, selector, predicate = undefined, statusCode = 0) => {
