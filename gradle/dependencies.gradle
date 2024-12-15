@@ -1136,6 +1136,22 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
+        mailgun          : [
+                dependencies.create("com.mailgun:mailgun-java:$mailgunVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.datatype", module: "jackson-datatype-jsr310")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "commons-io", module: "commons-io")
+                    exclude(group: "org.apache.commons", module: "commons-collections4")
+                }
+        ],
         mailjet          : [
                 dependencies.create("com.mailjet:mailjet-client:$mailjetVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
