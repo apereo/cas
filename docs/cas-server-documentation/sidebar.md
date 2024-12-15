@@ -819,6 +819,7 @@ layout: null
             *   [SendGrid](/cas/{{ version }}/notifications/Sending-Email-Configuration-SendGrid.html)
             *   [Amazon SES](/cas/{{ version }}/notifications/Sending-Email-Configuration-AmazonSES.html)
             *   [Mailjet](/cas/{{ version }}/notifications/Sending-Email-Configuration-Mailjet.html)
+            *   [Mailgun](/cas/{{ version }}/notifications/Sending-Email-Configuration-Mailgun.html)
             *   [Custom](/cas/{{ version }}/notifications/Sending-Email-Configuration-Custom.html)
     *   [Sending Text Messages](#sendingsms)
         *   [Overview](/cas/{{ version }}/notifications/SMS-Messaging-Configuration.html)

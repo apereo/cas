@@ -34,5 +34,11 @@ public class EmailProvidersProperties implements CasFeatureModule, Serializable 
      */
     @NestedConfigurationProperty
     private MailjetProperties mailjet = new MailjetProperties();
+
+    /**
+     * Mailgun settings.
+     */
+    @NestedConfigurationProperty
+    private MailgunProperties mailgun = new MailgunProperties();
     
 }

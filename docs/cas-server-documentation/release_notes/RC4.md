@@ -69,6 +69,10 @@ using a secondary FIDO2-enabled secondary device by scanning a QR code presented
 
 [Passwordless Authentication](../authentication/Passwordless-Authentication-UserSelectionMenu.html) at the direction of the
 account store can now be instructed to allow the user to select from a menu of available authentication options.
+   
+## Mailgun Integration
+
+Support for [Mailgun](../notifications/Sending-Email-Configuration-Mailgun.html) is now available for sending email messages.
 
 ## Other Stuff
    
