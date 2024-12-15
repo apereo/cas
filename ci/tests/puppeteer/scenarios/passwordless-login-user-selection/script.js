@@ -1,4 +1,3 @@
-const assert = require("assert");
 const cas = require("../../cas.js");
 
 async function authenticateWithPassword(browser) {
