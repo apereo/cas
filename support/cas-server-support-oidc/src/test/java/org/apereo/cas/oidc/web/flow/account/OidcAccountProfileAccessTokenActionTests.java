@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.1.0
  */
-@Tag("OIDC")
+@Tag("OIDCWeb")
 class OidcAccountProfileAccessTokenActionTests extends AbstractOidcTests {
 
     @Autowired

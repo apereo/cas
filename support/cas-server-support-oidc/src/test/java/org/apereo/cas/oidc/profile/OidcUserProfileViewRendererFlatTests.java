@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("OIDC")
+@Tag("OIDCAttributes")
 @TestPropertySource(properties = {
     "cas.authn.oidc.discovery.user-info-signing-alg-values-supported=RS256",
     "cas.authn.oidc.discovery.user-info-encryption-alg-values-supported=RSA1_5,RSA-OAEP,RSA-OAEP-256,A128KW,A192KW,A256KW",

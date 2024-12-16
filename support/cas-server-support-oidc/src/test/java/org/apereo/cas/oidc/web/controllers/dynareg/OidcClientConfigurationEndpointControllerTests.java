@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.2.0
  */
-@Tag("OIDC")
+@Tag("OIDCWeb")
 @TestPropertySource(properties = "cas.authn.oidc.registration.client-secret-expiration=PT1H")
 class OidcClientConfigurationEndpointControllerTests extends AbstractOidcTests {
     @Autowired

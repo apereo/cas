@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "cas.authn.oidc.discovery.scopes=openid,profile,assurance",
     "cas.authn.oidc.discovery.claims=sub,name,nationalities,birth_family_name,title,place_of_birth"
 })
-@Tag("OIDC")
+@Tag("OIDCAttributes")
 class OidcAssuranceScopeAttributeReleasePolicyTests extends AbstractOidcTests {
     @Test
     void verifyOperation() throws Throwable {

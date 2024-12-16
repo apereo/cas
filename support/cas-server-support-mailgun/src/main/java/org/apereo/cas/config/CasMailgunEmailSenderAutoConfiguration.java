@@ -2,7 +2,6 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.support.email.MailgunProperties;
 import org.apereo.cas.mail.MailgunEmailSender;
 import org.apereo.cas.notifications.mail.EmailSender;
 import org.apereo.cas.util.spring.SpringExpressionLanguageValueResolver;

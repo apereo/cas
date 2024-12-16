@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Christian Migowski
  * @since 6.4.0
  */
-@Tag("OIDC")
+@Tag("OIDCWeb")
 @Import(OidcLogoutEndpointControllerMatcherTests.OidcLogoutMatcherTestConfiguration.class)
 class OidcLogoutEndpointControllerMatcherTests extends AbstractOidcTests {
 

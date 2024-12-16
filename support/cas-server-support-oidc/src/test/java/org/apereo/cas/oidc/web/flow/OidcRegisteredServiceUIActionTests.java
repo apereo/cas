@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@Tag("OIDC")
+@Tag("OIDCWeb")
 class OidcRegisteredServiceUIActionTests extends AbstractOidcTests {
     @Test
     void verifyOidcActionWithoutMDUI() throws Throwable {

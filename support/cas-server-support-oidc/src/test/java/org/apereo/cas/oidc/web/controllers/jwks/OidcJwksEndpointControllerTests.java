@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("OIDC")
+@Tag("OIDCWeb")
 class OidcJwksEndpointControllerTests extends AbstractOidcTests {
     @Autowired
     @Qualifier("oidcJwksController")
