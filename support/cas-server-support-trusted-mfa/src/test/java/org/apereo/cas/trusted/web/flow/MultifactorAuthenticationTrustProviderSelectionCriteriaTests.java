@@ -66,7 +66,7 @@ class MultifactorAuthenticationTrustProviderSelectionCriteriaTests extends Abstr
         record.setMultifactorAuthenticationProvider(dummyProvider.getId());
         record = getMfaTrustEngine().save(record);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(record.getPrincipal()), requestContext);
-        requestContext.getHttpServletRequest().setCookies(requestContext.getHttpServletResponse().getCookies());
+        requestContext.setRequestCookiesFromResponse();
         val shouldProceed = mfaTrustProviderSelectionCriteria.shouldProceedWithMultifactorProviderSelection(requestContext);
         assertFalse(shouldProceed);
         assertTrue(requestContext.getFlashScope().contains("mfaProvider"));
@@ -87,7 +87,7 @@ class MultifactorAuthenticationTrustProviderSelectionCriteriaTests extends Abstr
         record.setMultifactorAuthenticationProvider(UUID.randomUUID().toString());
         record = getMfaTrustEngine().save(record);
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication(record.getPrincipal()), requestContext);
-        requestContext.getHttpServletRequest().setCookies(requestContext.getHttpServletResponse().getCookies());
+        requestContext.setRequestCookiesFromResponse();
         val shouldProceed = mfaTrustProviderSelectionCriteria.shouldProceedWithMultifactorProviderSelection(requestContext);
         assertTrue(shouldProceed);
     }

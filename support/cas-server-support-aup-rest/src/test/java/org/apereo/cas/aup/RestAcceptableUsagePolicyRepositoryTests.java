@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
-import java.util.List;
 import java.util.Locale;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -52,7 +51,7 @@ class RestAcceptableUsagePolicyRepositoryTests {
     @Test
     void verify() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.getHttpServletRequest().setPreferredLocales(List.of(Locale.GERMAN));
+        context.setPreferredLocales(Locale.GERMAN);
 
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
@@ -69,8 +68,7 @@ class RestAcceptableUsagePolicyRepositoryTests {
     @Test
     void verifyFails() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-
-        context.getHttpServletRequest().setPreferredLocales(List.of(Locale.GERMAN));
+        context.setPreferredLocales(Locale.GERMAN);
         
         WebUtils.putAuthentication(RegisteredServiceTestUtils.getAuthentication("casuser"), context);
         WebUtils.putServiceIntoFlowScope(context, RegisteredServiceTestUtils.getService());

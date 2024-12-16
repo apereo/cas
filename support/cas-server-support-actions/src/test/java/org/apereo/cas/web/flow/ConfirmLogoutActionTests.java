@@ -59,7 +59,7 @@ class ConfirmLogoutActionTests extends AbstractWebflowActionsTests {
 
         val cookie = getTicketGrantingTicketCookieGenerator()
             .addCookie(context.getHttpServletRequest(), context.getHttpServletResponse(), ticket.getId());
-        context.getHttpServletRequest().setCookies(cookie);
+        context.setHttpRequestCookies(cookie);
         
         val result = action.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
