@@ -58,7 +58,7 @@ class GenerateServiceTicketActionTests extends AbstractWebflowActionsTests {
         context.getFlowScope().put(CasWebflowConstants.ATTRIBUTE_SERVICE, service);
         context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, ticketGrantingTicket.getId());
         context.setParameter(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
-        context.getHttpServletRequest().setCookies(new Cookie("TGT", ticketGrantingTicket.getId()));
+        context.setHttpRequestCookies(new Cookie("TGT", ticketGrantingTicket.getId()));
         action.execute(context);
         assertNotNull(WebUtils.getServiceTicketFromRequestScope(context));
     }

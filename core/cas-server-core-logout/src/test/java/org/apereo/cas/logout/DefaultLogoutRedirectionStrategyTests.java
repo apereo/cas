@@ -39,7 +39,7 @@ class DefaultLogoutRedirectionStrategyTests {
 
     private static MockRequestContext getMockRequestContext() throws Exception {
         val context = MockRequestContext.create();
-        context.getHttpServletRequest().setRequestURI(CasProtocolConstants.ENDPOINT_LOGOUT);
+        context.setRequestURI(CasProtocolConstants.ENDPOINT_LOGOUT);
         return context;
     }
 

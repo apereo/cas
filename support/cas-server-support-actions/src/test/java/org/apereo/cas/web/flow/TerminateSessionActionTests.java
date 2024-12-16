@@ -43,7 +43,7 @@ class TerminateSessionActionTests {
         @Test
         void verifyTerminateActionByCookie() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
-            context.getHttpServletRequest().setCookies(new Cookie("TGC", "TGT-123456-something"));
+            context.setHttpRequestCookies(new Cookie("TGC", "TGT-123456-something"));
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
             assertNotNull(WebUtils.getLogoutRequests(context));
         }

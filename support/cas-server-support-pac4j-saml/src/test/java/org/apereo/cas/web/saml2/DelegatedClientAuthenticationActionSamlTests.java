@@ -24,7 +24,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.webflow.execution.Action;
-import java.nio.charset.StandardCharsets;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Map;
@@ -72,7 +71,7 @@ class DelegatedClientAuthenticationActionSamlTests {
         context.setMethod(HttpMethod.POST);
 
         val logoutResponse = getLogoutResponse();
-        context.getHttpServletRequest().setContent(EncodingUtils.encodeBase64(logoutResponse).getBytes(StandardCharsets.UTF_8));
+        context.setContent(EncodingUtils.encodeBase64(logoutResponse));
 
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         servicesManager.save(RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of()));

@@ -91,7 +91,7 @@ class SendTicketGrantingTicketActionTests {
 
             val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
             getTicketRegistry().addTicket(tgt);
-            context.getHttpServletRequest().setCookies(new Cookie("TGT", "test5"));
+            context.setHttpRequestCookies(new Cookie("TGT", "test5"));
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
@@ -118,7 +118,7 @@ class SendTicketGrantingTicketActionTests {
             context.setClientInfo();
 
             val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
-            context.getHttpServletRequest().setCookies(new Cookie("TGT", "test5"));
+            context.setHttpRequestCookies(new Cookie("TGT", "test5"));
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, action.execute(context).getId());
             assertEquals(0, context.getHttpServletResponse().getCookies().length);
@@ -137,7 +137,7 @@ class SendTicketGrantingTicketActionTests {
             when(svc.getId()).thenReturn("TestSsoFalse");
 
             val tgt = new MockTicketGrantingTicket(UUID.randomUUID().toString());
-            context.getHttpServletRequest().setCookies(new Cookie("TGT", "test5"));
+            context.setHttpRequestCookies(new Cookie("TGT", "test5"));
             WebUtils.putTicketGrantingTicketInScopes(context, tgt);
             context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, svc);
 

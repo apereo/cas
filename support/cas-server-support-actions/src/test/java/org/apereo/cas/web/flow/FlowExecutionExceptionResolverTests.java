@@ -38,7 +38,7 @@ class FlowExecutionExceptionResolverTests {
     @Test
     void verifyActionModelView() throws Throwable {
         val context = MockRequestContext.create(applicationContext);
-        context.getHttpServletRequest().setRequestURI("/cas/login");
+        context.setRequestURI("/cas/login");
         context.setQueryString("param=value&something=something");
         val resolver = new FlowExecutionExceptionResolver();
         val mv = resolver.resolveException(context.getHttpServletRequest(), context.getHttpServletResponse(),
