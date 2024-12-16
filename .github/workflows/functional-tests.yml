@@ -146,6 +146,8 @@ jobs:
           node-version: ${{ env.NODE_VERSION_REQUIRED }}
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
+      - name: AppArmor User Namespace Restrictions
+        run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
       - name: Run Tests
         uses: nick-fields/retry@v3
         with:
@@ -198,6 +200,8 @@ jobs:
           check-latest: true
           cache: 'npm'
           cache-dependency-path: ./ci/tests/puppeteer/package.json
+      - name: AppArmor User Namespace Restrictions
+        run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
       - name: Run Tests
         uses: nick-fields/retry@v3
         with:
