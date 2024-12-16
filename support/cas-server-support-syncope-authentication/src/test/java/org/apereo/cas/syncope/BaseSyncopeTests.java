@@ -1,5 +1,6 @@
 package org.apereo.cas.syncope;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuditAutoConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationAutoConfiguration;
@@ -94,6 +95,77 @@ public abstract class BaseSyncopeTests {
 
         return user;
     }
+    
+    protected static ObjectNode userForMembershipsTypeExtension(){
+        /***
+        "memberships":[
+            {
+            "groupKey":"0193c02d-ae47-7095-85c3-0bcea806feaa",
+            "groupName":"provaGruppo",
+            "plainAttrs":[
+                {"schema":"testSchema1","values":["valueTest1"]},
+                {"schema":"testSchema2","values":["valueTest2"]},
+                {"schema":"testSchema3","values":["valueTest3"]}],
+            "derAttrs":[],
+            "virAttrs":[]
+            }
+        ],  
+         ***/
+        val user = MAPPER.createObjectNode();
+        user.put("key", UUID.randomUUID().toString());
+        user.put("username", "casuser");
+        user.putArray("roles").add("role1");
+        user.putArray("dynRoles").add("DynRole1");
+        user.putArray("dynRealms").add("Realm1");
+        user.putArray("dynMemberships").add(MAPPER.createObjectNode()
+                .put("groupName", "G1"));
+        user.putArray("relationships").add(MAPPER.createObjectNode()
+                .put("type", "T1").put("otherEndName", "Other1"));
+        
+        val memberships = user.putArray("memberships");
+        val membershipsInfo = MAPPER.createObjectNode().put("groupName", "G1");
+        val membershipPlainAttrs = membershipsInfo.putArray("plainAttrs");
+
+        val plainAttrNode1 = MAPPER.createObjectNode();
+        plainAttrNode1.put("schema", "testSchema1");
+        val values1 = plainAttrNode1.putArray("values");
+        values1.add("valueSchema1");
+        membershipPlainAttrs.add(plainAttrNode1);
+
+        val plainAttrNode2 = MAPPER.createObjectNode();
+        plainAttrNode2.put("schema", "testSchema2");
+        val values2 = plainAttrNode2.putArray("values");
+        values2.add("valueSchema2");
+        membershipPlainAttrs.add(plainAttrNode2);
+        
+        memberships.add(membershipsInfo);
+        
+        val plainAttrs = MAPPER.createObjectNode();
+        plainAttrs.put("schema", "S1");
+        plainAttrs.putArray("values").add("V1");
+        user.putArray("plainAttrs").add(plainAttrs);
+
+        val derAttrs = MAPPER.createObjectNode();
+        derAttrs.put("schema", "S2");
+        derAttrs.putArray("values").add("V2");
+        user.putArray("derAttrs").add(derAttrs);
+
+        val virAttrs = MAPPER.createObjectNode();
+        virAttrs.put("schema", "S3");
+        virAttrs.putArray("values").add("V3");
+        user.putArray("virAttrs").add(virAttrs);
+
+        user.put("securityQuestion", "Q1");
+        user.put("status", "OK");
+        user.put("realm", "Master");
+        user.put("creator", "admin");
+        user.put("creationDate", new Date().toString());
+        user.put("changePwdDate", new Date().toString());
+        user.put("lastLoginDate", new Date().toString());
+
+        return user;
+    }
+    
     @ImportAutoConfiguration({
         CasSyncopeAutoConfiguration.class,
         CasCoreAutoConfiguration.class,
