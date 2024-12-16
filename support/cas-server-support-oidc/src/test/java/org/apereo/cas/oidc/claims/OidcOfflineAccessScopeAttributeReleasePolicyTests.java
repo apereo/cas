@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Tag("OIDC")
+@Tag("OIDCAttributes")
 class OidcOfflineAccessScopeAttributeReleasePolicyTests {
     @Test
     void verifyOperation() throws Throwable {

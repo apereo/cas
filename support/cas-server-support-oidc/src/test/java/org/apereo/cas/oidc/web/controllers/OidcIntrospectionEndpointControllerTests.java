@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("OIDC")
+@Tag("OIDCWeb")
 @TestPropertySource(properties = {
     "cas.authn.oidc.discovery.introspection-signed-response-alg-values-supported=RS256,RS384,RS512",
     "cas.authn.oidc.discovery.introspection-encrypted-response-alg-values-supported=RSA-OAEP-256"

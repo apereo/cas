@@ -70,6 +70,8 @@ enum TestCategories {
     OAuthToken(true, true),
     OAuthWeb(false, true),
     OIDC(false, true),
+    OIDCWeb(true, true),
+    OIDCAttributes(true, true),
     Oracle(false, true),
     PasswordOps(true, true),
     Postgres(false, true),

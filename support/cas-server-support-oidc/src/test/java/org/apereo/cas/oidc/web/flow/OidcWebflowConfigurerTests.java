@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.*;
     "CasFeatureModule.AccountManagement.enabled=true",
     "cas.authn.oidc.jwks.file-system.jwks-file=classpath:keystore.jwks"
 })
-@Tag("OIDC")
+@Tag("OIDCWeb")
 @ExtendWith(CasTestExtension.class)
 class OidcWebflowConfigurerTests extends BaseWebflowConfigurerTests {
 

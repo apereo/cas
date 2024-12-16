@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("OIDC")
+@Tag("OIDCAttributes")
 class OidcProfileScopeToAttributesFilterTests extends AbstractOidcTests {
 
     @Test

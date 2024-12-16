@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("OIDC")
+@Tag("OIDCAttributes")
 @TestPropertySource(properties = {
     "cas.authn.oidc.core.claims-map.email=mail",
     "cas.authn.oidc.core.claims-map.email_verified=mail_confirmed"

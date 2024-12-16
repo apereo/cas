@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 }, properties = {
     "cas.email-provider.mailgun.test-mode=true",
     "cas.email-provider.mailgun.api-key=59887ca85c4512f2d612ad7678fd2587-da554c25-123456",
-    "cas.email-provider.mailgun.domain=sandboxa47ca2002901479296b3b508e922ff9c.mailgun.org",
+    "cas.email-provider.mailgun.domain=sandboxa47ca2002901479296b3b508e922ff9c.mailgun.org"
 })
 @Tag("Mail")
 @ExtendWith(CasTestExtension.class)
