@@ -11,6 +11,8 @@ import org.apereo.cas.syncope.BaseSyncopeTests;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.junit.EnabledIfListeningOnPort;
 import org.apereo.cas.util.spring.beans.BeanContainer;
+
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
@@ -23,6 +25,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -32,6 +37,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Slf4j
 @Tag("Syncope")
 @ExtendWith(CasTestExtension.class)
 class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
@@ -99,6 +105,28 @@ class SyncopeAuthenticationHandlerTests extends BaseSyncopeTests {
                 val syncopeAuthenticationHandler = syncopeAuthenticationHandlers.first();
                 assertThrows(AccountDisabledException.class,
                     () -> syncopeAuthenticationHandler.authenticate(CREDENTIAL, mock(Service.class)));
+            }
+        }
+
+        @Test
+        void verifyMembershipInfoPassed() throws Throwable {
+            val syncopeAuthenticationHandler = syncopeAuthenticationHandlers.first();
+            try (val webserver = startMockSever(userForMembershipsTypeExtension(), HttpStatus.OK, 8096)) {
+                assertDoesNotThrow(() ->
+                        syncopeAuthenticationHandler.authenticate(CREDENTIAL, mock(Service.class)));
+                val result = syncopeAuthenticationHandler.authenticate(CREDENTIAL, mock(Service.class));
+                assertNotNull(result);
+                assertFalse(result.getPrincipal().getAttributes().get("syncopeUserMemberships").isEmpty());
+                assertEquals(1, result.getPrincipal().getAttributes().get("syncopeUserMemberships").size());
+                Map<String, String> membershipAttrs =
+                        (Map<String, String>) result.getPrincipal().getAttributes().get("syncopeUserMemberships").get(0);
+                assertEquals(3, membershipAttrs.size());
+                assertTrue(membershipAttrs.containsKey("groupName"));
+                assertTrue(membershipAttrs.containsKey("testSchema1"));
+                assertTrue(membershipAttrs.containsKey("testSchema2"));
+                assertEquals(membershipAttrs.get("groupName"), "G1");
+                assertEquals(membershipAttrs.get("testSchema1"), "[\"valueSchema1\"]");
+                assertEquals(membershipAttrs.get("testSchema2"), "[\"valueSchema2\"]");
             }
         }
     }
