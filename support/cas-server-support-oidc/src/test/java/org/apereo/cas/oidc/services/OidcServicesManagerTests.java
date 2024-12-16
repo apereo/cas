@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.2.0
  */
-@Tag("OIDC")
+@Tag("OIDCServices")
 @TestPropertySource(properties = "cas.service-registry.core.index-services=true")
 class OidcServicesManagerTests extends AbstractOidcTests {
 

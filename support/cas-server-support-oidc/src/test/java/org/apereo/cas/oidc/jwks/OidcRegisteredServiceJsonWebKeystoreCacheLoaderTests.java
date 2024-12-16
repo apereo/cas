@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@Tag("OIDC")
+@Tag("OIDCServices")
 class OidcRegisteredServiceJsonWebKeystoreCacheLoaderTests extends AbstractOidcTests {
     @Test
     void verifyOperation() throws Throwable {
