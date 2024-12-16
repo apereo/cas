@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("OIDC")
+@Tag("OIDCServices")
 @TestPropertySource(properties =
     "cas.authn.oidc.core.user-defined-scopes.SomeCustomScope=name"
 )

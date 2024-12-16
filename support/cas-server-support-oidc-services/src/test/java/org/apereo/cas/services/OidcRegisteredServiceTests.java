@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Tag("OIDC")
+@Tag("OIDCServices")
 class OidcRegisteredServiceTests {
 
     private static final ObjectMapper MAPPER = JacksonObjectMapperFactory.builder()

@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Tag("OIDC")
+@Tag("OIDCAuthentication")
 @Import(OidcUsernamePasswordAuthenticatorTests.AuthenticationTestConfiguration.class)
 class OidcUsernamePasswordAuthenticatorTests extends AbstractOidcTests {
     @Autowired

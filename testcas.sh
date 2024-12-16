@@ -304,6 +304,14 @@ while (( "$#" )); do
             oauth)
                 task+="testOAuth "
                 ;;
+            oidcservices)
+                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh
+                task+="testOIDCServices "
+                ;;
+            oidcauthentication|oidcauthn)
+                isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh
+                task+="testOIDCAuthentication "
+                ;;
             oidcattributes|oidcclaims|oidcattrs)
                 isDockerOnLinux && ./ci/tests/mail/run-mail-server.sh
                 task+="testOIDCAttributes "

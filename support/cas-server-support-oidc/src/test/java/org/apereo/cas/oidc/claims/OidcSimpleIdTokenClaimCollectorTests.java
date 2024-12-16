@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Tag("OIDC")
+@Tag("OIDCAttributes")
 @TestPropertySource(properties = {
     "cas.authn.attribute-repository.attribute-definition-store.json.location=classpath:/oidc-definitions.json",
     "cas.authn.oidc.identity-assurance.verification-source.location=classpath:assurance/id-1.json"

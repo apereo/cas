@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("OIDC")
+@Tag("OIDCAuthentication")
 @TestPropertySource(properties = "cas.authn.oauth.code.time-to-kill-in-seconds=60")
 class OidcJwtAuthenticatorHMacTests extends AbstractOidcTests {
     @Autowired

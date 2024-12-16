@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@Tag("OIDC")
+@Tag("OIDCServices")
 @TestPropertySource(properties = {
     "cas.authn.oidc.services.defaults.jwksKeyId=12345",
     "cas.authn.oidc.services.defaults.idTokenSigningAlg=SHA512"
