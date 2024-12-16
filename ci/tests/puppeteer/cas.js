@@ -61,6 +61,7 @@ const BROWSER_OPTIONS = {
     args: [
         `--user-data-dir=${CHROMIUM_USER_DATA_DIR}/user-data-dir`,
         "--no-sandbox",
+        "--disable-setuid-sandbox",
         "--disable-web-security",
         "--start-maximized",
         "--window-size=1920,1080"
