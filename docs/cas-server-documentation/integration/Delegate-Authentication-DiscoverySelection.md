@@ -27,7 +27,7 @@ allowing the user to *order one from the menu* and select one from the list of o
 
 {% endtab %}
 
-{% tab deldiscoverysel Dynamic %}
+{% tab deldiscoverysel <i class="fa fa-arrows-spin px-1"></i> Dynamic %}
 
 Rather than listing all available identity providers, this option allows CAS to auto-select the appropriate
 identity provider in a dynamic fashion using pre-defined rules and conditions and

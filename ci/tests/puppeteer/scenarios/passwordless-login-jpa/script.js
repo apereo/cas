@@ -1,5 +1,4 @@
 
-const assert = require("assert");
 const cas = require("../../cas.js");
 
 (async () => {
@@ -8,8 +7,7 @@ const cas = require("../../cas.js");
     
     await cas.gotoLogin(page);
 
-    const pswd = await page.$("#password");
-    assert(pswd === null);
+    await cas.assertElementDoesNotExist(page, "#password");
 
     await cas.attributeValue(page, "#username", "autocapitalize", "none");
     await cas.attributeValue(page, "#username", "spellcheck", "false");

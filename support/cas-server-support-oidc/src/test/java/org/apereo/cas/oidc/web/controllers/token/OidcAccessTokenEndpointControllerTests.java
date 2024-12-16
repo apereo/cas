@@ -59,7 +59,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @author Misagh Moayyed
  * @since 6.3.0
  */
-@Tag("OIDC")
+@Tag("OIDCWeb")
 class OidcAccessTokenEndpointControllerTests {
 
     @Nested

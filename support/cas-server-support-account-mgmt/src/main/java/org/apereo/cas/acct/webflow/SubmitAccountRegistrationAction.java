@@ -19,7 +19,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LoggingUtils;
 import org.apereo.cas.web.flow.actions.BaseCasWebflowAction;
 import org.apereo.cas.web.support.WebUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -28,7 +27,6 @@ import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
@@ -57,15 +55,7 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
     @Override
     protected Event doExecuteInternal(final RequestContext requestContext) {
         try {
-            val properties = accountRegistrationService.getAccountRegistrationPropertyLoader().load().values();
-            val registrationRequest = new AccountRegistrationRequest();
-            properties.forEach(entry -> {
-                var value = entry.isRequired()
-                    ? requestContext.getRequestParameters().getRequired(entry.getName())
-                    : requestContext.getRequestParameters().get(entry.getName());
-                registrationRequest.putProperty(entry.getName(), value);
-            });
-
+            val registrationRequest = buildRegistrationRequest(requestContext);
             val username = accountRegistrationService.getAccountRegistrationUsernameBuilder().build(registrationRequest);
             AccountRegistrationUtils.putAccountRegistrationRequest(requestContext, registrationRequest);
             AccountRegistrationUtils.putAccountRegistrationRequestUsername(requestContext, username);
@@ -81,6 +71,19 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
         }
         WebUtils.addErrorMessageToContext(requestContext, "cas.screen.acct.error.fail");
         return error();
+    }
+
+    protected AccountRegistrationRequest buildRegistrationRequest(final RequestContext requestContext) {
+        val properties = accountRegistrationService.getAccountRegistrationPropertyLoader().load().values();
+        val registrationRequest = new AccountRegistrationRequest();
+        properties.forEach(entry -> {
+            var value = entry.isRequired()
+                ? requestContext.getRequestParameters().getRequired(entry.getName())
+                : requestContext.getRequestParameters().get(entry.getName());
+            registrationRequest.putProperty(entry.getName(), value);
+        });
+        accountRegistrationService.getAccountRegistrationRequestValidator().validate(registrationRequest);
+        return registrationRequest;
     }
 
     protected boolean sendAccountRegistrationActivationSms(final AccountRegistrationRequest registrationRequest,
@@ -121,7 +124,8 @@ public class SubmitAccountRegistrationAction extends BaseCasWebflowAction {
                 .locale(locale)
                 .build()
                 .get();
-            val emailRequest = EmailMessageRequest.builder().emailProperties(emailProps)
+            val emailRequest = EmailMessageRequest.builder()
+                .emailProperties(emailProps)
                 .locale(locale.orElseGet(Locale::getDefault))
                 .to(List.of(registrationRequest.getEmail()))
                 .body(text).build();

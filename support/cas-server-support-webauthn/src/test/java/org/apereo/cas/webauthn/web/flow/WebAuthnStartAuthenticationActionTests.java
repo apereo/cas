@@ -33,7 +33,8 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @Tag("WebflowMfaActions")
 @ExtendWith(CasTestExtension.class)
-@SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class)
+@SpringBootTest(classes = BaseWebAuthnWebflowTests.SharedTestConfiguration.class,
+    properties = "cas.authn.mfa.web-authn.core.qr-code-authentication-enabled=true")
 class WebAuthnStartAuthenticationActionTests {
     private static final String USER = UUID.randomUUID().toString();
 
@@ -76,6 +77,11 @@ class WebAuthnStartAuthenticationActionTests {
                 .build());
         result = webAuthnStartAuthenticationAction.execute(context);
         assertEquals(CasWebflowConstants.TRANSITION_ID_SUCCESS, result.getId());
+
+        assertTrue(context.getFlowScope().contains("QRCode"));
+        assertTrue(context.getFlowScope().contains("QRCodeUri"));
+        assertTrue(context.getFlowScope().contains("QRCodeTicket"));
+        assertNotNull(WebUtils.getPrincipalFromRequestContext(context));
     }
 
 }

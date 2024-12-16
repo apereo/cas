@@ -25,6 +25,9 @@ import org.springframework.webflow.test.MockExternalContext;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestControlContext;
+import jakarta.servlet.http.Cookie;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 import static org.mockito.Mockito.*;
@@ -63,9 +66,24 @@ public class MockRequestContext extends MockRequestControlContext {
         putRequestParameter(name, value);
         return this;
     }
+    
+    public MockRequestContext setContent(final Object value) {
+        getHttpServletRequest().setContent(value.toString().getBytes(StandardCharsets.UTF_8));
+        return this;
+    }
+
+    public MockRequestContext setPreferredLocales(final Locale... values) {
+        getHttpServletRequest().setPreferredLocales(Arrays.stream(values).toList());
+        return this;
+    }
 
     public MockRequestContext setActiveFlow(final Flow flow) {
         setFlowExecutionContext(new MockFlowExecutionContext(flow));
+        return this;
+    }
+
+    public MockRequestContext setHttpRequestCookies(final Cookie... cookies) {
+        getHttpServletRequest().setCookies(cookies);
         return this;
     }
 
@@ -122,6 +140,11 @@ public class MockRequestContext extends MockRequestControlContext {
 
     public MockRequestContext setMethod(final HttpMethod method) {
         getHttpServletRequest().setMethod(method.name());
+        return this;
+    }
+
+    public MockRequestContext setRequestURI(final String uri) {
+        getHttpServletRequest().setRequestURI(uri);
         return this;
     }
 

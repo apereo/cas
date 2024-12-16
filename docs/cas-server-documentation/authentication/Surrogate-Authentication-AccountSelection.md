@@ -11,7 +11,7 @@ The surrogate user selection can happen via the following ways.
 
 {% tabs impersonationoptions %}
 
-{% tab impersonationoptions Preselected %}
+{% tab impersonationoptions <i class="fa fa-filter px-1"></i> Preselected %}
 
 This is the case where the surrogate user identity is known
 beforehand and is provided to CAS upon login using a special syntax.
@@ -60,7 +60,7 @@ the requested surrogate account and the admin user is authorized to impersonate 
 
 {% endtab %}
 
-{% tab impersonationoptions Wildcard %}
+{% tab impersonationoptions <i class="fa fa-sun px-1"></i> Wildcard %}
 
 The underlying account store can mark a primary *impersonator* account with special permissions
 and privileges to allow it to impersonate any other account. Accounts that are whitelisted and wildcarded

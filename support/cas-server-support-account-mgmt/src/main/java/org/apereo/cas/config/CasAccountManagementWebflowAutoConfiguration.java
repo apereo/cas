@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.acct.AccountRegistrationPropertyLoader;
 import org.apereo.cas.acct.AccountRegistrationRequestAuditPrincipalIdResolver;
+import org.apereo.cas.acct.AccountRegistrationRequestValidator;
 import org.apereo.cas.acct.AccountRegistrationService;
 import org.apereo.cas.acct.AccountRegistrationTokenCipherExecutor;
 import org.apereo.cas.acct.AccountRegistrationUsernameBuilder;
@@ -102,6 +103,8 @@ public class CasAccountManagementWebflowAutoConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @ConditionalOnMissingBean(name = AccountRegistrationService.BEAN_NAME)
     public AccountRegistrationService accountMgmtRegistrationService(
+        @Qualifier("accountMgmtRegistrationRequestValidator")
+        final AccountRegistrationRequestValidator accountMgmtRegistrationRequestValidator,
         final CasConfigurationProperties casProperties,
         @Qualifier("accountMgmtRegistrationPropertyLoader")
         final AccountRegistrationPropertyLoader accountMgmtRegistrationPropertyLoader,
@@ -111,9 +114,10 @@ public class CasAccountManagementWebflowAutoConfiguration {
         final AccountRegistrationUsernameBuilder accountRegistrationUsernameBuilder,
         @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
         final AccountRegistrationProvisioner accountMgmtRegistrationProvisioner) {
-        return new DefaultAccountRegistrationService(accountMgmtRegistrationPropertyLoader, casProperties,
+        return new DefaultAccountRegistrationService(
+            accountMgmtRegistrationPropertyLoader, casProperties,
             accountMgmtCipherExecutor, accountRegistrationUsernameBuilder,
-            accountMgmtRegistrationProvisioner);
+            accountMgmtRegistrationProvisioner, accountMgmtRegistrationRequestValidator);
     }
 
     @Bean
@@ -122,6 +126,13 @@ public class CasAccountManagementWebflowAutoConfiguration {
     public AccountRegistrationPropertyLoader accountMgmtRegistrationPropertyLoader(final CasConfigurationProperties casProperties) {
         val resource = casProperties.getAccountRegistration().getCore().getRegistrationProperties().getLocation();
         return new DefaultAccountRegistrationPropertyLoader(resource);
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "accountMgmtRegistrationRequestValidator")
+    @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+    public AccountRegistrationRequestValidator accountMgmtRegistrationRequestValidator() {
+        return AccountRegistrationRequestValidator.noOp();
     }
 
     @Configuration(value = "CasAccountManagementProvisioningConfiguration", proxyBeanMethods = false)

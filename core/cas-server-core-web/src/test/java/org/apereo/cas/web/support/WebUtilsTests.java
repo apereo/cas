@@ -24,7 +24,6 @@ import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.test.MockFlowExecutionContext;
 import org.springframework.webflow.test.MockFlowSession;
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -137,7 +136,7 @@ class WebUtilsTests {
         val context2 = MockRequestContext.create();
         context2.setMethod(HttpMethod.POST);
         context2.setContentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        context2.getHttpServletRequest().setContent((BrowserStorage.PARAMETER_BROWSER_STORAGE + '=' + UUID.randomUUID()).getBytes(StandardCharsets.UTF_8));
+        context2.setContent(BrowserStorage.PARAMETER_BROWSER_STORAGE + '=' + UUID.randomUUID());
         assertTrue(WebUtils.getBrowserStoragePayload(context2).isPresent());
         assertNotNull(context2.getHttpServletRequest().getAttribute(BrowserStorage.PARAMETER_BROWSER_STORAGE));
 
@@ -152,7 +151,7 @@ class WebUtilsTests {
         val context1 = MockRequestContext.create();
         context1.setMethod(HttpMethod.POST);
         context1.setContentType(MediaType.APPLICATION_FORM_URLENCODED_VALUE);
-        context1.getHttpServletRequest().setContent((BrowserStorage.PARAMETER_BROWSER_STORAGE + '=' + UUID.randomUUID()).getBytes(StandardCharsets.UTF_8));
+        context1.setContent(BrowserStorage.PARAMETER_BROWSER_STORAGE + '=' + UUID.randomUUID());
         var parameters = WebUtils.getHttpRequestParametersFromRequestBody(context1.getHttpServletRequest());
         assertTrue(parameters.containsKey(BrowserStorage.PARAMETER_BROWSER_STORAGE));
         assertNotNull(context1.getHttpServletRequest().getAttribute(BrowserStorage.PARAMETER_BROWSER_STORAGE));

@@ -1136,6 +1136,22 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
         ],
+        mailgun          : [
+                dependencies.create("com.mailgun:mailgun-java:$mailgunVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    exclude(group: "com.fasterxml.jackson.datatype", module: "jackson-datatype-jsr310")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.commons", module: "commons-lang3")
+                    exclude(group: "commons-lang", module: "commons-lang")
+                    exclude(group: "commons-io", module: "commons-io")
+                    exclude(group: "org.apache.commons", module: "commons-collections4")
+                }
+        ],
         mailjet          : [
                 dependencies.create("com.mailjet:mailjet-client:$mailjetVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
@@ -3444,11 +3460,11 @@ ext.libraries = [
                 },
         ],
         wss4j                      : [
-                dependencies.create("com.github.mmoayyed.ws-wss4j:wss4j-bindings:$wss4jVersion") {
+                dependencies.create("org.apache.wss4j:wss4j-bindings:$wss4jVersion") {
                 },
-                dependencies.create("com.github.mmoayyed.ws-wss4j:wss4j-policy:$wss4jVersion") {
+                dependencies.create("org.apache.wss4j:wss4j-policy:$wss4jVersion") {
                 },
-                dependencies.create("com.github.mmoayyed.ws-wss4j:wss4j-ws-security-stax:$wss4jVersion") {
+                dependencies.create("org.apache.wss4j:wss4j-ws-security-stax:$wss4jVersion") {
                     exclude(group: "org.opensaml", module: "opensaml-xacml-api")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-impl")
                     exclude(group: "org.opensaml", module: "opensaml-security-api")
@@ -3469,7 +3485,7 @@ ext.libraries = [
                     exclude(group: "org.opensaml", module: "opensaml-xacml-saml-api")
                     exclude(group: "org.opensaml", module: "opensaml-core")
                 },
-                dependencies.create("com.github.mmoayyed.ws-wss4j:wss4j-ws-security-policy-stax:$wss4jVersion") {
+                dependencies.create("org.apache.wss4j:wss4j-ws-security-policy-stax:$wss4jVersion") {
                     exclude(group: "org.opensaml", module: "opensaml-xacml-api")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-impl")
                     exclude(group: "org.opensaml", module: "opensaml-security-api")
@@ -3490,7 +3506,7 @@ ext.libraries = [
                     exclude(group: "org.opensaml", module: "opensaml-xacml-saml-api")
                     exclude(group: "org.opensaml", module: "opensaml-core")
                 },
-                dependencies.create("com.github.mmoayyed.ws-wss4j:wss4j-ws-security-dom:$wss4jVersion") {
+                dependencies.create("org.apache.wss4j:wss4j-ws-security-dom:$wss4jVersion") {
                     exclude(group: "org.jvnet.mimepull", module: "mimepull")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-api")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-impl")
@@ -3512,7 +3528,7 @@ ext.libraries = [
                     exclude(group: "org.opensaml", module: "opensaml-xacml-saml-api")
                     exclude(group: "org.opensaml", module: "opensaml-core")
                 },
-                dependencies.create("com.github.mmoayyed.ws-wss4j:wss4j-ws-security-common:$wss4jVersion") {
+                dependencies.create("org.apache.wss4j:wss4j-ws-security-common:$wss4jVersion") {
                     exclude(group: "org.jvnet.mimepull", module: "mimepull")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-api")
                     exclude(group: "org.opensaml", module: "opensaml-xacml-impl")

@@ -47,6 +47,9 @@
  * WebAuthN Core
  *******************************************************/
 
+const pathSegments = window.location.pathname.split('/');
+const contextPath = pathSegments[1] ? `/${pathSegments[1]}` : '';
+
 ((root, factory) => {
     if (typeof define === 'function' && define.amd) {
         define(['base64url'], factory);
@@ -255,6 +258,10 @@ function addMessage(message) {
     $('#messages').html(`<p>${message}</p>`);
 }
 
+function clearMessages() {
+    $('#messages').empty();
+}
+
 function addMessages(messages) {
     messages.forEach(addMessage);
 }
@@ -308,16 +315,17 @@ function resetDisplays() {
     showServerResponse(null);
      */
     hideDeviceInfo();
+    clearMessages()
 }
 
 function getWebAuthnUrls() {
-    let endpoints = {
-        authenticate: "webauthn/authenticate",
-        register: "webauthn/register",
+    
+    const endpoints = {
+        authenticate: `${window.location.origin}${contextPath}/webauthn/authenticate`,
+        register: `${window.location.origin}${contextPath}/webauthn/register`,
     };
-    return new Promise((resolve, reject) => resolve(endpoints)).then(data => {
-        return data;
-    });
+    console.log(endpoints);
+    return new Promise((resolve, reject) => resolve(endpoints)).then(data => data);
 }
 
 function getRegisterRequest(urls,
@@ -326,6 +334,10 @@ function getRegisterRequest(urls,
                             credentialNickname,
                             requireResidentKey = false) {
     let execution = document.getElementById('execution').value;
+    const headers = {};
+    if (csrfToken !== undefined) {
+        headers["X-CSRF-TOKEN"] = csrfToken;
+    }
     return fetch(urls.register, {
         body: new URLSearchParams({
             username,
@@ -335,9 +347,7 @@ function getRegisterRequest(urls,
             execution: execution,
             sessionToken: session.sessionToken || null,
         }),
-        headers: {
-           "X-CSRF-TOKEN": csrfToken
-        },
+        headers: headers,
         method: 'POST',
     })
         .then(response => response.json())
@@ -356,11 +366,13 @@ function submitResponse(url, request, response) {
         sessionToken: request.sessionToken || session.sessionToken || null,
     };
 
+    const headers = {};
+    if (csrfToken !== undefined) {
+        headers["X-CSRF-TOKEN"] = csrfToken;
+    }
     return fetch(url, {
         method: 'POST',
-        headers: {
-            "X-CSRF-TOKEN": csrfToken
-        },
+        headers: headers,
         body: JSON.stringify(body),
     })
         .then(response => response.json())
@@ -417,7 +429,8 @@ function finishCeremony(response) {
     }
     showAuthenticatorResponse(response);
 
-    return submitResponse(urls.finish, request, response)
+    const finishUrl = `${window.location.origin}${contextPath}${urls.finish}`;
+    return submitResponse(finishUrl, request, response)
         .then(data => {
             if (data && data.success) {
                 setStatus(statusStrings.success);
@@ -448,6 +461,7 @@ function register(username, displayName, credentialNickname, csrfToken,
     })
         .then(data => {
             console.log(`registration data: ${JSON.stringify(data.registration)}`);
+            clearMessages();
             if (data.registration) {
                 const nicknameInfo = {nickname: data.registration.credentialNickname};
 
@@ -474,7 +488,8 @@ function register(username, displayName, credentialNickname, csrfToken,
         .catch((err) => {
             setStatus('Registration failed.');
             console.error('Registration failed', err);
-
+            clearMessages();
+            
             if (err.name === 'NotAllowedError') {
                 if (request.publicKeyCredentialCreationOptions.excludeCredentials
                     && request.publicKeyCredentialCreationOptions.excludeCredentials.length > 0
@@ -495,11 +510,13 @@ function register(username, displayName, credentialNickname, csrfToken,
 }
 
 function getAuthenticateRequest(urls, username) {
+    const headers = {};
+    if (csrfToken !== undefined) {
+        headers["X-CSRF-TOKEN"] = csrfToken;
+    }
     return fetch(urls.authenticate, {
         body: new URLSearchParams(username ? {username} : {}),
-        headers: {
-            "X-CSRF-TOKEN": csrfToken
-        },
+        headers: headers,
         method: 'POST',
     })
         .then(response => response.json())
@@ -516,7 +533,9 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
     $('#deviceTable tbody tr').remove();
     $('#divDeviceInfo').hide();
     hideDeviceInfo();
-
+    clearMessages();
+    
+    console.log(`Starting authentication for username ${username}`);
     return performCeremony({
         getWebAuthnUrls,
         getRequest: urls => getRequest(urls, username),
@@ -527,10 +546,10 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
         },
         executeRequest: executeAuthenticateRequest,
     }).then(data => {
-        $('#divDeviceInfo').show();
+        clearMessages();
         console.log(`Received: ${JSON.stringify(data, undefined, 2)}`);
         if (data.registrations) {
-
+            $('#divDeviceInfo').show();
             data.registrations.forEach(reg => {
 
                 addDeviceAttributeAsRow("Username", reg.username);
@@ -553,15 +572,31 @@ function authenticate(username = null, getRequest = getAuthenticateRequest) {
 
             $('#authnButton').hide();
 
+            Swal.fire({
+                icon: "info",
+                title: `Finalizing attempt for ${username}`,
+                text: "Please wait while your authentication attempt is processed...",
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
             setTimeout(() => {
                 $('#token').val(data.sessionToken);
-                console.log("Submitting authentication form");
-                $('#webauthnLoginForm').submit();
-            }, 1500);
+                const form = QRCodeAuthentication ? $("#webauthnQRCodeVerifyForm") : $('#webauthnLoginForm');
+                console.log(`Submitting authentication form ${form.serialize()}`);
+                clearMessages();
+                hideDeviceInfo();
+                Swal.close();
+                form.submit();
+            }, 2000);
         }
         return data;
     }).catch((err) => {
         setStatus(authFailTitle);
+        clearMessages();
         if (err.name === 'InvalidStateError') {
             addMessage(`This authenticator is not registered for the account "${username}".`)
         } else if (err.message) {

@@ -19,9 +19,9 @@ import java.io.Closeable;
 public class PersonDirectoryRuntimeHints implements CasRuntimeHintsRegistrar {
     @Override
     public void registerHints(final RuntimeHints hints, final ClassLoader classLoader) {
-        registerSpringProxy(hints, PersonDirectoryAttributeRepositoryPlan.class, DisposableBean.class);
-        registerSpringProxy(hints, InitializingBean.class, PersonAttributeDao.class);
-        registerSpringProxy(hints, PrincipalAttributesRepositoryCache.class, Closeable.class);
+        registerSpringProxyHints(hints, PersonDirectoryAttributeRepositoryPlan.class, DisposableBean.class);
+        registerSpringProxyHints(hints, InitializingBean.class, PersonAttributeDao.class);
+        registerSpringProxyHints(hints, PrincipalAttributesRepositoryCache.class, Closeable.class);
 
         registerProxyHints(hints, PersonDirectoryAttributeRepositoryPlanConfigurer.class);
     }

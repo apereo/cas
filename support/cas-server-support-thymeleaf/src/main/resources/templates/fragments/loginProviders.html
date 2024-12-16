@@ -81,7 +81,7 @@
 
                                 function jqueryReady() {
                                     $("#fm1 #username").on("focusout", () => {
-                                        let user = $("#fm1 #username").val();
+                                        const user = $("#fm1 #username").val();
                                         /*
                                         if (user.endsWith("@example.org")) {
                                             let provider = providers.find(element => element.name === "ClientName");

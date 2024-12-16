@@ -225,7 +225,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, GITHUB_URL);
 
         val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
-        assertFalse(Objects.requireNonNull(modelAndView.getView()).toString().contains("Success"));
+        assertFalse(Objects.requireNonNull(modelAndView.getView()).toString().contains(SUCCESS));
     }
 
     @Test
@@ -237,7 +237,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, GITHUB_URL);
 
         val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
-        assertFalse(Objects.requireNonNull(modelAndView.getView()).toString().contains("Success"));
+        assertFalse(Objects.requireNonNull(modelAndView.getView()).toString().contains(SUCCESS));
     }
 
 
@@ -255,7 +255,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         request.addParameter(CasProtocolConstants.PARAMETER_FORMAT, "NOTHING");
 
         val modelAndView = this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse());
-        assertTrue(Objects.requireNonNull(modelAndView.getView()).toString().contains("Success"));
+        assertTrue(Objects.requireNonNull(modelAndView.getView()).toString().contains(SUCCESS));
     }
 
     @Test

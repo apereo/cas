@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Misagh Moayyed
  * @since 6.1.0
  */
-@Tag("OIDC")
+@Tag("OIDCAttributes")
 class OidcPhoneScopeAttributeReleasePolicyTests {
     @Nested
     @TestPropertySource(properties = "cas.authn.oidc.core.claims-map.phone_number=cell_phone")

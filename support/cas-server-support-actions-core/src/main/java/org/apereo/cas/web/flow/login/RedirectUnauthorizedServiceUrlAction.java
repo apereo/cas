@@ -62,9 +62,11 @@ public class RedirectUnauthorizedServiceUrlAction extends BaseCasWebflowAction {
     protected URI determineUnauthorizedServiceRedirectUrl(final RequestContext context) {
         val redirectUrl = WebUtils.getUnauthorizedRedirectUrlFromFlowScope(context);
         val currentEvent = context.getCurrentEvent();
-        val eventAttributes = currentEvent.getAttributes();
-        LOGGER.debug("Finalizing the unauthorized redirect URL [{}] when processing event [{}] with attributes [{}]",
-            redirectUrl, currentEvent.getId(), eventAttributes);
+        if (currentEvent != null) {
+            val eventAttributes = currentEvent.getAttributes();
+            LOGGER.debug("Finalizing the unauthorized redirect URL [{}] when processing event [{}] with attributes [{}]",
+                redirectUrl, currentEvent.getId(), eventAttributes);
+        }
         return redirectUrl;
     }
 }
