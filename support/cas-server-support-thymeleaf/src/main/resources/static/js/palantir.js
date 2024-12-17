@@ -45,6 +45,10 @@ function fetchServices(callback) {
             let serviceCountByType = [0, 0, 0, 0, 0];
             let applicationsTable = $("#applicationsTable").DataTable();
             applicationsTable.clear();
+
+            let saml2MetadataProvidersTable = $("#saml2MetadataProvidersTable").DataTable();
+            saml2MetadataProvidersTable.clear();
+            
             for (const service of response[1]) {
                 let icon = "mdi-web-box";
                 const serviceClass = service["@class"];
@@ -114,9 +118,21 @@ function fetchServices(callback) {
                     4: `<span serviceId='${service.id}'>${serviceButtons.trim()}</span>`,
                     5: `${service.id}`
                 });
+
+
+                if (serviceClass.includes("SamlRegisteredService")) {
+                    const metadataLocation = service.metadataLocation;
+                    saml2MetadataProvidersTable.row.add({
+                        0: `<span serviceId='${service.id}' class="text-wrap">${service.id ?? ""}</span>`,
+                        1: `<span serviceId='${service.id}' class="text-wrap">${service.name ?? ""}</span>`,
+                        2: metadataLocation
+                    });
+                }
             }
 
             applicationsTable.search("").draw();
+            saml2MetadataProvidersTable.search("").draw();
+            
             servicesChart.data.datasets[0].data = serviceCountByType;
             servicesChart.update();
 
@@ -1804,6 +1820,22 @@ async function initializeServicesOperations() {
         }
     });
     applicationsTable.on("click", "tbody tr", e => e.currentTarget.classList.remove("selected"));
+
+
+    const saml2MetadataProvidersTable = $("#saml2MetadataProvidersTable").DataTable({
+        pageLength: 25,
+        autoWidth: false,
+        columnDefs: [
+            {width: "15%", targets: 0},
+            {width: "35%", targets: 1},
+            {width: "50%", targets: 2}
+        ],
+        drawCallback: settings => {
+            $("#saml2MetadataProvidersTable tr").addClass("mdc-data-table__row");
+            $("#saml2MetadataProvidersTable td").addClass("mdc-data-table__cell");
+        }
+    });
+    saml2MetadataProvidersTable.on("click", "tbody tr", e => e.currentTarget.classList.remove("selected"));
 
     $("#entityHistoryTable").DataTable({
         pageLength: 10,
