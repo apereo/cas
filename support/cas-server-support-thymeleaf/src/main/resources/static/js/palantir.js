@@ -3631,7 +3631,7 @@ function selectSidebarMenuButton(selectedItem) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    $(".jqueryui-tabs").tabs().off().on("click", function() {
+    $(".jqueryui-tabs").tabs().off().on("click", () => {
         updateNavigationSidebar();
     });
     $(".jqueryui-menu").menu();
