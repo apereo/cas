@@ -29,8 +29,10 @@
             <div th:each="scope : ${cibaRequest.scopes}">
                 <span th:id="${scope}">
                     <i class="mdi mdi-cog fas fa-cog" aria-hidden="true"></i>
-                    <strong><code th:text="${scope}"/></strong>
-                    <p th:utext="#{screen.oidc.confirm.scope.__${scope}__}"/>
+                    <dl class="dl-class0 dl-class1">
+                        <dt class="dt-class0 dt-class1" th:text="${scope}"/>
+                        <dd class="dd-class0 dd-class1" th:utext="#{screen.oidc.confirm.scope.__${scope}__}"/>
+                    </dl>
                 </span>
             </div>
         </div>
