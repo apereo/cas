@@ -8,7 +8,7 @@ category: Authentication
 
 # GeoTracking Authentication - Maxmind
 
-Uses [Maxmind](https://www.maxmind.com) to translate authentication requests into a geo-location.
+Uses [Maxmind](https://github.com/maxmind) to translate authentication requests into a geo-location.
 
 {% include_cached casmodule.html group="org.apereo.cas" module="cas-server-support-geolocation-maxmind" %}
 
