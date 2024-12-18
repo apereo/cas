@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.clients;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.MockWebServer;
 import org.apereo.cas.util.serialization.JacksonObjectMapperFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,9 +9,11 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.pac4j.config.client.PropertiesConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,12 +38,15 @@ class RestfulDelegatedIdentityProviderFactoryOidcTests {
 
     @TestPropertySource(properties = "cas.custom.properties.delegation-test.enabled=false")
     abstract static class BaseTests extends BaseDelegatedClientFactoryTests {
+        @Autowired
+        protected CasConfigurationProperties casProperties;
+        
     }
  
     @Nested
     @TestPropertySource(properties = {
         "cas.authn.pac4j.core.lazy-init=true",
-        "cas.authn.pac4j.rest.url=http://localhost:9212"
+        "cas.authn.pac4j.rest.url=http://localhost:${random.int[3000,9000]}"
     })
     class DefaultTests extends BaseTests {
         @Test
@@ -50,7 +56,9 @@ class RestfulDelegatedIdentityProviderFactoryOidcTests {
             clients.put("properties", getProperties());
 
             val entity = MAPPER.writeValueAsString(clients);
-            try (val webServer = new MockWebServer(9212,
+            val props = casProperties.getAuthn().getPac4j().getRest();
+            val port = URI.create(props.getUrl()).getPort();
+            try (val webServer = new MockWebServer(port,
                 new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
                 webServer.start();
 

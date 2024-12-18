@@ -15,6 +15,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -42,17 +43,21 @@ class RestfulDelegatedIdentityProviderFactoryTests {
 
     @TestPropertySource(properties = "cas.custom.properties.delegation-test.enabled=false")
     abstract static class BaseTests extends BaseDelegatedClientFactoryTests {
+        @Autowired
+        protected CasConfigurationProperties casProperties;
     }
 
     @Nested
     @TestPropertySource(properties = {
         "cas.authn.pac4j.core.lazy-init=false",
-        "cas.authn.pac4j.rest.url=http://localhost:9212"
+        "cas.authn.pac4j.rest.url=http://localhost:${random.int[3000,9000]}"
     })
     class InvalidStatusCodeTests extends BaseTests {
         @Test
         void verifyBadStatusCode() throws Throwable {
-            try (val webServer = new MockWebServer(9212, HttpStatus.EXPECTATION_FAILED)) {
+            val props = casProperties.getAuthn().getPac4j().getRest();
+            val port = URI.create(props.getUrl()).getPort();
+            try (val webServer = new MockWebServer(port, HttpStatus.EXPECTATION_FAILED)) {
                 webServer.start();
                 val clientsFound = delegatedIdentityProviderFactory.build();
                 assertNotNull(clientsFound);
@@ -64,7 +69,7 @@ class RestfulDelegatedIdentityProviderFactoryTests {
     @Nested
     @TestPropertySource(properties = {
         "cas.authn.pac4j.core.lazy-init=true",
-        "cas.authn.pac4j.rest.url=http://localhost:9212"
+        "cas.authn.pac4j.rest.url=http://localhost:${random.int[3000,9000]}"
     })
     class DefaultTests extends BaseTests {
         @Test
@@ -74,7 +79,9 @@ class RestfulDelegatedIdentityProviderFactoryTests {
             clients.put("properties", getProperties());
 
             val entity = MAPPER.writeValueAsString(clients);
-            try (val webServer = new MockWebServer(9212,
+            val props = casProperties.getAuthn().getPac4j().getRest();
+            val port = URI.create(props.getUrl()).getPort();
+            try (val webServer = new MockWebServer(port,
                 new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
                 webServer.start();
 
@@ -97,12 +104,10 @@ class RestfulDelegatedIdentityProviderFactoryTests {
         "cas.server.name=https://sso.example.org",
         "cas.server.prefix=${cas.server.name}/cas",
         "cas.authn.pac4j.core.lazy-init=false",
-        "cas.authn.pac4j.rest.url=http://localhost:9212",
+        "cas.authn.pac4j.rest.url=http://localhost:${random.int[3000,9000]}",
         "cas.authn.pac4j.rest.type=cas"
     })
     class CasPropertiesTests extends BaseTests {
-        @Autowired
-        private CasConfigurationProperties casProperties;
 
         @Test
         void verifyAction() throws Throwable {
@@ -111,7 +116,9 @@ class RestfulDelegatedIdentityProviderFactoryTests {
             clients.put("cas.authn.pac4j.cas[0].protocol", "CAS30");
 
             val entity = MAPPER.writeValueAsString(clients);
-            try (val webServer = new MockWebServer(9212,
+            val props = casProperties.getAuthn().getPac4j().getRest();
+            val port = URI.create(props.getUrl()).getPort();
+            try (val webServer = new MockWebServer(port,
                 new ByteArrayResource(entity.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
                 webServer.start();
 

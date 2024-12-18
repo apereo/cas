@@ -1,6 +1,7 @@
 package org.apereo.cas.support.sms;
 
 import org.apereo.cas.config.CasClickatellSmsAutoConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.sms.SmsSender;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.MockWebServer;
@@ -15,9 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
-import static java.nio.charset.StandardCharsets.*;
+import java.net.URI;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.OK;
 
 /**
  * This is {@link ClickatellSmsSenderTests}.
@@ -27,7 +29,7 @@ import static org.springframework.http.HttpStatus.*;
  */
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = CasClickatellSmsAutoConfiguration.class, properties = {
-    "cas.sms-provider.clickatell.server-url=http://localhost:8099",
+    "cas.sms-provider.clickatell.server-url=http://localhost:${random.int[3000,9000]}",
     "cas.sms-provider.clickatell.token=DEMO_TOKEN"
 })
 @Tag("SMS")
@@ -37,7 +39,10 @@ class ClickatellSmsSenderTests {
     @Autowired
     @Qualifier(SmsSender.BEAN_NAME)
     private SmsSender smsSender;
-    
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     @Test
     void verifySmsSender() throws Throwable {
         val data = '{'
@@ -58,7 +63,9 @@ class ClickatellSmsSenderTests {
             + "\"error\": null"
             + '}';
 
-        try (val webServer = new MockWebServer(8099,
+        val props = casProperties.getSmsProvider().getClickatell();
+        val port = URI.create(props.getServerUrl()).getPort();
+        try (val webServer = new MockWebServer(port,
             new ByteArrayResource(data.getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
             assertTrue(smsSender.send("123-456-7890", "123-456-7890", "TEST"));
@@ -74,7 +81,9 @@ class ClickatellSmsSenderTests {
             + "\"accepted\": \"false\""
             + '}';
 
-        try (val webServer = new MockWebServer(8099,
+        val props = casProperties.getSmsProvider().getClickatell();
+        val port = URI.create(props.getServerUrl()).getPort();
+        try (val webServer = new MockWebServer(port,
             new ByteArrayResource(data.getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
             assertFalse(smsSender.send("123-456-7890", "123-456-7890", "TEST"));
@@ -89,7 +98,9 @@ class ClickatellSmsSenderTests {
             + ']'
             + '}';
 
-        try (val webServer = new MockWebServer(8099,
+        val props = casProperties.getSmsProvider().getClickatell();
+        val port = URI.create(props.getServerUrl()).getPort();
+        try (val webServer = new MockWebServer(port,
             new ByteArrayResource(data.getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
             assertFalse(smsSender.send("123-456-7890", "123-456-7890", "TEST"));
@@ -104,7 +115,9 @@ class ClickatellSmsSenderTests {
             + ']'
             + '}';
 
-        try (val webServer = new MockWebServer(8099,
+        val props = casProperties.getSmsProvider().getClickatell();
+        val port = URI.create(props.getServerUrl()).getPort();
+        try (val webServer = new MockWebServer(port,
             new ByteArrayResource(data.getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
             assertFalse(smsSender.send("123-456-7890", "123-456-7890", "TEST"));
@@ -113,7 +126,9 @@ class ClickatellSmsSenderTests {
 
     @Test
     void verifyBadSmsSender() throws Throwable {
-        try (val webServer = new MockWebServer(8099,
+        val props = casProperties.getSmsProvider().getClickatell();
+        val port = URI.create(props.getServerUrl()).getPort();
+        try (val webServer = new MockWebServer(port,
             new ByteArrayResource("{}".getBytes(UTF_8), "Output"), OK)) {
             webServer.start();
             assertFalse(smsSender.send("123-456-7890", "123-456-7890", "TEST"));

@@ -57,10 +57,10 @@ class ReturnRestfulAttributeReleasePolicyTests {
     @Test
     void verifyPolicy() throws Throwable {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("givenName", "CASUSER", "familyName", "CAS"));
-        try (val webServer = new MockWebServer(9299,
-            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+        try (val webServer = new MockWebServer(            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            val policyWritten = new ReturnRestfulAttributeReleasePolicy().setEndpoint("http://localhost:9299");
+            val policyWritten = new ReturnRestfulAttributeReleasePolicy()
+                .setEndpoint("http://localhost:%s".formatted(webServer.getPort()));
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())
@@ -75,11 +75,11 @@ class ReturnRestfulAttributeReleasePolicyTests {
     @Test
     void verifyPolicyWithMappedAttributes() throws Throwable {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("givenName", "CASUSER"));
-        try (val webServer = new MockWebServer(9299,
+        try (val webServer = new MockWebServer(
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val policyWritten = new ReturnRestfulAttributeReleasePolicy()
-                .setEndpoint("http://localhost:9299")
+                .setEndpoint("http://localhost:%s".formatted(webServer.getPort()))
                 .setAllowedAttributes(Map.of("givenName", List.of("givenName1", "givenName2")));
 
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
@@ -97,11 +97,12 @@ class ReturnRestfulAttributeReleasePolicyTests {
 
     @Test
     void verifyBadPolicy() throws Throwable {
-        try (val webServer = new MockWebServer(9298,
+        try (val webServer = new MockWebServer(
             new ByteArrayResource("---".getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
-            val policy = new ReturnRestfulAttributeReleasePolicy().setEndpoint("http://localhost:9298");
+            val policy = new ReturnRestfulAttributeReleasePolicy()
+                .setEndpoint("http://localhost:%s".formatted(webServer.getPort()));
             val releasePolicyContext = RegisteredServiceAttributeReleasePolicyContext.builder()
                 .registeredService(CoreAuthenticationTestUtils.getRegisteredService())
                 .service(CoreAuthenticationTestUtils.getService())

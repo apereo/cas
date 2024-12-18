@@ -334,8 +334,7 @@ public abstract class AbstractOidcTests {
         return getOidcRegisteredService(true, true);
     }
 
-    protected static OidcRegisteredService getOidcRegisteredService(final boolean sign,
-                                                                    final boolean encrypt) {
+    protected static OidcRegisteredService getOidcRegisteredService(final boolean sign, final boolean encrypt) {
         return getOidcRegisteredService("clientid", "https://oauth\\.example\\.org.*", sign, encrypt);
     }
 
