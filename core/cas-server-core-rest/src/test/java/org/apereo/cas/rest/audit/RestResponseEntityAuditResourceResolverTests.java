@@ -25,7 +25,7 @@ class RestResponseEntityAuditResourceResolverTests {
     @Test
     void verifyAction() throws Throwable {
         val resolver = new RestResponseEntityAuditResourceResolver(true);
-        try (val webServer = new MockWebServer(9193)) {
+        try (val webServer = new MockWebServer()) {
             webServer.start();
             val headers = new LinkedMultiValueMap<String, String>();
             headers.put("header", CollectionUtils.wrapList("value"));

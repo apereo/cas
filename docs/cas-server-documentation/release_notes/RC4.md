@@ -59,18 +59,18 @@ The collection of end-to-end [browser tests based on Puppeteer](../../developer/
 and scenarios. At the moment, the total number of jobs stands at approximately `507` distinct scenarios. The overall
 test coverage of the CAS codebase is approximately `94%`.
    
-## WebAuthN via QR Codes
+### WebAuthN via QR Codes
 
 CAS can be configured to support FIDO2 WebAuthn authentication using QR codes. Once 
 enabled, [this feature](../mfa/FIDO2-WebAuthn-Authentication-QRCode.html) allows users to authenticate
 using a secondary FIDO2-enabled secondary device by scanning a QR code presented by CAS.
   
-## Passwordless Authentication Selection
+### Passwordless Authentication Selection
 
 [Passwordless Authentication](../authentication/Passwordless-Authentication-UserSelectionMenu.html) at the direction of the
 account store can now be instructed to allow the user to select from a menu of available authentication options.
    
-## Mailgun Integration
+### Mailgun Integration
 
 Support for [Mailgun](../notifications/Sending-Email-Configuration-Mailgun.html) is now available for sending email messages.
 

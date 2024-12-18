@@ -1,6 +1,7 @@
 package org.apereo.cas.audit;
 
 import org.apereo.cas.config.CasSupportRestAuditAutoConfiguration;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.test.CasTestExtension;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.MockWebServer;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -36,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @SpringBootTestAutoConfigurations
 @SpringBootTest(classes = CasSupportRestAuditAutoConfiguration.class, properties = {
-    "cas.audit.rest.url=http://localhost:9296",
+    "cas.audit.rest.url=http://localhost:${random.int[3000,9000]}",
     "cas.audit.rest.asynchronous=false"
 })
 @Tag("RestfulApi")
@@ -50,10 +52,14 @@ class RestAuditTrailManagerTests {
     @Qualifier("restAuditTrailManager")
     private AuditTrailManager auditTrailManager;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     @Test
     void verifyRemoval() throws Throwable {
-        try (val webServer = new MockWebServer(9296,
+        val props = casProperties.getAudit().getRest();
+        val port = URI.create(props.getUrl()).getPort();
+        try (val webServer = new MockWebServer(port,
             new ByteArrayResource(ArrayUtils.EMPTY_BYTE_ARRAY), HttpStatus.OK)) {
             webServer.start();
             assertTrue(webServer.isRunning());
@@ -68,7 +74,9 @@ class RestAuditTrailManagerTests {
             new ClientInfo("123.456.789.000", "123.456.789.000", "GoogleChrome", "London"));
         val data = MAPPER.writeValueAsString(CollectionUtils.wrapSet(audit));
 
-        try (val webServer = new MockWebServer(9296,
+        val props = casProperties.getAudit().getRest();
+        val port = URI.create(props.getUrl()).getPort();
+        try (val webServer = new MockWebServer(port,
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8)), HttpStatus.OK)) {
             webServer.start();
             assertTrue(webServer.isRunning());
