@@ -1,5 +1,6 @@
 package org.apereo.cas.notifications.sms;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.notifications.BaseNotificationTests;
 import org.apereo.cas.notifications.CommunicationsManager;
 import org.apereo.cas.test.CasTestExtension;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,9 +41,8 @@ class RestfulSmsSenderTests {
     @SpringBootTest(classes = BaseNotificationTests.SharedTestConfiguration.class,
         properties = {
             "cas.sms-provider.rest.style=REQUEST_BODY",
-            "cas.sms-provider.rest.url=http://localhost:8232"
+            "cas.sms-provider.rest.url=http://localhost:${random.int[3000,9000]}"
         })
-
     public class RequestBody {
         @Autowired
         @Qualifier(CommunicationsManager.BEAN_NAME)
@@ -49,6 +50,9 @@ class RestfulSmsSenderTests {
 
         private MockWebServer webServer;
 
+        @Autowired
+        private CasConfigurationProperties casProperties;
+        
         @BeforeEach
         public void initialize() {
             val request = new MockHttpServletRequest();
@@ -56,7 +60,10 @@ class RestfulSmsSenderTests {
             request.setLocalAddr("185.88.151.11");
             ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
-            webServer = new MockWebServer(8232,
+            val props = casProperties.getSmsProvider().getRest();
+            val port = URI.create(props.getUrl()).getPort();
+            
+            webServer = new MockWebServer(port,
                 new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"),
                 MediaType.APPLICATION_JSON_VALUE);
             webServer.start();
@@ -80,7 +87,7 @@ class RestfulSmsSenderTests {
     @SpringBootTest(classes = BaseNotificationTests.SharedTestConfiguration.class,
         properties = {
             "cas.sms-provider.rest.style=QUERY_PARAMETERS",
-            "cas.sms-provider.rest.url=http://localhost:8132"
+            "cas.sms-provider.rest.url=http://localhost:${random.int[3000,9000]}"
         })
 
     public class RequestParameters {
@@ -88,6 +95,9 @@ class RestfulSmsSenderTests {
         @Qualifier(CommunicationsManager.BEAN_NAME)
         private CommunicationsManager communicationsManager;
 
+        @Autowired
+        private CasConfigurationProperties casProperties;
+        
         private MockWebServer webServer;
 
         @BeforeEach
@@ -97,7 +107,9 @@ class RestfulSmsSenderTests {
             request.setLocalAddr("185.88.151.11");
             ClientInfoHolder.setClientInfo(ClientInfo.from(request));
 
-            webServer = new MockWebServer(8132,
+            val props = casProperties.getSmsProvider().getRest();
+            val port = URI.create(props.getUrl()).getPort();
+            webServer = new MockWebServer(port,
                 new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "REST Output"),
                 MediaType.APPLICATION_JSON_VALUE);
             webServer.start();

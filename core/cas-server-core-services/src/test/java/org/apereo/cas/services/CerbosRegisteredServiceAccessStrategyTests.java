@@ -81,9 +81,10 @@ class CerbosRegisteredServiceAccessStrategyTests {
                 "cerbosCallId": "1-2-3-4"
             }
             """.formatted(requestId);
-        try (val webServer = new MockWebServer(3592,
+        try (val webServer = new MockWebServer(
             new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
+            strategy.setApiUrl("http://localhost:%s".formatted(webServer.getPort()));
             assertTrue(strategy.authorizeRequest(request));
         }
     }
