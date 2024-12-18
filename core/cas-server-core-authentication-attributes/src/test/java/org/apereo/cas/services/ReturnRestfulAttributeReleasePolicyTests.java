@@ -57,7 +57,7 @@ class ReturnRestfulAttributeReleasePolicyTests {
     @Test
     void verifyPolicy() throws Throwable {
         val data = MAPPER.writeValueAsString(CollectionUtils.wrap("givenName", "CASUSER", "familyName", "CAS"));
-        try (val webServer = new MockWebServer(            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
+        try (val webServer = new MockWebServer(new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"), MediaType.APPLICATION_JSON_VALUE)) {
             webServer.start();
             val policyWritten = new ReturnRestfulAttributeReleasePolicy()
                 .setEndpoint("http://localhost:%s".formatted(webServer.getPort()));

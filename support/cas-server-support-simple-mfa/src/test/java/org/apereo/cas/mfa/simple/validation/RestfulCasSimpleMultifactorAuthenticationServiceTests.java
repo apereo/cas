@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import javax.security.auth.login.FailedLoginException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.UUID;
@@ -37,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(CasTestExtension.class)
 @SpringBootTest(classes = BaseCasSimpleMultifactorAuthenticationTests.SharedTestConfiguration.class,
     properties = {
-        "cas.authn.mfa.simple.token.rest.url=http://localhost:9229",
+        "cas.authn.mfa.simple.token.rest.url=http://localhost:${random.int[3000,9000]}",
         "cas.authn.mfa.simple.token.rest.headers.h1=h2"
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
@@ -53,12 +54,18 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
     @Qualifier(TicketFactory.BEAN_NAME)
     private TicketFactory defaultTicketFactory;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     @Test
     void verifyGenerateToken() throws Throwable {
+        val props = casProperties.getAuthn().getMfa().getSimple().getToken().getRest();
+        val port = URI.create(props.getUrl()).getPort();
+        
         val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
         val tokenId = UUID.randomUUID().toString();
         val service = RegisteredServiceTestUtils.getService();
-        try (val webServer = new MockWebServer(9229,
+        try (val webServer = new MockWebServer(port,
             new ByteArrayResource(tokenId.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
             val token = multifactorAuthenticationService.generate(authentication.getPrincipal(), service);
@@ -66,7 +73,7 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
             assertEquals(token.getService(), service);
         }
 
-        try (val webServer = new MockWebServer(9229,
+        try (val webServer = new MockWebServer(port,
             new ByteArrayResource(tokenId.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.INTERNAL_SERVER_ERROR)) {
             webServer.start();
             assertThrows(FailedLoginException.class, () -> multifactorAuthenticationService.generate(authentication.getPrincipal(), service));
@@ -75,9 +82,12 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
 
     @Test
     void verifyStoreToken() throws Throwable {
+        val props = casProperties.getAuthn().getMfa().getSimple().getToken().getRest();
+        val port = URI.create(props.getUrl()).getPort();
+
         val tokenId = UUID.randomUUID().toString();
         val service = RegisteredServiceTestUtils.getService();
-        try (val webServer = new MockWebServer(9229,
+        try (val webServer = new MockWebServer(port,
             new ByteArrayResource(tokenId.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.CREATED)) {
             webServer.start();
             val mfaFactory = (CasSimpleMultifactorAuthenticationTicketFactory)
@@ -85,7 +95,7 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
             var token = mfaFactory.create(tokenId, service, Map.of());
             assertDoesNotThrow(() -> multifactorAuthenticationService.store(token));
         }
-        try (val webServer = new MockWebServer(9229,
+        try (val webServer = new MockWebServer(port,
             new ByteArrayResource(tokenId.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.INTERNAL_SERVER_ERROR)) {
             webServer.start();
             val mfaFactory = (CasSimpleMultifactorAuthenticationTicketFactory)
@@ -97,8 +107,11 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
 
     @Test
     void verifyValidateTokenFails() throws Throwable {
+        val props = casProperties.getAuthn().getMfa().getSimple().getToken().getRest();
+        val port = URI.create(props.getUrl()).getPort();
+
         val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
-        try (val webServer = new MockWebServer(9229,
+        try (val webServer = new MockWebServer(port,
             new ByteArrayResource(MAPPER.writeValueAsString(authentication.getPrincipal())
                 .getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.INTERNAL_SERVER_ERROR)) {
             webServer.start();
@@ -109,8 +122,11 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
 
     @Test
     void verifyValidateTokenOK() throws Throwable {
+        val props = casProperties.getAuthn().getMfa().getSimple().getToken().getRest();
+        val port = URI.create(props.getUrl()).getPort();
+
         val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
-        try (val webServer = new MockWebServer(9229,
+        try (val webServer = new MockWebServer(port,
             new ByteArrayResource(MAPPER.writeValueAsString(authentication.getPrincipal())
                 .getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
@@ -121,8 +137,11 @@ class RestfulCasSimpleMultifactorAuthenticationServiceTests {
 
     @Test
     void verifyFetchTokenOK() throws Throwable {
+        val props = casProperties.getAuthn().getMfa().getSimple().getToken().getRest();
+        val port = URI.create(props.getUrl()).getPort();
+
         val authentication = RegisteredServiceTestUtils.getAuthentication("casuser");
-        try (val webServer = new MockWebServer(9229,
+        try (val webServer = new MockWebServer(port,
             new ByteArrayResource(MAPPER.writeValueAsString(authentication.getPrincipal())
                 .getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();

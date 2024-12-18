@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import java.net.URI;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {
     CasAccountManagementWebflowAutoConfiguration.class,
     BaseWebflowConfigurerTests.SharedTestConfiguration.class
-}, properties = "cas.account-registration.provisioning.rest.url=http://localhost:5002")
+}, properties = "cas.account-registration.provisioning.rest.url=http://localhost:${random.int[3000,9000]}")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Tag("RestfulApi")
 @ExtendWith(CasTestExtension.class)
@@ -36,9 +37,14 @@ class RestfulAccountRegistrationProvisionerTests {
     @Qualifier(AccountRegistrationProvisioner.BEAN_NAME)
     private AccountRegistrationProvisioner accountMgmtRegistrationProvisioner;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+    
     @Test
     void verifyOperation() throws Throwable {
-        try (val webServer = new MockWebServer(5002, HttpStatus.OK)) {
+        val props = casProperties.getAccountRegistration().getProvisioning().getRest();
+        val port = URI.create(props.getUrl()).getPort();
+        try (val webServer = new MockWebServer(port, HttpStatus.OK)) {
             webServer.start();
             val registrationRequest = new AccountRegistrationRequest(Map.of("username", "casuser"));
             val results = accountMgmtRegistrationProvisioner.provision(registrationRequest);
@@ -48,7 +54,9 @@ class RestfulAccountRegistrationProvisionerTests {
 
     @Test
     void verifyOperationFails() throws Throwable {
-        try (val webServer = new MockWebServer(5002, HttpStatus.INTERNAL_SERVER_ERROR)) {
+        val props = casProperties.getAccountRegistration().getProvisioning().getRest();
+        val port = URI.create(props.getUrl()).getPort();
+        try (val webServer = new MockWebServer(port, HttpStatus.INTERNAL_SERVER_ERROR)) {
             webServer.start();
             val registrationRequest = new AccountRegistrationRequest(Map.of("username", "casuser"));
             val results = accountMgmtRegistrationProvisioner.provision(registrationRequest);

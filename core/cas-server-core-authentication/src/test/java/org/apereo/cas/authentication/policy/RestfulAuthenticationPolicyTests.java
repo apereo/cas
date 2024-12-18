@@ -54,11 +54,11 @@ class RestfulAuthenticationPolicyTests {
         val applicationContext = new StaticApplicationContext();
         applicationContext.refresh();
 
-        try (val webServer = new MockWebServer(9200,
+        try (val webServer = new MockWebServer(
             new ByteArrayResource(StringUtils.EMPTY.getBytes(StandardCharsets.UTF_8), "Output"), HttpStatus.OK)) {
             webServer.start();
             val props = new RestAuthenticationPolicyProperties();
-            props.setUrl("http://localhost:9200");
+            props.setUrl("http://localhost:%s".formatted(webServer.getPort()));
             val policy = new RestfulAuthenticationPolicy(props);
             assertTrue(policy.isSatisfiedBy(CoreAuthenticationTestUtils.getAuthentication("casuser"), applicationContext).isSuccess());
         }
