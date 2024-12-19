@@ -3,14 +3,15 @@ module.exports = ({ env }) => ({
     port: env.int("PORT", 1337),
     url: env("", "http://localhost:1337"),
     app: {
-        keys: env.array("APP_KEYS", ["testKey1", "testKey2"])
+        keys: env.array('APP_KEYS'),
     },
-    admin: {
-        auth: {
-            secret: env("ADMIN_JWT_SECRET", "example-token")
-        }
+    webhooks: {
+        populateRelations: env.bool('WEBHOOKS_POPULATE_RELATIONS', false),
     },
     logger: {
-        level: "debug"
+        config: {
+            level: 'debug'
+        }
     }
-});
+}
+);
