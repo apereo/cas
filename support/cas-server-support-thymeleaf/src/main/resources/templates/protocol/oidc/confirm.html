@@ -25,8 +25,10 @@
         <div th:each="scope : ${scopes}">
             <span th:id="${scope}">
                 <i class="mdi mdi-cog fas fa-cog" aria-hidden="true"></i>
-                <strong><code th:text="${scope}"/></strong>
-                <p th:utext="#{screen.oidc.confirm.scope.__${scope}__}"/>
+                <dl class="dl-class0 dl-class1">
+                    <dt class="dt-class0 dt-class1" th:text="${scope}"/>
+                    <dd class="dd-class0 dd-class1" th:utext="#{screen.oidc.confirm.scope.__${scope}__}"/>
+                </dl>
             </span>
         </div>
     </div>
@@ -38,8 +40,10 @@
         <div th:each="claim : ${userInfoClaims}">
             <span th:id="${claim}">
                 <i class="mdi mdi-cog fas fa-cog" aria-hidden="true"></i>
-                <strong><code th:text="${claim}"/></strong>
-                <p th:utext="#{screen.oidc.confirm.claim.__${claim}__}"/>
+                <dl class="dl-class0 dl-class1">
+                    <dt class="dt-class0 dt-class1" th:text="${claim}"/>
+                    <dd class="dd-class0 dd-class1" th:utext="#{screen.oidc.confirm.claim.__${claim}__}"/>
+                </dl>
             </span>
         </div>
     </div>
