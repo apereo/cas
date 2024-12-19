@@ -1,3 +1,6 @@
 spring:
   main:
     lazy-initialization: false
+  cloud:
+    refresh:
+      enabled: false
