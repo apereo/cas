@@ -47,6 +47,7 @@ public class AuthenticationException extends RootCasException {
 
     public AuthenticationException(final Throwable handlerError) {
         this(Collections.singletonMap(handlerError.getClass().getSimpleName(), handlerError));
+        initCause(handlerError);
     }
 
     public AuthenticationException(final Map<String, Throwable> handlerErrors,

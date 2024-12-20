@@ -2,6 +2,7 @@ package org.apereo.cas.mfa.simple;
 
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailedException;
 import org.apereo.cas.authentication.MultifactorAuthenticationHandler;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
@@ -16,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.ConfigurableApplicationContext;
-import javax.security.auth.login.FailedLoginException;
 
 /**
  * This is {@link CasSimpleMultifactorAuthenticationHandler}.
@@ -66,6 +66,6 @@ public class CasSimpleMultifactorAuthenticationHandler extends AbstractPreAndPos
             val resolvedPrincipal = resolvePrincipal(applicationContext, credentialPrincipal);
             val principal = multifactorAuthenticationService.validate(resolvedPrincipal, tokenCredential);
             return createHandlerResult(tokenCredential, principal);
-        }, e -> new FailedLoginException(e.getMessage()));
+        }, MultifactorAuthenticationFailedException::new);
     }
 }

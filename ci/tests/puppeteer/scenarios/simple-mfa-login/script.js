@@ -14,6 +14,11 @@ const cas = require("../../cas.js");
 
     await page.bringToFront();
     await cas.attributeValue(page, "html", "lang", "en");
+    await cas.type(page, "#token", "unknownCode");
+    await cas.submitForm(page, "#fm1");
+    await cas.sleep(1000);
+    await cas.assertTextContentStartsWith(page, "div .banner-danger p", "Multifactor authentication attempt has failed");
+
     await cas.type(page, "#token", code);
     await cas.submitForm(page, "#fm1");
     await cas.sleep(3000);

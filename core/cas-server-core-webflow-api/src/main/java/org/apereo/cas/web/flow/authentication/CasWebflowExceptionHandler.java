@@ -12,10 +12,6 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 6.1.0
  */
 public interface CasWebflowExceptionHandler<T extends Exception> extends Ordered {
-    /**
-     * Unknown event id, principal or action.
-     */
-    String UNKNOWN = "UNKNOWN";
 
     /**
      * Handle event.
