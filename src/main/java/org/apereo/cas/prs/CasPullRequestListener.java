@@ -1,6 +1,7 @@
 package org.apereo.cas.prs;
 
 import org.apereo.cas.CasLabels;
+import org.apereo.cas.DependencyRange;
 import org.apereo.cas.Memes;
 import org.apereo.cas.MonitoredRepository;
 import org.apereo.cas.PullRequestListener;
@@ -15,6 +16,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.StringUtils;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Slf4j
@@ -44,46 +46,53 @@ public class CasPullRequestListener implements PullRequestListener {
         processAutomaticMergeByChangeset(pr);
     }
 
-    private boolean processAutomaticMergeByChangeset(final PullRequest pr) {
-        if (pr.isBot()) {
+    private boolean canBotPullRequestBeMerged(final PullRequest pr) {
+        if (pr.isBot() && !pr.isDraft() && !pr.isWorkInProgress() && !pr.isLocked()) {
             var files = repository.getPullRequestFiles(pr);
-            if (files.size() == 1) {
-                var firstFile = files.getFirst().getFilename();
-
-                if (firstFile.endsWith("locust/requirements.txt")
-                    || firstFile.matches(".github/workflows/.+.yml")
-                    || firstFile.endsWith("client/package-lock.json")
-                    || firstFile.endsWith("client/.nvmrc")) {
-                    log.info("Merging pull request {}", pr);
+            if (files.stream().allMatch(file -> file.getFilename().endsWith("locust/requirements.txt"))) {
+                log.info("Merging bot pull request for Locust {}", pr);
+                return repository.approveAndMergePullRequest(pr);
+            }
+            if (files.stream().allMatch(file -> file.getFilename().matches(".github/workflows/.+.yml"))) {
+                var rangeResult = extractBotDependencyRange(pr);
+                if (rangeResult.isPresent() && (rangeResult.get().isQualifiedForPatchUpgrade() || rangeResult.get().isQualifiedForMinorUpgrade())) {
+                    log.info("Merging bot pull request {} for GitHub Actions for dependency range {}", pr, rangeResult.get());
                     return repository.approveAndMergePullRequest(pr);
                 }
+            }
+        }
+        return false;
+    }
+    
+    private boolean processAutomaticMergeByChangeset(final PullRequest pr) {
+        if (pr.isBot()) {
+            if (canBotPullRequestBeMerged(pr)) {
+                return true;
+            }
+            try {
+                var rangeResult = extractBotDependencyRange(pr);
+                if (rangeResult.isPresent()) {
+                    var startingVersion = rangeResult.get().startingVersion();
+                    var endingVersion = rangeResult.get().endingVersion();
 
-                try {
-                    var pattern = Pattern.compile("`(\\d+\\.\\d+\\.\\d+)` \\-\\> `(\\d+\\.\\d+\\.\\d+)`");
-                    var matcher = pattern.matcher(pr.getBody());
-                    if (matcher.find()) {
-                        var startingVersion = new Semver(matcher.group(1));
-                        var endingVersion = new Semver(matcher.group(2));
-                        if (startingVersion.getMajor().equals(endingVersion.getMajor())
-                            && startingVersion.getMinor().equals(endingVersion.getMinor())
-                            && endingVersion.getPatch() > startingVersion.getPatch()) {
-                            log.info("Merging patch dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
+                    if (rangeResult.get().isQualifiedForPatchUpgrade()) {
+                        log.info("Merging patch dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
+                        repository.labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
+                        return repository.approveAndMergePullRequest(pr);
+                    }
+
+                    var files = repository.getPullRequestFiles(pr);
+                    var firstFile = files.getFirst().getFilename();
+                    if (firstFile.endsWith("package.json")) {
+                        if (rangeResult.get().isQualifiedForMinorUpgrade()) {
+                            log.info("Merging minor dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
                             repository.labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
                             return repository.approveAndMergePullRequest(pr);
                         }
-
-                        if (firstFile.endsWith("package.json")) {
-                            if (startingVersion.getMajor().equals(endingVersion.getMajor())
-                                && endingVersion.getMinor() > startingVersion.getMinor()) {
-                                log.info("Merging minor dependency upgrade {} from {} to {}", pr, startingVersion, endingVersion);
-                                repository.labelPullRequestAs(pr, CasLabels.LABEL_SKIP_CI);
-                                return repository.approveAndMergePullRequest(pr);
-                            }
-                        }
                     }
-                } catch (final Exception e) {
-                    log.error(e.getMessage(), e);
                 }
+            } catch (final Exception e) {
+                log.error(e.getMessage(), e);
             }
         }
 
@@ -111,6 +120,17 @@ public class CasPullRequestListener implements PullRequestListener {
             || processInvalidPullRequest(pr);
     }
 
+    private static Optional<DependencyRange> extractBotDependencyRange(final PullRequest pr) {
+        var pattern = Pattern.compile("`(\\d+\\.\\d+\\.\\d+)` \\-\\> `(\\d+\\.\\d+\\.\\d+)`");
+        var matcher = pattern.matcher(pr.getBody());
+        if (matcher.find()) {
+            var startingVersion = new Semver(matcher.group(1));
+            var endingVersion = new Semver(matcher.group(2));
+            return Optional.of(new DependencyRange(startingVersion, endingVersion));
+        }
+        return Optional.empty();
+    }
+    
     @SneakyThrows
     private void checkForPullRequestDescription(final PullRequest pr) {
         val committer = repository.getGitHubProperties().getRepository().getCommitters().contains(pr.getUser().getLogin());
@@ -284,7 +304,7 @@ public class CasPullRequestListener implements PullRequestListener {
                 repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
 
                 var template = IOUtils.toString(new ClassPathResource("template-large-patch.md").getInputStream(), StandardCharsets.UTF_8);
-                repository.removeAllCommentsFrom(pr, "apereocas-bot");
+                repository.removeAllApereoCasBotCommentsFrom(pr);
                 repository.addComment(pr, template);
                 repository.close(pr);
                 return true;
@@ -296,7 +316,7 @@ public class CasPullRequestListener implements PullRequestListener {
             repository.labelPullRequestAs(pr, CasLabels.LABEL_PROPOSAL_DECLINED);
             repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
             var template = IOUtils.toString(new ClassPathResource("template-no-description.md").getInputStream(), StandardCharsets.UTF_8);
-            repository.removeAllCommentsFrom(pr, "apereocas-bot");
+            repository.removeAllApereoCasBotCommentsFrom(pr);
             repository.addComment(pr, template);
             repository.close(pr);
             return true;
@@ -411,7 +431,7 @@ public class CasPullRequestListener implements PullRequestListener {
                 }
 
                 if (closePullRequest) {
-                    repository.removeAllCommentsFrom(pr, "apereocas-bot");
+                    repository.removeAllApereoCasBotCommentsFrom(pr);
                     repository.labelPullRequestAs(pr, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
                     var template = IOUtils.toString(new ClassPathResource("template-port-forward.md").getInputStream(), StandardCharsets.UTF_8);
                     repository.addComment(pr, template);

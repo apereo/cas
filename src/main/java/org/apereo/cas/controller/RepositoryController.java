@@ -77,11 +77,13 @@ public class RepositoryController {
         if (pullRequest == null) {
             return ResponseEntity.notFound().build();
         }
-        repository.removeAllCommentsFrom(pullRequest, "apereocas-bot");
+        repository.removeAllApereoCasBotCommentsFrom(pullRequest);
         repository.removeLabelFrom(pullRequest, CasLabels.LABEL_PENDING_PORT_FORWARD);
         repository.removeLabelFrom(pullRequest, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
         repository.removeLabelFrom(pullRequest, CasLabels.LABEL_PROPOSAL_DECLINED);
         repository.removeLabelFrom(pullRequest, CasLabels.LABEL_PENDING_NEEDS_TESTS);
+        repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_UNDER_REVIEW);
+        
         if (pullRequest.isClosed()) {
             repository.open(pullRequest);
         }
@@ -98,7 +100,7 @@ public class RepositoryController {
         if (pullRequest == null) {
             return ResponseEntity.notFound().build();
         }
-        repository.removeAllCommentsFrom(pullRequest, "apereocas-bot");
+        repository.removeAllApereoCasBotCommentsFrom(pullRequest);
         repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
         repository.labelPullRequestAs(pullRequest, CasLabels.LABEL_PROPOSAL_DECLINED);
         repository.close(pullRequest);
@@ -135,7 +137,7 @@ public class RepositoryController {
         if (pullRequest.isClosed()) {
             repository.open(pullRequest);
         }
-        repository.removeAllCommentsFrom(pullRequest, "apereocas-bot");
+        repository.removeAllApereoCasBotCommentsFrom(pullRequest);
         repository.removeLabelFrom(pullRequest, CasLabels.LABEL_PENDING_PORT_FORWARD);
         repository.removeLabelFrom(pullRequest, CasLabels.LABEL_SEE_CONTRIBUTOR_GUIDELINES);
         repository.removeLabelFrom(pullRequest, CasLabels.LABEL_PROPOSAL_DECLINED);

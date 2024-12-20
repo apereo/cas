@@ -77,7 +77,7 @@ public class MonitoredRepository {
 
     public Boolean verifyPullRequest(final PullRequest pullRequest) {
         try {
-            removeAllCommentsFrom(pullRequest, "apereocas-bot");
+            removeAllApereoCasBotCommentsFrom(pullRequest);
             val mostRecentCommit = getPullRequestCommits(pullRequest)
                 .stream()
                 .filter(c -> !c.getCommit().isMergeCommit())
@@ -293,6 +293,10 @@ public class MonitoredRepository {
         comments.forEach(comment -> {
             gitHub.removeComment(getOrganization(), getName(), comment.getId());
         });
+    }
+
+    public void removeAllApereoCasBotCommentsFrom(final PullRequest pr) {
+        removeAllCommentsFrom(pr, "apereocas-bot");
     }
 
     private List<Comment> getAllCommentsFor(final PullRequest pr) {
@@ -521,7 +525,7 @@ public class MonitoredRepository {
         for (var i = 10; i > 0; i--) {
             var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(), i);
             if (!workflowRun.getRuns().isEmpty()) {
-                log.info("Found {} workflow runs for page {}", workflowRun.getRuns().size(), i);
+                log.debug("Found {} workflow runs for page {}", workflowRun.getRuns().size(), i);
             }
             
             workflowRun.getRuns().forEach(run -> {
