@@ -85,6 +85,8 @@ Support for [Mailgun](../notifications/Sending-Email-Configuration-Mailgun.html)
 - Spring
 - Apache Tomcat
 - Java Melody
+- Logback
+- Spring Integration
 - Apache CXF
 - Spring Retry
 - Zipkin Brave
@@ -97,5 +99,7 @@ Support for [Mailgun](../notifications/Sending-Email-Configuration-Mailgun.html)
 - Spring Data
 - Apache Log4j
 - Apache CXF
+- Hibernate
 - Sentry
+- Spring Session
 - GCP Logging
