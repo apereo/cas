@@ -14,6 +14,7 @@ import org.apache.catalina.authenticator.BasicAuthenticator;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.connector.Response;
+import org.apache.catalina.core.StandardHost;
 import org.apache.catalina.realm.GenericPrincipal;
 import org.apache.catalina.valves.ExtendedAccessLogValve;
 import org.apache.catalina.valves.SSLValve;
@@ -102,8 +103,21 @@ public class CasTomcatServletWebServerFactoryCustomizer extends ServletWebServer
             configureSSLValve(tomcat);
             configureBasicAuthn(tomcat);
             configureRemoteUserValve(tomcat);
+            configureErrorReportValve(tomcat);
             finalizeConnectors(tomcat);
         }
+    }
+
+    private static void configureErrorReportValve(final TomcatServletWebServerFactory tomcat) {
+        tomcat.addContextCustomizers(context -> {
+            val parent = context.getParent();
+            if (parent instanceof final StandardHost standardHost) {
+                standardHost.setErrorReportValveClass(CasErrorReportValve.class.getName());
+                val errorReportValve = new CasErrorReportValve();
+                errorReportValve.setShowServerInfo(false);
+                standardHost.addValve(errorReportValve);
+            }
+        });
     }
 
     private void finalizeConnectors(final TomcatServletWebServerFactory tomcat) {
