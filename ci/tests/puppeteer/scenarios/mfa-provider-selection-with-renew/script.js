@@ -20,6 +20,6 @@ const cas = require("../../cas.js");
     await cas.type(page, "#token", "12345678901234567890123456789012345");
     await cas.submitForm(page, "#yubiKeyForm", (response) => response.status() === 200);
     await cas.sleep(2000);
-    await cas.assertTextContentStartsWith(page, "div .banner-danger span", "Credentials are rejected/invalid");
+    await cas.assertTextContentStartsWith(page, "div .banner-danger span", "Authentication attempt has failed");
     await browser.close();
 })();
