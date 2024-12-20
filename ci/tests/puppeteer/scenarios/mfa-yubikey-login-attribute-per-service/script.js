@@ -5,7 +5,7 @@ const cas = require("../../cas.js");
 (async () => {
     const browser = await cas.newBrowser(cas.browserOptions());
     const page = await cas.newPage(browser);
-    await cas.gotoLogin(page, "https://apereo.github.io");
+    await cas.gotoLogin(page, "https://localhost:9859/anything/cas");
     await cas.loginWith(page);
 
     await cas.sleep(1000);
@@ -14,7 +14,7 @@ const cas = require("../../cas.js");
     await cas.assertInvisibility(page, "button[name=register]");
     await cas.type(page, "#token", "12345678901234567890123456789012345");
     await cas.submitForm(page, "#yubiKeyForm", (response) => response.status() === 200);
-    await cas.assertTextContentStartsWith(page, "div .banner-danger span", "Credentials are rejected/invalid");
+    await cas.assertTextContentStartsWith(page, "div .banner-danger span", "Authentication attempt has failed");
 
     const endpoints = ["yubikeyAccountRepository/casuser"];
     const baseUrl = "https://localhost:8443/cas/actuator/";
