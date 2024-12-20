@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorAuthenticationContextValidator;
+import org.apereo.cas.authentication.MultifactorAuthenticationFailedException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderAbsentException;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.authentication.MultifactorAuthenticationRequiredException;
@@ -21,7 +22,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ResponseBuilderLocator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
-import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -183,6 +183,8 @@ class CasCoreWebflowConfiguration {
             final CasCookieBuilder ticketGrantingTicketCookieGenerator,
             @Qualifier(ArgumentExtractor.BEAN_NAME)
             final ArgumentExtractor argumentExtractor,
+            @Qualifier(CasWebflowExceptionCatalog.BEAN_NAME)
+            final CasWebflowExceptionCatalog casWebflowExceptionCatalog,
             @Qualifier(CasWebflowCredentialProvider.BEAN_NAME)
             final CasWebflowCredentialProvider casWebflowCredentialProvider,
             @Qualifier(MultifactorAuthenticationProviderSelector.BEAN_NAME)
@@ -208,6 +210,7 @@ class CasCoreWebflowConfiguration {
                 .authenticationEventExecutionPlan(authenticationEventExecutionPlan)
                 .principalFactory(principalFactory)
                 .multifactorAuthenticationProviderSelector(multifactorAuthenticationProviderSelector)
+                .casWebflowExceptionCatalog(casWebflowExceptionCatalog)
                 .build();
         }
     }
@@ -336,30 +339,27 @@ class CasCoreWebflowConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExceptionHandler<AuthenticationException> defaultCasWebflowAuthenticationExceptionHandler(
-            @Qualifier("handledAuthenticationExceptions")
+            @Qualifier(CasWebflowExceptionCatalog.BEAN_NAME)
             final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
-            return new DefaultCasWebflowAuthenticationExceptionHandler(
-                handledAuthenticationExceptions, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+            return new DefaultCasWebflowAuthenticationExceptionHandler(handledAuthenticationExceptions);
         }
 
         @ConditionalOnMissingBean(name = "defaultCasWebflowAbstractTicketExceptionHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExceptionHandler<AbstractTicketException> defaultCasWebflowAbstractTicketExceptionHandler(
-            @Qualifier("handledAuthenticationExceptions")
+            @Qualifier(CasWebflowExceptionCatalog.BEAN_NAME)
             final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
-            return new DefaultCasWebflowAbstractTicketExceptionHandler(
-                handledAuthenticationExceptions, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+            return new DefaultCasWebflowAbstractTicketExceptionHandler(handledAuthenticationExceptions);
         }
 
         @ConditionalOnMissingBean(name = "genericCasWebflowExceptionHandler")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasWebflowExceptionHandler genericCasWebflowExceptionHandler(
-            @Qualifier("handledAuthenticationExceptions")
+            @Qualifier(CasWebflowExceptionCatalog.BEAN_NAME)
             final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
-            return new GenericCasWebflowExceptionHandler(
-                handledAuthenticationExceptions, MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+            return new GenericCasWebflowExceptionHandler(handledAuthenticationExceptions);
         }
     }
 
@@ -380,8 +380,8 @@ class CasCoreWebflowConfiguration {
          */
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        @ConditionalOnMissingBean(name = "handledAuthenticationExceptions")
-        public CasWebflowExceptionCatalog handledAuthenticationExceptions(
+        @ConditionalOnMissingBean(name = CasWebflowExceptionCatalog.BEAN_NAME)
+        public CasWebflowExceptionCatalog casWebflowExceptionCatalog(
             final ConfigurableApplicationContext applicationContext,
             final CasConfigurationProperties casProperties) {
             val catalog = new DefaultCasWebflowExceptionCatalog();
@@ -402,6 +402,7 @@ class CasCoreWebflowConfiguration {
             catalog.registerException(UnauthorizedAuthenticationException.class);
             catalog.registerException(MultifactorAuthenticationProviderAbsentException.class);
             catalog.registerException(MultifactorAuthenticationRequiredException.class);
+            catalog.registerException(MultifactorAuthenticationFailedException.class);
             catalog.registerExceptions(casProperties.getAuthn().getErrors().getExceptions());
 
             val configurers = applicationContext.getBeansOfType(CasWebflowExceptionConfigurer.class)

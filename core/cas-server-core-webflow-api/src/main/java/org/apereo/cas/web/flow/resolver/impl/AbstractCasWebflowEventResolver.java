@@ -40,8 +40,6 @@ import java.util.Set;
 @Getter
 public abstract class AbstractCasWebflowEventResolver implements CasWebflowEventResolver {
 
-    private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
-
     private final CasWebflowEventResolutionConfigurationContext configurationContext;
 
     @Override
@@ -133,19 +131,12 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             return CollectionUtils.wrapSet(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));
         } catch (final Exception e) {
             LoggingUtils.error(LOGGER, e);
-            WebUtils.addErrorMessageToContext(context, DEFAULT_MESSAGE_BUNDLE_PREFIX.concat(e.getClass().getSimpleName()));
+            configurationContext.getCasWebflowExceptionCatalog().translateException(context, e);
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return CollectionUtils.wrapSet(getAuthenticationFailureErrorEvent(context, e));
         }
     }
 
-    /**
-     * Gets authentication failure error event.
-     *
-     * @param context   the context
-     * @param exception the exception
-     * @return the authentication failure error event
-     */
     protected Event getAuthenticationFailureErrorEvent(final RequestContext context,
                                                        final Exception exception) {
         return new EventFactorySupport().error(this, exception);

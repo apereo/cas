@@ -5,7 +5,6 @@ import com.yubico.webauthn.data.ByteArray;
 import lombok.NonNull;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 public interface SessionManager {
     /**

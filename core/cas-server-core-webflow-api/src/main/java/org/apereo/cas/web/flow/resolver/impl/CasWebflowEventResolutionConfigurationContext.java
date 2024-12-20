@@ -16,6 +16,7 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasWebflowCredentialProvider;
 import org.apereo.cas.web.flow.SingleSignOnBuildingStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
+import org.apereo.cas.web.flow.authentication.CasWebflowExceptionCatalog;
 import org.apereo.cas.web.support.ArgumentExtractor;
 
 import lombok.Getter;
@@ -74,4 +75,6 @@ public class CasWebflowEventResolutionConfigurationContext {
     private final SingleSignOnBuildingStrategy singleSignOnBuildingStrategy;
 
     private final MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector;
+
+    private final CasWebflowExceptionCatalog casWebflowExceptionCatalog;
 }

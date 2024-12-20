@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow.authentication;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.ticket.InvalidProxyGrantingTicketForServiceTicketException;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.UnrecognizableServiceForServiceTicketValidationException;
@@ -41,8 +40,7 @@ class DefaultCasWebflowAbstractTicketExceptionHandlerTests {
 
         this.context = MockRequestContext.create();
 
-        this.handler = new DefaultCasWebflowAbstractTicketExceptionHandler(catalog,
-            MessageBundleProperties.DEFAULT_BUNDLE_PREFIX_AUTHN_FAILURE);
+        this.handler = new DefaultCasWebflowAbstractTicketExceptionHandler(catalog);
     }
 
     @Test
@@ -60,7 +58,7 @@ class DefaultCasWebflowAbstractTicketExceptionHandlerTests {
         assertTrue(handler.supports(ex, context));
         val event = handler.handle(ex, context);
         assertNotNull(event);
-        assertEquals(CasWebflowExceptionHandler.UNKNOWN, event.getId());
+        assertEquals(CasWebflowExceptionCatalog.UNKNOWN, event.getId());
     }
 
 }

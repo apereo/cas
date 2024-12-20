@@ -145,7 +145,7 @@ class SurrogateAuthenticationWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
         public InitializingBean surrogateAuthenticationWebflowInitializer(
-            @Qualifier("handledAuthenticationExceptions")
+            @Qualifier(CasWebflowExceptionCatalog.BEAN_NAME)
             final CasWebflowExceptionCatalog handledAuthenticationExceptions) {
             return () -> handledAuthenticationExceptions.registerException(SurrogateAuthenticationException.class);
         }

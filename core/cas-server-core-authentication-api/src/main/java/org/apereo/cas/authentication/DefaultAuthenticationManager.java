@@ -268,7 +268,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                     + "examined are: [{}]", authenticationHandlers.stream().map(AuthenticationHandler::getName).collect(Collectors.joining(", ")));
             }
             publishEvent(new CasAuthenticationTransactionFailureEvent(this, builder.getFailures(), transaction.getCredentials(), clientInfo));
-            throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
+            throw createAuthenticationException(builder);
         }
 
         val authentication = builder.build();
@@ -276,8 +276,18 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         if (!executionResult.isSuccess()) {
             publishEvent(new CasAuthenticationPolicyFailureEvent(this, builder.getFailures(), transaction, authentication, clientInfo));
             executionResult.getFailures().forEach(e -> handleAuthenticationException(e, e.getClass().getSimpleName(), builder));
-            throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
+            throw createAuthenticationException(builder);
         }
+    }
+
+    private static AuthenticationException createAuthenticationException(
+        final AuthenticationBuilder builder) {
+        val exception = new AuthenticationException(builder.getFailures(), builder.getSuccesses());
+        if (!builder.getFailures().isEmpty()) {
+            val firstCause = builder.getFailures().values().iterator().next();
+            exception.initCause(firstCause);
+        }
+        return exception;
     }
 
     protected ChainingAuthenticationPolicyExecutionResult evaluateAuthenticationPolicies(final Authentication authentication,
