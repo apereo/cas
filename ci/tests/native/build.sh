@@ -29,14 +29,14 @@ while (( "$#" )); do
   esac
 done
 
-function printred() {
-  printf "${RED}$1${ENDCOLOR}\n"
-}
 function printgreen() {
-  printf "${GREEN}$1${ENDCOLOR}\n"
+  printf "☘️ ${GREEN}$1${ENDCOLOR}\n"
+}
+function printred() {
+  printf "🚨 ${RED}$1${ENDCOLOR}\n"
 }
 function printyellow() {
-  printf "${YELLOW}$1${ENDCOLOR}\n"
+  printf "⚠️  ${YELLOW}$1${ENDCOLOR}\n"
 }
 
 if [[ "${BUILD}" == "true" ]]; then
