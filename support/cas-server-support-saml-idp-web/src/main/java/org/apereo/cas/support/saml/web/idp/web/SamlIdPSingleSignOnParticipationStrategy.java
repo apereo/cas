@@ -51,9 +51,9 @@ public class SamlIdPSingleSignOnParticipationStrategy extends BaseSingleSignOnPa
         val registeredService = ssoRequest.getAttributeValue(RegisteredService.class.getName(), RegisteredService.class);
         val authentication = ssoRequest.getAttributeValue(Authentication.class.getName(), Authentication.class);
         val request = ssoRequest.getHttpServletRequest()
-            .orElseGet(() -> WebUtils.getHttpServletRequestFromExternalWebflowContext(ssoRequest.getRequestContext().get()));
+            .orElseGet(() -> WebUtils.getHttpServletRequestFromExternalWebflowContext(ssoRequest.getRequestContext().orElseThrow()));
         val response = ssoRequest.getHttpServletResponse()
-            .orElseGet(() -> WebUtils.getHttpServletResponseFromExternalWebflowContext(ssoRequest.getRequestContext().get()));
+            .orElseGet(() -> WebUtils.getHttpServletResponseFromExternalWebflowContext(ssoRequest.getRequestContext().orElseThrow()));
 
         val authnRequest = ssoRequest.getAttributeValue(AuthnRequest.class.getName(), AuthnRequest.class);
         val initialResult = supports(ssoRequest) && Boolean.FALSE.equals(authnRequest.isForceAuthn());

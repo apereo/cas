@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * @since 7.0.0
  */
 @RequiredArgsConstructor(staticName = "of", access = AccessLevel.PROTECTED)
-class CasSimpleMultifactorSendSms {
+public class CasSimpleMultifactorSendSms {
     private final CommunicationsManager communicationsManager;
     private final CasSimpleMultifactorAuthenticationProperties properties;
 

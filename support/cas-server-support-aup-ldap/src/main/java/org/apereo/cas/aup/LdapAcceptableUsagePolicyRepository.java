@@ -107,7 +107,7 @@ public class LdapAcceptableUsagePolicyRepository extends BaseAcceptableUsagePoli
             .findFirst();
 
         if (response.isPresent()) {
-            val result = response.get().get();
+            val result = response.get().orElseThrow();
             val currentDn = result.getMiddle().getEntry().getDn();
             LOGGER.debug("Updating [{}]", currentDn);
             val attributes = CollectionUtils.<String, Set<String>>wrap(aupProperties.getCore().getAupAttributeName(),

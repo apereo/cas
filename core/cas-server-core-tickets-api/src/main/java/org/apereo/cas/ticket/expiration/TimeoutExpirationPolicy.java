@@ -20,7 +20,6 @@ import lombok.val;
 import java.io.Serial;
 import java.time.Clock;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 
 /**
  * Expiration policy that is based on a certain time period for a ticket to
@@ -85,7 +84,7 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy impleme
     @Override
     public ZonedDateTime getIdleExpirationTime(final Ticket ticketState) {
         val lastTimeUsed = ticketState.getLastTimeUsed();
-        return lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        return lastTimeUsed.plusSeconds(this.timeToKillInSeconds);
     }
 
     @Override

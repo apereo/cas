@@ -70,8 +70,8 @@ public class DefaultCasDelegatingWebflowEventResolver extends AbstractCasWebflow
                     CredentialMetadata.PROPERTY_GEO_LOCATION, geoLocation);
                 credentials.forEach(cred -> cred.getCredentialMetadata().putProperties(properties));
                 val builder = getConfigurationContext().getAuthenticationSystemSupport()
-                    .handleInitialAuthenticationTransaction(service, credentials.toArray(new Credential[]{}));
-                builder.collect(credentials.toArray(new Credential[]{}));
+                    .handleInitialAuthenticationTransaction(service, credentials.toArray(Credential.EMPTY_CREDENTIALS_ARRAY));
+                builder.collect(credentials.toArray(Credential.EMPTY_CREDENTIALS_ARRAY));
 
                 builder.getInitialAuthentication().ifPresent(authn -> {
                     WebUtils.putAuthenticationResultBuilder(builder, context);

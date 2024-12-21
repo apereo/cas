@@ -29,7 +29,7 @@ public class DuoSecurityHealthIndicator extends AbstractHealthIndicator {
             .stream()
             .filter(Objects::nonNull)
             .filter(BeanSupplier::isNotProxy)
-            .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
+            .map(duoSecurityMultifactorAuthenticationProvider -> duoSecurityMultifactorAuthenticationProvider)
             .map(DuoSecurityMultifactorAuthenticationProvider::getDuoAuthenticationService)
             .forEach(duoService -> {
                 val result = duoService.ping();

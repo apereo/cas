@@ -70,7 +70,7 @@ public class ServiceWarningAction extends BaseCasWebflowAction {
             () -> new InvalidTicketException(new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket), ticketGrantingTicket));
         val credentials = casWebflowCredentialProvider.extract(requestContext);
         val authenticationResultBuilder = authenticationSystemSupport.establishAuthenticationContextFromInitial(
-            authentication, credentials.toArray(credentials.toArray(new Credential[0])));
+            authentication, credentials.toArray(credentials.toArray(Credential.EMPTY_CREDENTIALS_ARRAY)));
         val authenticationResult = FunctionUtils.doUnchecked(() -> authenticationResultBuilder.build(principalElectionStrategy, service));
         grantServiceTicket(authenticationResult, service, requestContext);
 

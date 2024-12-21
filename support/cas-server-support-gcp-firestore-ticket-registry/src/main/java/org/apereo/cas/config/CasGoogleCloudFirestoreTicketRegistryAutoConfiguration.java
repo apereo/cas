@@ -60,33 +60,36 @@ public class CasGoogleCloudFirestoreTicketRegistryAutoConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         public CasTicketCatalogConfigurationValuesProvider googleCloudFirestoreTicketCatalogConfigurationValuesProvider() {
-            return new CasTicketCatalogConfigurationValuesProvider() {
+            return new GoogleCloudFirestoreTicketCatalogConfigurationValuesProvider();
+        }
 
-                @Override
-                public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
-                    return p -> "serviceTicketsCollection";
-                }
+        private static final class GoogleCloudFirestoreTicketCatalogConfigurationValuesProvider
+            implements CasTicketCatalogConfigurationValuesProvider {
 
-                @Override
-                public Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
-                    return p -> "proxyTicketsCollection";
-                }
+            @Override
+            public Function<CasConfigurationProperties, String> getServiceTicketStorageName() {
+                return p -> "serviceTicketsCollection";
+            }
 
-                @Override
-                public Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
-                    return p -> "ticketGrantingTicketsCollection";
-                }
+            @Override
+            public Function<CasConfigurationProperties, String> getProxyTicketStorageName() {
+                return p -> "proxyTicketsCollection";
+            }
 
-                @Override
-                public Function<CasConfigurationProperties, String> getProxyGrantingTicketStorageName() {
-                    return p -> "proxyGrantingTicketsCollection";
-                }
+            @Override
+            public Function<CasConfigurationProperties, String> getTicketGrantingTicketStorageName() {
+                return p -> "ticketGrantingTicketsCollection";
+            }
 
-                @Override
-                public Function<CasConfigurationProperties, String> getTransientSessionStorageName() {
-                    return p -> "transientSessionTicketsCollection";
-                }
-            };
+            @Override
+            public Function<CasConfigurationProperties, String> getProxyGrantingTicketStorageName() {
+                return p -> "proxyGrantingTicketsCollection";
+            }
+
+            @Override
+            public Function<CasConfigurationProperties, String> getTransientSessionStorageName() {
+                return p -> "transientSessionTicketsCollection";
+            }
         }
     }
 }

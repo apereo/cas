@@ -44,7 +44,7 @@ public class AddPropertiesToConfigurationCommand {
      * @throws Exception the exception
      */
     @ShellMethod(key = "add-properties", value = "Add properties associated with a CAS group/module to a Properties/Yaml configuration file.")
-    public static void add(
+    public void add(
         @ShellOption(value = { "file", "--file" },
             help = "Path to the CAS configuration file",
             defaultValue = "/etc/cas/config/cas.properties") final String file,

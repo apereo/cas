@@ -37,7 +37,7 @@ public class DuoSecurityMultifactorAuthenticationDeviceProviderAction extends Ba
             .stream()
             .filter(Objects::nonNull)
             .filter(BeanSupplier::isNotProxy)
-            .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
+            .map(duoSecurityMultifactorAuthenticationProvider -> duoSecurityMultifactorAuthenticationProvider)
             .filter(provider -> Objects.nonNull(provider.getDeviceManager()))
             .map(provider -> provider.getDeviceManager().findRegisteredDevices(principal))
             .flatMap(List::stream)

@@ -37,6 +37,11 @@ import java.util.Map;
 public interface CasWebflowConfigurer extends Ordered, NamedObject {
 
     /**
+     * Empty actions array.
+     */
+    Action[] EMPTY_ACTIONS_ARRAY = {};
+
+    /**
      * Flow id for risk-based authentication's verification.
      */
     String FLOW_ID_RISK_VERIFICATION = "riskauthverify";

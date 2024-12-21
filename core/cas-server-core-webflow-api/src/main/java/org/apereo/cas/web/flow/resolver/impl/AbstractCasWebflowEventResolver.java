@@ -125,7 +125,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             LOGGER.debug("Handling authentication transaction for credentials [{}]", credentials);
             val service = WebUtils.getService(context);
             val builder = configurationContext.getAuthenticationSystemSupport()
-                .handleAuthenticationTransaction(service, builderResult, credentials.toArray(new Credential[]{}));
+                .handleAuthenticationTransaction(service, builderResult, credentials.toArray(Credential.EMPTY_CREDENTIALS_ARRAY));
 
             LOGGER.debug("Issuing ticket-granting tickets for service [{}]", service);
             return CollectionUtils.wrapSet(grantTicketGrantingTicketToAuthenticationResult(context, builder, service));

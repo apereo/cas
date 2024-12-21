@@ -63,11 +63,10 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
             .stream()
             .filter(Objects::nonNull)
             .filter(BeanSupplier::isNotProxy)
-            .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
             .filter(provider -> StringUtils.isBlank(providerId) || provider.matches(providerId))
             .filter(provider -> provider.getDuoAuthenticationService().getAdminApiService().isPresent())
             .forEach(Unchecked.consumer(p -> {
-                val duoService = p.getDuoAuthenticationService().getAdminApiService().get();
+                val duoService = p.getDuoAuthenticationService().getAdminApiService().orElseThrow();
                 duoService.getDuoSecurityUserAccount(username).ifPresent(user -> results.put(p.getId(), user));
             }));
         return results;
@@ -98,11 +97,10 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
             .stream()
             .filter(Objects::nonNull)
             .filter(BeanSupplier::isNotProxy)
-            .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
             .filter(provider -> StringUtils.isBlank(providerId) || provider.matches(providerId))
             .filter(provider -> provider.getDuoAuthenticationService().getAdminApiService().isPresent())
             .forEach(Unchecked.consumer(provider -> {
-                val duoService = provider.getDuoAuthenticationService().getAdminApiService().get();
+                val duoService = provider.getDuoAuthenticationService().getAdminApiService().orElseThrow();
                 val uid = StringUtils.isBlank(userId)
                     ? duoService.getDuoSecurityUserAccount(username).map(DuoSecurityUserAccount::getUserId).orElse(StringUtils.EMPTY)
                     : userId;
@@ -140,11 +138,10 @@ public class DuoSecurityAdminApiEndpoint extends BaseCasRestActuatorEndpoint {
             .stream()
             .filter(Objects::nonNull)
             .filter(BeanSupplier::isNotProxy)
-            .map(DuoSecurityMultifactorAuthenticationProvider.class::cast)
             .filter(provider -> StringUtils.isBlank(providerId) || provider.matches(providerId))
             .filter(provider -> provider.getDuoAuthenticationService().getAdminApiService().isPresent())
             .forEach(Unchecked.consumer(provider -> {
-                val duoService = provider.getDuoAuthenticationService().getAdminApiService().get();
+                val duoService = provider.getDuoAuthenticationService().getAdminApiService().orElseThrow();
                 duoService.modifyDuoSecurityUserAccount(account.withUsername(username))
                     .ifPresent(user -> results.put(provider.getId(), user));
             }));

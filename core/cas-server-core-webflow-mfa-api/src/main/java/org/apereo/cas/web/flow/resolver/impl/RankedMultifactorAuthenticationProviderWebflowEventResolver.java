@@ -109,7 +109,7 @@ public class RankedMultifactorAuthenticationProviderWebflowEventResolver extends
 
         val credentials = getConfigurationContext().getCasWebflowCredentialProvider().extract(context);
         val builder = getConfigurationContext().getAuthenticationSystemSupport()
-            .establishAuthenticationContextFromInitial(authentication, credentials.toArray(new Credential[]{}));
+            .establishAuthenticationContextFromInitial(authentication, credentials.toArray(Credential.EMPTY_CREDENTIALS_ARRAY));
 
         LOGGER.trace("Recording and tracking initial authentication results in the request context");
         WebUtils.putAuthenticationResultBuilder(builder, context);

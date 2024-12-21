@@ -19,7 +19,6 @@ import lombok.val;
 import java.io.Serial;
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 
 /**
  * Implementation of an expiration policy that adds the concept of saying that a
@@ -96,6 +95,6 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
     @Override
     public ZonedDateTime getIdleExpirationTime(final Ticket ticketState) {
         val lastTimeUsed = ticketState.getLastTimeUsed();
-        return lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        return lastTimeUsed.plusSeconds(this.timeToKillInSeconds);
     }
 }

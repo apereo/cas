@@ -79,7 +79,7 @@ public class ConfigurationMetadataPropertyCreator {
      * @return the configuration metadata property
      */
     public ConfigurationMetadataProperty createConfigurationProperty(final FieldDeclaration fieldDecl, final String propName) {
-        val variable = fieldDecl.getVariables().getFirst().get();
+        val variable = fieldDecl.getVariables().getFirst().orElseThrow();
         val name = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(variable.getNameAsString()).spliterator(), false)
             .map(Object::toString)
             .findFirst()
@@ -118,7 +118,7 @@ public class ConfigurationMetadataPropertyCreator {
         } else if (elementTypeStr.startsWith("Map<") || elementTypeStr.startsWith("List<") || elementTypeStr.startsWith("Set<")) {
             prop.setType("java.util." + elementTypeStr);
             var typeName = elementTypeStr.substring(elementTypeStr.indexOf('<') + 1, elementTypeStr.indexOf('>'));
-            var parent = fieldDecl.getParentNode().get();
+            var parent = fieldDecl.getParentNode().orElseThrow();
             parent.findFirst(EnumDeclaration.class, em -> em.getNameAsString().contains(typeName))
                 .ifPresent(em -> {
                     var builder = collectJavadocsEnumFields(prop, em);
@@ -126,7 +126,7 @@ public class ConfigurationMetadataPropertyCreator {
                 });
         } else {
             prop.setType(elementTypeStr);
-            var parent = fieldDecl.getParentNode().get();
+            var parent = fieldDecl.getParentNode().orElseThrow();
 
             var enumDecl = parent.findFirst(EnumDeclaration.class, em -> em.getNameAsString().contains(elementTypeStr));
             if (enumDecl.isPresent()) {

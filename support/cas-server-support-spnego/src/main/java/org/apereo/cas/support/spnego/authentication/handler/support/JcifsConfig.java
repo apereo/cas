@@ -21,11 +21,6 @@ import java.util.Properties;
 @Slf4j
 @Getter
 public class JcifsConfig {
-    /**
-     * Default system configuration that controls the setting of system properties.
-     */
-    public static final SystemSettings SYSTEM_SETTINGS = new SystemSettings();
-
     private final JcifsSettings jcifsSettings = new JcifsSettings();
 
     /**

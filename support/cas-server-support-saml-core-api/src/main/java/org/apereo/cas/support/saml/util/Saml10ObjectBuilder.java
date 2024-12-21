@@ -36,7 +36,6 @@ import javax.xml.namespace.QName;
 import java.io.Serial;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -126,7 +125,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
         val conditions = SamlUtils.newSamlObject(Conditions.class);
         conditions.setNotBefore(issuedAt.toInstant());
 
-        val notOnOrAfter = ZonedDateTime.now(ZoneOffset.UTC).plus(issueLength, ChronoUnit.SECONDS);
+        val notOnOrAfter = ZonedDateTime.now(ZoneOffset.UTC).plusSeconds(issueLength);
         conditions.setNotOnOrAfter(notOnOrAfter.toInstant());
 
         val audienceRestriction = SamlUtils.newSamlObject(AudienceRestrictionCondition.class);

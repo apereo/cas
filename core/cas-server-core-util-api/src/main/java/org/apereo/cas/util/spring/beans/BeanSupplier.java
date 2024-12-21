@@ -198,11 +198,6 @@ public interface BeanSupplier<T> extends Supplier<T> {
         }
 
         @Override
-        public BeanSupplier<T> alwaysMatch() {
-            return BeanSupplier.super.alwaysMatch();
-        }
-
-        @Override
         @CanIgnoreReturnValue
         public BeanSupplier<T> when(final Supplier<Boolean> conditionSupplier) {
             this.conditionSuppliers.add(conditionSupplier);
