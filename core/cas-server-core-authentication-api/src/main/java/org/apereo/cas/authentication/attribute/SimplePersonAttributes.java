@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import java.io.Serial;
 import java.sql.Array;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -92,8 +93,8 @@ public class SimplePersonAttributes implements PersonAttributes {
                     LOGGER.trace("Converting SQL array values [{}] using pattern [{}]", values, arrayPattern.pattern());
                     val matcher = arrayPattern.matcher(values);
                     if (matcher.matches()) {
-                        val groups = matcher.group(1).split(",");
-                        value = List.of(groups);
+                        val groups = Arrays.stream(matcher.group(1).split(",")).toList();
+                        value = List.copyOf(groups);
                         LOGGER.trace("Converted SQL array values [{}]", values);
                     }
                 }
