@@ -1,13 +1,10 @@
 package org.apereo.cas.util.ssl;
 
 import org.apereo.cas.util.CollectionUtils;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import javax.net.ssl.X509TrustManager;
-
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -37,8 +34,10 @@ public class CompositeX509TrustManager implements X509TrustManager {
                 return true;
             } catch (final CertificateException e) {
                 val msg = "Unable to trust the client certificates [%s] for auth type [%s]: [%s]";
-                LOGGER.debug(String.format(msg, Arrays.stream(chain)
-                    .map(Certificate::toString).collect(Collectors.toSet()), authType, e.getMessage()), e);
+                if (LOGGER.isDebugEnabled()) {
+                    val certs = Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet());
+                    LOGGER.debug(String.format(msg, certs, authType, e.getMessage()), e);
+                }
                 return false;
             }
         });
@@ -57,8 +56,10 @@ public class CompositeX509TrustManager implements X509TrustManager {
                 return true;
             } catch (final CertificateException e) {
                 val msg = "Unable to trust the server certificates [%s] for auth type [%s]: [%s]";
-                LOGGER.debug(String.format(msg, Arrays.stream(chain)
-                    .map(Certificate::toString).collect(Collectors.toSet()), authType, e.getMessage()), e);
+                val certs = Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet());
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(String.format(msg, certs, authType, e.getMessage()), e);
+                }
                 return false;
             }
         });

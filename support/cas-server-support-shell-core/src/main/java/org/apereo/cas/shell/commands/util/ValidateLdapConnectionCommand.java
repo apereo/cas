@@ -43,7 +43,7 @@ public class ValidateLdapConnectionCommand {
      * @return true/false
      */
     @ShellMethod(key = "validate-ldap", value = "Test connections to an LDAP server to verify connectivity, SSL, etc")
-    public static boolean validateLdap(
+    public boolean validateLdap(
         @ShellOption(value = {"url", "--url"},
             help = "LDAP URL to test, comma-separated.")
         final String url,

@@ -335,7 +335,7 @@ public class ConfigurationMetadataGenerator {
                     }
                 } else {
                     val cu = StaticJavaParser.parse(new File(typePath));
-                    primaryType = cu.getPrimaryType().get();
+                    primaryType = cu.getPrimaryType().orElseThrow();
                 }
 
                 Objects.requireNonNull(primaryType).getMembers()

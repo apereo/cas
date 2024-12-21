@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 import java.io.Serializable;
 
 /**
@@ -16,6 +15,12 @@ import java.io.Serializable;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
 public interface Credential extends Serializable {
+
+    /**
+     * Empty credentials array.
+     */
+    Credential[] EMPTY_CREDENTIALS_ARRAY = new Credential[0];
+
     /**
      * Credential type, collected as metadata for authentication.
      */

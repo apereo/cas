@@ -95,7 +95,6 @@ import java.util.Objects;
 @ToString(of = "name")
 public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigurer {
 
-    private static final Action[] EMPTY_ACTIONS_ARRAY = {};
 
     /**
      * Flow builder services.

@@ -73,6 +73,31 @@ public class GitRepositoryBuilder {
 
     private final BaseGitProperties.HttpClientTypes httpClientType;
 
+    private final class CasJschConfigSessionFactory extends JschConfigSessionFactory {
+        @Override
+        protected void configure(final OpenSshConfig.Host host, final Session session) {
+            if (StringUtils.hasText(sshSessionPassword)) {
+                session.setPassword(sshSessionPassword);
+            }
+            if (!strictHostKeyChecking) {
+                session.setConfig("StrictHostKeyChecking", "no");
+            }
+        }
+
+        @Override
+        protected JSch createDefaultJSch(final FS fs) throws JSchException {
+            val defaultJSch = super.createDefaultJSch(fs);
+            if (clearExistingIdentities) {
+                defaultJSch.removeAllIdentity();
+            }
+
+            if (StringUtils.hasText(privateKeyPath)) {
+                defaultJSch.addIdentity(privateKeyPath, privateKeyPassphrase);
+            }
+            return defaultJSch;
+        }
+    }
+
     private static String getBranchPath(final String branchName) {
         return "refs/heads/" + branchName;
     }
@@ -142,30 +167,7 @@ public class GitRepositoryBuilder {
     protected TransportConfigCallback buildTransportConfigCallback() {
         return transport -> {
             if (transport instanceof final SshTransport sshTransport) {
-                val sshSessionFactory = new JschConfigSessionFactory() {
-                    @Override
-                    protected void configure(final OpenSshConfig.Host host, final Session session) {
-                        if (StringUtils.hasText(sshSessionPassword)) {
-                            session.setPassword(sshSessionPassword);
-                        }
-                        if (!strictHostKeyChecking) {
-                            session.setConfig("StrictHostKeyChecking", "no");
-                        }
-                    }
-
-                    @Override
-                    protected JSch createDefaultJSch(final FS fs) throws JSchException {
-                        val defaultJSch = super.createDefaultJSch(fs);
-                        if (clearExistingIdentities) {
-                            defaultJSch.removeAllIdentity();
-                        }
-
-                        if (StringUtils.hasText(privateKeyPath)) {
-                            defaultJSch.addIdentity(privateKeyPath, privateKeyPassphrase);
-                        }
-                        return defaultJSch;
-                    }
-                };
+                val sshSessionFactory = new CasJschConfigSessionFactory();
                 sshTransport.setSshSessionFactory(sshSessionFactory);
             }
             if (transport instanceof HttpTransport) {

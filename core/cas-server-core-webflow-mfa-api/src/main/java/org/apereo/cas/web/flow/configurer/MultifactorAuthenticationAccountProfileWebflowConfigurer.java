@@ -6,7 +6,6 @@ import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationDeviceProviderAction;
 import org.apereo.cas.web.flow.actions.MultifactorAuthenticationTrustedDeviceProviderAction;
-
 import lombok.val;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
@@ -14,8 +13,6 @@ import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ViewState;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.execution.Action;
-
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -52,7 +49,7 @@ public class MultifactorAuthenticationAccountProfileWebflowConfigurer extends Ab
                 .filter(action -> !currentActions.contains(action.getName()))
                 .collect(Collectors.toList());
             AnnotationAwareOrderComparator.sort(providerActions);
-            accountView.getRenderActionList().addAll(providerActions.toArray(new Action[]{}));
+            accountView.getRenderActionList().addAll(providerActions.toArray(CasWebflowConfigurer.EMPTY_ACTIONS_ARRAY));
             
             val currentTrustActions = Arrays.stream(accountView.getRenderActionList().toArray())
                 .filter(MultifactorAuthenticationTrustedDeviceProviderAction.class::isInstance)
@@ -67,7 +64,7 @@ public class MultifactorAuthenticationAccountProfileWebflowConfigurer extends Ab
                 .filter(action -> !currentTrustActions.contains(action.getName()))
                 .collect(Collectors.toList());
             AnnotationAwareOrderComparator.sort(trustedActions);
-            accountView.getRenderActionList().addAll(trustedActions.toArray(new Action[]{}));
+            accountView.getRenderActionList().addAll(trustedActions.toArray(CasWebflowConfigurer.EMPTY_ACTIONS_ARRAY));
         }
     }
 }

@@ -30,9 +30,8 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 7.0.0
  */
-@RequiredArgsConstructor(staticName = "of",
-    access = AccessLevel.PROTECTED)
-class CasSimpleMultifactorSendEmail {
+@RequiredArgsConstructor(staticName = "of", access = AccessLevel.PROTECTED)
+public class CasSimpleMultifactorSendEmail {
     private final CommunicationsManager communicationsManager;
     private final CasSimpleMultifactorAuthenticationProperties properties;
 
@@ -132,7 +131,7 @@ class CasSimpleMultifactorSendEmail {
         return parameters;
     }
 
-    record EmailCommunicationResults(List<EmailCommunicationResult> results) {
+    public record EmailCommunicationResults(List<EmailCommunicationResult> results) {
         boolean isAnyEmailSent() {
             return results.stream().anyMatch(EmailCommunicationResult::isSuccess);
         }

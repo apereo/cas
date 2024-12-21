@@ -172,7 +172,7 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
         LOGGER.trace("Before updating ticket [{}]\n\tPrevious time used: [{}]\n\tLast time used: [{}]\n\tUsage count: [{}]",
             getId(), this.previousTimeUsed, this.lastTimeUsed, this.countOfUses);
 
-        this.previousTimeUsed = ZonedDateTime.from(this.lastTimeUsed);
+        this.previousTimeUsed = this.lastTimeUsed;
         this.lastTimeUsed = ZonedDateTime.now(this.expirationPolicy.getClock());
         this.countOfUses++;
 

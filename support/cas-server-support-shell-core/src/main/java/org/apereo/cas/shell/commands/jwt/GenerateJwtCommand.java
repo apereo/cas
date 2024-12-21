@@ -56,7 +56,7 @@ public class GenerateJwtCommand {
      * @param subject              the subject
      */
     @ShellMethod(key = "generate-jwt", value = "Generate a JWT with given size and algorithm for signing and encryption.")
-    public static void generate(
+    public void generate(
         @ShellOption(value = {"signingSecretSize", "--signingSecretSize"},
             help = "Size of the signing secret",
             defaultValue = StringUtils.EMPTY + DEFAULT_SIGNING_SECRET_SIZE) final int signingSecretSize,

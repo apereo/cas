@@ -3,7 +3,6 @@ package org.apereo.cas.ticket.expiration;
 
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicketAwareTicket;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,10 +13,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.io.Serial;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 
 /**
  * Ticket expiration policy based on a hard timeout from ticket creation time rather than the
@@ -69,6 +66,6 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     @Override
     public ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
         val creationTime = ticketState.getCreationTime();
-        return creationTime.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        return creationTime.plusSeconds(this.timeToKillInSeconds);
     }
 }

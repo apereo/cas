@@ -135,7 +135,7 @@ public class DynamoDbTicketRegistryFacilitator {
                     keys, DynamoDbTicketRegistryFacilitator::deserializeTicket);
             })
             .toList();
-        return Streams.concat(resultStreams.toArray(new Stream[]{}));
+        return Streams.concat(resultStreams.toArray(new Stream[0]));
     }
 
     /**

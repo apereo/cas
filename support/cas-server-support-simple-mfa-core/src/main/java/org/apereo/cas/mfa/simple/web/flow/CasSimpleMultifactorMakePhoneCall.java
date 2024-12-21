@@ -23,7 +23,7 @@ import java.util.Map;
  * @since 7.0.0
  */
 @RequiredArgsConstructor(staticName = "of", access = AccessLevel.PROTECTED)
-class CasSimpleMultifactorMakePhoneCall {
+public class CasSimpleMultifactorMakePhoneCall {
     private final CommunicationsManager communicationsManager;
     private final CasSimpleMultifactorAuthenticationProperties properties;
 

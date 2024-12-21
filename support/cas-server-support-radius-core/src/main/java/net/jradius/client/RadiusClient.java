@@ -80,7 +80,7 @@ public class RadiusClient {
     }
 
     public static RadiusAuthenticator getAuthProtocol(String protocolName) {
-        RadiusAuthenticator auth = null;
+        RadiusAuthenticator auth;
         String[] args = null;
         int i;
 
@@ -109,7 +109,7 @@ public class RadiusClient {
         if (args != null) {
             var elements = new HashMap<String, PropertyDescriptor>();
             var clazz = auth.getClass();
-            PropertyDescriptor[] props = null;
+            PropertyDescriptor[] props;
             try {
                 props = Introspector.getBeanInfo(clazz).getPropertyDescriptors();
             } catch (final Exception e) {

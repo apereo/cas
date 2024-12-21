@@ -115,9 +115,9 @@ public class WebAuthnController extends BaseWebAuthnController {
             Optional.ofNullable(sessionTokenBase64).map(Unchecked.function(ByteArray::fromBase64Url)));
 
         if (result.isRight()) {
-            return startResponse(new StartRegistrationResponse(result.right().get()));
+            return startResponse(new StartRegistrationResponse(result.right().orElseThrow()));
         }
-        return messagesJson(ResponseEntity.badRequest(), result.left().get());
+        return messagesJson(ResponseEntity.badRequest(), result.left().orElseThrow());
     }
 
     /**

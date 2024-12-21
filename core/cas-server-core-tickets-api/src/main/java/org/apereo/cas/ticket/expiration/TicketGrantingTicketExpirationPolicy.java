@@ -19,7 +19,6 @@ import org.springframework.util.Assert;
 
 import java.io.Serial;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 
 /**
  * Provides the Ticket Granting Ticket expiration policy.  Ticket Granting Tickets
@@ -91,13 +90,13 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
     @Override
     public ZonedDateTime toMaximumExpirationTime(final Ticket ticketState) {
         val creationTime = ticketState.getCreationTime();
-        return creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
+        return creationTime.plusSeconds(this.maxTimeToLiveInSeconds);
     }
 
     @JsonIgnore
     @Override
     public ZonedDateTime getIdleExpirationTime(final Ticket ticketState) {
         val lastTimeUsed = ticketState.getLastTimeUsed();
-        return lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        return lastTimeUsed.plusSeconds(this.timeToKillInSeconds);
     }
 }
