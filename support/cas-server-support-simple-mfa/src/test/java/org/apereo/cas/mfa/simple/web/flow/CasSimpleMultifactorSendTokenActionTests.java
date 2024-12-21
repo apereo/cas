@@ -17,7 +17,6 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-import javax.security.auth.login.FailedLoginException;
 import java.util.List;
 import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;

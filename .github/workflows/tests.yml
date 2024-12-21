@@ -155,10 +155,13 @@ jobs:
         if: env.SONARCLOUD_TOKEN != null && (github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event_name == 'schedule')
         continue-on-error: true
         run: |
-          ./gradlew sonar --build-cache --configure-on-demand --no-daemon -DskipAot=true --parallel \
-            -x javadoc -DskipNestedConfigMetadataGen=true \
+          coverageReport="$PWD/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
+          echo "Uploading coverage report to SonarCloud from $coverageReport"
+          ./gradlew sonar --build-cache --configure-on-demand \
+            --no-daemon -DskipAot=true --parallel \
+            -x javadoc -x test -DskipNestedConfigMetadataGen=true \
             -PsonarOrganization="${{ github.repository_owner }}" \
-            -Dsonar.coverage.jacoco.xmlReportPaths=$PWD/build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml
+            -Dsonar.coverage.jacoco.xmlReportPaths="$coverageReport"
       - name: "Upload to Codecov"
         uses: "codecov/codecov-action@v5"
         continue-on-error: true
