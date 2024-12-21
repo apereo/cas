@@ -1,5 +1,6 @@
 package org.apereo.cas.mfa.simple.web.flow;
 
+import org.apereo.cas.authentication.MultifactorAuthenticationFailedException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mfa.simple.BaseCasSimpleMultifactorAuthenticationTests;
 import org.apereo.cas.mfa.simple.CasSimpleMultifactorTokenCredential;
@@ -148,8 +149,7 @@ class CasSimpleMultifactorSendTokenActionTests {
             
             val token = new CasSimpleMultifactorTokenCredential(theToken1.getKey());
             ticketRegistry.deleteTicket(theToken1.getKey());
-
-            assertThrows(FailedLoginException.class, () -> authenticationHandler.authenticate(token, mock(Service.class)));
+            assertThrows(MultifactorAuthenticationFailedException.class, () -> authenticationHandler.authenticate(token, mock(Service.class)));
         }
     }
 
