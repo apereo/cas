@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns="http://www.w3.org/1999/html"
+      layout:decorate="~{layout}">
 
 <head>
     <title th:text="#{cas.oauth.confirm.pagetitle}"></title>
@@ -22,30 +23,28 @@
         <h3 class="border-bottom bg-primary p-2" th:text="#{screen.oidc.confirm.scopes}"/>
         <p th:text="#{screen.oidc.confirm.asksinfo}"/>
 
-        <div th:each="scope : ${scopes}">
-            <span th:id="${scope}">
-                <i class="mdi mdi-cog fas fa-cog" aria-hidden="true"></i>
-                <dl class="dl-class0 dl-class1">
-                    <dt class="dt-class0 dt-class1" th:text="${scope}"/>
+        <dl class="dl-class0 dl-class1">
+            <div th:each="scope : ${scopes}">
+                <span th:id="${scope}">
+                    <dt class="dt-class0 dt-class1 mdi mdi-cog"> <strong><code th:text="${scope}"/></strong></dt>
                     <dd class="dd-class0 dd-class1" th:utext="#{screen.oidc.confirm.scope.__${scope}__}"/>
-                </dl>
-            </span>
-        </div>
+                </span>
+            </div>
+        </dl>
     </div>
 
     <div id="userInfoClaims" th:unless="${#sets.isEmpty(userInfoClaims)}" class="my-2">
         <h3 class="border-bottom bg-primary p-2" th:text="#{screen.oidc.confirm.claims}"/>
         <p th:utext="#{screen.oidc.confirm.asksinfo}"/>
 
-        <div th:each="claim : ${userInfoClaims}">
-            <span th:id="${claim}">
-                <i class="mdi mdi-cog fas fa-cog" aria-hidden="true"></i>
-                <dl class="dl-class0 dl-class1">
-                    <dt class="dt-class0 dt-class1" th:text="${claim}"/>
+        <dl class="dl-class0 dl-class1">
+            <div th:each="claim : ${userInfoClaims}">
+                <span th:id="${claim}">
+                    <dt class="dt-class0 dt-class1 mdi mdi-cog"> <strong><code th:text="${claim}"/></strong></dt>
                     <dd class="dd-class0 dd-class1" th:utext="#{screen.oidc.confirm.claim.__${claim}__}"/>
-                </dl>
-            </span>
-        </div>
+                </span>
+            </div>
+        </dl>
     </div>
 
 
