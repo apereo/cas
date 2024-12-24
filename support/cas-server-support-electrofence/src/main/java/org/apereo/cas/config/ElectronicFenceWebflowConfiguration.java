@@ -16,6 +16,7 @@ import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
 import org.apereo.cas.web.flow.CasFlowHandlerMapping;
+import org.apereo.cas.web.flow.CasFlowIdExtractor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
@@ -81,10 +82,14 @@ class ElectronicFenceWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Lazy(false)
         public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver(
-            @Qualifier("casWebflowConfigurationContext") final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext,
-            @Qualifier("authenticationRiskMitigator") final AuthenticationRiskMitigator authenticationRiskMitigator,
-            @Qualifier("authenticationRiskEvaluator") final AuthenticationRiskEvaluator authenticationRiskEvaluator,
-            @Qualifier("initialAuthenticationAttemptWebflowEventResolver") final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
+            @Qualifier("casWebflowConfigurationContext")
+            final CasWebflowEventResolutionConfigurationContext casWebflowConfigurationContext,
+            @Qualifier("authenticationRiskMitigator")
+            final AuthenticationRiskMitigator authenticationRiskMitigator,
+            @Qualifier("authenticationRiskEvaluator")
+            final AuthenticationRiskEvaluator authenticationRiskEvaluator,
+            @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
+            final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver) {
             val resolver = new RiskAwareAuthenticationWebflowEventResolver(casWebflowConfigurationContext,
                 authenticationRiskEvaluator, authenticationRiskMitigator);
             initialAuthenticationAttemptWebflowEventResolver.addDelegate(resolver, 0);
@@ -141,6 +146,7 @@ class ElectronicFenceWebflowConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
+        @ConditionalOnMissingBean(name = "riskVerificationFlowExecutor")
         public FlowExecutor riskVerificationFlowExecutor(
             @Qualifier("riskVerificationWebflowUrlHandler") final FlowUrlHandler riskVerificationWebflowUrlHandler,
             final CasConfigurationProperties casProperties,
@@ -154,6 +160,7 @@ class ElectronicFenceWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "riskVerificationFlowRegistry")
         public FlowDefinitionRegistry riskVerificationFlowRegistry(
             final ConfigurableApplicationContext applicationContext,
             @Qualifier(CasWebflowConstants.BEAN_NAME_FLOW_BUILDER_SERVICES) final FlowBuilderServices flowBuilderServices,
@@ -165,12 +172,14 @@ class ElectronicFenceWebflowConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        public FlowUrlHandler riskVerificationWebflowUrlHandler() {
-            return new CasDefaultFlowUrlHandler();
+        @ConditionalOnMissingBean(name = "riskVerificationWebflowUrlHandler")
+        public FlowUrlHandler riskVerificationWebflowUrlHandler(final List<CasFlowIdExtractor> flowIdExtractors) {
+            return new CasDefaultFlowUrlHandler(flowIdExtractors);
         }
         
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
+        @ConditionalOnMissingBean(name = "riskVerificationWebflowHandlerAdapter")
         public HandlerAdapter riskVerificationWebflowHandlerAdapter(
             @Qualifier(CasWebflowExecutionPlan.BEAN_NAME) final CasWebflowExecutionPlan webflowExecutionPlan,
             @Qualifier("riskVerificationWebflowUrlHandler") final FlowUrlHandler riskVerificationWebflowUrlHandler,
@@ -184,6 +193,7 @@ class ElectronicFenceWebflowConfiguration {
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        @ConditionalOnMissingBean(name = "riskVerificationFlowHandlerMapping")
         public HandlerMapping riskVerificationFlowHandlerMapping(
             @Qualifier(CasWebflowExecutionPlan.BEAN_NAME) final CasWebflowExecutionPlan webflowExecutionPlan,
             @Qualifier("riskVerificationFlowRegistry") final FlowDefinitionRegistry riskVerificationFlowRegistry) {

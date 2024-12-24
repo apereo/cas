@@ -9,6 +9,7 @@ import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
 import org.apereo.cas.web.flow.CasFlowHandlerMapping;
+import org.apereo.cas.web.flow.CasFlowIdExtractor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
@@ -88,8 +89,9 @@ class CasWebflowAccountProfileConfiguration {
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
-    public FlowUrlHandler accountProfileWebflowUrlHandler() {
-        return new CasDefaultFlowUrlHandler();
+    public FlowUrlHandler accountProfileWebflowUrlHandler(
+        final List<CasFlowIdExtractor> flowIdExtractors) {
+        return new CasDefaultFlowUrlHandler(flowIdExtractors);
     }
 
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
@@ -108,6 +110,7 @@ class CasWebflowAccountProfileConfiguration {
     @Bean
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     public HandlerMapping accountProfileFlowHandlerMapping(
+        @Qualifier("accountProfileWebflowUrlHandler") final FlowUrlHandler accountProfileWebflowUrlHandler,
         @Qualifier(CasWebflowExecutionPlan.BEAN_NAME) final CasWebflowExecutionPlan webflowExecutionPlan,
         @Qualifier(CasWebflowConstants.BEAN_NAME_LOGIN_FLOW_DEFINITION_REGISTRY)
         final FlowDefinitionRegistry flowDefinitionRegistry) {
@@ -115,7 +118,7 @@ class CasWebflowAccountProfileConfiguration {
         handler.setOrder(0);
         handler.setFlowRegistry(flowDefinitionRegistry);
         handler.setInterceptors(webflowExecutionPlan.getWebflowInterceptors().toArray());
-        handler.setFlowUrlHandler(new CasDefaultFlowUrlHandler());
+        handler.setFlowUrlHandler(accountProfileWebflowUrlHandler);
         return handler;
     }
 

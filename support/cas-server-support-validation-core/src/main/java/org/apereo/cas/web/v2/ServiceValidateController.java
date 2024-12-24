@@ -25,7 +25,7 @@ public class ServiceValidateController extends AbstractServiceValidateController
         super(serviceValidateConfigurationContext);
     }
 
-    @GetMapping(path = CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE)
+    @GetMapping(path = "/**/" + CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE)
     @Override
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return super.handleRequestInternal(request, response);

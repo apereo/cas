@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
+import org.apereo.cas.web.flow.CasFlowIdExtractor;
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.webflow.context.servlet.FlowUrlHandler;
 import org.springframework.webflow.core.collection.LocalAttributeMap;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -17,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Tag("Webflow")
 class CasDefaultFlowUrlHandlerTests {
 
-    private final FlowUrlHandler urlHandler = new CasDefaultFlowUrlHandler();
+    private final FlowUrlHandler urlHandler = new CasDefaultFlowUrlHandler(List.of(CasFlowIdExtractor.noOp()));
 
     private final MockHttpServletRequest request = new MockHttpServletRequest();
 

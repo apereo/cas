@@ -31,7 +31,7 @@ public class SamlValidateController extends AbstractServiceValidateController {
      * @return the model and view
      * @throws Exception the exception
      */
-    @PostMapping(path = SamlProtocolConstants.ENDPOINT_SAML_VALIDATE)
+    @PostMapping(path = "/**/" + SamlProtocolConstants.ENDPOINT_SAML_VALIDATE)
     @Override
     public ModelAndView handleRequestInternal(final HttpServletRequest request,
                                               final HttpServletResponse response) throws Exception {

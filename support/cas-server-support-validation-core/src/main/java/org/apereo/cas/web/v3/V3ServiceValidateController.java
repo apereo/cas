@@ -30,7 +30,7 @@ public class V3ServiceValidateController extends AbstractServiceValidateControll
      * @return the model and view
      * @throws Exception the exception
      */
-    @GetMapping(path = CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE_V3)
+    @GetMapping(path = "/**/" + CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE_V3)
     protected ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return handleRequestInternal(request, response);
     }

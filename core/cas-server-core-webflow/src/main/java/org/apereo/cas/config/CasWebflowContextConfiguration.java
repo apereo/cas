@@ -14,6 +14,7 @@ import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
 import org.apereo.cas.web.flow.CasFlowHandlerMapping;
+import org.apereo.cas.web.flow.CasFlowIdExtractor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
@@ -90,16 +91,24 @@ class CasWebflowContextConfiguration {
     @Configuration(value = "CasWebflowContextFlowHandlerConfiguration", proxyBeanMethods = false)
     @EnableConfigurationProperties(CasConfigurationProperties.class)
     static class CasWebflowContextFlowHandlerConfiguration {
+
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FlowUrlHandler loginFlowUrlHandler() {
-            return new CasDefaultFlowUrlHandler();
+        @ConditionalOnMissingBean(name = "casDefaultFlowIdExtractor")
+        public CasFlowIdExtractor casDefaultFlowIdExtractor() {
+            return CasFlowIdExtractor.noOp();
+        }
+        
+        @Bean
+        @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
+        public FlowUrlHandler loginFlowUrlHandler(final List<CasFlowIdExtractor> flowIdExtractors) {
+            return new CasDefaultFlowUrlHandler(flowIdExtractors);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FlowUrlHandler logoutFlowUrlHandler() {
-            return new CasDefaultFlowUrlHandler();
+        public FlowUrlHandler logoutFlowUrlHandler(final List<CasFlowIdExtractor> flowIdExtractors) {
+            return new CasDefaultFlowUrlHandler(flowIdExtractors);
         }
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)

@@ -1251,6 +1251,11 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_SIMPLE_MFA_SEND_TOKEN = "sendSimpleToken";
 
+    /**
+     * State id 'riskVerificationConfirmationView'.
+     */
+    String STATE_ID_RISK_VERIFICATION_CONFIRMATION = "riskVerificationConfirmationView";
+    
     /*
      ****************************************
      * Views.
