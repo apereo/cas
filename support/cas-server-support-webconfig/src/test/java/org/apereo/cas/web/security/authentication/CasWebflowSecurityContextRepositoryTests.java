@@ -24,6 +24,7 @@ import org.springframework.webflow.execution.FlowExecution;
 import org.springframework.webflow.execution.FlowExecutionKey;
 import org.springframework.webflow.execution.repository.FlowExecutionRepository;
 import org.springframework.webflow.executor.FlowExecutor;
+import java.util.List;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -85,7 +86,7 @@ class CasWebflowSecurityContextRepositoryTests {
             when(repository.parseFlowExecutionKey(anyString())).thenReturn(mock(FlowExecutionKey.class));
             when(repository.getFlowExecution(any(FlowExecutionKey.class))).thenReturn(flowExecution);
             when(executor.getFlowExecutionRepository()).thenReturn(repository);
-            when(executor.getFlowUrlHandler()).thenReturn(new CasDefaultFlowUrlHandler());
+            when(executor.getFlowUrlHandler()).thenReturn(new CasDefaultFlowUrlHandler(List.of()));
             return executor;
         }
     }

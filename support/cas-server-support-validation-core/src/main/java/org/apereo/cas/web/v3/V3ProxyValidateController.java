@@ -21,7 +21,7 @@ public class V3ProxyValidateController extends V3ServiceValidateController {
         super(ctx);
     }
 
-    @GetMapping(path = CasProtocolConstants.ENDPOINT_PROXY_VALIDATE_V3)
+    @GetMapping(path = "/**/" + CasProtocolConstants.ENDPOINT_PROXY_VALIDATE_V3)
     @Override
     protected ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return handleRequestInternal(request, response);

@@ -42,6 +42,7 @@ import org.apereo.cas.configuration.model.support.heimdall.HeimdallAuthorization
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
 import org.apereo.cas.configuration.model.support.javers.JaversProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
+import org.apereo.cas.configuration.model.support.multitenancy.MultitenancyProperties;
 import org.apereo.cas.configuration.model.support.saml.SamlCoreProperties;
 import org.apereo.cas.configuration.model.support.saml.mdui.SamlMetadataUIProperties;
 import org.apereo.cas.configuration.model.support.saml.sps.SamlServiceProviderProperties;
@@ -386,7 +387,13 @@ public class CasConfigurationProperties implements Serializable {
     @NestedConfigurationProperty
     private JaversProperties javers = new JaversProperties();
 
+    /**
+     * Multitenancy settings.
+     */
+    @NestedConfigurationProperty
+    private MultitenancyProperties multitenancy = new MultitenancyProperties();
 
+    
     /**
      * Bind from map.
      *

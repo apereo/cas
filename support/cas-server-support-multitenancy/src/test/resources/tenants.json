@@ -1,0 +1,9 @@
+[
+  "java.util.ArrayList",
+  [
+    {
+      "@class": "org.apereo.cas.multitenancy.TenantDefinition",
+      "id": "b9584c42"
+    }
+  ]
+]

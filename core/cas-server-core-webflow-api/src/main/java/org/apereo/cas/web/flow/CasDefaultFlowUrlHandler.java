@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.http.HttpRequestUtils;
 import org.apereo.cas.web.support.WebUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 import org.springframework.webflow.core.collection.AttributeMap;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -24,6 +26,7 @@ import java.util.stream.Stream;
  */
 @Setter
 @Slf4j
+@RequiredArgsConstructor
 public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
     /**
@@ -34,7 +37,7 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
     private static final String DELIMITER = "&";
 
-    private String flowExecutionKeyParameter = DEFAULT_FLOW_EXECUTION_KEY_PARAMETER;
+    private final List<CasFlowIdExtractor> flowIdExtractors;
 
     private static Stream<String> encodeMultiParameter(final String key, final String[] values, final String encoding) {
         return Stream.of(values).map(value -> encodeSingleParameter(key, value, encoding));
@@ -46,10 +49,10 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
     @Override
     public String getFlowExecutionKey(final HttpServletRequest request) {
-        var executionKey = request.getParameter(this.flowExecutionKeyParameter);
+        var executionKey = request.getParameter(DEFAULT_FLOW_EXECUTION_KEY_PARAMETER);
         if (StringUtils.isBlank(executionKey) && HttpMethod.POST.matches(request.getMethod())) {
             val parameters = WebUtils.getHttpRequestParametersFromRequestBody(request);
-            executionKey = parameters.get(this.flowExecutionKeyParameter);
+            executionKey = parameters.get(DEFAULT_FLOW_EXECUTION_KEY_PARAMETER);
         }
         return executionKey;
     }
@@ -57,7 +60,7 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
     @Override
     public String createFlowExecutionUrl(final String flowId, final String flowExecutionKey, final HttpServletRequest request) {
         val encoding = getEncodingScheme(request);
-        val executionKey = encodeSingleParameter(flowExecutionKeyParameter, flowExecutionKey, encoding);
+        val executionKey = encodeSingleParameter(DEFAULT_FLOW_EXECUTION_KEY_PARAMETER, flowExecutionKey, encoding);
         val url = request.getParameterMap().entrySet()
             .stream()
             .flatMap(entry -> encodeMultiParameter(entry.getKey(), entry.getValue(), encoding))
@@ -76,6 +79,11 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
         var flowId = super.getFlowId(request);
         if (flowId.contains("#")) {
             flowId = RegExUtils.removePattern(flowId, "#.*");
+        }
+        for (val flowIdExtractor : flowIdExtractors) {
+            if (flowIdExtractor.supports(request, flowId)) {
+                flowId = flowIdExtractor.extract(request, flowId);
+            }
         }
         return flowId.trim();
     }

@@ -2,6 +2,7 @@ package org.apereo.cas.notifications.mail;
 
 import org.apereo.cas.util.function.FunctionUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.context.MessageSource;
@@ -16,6 +17,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
  * @since 7.0.0
  */
 @RequiredArgsConstructor
+@Slf4j
 public class DefaultEmailSender implements EmailSender {
     private final JavaMailSender mailSender;
 
@@ -23,13 +25,15 @@ public class DefaultEmailSender implements EmailSender {
 
     @Override
     public boolean canSend() {
-        return FunctionUtils.doAndHandle(() -> {
+        try {
             if (mailSender != null && mailSender instanceof final JavaMailSenderImpl impl) {
                 impl.testConnection();
                 return true;
             }
-            return false;
-        }, ex -> false).get();
+        } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
+        }
+        return false;
     }
 
     @Override
@@ -55,5 +59,5 @@ public class DefaultEmailSender implements EmailSender {
         return EmailCommunicationResult.builder().success(true)
             .to(recipients).body(emailRequest.getBody()).build();
     }
-    
+
 }

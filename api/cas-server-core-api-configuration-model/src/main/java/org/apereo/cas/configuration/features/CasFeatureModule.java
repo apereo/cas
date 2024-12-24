@@ -71,6 +71,10 @@ public interface CasFeatureModule {
 
     enum FeatureCatalog {
         /**
+         * Multitenancy support.
+         */
+        Multitenancy,
+        /**
          * Authorization services and API access management.
          */
         Authorization,
