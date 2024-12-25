@@ -461,9 +461,7 @@ public class RegisteredServiceTestUtils {
             val strategy = mock(PrincipalElectionStrategy.class);
             when(strategy.getAttributeMerger()).thenReturn(new MultivaluedAttributeMerger());
             when(strategy.nominate(anyCollection(), anyMap())).thenReturn(authentication.getPrincipal());
-            return new DefaultAuthenticationResultBuilder()
-                .collect(authentication)
-                .build(strategy);
+            return new DefaultAuthenticationResultBuilder(strategy).collect(authentication).build();
         });
     }
 }

@@ -162,7 +162,7 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
         val authenticationResultBuilder = (AuthenticationResultBuilder) sessionStorage.getSessionAttributes(webContext)
             .get(AuthenticationResultBuilder.class.getSimpleName());
         FunctionUtils.doIfNotNull(authenticationResultBuilder, value -> WebUtils.putAuthenticationResultBuilder(value, requestContext));
-        val authenticationResult = authenticationResultBuilder.build(authenticationSystemSupport.getPrincipalElectionStrategy());
+        val authenticationResult = authenticationResultBuilder.build();
         WebUtils.putAuthenticationResult(authenticationResult, requestContext);
         Objects.requireNonNull(authenticationResult.getAuthentication());
         WebUtils.putAuthentication(authenticationResult.getAuthentication(), requestContext);

@@ -296,12 +296,11 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         val policies = authenticationEventExecutionPlan.getAuthenticationPolicies(transaction);
         val executionResult = new ChainingAuthenticationPolicyExecutionResult();
 
-        val resultBuilder = new DefaultAuthenticationResultBuilder();
+        val resultBuilder = authenticationSystemSupport.getObject().getAuthenticationResultBuilderFactory().newBuilder();
         resultBuilder.collect(transaction.getAuthentications());
         resultBuilder.collect(authentication);
 
-        val principalElectionStrategy = authenticationSystemSupport.getObject().getPrincipalElectionStrategy();
-        val resultAuthentication = resultBuilder.build(principalElectionStrategy).getAuthentication();
+        val resultAuthentication = resultBuilder.build().getAuthentication();
         LOGGER.trace("Final authentication used for authentication policy evaluation is [{}]", resultAuthentication);
 
         policies.forEach(policy -> {

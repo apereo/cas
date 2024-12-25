@@ -102,7 +102,8 @@ class UserAuthenticationResourceTests {
 
     @Test
     void verifyAuthWithMfaFails() throws Throwable {
-        val builder = new DefaultAuthenticationResultBuilder().collect(CoreAuthenticationTestUtils.getAuthentication());
+        val builder = new DefaultAuthenticationResultBuilder(new DefaultPrincipalElectionStrategy())
+            .collect(CoreAuthenticationTestUtils.getAuthentication());
         when(authenticationSupport.handleInitialAuthenticationTransaction(any(), any())).thenReturn(builder);
         when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any(), any()))
             .thenReturn(AuthenticationContextValidationResult.builder().success(false).build());
@@ -117,8 +118,9 @@ class UserAuthenticationResourceTests {
 
     @Test
     void verifyAuthWithMfa() throws Throwable {
-        val builder = new DefaultAuthenticationResultBuilder().collect(CoreAuthenticationTestUtils.getAuthentication());
-        val result = builder.build(new DefaultPrincipalElectionStrategy());
+        val builder = new DefaultAuthenticationResultBuilder(new DefaultPrincipalElectionStrategy())
+            .collect(CoreAuthenticationTestUtils.getAuthentication());
+        val result = builder.build();
         when(authenticationSupport.finalizeAuthenticationTransaction(any(), anyCollection())).thenReturn(result);
         when(authenticationSupport.handleInitialAuthenticationTransaction(any(), any())).thenReturn(builder);
         when(requestedContextValidator.validateAuthenticationContext(any(), any(), any(), any(), any()))
@@ -134,8 +136,9 @@ class UserAuthenticationResourceTests {
 
     @Test
     void verifyStatus() throws Throwable {
-        val builder = new DefaultAuthenticationResultBuilder().collect(CoreAuthenticationTestUtils.getAuthentication());
-        val result = builder.build(new DefaultPrincipalElectionStrategy());
+        val builder = new DefaultAuthenticationResultBuilder(new DefaultPrincipalElectionStrategy())
+            .collect(CoreAuthenticationTestUtils.getAuthentication());
+        val result = builder.build();
         lenient().when(authenticationSupport.finalizeAuthenticationTransaction(any(), anyCollection())).thenReturn(result);
         when(authenticationSupport.handleInitialAuthenticationTransaction(any(), any())).thenReturn(builder);
         when(authenticationSupport.finalizeAllAuthenticationTransactions(any(), any())).thenReturn(result);

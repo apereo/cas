@@ -28,4 +28,6 @@ public class TenantDefinition implements Serializable {
     private static final long serialVersionUID = -9012299259747093234L;
 
     private String id;
+
+    private String description;
 }

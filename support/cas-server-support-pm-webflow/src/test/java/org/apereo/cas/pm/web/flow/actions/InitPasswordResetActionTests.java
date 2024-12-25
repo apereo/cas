@@ -2,6 +2,7 @@ package org.apereo.cas.pm.web.flow.actions;
 
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
 import org.apereo.cas.authentication.mfa.TestMultifactorAuthenticationProvider;
 import org.apereo.cas.config.CasSimpleMultifactorAuthenticationAutoConfiguration;
@@ -114,6 +115,10 @@ class InitPasswordResetActionTests extends BasePasswordManagementActionTests {
         @Qualifier("casSimpleMultifactorAuthenticationProvider")
         private MultifactorAuthenticationProvider multifactorAuthenticationProvider;
 
+        @Autowired
+        @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
+        private PrincipalElectionStrategy principalElectionStrategy;
+
         @Test
         void verifyAction() throws Throwable {
             val context = MockRequestContext.create(applicationContext);
@@ -143,7 +148,7 @@ class InitPasswordResetActionTests extends BasePasswordManagementActionTests {
             val token = passwordManagementService.createToken(query);
             context.getFlowScope().put(PasswordManagementService.PARAMETER_TOKEN, token);
 
-            val resultBuilder = new DefaultAuthenticationResultBuilder()
+            val resultBuilder = new DefaultAuthenticationResultBuilder(principalElectionStrategy)
                 .collect(RegisteredServiceTestUtils.getAuthentication(query.getUsername(),
                     Map.of(casProperties.getAuthn().getMfa().getCore().getAuthenticationContextAttribute(),
                         List.of(multifactorAuthenticationProvider.getId()))));

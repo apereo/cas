@@ -84,11 +84,11 @@ class RememberMeDelegatingExpirationPolicyTests extends BaseTicketFactoryTests {
 
     @Test
     void verifyTicketExpirationWithRememberMeBuiltAuthn() throws Throwable {
-        val builder = new DefaultAuthenticationResultBuilder();
+        val builder = new DefaultAuthenticationResultBuilder(new DefaultPrincipalElectionStrategy());
         val p1 = CoreAuthenticationTestUtils.getPrincipal("casuser", CollectionUtils.wrap("uid", "casuser"));
         val authn1 = CoreAuthenticationTestUtils.getAuthentication(p1,
             CollectionUtils.wrap(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, true));
-        val result = builder.collect(authn1).build(new DefaultPrincipalElectionStrategy());
+        val result = builder.collect(authn1).build();
 
         val authentication = result.getAuthentication();
         assertNotNull(authentication);

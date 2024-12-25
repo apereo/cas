@@ -160,11 +160,11 @@ public abstract class BaseCasWebflowSessionContextConfigurationTests {
 
                     return FunctionUtils.doUnchecked(() -> {
                         val authentication = CoreAuthenticationTestUtils.getAuthentication();
-                        val authenticationResultBuilder = new DefaultAuthenticationResultBuilder();
+                        val authenticationResultBuilder = new DefaultAuthenticationResultBuilder(principalElectionStrategy.getObject());
                         val principal = CoreAuthenticationTestUtils.getPrincipal();
                         authenticationResultBuilder.collect(authentication);
                         authenticationResultBuilder.collect(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-                        val authenticationResult = authenticationResultBuilder.build(principalElectionStrategy.getObject(), service);
+                        val authenticationResult = authenticationResultBuilder.build(service);
 
                         WebUtils.putAuthenticationResultBuilder(authenticationResultBuilder, requestContext);
                         WebUtils.putAuthenticationResult(authenticationResult, requestContext);

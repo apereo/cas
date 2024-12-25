@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationManager;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilderFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
+import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.handler.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
@@ -60,8 +61,10 @@ class CasCoreAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "authenticationResultBuilderFactory")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public AuthenticationResultBuilderFactory authenticationResultBuilderFactory() {
-            return new DefaultAuthenticationResultBuilderFactory();
+        public AuthenticationResultBuilderFactory authenticationResultBuilderFactory(
+            @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
+            final PrincipalElectionStrategy principalElectionStrategy) {
+            return new DefaultAuthenticationResultBuilderFactory(principalElectionStrategy);
         }
 
         @ConditionalOnMissingBean(name = AuthenticationTransactionFactory.BEAN_NAME)

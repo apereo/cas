@@ -56,11 +56,10 @@ class DefaultSurrogateAuthenticationPrincipalBuilderTests {
     @Test
     void verifyOperationWithoutAuthn() throws Throwable {
         val registeredService = CoreAuthenticationTestUtils.getRegisteredService();
-        val resultBuilder = new DefaultAuthenticationResultBuilder();
+        val resultBuilder = new DefaultAuthenticationResultBuilder(principalElectionStrategy);
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
         assertTrue(surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(resultBuilder, credential, registeredService).isEmpty());
     }
-
 
     @Test
     void verifyOperationWithSurrogate() throws Throwable {
@@ -70,7 +69,7 @@ class DefaultSurrogateAuthenticationPrincipalBuilderTests {
         val principal = surrogatePrincipalBuilder.buildSurrogatePrincipal("surrogate",
             CoreAuthenticationTestUtils.getPrincipal("unknown"), registeredService);
 
-        val resultBuilder = new DefaultAuthenticationResultBuilder();
+        val resultBuilder = new DefaultAuthenticationResultBuilder(principalElectionStrategy);
         resultBuilder.collect(CoreAuthenticationTestUtils.getAuthentication(principal));
 
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
@@ -90,7 +89,7 @@ class DefaultSurrogateAuthenticationPrincipalBuilderTests {
         val principal = surrogatePrincipalBuilder.buildSurrogatePrincipal("surrogate",
             CoreAuthenticationTestUtils.getPrincipal("test"), registeredService);
 
-        val resultBuilder = new DefaultAuthenticationResultBuilder();
+        val resultBuilder = new DefaultAuthenticationResultBuilder(principalElectionStrategy);
         resultBuilder.collect(CoreAuthenticationTestUtils.getAuthentication(principal));
 
         val credential = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
@@ -100,7 +99,7 @@ class DefaultSurrogateAuthenticationPrincipalBuilderTests {
         credential.getCredentialMetadata().addTrait(new SurrogateCredentialTrait("surrogate"));
         val builder = surrogatePrincipalBuilder.buildSurrogateAuthenticationResult(
             resultBuilder, credential, registeredService).orElseThrow();
-        val authentication = builder.build(principalElectionStrategy).getAuthentication();
+        val authentication = builder.build().getAuthentication();
         assertTrue(authentication.getSingleValuedAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED, Boolean.class));
         assertEquals("test", authentication.getSingleValuedAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL, String.class));
         assertEquals("surrogate", authentication.getSingleValuedAttribute(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_USER, String.class));

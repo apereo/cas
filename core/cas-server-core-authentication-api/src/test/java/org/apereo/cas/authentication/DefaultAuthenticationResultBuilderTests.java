@@ -22,7 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultAuthenticationResultBuilderTests {
     @Test
     void verifyAuthenticationResultBuildsPrincipals() throws Throwable {
-        val builder = new DefaultAuthenticationResultBuilder();
+        val electionStrategy = new DefaultPrincipalElectionStrategy();
+        val builder = new DefaultAuthenticationResultBuilder(electionStrategy);
         assertFalse(builder.getInitialAuthentication().isPresent());
         assertFalse(builder.getInitialCredential().isPresent());
 
@@ -31,7 +32,7 @@ class DefaultAuthenticationResultBuilderTests {
         val authn1 = CoreAuthenticationTestUtils.getAuthentication(p1, CollectionUtils.wrap("authn1", "first"));
         val authn2 = CoreAuthenticationTestUtils.getAuthentication(p2, CollectionUtils.wrap("authn2", "second"));
 
-        val result = builder.collect(authn1).collect(authn2).build(new DefaultPrincipalElectionStrategy());
+        val result = builder.collect(authn1).collect(authn2).build();
 
         val authentication = result.getAuthentication();
         assertNotNull(authentication);
@@ -53,7 +54,8 @@ class DefaultAuthenticationResultBuilderTests {
 
     @Test
     void verifyAuthenticationResultMergesPrincipalAttributes() throws Throwable {
-        val builder = new DefaultAuthenticationResultBuilder();
+        val principalElectionStrategy = new DefaultPrincipalElectionStrategy();
+        val builder = new DefaultAuthenticationResultBuilder(principalElectionStrategy);
         val p1 = CoreAuthenticationTestUtils.getPrincipal("casuser1",
             CollectionUtils.wrap("givenName", "CAS", "uid", "casuser1"));
         val p2 = CoreAuthenticationTestUtils.getPrincipal("casuser2",
@@ -62,13 +64,12 @@ class DefaultAuthenticationResultBuilderTests {
         val authn1 = CoreAuthenticationTestUtils.getAuthentication(p1, CollectionUtils.wrap("authn", "test1"));
         val authn2 = CoreAuthenticationTestUtils.getAuthentication(p2, CollectionUtils.wrap("authn", "test2"));
 
-        val principalElectionStrategy = new DefaultPrincipalElectionStrategy();
         var attributeMerger = CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED);
         principalElectionStrategy.setAttributeMerger(attributeMerger);
         val result = builder
             .collect(authn1)
             .collect(authn2)
-            .build(principalElectionStrategy);
+            .build();
 
         val authentication = result.getAuthentication();
         assertNotNull(authentication);

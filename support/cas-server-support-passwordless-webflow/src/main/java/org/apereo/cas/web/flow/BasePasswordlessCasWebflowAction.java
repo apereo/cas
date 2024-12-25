@@ -102,9 +102,7 @@ public abstract class BasePasswordlessCasWebflowAction extends BaseCasWebflowAct
     protected void populateContextWithAuthenticationResult(final RequestContext requestContext, final Authentication authentication,
                                                            final WebApplicationService service) throws Throwable {
         val builder = authenticationSystemSupport.getAuthenticationResultBuilderFactory().newBuilder();
-        val authenticationResult = builder
-            .collect(authentication)
-            .build(authenticationSystemSupport.getPrincipalElectionStrategy(), service);
+        val authenticationResult = builder.collect(authentication).build(service);
         WebUtils.putAuthenticationResultBuilder(builder, requestContext);
         WebUtils.putAuthenticationResult(authenticationResult, requestContext);
         WebUtils.putAuthentication(authentication, requestContext);

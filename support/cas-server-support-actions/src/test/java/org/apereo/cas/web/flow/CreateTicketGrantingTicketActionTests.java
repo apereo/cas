@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -88,8 +87,8 @@ class CreateTicketGrantingTicketActionTests extends AbstractWebflowActionsTests 
         val result = mock(AuthenticationResult.class);
         when(result.getAuthentication()).thenReturn(authentication);
 
-        when(builder.build(any(PrincipalElectionStrategy.class))).thenReturn(result);
-        when(builder.build(any(PrincipalElectionStrategy.class), any(Service.class))).thenReturn(result);
+        when(builder.build()).thenReturn(result);
+        when(builder.build(any(Service.class))).thenReturn(result);
 
         WebUtils.putAuthenticationResultBuilder(builder, context);
         WebUtils.putServiceIntoFlowScope(context, CoreAuthenticationTestUtils.getWebApplicationService());
