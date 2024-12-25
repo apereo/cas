@@ -12,6 +12,7 @@ dependencies {
     api project(":api:cas-server-core-api-audit")
     api project(":api:cas-server-core-api-cookie")
     api project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api-multitenancy")
 
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")

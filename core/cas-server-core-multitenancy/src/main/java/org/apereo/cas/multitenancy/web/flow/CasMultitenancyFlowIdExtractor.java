@@ -22,12 +22,12 @@ import java.util.regex.Pattern;
 @Slf4j
 @RequiredArgsConstructor
 public class CasMultitenancyFlowIdExtractor implements CasFlowIdExtractor {
-    private int order = Ordered.HIGHEST_PRECEDENCE;
-
     private static final Pattern PATTERN_TENANTS = RegexUtils.createPattern("tenants/(.+)/(.+)");
 
+    private int order = Ordered.HIGHEST_PRECEDENCE;
+
     private final TenantsManager tenantsManager;
-    
+
     @Override
     public String extract(final HttpServletRequest request, final String flowId) {
         val matcher = PATTERN_TENANTS.matcher(flowId);
