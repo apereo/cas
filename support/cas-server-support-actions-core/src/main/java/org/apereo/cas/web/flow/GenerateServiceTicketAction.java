@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -47,8 +46,6 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     private final ServicesManager servicesManager;
-
-    private final PrincipalElectionStrategy principalElectionStrategy;
 
     private final List<ServiceTicketGeneratorAuthority> serviceTicketAuthorities;
 

@@ -5,7 +5,6 @@ import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -434,8 +433,6 @@ public class CasSupportActionsAutoConfiguration {
             final TicketRegistrySupport ticketRegistrySupport,
             @Qualifier(AuthenticationServiceSelectionPlan.BEAN_NAME)
             final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-            @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
-            final PrincipalElectionStrategy principalElectionStrategy,
             final List<ServiceTicketGeneratorAuthority> serviceTicketAuthorities,
             @Qualifier(CasWebflowCredentialProvider.BEAN_NAME)
             final CasWebflowCredentialProvider casWebflowCredentialProvider) {
@@ -444,7 +441,7 @@ public class CasSupportActionsAutoConfiguration {
                 .withProperties(casProperties)
                 .withAction(() -> new GenerateServiceTicketAction(authenticationSystemSupport, centralAuthenticationService,
                     ticketRegistrySupport, authenticationRequestServiceSelectionStrategies,
-                    servicesManager, principalElectionStrategy, serviceTicketAuthorities, casWebflowCredentialProvider))
+                    servicesManager, serviceTicketAuthorities, casWebflowCredentialProvider))
                 .withId(CasWebflowConstants.ACTION_ID_GENERATE_SERVICE_TICKET)
                 .build()
                 .get();
@@ -611,8 +608,6 @@ public class CasSupportActionsAutoConfiguration {
             final AuthenticationSystemSupport authenticationSystemSupport,
             @Qualifier(TicketRegistrySupport.BEAN_NAME)
             final TicketRegistrySupport ticketRegistrySupport,
-            @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
-            final PrincipalElectionStrategy principalElectionStrategy,
             final List<ServiceTicketGeneratorAuthority> serviceTicketAuthorities,
             @Qualifier(CasWebflowCredentialProvider.BEAN_NAME)
             final CasWebflowCredentialProvider casWebflowCredentialProvider) {
@@ -620,7 +615,7 @@ public class CasSupportActionsAutoConfiguration {
                 .withApplicationContext(applicationContext)
                 .withProperties(casProperties)
                 .withAction(() -> new ServiceWarningAction(centralAuthenticationService, authenticationSystemSupport,
-                    ticketRegistrySupport, warnCookieGenerator, principalElectionStrategy, serviceTicketAuthorities,
+                    ticketRegistrySupport, warnCookieGenerator, serviceTicketAuthorities,
                     casWebflowCredentialProvider))
                 .withId(CasWebflowConstants.ACTION_ID_SERVICE_WARNING)
                 .build()
