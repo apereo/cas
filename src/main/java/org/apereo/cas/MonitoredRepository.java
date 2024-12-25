@@ -452,9 +452,9 @@ public class MonitoredRepository {
     public void removeCancelledWorkflowRuns() {
         var workflowRun = gitHub.getWorkflowRuns(getOrganization(), getName(), Workflows.WorkflowRunStatus.CANCELLED);
         if (!workflowRun.getRuns().isEmpty()) {
-            log.info("Found {} cancelled workflow runs", workflowRun.getRuns().size());
+            log.debug("Found {} cancelled workflow runs", workflowRun.getRuns().size());
             workflowRun.getRuns().forEach(run -> {
-                log.info("Removing workflow run {}", run);
+                log.debug("Removing workflow run {}", run);
                 gitHub.removeWorkflowRun(getOrganization(), getName(), run);
             });
         }
@@ -493,13 +493,13 @@ public class MonitoredRepository {
                     .filter(status -> status == Workflows.WorkflowRunStatus.IN_PROGRESS)
                     .ifPresent(status -> cancelWorkflowRun(run));
 
-                log.info("Removing workflow run {} without an active pull request", run);
+                log.debug("Removing workflow run {} without an active pull request", run);
                 gitHub.removeWorkflowRun(getOrganization(), getName(), run);
             } else {
                 var pr = found.get();
                 var foundci = pr.getLabels().stream().anyMatch(label -> label.getName().equalsIgnoreCase(CasLabels.LABEL_CI.getTitle()));
                 if (!repositoryProperties.getCommitters().contains(pr.getUser().getLogin()) && !foundci) {
-                    log.info("Removing workflow run {} without the label {}", run, CasLabels.LABEL_CI.getTitle());
+                    log.debug("Removing workflow run {} without the label {}", run, CasLabels.LABEL_CI.getTitle());
                     gitHub.removeWorkflowRun(getOrganization(), getName(), run);
                 }
             }

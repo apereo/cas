@@ -9,7 +9,7 @@
     <packaging>jar</packaging>
 
     <name>cas-bot</name>
-    <description>GitHub Bot</description>
+    <description>Apereo CAS GitHub Bot</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
