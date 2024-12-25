@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.duo.web.flow.action;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityUniversalPromptCredential;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -49,17 +48,13 @@ public class DuoSecurityUniversalPromptValidateLoginAction extends DuoSecurityAu
 
     private final ConfigurableApplicationContext applicationContext;
 
-    private final AuthenticationSystemSupport authenticationSystemSupport;
-
     public DuoSecurityUniversalPromptValidateLoginAction(
         final CasWebflowEventResolver duoAuthenticationWebflowEventResolver,
         final BrowserWebStorageSessionStore sessionStore,
-        final ConfigurableApplicationContext applicationContext,
-        final AuthenticationSystemSupport authenticationSystemSupport) {
+        final ConfigurableApplicationContext applicationContext) {
         super(duoAuthenticationWebflowEventResolver);
         this.sessionStore = sessionStore;
         this.applicationContext = applicationContext;
-        this.authenticationSystemSupport = authenticationSystemSupport;
     }
 
     @Override

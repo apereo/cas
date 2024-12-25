@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicketGeneratorAuthority;
@@ -51,8 +50,6 @@ public class ServiceWarningAction extends BaseCasWebflowAction {
     private final TicketRegistrySupport ticketRegistrySupport;
 
     private final CasCookieBuilder warnCookieGenerator;
-
-    private final PrincipalElectionStrategy principalElectionStrategy;
 
     private final List<ServiceTicketGeneratorAuthority> serviceTicketAuthorities;
 

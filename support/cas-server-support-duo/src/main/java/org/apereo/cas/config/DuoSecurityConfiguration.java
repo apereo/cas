@@ -129,7 +129,7 @@ class DuoSecurityConfiguration {
                     .when(DuoSecurityAuthenticationService.CONDITION.given(applicationContext.getEnvironment()))
                     .supply(() -> new DuoSecurityUniversalPromptValidateLoginAction(
                         duoAuthenticationWebflowEventResolver, duoUniversalPromptSessionStore,
-                        applicationContext, authenticationSystemSupport))
+                        applicationContext))
                     .otherwiseProxy()
                     .get())
                 .withId(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_VALIDATE_LOGIN)
