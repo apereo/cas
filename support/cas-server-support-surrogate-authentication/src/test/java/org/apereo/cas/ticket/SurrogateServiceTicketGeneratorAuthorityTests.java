@@ -1,9 +1,8 @@
 package org.apereo.cas.ticket;
 
-import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
+import org.apereo.cas.authentication.AuthenticationResultBuilderFactory;
 import org.apereo.cas.authentication.SurrogateAuthenticationException;
 import org.apereo.cas.authentication.credential.UsernamePasswordCredential;
-import org.apereo.cas.authentication.principal.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.surrogate.BaseSurrogateAuthenticationServiceTests;
 import org.apereo.cas.authentication.surrogate.SurrogateCredentialTrait;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -50,6 +49,10 @@ class SurrogateServiceTicketGeneratorAuthorityTests {
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("authenticationResultBuilderFactory")
+    private AuthenticationResultBuilderFactory authenticationResultBuilderFactory;
+
     @Test
     void verifyOperation() throws Throwable {
         assertEquals(Ordered.HIGHEST_PRECEDENCE, surrogateServiceTicketGeneratorAuthority.getOrder());
@@ -58,7 +61,7 @@ class SurrogateServiceTicketGeneratorAuthorityTests {
         credential.getCredentialMetadata()
             .addTrait(new SurrogateCredentialTrait("surrogate"));
         credential.setUsername("casuser");
-        val authenticationResult = new DefaultAuthenticationResultBuilder(new DefaultPrincipalElectionStrategy())
+        val authenticationResult = authenticationResultBuilderFactory.newBuilder()
             .collect(RegisteredServiceTestUtils.getAuthentication(credential))
             .build();
 
