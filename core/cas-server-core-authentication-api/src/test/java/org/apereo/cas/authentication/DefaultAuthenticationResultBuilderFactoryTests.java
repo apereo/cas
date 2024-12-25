@@ -2,8 +2,8 @@ package org.apereo.cas.authentication;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * This is {@link DefaultAuthenticationResultBuilderFactoryTests}.
@@ -15,6 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultAuthenticationResultBuilderFactoryTests {
     @Test
     void verifyOperation() throws Throwable {
-        assertNotNull(new DefaultAuthenticationResultBuilderFactory().newBuilder());
+        assertNotNull(new DefaultAuthenticationResultBuilderFactory(mock(PrincipalElectionStrategy.class)).newBuilder());
     }
 }

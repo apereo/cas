@@ -268,10 +268,11 @@ public class CoreAuthenticationTestUtils {
     public static AuthenticationSystemSupport getAuthenticationSystemSupport(final AuthenticationManager authenticationManager,
                                                                              final ServicesManager servicesManager) {
         val publisher = mock(ApplicationEventPublisher.class);
+        val principalElectionStrategy = new DefaultPrincipalElectionStrategy();
         return new DefaultAuthenticationSystemSupport(
             new DefaultAuthenticationTransactionManager(publisher, authenticationManager),
-            new DefaultPrincipalElectionStrategy(),
-            new DefaultAuthenticationResultBuilderFactory(),
+            principalElectionStrategy,
+            new DefaultAuthenticationResultBuilderFactory(principalElectionStrategy),
             getAuthenticationTransactionFactory(servicesManager),
             servicesManager,
             new EchoingPrincipalResolver(),

@@ -98,9 +98,7 @@ public class ServiceTicketResource {
                 return serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
             }
             val builder = authenticationSystemSupport.getAuthenticationResultBuilderFactory().newBuilder();
-            val authenticationResult = builder
-                .collect(authn)
-                .build(authenticationSystemSupport.getPrincipalElectionStrategy(), service);
+            val authenticationResult = builder.collect(authn).build(service);
             return serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<>(StringEscapeUtils.escapeHtml4(tgtId) + " could not be found or is considered invalid", HttpStatus.NOT_FOUND);

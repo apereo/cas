@@ -58,9 +58,9 @@ class SurrogateServiceTicketGeneratorAuthorityTests {
         credential.getCredentialMetadata()
             .addTrait(new SurrogateCredentialTrait("surrogate"));
         credential.setUsername("casuser");
-        val authenticationResult = new DefaultAuthenticationResultBuilder()
+        val authenticationResult = new DefaultAuthenticationResultBuilder(new DefaultPrincipalElectionStrategy())
             .collect(RegisteredServiceTestUtils.getAuthentication(credential))
-            .build(new DefaultPrincipalElectionStrategy());
+            .build();
 
         val service = RegisteredServiceTestUtils.getService(UUID.randomUUID().toString());
         val registeredService = RegisteredServiceTestUtils.getRegisteredService(service.getId(), Map.of());

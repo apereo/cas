@@ -71,7 +71,7 @@ public class ServiceWarningAction extends BaseCasWebflowAction {
         val credentials = casWebflowCredentialProvider.extract(requestContext);
         val authenticationResultBuilder = authenticationSystemSupport.establishAuthenticationContextFromInitial(
             authentication, credentials.toArray(credentials.toArray(Credential.EMPTY_CREDENTIALS_ARRAY)));
-        val authenticationResult = FunctionUtils.doUnchecked(() -> authenticationResultBuilder.build(principalElectionStrategy, service));
+        val authenticationResult = FunctionUtils.doUnchecked(() -> authenticationResultBuilder.build(service));
         grantServiceTicket(authenticationResult, service, requestContext);
 
         if (request.getParameterMap().containsKey(PARAMETER_NAME_IGNORE_WARNING)

@@ -5,6 +5,7 @@ import org.apereo.cas.adaptors.duo.BaseDuoSecurityTests;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
+import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.duo.DuoSecurityMultifactorAuthenticationProperties;
 import org.apereo.cas.pac4j.BrowserWebStorageSessionStore;
@@ -76,6 +77,10 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
     private Action duoUniversalPromptValidateLoginAction;
 
     @Autowired
+    @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
+    private PrincipalElectionStrategy principalElectionStrategy;
+
+    @Autowired
     @Qualifier(CasWebflowConstants.ACTION_ID_DUO_UNIVERSAL_PROMPT_PREPARE_LOGIN)
     private Action duoUniversalPromptPrepareLoginAction;
 
@@ -131,7 +136,7 @@ class DuoSecurityUniversalPromptValidateLoginActionTests extends BaseCasWebflowM
         MultifactorAuthenticationWebflowUtils.putMultifactorAuthenticationProvider(context, provider);
         WebUtils.putTargetTransition(context, "targetDestination");
 
-        val authnResult = new DefaultAuthenticationResultBuilder()
+        val authnResult = new DefaultAuthenticationResultBuilder(principalElectionStrategy)
             .collect(RegisteredServiceTestUtils.getAuthentication());
 
         WebUtils.putAuthenticationResultBuilder(authnResult, context);

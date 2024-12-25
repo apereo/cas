@@ -4,6 +4,7 @@ import org.apereo.cas.api.PasswordlessAuthenticationPreProcessor;
 import org.apereo.cas.api.PasswordlessUserAccount;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationResultBuilder;
+import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.SurrogatePrincipal;
 import org.apereo.cas.authentication.credential.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
@@ -48,11 +49,16 @@ class SurrogatePasswordlessAuthenticationPreProcessorTests extends BaseSurrogate
     @Qualifier(ServicesManager.BEAN_NAME)
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier(PrincipalElectionStrategy.BEAN_NAME)
+    private PrincipalElectionStrategy principalElectionStrategy;
 
+    
     @Test
     void verifyOperation() throws Throwable {
         val uid = "casuser";
-        val builder = new DefaultAuthenticationResultBuilder().collect(CoreAuthenticationTestUtils.getAuthentication(uid));
+        val builder = new DefaultAuthenticationResultBuilder(principalElectionStrategy)
+            .collect(CoreAuthenticationTestUtils.getAuthentication(uid));
         val account = PasswordlessUserAccount.builder().username(uid).build();
 
         val credential = new BasicIdentifiableCredential(uid);

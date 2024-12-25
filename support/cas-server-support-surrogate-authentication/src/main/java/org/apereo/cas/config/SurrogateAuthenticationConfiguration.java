@@ -142,10 +142,12 @@ class SurrogateAuthenticationConfiguration {
         @ConditionalOnMissingBean(name = "surrogatePrincipalElectionStrategyConfigurer")
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public PrincipalElectionStrategyConfigurer surrogatePrincipalElectionStrategyConfigurer(final CasConfigurationProperties casProperties) {
+        public PrincipalElectionStrategyConfigurer surrogatePrincipalElectionStrategyConfigurer(
+            final CasConfigurationProperties casProperties) {
             return chain -> {
                 val strategy = new SurrogatePrincipalElectionStrategy();
-                val merger = CoreAuthenticationUtils.getAttributeMerger(casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
+                val merger = CoreAuthenticationUtils.getAttributeMerger(
+                    casProperties.getAuthn().getAttributeRepository().getCore().getMerger());
                 strategy.setAttributeMerger(merger);
                 chain.registerElectionStrategy(strategy);
             };

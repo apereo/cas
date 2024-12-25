@@ -73,7 +73,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     @Override
     public AuthenticationResult finalizeAllAuthenticationTransactions(@NonNull final AuthenticationResultBuilder authenticationResultBuilder,
                                                                       final Service service) throws Throwable {
-        return authenticationResultBuilder.build(principalElectionStrategy, service);
+        return authenticationResultBuilder.build(service);
     }
 
     @Override

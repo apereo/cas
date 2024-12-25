@@ -88,10 +88,10 @@ class DefaultAuthenticationBuilderTests {
         builder2.mergeAttribute("key", CollectionUtils.wrapList(443322));
         val authn2 = builder2.build();
 
-        val resultBuilder = new DefaultAuthenticationResultBuilderFactory().newBuilder();
         val strategy = new DefaultPrincipalElectionStrategy();
+        val resultBuilder = new DefaultAuthenticationResultBuilderFactory(strategy).newBuilder();
         strategy.setAttributeMerger(CoreAuthenticationUtils.getAttributeMerger(PrincipalAttributesCoreProperties.MergingStrategyTypes.MULTIVALUED));
-        val resultAuthn = resultBuilder.collect(authn1).collect(authn2).build(strategy);
+        val resultAuthn = resultBuilder.collect(authn1).collect(authn2).build();
         assertNotNull(resultAuthn);
         assertEquals(5, resultAuthn.getAuthentication().getAttributes().get("key").size());
     }

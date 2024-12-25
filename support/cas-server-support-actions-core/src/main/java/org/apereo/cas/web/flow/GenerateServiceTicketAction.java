@@ -101,7 +101,7 @@ public class GenerateServiceTicketAction extends BaseCasWebflowAction {
             val credentials = casWebflowCredentialProvider.extract(context);
             val builder = authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication,
                 credentials.toArray(Credential.EMPTY_CREDENTIALS_ARRAY));
-            val authenticationResult = builder.build(principalElectionStrategy, service);
+            val authenticationResult = builder.build(service);
 
             LOGGER.trace("Built the final authentication result [{}] to grant service ticket to [{}]", authenticationResult, service);
             grantServiceTicket(authenticationResult, service, context);
