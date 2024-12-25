@@ -58,16 +58,16 @@ public class JsonTenantsManager implements TenantsManager, DisposableBean {
 
     private List<TenantDefinition> readFromJsonResource() {
         return FunctionUtils.doAndHandle((CheckedSupplier<List<TenantDefinition>>) () -> {
-                if (ResourceUtils.doesResourceExist(jsonResource)) {
-                    try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
-                        val tenantsList = new TypeReference<List<TenantDefinition>>() {
-                        };
-                        return MAPPER.readValue(JsonValue.readHjson(reader).toString(), tenantsList);
-                    }
+            if (ResourceUtils.doesResourceExist(jsonResource)) {
+                try (val reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
+                    val tenantsList = new TypeReference<List<TenantDefinition>>() {
+                    };
+                    return MAPPER.readValue(JsonValue.readHjson(reader).toString(), tenantsList);
                 }
-                return new ArrayList<>();
-            }, throwable -> new ArrayList<>())
-            .get();
+            }
+            return new ArrayList<>();
+        }, throwable -> new ArrayList<>())
+        .get();
     }
 
     @Override
