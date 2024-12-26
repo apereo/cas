@@ -94,7 +94,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         }
 
         val factory = (TicketGrantingTicketFactory) configurationContext.getTicketFactory().get(TicketGrantingTicket.class);
-        val ticketGrantingTicket = factory.create(authentication, service, TicketGrantingTicket.class);
+        val ticketGrantingTicket = factory.create(authentication, service);
         val addedTicket = configurationContext.getTicketRegistry().addTicket(ticketGrantingTicket);
         doPublishEvent(new CasTicketGrantingTicketCreatedEvent(this, ticketGrantingTicket, clientInfo));
         return addedTicket;
@@ -177,7 +177,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                     val authentication = proxyGrantingTicket.getRoot().getAuthentication();
                     val principal = authentication.getPrincipal();
                     val factory = (ProxyTicketFactory) configurationContext.getTicketFactory().get(ProxyTicket.class);
-                    val proxyTicket = factory.create(proxyGrantingTicket, service, ProxyTicket.class);
+                    val proxyTicket = factory.create(proxyGrantingTicket, service);
                     val clientInfo = ClientInfoHolder.getClientInfo();
                     if (!proxyGrantingTicket.isStateless()) {
                         configurationContext.getTicketRegistry().updateTicket(proxyGrantingTicket);
@@ -356,7 +356,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
                 Unchecked.supplier(() -> {
                     val authentication = authenticationResult.getAuthentication();
                     val factory = (ProxyGrantingTicketFactory) configurationContext.getTicketFactory().get(ProxyGrantingTicket.class);
-                    val proxyGrantingTicket = factory.create(serviceTicket, authentication, ProxyGrantingTicket.class);
+                    val proxyGrantingTicket = factory.create(serviceTicket, authentication);
                     val addedTicket = configurationContext.getTicketRegistry().addTicket(proxyGrantingTicket);
                     LOGGER.debug("Generated proxy granting ticket [{}] based off of [{}]", proxyGrantingTicket, serviceTicketId);
                     if (!serviceTicket.isStateless()) {

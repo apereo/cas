@@ -102,7 +102,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     void verifyOperation() throws Throwable {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
-            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
+            RegisteredServiceTestUtils.getService());
         ticketRegistry.addTicket(tgt);
 
         val stFactory = (ServiceTicketFactory) ticketFactory.get(ServiceTicket.class);
@@ -130,7 +130,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     void verifyTransientTicketCleaning() throws Throwable {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
-            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
+            RegisteredServiceTestUtils.getService());
         ticketRegistry.addTicket(tgt);
 
         val transientFactory = (TransientSessionTicketFactory) ticketFactory.get(TransientSessionTicket.class);
@@ -154,7 +154,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     void verifyOauthOperation() throws Throwable {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
-            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
+            RegisteredServiceTestUtils.getService());
         ticketRegistry.addTicket(tgt);
 
         val code = createOAuthCode();
@@ -184,7 +184,7 @@ public abstract class BaseJpaTicketRegistryCleanerTests {
     void verifyDeviceCodeAndUserCleaning() throws Throwable {
         val tgtFactory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val tgt = tgtFactory.create(RegisteredServiceTestUtils.getAuthentication(),
-            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
+            RegisteredServiceTestUtils.getService());
         ticketRegistry.addTicket(tgt);
 
         val deviceCodeFactory = (OAuth20DeviceTokenFactory) ticketFactory.get(OAuth20DeviceToken.class);

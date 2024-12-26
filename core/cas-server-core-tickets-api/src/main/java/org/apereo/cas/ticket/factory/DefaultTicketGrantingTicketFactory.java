@@ -18,13 +18,11 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.lang3.math.NumberUtils;
-
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -37,7 +35,7 @@ import java.util.Optional;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketFactory {
+public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketFactory<TicketGrantingTicket> {
     /**
      * UniqueTicketIdGenerator to generate ids for {@link TicketGrantingTicket}s created.
      */
@@ -57,10 +55,9 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
     protected final ServicesManager servicesManager;
 
     @Override
-    public <T extends TicketGrantingTicket> T create(final Authentication authentication,
-                                                     final Service service, final Class<T> clazz) throws Throwable {
+    public TicketGrantingTicket create(final Authentication authentication, final Service service) throws Throwable {
         val tgtId = produceTicketIdentifier(authentication);
-        return produceTicket(authentication, tgtId, service, clazz);
+        return produceTicket(authentication, tgtId, service);
     }
 
     @Override
@@ -68,16 +65,10 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
         return TicketGrantingTicket.class;
     }
 
-    protected <T extends TicketGrantingTicket> T produceTicket(final Authentication authentication,
-                                                               final String tgtId,
-                                                               final Service service,
-                                                               final Class<T> clazz) {
+    protected TicketGrantingTicket produceTicket(final Authentication authentication,
+                                                 final String tgtId, final Service service) {
         val expirationPolicy = getExpirationPolicyBuilder(service, authentication);
-        val result = new TicketGrantingTicketImpl(tgtId, authentication, expirationPolicy.orElseThrow());
-        if (!clazz.isAssignableFrom(result.getClass())) {
-            throw new ClassCastException("Result [" + result + "] is of type " + result.getClass() + " when we were expecting " + clazz);
-        }
-        return (T) result;
+        return new TicketGrantingTicketImpl(tgtId, authentication, expirationPolicy.orElseThrow());
     }
 
     protected Optional<ExpirationPolicy> getExpirationPolicyBuilder(final Service service,

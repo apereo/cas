@@ -31,7 +31,7 @@ import java.util.Map;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class DefaultProxyTicketFactory implements ProxyTicketFactory {
+public class DefaultProxyTicketFactory implements ProxyTicketFactory<ProxyTicket> {
     private final UniqueTicketIdGenerator defaultTicketIdGenerator = new HostNameBasedUniqueTicketIdGenerator();
 
     @Getter
@@ -46,10 +46,9 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
     private final ServicesManager servicesManager;
 
     @Override
-    public <T extends Ticket> T create(final ProxyGrantingTicket proxyGrantingTicket, final Service service,
-                                       final Class<T> clazz) throws Throwable {
+    public ProxyTicket create(final ProxyGrantingTicket proxyGrantingTicket, final Service service) throws Throwable {
         val ticketId = produceTicketIdentifier(service);
-        return produceTicket(proxyGrantingTicket, service, ticketId, clazz);
+        return produceTicket(proxyGrantingTicket, service, ticketId);
     }
 
     @Override
@@ -57,32 +56,14 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
         return ProxyTicket.class;
     }
 
-    /**
-     * Produce ticket.
-     *
-     * @param <T>                 the type parameter
-     * @param proxyGrantingTicket the proxy granting ticket
-     * @param service             the service
-     * @param ticketId            the ticket id
-     * @param clazz               the clazz
-     * @return the ticket
-     */
-    protected <T extends Ticket> T produceTicket(final ProxyGrantingTicket proxyGrantingTicket,
-                                                 final Service service, final String ticketId,
-                                                 final Class<T> clazz) {
+    protected ProxyTicket produceTicket(final ProxyGrantingTicket proxyGrantingTicket,
+                                        final Service service, final String ticketId) {
         val expirationPolicyToUse = determineExpirationPolicyForService(service);
-        val result = proxyGrantingTicket.grantProxyTicket(
+        return proxyGrantingTicket.grantProxyTicket(
             ticketId,
             service,
             expirationPolicyToUse,
             serviceTicketSessionTrackingPolicy);
-
-        if (!clazz.isAssignableFrom(result.getClass())) {
-            throw new ClassCastException("Result [" + result
-                                         + " is of type " + result.getClass()
-                                         + " when we were expecting " + clazz);
-        }
-        return (T) result;
     }
 
     protected String produceTicketIdentifier(final Service service) throws Throwable {
