@@ -15,7 +15,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 7.2.0
  */
-@RequiresModule(name = "cas-server-support-multitenancy")
+@RequiresModule(name = "cas-server-core-multitenancy")
 @Getter
 @Setter
 @Accessors(chain = true)
