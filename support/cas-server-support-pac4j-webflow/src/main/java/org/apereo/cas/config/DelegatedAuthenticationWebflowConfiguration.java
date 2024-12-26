@@ -44,11 +44,11 @@ import org.apereo.cas.web.cookie.CasCookieBuilder;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
 import org.apereo.cas.web.flow.CasFlowHandlerMapping;
-import org.apereo.cas.web.flow.CasFlowIdExtractor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.CasWebflowIdExtractor;
 import org.apereo.cas.web.flow.CasWebflowLoginContextProvider;
 import org.apereo.cas.web.flow.DefaultDelegatedClientAuthenticationWebflowManager;
 import org.apereo.cas.web.flow.DefaultDelegatedClientAuthenticationWebflowStateContributor;
@@ -706,7 +706,7 @@ class DelegatedAuthenticationWebflowConfiguration {
 
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
-        public FlowUrlHandler delegatedClientWebflowUrlHandler(final List<CasFlowIdExtractor> flowIdExtractors) {
+        public FlowUrlHandler delegatedClientWebflowUrlHandler(final List<CasWebflowIdExtractor> flowIdExtractors) {
             return new CasDefaultFlowUrlHandler(flowIdExtractors);
         }
         

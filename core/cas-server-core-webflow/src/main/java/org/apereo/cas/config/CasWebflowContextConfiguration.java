@@ -4,6 +4,8 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
+import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.multitenancy.TenantsManager;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.throttle.AuthenticationThrottlingExecutionPlan;
 import org.apereo.cas.util.CollectionUtils;
@@ -14,11 +16,12 @@ import org.apereo.cas.util.spring.boot.ConditionalOnMissingGraalVMNativeImage;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
 import org.apereo.cas.web.flow.CasFlowHandlerMapping;
-import org.apereo.cas.web.flow.CasFlowIdExtractor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.CasWebflowIdExtractor;
+import org.apereo.cas.web.flow.DefaultCasWebflowIdExtractor;
 import org.apereo.cas.web.flow.FlowBuilderConversionService;
 import org.apereo.cas.web.flow.configurer.DefaultLoginWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.DefaultLogoutWebflowConfigurer;
@@ -29,7 +32,6 @@ import org.apereo.cas.web.flow.executor.WebflowExecutorFactory;
 import org.apereo.cas.web.flow.resolver.CasMvcViewFactoryCreator;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CasLocaleChangeInterceptor;
-
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.springframework.beans.factory.ObjectProvider;
@@ -67,7 +69,6 @@ import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser;
 import org.springframework.webflow.mvc.servlet.FlowHandlerMapping;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,19 +96,23 @@ class CasWebflowContextConfiguration {
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @ConditionalOnMissingBean(name = "casDefaultFlowIdExtractor")
-        public CasFlowIdExtractor casDefaultFlowIdExtractor() {
-            return CasFlowIdExtractor.noOp();
+        public CasWebflowIdExtractor casDefaultFlowIdExtractor(
+            @Qualifier(TenantExtractor.BEAN_NAME)
+            final TenantExtractor tenantExtractor,
+            @Qualifier(TenantsManager.BEAN_NAME)
+            final TenantsManager tenantsManager) {
+            return new DefaultCasWebflowIdExtractor(tenantExtractor, tenantsManager);
         }
         
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FlowUrlHandler loginFlowUrlHandler(final List<CasFlowIdExtractor> flowIdExtractors) {
+        public FlowUrlHandler loginFlowUrlHandler(final List<CasWebflowIdExtractor> flowIdExtractors) {
             return new CasDefaultFlowUrlHandler(flowIdExtractors);
         }
 
         @Bean
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
-        public FlowUrlHandler logoutFlowUrlHandler(final List<CasFlowIdExtractor> flowIdExtractors) {
+        public FlowUrlHandler logoutFlowUrlHandler(final List<CasWebflowIdExtractor> flowIdExtractors) {
             return new CasDefaultFlowUrlHandler(flowIdExtractors);
         }
 
