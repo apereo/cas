@@ -7,15 +7,11 @@ import org.apereo.cas.services.DefaultRegisteredServiceTicketGrantingTicketExpir
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import java.io.Serial;
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -31,19 +27,11 @@ class DefaultTicketGrantingTicketFactoryTests extends BaseTicketFactoryTests {
     void verifyNoExpirationPolicy() throws Throwable {
         val service = RegisteredServiceTestUtils.getService("noExpirationPolicy");
         val factory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
-        val tgt = factory.create(RegisteredServiceTestUtils.getAuthentication(), service, TicketGrantingTicket.class);
+        val tgt = factory.create(RegisteredServiceTestUtils.getAuthentication(), service);
         val seconds = Beans.newDuration(casProperties.getTicket().getTgt().getPrimary().getMaxTimeToLiveInSeconds()).toSeconds();
         assertEquals(seconds, tgt.getExpirationPolicy().getTimeToLive());
     }
-
-    @Test
-    void verifyBadTicketType() throws Throwable {
-        val service = RegisteredServiceTestUtils.getService("noExpirationPolicy");
-        val factory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
-        assertThrows(ClassCastException.class,
-            () -> factory.create(RegisteredServiceTestUtils.getAuthentication(), service, BaseMockTicketGrantingTicket.class));
-    }
-
+    
     @Test
     void verifyExpirationPolicyPerAuthenticationAsSeconds() throws Throwable {
         val registeredService = RegisteredServiceTestUtils.getRegisteredService("someTgtExpirationPolicy", CasRegisteredService.class);
@@ -51,7 +39,7 @@ class DefaultTicketGrantingTicketFactoryTests extends BaseTicketFactoryTests {
         val factory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val authentication = RegisteredServiceTestUtils.getAuthentication("casuser",
             Map.of(AuthenticationManager.AUTHENTICATION_SESSION_TIMEOUT_ATTRIBUTE, List.of(600)));
-        val tgt = factory.create(authentication, RegisteredServiceTestUtils.getService(registeredService.getServiceId()), TicketGrantingTicket.class);
+        val tgt = factory.create(authentication, RegisteredServiceTestUtils.getService(registeredService.getServiceId()));
         assertEquals(600, tgt.getExpirationPolicy().getTimeToLive());
     }
 
@@ -62,7 +50,7 @@ class DefaultTicketGrantingTicketFactoryTests extends BaseTicketFactoryTests {
         val factory = (TicketGrantingTicketFactory) ticketFactory.get(TicketGrantingTicket.class);
         val authentication = RegisteredServiceTestUtils.getAuthentication("casuser",
             Map.of(AuthenticationManager.AUTHENTICATION_SESSION_TIMEOUT_ATTRIBUTE, List.of("PT10S")));
-        val tgt = factory.create(authentication, RegisteredServiceTestUtils.getService(registeredService.getServiceId()), TicketGrantingTicket.class);
+        val tgt = factory.create(authentication, RegisteredServiceTestUtils.getService(registeredService.getServiceId()));
         assertEquals(10, tgt.getExpirationPolicy().getTimeToLive());
     }
 
@@ -75,13 +63,7 @@ class DefaultTicketGrantingTicketFactoryTests extends BaseTicketFactoryTests {
 
         val service = RegisteredServiceTestUtils.getService("customTgtExpirationPolicy");
         val factory = (TicketGrantingTicketFactory) this.ticketFactory.get(TicketGrantingTicket.class);
-        val tgt = factory.create(RegisteredServiceTestUtils.getAuthentication(), service, TicketGrantingTicket.class);
+        val tgt = factory.create(RegisteredServiceTestUtils.getAuthentication(), service);
         assertEquals(120, tgt.getExpirationPolicy().getTimeToLive());
     }
-
-    abstract static class BaseMockTicketGrantingTicket implements TicketGrantingTicket {
-        @Serial
-        private static final long serialVersionUID = 6712185629825357896L;
-    }
-
 }

@@ -13,7 +13,6 @@ import org.apereo.cas.ticket.expiration.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.util.crypto.CipherExecutor;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +27,7 @@ import lombok.val;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFactory {
+public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFactory<ProxyGrantingTicket> {
     protected final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator;
 
     @Getter
@@ -39,10 +38,9 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
     protected final ServicesManager servicesManager;
 
     @Override
-    public <T extends ProxyGrantingTicket> T create(final ServiceTicket serviceTicket,
-                                                    final Authentication authentication, final Class<T> clazz) throws Throwable {
+    public ProxyGrantingTicket create(final ServiceTicket serviceTicket, final Authentication authentication) throws Throwable {
         val pgtId = produceTicketIdentifier();
-        return produceTicket(serviceTicket, authentication, pgtId, clazz);
+        return produceTicket(serviceTicket, authentication, pgtId);
     }
 
     @Override
@@ -50,16 +48,13 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
         return ProxyGrantingTicket.class;
     }
 
-    protected <T extends ProxyGrantingTicket> T produceTicket(final ServiceTicket serviceTicket, final Authentication authentication,
-                                                              final String pgtId, final Class<T> clazz) {
+    protected ProxyGrantingTicket produceTicket(final ServiceTicket serviceTicket,
+                                                final Authentication authentication,
+                                                final String pgtId) {
 
         val proxyGrantingTicketExpirationPolicy = getProxyGrantingTicketExpirationPolicy(serviceTicket);
         val pgtIssuer = (ProxyGrantingTicketIssuerTicket) serviceTicket;
-        val result = produceTicketWithAdequateExpirationPolicy(proxyGrantingTicketExpirationPolicy, pgtIssuer, authentication, pgtId);
-        if (result == null || !clazz.isAssignableFrom(result.getClass())) {
-            throw new ClassCastException("Result %s does not match %s ".formatted(result, clazz));
-        }
-        return (T) result;
+        return produceTicketWithAdequateExpirationPolicy(proxyGrantingTicketExpirationPolicy, pgtIssuer, authentication, pgtId);
     }
 
     protected RegisteredServiceProxyGrantingTicketExpirationPolicy getProxyGrantingTicketExpirationPolicy(

@@ -64,7 +64,7 @@ class DefaultTicketStringSerializationManagerTests {
     void verifyOperation() throws Throwable {
         val factory = (TicketGrantingTicketFactory) this.defaultTicketFactory.get(TicketGrantingTicket.class);
         val ticket = factory.create(RegisteredServiceTestUtils.getAuthentication(),
-            RegisteredServiceTestUtils.getService(), TicketGrantingTicket.class);
+            RegisteredServiceTestUtils.getService());
         val result = ticketSerializationManager.serializeTicket(ticket);
         assertNotNull(result);
         val deserializedTicket = ticketSerializationManager.deserializeTicket(result, TicketGrantingTicket.class);

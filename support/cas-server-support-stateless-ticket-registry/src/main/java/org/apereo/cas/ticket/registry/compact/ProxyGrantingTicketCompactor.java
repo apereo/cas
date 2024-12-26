@@ -65,7 +65,7 @@ public class ProxyGrantingTicketCompactor implements TicketCompactor<ProxyGranti
         val service = serviceFactory.createService(structure.ticketElements().get(CompactTicketIndexes.SERVICE.getIndex()));
         val serviceTicket = serviceTicketFactory.create(service, authentication, false, ServiceTicket.class);
         
-        val proxyGrantingTicket = proxyGrantingTicketFactory.create(serviceTicket, authentication, ProxyGrantingTicket.class);
+        val proxyGrantingTicket = proxyGrantingTicketFactory.create(serviceTicket, authentication);
         proxyGrantingTicket.setExpirationPolicy(new FixedInstantExpirationPolicy(structure.expirationTime()));
         proxyGrantingTicket.setCreationTime(DateTimeUtils.zonedDateTimeOf(structure.creationTime()));
 

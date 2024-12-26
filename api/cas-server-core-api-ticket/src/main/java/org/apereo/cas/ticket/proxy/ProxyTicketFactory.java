@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.proxy;
 
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketFactory;
 
 /**
@@ -11,18 +10,15 @@ import org.apereo.cas.ticket.TicketFactory;
  * @author Misagh Moayyed
  * @since 4.2
  */
-public interface ProxyTicketFactory extends TicketFactory {
+public interface ProxyTicketFactory<T extends ProxyTicket> extends TicketFactory {
 
     /**
      * Create the ticket object.
      *
-     * @param <T>                  the type parameter
      * @param ticketGrantingTicket the ticket granting ticket
      * @param service              the service
-     * @param clazz                the clazz
      * @return the t
      * @throws Throwable the throwable
      */
-    <T extends Ticket> T create(ProxyGrantingTicket ticketGrantingTicket,
-                                Service service, Class<T> clazz) throws Throwable;
+    T create(ProxyGrantingTicket ticketGrantingTicket, Service service) throws Throwable;
 }

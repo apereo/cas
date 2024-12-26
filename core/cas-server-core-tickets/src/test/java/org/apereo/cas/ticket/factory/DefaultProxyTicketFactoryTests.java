@@ -6,17 +6,14 @@ import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.CasRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceProxyTicketExpirationPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
-
 import lombok.val;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -39,9 +36,9 @@ class DefaultProxyTicketFactoryTests extends BaseTicketFactoryTests {
         val service = RegisteredServiceTestUtils.getService("customExpirationPolicy");
         val pgtFactory = (ProxyGrantingTicketFactory) ticketFactory.get(ProxyGrantingTicket.class);
         val pgt = pgtFactory.create(new MockServiceTicket("123456", service, tgt),
-            RegisteredServiceTestUtils.getAuthentication(), ProxyGrantingTicket.class);
+            RegisteredServiceTestUtils.getAuthentication());
         val factory = (ProxyTicketFactory) ticketFactory.get(ProxyTicket.class);
-        val ticket = factory.create(pgt, service, ProxyTicket.class);
+        val ticket = factory.create(pgt, service);
         assertNotNull(ticket);
         assertEquals(1984, ticket.getExpirationPolicy().getTimeToLive());
         
@@ -56,26 +53,13 @@ class DefaultProxyTicketFactoryTests extends BaseTicketFactoryTests {
         val service = RegisteredServiceTestUtils.getService("defaultExpirationPolicy");
         val pgtFactory = (ProxyGrantingTicketFactory) ticketFactory.get(ProxyGrantingTicket.class);
         val pgt = pgtFactory.create(new MockServiceTicket("123456", service, tgt),
-            RegisteredServiceTestUtils.getAuthentication(), ProxyGrantingTicket.class);
+            RegisteredServiceTestUtils.getAuthentication());
         val factory = (ProxyTicketFactory) ticketFactory.get(ProxyTicket.class);
-        val ticket = factory.create(pgt, service, ProxyTicket.class);
+        val ticket = factory.create(pgt, service);
         assertNotNull(ticket);
         assertEquals(10, ticket.getExpirationPolicy().getTimeToLive());
     }
-
-    @Test
-    void verifyMismatchedClass() throws Throwable {
-        val defaultSvc = RegisteredServiceTestUtils.getRegisteredService("defaultExpirationPolicy", CasRegisteredService.class);
-        servicesManager.save(defaultSvc);
-        val tgt = new MockTicketGrantingTicket("casuser");
-        val service = RegisteredServiceTestUtils.getService("defaultExpirationPolicy");
-        val pgtFactory = (ProxyGrantingTicketFactory) ticketFactory.get(ProxyGrantingTicket.class);
-        val pgt = pgtFactory.create(new MockServiceTicket("123456", service, tgt),
-            RegisteredServiceTestUtils.getAuthentication(), ProxyGrantingTicket.class);
-        val factory = (ProxyTicketFactory) ticketFactory.get(ProxyTicket.class);
-        assertThrows(ClassCastException.class, () -> factory.create(pgt, service, TransientSessionTicket.class));
-    }
-
+    
     @Test
     void verifyDefaultTicketIdGenerator() throws Throwable {
         val defaultSvc = RegisteredServiceTestUtils.getRegisteredService("defaultExpirationPolicy", CasRegisteredService.class);
@@ -84,8 +68,8 @@ class DefaultProxyTicketFactoryTests extends BaseTicketFactoryTests {
         val service = CoreAuthenticationTestUtils.getService("defaultExpirationPolicy");
         val pgtFactory = (ProxyGrantingTicketFactory) ticketFactory.get(ProxyGrantingTicket.class);
         val pgt = pgtFactory.create(new MockServiceTicket("123456", service, tgt),
-            RegisteredServiceTestUtils.getAuthentication(), ProxyGrantingTicket.class);
+            RegisteredServiceTestUtils.getAuthentication());
         val factory = (ProxyTicketFactory) ticketFactory.get(ProxyTicket.class);
-        assertNotNull(factory.create(pgt, service, ProxyTicket.class));
+        assertNotNull(factory.create(pgt, service));
     }
 }
