@@ -16,11 +16,11 @@ import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
 import org.apereo.cas.web.flow.CasFlowHandlerMapping;
-import org.apereo.cas.web.flow.CasFlowIdExtractor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.CasWebflowIdExtractor;
 import org.apereo.cas.web.flow.RiskAuthenticationCheckTokenAction;
 import org.apereo.cas.web.flow.RiskAuthenticationVerificationWebflowConfigurer;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowConfigurer;
@@ -173,7 +173,7 @@ class ElectronicFenceWebflowConfiguration {
         @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
         @Bean
         @ConditionalOnMissingBean(name = "riskVerificationWebflowUrlHandler")
-        public FlowUrlHandler riskVerificationWebflowUrlHandler(final List<CasFlowIdExtractor> flowIdExtractors) {
+        public FlowUrlHandler riskVerificationWebflowUrlHandler(final List<CasWebflowIdExtractor> flowIdExtractors) {
             return new CasDefaultFlowUrlHandler(flowIdExtractors);
         }
         

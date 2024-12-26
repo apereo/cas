@@ -37,7 +37,7 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
     private static final String DELIMITER = "&";
 
-    private final List<CasFlowIdExtractor> flowIdExtractors;
+    private final List<CasWebflowIdExtractor> flowIdExtractors;
 
     private static Stream<String> encodeMultiParameter(final String key, final String[] values, final String encoding) {
         return Stream.of(values).map(value -> encodeSingleParameter(key, value, encoding));
@@ -81,9 +81,7 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
             flowId = RegExUtils.removePattern(flowId, "#.*");
         }
         for (val flowIdExtractor : flowIdExtractors) {
-            if (flowIdExtractor.supports(request, flowId)) {
-                flowId = flowIdExtractor.extract(request, flowId);
-            }
+            flowId = flowIdExtractor.extract(request, flowId);
         }
         return flowId.trim();
     }

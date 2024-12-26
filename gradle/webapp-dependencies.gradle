@@ -12,6 +12,7 @@ dependencies {
     implementation project(":core:cas-server-core-validation")
     implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-notifications")
+    implementation project(":core:cas-server-core-multitenancy")
 
     compileOnly project(":support:cas-server-support-jpa-util")
 

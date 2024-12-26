@@ -9,14 +9,13 @@ import org.apereo.cas.web.CasWebSecurityConfigurer;
 import org.apereo.cas.web.flow.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
 import org.apereo.cas.web.flow.CasFlowHandlerMapping;
-import org.apereo.cas.web.flow.CasFlowIdExtractor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.CasWebflowIdExtractor;
 import org.apereo.cas.web.flow.configurer.acct.AccountProfileWebflowConfigurer;
 import org.apereo.cas.web.flow.executor.WebflowExecutorFactory;
-
 import lombok.val;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,7 +33,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.FlowExecutionListener;
 import org.springframework.webflow.executor.FlowExecutor;
-
 import java.util.List;
 
 /**
@@ -90,7 +88,7 @@ class CasWebflowAccountProfileConfiguration {
     @RefreshScope(proxyMode = ScopedProxyMode.DEFAULT)
     @Bean
     public FlowUrlHandler accountProfileWebflowUrlHandler(
-        final List<CasFlowIdExtractor> flowIdExtractors) {
+        final List<CasWebflowIdExtractor> flowIdExtractors) {
         return new CasDefaultFlowUrlHandler(flowIdExtractors);
     }
 

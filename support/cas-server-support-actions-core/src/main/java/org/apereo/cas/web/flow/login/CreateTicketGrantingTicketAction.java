@@ -51,7 +51,8 @@ public class CreateTicketGrantingTicketAction extends BaseCasWebflowAction {
         val authentication = buildFinalAuthentication(authenticationResult);
         val ticketGrantingTicket = determineTicketGrantingTicketId(context);
         LOGGER.debug("Creating ticket-granting ticket, potentially based on [{}]", ticketGrantingTicket);
-        val tgt = configurationContext.getSingleSignOnBuildingStrategy().buildTicketGrantingTicket(authenticationResult, authentication, ticketGrantingTicket);
+        val tgt = configurationContext.getSingleSignOnBuildingStrategy()
+            .buildTicketGrantingTicket(authenticationResult, authentication, ticketGrantingTicket);
 
         if (registeredService != null && registeredService.getAccessStrategy() != null) {
             WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());

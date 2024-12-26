@@ -13,6 +13,7 @@ import org.jooq.lambda.Unchecked;
 import org.jooq.lambda.fi.util.function.CheckedSupplier;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.io.Resource;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -36,10 +37,14 @@ public class JsonTenantsManager implements TenantsManager, DisposableBean {
     private final List<TenantDefinition> tenantDefinitionList = new ArrayList<>();
 
     public JsonTenantsManager(final Resource resource) throws Exception {
-        this.jsonResource = resource;
+        jsonResource = resource;
         tenantDefinitionList.addAll(readFromJsonResource());
-        if (ResourceUtils.isFile(this.jsonResource)) {
-            this.watcherService = new FileWatcherService(resource.getFile(),
+        initializeWatchService();
+    }
+
+    private void initializeWatchService() throws IOException {
+        if (ResourceUtils.isFile(jsonResource)) {
+            watcherService = new FileWatcherService(jsonResource.getFile(),
                 Unchecked.consumer(__ -> {
                     val resources = readFromJsonResource();
                     if (resources.isEmpty()) {
@@ -47,13 +52,21 @@ public class JsonTenantsManager implements TenantsManager, DisposableBean {
                         tenantDefinitionList.addAll(resources);
                     }
                 }));
-            this.watcherService.start(getClass().getSimpleName());
+            watcherService.start(getClass().getSimpleName());
         }
     }
 
     @Override
     public void destroy() {
         FunctionUtils.doIfNotNull(watcherService, WatcherService::close);
+    }
+
+    @Override
+    public Optional<TenantDefinition> findTenant(final String tenantId) {
+        return tenantDefinitionList
+            .stream()
+            .filter(t -> t.getId().equalsIgnoreCase(tenantId))
+            .findFirst();
     }
 
     private List<TenantDefinition> readFromJsonResource() {
@@ -70,11 +83,4 @@ public class JsonTenantsManager implements TenantsManager, DisposableBean {
         .get();
     }
 
-    @Override
-    public Optional<TenantDefinition> findTenant(final String tenantId) {
-        return tenantDefinitionList
-            .stream()
-            .filter(t -> t.getId().equalsIgnoreCase(tenantId))
-            .findFirst();
-    }
 }

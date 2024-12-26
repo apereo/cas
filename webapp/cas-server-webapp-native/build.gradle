@@ -69,6 +69,7 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-notifications")
+    implementation project(":core:cas-server-core-multitenancy")
 
     implementation project(":support:cas-server-support-native")
     implementation project(":support:cas-server-support-webconfig")
