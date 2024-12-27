@@ -97,8 +97,7 @@ public abstract class AbstractAggregatingDefaultQueryPersonAttributeDao extends 
                 }
             } else if (this.requireAll) {
                 LOGGER.debug("Attribute repository dao [{}] did not resolve a person "
-                    + "and configuration requires all sources to produce valid results. "
-                    + "Short-circuiting the execution and returning null instead", currentlyConsidering);
+                    + "and configuration requires all sources to produce valid results. ", currentlyConsidering);
                 return null;
             }
 

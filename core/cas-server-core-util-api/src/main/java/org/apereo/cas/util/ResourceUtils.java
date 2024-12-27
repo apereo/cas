@@ -178,7 +178,7 @@ public class ResourceUtils {
     public static Resource exportClasspathResourceToFile(final File parentDirectory, final Resource resource) {
         LOGGER.trace("Preparing classpath resource [{}]", resource);
         if (resource == null) {
-            LOGGER.warn("No resource defined to prepare. Returning null");
+            LOGGER.warn("No resource defined to prepare.");
             return null;
         }
         if (!parentDirectory.exists() && !parentDirectory.mkdirs()) {
@@ -207,7 +207,7 @@ public class ResourceUtils {
      */
     public static Resource prepareClasspathResourceIfNeeded(final Resource resource) {
         if (resource == null) {
-            LOGGER.debug("No resource defined to prepare. Returning null");
+            LOGGER.debug("No resource defined to prepare.");
             return null;
         }
         return prepareClasspathResourceIfNeeded(resource, false, resource.getFilename());
@@ -231,7 +231,7 @@ public class ResourceUtils {
         try {
             LOGGER.trace("Preparing possible classpath resource [{}]", resource);
             if (resource == null) {
-                LOGGER.debug("No resource defined to prepare. Returning null");
+                LOGGER.debug("No resource defined to prepare.");
                 return null;
             }
 

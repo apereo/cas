@@ -16,9 +16,6 @@ public class InvalidTicketException extends AbstractTicketException {
     @Serial
     private static final long serialVersionUID = 9141891414482490L;
 
-    /**
-     * The code description.
-     */
     private static final String CODE = "INVALID_TICKET";
 
     private final String ticketId;

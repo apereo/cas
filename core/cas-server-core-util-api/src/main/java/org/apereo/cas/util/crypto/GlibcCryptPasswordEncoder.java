@@ -34,7 +34,7 @@ public class GlibcCryptPasswordEncoder implements PasswordEncoder {
         }
 
         if (StringUtils.isBlank(this.encodingAlgorithm)) {
-            LOGGER.warn("No encoding algorithm is defined. Password cannot be encoded; Returning null");
+            LOGGER.warn("No encoding algorithm is defined. Password cannot be encoded;");
             return null;
         }
 

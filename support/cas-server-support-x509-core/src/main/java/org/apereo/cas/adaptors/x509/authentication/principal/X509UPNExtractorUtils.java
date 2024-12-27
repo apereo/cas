@@ -86,7 +86,7 @@ public class X509UPNExtractorUtils {
      */
     private ASN1Sequence getOtherNameTypeSAN(final List<?> sanItem) {
         if (sanItem.size() < 2) {
-            LOGGER.error("Subject Alternative Name List does not contain at least two required elements. Returning null principal id...");
+            LOGGER.error("Subject Alternative Name List does not contain at least two required elements");
             return null;
         }
         val itemType = (Integer) sanItem.getFirst();

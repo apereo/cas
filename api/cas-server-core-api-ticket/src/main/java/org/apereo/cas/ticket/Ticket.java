@@ -17,7 +17,13 @@ public interface Ticket extends ExpirableTicket, StatelessTicket, Comparable<Tic
      * @return the id
      */
     String getId();
-    
+
+    /**
+     * Method to retrieve the tenant id that owns and issued this ticket.
+     * @return tenant id or null
+     */
+    String getTenantId();
+
     /**
      * Gets count of uses.
      *
