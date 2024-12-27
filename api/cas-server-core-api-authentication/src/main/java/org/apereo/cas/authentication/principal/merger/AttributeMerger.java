@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal.merger;
 
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -11,7 +12,7 @@ import java.util.Set;
  * @author andrew.petro@yale.edu
  * @since 7.1.0
  */
-public interface AttributeMerger {
+public interface AttributeMerger extends Serializable {
     /**
      * Merge the results of a Set of {@link PersonAttributes} and a compiled results map.
      *

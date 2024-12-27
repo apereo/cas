@@ -7,7 +7,6 @@ dependencies {
     api project(":api:cas-server-core-api-monitor")
 
     compileOnly project(":core:cas-server-core-services")
-
     
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-authentication-api")

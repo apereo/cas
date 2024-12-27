@@ -3,6 +3,8 @@ package org.apereo.cas.authentication;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.multitenancy.TenantExtractor;
+import org.apereo.cas.multitenancy.TenantsManager;
 import org.apereo.cas.services.ServicesManager;
 
 import lombok.Getter;
@@ -37,6 +39,10 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     private final PrincipalResolver principalResolver;
 
     private final PrincipalFactory principalFactory;
+
+    private final TenantExtractor tenantExtractor;
+    
+    private final TenantsManager tenantsManager;
 
     @Override
     public AuthenticationResultBuilder establishAuthenticationContextFromInitial(final Authentication authentication,

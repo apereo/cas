@@ -12,7 +12,7 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * This is {@link JsonTenantsManagerTests}.
+ * This is {@link DefaultTenantsManagerTests}.
  *
  * @author Misagh Moayyed
  * @since 7.2.0
@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = BaseMultitenancyTests.SharedTestConfiguration.class)
 @TestPropertySource(properties = "cas.multitenancy.json.location=classpath:/tenants.json")
 @ExtendWith(CasTestExtension.class)
-class JsonTenantsManagerTests {
+class DefaultTenantsManagerTests {
 
     @Autowired
     @Qualifier(TenantsManager.BEAN_NAME)

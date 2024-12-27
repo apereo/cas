@@ -22,6 +22,7 @@ dependencies {
     implementation project(":support:cas-server-support-wsfederation")
     
     implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-multitenancy")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-util-api")

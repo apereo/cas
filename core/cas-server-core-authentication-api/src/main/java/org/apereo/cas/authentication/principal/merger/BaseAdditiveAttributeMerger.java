@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal.merger;
 import org.apereo.cas.authentication.attribute.SimplePersonAttributes;
 import org.apereo.cas.authentication.principal.attribute.PersonAttributes;
 import lombok.val;
+import java.io.Serial;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,6 +20,9 @@ import java.util.Set;
  * @since 7.1.0
  */
 public abstract class BaseAdditiveAttributeMerger implements AttributeMerger {
+
+    @Serial
+    private static final long serialVersionUID = -7112667508448078170L;
 
     @Override
     public Set<String> mergeAvailableQueryAttributes(final Set<String> toModify, final Set<String> toConsider) {

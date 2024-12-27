@@ -7,13 +7,13 @@ dependencies {
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-events")
     api project(":api:cas-server-core-api-monitor")
-    
+    api project(":api:cas-server-core-api-multitenancy")
+
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-mfa-api")
 
-
     testImplementation project(":core:cas-server-core-scripting")
-    
+    testImplementation project(":core:cas-server-core-multitenancy")
     testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
 }

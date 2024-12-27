@@ -26,6 +26,7 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-throttle")
     implementation project(":core:cas-server-core-services-authentication")
     implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-multitenancy")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-webflow-mfa")
     implementation project(":core:cas-server-core-webflow-mfa-api")

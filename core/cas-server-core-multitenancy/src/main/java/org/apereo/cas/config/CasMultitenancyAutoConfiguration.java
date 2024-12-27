@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.features.CasFeatureModule;
 import org.apereo.cas.multitenancy.DefaultTenantExtractor;
-import org.apereo.cas.multitenancy.JsonTenantsManager;
+import org.apereo.cas.multitenancy.DefaultTenantsManager;
 import org.apereo.cas.multitenancy.TenantExtractor;
 import org.apereo.cas.multitenancy.TenantsManager;
 import org.apereo.cas.util.spring.boot.ConditionalOnFeatureEnabled;
@@ -36,7 +36,7 @@ public class CasMultitenancyAutoConfiguration {
     @ConditionalOnMissingBean(name = TenantsManager.BEAN_NAME)
     public TenantsManager tenantsManager(final CasConfigurationProperties casProperties) throws Exception {
         val location = casProperties.getMultitenancy().getJson().getLocation();
-        return new JsonTenantsManager(location);
+        return new DefaultTenantsManager(location);
     }
 
     @Bean
