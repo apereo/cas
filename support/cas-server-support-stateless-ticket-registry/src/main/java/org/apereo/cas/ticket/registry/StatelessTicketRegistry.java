@@ -57,7 +57,8 @@ public class StatelessTicketRegistry extends AbstractTicketRegistry {
             LOGGER.trace("Raw compacted ticket to expand is [{}]", ticketContent);
             val ticketObject = ticketCompactor.expand(ticketContent);
             if (ticketObject != null && predicate.test(ticketObject)) {
-                return ticketObject.markTicketStateless();
+                ticketObject.markTicketStateless();
+                return ticketObject;
             }
             return null;
         });

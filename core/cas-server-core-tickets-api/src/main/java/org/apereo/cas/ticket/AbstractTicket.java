@@ -1,12 +1,10 @@
 package org.apereo.cas.ticket;
 
 import org.apereo.cas.authentication.Authentication;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -118,10 +115,8 @@ public abstract class AbstractTicket implements TicketGrantingTicketAwareTicket,
     }
 
     @Override
-    @CanIgnoreReturnValue
-    public Ticket markTicketStateless() {
+    public void markTicketStateless() {
         this.stateless = Boolean.TRUE;
-        return this;
     }
 
     @Override

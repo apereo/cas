@@ -126,7 +126,8 @@ class AccessTokenAuthorizationCodeGrantRequestExtractorTests extends AbstractOAu
         request.addParameter(OAuth20Constants.CLIENT_ID, service.getClientId());
 
         val principal = RegisteredServiceTestUtils.getPrincipal();
-        val code = addCode(principal, service).markTicketStateless();
+        val code = addCode(principal, service);
+        code.markTicketStateless();
         request.addParameter(OAuth20Constants.CODE, code.getId());
 
         val response = new MockHttpServletResponse();
